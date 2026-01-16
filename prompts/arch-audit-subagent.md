@@ -1,5 +1,5 @@
 ---
-description: Run arch audit in a subagent and insert Gaps & Concerns into the doc.
+description: "08a) Audit (subagent): code vs plan gaps list."
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

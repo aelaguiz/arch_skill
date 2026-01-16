@@ -1,5 +1,5 @@
 ---
-description: Ramp up on an existing architecture plan (doc + code) before taking action.
+description: "00) Ramp-up: read plan doc + referenced code before acting."
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

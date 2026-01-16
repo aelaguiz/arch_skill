@@ -1,5 +1,5 @@
 ---
-description: Audit code vs arch plan; add a canonical gaps & concerns list.
+description: "08) Audit: code vs plan gaps list."
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

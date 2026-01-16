@@ -1,5 +1,5 @@
 ---
-description: Add dev experience targets (CLI/output mocks, artifacts, commands).
+description: "07) DevX: CLI-output mocks + artifacts."
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

@@ -1,5 +1,5 @@
 ---
-description: Update canonical architecture doc with execution progress.
+description: "10) Phase progress: update doc + decision log."
 argument-hint: DOC_PATH=<path> PHASE=<n>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

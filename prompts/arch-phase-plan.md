@@ -1,5 +1,5 @@
 ---
-description: Add a depth-first phased implementation plan to the architecture doc.
+description: "06) Phase plan: depth-first implementation plan."
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

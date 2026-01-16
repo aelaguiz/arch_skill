@@ -1,5 +1,5 @@
 ---
-description: Start a new architecture doc from the canonical template (single-doc rule).
+description: "01) New doc: create canonical architecture doc from template."
 argument-hint: TITLE="<title>" DATE=YYYY-MM-DD
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

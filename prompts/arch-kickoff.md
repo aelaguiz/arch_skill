@@ -1,5 +1,5 @@
 ---
-description: Kick off the 4-phase architecture workflow (lightweight alignment).
+description: "02) Phase 1 kickoff: research setup + checkpoints."
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).

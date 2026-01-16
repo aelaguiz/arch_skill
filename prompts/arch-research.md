@@ -1,5 +1,5 @@
 ---
-description: Populate research grounding (internal + external anchors).
+description: "03) Research grounding: external + internal anchors."
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
