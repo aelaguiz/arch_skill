@@ -10,3 +10,6 @@ remote_install:
 	@for f in ~/.codex/prompts/arch-*.md; do \
 		scp $$f $(HOST):~/.codex/prompts/; \
 	done
+	@for f in ~/.codex/prompts/maestro-*.md; do \
+		scp $$f $(HOST):~/.codex/prompts/; \
+	done
