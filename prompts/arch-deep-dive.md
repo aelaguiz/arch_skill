@@ -1,9 +1,10 @@
 ---
 description: "04) Deep dive: current-target architecture + call-site audit."
-argument-hint: DOC_PATH=<path>
+argument-hint: DOC_PATH=<path> (optional)
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list. Console output must ONLY use the specified format; no extra narrative.
+If DOC_PATH is not provided, locate the most relevant architecture doc by semantic match to $ARGUMENTS and the current conversation; prefer the doc that explicitly matches the topic and is most recently updated among relevant candidates. If you cannot determine a clear winner, ask the user to choose from the top 2–3 candidates.
 Populate sections 4–6 in $DOC_PATH:
 - Current architecture (on-disk tree, control paths, object model, failure behavior).
 - Target architecture (future tree, flows, APIs, invariants).
