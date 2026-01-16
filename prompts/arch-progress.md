@@ -6,8 +6,9 @@ Execution rule: do not block on unrelated dirty files in git; ignore unrecognize
 Update $DOC_PATH with progress for Phase $PHASE.
 Add decisions to Decision Log.
 Do not create additional planning docs.
+Write the progress update into $DOC_PATH and append the decision entry to the Decision Log. Do not paste the full block to the console.
 
-OUTPUT FORMAT:
+DOCUMENT INSERT FORMAT:
 ## Phase <n> Progress Update
 - Work completed:
   - <item>
@@ -25,3 +26,9 @@ OUTPUT FORMAT:
 - Decision:
 - Consequences:
 - Follow-ups:
+
+CONSOLE OUTPUT FORMAT (summary + open questions only):
+Summary:
+- <bullet>
+Open questions:
+- Proceed to next phase? (yes/no)

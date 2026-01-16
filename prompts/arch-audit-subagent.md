@@ -1,14 +1,22 @@
 ---
-description: Audit code vs arch plan; add a canonical gaps & concerns list.
+description: Run arch audit in a subagent and insert Gaps & Concerns into the doc.
 argument-hint: DOC_PATH=<path>
 ---
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
-Compare the architecture doc at $DOC_PATH against the actual code in the current repo.
-Find gaps, drift, missed call sites, and violations of conventions/patterns.
-Update the doc with a **Gaps & Concerns List** using the exact format below.
-Write the block into $DOC_PATH (append near the end, before Decision Log). Do not paste the full block to the console.
 
-DOCUMENT INSERT FORMAT (append near the end, before Decision Log):
+Use a subagent (non‑interactive Codex CLI) to perform the audit, then insert its output into $DOC_PATH.
+Do not paste the full gaps list to the console; only summarize and list open questions.
+
+Steps:
+1) Build a subagent prompt that:
+   - reads $DOC_PATH
+   - inspects the current repo code
+   - outputs ONLY the canonical “Gaps & Concerns List” block below
+2) Run the subagent via `codex exec` (codex model, high reasoning) and capture its final message:
+   - `codex exec -m gpt-5-codex -c reasoning_effort="high" --output-last-message /tmp/arch_audit_subagent.txt "<SUBAGENT_PROMPT>"`
+3) Replace any existing “Gaps & Concerns List” block in $DOC_PATH; if none exists, insert it immediately **before** the Decision Log.
+
+SUBAGENT OUTPUT FORMAT (MUST MATCH EXACTLY):
 # Gaps & Concerns List (audit vs code)
 ## Summary
 - Coverage: <what % or rough completeness>

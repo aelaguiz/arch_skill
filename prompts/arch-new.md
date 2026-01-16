@@ -11,8 +11,9 @@ Example: TITLE="PSV2 — Foo — Architecture Plan" DATE=2026-01-16
 → `docs/PSV2_FOO_ARCHITECTURE_PLAN_2026-01-16.md`
 Apply the **single-document rule**: all planning and decisions live in this doc.
 Do not create additional planning docs.
+Write the filled template into the new doc file. Do not paste the full document to the console.
 
-OUTPUT FORMAT (paste and fill placeholders):
+DOCUMENT CONTENT FORMAT (write to the new doc file):
 
 ---
 title: "<PROJECT> — <CHANGE> — Architecture Plan"
@@ -288,3 +289,10 @@ related:
 
 
 ---
+
+CONSOLE OUTPUT FORMAT (summary + open questions only):
+Summary:
+- Created doc: <path>
+- <other summary item>
+Open questions:
+- <open question, if any>

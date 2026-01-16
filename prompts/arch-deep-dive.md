@@ -8,8 +8,9 @@ Populate sections 4–6 in $DOC_PATH:
 - Target architecture (future tree, flows, APIs, invariants).
 - Call-site audit table (exhaustive inventory).
 Reference ground truth code paths for every claim.
+Write the updated sections into $DOC_PATH (replace sections 4–6 in-place). Do not paste the full block to the console.
 
-OUTPUT FORMAT:
+DOCUMENT INSERT FORMAT (replace sections 4–6 in-place):
 # 4) Current Architecture (as-is)
 
 ## 4.1 On-disk structure
@@ -77,6 +78,12 @@ OUTPUT FORMAT:
 * Single source of truth:
 * Determinism contracts (time/randomness):
 * Performance / allocation boundaries:
+
+CONSOLE OUTPUT FORMAT (summary + open questions only):
+Summary:
+- <bullet>
+Open questions:
+- <open question>
 
 ## 5.5 UI surfaces (ASCII mockups, if UI work)
 

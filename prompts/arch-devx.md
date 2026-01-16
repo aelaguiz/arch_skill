@@ -10,8 +10,9 @@ Capture developer-facing outputs and commands:
 - Debugging/inspection shortcuts
 - DX acceptance tests
 Update the section in place if it already exists.
+Write the section into $DOC_PATH (insert after #8 Test Strategy). Do not paste the full block to the console.
 
-OUTPUT FORMAT (insert after #8 Test Strategy):
+DOCUMENT INSERT FORMAT (insert after #8 Test Strategy):
 # 8.5 Dev Experience (DX) Targets
 ## 8.5.1 CLI / Console UX (if relevant)
 - Principles:
@@ -42,3 +43,9 @@ OUTPUT FORMAT (insert after #8 Test Strategy):
 
 ## 8.5.4 DX acceptance tests
 - `<command>` — expected artifacts + pass/fail signal
+
+CONSOLE OUTPUT FORMAT (summary + open questions only):
+Summary:
+- <bullet>
+Open questions:
+- <open question>

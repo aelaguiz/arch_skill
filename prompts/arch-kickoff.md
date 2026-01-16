@@ -6,8 +6,9 @@ Execution rule: do not block on unrelated dirty files in git; ignore unrecognize
 We will work out of a single canonical doc at $DOC_PATH.
 Start Phase 1 (Research). Ask clarifying questions only if there are multiple viable options or ambiguity.
 Summarize research anchors and pause for a lightweight check before Phase 2.
+Write the kickoff + summary block into $DOC_PATH (insert after TL;DR, before #0). Do not paste the full block to the console.
 
-OUTPUT FORMAT:
+DOCUMENT INSERT FORMAT (insert after TL;DR, before #0):
 ## Phase 1 Kickoff (Research)
 - Repo: <current>
 - Target doc: <path>
@@ -28,3 +29,10 @@ OUTPUT FORMAT:
   - <Q> — <evidence needed>
 
 Decision: proceed to Phase 2? (yes/no)
+
+CONSOLE OUTPUT FORMAT (summary + open questions only):
+Summary:
+- <bullet>
+Open questions:
+- Proceed to Phase 2? (yes/no)
+- <other open questions, if any>

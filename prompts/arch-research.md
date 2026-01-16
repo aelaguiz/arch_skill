@@ -7,8 +7,9 @@ Fill the Research Grounding section in $DOC_PATH.
 - External anchors: what to adopt vs reject.
 - Internal ground truth: file paths + behaviors.
 - Open questions + evidence needed.
+Write the Research Grounding block into $DOC_PATH (replace section 3 in-place). Do not paste the full block to the console.
 
-OUTPUT FORMAT:
+DOCUMENT INSERT FORMAT (replace section 3 in-place):
 # 3) Research Grounding (external + internal “ground truth”)
 ## 3.1 External anchors (papers, systems, prior art)
 - <source> — <what we borrow / what we reject> — <why it applies>
@@ -23,3 +24,9 @@ OUTPUT FORMAT:
 - Q1:
 - Q2:
 - What evidence would settle them:
+
+CONSOLE OUTPUT FORMAT (summary + open questions only):
+Summary:
+- <bullet>
+Open questions:
+- <open question>
