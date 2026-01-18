@@ -26,6 +26,7 @@ Restart Codex after updating prompts.
 | `arch_skill/prompts/arch-deep-dive.md` | `/prompts:arch-deep-dive` | Fill Current/Target architecture + Call‑Site Audit sections. |
 | `arch_skill/prompts/arch-plan-audit.md` | `/prompts:arch-plan-audit` | Audit plan readiness across phases (emphasis: fully specified target architecture, fully idiomatic, call sites audited). |
 | `arch_skill/prompts/arch-plan-enhance.md` | `/prompts:arch-plan-enhance` | Enhance an existing plan to be best-possible: idiomatic + SSOT + call‑site complete + drift-proof. |
+| `arch_skill/prompts/arch-impl-audit.md` | `/prompts:arch-impl-audit` | Audit implementation completeness vs the plan, reopen false-complete phases, and get opus+gemini second opinions. |
 | `arch_skill/prompts/arch-ui-ascii.md` | `/prompts:arch-ui-ascii` | Add ASCII mockups for current/target UI states. |
 | `arch_skill/prompts/arch-ascii.md` | `/prompts:arch-ascii` | Render a simple ASCII chart for the current topic/pipeline. |
 | `arch_skill/prompts/arch-research.md` | `/prompts:arch-research` | Populate Research Grounding (external + internal anchors). |
@@ -54,6 +55,7 @@ Restart Codex after updating prompts.
 4) `/prompts:arch-plan-enhance …` (optional, recommended: tighten plan + drift-proofing sweep)
 5) `/prompts:arch-phase-plan …`
 6) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
+7) `/prompts:arch-impl-audit …` (recommended: prove we didn’t miss anything; reopen false-complete)
 
 ### Full flow (large change)
 1) `/prompts:arch-new …`
@@ -68,3 +70,4 @@ Restart Codex after updating prompts.
 10) `/prompts:arch-review-gate …`
 11) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
 12) `/prompts:arch-progress …` (optional if not covered by implement)
+13) `/prompts:arch-impl-audit …` (recommended: completeness + idiomatic audit vs plan; reopen false-complete)

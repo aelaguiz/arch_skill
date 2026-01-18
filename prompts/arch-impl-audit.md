@@ -1,0 +1,127 @@
+---
+description: "Implementation audit: prove plan compliance + completeness, reopen false-complete phases, get opus+gemini second opinions."
+argument-hint: "<Paste anything. Include docs/<...>.md to pin the plan doc (optional).>"
+---
+# /prompts:arch-impl-audit — $ARGUMENTS
+Execution rule: ignore unrelated dirty git files; if committing, stage only what you touched.
+Do not preface with a plan. Begin work immediately.
+
+# North Star (authoritative)
+Running this audit should stop us from “missing parts” of the implementation. After it runs:
+- the plan doc reflects reality (no false “complete”),
+- any missing implementation is explicitly listed with evidence anchors (file paths/symbols/tests),
+- phases that were marked complete but aren’t truly done are reopened with concrete missing work,
+- and we have two independent second opinions (opus + gemini) on completeness + idiomatic fit.
+
+$ARGUMENTS is freeform steering. Treat it as intent + constraints + any relevant context.
+
+DOC_PATH:
+- If $ARGUMENTS includes a docs/<...>.md path, use it.
+- Otherwise infer from the conversation.
+- If ambiguous, ask me to pick from the top 2–3 candidates.
+
+Question policy (strict: no dumb questions):
+- Do NOT ask technical questions you can answer by reading the plan/code/tests. Go look and decide.
+- Ask only when DOC_PATH is ambiguous or a true product/UX decision is missing.
+
+Hard rules:
+- You MUST update DOC_PATH.
+- You MUST output a friendly human-readable report to the console.
+- Code is ground truth: validate “complete” claims by reading code and searching the repo.
+- Avoid proof ladders: evidence should be common-sense and fast (existing tests/harness, instrumentation/log signatures, or a short manual checklist).
+
+What you are auditing for (highest bar):
+1) ABSOLUTE completeness:
+   - If the plan says something is done, it is actually shipped in code (not hand-wavy).
+2) Architecture compliance:
+   - SSOT is real (no parallel sources of truth).
+   - Boundaries/contracts match the plan.
+   - Old paths are deleted or provably unreachable if the plan requires it.
+3) FULL idiomatic fit:
+   - Aligns to existing repo patterns (no unnecessary new abstractions).
+4) CALL SITES AUDITED:
+   - Every call site that should be migrated is migrated, and you verify by searching for misses.
+
+Audit procedure (do this in order):
+1) Read DOC_PATH fully.
+2) Extract the plan’s authoritative anchors (from wherever they live in the doc):
+   - Target architecture contracts/APIs (names + paths)
+   - Call-site audit / change inventory (table or equivalent)
+   - Phase plan + which phases are marked complete (any “Status: complete”, checkmarks, “done”, etc.)
+   - Delete list / cleanup expectations (if present)
+   - “Definition of done” evidence expectations
+3) Validate completeness against code:
+   - For each call-site audit item: verify the code has the required change (path + symbol usage).
+   - Search for old APIs/old patterns/old paths to find misses (do not trust the table blindly).
+   - Verify SSOT enforcement: look for lingering writers/readers of the old source of truth.
+   - Verify deletions/cleanup: if the plan says “remove X”, confirm X is removed OR no longer referenced.
+   - Verify evidence: if the plan claims a test/log/invariant proves the North Star, confirm it exists and is wired to the real failure site.
+4) Determine phase truth:
+   - If a phase is marked complete but any required work is missing → REOPEN it.
+   - Always refer to phases as `Phase <n> (<what it does>)` (use the phase heading text; if missing, infer from that phase’s Goal/Work bullets).
+5) Second opinions (required):
+   - Get two independent reviews:
+     - Opus (anthropic/claude-opus-4.5)
+     - Gemini (gemini-3-pro-preview)
+   - Ask them: “Is the implementation complete and idiomatic relative to DOC_PATH? What’s missing? Where does code drift from plan? Any SSOT/contract violations?”
+   - Provide them enough context to answer (DOC_PATH + top gaps + key file anchors). Do not be vague.
+   - Record their feedback in the doc, even if you disagree (label: accepted/rejected).
+
+DOC UPDATES (anti-fragile; do NOT assume section numbers):
+A) Insert/replace an audit block near the top:
+Placement rule (in order):
+1) If `<!-- arch_skill:block:implementation_audit:start -->` exists: replace inside it.
+2) Else insert after TL;DR if present, otherwise after YAML front matter, otherwise at top.
+
+<!-- arch_skill:block:implementation_audit:start -->
+# Implementation Audit (authoritative)
+Date: <YYYY-MM-DD>
+Verdict: <COMPLETE|NOT COMPLETE>
+
+## Top blockers (why we’re not done)
+- <bullets>
+
+## Reopened phases (false-complete fixes)
+- Phase <n> (<what it does>) — reopened because:
+  - <missing items>
+
+## Missing items (evidence-anchored)
+| Area | Evidence anchor | Plan expects | Code does | Fix |
+| ---- | -------------- | ------------ | --------- | --- |
+| <area> | <path:line> | <expected> | <actual> | <fix> |
+
+## External second opinions
+- Opus: <received|pending>
+  - Key points:
+    - <bullet>
+  - Disposition: <accepted|rejected> — <why>
+- Gemini: <received|pending>
+  - Key points:
+    - <bullet>
+  - Disposition: <accepted|rejected> — <why>
+<!-- arch_skill:block:implementation_audit:end -->
+
+B) Reopen phases in-place (only when needed):
+- Find the phase section in the doc.
+- Add/replace a status line directly under the phase heading:
+  - `Status: REOPENED (audit found missing work)`
+- Add a short `Missing:` list with concrete items (file paths/symbols/tests/deletes).
+
+CONSOLE OUTPUT (friendly + decisive; no cryptic questions):
+Summary:
+- Doc: <path>
+- Verdict: <COMPLETE|NOT COMPLETE> (<short reason>)
+- Reopened phases:
+  - <Phase n (what)> — <why>
+- External second opinions:
+  - Opus: <received|pending> — <1 line>
+  - Gemini: <received|pending> — <1 line>
+Major issues (human readable):
+1) <issue>
+2) <issue>
+3) <issue>
+Next:
+- <highest leverage fix>
+- <next fix>
+Open questions (ONLY if unavoidable):
+- <question with full context + your default recommendation>
