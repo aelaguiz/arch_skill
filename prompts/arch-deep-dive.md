@@ -34,10 +34,13 @@ Hard rules (drift-proof):
 - Do not ask the user technical questions you can answer by reading code; go look and decide.
 - If multiple viable technical approaches exist, pick the most idiomatic default and note alternatives in the doc (do not ask “what do you want to do?”).
 
-Pattern Consolidation Sweep (anti-blinders; confirm with user)
+Pattern Consolidation Sweep (anti-blinders; scoped by the plan)
 - If this design introduces/updates a central pattern (SSOT, lifecycle primitive, layout contract, policy resolver, etc.), look for other places that should adopt it.
 - Capture candidates with file paths and your default recommendation: include in this plan vs defer (follow-up) vs exclude.
-- Do not ask cryptic scope questions. If you need user confirmation, list the concrete candidates (paths/symbols) and your default, then ask for override.
+- Treat the plan’s scope as authoritative. Do NOT ask the user to re-decide scope here.
+  - If a candidate is in-scope: mark it include and proceed.
+  - If it expands scope: default to defer/exclude (and proceed). Do not block.
+  - Only stop+ask if the plan’s scope/North Star is internally contradictory (i.e., required work is declared out-of-scope).
 
 DOC UPDATE RULES (anti-fragile; do NOT assume section numbers match the template)
 Placement rule (in order):
@@ -137,7 +140,7 @@ DOCUMENT CONTENT SKELETON (adapt to existing headings; do not blindly paste dupl
 * Compatibility shims (if any):
 * Delete list (what must be removed):
 
-## Pattern Consolidation Sweep (anti-blinders; confirm scope)
+## Pattern Consolidation Sweep (anti-blinders; scoped by plan)
 | Area | File / Symbol | Pattern to adopt | Why (drift prevented) | Proposed scope (include/defer/exclude) |
 | ---- | ------------- | ---------------- | ---------------------- | ------------------------------------- |
 | <area> | <path> | <pattern> | <reason> | <include/defer/exclude> |
@@ -150,5 +153,4 @@ Summary:
 - Pattern sweep candidates (top, with context):
   - <path> — <pattern> — <why> (or "None")
 Open questions:
-- Consolidation sweep confirmation (only if needed): I will include the above in-scope items in this plan. Any exclusions? (yes/no + list) (or "None")
 - <other open questions, if any>

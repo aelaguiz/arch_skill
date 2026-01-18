@@ -28,7 +28,9 @@ Work you do (high-level, no ceremony):
   - Make SSOT explicit; remove parallel solutions.
   - Make boundaries/invariants enforceable (module/API structure, deletes/cleanup, fail-loud behavior).
   - Find and list all call sites; include adoption/migration steps.
-  - Drift sweep: identify other places that should adopt the central pattern; propose include in this plan vs follow-up vs ignore (only ask me if it expands UX scope or meaningfully expands work).
+  - Drift sweep: identify other places that should adopt the central pattern; propose include vs follow-up vs ignore.
+    - Treat the plan’s scope as authoritative; do NOT ask the user to re-decide scope here.
+    - If it expands UX scope or meaningfully expands work, default to follow-up/ignore and proceed.
   - Evidence plan must be common-sense and non-blocking: prefer existing tests/harness; otherwise instrumentation/log signature or a short manual checklist. Avoid proof ladders.
 
 Stop-the-line gates (must pass before heavy edits)
@@ -71,7 +73,7 @@ Update DOC_PATH by inserting/replacing this block (do NOT assume section numbers
   - <e.g. “screen recordings”, “sim screenshot baselines”>
 
 ## Questions (ONLY if truly needed)
-- <product/UX scope decision>
+- <product/UX scope decision> (must include context + your default recommendation)
 <!-- arch_skill:block:plan_enhancer:end -->
 
 Console output (only):

@@ -34,9 +34,9 @@ Implementation discipline (optimize for steady execution, not ceremony):
   - If a phase is complete, mark it complete in the doc (do not leave the doc ambiguous).
 - Avoid blinders: if you introduce/upgrade a centralized pattern (SSOT/primitives/contracts), scan for other call sites that should adopt it to prevent drift.
   - If it's clearly in-scope, do it (no question).
-  - If it expands UX scope or meaningfully expands work, stop and ask the user to confirm scope WITH CONTEXT:
-    - List the concrete candidates (file paths/symbols) and your default recommendation (include vs defer).
-    - Ask for override only; never ask a cryptic “what do you want to do?” question.
+  - If it expands UX scope or meaningfully expands work, do NOT expand scope:
+    - Record it as a follow-up candidate (with file paths/symbols + why) and continue.
+    - Only stop+ask if the plan’s scope/North Star is internally contradictory (i.e., required work is declared out-of-scope).
 
 Optional worklog (lightweight, not required):
 - If `<DOC_BASENAME>_WORKLOG.md` exists, append short progress updates there as you go.
