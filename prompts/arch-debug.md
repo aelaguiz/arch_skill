@@ -2,6 +2,7 @@
 description: "15) Debug (plan-aware): prove root cause with high certainty, then propose an elegant plan-aligned fix."
 argument-hint: "<Paste what you're seeing: symptoms, logs, repro steps. Optional: include a docs/<...>.md path anywhere to pin the plan doc.>"
 ---
+# /prompts:arch-debug — $ARGUMENTS
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list. Console output must ONLY use the specified format; no extra narrative.
 

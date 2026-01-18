@@ -2,6 +2,7 @@
 description: "01) New doc: create canonical plan doc + draft North Star from blurb, then confirm with user."
 argument-hint: "<Paste the change request / symptoms / goal. This becomes the draft TL;DR + North Star. No structured args needed.>"
 ---
+# /prompts:arch-new — $ARGUMENTS
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list. Console output must ONLY use the specified format; no extra narrative.
 Use the freeform blurb provided after the command ($ARGUMENTS) as the working intent.

@@ -2,6 +2,7 @@
 description: "05) UI ASCII: current-target mockups (if UI)."
 argument-hint: "<Freeform guidance. Include a docs/<...>.md path anywhere to pin the plan doc (optional).>"
 ---
+# /prompts:arch-ui-ascii — $ARGUMENTS
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list. Console output must ONLY use the specified format; no extra narrative.
 Inputs: $ARGUMENTS is freeform steering (user intent, constraints, random notes). Process it intelligently.

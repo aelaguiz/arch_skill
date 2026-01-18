@@ -2,6 +2,7 @@
 description: "16) Arch HTML (full fidelity): render doc with zero omissions."
 argument-hint: <doc path or guidance>
 ---
+# /prompts:arch-html-full — $ARGUMENTS
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list. Console output must ONLY use the specified format; no extra narrative.
 

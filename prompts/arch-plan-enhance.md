@@ -2,6 +2,7 @@
 description: "Plan enhancer: turn an existing plan into the best possible architecture by your standards."
 argument-hint: "<Paste anything. If you have a doc, include docs/<...>.md somewhere in the text.>"
 ---
+# /prompts:arch-plan-enhance — $ARGUMENTS
 Execution rule: ignore unrelated dirty git files; if committing, stage only what you touched.
 Do not preface with a plan. Begin work immediately.
 

@@ -2,6 +2,7 @@
 description: "11) Implement: ship the plan end-to-end (systematic, test-as-you-go, review gate, commit/push after review)."
 argument-hint: "<Optional: paste symptoms/constraints. Optional: include a docs/<...>.md path anywhere to pin the plan doc.>"
 ---
+# /prompts:arch-implement — $ARGUMENTS
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list. Console output must ONLY use the specified format; no extra narrative.
 Inputs: $ARGUMENTS is freeform steering (user intent, constraints, random notes). Process it intelligently.
