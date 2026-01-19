@@ -43,6 +43,7 @@ Restart Codex after updating prompts.
 | `arch_skill/prompts/maestro-autopilot.md` | `/prompts:maestro-autopilot` | Autonomously run Maestro tests, fix flow issues, re-run. |
 | `arch_skill/prompts/maestro-rerun-last.md` | `/prompts:maestro-rerun-last` | Re-run the most recent failed Maestro flow. |
 | `arch_skill/prompts/maestro-kill.md` | `/prompts:maestro-kill` | Kill stuck Maestro runs. |
+| `arch_skill/prompts/qa-autopilot.md` | `/prompts:qa-autopilot` | Run QA automation (framework-agnostic), fix broken flows idiomatically, and write a QA worklog (plan-aware). |
 
 ---
 
