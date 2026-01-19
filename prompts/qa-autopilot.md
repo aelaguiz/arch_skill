@@ -43,6 +43,15 @@ Stop conditions:
 - If you discover a product-level issue that requires a decision: STOP and report (no guessing).
 - If QA is impossible due to infra/environment issues: STOP and report the single smallest unblock step.
 
+Unblock policy (default: fix it, don’t ask):
+- Do NOT get stuck on obvious compile/build/test failures. Treat them as part of the work.
+- If a run fails due to compilation, typecheck, lint-as-error, missing imports, etc.:
+  - Note it in the QA worklog doc (briefly).
+  - Fix it immediately (small, local, high-confidence fix).
+  - Re-run the smallest relevant QA signal.
+- Only stop for “infra/environment” when you truly cannot unblock from repo code (e.g., missing SDKs/credentials/CI-only resources). Even then, propose the single smallest unblock step.
+- “Obvious bug” rule: if you can clearly see the bug and the fix is small + high-confidence, note it and fix it (don’t debate it).
+
 Environment preflight (fast; do early; don't repeat needlessly):
 - If this is the first time you’re running QA in this repo/session (or you’re unsure), do a quick preflight BEFORE running tests:
   - Ensure the app is built from the latest code and installed on the target simulator/emulator/device.
@@ -75,6 +84,9 @@ Process (systematic):
    - Create a "Product Bugs Found" section with crisp repro steps + evidence.
    - If the fix requires a product decision, STOP and ask (with context).
    - If it does NOT require a product decision, you may fix it if it is clearly in-scope of the plan (otherwise record and stop).
+8) If a failure is a build/compile/test-harness failure:
+   - Follow “Unblock policy” above: note → fix → re-run smallest signal.
+   - Prefer the smallest fix that restores the canonical QA entrypoint and avoids drift.
 
 QA WORKLOG FORMAT (write to the QA worklog doc; keep it readable; no ASCII tables):
 # QA Autopilot Worklog
