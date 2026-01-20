@@ -26,6 +26,7 @@ This prompt edits ONLY:
 - `PROMPT.md`
 - `@fix_plan.md`
 - `@AGENT.md` (if it exists)
+- a copied spec file in `specs/` (see SPEC_PATH below)
 - archival backups + clearing Ralph loop state files
 DO NOT modify product code.
 
@@ -34,7 +35,20 @@ DOC_PATH:
 - Otherwise infer from conversation/repo.
 - If ambiguous, ask the user to pick from the top 2–3 candidates.
 
-Read DOC_PATH and extract (as ground truth):
+SPEC_PATH (canonical SSOT; always materialize in `specs/`):
+- Ralph should always reference a spec in `specs/` as SSOT (not `docs/`).
+- Always ensure the SSOT doc exists at: `SPEC_PATH = specs/<DOC_BASENAME>.md`
+  - Ensure `specs/` exists (create it if missing).
+  - If `SPEC_PATH` does not exist: copy `DOC_PATH` → `SPEC_PATH` (exact copy; do not rewrite contents).
+  - If `SPEC_PATH` exists:
+    - If `DOC_PATH` and `SPEC_PATH` contents are identical: keep `SPEC_PATH` as-is.
+    - If contents differ: STOP and ask which should be SSOT (show both paths + recommend creating a new uniquely named spec file in `specs/`).
+
+From this point on:
+- Treat `SPEC_PATH` as the authoritative “Spec (SSOT)” for Ralph.
+- Treat `DOC_PATH` as the source doc that was copied (keep it as a reference anchor if helpful, but do not use it as SSOT).
+
+Read SPEC_PATH and extract (as ground truth):
 - TL;DR outcome
 - Non-negotiables / invariants
 - UX in-scope + out-of-scope
@@ -44,13 +58,14 @@ Read DOC_PATH and extract (as ground truth):
 
 Ground truth policy (inescapable; repeat it everywhere it matters):
 - Before writing tasks, identify the “ground truth set” for this plan:
-  - Spec SSOT: `DOC_PATH`
-  - Any additional docs referenced by DOC_PATH that constrain behavior (list the exact doc paths)
+  - Spec SSOT: `SPEC_PATH`
+  - Source doc (copied into specs): `DOC_PATH` (only if different from SPEC_PATH)
+  - Any additional docs referenced by SPEC_PATH that constrain behavior (list the exact doc paths)
   - Code anchors (entry points / primitives / central SSOT implementation) with file paths
   - If parity work: upstream reference file(s) (e.g., RN tokens, existing canonical implementations) with file paths
 - When you update Ralph files, you MUST embed these references so the loop can’t drift:
   - In `PROMPT.md`: add/patch a short `Ground truth / References:` list (or equivalent existing section) that includes the exact paths above.
-  - In `@fix_plan.md`: each `## Phase N (...)` should mention the relevant spec anchor once (e.g., a line like `Spec anchor: DOC_PATH — <section name>`), and each `###` subsection should include at least one code anchor path.
+  - In `@fix_plan.md`: the `Spec (SSOT)` line must reference `SPEC_PATH`, and each `## Phase N (...)` should mention the relevant spec anchor once (e.g., `Spec anchor: SPEC_PATH — <section name>`). Each `###` subsection should include at least one code anchor path.
 - If the spec is ambiguous, link to the exact paragraph/section that is ambiguous and propose a default; do not ask a contextless question.
 
 Manual QA / screenshots policy (non-blocking; no harness):
