@@ -40,6 +40,7 @@ Restart Codex after updating prompts.
 | `arch_skill/prompts/arch-audit-subagent.md` | `/prompts:arch-audit-subagent` | Run arch audit in a subagent and insert Gaps & Concerns into the doc. |
 | `arch_skill/prompts/arch-review-gate.md` | `/prompts:arch-review-gate` | External review gate for completeness/idiomatic fit. |
 | `arch_skill/prompts/arch-html-full.md` | `/prompts:arch-html-full` | Render a full-fidelity HTML doc using the shared template (no omissions). |
+| `arch_skill/prompts/arch-ralph-retarget.md` | `/prompts:arch-ralph-retarget` | Retarget an existing Ralph setup by updating `PROMPT.md` + `@fix_plan.md` in-place from a plan doc (manual QA non-blocking); hard-bails if Ralph isn’t set up. |
 | `arch_skill/prompts/maestro-autopilot.md` | `/prompts:maestro-autopilot` | Autonomously run Maestro tests, fix flow issues, re-run. |
 | `arch_skill/prompts/maestro-rerun-last.md` | `/prompts:maestro-rerun-last` | Re-run the most recent failed Maestro flow. |
 | `arch_skill/prompts/maestro-kill.md` | `/prompts:maestro-kill` | Kill stuck Maestro runs. |
