@@ -71,7 +71,7 @@ DOCUMENT INSERT FORMAT:
 - `jq -r "<filter>" <json_path>`
 
 ## DX acceptance tests
-- Principle: keep these fast and runnable; prefer smoke-level checks over “proof ladders.” Do not block the plan on flaky device/sim steps.
+- Principle: keep these fast and runnable; prefer smoke-level checks over verification bureaucracy. Do not block the plan on flaky device/sim steps.
 - `<command>` — expected artifacts + pass/fail signal
 <!-- arch_skill:block:devx:end -->
 

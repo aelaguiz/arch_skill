@@ -25,9 +25,9 @@ Implementation discipline (optimize for steady execution, not ceremony):
   - Before starting any new phase, explicitly confirm you are executing the phases in order (no skipping), and that the next work item supports the North Star.
   - If you discover you are out of order or the plan is missing a prerequisite step, STOP and update the plan doc sequencing (Decision Log entry) before continuing.
 - Implement SYSTEMATICALLY: follow the phased plan (or the plan’s checklist) in order.
-- Test as you go: after each meaningful chunk (at least once per phase), gather the smallest relevant evidence (existing test/harness, targeted instrumentation/log signature, or a quick manual check) and record what it proved.
-- Common-sense verification (avoid “proof ladders”):
-  - Prefer existing signal over building new harnesses; add only minimal tests/instrumentation that pay off.
+- Test as you go: after each meaningful chunk (at least once per phase), gather the smallest relevant evidence (existing checks like tests/typecheck/lint/build/QA automation, targeted instrumentation/log signature, or a quick manual check) and record what it proved.
+- Common-sense verification (avoid verification bureaucracy):
+  - Prefer existing checks over building bespoke harnesses or drift scripts; add only minimal tests/instrumentation that pay off.
   - Do not block the entire plan on flaky sim/video/screenshot steps; if human visual verification is required, add a short manual checklist + clear log/trace signatures and keep moving (record pending QA explicitly in the doc/worklog).
 - Keep the doc current: update DOC_PATH as you go to reflect real progress, phase completion, and any plan drift you discover.
   - If the plan drifts, update the plan doc and add a Decision Log entry (append-only).
@@ -38,9 +38,24 @@ Implementation discipline (optimize for steady execution, not ceremony):
     - Record it as a follow-up candidate (with file paths/symbols + why) and continue.
     - Only stop+ask if the plan’s scope/North Star is internally contradictory (i.e., required work is declared out-of-scope).
 
-Optional worklog (lightweight, not required):
-- If `<DOC_BASENAME>_WORKLOG.md` exists, append short progress updates there as you go.
-- Do NOT create a new worklog unless the plan doc already references one or the user explicitly asked for it.
+Worklog (lightweight, required):
+- Derive WORKLOG_PATH from DOC_PATH using the same directory and suffix: `<DOC_BASENAME>_WORKLOG.md`.
+- If WORKLOG_PATH is missing, create it and add cross-links:
+  - Plan doc should reference WORKLOG_PATH near the top (add if missing).
+  - Worklog should link back to DOC_PATH at the top.
+- When creating WORKLOG_PATH, initialize it with a minimal header + first entry (keep it short; avoid writing a second plan doc).
+- Append short progress updates there as you go (at least once per phase).
+
+Preferred worklog insert format:
+## Phase <n> (<phase name>) Progress Update
+- Work completed:
+  - <item>
+- Tests run + results:
+  - <command> — <result>
+- Issues / deviations:
+  - <issue>
+- Next steps:
+  - <step>
 
 Stop conditions (do not plow ahead):
 - If a stop-the-line invariant fails: stop, fix immediately, and prove it with a test or evidence.
@@ -62,7 +77,7 @@ Finalization (after implementation is complete):
 OUTPUT FORMAT (console only):
 Summary:
 - Doc: <path>
-- Worklog: <found|missing|skipped>
+- Worklog: <found|created|skipped>
 - North Star refresh: <done|skipped> — <1 short line: how current work supports North Star>
 - Phase order: <in order|out of order fixed> — working on <phase name/number>
 - Progress:

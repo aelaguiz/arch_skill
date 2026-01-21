@@ -32,12 +32,12 @@ Work you do (high-level, no ceremony):
 - Read enough code to make real decisions (code is ground truth).
 - Improve the plan/architecture aggressively:
   - Make SSOT explicit; remove parallel solutions.
-  - Make boundaries/invariants enforceable (module/API structure, deletes/cleanup, fail-loud behavior).
+  - Make boundaries/invariants enforceable (module/API structure, deletes/cleanup, fail-loud behavior). Prefer architectural enforcement over new harnesses/lints/scripts by default.
   - Find and list all call sites; include adoption/migration steps.
   - Drift sweep: identify other places that should adopt the central pattern; propose include vs follow-up vs ignore.
     - Treat the plan’s scope as authoritative; do NOT ask the user to re-decide scope here.
     - If it expands UX scope or meaningfully expands work, default to follow-up/ignore and proceed.
-  - Evidence plan must be common-sense and non-blocking: prefer existing tests/harness; otherwise instrumentation/log signature or a short manual checklist. Avoid proof ladders.
+  - Evidence plan must be common-sense and non-blocking: prefer existing tests/checks; otherwise instrumentation/log signature or a short manual checklist. Avoid verification bureaucracy.
 
 Stop-the-line gates (must pass before heavy edits)
 - North Star Gate: doc has a falsifiable + verifiable claim, and explicit stop-the-line invariants.
@@ -74,7 +74,7 @@ Update DOC_PATH by inserting/replacing this block (do NOT assume section numbers
 
 ## Evidence (non-blocking)
 - Proof we’ll rely on:
-  - <test/harness OR instrumentation/log signature OR manual checklist> — <pass/fail>
+  - <existing test/check OR instrumentation/log signature OR manual checklist> — <pass/fail>
 - What we will not block on:
   - <e.g. “screen recordings”, “sim screenshot baselines”>
 

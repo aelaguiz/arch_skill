@@ -20,7 +20,7 @@ Documentation-only (planning):
 - Do not commit/push unless explicitly requested in $ARGUMENTS.
 
 Stop-the-line: North Star Gate (must pass before current/target architecture + call-site audit)
-- Falsifiable + verifiable: the North Star states a concrete claim AND how we will prove it (acceptance evidence: tests/harness/instrumentation/manual QA + stop-the-line invariants).
+- Falsifiable + verifiable: the North Star states a concrete claim AND the smallest credible pass/fail signal (prefer existing tests/checks; otherwise minimal instrumentation/log signature; otherwise a short manual checklist). Do NOT invent new harnesses/screenshot frameworks or drift scripts by default.
 - Bounded + coherent: the North Star clearly states in-scope + out-of-scope and does not contradict the TL;DR/plan.
 If the North Star Gate does not pass, STOP and ask the user to fix/confirm the North Star in the doc before proceeding.
 

@@ -68,7 +68,9 @@ related:
 ## 0.4 Definition of done (acceptance evidence)
 - <observable acceptance criteria, not vibes>
 - Evidence plan (common-sense; non-blocking):
-  - <test/harness OR instrumentation/log signature OR manual QA checklist> — <pass/fail signal>
+  - Primary signal (keep it minimal; prefer existing tests/checks): <existing test/check OR instrumentation/log signature OR manual QA checklist> — <pass/fail signal>
+  - Optional second signal (only if needed): <...> — <pass/fail signal>
+  - Default: do NOT add bespoke screenshot harnesses / drift scripts unless they already exist in-repo or are explicitly requested.
 - Metrics / thresholds (if relevant):
   - <metric>: <threshold> — measured via <dash/test/log>
 
@@ -237,7 +239,7 @@ related:
 
 * Goal:
 * Work:
-* Test plan:
+* Test plan (smallest signal):
 * Exit criteria:
 * Rollback:
 
@@ -245,7 +247,7 @@ related:
 
 * Goal:
 * Work:
-* Test plan:
+* Test plan (smallest signal):
 * Exit criteria:
 * Rollback:
 
@@ -253,7 +255,7 @@ related:
 
 * Goal:
 * Work:
-* Test plan:
+* Test plan (smallest signal):
 * Exit criteria:
 * Rollback:
 
@@ -261,7 +263,8 @@ related:
 
 # 8) Test Strategy (common-sense; non-blocking)
 
-> Principle: avoid “proof ladders.” Prefer the smallest existing signal. If sim/video/screenshot capture is flaky or slow, rely on targeted instrumentation + a short manual QA checklist and keep moving.
+> Principle: avoid verification bureaucracy. Prefer the smallest existing signal. If sim/video/screenshot capture is flaky or slow, rely on targeted instrumentation + a short manual QA checklist and keep moving.
+> Default: 1–3 checks total. Do not invent new harnesses/frameworks/scripts unless they already exist in-repo and are the cheapest guardrail.
 
 ## 8.1 Unit tests (contracts)
 
