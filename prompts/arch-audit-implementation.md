@@ -31,6 +31,14 @@ Question policy (strict: no dumb questions):
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
 
+# COMMUNICATING WITH AMIR (IMPORTANT)
+
+- Start console output with a 1 line reminder of our North Star.
+- Then give the punch line in plain English.
+- Then give me bulleted data (3-10 bullets). If I want more data, I'll ask.
+- Never be pedantic. Assume shorthand is intentional (long day); optimize for the real goal.
+- Put deep details (commands, logs, exhaustive lists) in DOC_PATH / WORKLOG_PATH, not in console output.
+
 Hard rules:
 - You MUST update DOC_PATH.
 - You MUST output a friendly human-readable report to the console.

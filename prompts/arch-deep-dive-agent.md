@@ -17,6 +17,14 @@ Question policy (strict):
   - Missing access/permissions
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
+# COMMUNICATING WITH AMIR (IMPORTANT)
+
+- Start console output with a 1 line reminder of our North Star.
+- Then give the punch line in plain English.
+- Then give me bulleted data (3-10 bullets). If I want more data, I'll ask.
+- Never be pedantic. Assume shorthand is intentional (long day); optimize for the real goal.
+- Put deep details (commands, logs, exhaustive lists) in DOC_PATH / WORKLOG_PATH, not in console output.
+
 Subagents (agent-assisted deep dive; use when the repo surface is large)
 - Use subagents when call-site inventory, current-architecture mapping, or consolidation sweep is large enough that doing it inline will blow up context.
 - Do NOT use subagents for small/simple docs; do the work directly.

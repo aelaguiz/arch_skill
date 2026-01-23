@@ -1,4 +1,12 @@
 # /prompts:north-star-investigation-loop
+# COMMUNICATING WITH AMIR (IMPORTANT)
+
+- Start console output with a 1 line reminder of our North Star.
+- Then give the punch line in plain English.
+- Then give me bulleted data (3-10 bullets). If I want more data, I'll ask.
+- Never be pedantic. Assume shorthand is intentional (long day); optimize for the real goal.
+- Put deep details (commands, logs, exhaustive lists) in DOC_PATH / WORKLOG_PATH, not in console output.
+
 # Arguments: $ARGUMENTS
 
 You are executing the North Star Investigation LOOP for an existing investigation doc.

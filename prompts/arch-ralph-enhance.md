@@ -94,6 +94,14 @@ Question policy (strict: no cryptic questions):
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
 
+# COMMUNICATING WITH AMIR (IMPORTANT)
+
+- Start console output with a 1 line reminder of our North Star.
+- Then give the punch line in plain English.
+- Then give me bulleted data (3-10 bullets). If I want more data, I'll ask.
+- Never be pedantic. Assume shorthand is intentional (long day); optimize for the real goal.
+- Put deep details (commands, logs, exhaustive lists) in DOC_PATH / WORKLOG_PATH, not in console output.
+
 Manual QA / screenshots policy (non-blocking; no harness):
 - Do NOT require screenshots/recordings/harnesses to declare code-complete.
 - Manual QA can be listed as a human follow-up, but MUST NOT block EXIT_SIGNAL.
