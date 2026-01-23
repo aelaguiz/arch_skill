@@ -48,6 +48,19 @@ related:
 
 ---
 
+<!-- arch_skill:block:planning_passes:start -->
+<!--
+arch_skill:planning_passes
+deep_dive_pass_1: not started
+external_research_grounding: not started
+deep_dive_pass_2: not started
+recommended_flow: deep dive -> external research grounding -> deep dive again -> phase plan -> implement
+note: This is a warn-first checklist only. It should not hard-block execution.
+-->
+<!-- arch_skill:block:planning_passes:end -->
+
+---
+
 # 0) Holistic North Star
 
 ## 0.1 The claim (falsifiable)

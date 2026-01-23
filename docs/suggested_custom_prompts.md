@@ -29,8 +29,8 @@ Restart Codex after updating prompts.
 | `arch_skill/prompts/arch-plan-audit.md` | `/prompts:arch-plan-audit` | Audit plan readiness across phases (emphasis: fully specified target architecture, fully idiomatic, call sites audited). |
 | `arch_skill/prompts/arch-plan-audit-agent.md` | `/prompts:arch-plan-audit-agent` | Agent-assisted plan audit: use parallel read-only subagents to validate call-site completeness, architecture specificity, and idiomatic fit. |
 | `arch_skill/prompts/arch-plan-enhance.md` | `/prompts:arch-plan-enhance` | Enhance an existing plan to be best-possible: idiomatic + SSOT + call‑site complete + drift-proof. |
-| `arch_skill/prompts/arch-impl-audit.md` | `/prompts:arch-impl-audit` | Audit implementation completeness vs the plan, reopen false-complete phases, and get opus+gemini second opinions. |
-| `arch_skill/prompts/arch-impl-audit-agent.md` | `/prompts:arch-impl-audit-agent` | Agent-assisted implementation audit: parallel read-only subagents prove call-site completeness + cleanup + guardrails, then opus+gemini. |
+| `arch_skill/prompts/arch-audit-implementation.md` | `/prompts:arch-audit-implementation` | Audit implementation completeness vs the plan, reopen false-complete phases, and get opus+gemini second opinions. |
+| `arch_skill/prompts/arch-audit-implementation-agent.md` | `/prompts:arch-audit-implementation-agent` | Agent-assisted implementation audit: parallel read-only subagents prove call-site completeness + cleanup + guardrails, then opus+gemini. |
 | `arch_skill/prompts/arch-ui-ascii.md` | `/prompts:arch-ui-ascii` | Add ASCII mockups for current/target UI states. |
 | `arch_skill/prompts/arch-ascii.md` | `/prompts:arch-ascii` | Render a simple ASCII chart for the current topic/pipeline. |
 | `arch_skill/prompts/arch-research.md` | `/prompts:arch-research` | Populate Research Grounding (external + internal anchors). |
@@ -40,6 +40,7 @@ Restart Codex after updating prompts.
 | `arch_skill/prompts/arch-implement.md` | `/prompts:arch-implement` | Implement the plan end-to-end: systematic + test-as-you-go + keep doc current + review gate + commit/push after review. |
 | `arch_skill/prompts/arch-implement-agent.md` | `/prompts:arch-implement-agent` | Agent-assisted implement: main agent orchestrates phase-by-phase; subagents write code + run checks; main context stays lean. |
 | `arch_skill/prompts/arch-ramp-up.md` | `/prompts:arch-ramp-up` | Ramp up on an existing plan doc + code before taking action. |
+| `arch_skill/prompts/arch-ramp-up-agent.md` | `/prompts:arch-ramp-up-agent` | Agent-assisted ramp-up: parallel read-only orientation on DOC_PATH + code anchors + repo commands before acting. |
 | `arch_skill/prompts/arch-debug.md` | `/prompts:arch-debug` | Debug in context of an existing plan: prove root cause + propose an elegant plan-aligned fix. |
 | `arch_skill/prompts/arch-debug-brutal.md` | `/prompts:arch-debug-brutal` | Brutal dev diagnosis: fastest path to prove root cause (temporary hacks allowed). |
 | `arch_skill/prompts/arch-devx.md` | `/prompts:arch-devx` | Add Dev Experience targets (CLI/output mocks, artifacts, commands). |
@@ -66,7 +67,7 @@ Restart Codex after updating prompts.
 4) `/prompts:arch-plan-enhance …` (optional, recommended: tighten plan + drift-proofing sweep)
 5) `/prompts:arch-phase-plan …`
 6) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
-7) `/prompts:arch-impl-audit …` (recommended: prove we didn’t miss anything; reopen false-complete)
+7) `/prompts:arch-audit-implementation …` (recommended: prove we didn’t miss anything; reopen false-complete)
 
 ### Full flow (large change)
 1) `/prompts:arch-new …`
@@ -80,4 +81,4 @@ Restart Codex after updating prompts.
 9) `/prompts:arch-review-gate …`
 10) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
 11) `/prompts:arch-progress …` (optional if not covered by implement)
-12) `/prompts:arch-impl-audit …` (recommended: completeness + idiomatic audit vs plan; reopen false-complete)
+12) `/prompts:arch-audit-implementation …` (recommended: completeness + idiomatic audit vs plan; reopen false-complete)

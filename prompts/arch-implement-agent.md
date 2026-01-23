@@ -79,6 +79,19 @@ If either gate does not pass, STOP and ask the user to fix/confirm in the plan d
 
 Read DOC_PATH fully. Treat the doc as the authoritative spec and checklist.
 
+Warn-first preflight (recommended planning pass sequence; do NOT hard-block)
+- Recommended flow before phase plan and implementation:
+  1) Deep dive (pass 1): current/target architecture + call-site audit
+  2) External research grounding (best practices where applicable)
+  3) Deep dive (pass 2): integrate external research into target architecture + call-site audit
+- Before executing any code changes, check DOC_PATH for the planning passes marker:
+  - `<!-- arch_skill:block:planning_passes:start -->` … `<!-- arch_skill:block:planning_passes:end -->`
+  - If present: use it to determine which passes are done.
+  - If missing: infer from doc contents (deep dive blocks / external research block), but treat deep dive pass 2 as unknown.
+- If the recommended sequence is incomplete or unknown, DO NOT stop. Proceed, but:
+  - Print a clear warning in the Summary (missing items + recommended next prompts).
+  - Continue to respect North Star + UX scope; do not “wing it.”
+
 Implementation discipline (optimize for steady execution, not ceremony):
 - Refresh discipline (prevent drift):
   - At the start of each phase (and at least every ~30–60 minutes of work), re-read the North Star, UX scope, and stop-the-line invariants in the plan doc.
@@ -143,6 +156,7 @@ OUTPUT FORMAT (console only):
 Summary:
 - Doc: <path>
 - Worklog: <found|created|skipped>
+- Preflight (recommended planning passes): <ok|warning> — <short>
 - North Star refresh: <done|skipped> — <1 short line: how current work supports North Star>
 - Phase order: <in order|out of order fixed> — working on <phase name/number>
 - Progress:

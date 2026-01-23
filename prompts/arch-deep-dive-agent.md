@@ -69,6 +69,30 @@ Stop-the-line: UX Scope Gate (must pass before current/target architecture + cal
 - UX scope is coherent with the North Star and does not silently expand.
 If the UX Scope Gate does not pass, STOP and ask the user to fix/confirm scope in the doc before proceeding.
 
+Warn-first planning passes (soft sequencing guard; do NOT hard-block)
+- If DOC_PATH contains `<!-- arch_skill:block:planning_passes:start -->` … `<!-- arch_skill:block:planning_passes:end -->`, keep it updated.
+- If missing, insert a new planning passes block near the top of the doc:
+  - Prefer inserting after the TL;DR section if present,
+  - otherwise after YAML front matter,
+  - otherwise at the top of the document.
+- Planning passes block format (use exactly this shape; update fields in-place):
+  - `<!-- arch_skill:block:planning_passes:start -->`
+  - `<!--`
+  - `arch_skill:planning_passes`
+  - `deep_dive_pass_1: <not started|done YYYY-MM-DD>`
+  - `external_research_grounding: <not started|done YYYY-MM-DD>`
+  - `deep_dive_pass_2: <not started|done YYYY-MM-DD>`
+  - `recommended_flow: deep dive -> external research grounding -> deep dive again -> phase plan -> implement`
+  - `-->`
+  - `<!-- arch_skill:block:planning_passes:end -->`
+- Update rules (additive; never wipe progress):
+  - If external research grounding exists in DOC_PATH (block marker or an "External Research" section), set:
+    - `deep_dive_pass_2: done <YYYY-MM-DD>`
+  - Else set:
+    - `deep_dive_pass_1: done <YYYY-MM-DD>`
+  - Do NOT clear other fields (especially `external_research_grounding`).
+  - Preserve any existing timestamps if present; update only the field(s) you are completing now.
+
 You are designing architecture. Produce/update THREE artifacts in DOC_PATH:
 1) Current architecture (as-is): on-disk tree, 2–4 primary control paths, ownership boundaries, failure behavior.
 2) Target architecture (to-be): future tree, future flows, explicit new/changed contracts, invariants/boundaries.
@@ -195,6 +219,7 @@ DOCUMENT CONTENT SKELETON (adapt to existing headings; do not blindly paste dupl
 CONSOLE OUTPUT FORMAT (summary + open questions only):
 Summary:
 - Doc updated: <path>
+- Planning passes: <deep_dive_pass_1|deep_dive_pass_2> marked done (or "no block; inferred only")
 - Sections updated/added: <Current/Target/Audit>
 - Pattern sweep candidates (top, with context):
   - <path> — <pattern> — <why> (or "None")

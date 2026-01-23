@@ -28,6 +28,27 @@ Stop-the-line gates (must pass before external web research)
 - UX Scope Gate: explicit UX in-scope/out-of-scope (what users see changes vs does not change).
 If either gate does not pass, STOP and ask the user to fix/confirm in the doc before proceeding.
 
+Warn-first planning passes (soft sequencing guard; do NOT hard-block)
+- If DOC_PATH contains `<!-- arch_skill:block:planning_passes:start -->` … `<!-- arch_skill:block:planning_passes:end -->`, keep it updated.
+- If missing, insert a new planning passes block near the top of the doc:
+  - Prefer inserting after the TL;DR section if present,
+  - otherwise after YAML front matter,
+  - otherwise at the top of the document.
+- Planning passes block format (use exactly this shape; update fields in-place):
+  - `<!-- arch_skill:block:planning_passes:start -->`
+  - `<!--`
+  - `arch_skill:planning_passes`
+  - `deep_dive_pass_1: <not started|done YYYY-MM-DD>`
+  - `external_research_grounding: <not started|done YYYY-MM-DD>`
+  - `deep_dive_pass_2: <not started|done YYYY-MM-DD>`
+  - `recommended_flow: deep dive -> external research grounding -> deep dive again -> phase plan -> implement`
+  - `-->`
+  - `<!-- arch_skill:block:planning_passes:end -->`
+- Update rules (additive; never wipe progress):
+  - Set `external_research_grounding: done <YYYY-MM-DD>`.
+  - Do NOT clear other fields (especially deep dive passes).
+  - Preserve any existing timestamps if present; update only the field you are completing now.
+
 What this prompt does (external research, not project trivia):
 - Goal: strengthen DOC_PATH by anchoring plan-adjacent, generalizable topics in best-in-class external references and practices.
 - This is NOT for project-specific internals (our API names, our endpoint semantics, our internal folder layout).
@@ -147,6 +168,7 @@ DOCUMENT INSERT FORMAT:
 CONSOLE OUTPUT FORMAT (summary + open questions only):
 Summary:
 - Doc updated: <path>
+- Planning passes: external_research_grounding marked done (or "no block; inferred only")
 - Topics researched: <count> (<names>)
 - Plan changes implied: <none|listed>
 Open questions:

@@ -34,6 +34,17 @@ Stop-the-line: UX Scope Gate (must pass before writing the phase plan)
 - UX scope is coherent with the North Star and does not silently expand.
 If the UX Scope Gate does not pass, STOP and ask the user to fix/confirm scope in the doc before proceeding.
 
+Warn-first preflight (recommended planning pass sequence; do NOT hard-block)
+- Recommended flow before phase planning and implementation:
+  1) Deep dive (pass 1): current/target architecture + call-site audit
+  2) External research grounding (best practices where applicable)
+  3) Deep dive (pass 2): integrate external research into target architecture + call-site audit
+- Before writing the phase plan, check DOC_PATH for the planning passes marker:
+  - `<!-- arch_skill:block:planning_passes:start -->` … `<!-- arch_skill:block:planning_passes:end -->`
+  - If present: use it to determine which passes are done.
+  - If missing: infer from doc contents (deep dive blocks / external research block), but treat deep dive pass 2 as unknown.
+- If the recommended sequence is incomplete or unknown, DO NOT stop. Proceed to write the phase plan, but print a clear warning in the Summary (with the missing items and the recommended next prompts).
+
 Write/update the phased plan block into DOC_PATH (anti-fragile: do NOT assume section numbers match the template).
 Placement rule (in order):
 1) If a block marker exists, replace the content inside it:
@@ -80,6 +91,7 @@ DOCUMENT INSERT FORMAT:
 
 CONSOLE OUTPUT FORMAT (summary + open questions only):
 Summary:
+- Preflight (recommended planning passes): <ok|warning> — <short>
 - <bullet>
 Open questions:
 - <open question>

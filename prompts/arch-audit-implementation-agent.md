@@ -1,8 +1,8 @@
 ---
-description: "Implementation audit: prove plan compliance + completeness, reopen false-complete phases, get opus+gemini second opinions."
+description: "Implementation audit (agent-assisted): prove plan compliance + completeness with subagent scans, then opus+gemini second opinions."
 argument-hint: "<Paste anything. Include docs/<...>.md to pin the plan doc (optional).>"
 ---
-# /prompts:arch-impl-audit — $ARGUMENTS
+# /prompts:arch-audit-implementation-agent — $ARGUMENTS
 Execution rule: ignore unrelated dirty git files; if committing, stage only what you touched.
 Do not preface with a plan. Begin work immediately.
 
@@ -30,6 +30,45 @@ Question policy (strict: no dumb questions):
   - Missing access/permissions
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
+Subagents (agent-assisted; parallel read-only sweeps when beneficial)
+- Use subagents to keep grep-heavy scanning and long outputs out of the main agent context.
+- Spawn these subagents in parallel only when they are read-only and disjoint.
+- Subagent ground rules:
+  - Read-only: subagents MUST NOT modify files or create artifacts.
+  - Shared environment: avoid commands that generate/overwrite outputs; prefer pure read/search.
+  - No questions: subagents must answer from repo/doc evidence only.
+  - No recursion: subagents must NOT spawn other subagents.
+  - Output must match the exact format requested (no extra narrative).
+  - Do not spam/poll subagents; wait for completion, then integrate.
+  - Close subagents once their results are captured.
+
+Spawn subagents as needed (disjoint scopes; read-only):
+1) Subagent: Call-Site Completeness Scan
+   - Task: verify call-site audit items and find missed migrations (search for old APIs/patterns; enumerate misses).
+   - Output format (nested lists; no tables):
+     - Missing item:
+       - Evidence anchors:
+         - <path:line>
+       - Plan expects:
+         - <expected>
+       - Code reality:
+         - <actual>
+       - Fix:
+         - <fix>
+2) Subagent: SSOT + Cleanup / Delete Verification
+   - Task: verify SSOT is enforced (no parallel writers/readers) and delete/cleanup expectations are met.
+   - Output format (nested lists; no tables):
+     - Finding:
+       - Evidence anchors:
+         - <path:line>
+       - Why it violates SSOT/cleanup:
+         - <reason>
+       - Fix:
+         - <fix>
+3) Subagent: Guardrails / Evidence Scan
+   - Task: verify claimed tests/checks/instrumentation exist and are wired to the real failure site (ignore manual QA).
+   - Output format (bullets only):
+     - <claim in plan> — <exists yes/no> — <evidence anchor> — <note>
 
 Hard rules:
 - You MUST update DOC_PATH.
