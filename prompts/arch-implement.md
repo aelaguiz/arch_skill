@@ -73,8 +73,13 @@ Finish criteria:
 
 Finalization (after implementation is complete):
 1) Run a final test sweep appropriate to the plan (tests listed in the doc + any standard repo checks).
-2) Get a code review from opus/gemini:
+2) Get a code review from opus/gemini (via read-only reviewer subagents; keep main context lean):
    - Explicit question: “Is this complete and idiomatic relative to the plan?”
+   - Reviewer subagent rules:
+     - Read-only: MUST NOT modify files.
+     - No questions: MUST answer from DOC_PATH + repo evidence only.
+     - No recursion: MUST NOT spawn other subagents.
+     - Output must be short, actionable bullets with evidence anchors (file paths/symbols).
    - Provide ALL context they need (plan doc + key code paths + diffs).
    - Integrate feedback you agree with; do not scope creep.
 3) Commit and push AFTER review (unless the user explicitly requested a different sequence).

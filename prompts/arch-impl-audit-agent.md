@@ -117,9 +117,14 @@ Audit procedure (do this in order):
    - If a phase is code-complete but only manual QA evidence is missing → do NOT reopen; instead record “Manual QA pending (non-blocking)” as follow-up.
    - Always refer to phases as `Phase <n> (<what it does>)` (use the phase heading text; if missing, infer from that phase’s Goal/Work bullets).
 5) Second opinions (required):
-   - Get two independent reviews:
+   - Get two independent reviews (via read-only reviewer subagents; do not bloat main context):
      - Opus (anthropic/claude-opus-4.5)
      - Gemini (gemini-3-pro-preview)
+   - Reviewer subagent rules:
+     - Read-only: MUST NOT modify files.
+     - No questions: MUST answer from DOC_PATH + repo evidence only.
+     - No recursion: MUST NOT spawn other subagents.
+     - Output must be short, actionable bullets with evidence anchors (file paths/symbols).
    - Ask them: “Is the implementation complete and idiomatic relative to DOC_PATH? What’s missing? Where does code drift from plan? Any SSOT/contract violations?”
    - Provide them enough context to answer (DOC_PATH + top gaps + key file anchors). Do not be vague.
    - Record their feedback in the doc, even if you disagree (label: accepted/rejected).
