@@ -46,6 +46,7 @@ Restart your Codex instance after updating prompts so it reloads `/prompts:*`.
 | `prompts/arch-progress.md` | `/prompts:arch-progress` | Update the worklog with phase progress (plan doc only for decisions). |
 | `prompts/arch-implement.md` | `/prompts:arch-implement` | Implement the plan end-to-end: systematic + test-as-you-go + keep doc current + review gate + commit/push after review. |
 | `prompts/arch-implement-agent.md` | `/prompts:arch-implement-agent` | Agent-assisted implement: main agent orchestrates phase-by-phase; subagents write code + run checks; main context stays lean. |
+| `prompts/arch-qa-autotest.md` | `/prompts:arch-qa-autotest` | Automation QA on existing sims/emulators, then reopen plan issues with evidence. |
 | `prompts/arch-ramp-up.md` | `/prompts:arch-ramp-up` | Ramp up on an existing plan doc + code before taking action. |
 | `prompts/arch-ramp-up-agent.md` | `/prompts:arch-ramp-up-agent` | Agent-assisted ramp-up: parallel read-only orientation on DOC_PATH + code anchors + repo commands before acting. |
 | `prompts/arch-debug.md` | `/prompts:arch-debug` | Debug in context of an existing plan: prove root cause + propose an elegant plan-aligned fix. |
@@ -78,8 +79,9 @@ For a deeper explanation of when to use the **regular flow** vs the **mini flow*
 1) `/prompts:arch-reformat …` (only if you already have a doc and it needs canonical formatting)
 2) `/prompts:arch-mini-plan-agent …` (combined planning pass: research + deep dive + phase plan)
 3) `/prompts:arch-implement-agent …` (implement in 1-2 phases; minimal checks; keep doc/worklog current)
-4) `/prompts:arch-audit-agent …` (recommended: fast audit for drift/missed call sites)
-5) `/prompts:arch-audit-implementation-agent …` (optional upgrade: strict completeness audit + second opinions)
+4) `/prompts:arch-qa-autotest …` (optional: run automation on an existing sim/emulator; reopen plan issues with evidence)
+5) `/prompts:arch-audit-agent …` (recommended: fast audit for drift/missed call sites)
+6) `/prompts:arch-audit-implementation-agent …` (optional upgrade: strict completeness audit + second opinions)
 
 ### Minimal flow (small change)
 1) `/prompts:arch-new …`
@@ -88,7 +90,8 @@ For a deeper explanation of when to use the **regular flow** vs the **mini flow*
 4) `/prompts:arch-plan-enhance …` (optional, recommended: tighten plan + drift-proofing sweep)
 5) `/prompts:arch-phase-plan …`
 6) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
-7) `/prompts:arch-audit-implementation …` (recommended: prove we didn’t miss anything; reopen false-complete)
+7) `/prompts:arch-qa-autotest …` (optional: run automation on an existing sim/emulator; reopen plan issues with evidence)
+8) `/prompts:arch-audit-implementation …` (recommended: prove we didn’t miss anything; reopen false-complete)
 
 ### Full flow (large change)
 1) `/prompts:arch-new …`
@@ -101,5 +104,6 @@ For a deeper explanation of when to use the **regular flow** vs the **mini flow*
 8) `/prompts:arch-devx …` (if CLI/output mocks are required)
 9) `/prompts:arch-review-gate …`
 10) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
-11) `/prompts:arch-progress …` (optional if not covered by implement)
-12) `/prompts:arch-audit-implementation …` (recommended: completeness + idiomatic audit vs plan; reopen false-complete)
+11) `/prompts:arch-qa-autotest …` (optional: run automation on an existing sim/emulator; reopen plan issues with evidence)
+12) `/prompts:arch-progress …` (optional if not covered by implement)
+13) `/prompts:arch-audit-implementation …` (recommended: completeness + idiomatic audit vs plan; reopen false-complete)

@@ -170,6 +170,9 @@ If the change touches UI/UX:
    - Runs the smallest checks per phase and records results
    - Defers UI verification until finalization by default
 
+Optional “did we actually ship it?” automation QA (sims/emulators):
+- `/prompts:arch-qa-autotest docs/<...>.md` (runs the existing automation harness on an already-running sim/emulator and reopens plan phases if failures prove missing work)
+
 Optional during long executions:
 - `/prompts:arch-progress docs/<...>.md` (worklog updates without re-planning)
 
@@ -210,6 +213,7 @@ The mini prompt uses parallel *read-only* subagents internally; that’s where p
 3) `/prompts:arch-implement-agent docs/<...>.md`
 
 Optional post-checks:
+- `/prompts:arch-qa-autotest docs/<...>.md` (automation QA on existing sims/emulators; reopens plan issues with evidence)
 - `/prompts:arch-audit-agent docs/<...>.md`
 - `/prompts:arch-audit-implementation-agent docs/<...>.md`
 

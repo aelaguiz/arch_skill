@@ -19,5 +19,5 @@ Restart your Codex instance so it reloads the installed prompts.
 ## Usage
 
 - Start typing `/prompts:` in Codex CLI and pick the command you want (`arch-new`, `arch-mini-plan-agent`, `arch-implement`, etc.).
+- Shortcut for “run automation on an existing sim/emulator and reopen plan issues if it fails”: `/prompts:arch-qa-autotest`
 - Regular flow vs mini flow guide: `docs/arch_skill_usage_guide.md`
-
