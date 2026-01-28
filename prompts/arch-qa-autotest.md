@@ -9,7 +9,7 @@ argument-hint: "<Paste anything. Include docs/<...>.md to pin the plan doc. Slan
 - Then give the punch line in plain English.
 - Then give a short update in natural English (bullets optional; use them only if they improve clarity).
 - Never be pedantic. Assume shorthand is intentional (long day); optimize for the real goal.
-- Put deep details (commands, logs, exhaustive lists) in DOC_PATH / WORKLOG_PATH, not in console output.
+- Put deep details (commands, logs, exhaustive lists) in DOC_PATH / QA_WORKLOG_PATH, not in console output.
 
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list. Console output should be short and high-signal (no logs); see OUTPUT FORMAT for required content.
