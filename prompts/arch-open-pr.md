@@ -50,11 +50,24 @@ Default (FAST):
 - Do NOT try to replicate a full CI matrix locally. Run the smallest reasonable set of high-signal checks:
   - lint/format (or the repo’s “check” target),
   - typecheck (if applicable),
-  - unit tests (prefer a small/targeted suite),
-  - build only if this repo commonly breaks at build time or CI requires it.
+  - **compile/build** (so we don’t ship something that doesn’t build),
+  - unit tests (relevant/affected only; avoid the full suite).
 - Prefer the repo’s canonical “one command does the basics” entrypoint if it exists (`make check`, `make test`, `./script/check`, `npm test`, etc.).
 - Use best judgment on install/setup (use the repo’s preferred package manager / setup step). If there’s a `make install`, use it when it clearly matches how the repo expects deps to be installed.
 - Timebox: if we’re heading into “this will take forever” territory, pause and ask before running an obviously long suite (unless $ARGUMENTS requested parity).
+
+Monorepo/mobile nuance (compile means “the active app”, not the world):
+- If this repo contains iOS + Android apps, ensure **the app we’re actively changing** compiles for BOTH iOS and Android.
+  - Do not build every app/package “just because it exists”.
+  - Infer the active app from the diff and repo conventions (nearest app folder, project graph tooling, docs, existing scripts).
+  - If multiple apps are clearly affected, compile each affected app (still avoid building everything).
+  - Only ask a single clarifying question if it’s truly ambiguous which app is the target.
+- If iOS/Android compilation is not applicable (backend/lib/web-only repo), do the equivalent compile/build step for that project (e.g., `tsc` build, `cargo build`, `gradle assemble`, `bazel build`, etc.).
+
+Unit tests (relevant only):
+- Prefer “affected/related” test selection if the repo supports it (project graph tooling, “changed packages” scripts, `--findRelatedTests`, etc.).
+- Otherwise run the smallest set of unit tests that exercise the touched modules/packages.
+- Avoid long integration/e2e suites in FAST mode unless the diff clearly touches that surface or CI will block without it.
 
 If $ARGUMENTS includes `full` / `ci parity` / `parity`:
 - Derive what CI actually runs from `.github/workflows/*` (and referenced scripts) and run the closest local equivalent.
