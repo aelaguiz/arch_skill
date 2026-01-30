@@ -41,7 +41,7 @@ Where `<PROMPT>` is a single, well-formed instruction that includes DOC_PATH and
 Use this prompt template (fill in DOC_PATH and any scope hints from $ARGUMENTS):
 
 Claude prompt (single string):
-`Use parallel agents to deeply code review my implementation relative to DOC_PATH=<DOC_PATH>. Review for correctness vs the plan, edge cases, security/privacy, performance, maintainability, and test coverage. Point to concrete evidence (file paths / symbols). Output: (1) Top risks (ranked), (2) Specific suggested fixes with file anchors, (3) Tests to add or run (relevant only, not full-suite), (4) Anything that looks over-scoped. Be direct.`
+`Use parallel agents to exhaustively, line by line, code review my implementation relative to DOC_PATH=<DOC_PATH>, looking for every single element of our plan doc vs any ground truths referenced. Literally read every single file that was part of the plan or adjacent to the plan, read the actual diff vs main, and find anything we did we weren't supposed to as well as anything we did not do that we were supposed to. Review for correctness vs the plan, edge cases, security/privacy, performance, maintainability, and test coverage. Point to concrete evidence (file paths / symbols). Output: (1) Top risks (ranked), (2) Specific suggested fixes with file anchors, (3) Tests to add or run (relevant only, not full-suite), (4) Anything that looks over-scoped. Be direct.`
 
 ## 2) Process feedback (apply what we agree with)
 - Summarize Claude’s feedback into three buckets:
