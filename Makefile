@@ -1,10 +1,18 @@
 .PHONY: install install_prompts install_templates install_skill verify_install remote_install
 
+PROMPT_USER ?= $(shell whoami)
+
 install: install_prompts install_templates install_skill
 
 install_prompts:
 	mkdir -p ~/.codex/prompts
-	cp prompts/*.md ~/.codex/prompts/
+	@for src in prompts/*.md; do \
+		dst=~/.codex/prompts/$$(basename $$src); \
+		sed \
+			-e "s/AMIR/$(PROMPT_USER)/g" \
+			-e "s/Amir/$(PROMPT_USER)/g" \
+			"$$src" > "$$dst"; \
+	done
 
 install_templates:
 	mkdir -p ~/.codex/templates/arch_skill
