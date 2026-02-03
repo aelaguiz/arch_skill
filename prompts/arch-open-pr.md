@@ -3,7 +3,7 @@ description: "12) Open PR: merge default branch, run fast local preflight checks
 argument-hint: "<Optional: PR title + intent + any constraints. Slang ok.>"
 ---
 # /prompts:arch-open-pr — $ARGUMENTS
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 You are doing the “make CI boring” finalization pass.
 
 - Start console output with a 1 line reminder of our North Star.
@@ -96,9 +96,9 @@ Produce a PR title + body that is detailed and matches THIS repo’s template:
 
 Then open the PR:
 - If GitHub CLI `gh` is available and authenticated, create the PR and print the URL.
-- Otherwise, print the prepared title + body clearly so Amir can paste it (and provide the exact `gh pr create` command to run).
+- Otherwise, print the prepared title + body clearly so USERNAME can paste it (and provide the exact `gh pr create` command to run).
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)
@@ -107,4 +107,4 @@ Include:
 - Result (green/red; what’s blocking if red)
 - What got committed + pushed (branch name + commits)
 - PR status (opened URL or ready-to-paste title/body)
-- Need from Amir (only if required)
+- Need from USERNAME (only if required)

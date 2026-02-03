@@ -40,7 +40,7 @@ Question policy (strict: no dumb questions):
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
 
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -191,7 +191,7 @@ Plan doc: <DOC_PATH or "none">
 - What is still unverified:
   - <bullet>
 
-CONSOLE OUTPUT (Amir-style; only print when STOPPING: complete/blocked/timeboxed):
+CONSOLE OUTPUT (USERNAME-style; only print when STOPPING: complete/blocked/timeboxed):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)

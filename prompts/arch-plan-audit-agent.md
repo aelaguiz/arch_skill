@@ -28,7 +28,7 @@ Question policy (strict: no dumb questions):
   - Missing access/permissions
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -102,7 +102,7 @@ Minimum audit procedure:
    - Use `rg` to find call sites in the repo.
    - If you find plausible call sites not represented in the plan, mark Call‑Site Audit as FAIL and list the misses.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)
@@ -110,5 +110,5 @@ Include:
 - What you did / what changed
 - Issues/Risks (if any)
 - Next action
-- Need from Amir (only if required)
+- Need from USERNAME (only if required)
 - Pointers (DOC_PATH / WORKLOG_PATH / other artifacts)

@@ -3,7 +3,7 @@ description: "13) Code review (Claude CLI): run an external review via `claude`,
 argument-hint: "<Required: docs/<...>.md plan doc path. Optional: scope notes like 'security', 'perf', 'only suggest, no code changes'.>"
 ---
 # /prompts:arch-codereview — $ARGUMENTS
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
 - Then give a short update in natural English (bullets optional; only if they help).
@@ -56,7 +56,7 @@ Commit policy:
 - Do NOT commit by default; leave changes ready for `/prompts:arch-open-pr`.
 - If $ARGUMENTS explicitly asks to commit, do so (stage only files you touched).
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)

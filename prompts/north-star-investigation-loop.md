@@ -1,5 +1,5 @@
 # /prompts:north-star-investigation-loop
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -53,7 +53,7 @@ Loop protocol (do this in order, every time):
 1) Identify the target investigation doc from $ARGUMENTS and open it.
    - If ambiguous, ask ONCE with concrete candidates.
 
-2) Print "State of the Union" (for the human; chat only; Amir-style):
+2) Print "State of the Union" (for the human; chat only; USERNAME-style):
    - Line 1: North Star reminder (1 line, plain English)
    - Line 2: punchline (1 line, plain English)
    - Then bullets (3-10 bullets max):
@@ -92,7 +92,7 @@ Loop protocol (do this in order, every time):
    - Stop if the next step requires a product decision; ask ONE well-formed question with context + options + recommendation.
    - Stop if the time budget is hit; print State of the Union + next bet, and ensure Worklog is updated.
 
-Output to the user (in chat; Amir-style):
+Output to the user (in chat; USERNAME-style):
 - Line 1: 1-line North Star reminder.
 - Line 2: punchline (what happened / are we unblocked).
 - Then bullets (3-10 bullets max):

@@ -94,7 +94,7 @@ Question policy (strict: no cryptic questions):
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
 
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -211,7 +211,7 @@ Checklist for each phase group you touch:
 
 Manual QA placement:
 - Add/maintain a `Manual QA (HITL, non-blocking)` section using bullets only.
-- Manual QA bullets can reference “Amir run” or “human check later” without blocking.
+- Manual QA bullets can reference “USERNAME run” or “human check later” without blocking.
 
 C) Ensure `@AGENT.md` matches repo rules (copy-only)
 - Set `@AGENT.md` to an exact copy of `AGENTS.md` (overwrite; do not append extra sections).
@@ -222,7 +222,7 @@ Stop conditions:
 - If required anchors in @fix_plan.md are missing and you can’t patch safely: stop and report what’s missing.
 - Otherwise do not ask questions.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)
@@ -230,5 +230,5 @@ Include:
 - What you did / what changed
 - Issues/Risks (if any)
 - Next action
-- Need from Amir (only if required)
+- Need from USERNAME (only if required)
 - Pointers (DOC_PATH / WORKLOG_PATH / other artifacts)

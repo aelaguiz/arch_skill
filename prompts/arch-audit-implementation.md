@@ -31,7 +31,7 @@ Question policy (strict: no dumb questions):
 - If you think you need to ask, first state where you looked; ask only after exhausting repo evidence.
 
 
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -153,7 +153,7 @@ B) Reopen phases in-place (only when needed):
   - Do NOT reopen.
   - Add (or update) a short `Manual QA (non-blocking):` note with the smallest checklist needed.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)
@@ -161,5 +161,5 @@ Include:
 - What you did / what changed
 - Issues/Risks (if any)
 - Next action
-- Need from Amir (only if required)
+- Need from USERNAME (only if required)
 - Pointers (DOC_PATH / WORKLOG_PATH / other artifacts)

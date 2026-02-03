@@ -23,7 +23,7 @@ Git discipline (important; avoid collateral damage):
   - If local state prevents a clean branch-off, create the branch first, then reconcile with `origin/main` once safe (merge/rebase as appropriate).
 
 
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -130,7 +130,7 @@ Finalization (after implementation is complete):
 4) Commit and push AFTER review (unless the user explicitly requested a different sequence).
    - Stage only files you touched; ignore other dirty files.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)
@@ -138,5 +138,5 @@ Include:
 - What you did / what changed
 - Issues/Risks (if any)
 - Next action
-- Need from Amir (only if required)
+- Need from USERNAME (only if required)
 - Pointers (DOC_PATH / WORKLOG_PATH / other artifacts)

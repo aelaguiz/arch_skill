@@ -10,7 +10,7 @@ Goal: Generate a clean, static HTML view of an architecture doc using the framew
 `~/.codex/templates/arch_skill/arch_doc_template.html`, with ZERO omissions (every line of source content must appear somewhere).
 
 1) Resolve DOC_PATH:
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -42,7 +42,7 @@ Goal: Generate a clean, static HTML view of an architecture doc using the framew
    `docs/prototypes/<DOC_BASENAME>_full.html`
 4) Open in Chrome.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)

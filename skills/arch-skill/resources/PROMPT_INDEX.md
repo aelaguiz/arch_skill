@@ -10,6 +10,7 @@ Principle: prompts are the **procedures**; this index is just routing.
 ## 0) Setup / normalization
 - Create a new plan doc: `/prompts:arch-new <freeform blurb>`
 - Reformat an existing doc into canonical template: `/prompts:arch-reformat <path-to-doc.md> [OUT=docs/<...>.md]`
+- Flow status / what’s next: `/prompts:arch-flow <DOC_PATH>`
 
 ## 0a) Ramp-up (read-only orientation)
 - Quick ramp-up: `/prompts:arch-ramp-up <DOC_PATH or guidance>`

@@ -3,7 +3,7 @@ description: "12) Maestro autopilot: run tests, fix flow issues, re-run."
 argument-hint: "<Slang is fine: 'run onboarding on android', 'start from the top on both sims'>"
 ---
 # /prompts:maestro-autopilot — $ARGUMENTS
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -70,7 +70,7 @@ Execution (end-to-end):
 3) Keep a short work log and note fixes in the relevant doc if one exists.
 4) Commit only files you changed; ignore other dirty files. Push if requested.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 Only print this when STOPPING (complete/blocked) or when a real product decision is required.
 
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.

@@ -3,7 +3,7 @@ description: "Automation QA (sims): run existing mobile automation on an already
 argument-hint: "<Paste anything. Include docs/<...>.md to pin the plan doc. Slang ok: 'smoke ios', 'both sims', 'run maestro onboarding'.>"
 ---
 # /prompts:arch-qa-autotest — $ARGUMENTS
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -128,7 +128,7 @@ B) Reopen phases in-place (only when justified by failures):
   - `Status: REOPENED (automation found failure)`
 - Add a short `Automation failures:` list with evidence anchors and the minimal fix expectation.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 Only print this when STOPPING (complete/blocked/timeboxed) or when a real product decision is required.
 
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.

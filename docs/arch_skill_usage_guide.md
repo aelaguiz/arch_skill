@@ -68,6 +68,12 @@ Most prompts accept freeform text, but will try to resolve `DOC_PATH` from:
 
 Practical rule: **always include the plan doc path explicitly** once it exists.
 
+### `arch-flow` (status + next-step helper)
+At any time, run:
+- `/prompts:arch-flow DOC_PATH`
+
+It prints a checklist of where you are in the regular/mini flow and recommends the next prompt (with an optional `RUN=1` mode to execute the next step immediately).
+
 ### `WORKLOG_PATH` (the progress journal)
 Implementation- and progress-oriented prompts derive the worklog from the plan doc:
 

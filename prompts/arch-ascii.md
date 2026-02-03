@@ -3,7 +3,7 @@ description: "05a) ASCII chart: visualize current topic or pipeline."
 argument-hint: <guidance>
 ---
 # /prompts:arch-ascii — $ARGUMENTS
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -16,7 +16,7 @@ Do not preface with a plan or restate these instructions. Begin work immediately
 Use the freeform guidance in $ARGUMENTS to decide what to visualize. If a docs/<...>.md path appears in $ARGUMENTS, read it and use its current/target architecture or phase plan as the source of truth. If no doc is provided, infer from the current conversation and $ARGUMENTS; if multiple docs are plausible, ask the user to choose.
 Do not modify any files. Output a simple, readable ASCII chart (60-100 cols). Prefer a single diagram. Keep labels short. Avoid ornate boxes.
 
-OUTPUT FORMAT (console only; Amir-style):
+OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line)

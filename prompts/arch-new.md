@@ -3,7 +3,7 @@ description: "01) New doc: create canonical plan doc + draft North Star from blu
 argument-hint: "<Paste the change request / symptoms / goal. This becomes the draft TL;DR + North Star. No structured args needed.>"
 ---
 # /prompts:arch-new — $ARGUMENTS
-# COMMUNICATING WITH AMIR (IMPORTANT)
+# COMMUNICATING WITH USERNAME (IMPORTANT)
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
@@ -31,6 +31,7 @@ CRITICAL: The North Star MUST be correct.
 - Draft the TL;DR and Section 0 (Holistic North Star) from $ARGUMENTS (do not leave placeholders there).
 - Then pause and ask the user to confirm/correct the North Star before proceeding to research/architecture execution.
 - If the user provides edits, update the doc and re-ask for confirmation until the user says “yes”.
+- Once the user confirms “yes”, update the plan doc YAML frontmatter `status:` from `draft` → `active` (do not change scope; this is just marking North Star alignment).
 
 Write the filled template into the new doc file. Do not paste the full document to the console (you may print only the drafted TL;DR + North Star for confirmation).
 
@@ -338,12 +339,12 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 
 ---
 
-CONSOLE OUTPUT (Amir-style; north star confirmation):
+CONSOLE OUTPUT (USERNAME-style; north star confirmation):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
 - North Star reminder (1 line; what we’re trying to accomplish overall)
-- Punchline (1 line; what you need from Amir right now)
+- Punchline (1 line; what you need from USERNAME right now)
 - Doc created path
 - Draft TL;DR (outcome/problem/approach/plan)
 - Draft North Star for confirmation (claim/scope/definition-of-done/key invariants)
-- Ask Amir to confirm “yes/no” (and paste edits if “no”)
+- Ask USERNAME to confirm “yes/no” (and paste edits if “no”)
