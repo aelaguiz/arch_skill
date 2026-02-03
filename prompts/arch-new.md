@@ -31,6 +31,7 @@ CRITICAL: The North Star MUST be correct.
 - Draft the TL;DR and Section 0 (Holistic North Star) from $ARGUMENTS (do not leave placeholders there).
 - Then pause and ask the user to confirm/correct the North Star before proceeding to research/architecture execution.
 - If the user provides edits, update the doc and re-ask for confirmation until the user says “yes”.
+- Once the user confirms “yes”, update the plan doc YAML frontmatter `status:` from `draft` → `active` (do not change scope; this is just marking North Star alignment).
 
 Write the filled template into the new doc file. Do not paste the full document to the console (you may print only the drafted TL;DR + North Star for confirmation).
 

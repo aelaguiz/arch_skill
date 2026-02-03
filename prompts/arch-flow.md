@@ -17,7 +17,7 @@ $ARGUMENTS is freeform steering. Infer what you can.
 
 Purpose:
 - Read DOC_PATH and infer which arch flow steps are DONE vs PENDING.
-- Print a checklist and recommend the single best next `/prompts:*` command to run.
+- Print a FULL checklist (all steps) and recommend the single best next `/prompts:*` command to run.
 - Offer to run the next step:
   - Default: recommend only (no file edits).
   - If `$ARGUMENTS` includes `RUN=1`: immediately execute the next step by loading the next prompt markdown and following it as the procedure.
@@ -66,7 +66,17 @@ Shared signals:
 - Worklog exists: WORKLOG_PATH exists on disk.
 
 ## 3) Produce a checklist + choose the next step
-Build a short checklist (DONE/PENDING/OPTIONAL/UNKNOWN) for the selected flow:
+Build a complete checklist (DONE/PENDING/OPTIONAL/UNKNOWN) for the selected flow (do not truncate):
+
+Checklist output format (required):
+- Print a "Flow checklist" section.
+- Include EVERY step line (in order) with a status prefix:
+  - `- [DONE] ...` for completed steps
+  - `- [PENDING] ...` for required-but-not-done steps
+  - `- [OPTIONAL] ...` for optional-and-not-done steps
+  - `- [UNKNOWN] ...` only if you truly cannot determine from DOC_PATH/WORKLOG_PATH
+- For each line, include a short evidence note like:
+  - `— evidence: <marker present>` or `— evidence: missing <marker>` or `— evidence: status: draft`
 
 Regular Flow (recommended):
 1) Plan doc exists (DOC_PATH readable)
@@ -113,6 +123,6 @@ Communicate naturally in English, but include (briefly):
 - North Star reminder (1 line)
 - Punchline (1 line; what the next command is)
 - DOC_PATH + inferred flow (regular/mini)
-- Checklist (short; only the key items + what’s blocking next)
+- Checklist (FULL: list every step for the selected flow, each labeled DONE/PENDING/OPTIONAL/UNKNOWN)
 - Next command to run (exact `/prompts:*` invocation)
 - Ask: “Run it now? (yes/no)” and mention `RUN=1` option
