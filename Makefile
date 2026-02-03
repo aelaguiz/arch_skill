@@ -2,6 +2,7 @@
 
 ENV_FILE ?= .env
 DEFAULT_USERNAME := $(shell whoami)
+SKILLS := arch-skill arch-flow
 
 install: env install_prompts install_templates install_skill
 
@@ -29,13 +30,17 @@ install_templates:
 
 install_skill:
 	mkdir -p ~/.codex/skills
-	rm -rf ~/.codex/skills/arch-skill
-	cp -R skills/arch-skill ~/.codex/skills/arch-skill
+	@for skill in $(SKILLS); do \
+		rm -rf ~/.codex/skills/$$skill; \
+		cp -R skills/$$skill ~/.codex/skills/$$skill; \
+	done
 
 verify_install:
 	@test -f ~/.codex/prompts/arch-new.md
+	@test -f ~/.codex/prompts/arch-flow.md
 	@test -f ~/.codex/templates/arch_skill/arch_doc_template.html
 	@test -f ~/.codex/skills/arch-skill/SKILL.md
+	@test -f ~/.codex/skills/arch-flow/SKILL.md
 	@echo "OK: prompts + templates + skill installed"
 
 remote_install:
@@ -54,5 +59,5 @@ remote_install:
 	scp $$tmpdir/*.md $(HOST):~/.codex/prompts/; \
 	rm -rf "$$tmpdir"
 	@scp templates/*.html $(HOST):~/.codex/templates/arch_skill/
-	@ssh $(HOST) "rm -rf ~/.codex/skills/arch-skill"
-	@scp -r skills/arch-skill $(HOST):~/.codex/skills/
+	@ssh $(HOST) "rm -rf ~/.codex/skills/arch-skill ~/.codex/skills/arch-flow"
+	@scp -r skills/arch-skill skills/arch-flow $(HOST):~/.codex/skills/

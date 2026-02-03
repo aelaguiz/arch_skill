@@ -17,7 +17,9 @@ make install
 This installs:
 - Prompts → `~/.codex/prompts/`
 - Templates → `~/.codex/templates/arch_skill/`
-- Skill (`arch-skill`) → `~/.codex/skills/arch-skill/`
+- Skills:
+  - `arch-skill` → `~/.codex/skills/arch-skill/`
+  - `arch-flow` → `~/.codex/skills/arch-flow/`
 
 Note: prompts use a `USERNAME` placeholder. `make install` creates a `.env` file (if missing), ensures it contains `USERNAME=<whoami>`, then substitutes that value into the installed prompts. Edit `.env` to override.
 
