@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codemagic Builds"
+  short_description: "Query and manage Codemagic builds"
+  default_prompt: "Use $codemagic-builds to report build status across environments, summarize failures, and start/cancel builds via the Codemagic REST API."
