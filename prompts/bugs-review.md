@@ -16,7 +16,10 @@ $ARGUMENTS is freeform steering. Infer what you can.
 
 Hard constraints:
 - DO NOT USE PAL MCP (this is a command-line action).
-- Use the Claude CLI exactly like: `claude --dangerously-skip-permissions "<prompt>"`
+- Use the Claude CLI in **print mode with piped input** (positional args hang when nested):
+  `echo "<prompt>" | claude -p --dangerously-skip-permissions`
+- NEVER pass the prompt as a positional argument — it will hang indefinitely inside an agent session.
+- ALWAYS use `-p` (print mode) so Claude exits after responding instead of starting interactive mode.
 
 Question policy (strict):
 - You MUST answer anything discoverable from code/tests/docs or by running repo tooling; do not ask me.
@@ -32,15 +35,24 @@ Get an external, high-signal code review of the bug fix relative to the bug doc,
 - If $ARGUMENTS contains a docs/bugs/<...>.md path, use it as DOC_PATH.
 - Otherwise infer DOC_PATH from the repo (recent bug docs). If ambiguous, ask the user to choose from the top 2–3 candidates.
 
-## 1) Run Claude review (this may take ~5 minutes — don’t be antsy)
-- Print one short line like: “Running Claude code review (can take ~5 minutes)…”, then run the command and wait for completion (no chatty progress spam).
+## 1) Run Claude review (this may take ~5 minutes — don't be antsy)
+- Print one short line like: "Running Claude code review (can take ~5 minutes)…", then run the command and wait for completion (no chatty progress spam).
+- CRITICAL: You must **pipe the prompt** to claude, not pass it as a positional argument. Positional args hang when claude is invoked from inside another agent session.
 - Run:
-  - `claude --dangerously-skip-permissions "<PROMPT>"`
+  ```bash
+  echo "<PROMPT>" | claude -p --dangerously-skip-permissions
+  ```
+  For long prompts use a heredoc:
+  ```bash
+  cat <<'REVIEW_EOF' | claude -p --dangerously-skip-permissions
+  <PROMPT>
+  REVIEW_EOF
+  ```
 
 Where `<PROMPT>` is a single, well-formed instruction that includes DOC_PATH and asks Claude to do an evidence-anchored audit relative to the bug doc.
 Use this prompt template (fill in DOC_PATH and any scope hints from $ARGUMENTS):
 
-Claude prompt (single string):
+Claude prompt:
 `Use parallel agents to exhaustively review my implementation relative to DOC_PATH=<DOC_PATH>, looking for anything missing or incorrect vs the bug doc. Read the relevant files and the diff vs main. Focus on correctness, edge cases, regressions, and whether the fix truly addresses the stated root cause. Explicitly verify the fix aligns with the Evidence section and that the evidence supports the chosen root cause/fix. Call out any missing call sites, partial migrations, or SSOT violations. Do not recommend negative-value tests (deleted-code proofs, visual-constant/golden noise, doc-driven inventory gates, mock-only interaction tests). Provide evidence anchors (file paths / symbols). Output: (1) Top risks (ranked), (2) Specific fixes with file anchors, (3) Tests to add or run (targeted only), (4) Anything over-scoped or unrelated.`
 
 ## 2) Process feedback (apply what we agree with)

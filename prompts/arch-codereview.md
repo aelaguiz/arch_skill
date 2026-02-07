@@ -16,7 +16,10 @@ $ARGUMENTS is freeform steering. Infer what you can.
 
 Hard constraints:
 - DO NOT USE PAL MCP (this is a command-line action).
-- Use the Claude CLI exactly like: `claude --dangerously-skip-permissions "<prompt>"`
+- Use the Claude CLI in **print mode with piped input** (positional args hang when nested):
+  `echo "<prompt>" | claude -p --dangerously-skip-permissions`
+- NEVER pass the prompt as a positional argument — it will hang indefinitely inside an agent session.
+- ALWAYS use `-p` (print mode) so Claude exits after responding instead of starting interactive mode.
 
 Question policy (strict):
 - You MUST answer anything discoverable from code/tests/docs or by running repo tooling; do not ask me.
@@ -32,15 +35,24 @@ Get an external, high-signal code review of the implementation relative to the p
 - If $ARGUMENTS contains a `docs/<...>.md` path, use it as DOC_PATH.
 - Otherwise infer DOC_PATH from the repo (recent docs, or the most relevant plan doc). If ambiguous, ask the user to choose from the top 2–3 candidates.
 
-## 1) Run Claude review (this may take ~5 minutes — don’t be antsy)
-- Print one short line like: “Running Claude code review (can take ~5 minutes)…”, then run the command and wait for completion (no chatty progress spam).
+## 1) Run Claude review (this may take ~5 minutes — don't be antsy)
+- Print one short line like: "Running Claude code review (can take ~5 minutes)…", then run the command and wait for completion (no chatty progress spam).
+- CRITICAL: You must **pipe the prompt** to claude, not pass it as a positional argument. Positional args hang when claude is invoked from inside another agent session.
 - Run:
-  - `claude --dangerously-skip-permissions "<PROMPT>"`
+  ```bash
+  echo "<PROMPT>" | claude -p --dangerously-skip-permissions
+  ```
+  For long prompts use a heredoc:
+  ```bash
+  cat <<'REVIEW_EOF' | claude -p --dangerously-skip-permissions
+  <PROMPT>
+  REVIEW_EOF
+  ```
 
-Where `<PROMPT>` is a single, well-formed instruction that includes DOC_PATH and asks Claude to use “parallel agents” (multiple reviewer perspectives) and produce actionable, evidence-anchored feedback.
+Where `<PROMPT>` is a single, well-formed instruction that includes DOC_PATH and asks Claude to use "parallel agents" (multiple reviewer perspectives) and produce actionable, evidence-anchored feedback.
 Use this prompt template (fill in DOC_PATH and any scope hints from $ARGUMENTS):
 
-Claude prompt (single string):
+Claude prompt:
 `Use parallel agents to exhaustively, line by line, code review my implementation relative to DOC_PATH=<DOC_PATH>, looking for every single element of our plan doc vs any ground truths referenced. Literally read every single file that was part of the plan or adjacent to the plan, read the actual diff vs main, and find anything we did we weren't supposed to as well as anything we did not do that we were supposed to. DO NOT AUDIT FOR SECURITY OR PII CONCERNS THAT IS OUT OF SCOPE. Also: do not recommend negative-value tests (deleted-code proofs, visual-constant/golden noise, doc-driven inventory gates, mock-only interaction tests). Also: call out any missing high-leverage code comments/doc comments for new SSOTs/contracts or tricky gotchas; avoid comment spam. Review for correctness vs the plan, edge cases, performance, maintainability, and test coverage. Point to concrete evidence (file paths / symbols). Output: (1) Top risks (ranked), (2) Specific suggested fixes with file anchors, (3) Tests to add or run (relevant only, not full-suite), (4) Anything that looks over-scoped. Be direct.`
 
 ## 2) Process feedback (apply what we agree with)
