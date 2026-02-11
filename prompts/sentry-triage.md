@@ -1,6 +1,6 @@
 ---
 description: "Sentry triage: list, analyze, and rank the top ongoing client + server problems by user experience impact."
-argument-hint: "<Optional: org, client projects, server projects, envs, release/version to focus on, time window, topN, key journeys, categorization schema. If no release is provided, default to last 2 days.>"
+argument-hint: "<Optional: org, client projects, server projects, envs, release/version to focus on, time window, topN, serverIssueFilter (e.g. service:backend), key journeys, categorization schema. If no release is provided, default to last 2 days.>"
 ---
 # /prompts:sentry-triage — $ARGUMENTS
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list.
@@ -20,6 +20,9 @@ If $ARGUMENTS does not clearly include all of the following, STOP and ask for th
 - `organizationSlug`
 - `clientProjectSlugsOrIds` (one or more)
 - `serverProjectSlugsOrIds` (one or more)
+
+Important:
+- If server and client errors live in the **same** Sentry project(s), set `serverProjectSlugsOrIds` to those project(s) and include `serverIssueFilter` (e.g. `service:backend`) so you don’t duplicate client issues into the server list. If missing, STOP and ask.
 
 Defaults (only if not specified):
 - `environments`: ["production"]
@@ -62,6 +65,7 @@ For each project in client + server:
 - Pull candidate ongoing issues (unresolved) within scope:
   - Use `search_issues(organizationSlug=..., naturalLanguageQuery=...)`.
   - Query should bias toward: most users impacted, most events, most recent, and production env (unless Dev specifies otherwise).
+  - If `serverIssueFilter` is provided, include it in the server queries (e.g., append `service:backend`).
   - Example query shape (adapt as needed):
     - “Top unresolved issues affecting the most users in production in the last 2 days”
     - If `releaseVersionFocus` set: “Top unresolved issues affecting the most users in production for release <release> in the last 7 days”
