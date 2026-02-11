@@ -195,6 +195,12 @@ Optional (recommended when you have specs/design docs you don’t want missed du
 - `/prompts:arch-fold-in docs/<...>.md <any number of ref doc paths/URLs> <short blurb>`
   - Folds references *into* the plan doc and wires binding obligations into the relevant phases.
 
+Optional (when you want extremely granular, small-agent-executable tasks):
+- `/prompts:arch-phase-plan-granularize docs/<...>.md LEVEL=2`
+  - Rewrites the existing Phase Plan in-place into micro-phases + microtasks (single SSOT; no second checklist).
+  - Safe to re-run to get more granular (e.g., run again with `LEVEL=3`, `LEVEL=4`, etc).
+  - If the repo is large, prefer `/prompts:arch-phase-plan-granularize-agent`.
+
 10) `/prompts:arch-review-gate docs/<...>.md` (recommended for high-risk changes)
    - Runs an “idiomatic + completeness” review pass and writes the review gate block into the doc
 
@@ -246,6 +252,9 @@ The mini prompt uses parallel *read-only* subagents internally; that’s where p
 
 ### 5.3 Execution
 
+Optional (when you want microtasks before implementation):
+- `/prompts:arch-phase-plan-granularize docs/<...>.md LEVEL=2`
+
 3) `/prompts:arch-implement-agent docs/<...>.md`
 
 Optional post-checks:
@@ -269,6 +278,7 @@ Examples:
 - `/prompts:arch-research-agent` instead of `/prompts:arch-research`
 - `/prompts:arch-deep-dive-agent` instead of `/prompts:arch-deep-dive`
 - `/prompts:arch-phase-plan-agent` instead of `/prompts:arch-phase-plan`
+- `/prompts:arch-phase-plan-granularize-agent` instead of `/prompts:arch-phase-plan-granularize`
 - `/prompts:arch-implement-agent` for implementation where you want phase-by-phase subagents
 
 ---

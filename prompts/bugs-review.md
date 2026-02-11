@@ -1,5 +1,5 @@
 ---
-description: "External review (Claude CLI): audit bug fix against the bug doc, then apply feedback you agree with."
+description: "External review (cross-tool): audit bug fix against the bug doc via the other agent CLI, then apply feedback you agree with."
 argument-hint: "<Required: docs/bugs/<...>.md bug doc path. Optional: scope notes (perf/security/only suggest, no code changes).>"
 ---
 # /prompts:bugs-review — $ARGUMENTS
@@ -16,10 +16,13 @@ $ARGUMENTS is freeform steering. Infer what you can.
 
 Hard constraints:
 - DO NOT USE PAL MCP (this is a command-line action).
-- Use the Claude CLI in **print mode with piped input** (positional args hang when nested):
-  `echo "<prompt>" | claude -p --dangerously-skip-permissions`
-- NEVER pass the prompt as a positional argument — it will hang indefinitely inside an agent session.
-- ALWAYS use `-p` (print mode) so Claude exits after responding instead of starting interactive mode.
+- Detect which agent you're running in and use the OTHER tool for the review:
+  - If `CLAUDECODE=1` is set (you are Claude Code): use Codex CLI
+    `echo "<prompt>" | codex exec --dangerously-bypass-approvals-and-sandbox`
+  - Otherwise (you are Codex or other): use Claude Code CLI
+    `echo "<prompt>" | claude -p --dangerously-skip-permissions`
+- NEVER pass the prompt as a positional argument — it hangs in nested sessions.
+- ALWAYS use print/exec mode so the reviewer exits after responding.
 
 Question policy (strict):
 - You MUST answer anything discoverable from code/tests/docs or by running repo tooling; do not ask me.
@@ -35,16 +38,19 @@ Get an external, high-signal code review of the bug fix relative to the bug doc,
 - If $ARGUMENTS contains a docs/bugs/<...>.md path, use it as DOC_PATH.
 - Otherwise infer DOC_PATH from the repo (recent bug docs). If ambiguous, ask the user to choose from the top 2–3 candidates.
 
-## 1) Run Claude review (this may take ~5 minutes — don't be antsy)
-- Print one short line like: "Running Claude code review (can take ~5 minutes)…", then run the command and wait for completion (no chatty progress spam).
-- CRITICAL: You must **pipe the prompt** to claude, not pass it as a positional argument. Positional args hang when claude is invoked from inside another agent session.
-- Run:
+## 1) Run external review (this may take ~5 minutes — don't be antsy)
+- Print one short line like: "Running external code review (can take ~5 minutes)…", then run the command and wait for completion (no chatty progress spam).
+- CRITICAL: You must **pipe the prompt** to the reviewer, not pass it as a positional argument. Positional args hang when invoked from inside another agent session.
+- Detect the reviewer CLI and run:
   ```bash
-  echo "<PROMPT>" | claude -p --dangerously-skip-permissions
-  ```
-  For long prompts use a heredoc:
-  ```bash
-  cat <<'REVIEW_EOF' | claude -p --dangerously-skip-permissions
+  # Detect reviewer CLI
+  if [ "$CLAUDECODE" = "1" ]; then
+    REVIEWER="codex exec --dangerously-bypass-approvals-and-sandbox"
+  else
+    REVIEWER="claude -p --dangerously-skip-permissions"
+  fi
+
+  cat <<'REVIEW_EOF' | $REVIEWER
   <PROMPT>
   REVIEW_EOF
   ```
@@ -73,7 +79,7 @@ This is the information it should contain but you should communicate it naturall
 Include:
 - Bug North Star reminder (1 line)
 - Punchline (1 line)
-- What Claude found (short, practical summary)
+- What the reviewer found (short, practical summary)
 - What you accepted vs declined (and why, briefly)
 - What you changed (if anything) + what checks you ran
 - Pointers (DOC_PATH + any file where you saved the raw Claude output, if you saved it)
