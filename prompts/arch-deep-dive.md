@@ -74,6 +74,7 @@ You are designing architecture. Produce/update THREE artifacts in DOC_PATH:
 Hard rules (drift-proof):
 - Code is ground truth: every claim is anchored in file paths (include symbols when helpful).
 - No competing sources of truth: prefer centralized contracts/primitives; delete/avoid parallel implementations.
+- No fallbacks / runtime shims: the architecture should work correctly or fail loudly. If a shim seems unavoidable, stop and ask for explicit approval (plan doc must set `fallback_policy: approved`).
 - Do not ask the user technical questions you can answer by reading code; go look and decide.
 - If multiple viable technical approaches exist, pick the most idiomatic default and note alternatives in the doc (do not ask “what do you want to do?”).
 
@@ -179,9 +180,8 @@ DOCUMENT CONTENT SKELETON (adapt to existing headings; do not blindly paste dupl
 | <module> | <path> | <fn/cls> | <today> | <diff> | <rationale> | <new usage> | <tests> |
 
 ## Migration notes
-* Deprecated APIs:
-* Compatibility shims (if any):
-* Delete list (what must be removed):
+* Deprecated APIs (if any):
+* Delete list (what must be removed; include legacy shims/parallel paths if any):
 
 ## Pattern Consolidation Sweep (anti-blinders; scoped by plan)
 | Area | File / Symbol | Pattern to adopt | Why (drift prevented) | Proposed scope (include/defer/exclude) |

@@ -123,6 +123,7 @@ Integrate subagent results into Phase Plan microtasks. If subagents disagree, re
 Same rewrite rules as the non-agent prompt, with two emphasis points:
 - Make call-site batches explicit (especially at LEVEL>=3) using the Call-Site Grouper output.
 - Make deletes/cleanup explicit (no parallel paths) using the Deletes Inventory output.
+- No fallbacks: do NOT introduce runtime fallback/compatibility shim tasks unless DOC_PATH explicitly sets `fallback_policy: approved`. If you discover existing shims/fallbacks, add delete tasks.
 
 Monotonic / re-entrant rule:
 - Preserve any completed tasks (`[x]` / `[X]`) verbatim.
@@ -161,4 +162,3 @@ Communicate naturally in English, but include (briefly):
 - Next action (usually: proceed to `/prompts:arch-implement-agent DOC_PATH`)
 - Need from USERNAME (only if required)
 - Pointers (DOC_PATH)
-

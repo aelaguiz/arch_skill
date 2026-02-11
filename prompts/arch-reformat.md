@@ -71,6 +71,7 @@ Do not paste the full document to the console. You may print only the drafted TL
 title: "<PROJECT> — <CHANGE> — Architecture Plan"
 date: <YYYY-MM-DD>
 status: draft | active | complete
+fallback_policy: forbidden
 owners: [<name>, ...]
 reviewers: [<name>, ...]
 doc_type: architectural_change | parity_plan | phased_refactor | new_system
@@ -130,7 +131,10 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 
 ## 0.5 Key invariants (fix immediately if violated)
 - <if these fail, fix before continuing>
-- Example: “No silent fallbacks.” “No dual sources of truth.” “No undefined behavior.”
+- Example: “No fallbacks.” “Fail-loud boundaries.” “No dual sources of truth.” “No undefined behavior.”
+- Fallback policy (strict):
+  - Default: **NO fallbacks or runtime shims** (feature must work correctly or fail loudly).
+  - If an exception is truly required, it must be explicitly approved by USERNAME by setting `fallback_policy: approved` and recording a Decision Log entry with a timebox + removal plan.
 
 ---
 
@@ -145,7 +149,7 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 - Correctness:
 - Performance:
 - Offline / latency:
-- Compatibility / migration:
+- Compatibility / migration (default: hard cutover; no shims):
 - Operational / observability:
 
 ## 1.3 Architectural principles (rules we will enforce)
@@ -268,9 +272,8 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 | <module> | <path> | <fn/cls>           | <today>          | <diff>          | <rationale> | <new usage>        | <tests>        |
 
 ## 6.2 Migration notes
-* Deprecated APIs:
-* Compatibility shims (if any):
-* Delete list (what must be removed):
+* Deprecated APIs (if any):
+* Delete list (what must be removed; include legacy shims/parallel paths if any):
 
 ---
 
@@ -320,8 +323,8 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 # 9) Rollout / Ops / Telemetry
 
 ## 9.1 Rollout plan
-* Flags / gradual rollout:
-* Backward compatibility:
+* Flags / gradual rollout (only if needed; avoid long-lived dual paths):
+* Rollback plan (preferred over runtime shims): revert commit / kill-switch / disable new path
 
 ## 9.2 Telemetry changes
 * New events:

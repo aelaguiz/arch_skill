@@ -110,6 +110,11 @@ Implementation discipline (optimize for steady execution, not ceremony):
   - At phase boundaries, re-check the North Star + UX scope + invariants in DOC_PATH.
   - If the plan needs sequencing tweaks, update DOC_PATH (Decision Log entry) and keep going unless it changes user-facing scope or requires a product decision.
 - Implement SYSTEMATICALLY: follow the phased plan (or the plan’s checklist) in order.
+- No-fallback policy (strict; do not propose):
+  - Default: do NOT add runtime fallbacks, compatibility shims, placeholder behavior, or “best effort” paths that emulate success while being wrong.
+    - Examples: swallowing errors and returning empty/null; silently defaulting to stale/cached data; “try old API if new fails”; leaving dev-only shims in prod.
+  - If correct behavior can’t be implemented with current info/permissions, stop and ask for what’s missing (or do only independent tasks that don’t require faking behavior).
+  - Only if DOC_PATH explicitly sets `fallback_policy: approved` AND a Decision Log entry approves a timebox + removal plan may you implement a shim — and it must be minimal + include a delete task.
 - Check as you go: after each meaningful chunk (at least once per phase), run the smallest relevant *programmatic* signal (tests/typecheck/lint/build, or targeted instrumentation/log signature) and record the result.
 - Verification policy (autonomy-first):
   - Prefer existing checks over building bespoke harnesses/DSLs; add only minimal tests/instrumentation that directly prevent a likely regression.

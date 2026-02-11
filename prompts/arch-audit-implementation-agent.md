@@ -98,6 +98,7 @@ What you are auditing for (highest bar):
    - SSOT is real (no parallel sources of truth).
    - Boundaries/contracts match the plan.
    - Old paths are deleted or provably unreachable if the plan requires it.
+   - No runtime fallbacks/shims/placeholder behavior were introduced to “make it feel unbroken” (unless explicitly approved in DOC_PATH). If any exist, call them out with evidence anchors and reopen the phase that introduced them.
 3) FULL idiomatic fit:
    - Aligns to existing repo patterns (no unnecessary new abstractions).
 4) CALL SITES AUDITED:

@@ -18,6 +18,7 @@ This skill runs **alongside** the existing `/prompts:*` commands:
 - **Single-document rule (SSOT):** exactly one plan doc under `docs/` is authoritative. Worklog is derived from it.
 - **Code is ground truth:** anchor claims in file paths/symbols/commands; do not speculate.
 - **Minimal verification:** prefer existing tests/commands; avoid inventing new harnesses by default.
+- **No fallbacks:** do not propose or implement runtime fallbacks/shims/placeholder behavior unless explicitly approved in the plan doc (`fallback_policy: approved` + Decision Log entry).
 - **Question policy (strict):** only ask questions that cannot be answered by searching the repo/docs/fixtures or running existing tooling.
 - **Output format:** when you invoke a prompt, follow that prompt's output format (don't restate style rules here).
 

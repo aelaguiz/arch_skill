@@ -75,6 +75,7 @@ Keep console output short and high-signal:
 title: "<Project/Area> — <Feature/Change> — Feature Plan"
 date: <YYYY-MM-DD>
 status: draft | active | complete
+fallback_policy: forbidden
 owners: ["<owner or TBD (not provided in source docs)>"]
 reviewers: ["<reviewer or TBD (not provided in source docs)>"]
 doc_type: architectural_change | parity_plan | phased_refactor | new_system
@@ -157,6 +158,9 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 
 ## 0.5 Key invariants (fix immediately if violated)
 - <invariants>
+- Fallback policy (strict):
+  - Default: **NO fallbacks or runtime shims** (feature must work correctly or fail loudly).
+  - If an exception is truly required, it must be explicitly approved by USERNAME by setting `fallback_policy: approved` and recording a Decision Log entry with a timebox + removal plan.
 
 ---
 
@@ -170,7 +174,7 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 - Correctness:
 - Performance:
 - Offline / latency:
-- Compatibility / migration:
+- Compatibility / migration (default: hard cutover; no shims):
 - Operational / observability:
 
 ## 1.3 Architectural principles (rules we will enforce)
@@ -319,9 +323,8 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 | ... | ... | ... | ... | ... | ... | ... | ... |
 
 ## 6.2 Migration notes
-- Deprecated APIs:
-- Compatibility shims (if any):
-- Delete list (what must be removed):
+- Deprecated APIs (if any):
+- Delete list (what must be removed; include legacy shims/parallel paths if any):
 
 ## Pattern Consolidation Sweep (anti-blinders; scoped by plan)
 | Area | File / Symbol | Pattern to adopt | Why (drift prevented) | Proposed scope (include/defer/exclude) |
@@ -333,7 +336,7 @@ note: This is a warn-first checklist only. It should not hard-block execution.
 
 <!-- arch_skill:block:phase_plan:start -->
 # 7) Depth-First Phased Implementation Plan (authoritative)
-> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional).
+> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). No fallbacks/runtime shims — the system must work correctly or fail loudly (delete legacy paths).
 
 ## Phase 1 — <foundation>
 Status: planned
@@ -401,4 +404,3 @@ Status: planned
 - Decision:
 - Consequences:
 - Follow-ups:
-

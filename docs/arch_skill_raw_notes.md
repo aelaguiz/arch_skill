@@ -9,6 +9,7 @@ Below is a **copy-paste template** plus a **section playbook** (what goes in, wh
 title: "<PROJECT> — <CHANGE> — Architecture Plan"
 date: <YYYY-MM-DD>
 status: draft | active | complete
+fallback_policy: forbidden
 owners: [<name>, ...]
 reviewers: [<name>, ...]
 doc_type: architectural_change | parity_plan | phased_refactor | new_system
@@ -52,7 +53,8 @@ related:
 
 ## 0.5 Stop-the-line invariants
 - <if these fail, we stop and fix before continuing>
-- Example: “No silent fallbacks.” “No dual sources of truth.” “No undefined behavior.”
+- Example: “No fallbacks.” “Fail-loud boundaries.” “No dual sources of truth.” “No undefined behavior.”
+- Fallback policy (strict): default `fallback_policy: forbidden`. Any exception requires explicit approval + timebox + removal plan (Decision Log).
 
 ---
 
@@ -201,15 +203,14 @@ related:
 
 ## 6.2 Migration notes
 
-* Deprecated APIs:
-* Compatibility shims (if any):
-* Delete list (what must be removed):
+* Deprecated APIs (if any):
+* Delete list (what must be removed; include legacy shims/parallel paths if any):
 
 ---
 
 # 7) Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: systematic build, foundational first; every phase has exit criteria + explicit test plan.
+> Rule: systematic build, foundational first; every phase has exit criteria + explicit test plan. No fallbacks/runtime shims — the system must work correctly or fail loudly (delete legacy paths).
 
 ## Phase 0 — Baseline gates
 
@@ -261,8 +262,8 @@ related:
 
 ## 9.1 Rollout plan
 
-* Flags / gradual rollout:
-* Backward compatibility:
+* Flags / gradual rollout (only if needed; avoid long-lived dual paths):
+* Rollback plan (preferred over runtime shims): revert commit / kill-switch / disable new path
 
 ## 9.2 Telemetry changes
 

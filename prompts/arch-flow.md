@@ -112,7 +112,7 @@ Next step selection rule:
 
 ## 4) If RUN=1, execute the next step
 If `$ARGUMENTS` includes `RUN=1`, then:
-- Load the next prompt procedure file from the installed prompts (preferred) or repo fallback:
+- Load the next prompt procedure file from the installed prompts (preferred) or the repo copy:
   1) `~/.codex/prompts/<next>.md`
   2) `prompts/<next>.md`
 - Follow it exactly as the procedure, using the same DOC_PATH.

@@ -57,6 +57,10 @@ These are the rules the prompt family is designed around. If you violate them, t
 - If no tests exist for the behavior, use minimal instrumentation/log signature or a short manual checklist.
 - Avoid inventing new harnesses by default.
 
+### No fallbacks (strict)
+- Default: do not add runtime fallbacks/shims/placeholder behavior to emulate correctness.
+- If an exception is truly required, it must be explicitly approved in the plan doc by setting `fallback_policy: approved` and recording a Decision Log entry with a timebox + removal plan.
+
 ### Question policy (strict)
 Only ask questions that cannot be answered by searching the repo / reading code / reading docs:
 - Product/UX decisions not encoded anywhere
