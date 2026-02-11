@@ -73,6 +73,8 @@ See `resources/PROMPT_INDEX.md` for the canonical mapping from intent → prompt
 | `/prompts:arch-plan-enhance` | Harden plan (turn it into best possible architecture). | `DOC_PATH` |
 | `/prompts:arch-phase-plan` | Generate depth-first phased implementation plan. | `DOC_PATH` |
 | `/prompts:arch-phase-plan-agent` | Agent-assisted phase plan with subagent discovery. | `DOC_PATH` |
+| `/prompts:arch-phase-plan-granularize` | Optional: rewrite the Phase Plan into micro-phases + microtasks (single SSOT; no second checklist). | `DOC_PATH` |
+| `/prompts:arch-phase-plan-granularize-agent` | Agent-assisted phase plan granularize (parallel read-only: call-site batching, deletes, smallest checks). | `DOC_PATH` |
 | `/prompts:arch-review-gate` | External idiomatic + completeness check (recommended for risky changes). | `DOC_PATH` |
 | `/prompts:arch-fold-in` | Inline reference docs/links into phases so implementation can't miss them. | `DOC_PATH` |
 | `/prompts:arch-plan-audit` | Score plan readiness across phases. | `DOC_PATH` |
@@ -132,7 +134,7 @@ See `resources/PROMPT_INDEX.md` for the canonical mapping from intent → prompt
 
 | Prompt | What it does | Args |
 | --- | --- | --- |
-| `/prompts:arch-codereview` | Run external review via Claude CLI, then apply feedback you agree with. | `DOC_PATH` + scope |
+| `/prompts:arch-codereview` | Run cross-tool external review (Claude↔Codex), then apply feedback you agree with. | `DOC_PATH` + scope |
 | `/prompts:arch-open-pr` | Merge default branch, run preflight, commit/push, open detailed PR. | Optional title/constraints |
 
 ### Rendering

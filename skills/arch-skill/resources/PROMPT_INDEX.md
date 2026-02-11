@@ -33,6 +33,8 @@ Principle: prompts are the **procedures**; this index is just routing.
 - Harden plan (optional): `/prompts:arch-plan-enhance <DOC_PATH>`
 - Generate depth-first phased plan: `/prompts:arch-phase-plan <DOC_PATH>`
 - Agent-assisted phase plan: `/prompts:arch-phase-plan-agent <DOC_PATH>`
+- Phase plan granularize (optional; single SSOT microtasks): `/prompts:arch-phase-plan-granularize <DOC_PATH>`
+- Phase plan granularize (agent-assisted): `/prompts:arch-phase-plan-granularize-agent <DOC_PATH>`
 - Review gate (recommended for risky changes): `/prompts:arch-review-gate <DOC_PATH>`
 - Fold in references (inline docs/links into phases): `/prompts:arch-fold-in <DOC_PATH>`
 - Plan audit (score readiness across phases): `/prompts:arch-plan-audit <DOC_PATH>`
@@ -77,7 +79,7 @@ Principle: prompts are the **procedures**; this index is just routing.
 - DevX (agent-assisted): `/prompts:arch-devx-agent <DOC_PATH>`
 
 ## 12) Code review & finalization
-- Code review (Claude CLI external review): `/prompts:arch-codereview <DOC_PATH + scope>`
+- Code review (cross-tool external review, Claude↔Codex): `/prompts:arch-codereview <DOC_PATH + scope>`
 - Open PR (merge, preflight, push, open PR): `/prompts:arch-open-pr [title/constraints]`
 
 ## 13) Rendering

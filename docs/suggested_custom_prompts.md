@@ -32,6 +32,8 @@ Restart your Codex/Claude Code instance after updating prompts so it reloads `/p
 | `prompts/arch-kickoff.md` | `/prompts:arch-kickoff` | Start Phase 1 (Research) and checkpoint before Phase 2 (Architectural planning: current/target architecture + call-site audit). |
 | `prompts/arch-phase-plan.md` | `/prompts:arch-phase-plan` | Insert the phased implementation plan block. |
 | `prompts/arch-phase-plan-agent.md` | `/prompts:arch-phase-plan-agent` | Agent-assisted phase plan: use parallel read-only subagents for call-site + delete list discovery, then write the phased plan. |
+| `prompts/arch-phase-plan-granularize.md` | `/prompts:arch-phase-plan-granularize` | Optional: rewrite the existing Phase Plan in-place into micro-phases + microtasks (single SSOT; no second checklist). |
+| `prompts/arch-phase-plan-granularize-agent.md` | `/prompts:arch-phase-plan-granularize-agent` | Agent-assisted phase plan granularize: parallel read-only subagents batch call sites, inventory deletes/cleanup, and find smallest checks; then rewrite Phase Plan in-place. |
 | `prompts/arch-deep-dive.md` | `/prompts:arch-deep-dive` | Fill Current/Target architecture + Call‑Site Audit sections. |
 | `prompts/arch-deep-dive-agent.md` | `/prompts:arch-deep-dive-agent` | Agent-assisted deep dive: use parallel read-only subagents for current-arch mapping + call-site sweep + consolidation scan. |
 | `prompts/arch-mini-plan-agent.md` | `/prompts:arch-mini-plan-agent` | Mini planning pass: fill Research Grounding + Current/Target Architecture + Call-Site Audit + Phase Plan in one agent-assisted prompt (small tasks). |
@@ -91,6 +93,8 @@ For a deeper explanation of when to use the **regular flow** vs the **mini flow*
 2) `/prompts:arch-mini-plan-agent …` (combined planning pass: research + deep dive + phase plan)
 Optional (if you have external specs/designs you don’t want missed during implementation):
 3) `/prompts:arch-fold-in …` (fold reference materials into DOC_PATH and wire them into phases)
+Optional (when you want extremely granular, small-agent-executable tasks):
+- `/prompts:arch-phase-plan-granularize …` (rewrite Phase Plan in-place into micro-phases + microtasks; single SSOT)
 4) `/prompts:arch-implement-agent …` (implement in 1-2 phases; minimal checks; keep doc/worklog current)
 5) `/prompts:arch-qa-autotest …` (optional: run automation on an existing sim/emulator; reopen plan issues with evidence)
 6) `/prompts:arch-audit-agent …` (recommended: fast audit for drift/missed call sites)
@@ -104,6 +108,8 @@ Optional (if you have external specs/designs you don’t want missed during impl
 5) `/prompts:arch-phase-plan …`
 Optional (if you have external specs/designs you don’t want missed during implementation):
 6) `/prompts:arch-fold-in …` (fold reference materials into DOC_PATH and wire them into phases)
+Optional (when you want extremely granular tasks without a second checklist):
+- `/prompts:arch-phase-plan-granularize …` (rewrite Phase Plan in-place into micro-phases + microtasks; single SSOT)
 7) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
 8) `/prompts:arch-qa-autotest …` (optional: run automation on an existing sim/emulator; reopen plan issues with evidence)
 9) `/prompts:arch-audit-implementation …` (recommended: prove we didn’t miss anything; reopen false-complete)
@@ -118,6 +124,8 @@ Optional (if you have external specs/designs you don’t want missed during impl
 7) `/prompts:arch-phase-plan …`
 Optional (if you have external specs/designs you don’t want missed during implementation):
 8) `/prompts:arch-fold-in …` (fold reference materials into DOC_PATH and wire them into phases)
+Optional (when you want extremely granular tasks for smaller/dumber agents):
+- `/prompts:arch-phase-plan-granularize …` (rewrite Phase Plan in-place into micro-phases + microtasks; single SSOT)
 9) `/prompts:arch-devx …` (if CLI/output mocks are required)
 10) `/prompts:arch-review-gate …`
 11) `/prompts:arch-implement …` (implement + test systematically; keep doc current; review gate; commit/push after review)
