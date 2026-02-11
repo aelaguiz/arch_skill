@@ -15,7 +15,7 @@ Question policy (strict; stop early when needed):
 - If something is ambiguous but not essential, proceed with a sensible default and include the ambiguity in “Questions for Dev”.
 - After getting answers, resume exactly where you stopped.
 
-## 0) Essential inputs gate (do this first)
+## Essential inputs (must have)
 If $ARGUMENTS does not clearly include all of the following, STOP and ask for them:
 - `organizationSlug`
 - `clientProjectSlugsOrIds` (one or more)
@@ -25,7 +25,7 @@ Defaults (only if not specified):
 - `environments`: ["production"]
 - `topN`: 10 overall + 5 client + 5 server (but do not duplicate the same issue across lists)
 
-## 1) Scope rule (release vs last 2 days)
+## Scope (release vs last 2 days)
 You MUST “look for a version to focus on”:
 - If $ARGUMENTS includes a release/version (e.g. `release=...`, `version=...`, or a clearly named release string), use it as `releaseVersionFocus`.
 - If no release/version is provided:
@@ -37,7 +37,7 @@ Time window defaults:
 - If `releaseVersionFocus` is provided and no explicit time window is provided: use last **7 days** (and call out the assumption).
 - If `releaseVersionFocus` is NOT provided: time window MUST be last **2 days**.
 
-## 2) Categorization (required)
+## Categorization (required)
 For each issue, assign:
 - `Surface`: Client | Server | Shared
 - `Priority`: P0 | P1 | P2 | P3 | P4 (definitions below)
@@ -55,28 +55,36 @@ Important:
 - Do not map Sentry level (error/warn/info) directly to priority. Use UX harm.
 - If the issue is clearly not user-facing and not actionable, it is likely P4.
 
-## 3) How to gather issues (efficient; focus on impact)
+## Gathering issues (efficient; impact-first)
 You will run **separate** passes for client and server, then merge and rank globally.
 
 For each project in client + server:
-1) Pull candidate ongoing issues (unresolved) within scope:
-   - Use `search_issues(organizationSlug=..., naturalLanguageQuery=...)`.
-   - Query should bias toward: most users impacted, most events, most recent, and production env (unless Dev specifies otherwise).
-   - Example query shape (adapt as needed):
-     - “Top unresolved issues affecting the most users in production in the last 2 days”
-     - If `releaseVersionFocus` set: “Top unresolved issues affecting the most users in production for release <release> in the last 7 days”
-2) Pull candidate issues that are **resolved** within scope:
-   - Use `search_issues` again, but include resolved issues in the query.
+- Pull candidate ongoing issues (unresolved) within scope:
+  - Use `search_issues(organizationSlug=..., naturalLanguageQuery=...)`.
+  - Query should bias toward: most users impacted, most events, most recent, and production env (unless Dev specifies otherwise).
+  - Example query shape (adapt as needed):
+    - “Top unresolved issues affecting the most users in production in the last 2 days”
+    - If `releaseVersionFocus` set: “Top unresolved issues affecting the most users in production for release <release> in the last 7 days”
+- Pull candidate issues that are **resolved** within scope:
+  - Use `search_issues` again, but include resolved issues in the query.
 
 Then:
 - Deduplicate issues across projects/surfaces.
 - Shortlist: topN overall plus top 5 client and top 5 server (unless overlap already covers them).
 
-## 4) Enrich top issues (context + quantities)
+## Enrich top issues (context + quantities)
 For each shortlisted issue:
 - Use `get_issue_details(...)` to extract:
   - title/message, issue id/url, status (unresolved/resolved/ignored), level/type, firstSeen/lastSeen
   - **# events** and **# users impacted** (use whatever Sentry provides; if not time-scoped, say so)
+- Add a **version status hint** for each issue:
+  - If `releaseVersionFocus` is set: use that version.
+  - Otherwise: use the **latest release** for the issue’s project (use `find_releases` once per project; cache the latest version).
+  - Then, for the chosen version, check whether the issue is still happening:
+    - Use `search_issue_events(..., naturalLanguageQuery=...)` with `release:<version>` + environment + the same time window; `limit=1`.
+    - If events exist: `Version hint = "Unresolved in <version> (still firing in scope)"`.
+    - If no events: `Version hint = "Likely resolved in <version> (not observed in scope)"`.
+    - If release filtering is impossible (missing release tag): `Version hint = "Unknown (no release tag)"`.
 - Use `get_issue_tag_values` *selectively* when it changes UX interpretation or helps isolate a regression:
   - Recommended tagKeys: `release`, `environment`, `url`, `transaction`, `browser.name`, `os`, `device`
 - If a top issue looks like P0/P1 and needs deeper root-cause help, run `analyze_issue_with_seer(...)` (limit ~3–5 issues).
@@ -84,47 +92,88 @@ For each shortlisted issue:
 Optional (only if needed for UX understanding):
 - Use `search_issue_events` (small limit) to sample recent events and infer “what the user experiences”.
 
-## 5) Ranking rubric (order by UX impact, then scale)
+## Ranking rubric (UX first, then scale)
 Rank issues primarily by user harm:
-1) P0 > P1 > P2 > P3 > P4
-2) Within same priority:
-   - More users impacted > more events
-   - Still happening now (recent lastSeen) > older
-   - Concentrated in a new release/environment/device/journey (possible regression) gets bumped up
+- Priority order: P0 > P1 > P2 > P3 > P4
+- Within the same priority:
+  - More users impacted > more events
+  - Still happening now (recent lastSeen) > older
+  - If Sentry status is “resolved” but the issue is still **unresolved in the focus/latest version** (per version hint), bump it up (likely regression or premature resolve).
+  - Concentrated in a new release/environment/device/journey (possible regression) gets bumped up
 
 If key UX details are unknown, say so and ask a targeted question rather than guessing.
 
-## 6) Output format (EVERY response must follow this structure)
-### 1) North Star (1 sentence)
+## Response format (senior-dev-friendly; no pointless numbering)
+Use this structure in EVERY response. Do not number headings. Only number the ranked issues (the rank is the point).
+
+### North Star (1 sentence)
 State the guiding principle for this report.
 
-### 2) Punchline (max 5 bullets)
-Most important takeaways, ordered by UX impact.
+### Punchline (max 5 bullets)
+The 2–5 most important takeaways, ordered by UX impact.
 
-### 3) Questions for Dev (max 8 bullets)
-Only questions that would change prioritization, scope, or next actions (release focus, key journeys, known incidents, what “core flow” means, etc.).
+### Questions for Dev (max 8 bullets)
+Only questions that would materially change prioritization, scope, or next actions.
 
-### 4) Summary of analysis (concise)
-1 short paragraph or up to 5 bullets summarizing what you found at a high level (no deep lists here).
-
-### 5) What I analyzed (concise)
-- Scope: `releaseVersionFocus` OR explicit “last 2 days”
+### Scope & method (concise)
+- Release focus: `releaseVersionFocus` OR “none”
+- Time window: explicit (e.g. “last 2 days”)
 - Environments
 - Client projects + Server projects
-- Tooling: which Sentry tools were used (high level)
+- Tools used (high level)
+- Caveats (release tagging missing, counts not time-scoped, etc.)
 
-### 6) Ranked issues (ordered by UX impact)
-Provide a table or numbered list. For each issue include:
+### Ranked issues (ordered by UX impact)
+Prefer a table when it stays readable; otherwise use a numbered list.
+
+For each issue include:
 - Rank, Priority (P0–P4), Surface, UX Impact Type, User Journey
-- Issue title + status (explicitly note **resolved** issues)
+- Issue title + Sentry status (explicitly note **resolved** issues)
+- Version hint (required): **resolved/unresolved in the specified (or latest) version** (label as a hint)
 - Quantities: **#users impacted**, **#events** (within scope when possible; otherwise state limitation)
 - “What the user experiences” (1 sentence)
 - “Engineer summary” (1–2 sentences)
 - Key evidence (release/env concentration, top url/transaction, spike/regression note)
 
-### 7) Resolved issues callout (required)
-If any shortlisted issues are marked resolved, list them explicitly and note whether they still show new events in-scope (if you can tell).
+### Resolved & regression watch (required)
+Explicitly list:
+- Issues marked resolved that are still firing (per version hint)
+- Issues marked resolved that appear not to be firing anymore (per version hint)
 
-### 8) Optional: Out-of-the-box ideas (clearly labeled optional)
-1–2 creative ideas/questions to accelerate understanding or prevention (optional, not required).
+### Optional: Out-of-the-box ideas (clearly labeled optional)
+1–2 creative ideas/questions to accelerate understanding or prevention.
 
+### Response template (copy/paste and fill in)
+Use this exact skeleton:
+```md
+### North Star
+<one sentence>
+
+### Punchline
+- <most important finding>
+- <next most important finding>
+
+### Questions for Dev
+- <question that changes prioritization/scope>
+
+### Scope & method
+- Release focus: <value or "none">
+- Time window: <explicit>
+- Environments: <...>
+- Client projects: <...>
+- Server projects: <...>
+- Tools used: <search_issues, get_issue_details, ...>
+- Caveats: <1–3 bullets>
+
+### Ranked issues
+| Rank | Pri | Surface | Version hint (hint) | Sentry status | Issue | Users | Events | UX (what user sees) | Engineer summary | Evidence |
+| ---: | :--: | :-----: | :------------------ | :------------ | :---- | ----: | -----: | :------------------ | :-------------- | :------- |
+| 1 | P0 | Client | Unresolved in <v> | unresolved | <title / link / id> | <#> | <#> | <1 sentence> | <1–2 sentences> | <tags/urls/releases> |
+
+### Resolved & regression watch
+- <resolved-in-sentry but still firing>
+- <resolved-in-sentry and not firing>
+
+### Optional: Out-of-the-box
+- <optional idea>
+```
