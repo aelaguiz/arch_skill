@@ -46,6 +46,7 @@ Work you do (high-level, no ceremony):
 - Read enough code to make real decisions (code is ground truth).
 - Improve the plan/architecture aggressively:
   - Make SSOT explicit; remove parallel solutions.
+  - No-fallback policy: do NOT propose or design runtime fallbacks/compatibility shims by default. Prefer fail-loud boundaries, hard cutover, and explicit deletes/cleanup. If a shim seems unavoidable, stop and ask for explicit approval (plan doc must set `fallback_policy: approved`).
   - Make boundaries/invariants enforceable (module/API structure, deletes/cleanup, fail-loud behavior). Prefer architectural enforcement over new harnesses/lints/scripts by default.
   - Find and list all call sites; include adoption/migration steps.
   - Drift sweep: identify other places that should adopt the central pattern; propose include vs follow-up vs ignore.

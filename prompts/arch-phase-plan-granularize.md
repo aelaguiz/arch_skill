@@ -102,6 +102,7 @@ Rewrite inside the existing Phase Plan block/section. Keep it deterministic:
 - Prefer preserving phase titles and sequencing, while making “Work” microtasked.
 - Add a Phase 0 if missing: setup + inventory refresh + checks.
 - Add explicit “delete/cleanup” tasks (no parallel truth).
+- No fallbacks: do NOT introduce runtime fallback/compatibility shim tasks unless DOC_PATH explicitly sets `fallback_policy: approved`. If you discover existing shims/fallbacks, add delete tasks.
 - For each phase, convert “Work” into microtasks:
   - `* Work (microtasks):`
   - `- [ ] P<phase>.T<n> — <imperative task title>`
@@ -165,4 +166,3 @@ Communicate naturally in English, but include (briefly):
 - Next action (usually: proceed to `/prompts:arch-implement-agent DOC_PATH`)
 - Need from USERNAME (only if required)
 - Pointers (DOC_PATH)
-

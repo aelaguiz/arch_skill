@@ -36,6 +36,9 @@ If the doc is not fix-ready, stop and recommend running /prompts:bugs-analyze (d
 
 Implementation discipline (speed + safety):
 - Keep the fix minimal and localized; do not add new abstractions unless clearly needed.
+- No-fallback policy (strict; do not propose):
+  - Do NOT add “make it feel unbroken” fallbacks (compatibility shims, placeholder values, silent error swallowing, or alternate codepaths) to mask the bug.
+  - If an exception is truly required (rare), stop and ask Dev for explicit approval and record it in DOC_PATH (Decision Log / Fix Plan) with a timebox + removal plan.
 - Challenge the plan: list 1–3 plausible alternatives and why we are not choosing them.
 - Avoid external research unless required to resolve ambiguous framework/library behavior; if needed, confirm the current date first.
 - Testing policy: run the smallest relevant check(s) after meaningful changes; avoid “negative-value” tests.

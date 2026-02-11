@@ -85,8 +85,8 @@ If $ARGUMENTS includes `full` / `ci parity` / `parity`:
 Produce a PR title + body that is detailed and matches THIS repo’s template:
 - Load the PR template from THIS repo (repo-relative), preferring:
   - `.github/pull_request_template.md`
-  - (fallback) `.github/pul_request_template.md`
-  - (fallback) `.github/PULL_REQUEST_TEMPLATE.md`
+  - (alternate) `.github/pul_request_template.md`
+  - (alternate) `.github/PULL_REQUEST_TEMPLATE.md`
 - Fill it in with specifics from the actual diff:
   - What changed and why (user impact + technical summary)
   - How it was tested (commands + results)

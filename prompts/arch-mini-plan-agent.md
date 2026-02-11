@@ -82,7 +82,7 @@ Spawn subagents as needed (disjoint scopes; read-only; run in parallel):
    - Output format (bullets only):
      - <path> — <symbol/call site> — <why it is a call site> — <current behavior>
 5) Subagent: Deletes / Cleanup Inventory (anti-parallel-paths)
-   - Task: identify what must be deleted/removed/disabled to avoid parallel paths (old APIs, dead files, old writers/readers, fallback behavior).
+   - Task: identify what must be deleted/removed/disabled to avoid parallel paths (old APIs, dead files, old writers/readers, legacy alternate-path behavior).
    - Output format (bullets only):
      - <path> — <what should be deleted/removed/blocked> — <why>
 6) Subagent: Smallest Signal Checks
@@ -122,6 +122,7 @@ What you must produce/update in DOC_PATH (same canonical blocks as full flow):
 Hard rules (drift-proof, even in mini mode):
 - Code is ground truth: every claim is anchored in file paths (include symbols when helpful).
 - No competing sources of truth: prefer centralized contracts/primitives; delete/avoid parallel implementations.
+- No fallbacks / runtime shims: the plan should converge to a single correct implementation (hard cutover + deletes). If a shim seems unavoidable, stop and ask for explicit approval (plan doc must set `fallback_policy: approved`).
 - Do not ask the user technical questions you can answer by reading code; go look and decide.
 - If multiple viable technical approaches exist, pick the most idiomatic default and note alternatives in the doc (do not ask "what do you want to do?").
 
@@ -235,9 +236,8 @@ Call-site audit (inventory + anti-drift):
 | <module> | <path> | <fn/cls> | <today> | <diff> | <rationale> | <new usage> | <tests> |
 
 ## Migration notes
-* Deprecated APIs:
-* Compatibility shims (if any):
-* Delete list (what must be removed):
+* Deprecated APIs (if any):
+* Delete list (what must be removed; include legacy shims/parallel paths if any):
 
 ## Pattern Consolidation Sweep (anti-blinders; scoped by plan)
 | Area | File / Symbol | Pattern to adopt | Why (drift prevented) | Proposed scope (include/defer/exclude) |
@@ -249,7 +249,7 @@ Phase plan (mini: keep phases small; include per-phase smallest signal):
 <!-- arch_skill:block:phase_plan:start -->
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
+> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). No fallbacks/runtime shims — the system must work correctly or fail loudly (delete legacy paths). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
 
 ## Phase 1 — <main change>
 

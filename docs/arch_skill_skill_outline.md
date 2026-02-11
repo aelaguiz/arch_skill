@@ -135,7 +135,7 @@ Exit criteria:
 ## Quality guardrails
 - Code is ground truth; no speculation without anchors.
 - Single source of truth (no competing patterns).
-- No silent fallbacks; fail-loud boundaries.
+- No fallbacks; fail-loud boundaries (exceptions require explicit approval + timebox + removal plan).
 - Explicit testing for each phase.
 
 ## Oversight / verification helpers

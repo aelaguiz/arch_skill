@@ -96,7 +96,7 @@ DOCUMENT INSERT FORMAT:
 <!-- arch_skill:block:phase_plan:start -->
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
+> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). No fallbacks/runtime shims — the system must work correctly or fail loudly (delete legacy paths). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
 
 ## Phase 1 — <foundation>
 
