@@ -136,7 +136,7 @@ See `resources/PROMPT_INDEX.md` for the canonical mapping from intent → prompt
 | Prompt | What it does | Args |
 | --- | --- | --- |
 | `/prompts:arch-codereview` | Run cross-tool external review (Claude↔Codex), then apply feedback you agree with. | `DOC_PATH` + scope |
-| `/prompts:arch-open-pr` | Merge default branch, run preflight, commit/push, open detailed PR. | Optional title/constraints |
+| `/prompts:arch-open-pr` | Merge default branch, run preflight, commit/push, open detailed **draft** PR. | Optional title/constraints |
 
 ### Rendering
 

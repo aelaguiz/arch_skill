@@ -80,7 +80,7 @@ Principle: prompts are the **procedures**; this index is just routing.
 
 ## 12) Code review & finalization
 - Code review (cross-tool external review, Claude↔Codex): `/prompts:arch-codereview <DOC_PATH + scope>`
-- Open PR (merge, preflight, push, open PR): `/prompts:arch-open-pr [title/constraints]`
+- Open PR (merge, preflight, push, open draft PR): `/prompts:arch-open-pr [title/constraints]`
 
 ## 13) Rendering
 - HTML full-fidelity render: `/prompts:arch-html-full <DOC_PATH>`

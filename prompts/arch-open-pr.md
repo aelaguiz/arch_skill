@@ -1,5 +1,5 @@
 ---
-description: "12) Open PR: merge default branch, run fast local preflight checks, then commit/push and open a detailed PR (CI-parity optional)."
+description: "12) Open PR: merge default branch, run fast local preflight checks, then commit/push and open a detailed draft PR (CI-parity optional)."
 argument-hint: "<Optional: PR title + intent + any constraints. Slang ok.>"
 ---
 # /prompts:arch-open-pr — $ARGUMENTS
@@ -29,7 +29,7 @@ Get the current branch into a state where:
 1) it cleanly incorporates the latest default branch (usually `origin/main`),
 2) it passes a **fast, local preflight** (lint/typecheck/unit tests/build-as-needed),
 3) it is pushed, and
-4) the PR is opened with a detailed, template-based description.
+4) the PR is opened as a **draft** with a detailed, template-based description.
 
 Modes (keep it simple):
 - Default = FAST: do the minimal high-signal checks that catch 80% of mistakes quickly.
@@ -81,7 +81,7 @@ If $ARGUMENTS includes `full` / `ci parity` / `parity`:
 - Stage only files you touched; keep commits cohesive.
 - Push the branch to origin (set upstream if needed).
 
-## 4) Open a PR with the repo’s template (repo-relative)
+## 4) Open a draft PR with the repo’s template (repo-relative)
 Produce a PR title + body that is detailed and matches THIS repo’s template:
 - Load the PR template from THIS repo (repo-relative), preferring:
   - `.github/pull_request_template.md`
@@ -95,8 +95,12 @@ Produce a PR title + body that is detailed and matches THIS repo’s template:
   - Screenshots/logs/QA notes if relevant
 
 Then open the PR:
-- If GitHub CLI `gh` is available and authenticated, create the PR and print the URL.
-- Otherwise, print the prepared title + body clearly so USERNAME can paste it (and provide the exact `gh pr create` command to run).
+- ALWAYS open the PR as a **draft** (never “ready for review” by default).
+- If a PR already exists for the branch, do not create a duplicate:
+  - Ensure it is in draft mode (GitHub UI: “Convert to draft”, or `gh pr ready --undo`), then print the URL.
+- If GitHub CLI `gh` is available and authenticated, create the PR as a draft and print the URL (use `gh pr create --draft …`).
+- Otherwise, print the prepared title + body clearly so USERNAME can paste it (and provide the exact `gh pr create --draft …` command to run).
+- If using the GitHub web UI, choose “Create draft pull request”.
 
 OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
