@@ -1,16 +1,14 @@
 ---
-description: "12) Open PR: merge default branch, run fast local preflight checks, then commit/push and open a detailed draft PR (CI-parity optional)."
-argument-hint: "<Optional: PR title + intent + any constraints. Slang ok.>"
+description: "12) Open PR: merge default branch, do a post-merge smoke check (no redundant suites), push, open a detailed draft PR, then watch CI until mergeable."
+argument-hint: "<Optional: PR title/intent/constraints. Add `parity` to run CI-equivalent locally. Add `no-watch` to skip CI watching.>"
 ---
 # /prompts:arch-open-pr — $ARGUMENTS
 # COMMUNICATING WITH USERNAME (IMPORTANT)
-You are doing the “make CI boring” finalization pass.
+You are doing the “get the PR live fast, then let CI be the referee” finalization pass.
 
 - Start console output with a 1 line reminder of our North Star.
 - Then give the punch line in plain English.
-- Then give a short update in natural English (bullets optional; only if they help).
-- Never be pedantic. Assume shorthand is intentional (long day); optimize for the real goal.
-- Keep console output high-signal; put deep logs/long outputs in a file if needed.
+- Keep console output high-signal; deep logs/long outputs go in a file if needed.
 
 Execution rule: do not block on unrelated dirty files in git; ignore unrecognized changes. If committing, stage only files you touched (or as instructed).
 Do not preface with a plan or restate these instructions. Begin work immediately.
@@ -19,21 +17,21 @@ $ARGUMENTS is freeform steering (title ideas, intent, constraints). Infer what y
 Question policy (strict):
 - You MUST answer anything discoverable from code/tests/CI config/docs or by running repo tooling; do not ask me.
 - Allowed questions only:
-  - Product/UX decisions not encoded in repo/docs
-  - External constraints not in repo/docs (policies, launch dates, KPIs, access)
   - Missing access/permissions (e.g., can’t push, can’t open PR)
   - Irreducible ambiguity about “what PR are we opening?”
 
 Goal:
 Get the current branch into a state where:
 1) it cleanly incorporates the latest default branch (usually `origin/main`),
-2) it passes a **fast, local preflight** (lint/typecheck/unit tests/build-as-needed),
+2) it passes a **post-merge smoke check** (no redundant long suites),
 3) it is pushed, and
 4) the PR is opened as a **draft** with a detailed, template-based description.
+5) if CI runs on PRs, we watch it to completion and report whether the PR is mergeable.
 
 Modes (keep it simple):
-- Default = FAST: do the minimal high-signal checks that catch 80% of mistakes quickly.
-- If $ARGUMENTS includes `full` / `ci parity` / `parity`: run the CI-equivalent checks locally (can take a while).
+- Default = FAST: open the PR quickly; avoid re-running suites we already ran.
+- If $ARGUMENTS includes `parity` / `full`: run the CI-equivalent checks locally (can take a while).
+- If $ARGUMENTS includes `no-watch`: do not watch CI.
 
 ## 1) Sync with default branch (thoughtful merge)
 - Identify the repo’s default branch from git (prefer `origin/main`, otherwise `origin/HEAD`).
@@ -41,40 +39,22 @@ Modes (keep it simple):
 - Ensure changes are safely committed before merging:
   - If there are in-progress changes you created, commit them (stage only what you touched).
   - Do not sweep unrelated local files into commits.
-- `git fetch origin`, then merge the default branch into the feature branch.
+- Capture `PRE_MERGE_SHA` (current `HEAD`), then `git fetch origin`, then merge the default branch into the feature branch.
 - If conflicts occur: resolve them thoughtfully using repo conventions and our intended behavior.
   - If a conflict forces a real product/UX decision not in the repo, stop and ask with the smallest possible question.
 
-## 2) Run local checks (fast by default)
+## 2) Local checks (post-merge smoke; FAST = minimal)
 Default (FAST):
-- Do NOT try to replicate a full CI matrix locally. Run the smallest reasonable set of high-signal checks:
-  - lint/format (or the repo’s “check” target),
-  - typecheck (if applicable),
-  - **compile/build** (so we don’t ship something that doesn’t build),
-  - unit tests (relevant/affected only; avoid the full suite).
-- Prefer the repo’s canonical “one command does the basics” entrypoint if it exists (`make check`, `make test`, `./script/check`, `npm test`, etc.).
-- Use best judgment on install/setup (use the repo’s preferred package manager / setup step). If there’s a `make install`, use it when it clearly matches how the repo expects deps to be installed.
-- Skip redundant work: if checks already ran successfully for the current code (same commit / no relevant changes since), do not re-run them — just record the prior commands + results in the PR.
-- If a check fails due to a clearly negative-value test/gate (deleted-code proofs, visual-constant/golden noise, doc-driven inventory gates), prefer deleting or rewriting that test/gate instead of “fixing” code to satisfy it. Record the rationale in the PR.
-- Timebox: if we’re heading into “this will take forever” territory, pause and ask before running an obviously long suite (unless $ARGUMENTS requested parity).
+- Do NOT re-run long suites we already ran earlier in this work unless the merge introduced conflicts or we changed behavior after the last known green run.
+- Prefer to rely on PR CI to re-validate the full suite.
+- Run only a post-merge smoke check that proves we didn’t break basics:
+  - compile/build the affected target(s) (and both iOS + Android if you’re changing a mobile app),
+  - run a small, relevant unit test set only if conflicts occurred or the merge diff touches core code.
+- If the merge was conflict-free and `git diff --name-only "$PRE_MERGE_SHA..HEAD"` is empty or trivially irrelevant: prefer skipping local checks and proceed to opening the PR.
+- Avoid heavy setup/install steps unless a check fails and indicates missing deps.
 
-Monorepo/mobile nuance (compile means “the active app”, not the world):
-- If this repo contains iOS + Android apps, ensure **the app we’re actively changing** compiles for BOTH iOS and Android.
-  - Do not build every app/package “just because it exists”.
-  - Infer the active app from the diff and repo conventions (nearest app folder, project graph tooling, docs, existing scripts).
-  - If multiple apps are clearly affected, compile each affected app (still avoid building everything).
-  - Only ask a single clarifying question if it’s truly ambiguous which app is the target.
-- If iOS/Android compilation is not applicable (backend/lib/web-only repo), do the equivalent compile/build step for that project (e.g., `tsc` build, `cargo build`, `gradle assemble`, `bazel build`, etc.).
-
-Unit tests (relevant only):
-- Prefer “affected/related” test selection if the repo supports it (project graph tooling, “changed packages” scripts, `--findRelatedTests`, etc.).
-- Otherwise run the smallest set of unit tests that exercise the touched modules/packages.
-- Avoid long integration/e2e suites in FAST mode unless the diff clearly touches that surface or CI will block without it.
-
-If $ARGUMENTS includes `full` / `ci parity` / `parity`:
-- Derive what CI actually runs from `.github/workflows/*` (and referenced scripts) and run the closest local equivalent.
-- Iterate until green: fix what blocks the PR, then re-run the smallest check that proves the fix.
-- Still avoid scope creep: fix blockers; record follow-ups instead of expanding the PR.
+If $ARGUMENTS includes `parity` / `full`:
+- Derive what CI actually runs from workflows/scripts and run the closest local equivalent until green.
 
 ## 3) Finalize commits + push
 - Ensure the branch has clean commits for review (not “temp debug”).
@@ -82,6 +62,8 @@ If $ARGUMENTS includes `full` / `ci parity` / `parity`:
 - Push the branch to origin (set upstream if needed).
 
 ## 4) Open a draft PR with the repo’s template (repo-relative)
+Before opening the PR: if this repo has an explicit docs policy / doc lifecycle policy (in `AGENTS.md`, `docs/AGENTS.md`, `docs/ORIENTATION_ARTIFACT_MAP.md`, or similar), follow it first (e.g., required doc summaries, moving plan docs to the right place, not committing huge raw logs/artifacts, adding `gitignore` rules). Do not invent new policy; obey only what’s clearly specified.
+
 Produce a PR title + body that is detailed and matches THIS repo’s template:
 - Load the PR template from THIS repo (repo-relative), preferring:
   - `.github/pull_request_template.md`
@@ -102,6 +84,12 @@ Then open the PR:
 - Otherwise, print the prepared title + body clearly so USERNAME can paste it (and provide the exact `gh pr create --draft …` command to run).
 - If using the GitHub web UI, choose “Create draft pull request”.
 
+## 5) Watch PR CI (default)
+If CI checks run on PRs, prefer to watch them to completion so we know whether the PR is green/mergeable:
+- If GitHub CLI `gh` is available and authenticated: run `gh pr checks --watch` for this PR.
+- Summarize whether checks are green, and if not, which check failed and the smallest next action.
+- Skip CI watching if $ARGUMENTS includes `no-watch`.
+
 OUTPUT FORMAT (console only; USERNAME-style):
 This is the information it should contain but you should communicate it naturally in english not as a bulleted list that is hard to parse for the user.
 Include:
@@ -111,4 +99,5 @@ Include:
 - Result (green/red; what’s blocking if red)
 - What got committed + pushed (branch name + commits)
 - PR status (opened URL or ready-to-paste title/body)
+- CI status (watched/pending; mergeable or what failed)
 - Need from USERNAME (only if required)
