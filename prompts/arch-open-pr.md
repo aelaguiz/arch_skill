@@ -39,7 +39,7 @@ Modes (keep it simple):
 - Ensure changes are safely committed before merging:
   - If there are in-progress changes you created, commit them (stage only what you touched).
   - Do not sweep unrelated local files into commits.
-- Capture `PRE_MERGE_SHA` (current `HEAD`), then `git fetch origin`, then merge the default branch into the feature branch.
+- Run `git fetch origin`, then merge the default branch into the feature branch.
 - If conflicts occur: resolve them thoughtfully using repo conventions and our intended behavior.
   - If a conflict forces a real product/UX decision not in the repo, stop and ask with the smallest possible question.
 
@@ -50,7 +50,10 @@ Default (FAST):
 - Run only a post-merge smoke check that proves we didn’t break basics:
   - compile/build the affected target(s) (and both iOS + Android if you’re changing a mobile app),
   - run a small, relevant unit test set only if conflicts occurred or the merge diff touches core code.
-- If the merge was conflict-free and `git diff --name-only "$PRE_MERGE_SHA..HEAD"` is empty or trivially irrelevant: prefer skipping local checks and proceed to opening the PR.
+- Decide whether to run additional local checks using judgment plus one quick signal:
+  - If `git merge` reported `Already up to date.`, treat the merge as a no-op and skip local checks.
+  - Otherwise, quickly inspect what the merge introduced via `git diff --name-only ORIG_HEAD..HEAD` (fallback: `git diff --name-only HEAD@{1}..HEAD` if `ORIG_HEAD` is unusable).
+  - If the diff touches runtime/app code, build/test infra, or you’re uncertain, run the smoke check; if it’s clearly irrelevant (docs-only / comments), skip and proceed to opening the PR.
 - Avoid heavy setup/install steps unless a check fails and indicates missing deps.
 
 If $ARGUMENTS includes `parity` / `full`:
