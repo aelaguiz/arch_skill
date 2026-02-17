@@ -39,7 +39,9 @@ Modes (keep it simple):
 - Ensure changes are safely committed before merging:
   - If there are in-progress changes you created, commit them (stage only what you touched).
   - Do not sweep unrelated local files into commits.
-- Run `git fetch origin`, then merge the default branch into the feature branch.
+- Run `git fetch origin`, then merge the default branch into the feature branch (this is the conflict check):
+  - Prefer an explicit merge commit: `git merge --no-ff <default>` (usually `origin/main`).
+  - If there are conflicts: resolve them, `git add` the resolutions, then complete the merge (`git commit` if needed).
 - If conflicts occur: resolve them thoughtfully using repo conventions and our intended behavior.
   - If a conflict forces a real product/UX decision not in the repo, stop and ask with the smallest possible question.
 
@@ -66,6 +68,10 @@ If $ARGUMENTS includes `parity` / `full`:
 
 ## 4) Open a draft PR with the repo’s template (repo-relative)
 Before opening the PR: if this repo has an explicit docs policy / doc lifecycle policy (in `AGENTS.md`, `docs/AGENTS.md`, `docs/ORIENTATION_ARTIFACT_MAP.md`, or similar), follow it first (e.g., required doc summaries, moving plan docs to the right place, not committing huge raw logs/artifacts, adding `gitignore` rules). Do not invent new policy; obey only what’s clearly specified.
+
+Before opening/submitting the PR, re-check that we’re still synced to the latest default branch tip:
+- Run `git fetch origin`.
+- If `<default>` has moved since your merge (i.e., `git log HEAD..<default> --oneline` shows any commits), go back to step (1) and merge again. Do not open a PR that’s immediately “out of date”.
 
 Produce a PR title + body that is detailed and matches THIS repo’s template:
 - Load the PR template from THIS repo (repo-relative), preferring:
