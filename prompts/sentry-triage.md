@@ -1,6 +1,6 @@
 ---
 description: "Sentry triage: list, analyze, and rank the top ongoing client + server problems by user experience impact."
-argument-hint: "<Optional: org, client projects, server projects, envs, release/version to focus on, time window, topN, serverIssueFilter (e.g. service:backend), key journeys, categorization schema. If no release is provided, default to last 2 days.>"
+argument-hint: "<Optional: envs, release/version to focus on, time window, topN, optional serverIssueFilter (e.g. service:backend), key journeys, categorization schema. Defaults: org=funcountry; project=psmobile-production (or psmobile-staging when env includes staging); if no release is provided, default to last 2 days.>"
 ---
 # /prompts:sentry-triage — $ARGUMENTS
 Do not preface with a plan or restate these instructions. Begin work immediately. If a tool-call preamble is required by system policy, keep it to a single terse line with no step list.
@@ -10,23 +10,21 @@ Primary objective:
 - Use Sentry MCP tools to list, analyze, and evaluate the **top ongoing problems** affecting **client** and **server**.
 - Always view issues through the lens of **user experience (UX)**. A WARN may outrank an ERROR if UX harm is higher.
 
-Question policy (strict; stop early when needed):
-- If you are missing any *essential* input to run accurate queries (org slug, projects, environment, scope), STOP and ask the smallest set of clarifying questions (max 6).
-- If something is ambiguous but not essential, proceed with a sensible default and include the ambiguity in “Questions for Dev”.
-- After getting answers, resume exactly where you stopped.
+Question policy (default to action):
+- Do not block on missing scope details. Start with defaults and run triage immediately.
+- Ask follow-up questions only when absolutely essential to proceed (for example: org/project access fails or tools return no reachable scope). Max 3 concise questions.
+- If something is ambiguous but not essential, proceed with defaults and capture the ambiguity in “Questions for Dev”.
 
-## Essential inputs (must have)
-If $ARGUMENTS does not clearly include all of the following, STOP and ask for them:
-- `organizationSlug`
-- `clientProjectSlugsOrIds` (one or more)
-- `serverProjectSlugsOrIds` (one or more)
-
-Important:
-- If server and client errors live in the **same** Sentry project(s), set `serverProjectSlugsOrIds` to those project(s) and include `serverIssueFilter` (e.g. `service:backend`) so you don’t duplicate client issues into the server list. If missing, STOP and ask.
-
-Defaults (only if not specified):
+## Default scope (auto-fill unless overridden)
+- `organizationSlug`: `funcountry`
 - `environments`: ["production"]
+- `clientProjectSlugsOrIds`:
+  - If environment is production (default): ["psmobile-production"]
+  - If environment includes staging: ["psmobile-staging"]
+  - If both production and staging are requested: query both projects
+- `serverProjectSlugsOrIds`: not required; ignore unless explicitly provided in $ARGUMENTS
 - `topN`: 10 overall + 5 client + 5 server (but do not duplicate the same issue across lists)
+- `serverIssueFilter`: optional optimization only (never a gate)
 
 ## Scope (release vs last 2 days)
 You MUST “look for a version to focus on”:
@@ -59,13 +57,18 @@ Important:
 - If the issue is clearly not user-facing and not actionable, it is likely P4.
 
 ## Gathering issues (efficient; impact-first)
-You will run **separate** passes for client and server, then merge and rank globally.
+You will run **separate** client and server passes, then merge and rank globally.
 
-For each project in client + server:
+Project scope selection:
+- Use `clientProjectSlugsOrIds` from defaults/overrides.
+- If explicit `serverProjectSlugsOrIds` are provided, include them for the server pass.
+- If no explicit server projects are provided, run server pass against the same project pool and classify by issue evidence (service tags, stack traces, logger names, transactions, URLs, SDK/platform context).
+
+For each project in the selected pool:
 - Pull candidate ongoing issues (unresolved) within scope:
   - Use `search_issues(organizationSlug=..., naturalLanguageQuery=...)`.
   - Query should bias toward: most users impacted, most events, most recent, and production env (unless Dev specifies otherwise).
-  - If `serverIssueFilter` is provided, include it in the server queries (e.g., append `service:backend`).
+  - For server pass, if `serverIssueFilter` is provided include it (e.g., append `service:backend`); otherwise infer backend/server issues from issue content and tags. Do not stop if the filter is missing.
   - Example query shape (adapt as needed):
     - “Top unresolved issues affecting the most users in production in the last 2 days”
     - If `releaseVersionFocus` set: “Top unresolved issues affecting the most users in production for release <release> in the last 7 days”
@@ -123,7 +126,7 @@ Only questions that would materially change prioritization, scope, or next actio
 - Release focus: `releaseVersionFocus` OR “none”
 - Time window: explicit (e.g. “last 2 days”)
 - Environments
-- Client projects + Server projects
+- Client project scope + server pass strategy (explicit server projects vs in-project classification)
 - Tools used (high level)
 - Caveats (release tagging missing, counts not time-scoped, etc.)
 
@@ -165,7 +168,7 @@ Use this exact skeleton:
 - Time window: <explicit>
 - Environments: <...>
 - Client projects: <...>
-- Server projects: <...>
+- Server pass: <explicit server projects OR in-project classification>
 - Tools used: <search_issues, get_issue_details, ...>
 - Caveats: <1–3 bullets>
 
