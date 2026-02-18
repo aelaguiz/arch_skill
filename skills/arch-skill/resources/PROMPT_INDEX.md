@@ -13,6 +13,17 @@ Principle: prompts are the **procedures**; this index is just routing.
 - Flow status / what's next: `/prompts:arch-flow <DOC_PATH>`
 - Kickoff (research setup + checkpoints): `/prompts:arch-kickoff <DOC_PATH>`
 
+## 0c) Mini-arch (tiny tasks)
+For small features/improvements that can ship in **1–3 phases** (not new architectures, not big migrations):
+
+- Start (new + research + requirements): `/prompts:lilarch-start <freeform request> [docs/<...>.md]`
+- Plan (deep dive + plan + audits): `/prompts:lilarch-plan <DOC_PATH>`
+- Finish (implement + review): `/prompts:lilarch-finish <DOC_PATH>`
+
+If the work expands beyond 3 phases or is investigation-heavy:
+- Switch to `/prompts:arch-flow <DOC_PATH> FLOW=regular` (or)
+- Use `/prompts:bugs-analyze <evidence>`
+
 ## 0a) Ramp-up (read-only orientation)
 - Quick ramp-up: `/prompts:arch-ramp-up <DOC_PATH or guidance>`
 - Agent-assisted ramp-up (parallel read-only scans): `/prompts:arch-ramp-up-agent <DOC_PATH or guidance>`
