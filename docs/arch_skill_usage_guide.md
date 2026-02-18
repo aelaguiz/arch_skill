@@ -140,6 +140,24 @@ Practical placement: run it after the phase plan is written and before implement
 
 If you’re on the fence: default to the regular flow. The overhead is mostly “structured writeback” you’ll want anyway.
 
+### Lilarch flow (tiny tasks, 3 prompts)
+`lilarch` is a **compressed mini-arch** flow intended for **small features or improvements** that can ship in **1–3 phases**.
+
+Use `lilarch` when:
+- You mostly need to (1) lock North Star + requirements, (2) confirm call sites + idiomatic plan, (3) ship + review.
+- You want to avoid the larger prompt surface area of the full arch flow.
+
+Avoid `lilarch` when:
+- The plan is likely **4+ phases**, a broad migration, or a new system.
+- Investigation dominates (unknown root cause) → use `bugs-*` or North Star investigation.
+
+Flow:
+1) `/prompts:lilarch-start <freeform request>`
+2) `/prompts:lilarch-plan docs/<...>.md`
+3) `/prompts:lilarch-finish docs/<...>.md`
+
+If lilarch feels too small midway, the doc is still compatible with the full arch prompts (same block marker conventions), so you can switch to `/prompts:arch-flow docs/<...>.md FLOW=regular`.
+
 ---
 
 ## 4) Regular arch flow (recommended for serious work)

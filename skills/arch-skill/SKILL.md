@@ -52,6 +52,17 @@ See `resources/PROMPT_INDEX.md` for the canonical mapping from intent → prompt
 | `/prompts:arch-ramp-up-agent` | Agent-assisted ramp-up (parallel read-only scans). | `DOC_PATH` or guidance |
 | `/prompts:arch-context-load` | Derive high-signal brief from DOC_PATH for agent handoff. | `DOC_PATH` |
 
+### Mini-arch (lilarch — tiny tasks)
+
+`lilarch` is a compressed 3-prompt flow for small features/improvements that can ship in 1–3 phases.
+If the work expands beyond that (or is investigation-heavy), switch back to the full `arch-*` flow or the `bugs-*` flow.
+
+| Prompt | What it does | Args |
+| --- | --- | --- |
+| `/prompts:lilarch-start` | Create/repair a compact plan doc: North Star + requirements + minimal grounding (optional external best practices). | Freeform request; optional `docs/<...>.md` |
+| `/prompts:lilarch-plan` | Deep dive + 1–3 phase plan + internal plan audit + external plan audit (write back to doc). | `DOC_PATH` |
+| `/prompts:lilarch-finish` | Implement + self-audit + external code review; update worklog and mark doc complete. | `DOC_PATH`; optional `PAUSE=1` |
+
 ### Research grounding
 
 | Prompt | What it does | Args |

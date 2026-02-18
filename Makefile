@@ -62,6 +62,9 @@ claude_install_skill:
 verify_install: verify_claude_install
 	@test -f ~/.codex/prompts/arch-new.md
 	@test -f ~/.codex/prompts/arch-flow.md
+	@test -f ~/.codex/prompts/lilarch-start.md
+	@test -f ~/.codex/prompts/lilarch-plan.md
+	@test -f ~/.codex/prompts/lilarch-finish.md
 	@test -f ~/.codex/prompts/bugs-analyze.md
 	@test -f ~/.codex/prompts/bugs-fix.md
 	@test -f ~/.codex/prompts/bugs-review.md
@@ -75,6 +78,7 @@ verify_install: verify_claude_install
 
 verify_claude_install:
 	@test -f ~/.claude/commands/prompts/arch-new.md
+	@test -f ~/.claude/commands/prompts/lilarch-start.md
 	@test -f ~/.claude/commands/prompts/goal-loop-new.md
 	@test -f ~/.claude/skills/arch-skill/SKILL.md
 	@test -f ~/.claude/skills/arch-flow/SKILL.md
