@@ -1,6 +1,6 @@
-# arch_skill (Codex CLI + Claude Code prompts)
+# arch_skill (Codex CLI + Claude Code + Gemini CLI prompts)
 
-This repo is a set of **custom prompts** (slash commands) for **Codex CLI** and **Claude Code**, plus a small HTML template used by some prompts.
+This repo is a set of **custom prompts** (slash commands) for **Codex CLI**, **Claude Code**, and **Gemini CLI**, plus a small HTML template used by some prompts.
 
 In addition, it includes an optional **skill** (`arch-skill`) that acts as a router + invariants layer (single SSOT doc, question policy, flow selection). The skill is a **parallel mechanism**: prompts are still installed and used as-is.
 
@@ -10,8 +10,9 @@ In addition, it includes an optional **skill** (`arch-skill`) that acts as a rou
 | --- | --- | --- | --- |
 | **Codex CLI** | `~/.codex/prompts/` | `~/.codex/skills/` | `~/.codex/templates/` |
 | **Claude Code** | `~/.claude/commands/prompts/` | `~/.claude/skills/` | (not applicable) |
+| **Gemini CLI** | `~/.gemini/arch_skill/prompts/` | `~/.gemini/skills/` | (not applicable) |
 
-Both tools discover prompts as `/prompts:<name>` slash commands after install.
+All tools discover prompts as `/prompts:<name>` slash commands after install.
 
 ## Install
 
@@ -21,7 +22,13 @@ cd arch_skill
 make install
 ```
 
-This installs to **both** Codex CLI and Claude Code directories:
+This installs to **Codex CLI**, **Claude Code**, and **Gemini CLI** directories.
+
+To skip Gemini (leave existing behavior unchanged):
+
+```bash
+make install NO_GEMINI=1
+```
 
 **Codex CLI:**
 - Prompts → `~/.codex/prompts/`
@@ -32,7 +39,14 @@ This installs to **both** Codex CLI and Claude Code directories:
 - Prompts → `~/.claude/commands/prompts/`
 - Skills → `~/.claude/skills/arch-skill/`, `~/.claude/skills/arch-flow/`
 
+**Gemini CLI:**
+- Commands → `~/.gemini/commands/prompts/*.toml` (invoked as `/prompts:<name>`)
+- Prompts → `~/.gemini/arch_skill/prompts/`
+- Skills → `~/.gemini/skills/arch-skill/`, `~/.gemini/skills/arch-flow/`
+
 Note: prompts use a `USERNAME` placeholder. `make install` creates a `.env` file (if missing), ensures it contains `USERNAME=<whoami>`, then substitutes that value into the installed prompts. Edit `.env` to override.
+
+Gemini CLI note: `make install` generates per-command `.toml` files for Gemini using `python3`.
 
 ### Remote install
 
@@ -40,7 +54,7 @@ Note: prompts use a `USERNAME` placeholder. `make install` creates a `.env` file
 make remote_install HOST=user@host
 ```
 
-Installs prompts + skills to both Codex and Claude Code directories on the remote host via SSH/SCP.
+Installs prompts + skills to Codex + Claude Code + Gemini CLI directories on the remote host via SSH/SCP.
 
 ### Verify
 
@@ -48,11 +62,11 @@ Installs prompts + skills to both Codex and Claude Code directories on the remot
 make verify_install
 ```
 
-Checks that key files are in place for both Codex CLI and Claude Code.
+Checks that key files are in place for Codex CLI, Claude Code, and Gemini CLI.
 
-Restart your Codex/Claude Code instance so it reloads the installed prompts/skills.
+Restart your Codex/Claude Code/Gemini CLI instance so it reloads the installed prompts/skills.
 
-## Prompt families (53 prompts)
+## Prompt families (59 prompts)
 
 The full catalog is in `skills/arch-skill/SKILL.md` and `skills/arch-skill/resources/PROMPT_INDEX.md`.
 
@@ -105,7 +119,7 @@ Deep investigation for optimization or root-cause analysis. Commander's Intent s
 
 ## Usage
 
-- Start typing `/prompts:` in Codex CLI or Claude Code and pick the command you want.
+- Start typing `/prompts:` in Codex CLI, Claude Code, or Gemini CLI and pick the command you want.
 - Optional: in conversation, you can ask the agent to "use arch-skill" to activate the router + invariants layer (prompts remain the SSOT procedures).
 - Optional (high leverage when you have specs/design docs you don't want missed): `/prompts:arch-fold-in`
   - Example: `/prompts:arch-fold-in docs/MY_PLAN.md docs/spec.md docs/ux_notes.md https://… "Fold these in; Phase 2 must obey the UX contract."`
@@ -113,3 +127,7 @@ Deep investigation for optimization or root-cause analysis. Commander's Intent s
 - Sentry top-problems triage (client + server): `/prompts:sentry-triage`
 - Shortcut for "run automation on an existing sim/emulator and reopen plan issues if it fails": `/prompts:arch-qa-autotest`
 - Regular flow vs mini flow guide: `docs/arch_skill_usage_guide.md`
+
+## Known limitations (Gemini CLI)
+
+Some prompts assume Codex CLI is installed/configured and will reference Codex-specific paths or commands (for example, `~/.codex/templates/...` or `codex exec`). Gemini CLI can still *invoke* these prompts, but running them end-to-end may require Codex CLI to be installed as a dependency.
