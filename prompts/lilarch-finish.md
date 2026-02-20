@@ -100,16 +100,16 @@ Manual QA: <pending|complete|n/a> (non-blocking)
      - If `CLAUDECODE=1` is set (you are Claude Code): use Codex CLI
        - `codex exec --dangerously-bypass-approvals-and-sandbox`
      - Otherwise: use Claude Code CLI
-       - `claude -p --dangerously-skip-permissions`
+     - `claude -p --dangerously-skip-permissions`
    - Suggested command pattern:
      ```bash
-     if [ "$CLAUDECODE" = "1" ]; then
+     if [ "$$CLAUDECODE" = "1" ]; then
        REVIEWER="codex exec --dangerously-bypass-approvals-and-sandbox"
      else
        REVIEWER="claude -p --dangerously-skip-permissions"
      fi
  
-     cat <<'REVIEW_EOF' | $REVIEWER
+     cat <<'REVIEW_EOF' | $$REVIEWER
      You are code reviewing an implementation relative to DOC_PATH="<DOC_PATH>".
      Task:
      - Verify completeness vs the plan (especially call sites + deletes).

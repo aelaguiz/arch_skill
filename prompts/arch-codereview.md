@@ -44,13 +44,13 @@ Get an external, high-signal code review of the implementation relative to the p
 - Detect the reviewer CLI and run:
   ```bash
   # Detect reviewer CLI
-  if [ "$CLAUDECODE" = "1" ]; then
+  if [ "$$CLAUDECODE" = "1" ]; then
     REVIEWER="codex exec --dangerously-bypass-approvals-and-sandbox"
   else
     REVIEWER="claude -p --dangerously-skip-permissions"
   fi
 
-  cat <<'REVIEW_EOF' | $REVIEWER
+  cat <<'REVIEW_EOF' | $$REVIEWER
   <PROMPT>
   REVIEW_EOF
   ```
