@@ -161,7 +161,7 @@ remote_install:
 	@ssh $(HOST) "mkdir -p ~/.codex/prompts/_backup && for f in arch-impl-audit.md arch-impl-audit-agent.md goal-loop-bootstrap.md; do [ -f ~/.codex/prompts/$$f ] && mv -f ~/.codex/prompts/$$f ~/.codex/prompts/_backup/ || true; done"
 	@ssh $(HOST) "mkdir -p ~/.claude/commands/prompts/_backup && [ -f ~/.claude/commands/prompts/goal-loop-bootstrap.md ] && mv -f ~/.claude/commands/prompts/goal-loop-bootstrap.md ~/.claude/commands/prompts/_backup/ || true"
 	@if [ "$(NO_GEMINI)" != "1" ]; then \
-		ssh $(HOST) "ts=$$(date +%Y%m%d_%H%M%S); if [ -f ~/.gemini/commands/prompts.toml ]; then mv -f ~/.gemini/commands/prompts.toml ~/.gemini/_backup/commands/prompts.toml.$$ts.bak; fi; if [ -d ~/.gemini/commands/prompts ]; then mv -f ~/.gemini/commands/prompts ~/.gemini/_backup/commands/prompts.$$ts; fi"; \
+		ssh $(HOST) "ts=\$$(date +%Y%m%d_%H%M%S); if [ -f ~/.gemini/commands/prompts.toml ]; then mv -f ~/.gemini/commands/prompts.toml ~/.gemini/_backup/commands/prompts.toml.\$$ts.bak; fi; if [ -d ~/.gemini/commands/prompts ]; then mv -f ~/.gemini/commands/prompts ~/.gemini/_backup/commands/prompts.\$$ts; fi"; \
 	fi
 	@tmpdir=$$(mktemp -d); \
 	USERNAME=$$(grep -E '^USERNAME=' "$(ENV_FILE)" | tail -n 1 | cut -d= -f2-); \
@@ -185,6 +185,6 @@ remote_install:
 		scp -r "$$tmpdir/prompts" $(HOST):~/.gemini/commands/; \
 		rm -rf "$$tmpdir"; \
 		ssh $(HOST) "rm -rf ~/.gemini/skills/arch-skill ~/.gemini/skills/arch-flow"; \
-		scp -r skills/arch-skill skills/arch-flow $(HOST):~/.gemini/skills/; \
-		ssh $(HOST) "for skill in $(GEMINI_SKILLS); do f=~/.gemini/skills/$$skill/SKILL.md; tmp=$$f.tmp; awk 'NR==1 && $$0==\"---\" {front=1; next} front && $$0==\"---\" {front=0; next} !front {print}' \"$$f\" > \"$$tmp\" && mv \"$$tmp\" \"$$f\"; done"; \
-	fi
+			scp -r skills/arch-skill skills/arch-flow $(HOST):~/.gemini/skills/; \
+			ssh $(HOST) "for skill in $(GEMINI_SKILLS); do f=~/.gemini/skills/\$$skill/SKILL.md; tmp=\$$f.tmp; awk 'NR==1 && $$0==\"---\" {front=1; next} front && $$0==\"---\" {front=0; next} !front {print}' \"\$$f\" > \"\$$tmp\" && mv \"\$$tmp\" \"\$$f\"; done"; \
+		fi
