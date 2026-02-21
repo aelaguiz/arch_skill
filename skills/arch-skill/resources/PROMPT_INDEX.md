@@ -46,6 +46,7 @@ If the work expands beyond 3 phases or is investigation-heavy:
 - Agent-assisted phase plan: `/prompts:arch-phase-plan-agent <DOC_PATH>`
 - Phase plan granularize (optional; single SSOT microtasks): `/prompts:arch-phase-plan-granularize <DOC_PATH>`
 - Phase plan granularize (agent-assisted): `/prompts:arch-phase-plan-granularize-agent <DOC_PATH>`
+- Overbuild protector (optional; prevent scope creep/overbuild): `/prompts:arch-overbuild-protector <DOC_PATH>`
 - Review gate (recommended for risky changes): `/prompts:arch-review-gate <DOC_PATH>`
 - Fold in references (inline docs/links into phases): `/prompts:arch-fold-in <DOC_PATH>`
 - Plan audit (score readiness across phases): `/prompts:arch-plan-audit <DOC_PATH>`

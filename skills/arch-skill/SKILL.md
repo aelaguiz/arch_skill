@@ -89,6 +89,7 @@ If the work expands beyond that (or is investigation-heavy), switch back to the 
 | `/prompts:arch-phase-plan-granularize-agent` | Agent-assisted phase plan granularize (parallel read-only: call-site batching, deletes, smallest checks). | `DOC_PATH` |
 | `/prompts:arch-review-gate` | External idiomatic + completeness check (recommended for risky changes). | `DOC_PATH` |
 | `/prompts:arch-fold-in` | Inline reference docs/links into phases so implementation can't miss them. | `DOC_PATH` |
+| `/prompts:arch-overbuild-protector` | Optional: scope triage to prevent overbuild; classify Phase Plan items and move out-of-scope work to intentional follow-ups. | `DOC_PATH` (`MODE=report|apply`, `STRICT=0|1`) |
 | `/prompts:arch-plan-audit` | Score plan readiness across phases. | `DOC_PATH` |
 | `/prompts:arch-plan-audit-agent` | Agent-assisted plan audit with parallel subagent checks. | `DOC_PATH` |
 | `/prompts:arch-mini-plan-agent` | One-pass research + deep dive + phase plan (small tasks). | `DOC_PATH` |

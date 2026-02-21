@@ -60,6 +60,7 @@ Shared signals:
   - `<!-- arch_skill:block:ui_ascii_target:start -->`
 - Plan enhancer (optional): `<!-- arch_skill:block:plan_enhancer:start -->`
 - Phase plan: `<!-- arch_skill:block:phase_plan:start -->`
+- Overbuild protector (optional): `<!-- arch_skill:block:overbuild_protector:start -->`
 - Review gate (optional): `<!-- arch_skill:block:review_gate:start -->`
 - Gaps & concerns (optional): `<!-- arch_skill:block:gaps_concerns:start -->`
 - Implementation vs plan audit (optional): `<!-- arch_skill:block:implementation_audit:start -->`
@@ -88,20 +89,22 @@ Regular Flow (recommended):
 7) UI ASCII (optional; `/prompts:arch-ui-ascii`)
 8) Plan enhancer (optional; `/prompts:arch-plan-enhance`)
 9) Phase plan (`/prompts:arch-phase-plan` or `arch-phase-plan-agent`)
-10) Review gate (optional; `/prompts:arch-review-gate`)
-11) Implement (`/prompts:arch-implement` or `arch-implement-agent`) + WORKLOG_PATH exists
-12) Post-checks (optional): `/prompts:arch-audit`, `/prompts:arch-audit-implementation`, `/prompts:arch-qa-autotest`
-13) Code review: `/prompts:arch-codereview`
-14) PR finalization (optional): `/prompts:arch-open-pr`
+10) Overbuild protector (optional): `/prompts:arch-overbuild-protector`
+11) Review gate (optional; `/prompts:arch-review-gate`)
+12) Implement (`/prompts:arch-implement` or `arch-implement-agent`) + WORKLOG_PATH exists
+13) Post-checks (optional): `/prompts:arch-audit`, `/prompts:arch-audit-implementation`, `/prompts:arch-qa-autotest`
+14) Code review: `/prompts:arch-codereview`
+15) PR finalization (optional): `/prompts:arch-open-pr`
 
 Mini Flow (small tasks):
 1) Plan doc exists (DOC_PATH readable)
 2) North Star confirmed (soft; based on `status:`)
 3) Mini plan (`/prompts:arch-mini-plan-agent`)
-4) Implement (`/prompts:arch-implement-agent`) + WORKLOG_PATH exists
-5) Post-checks (optional): `/prompts:arch-audit-agent`, `/prompts:arch-audit-implementation-agent`, `/prompts:arch-qa-autotest`
-6) Code review: `/prompts:arch-codereview`
-7) PR finalization (optional): `/prompts:arch-open-pr`
+4) Overbuild protector (optional): `/prompts:arch-overbuild-protector`
+5) Implement (`/prompts:arch-implement-agent`) + WORKLOG_PATH exists
+6) Post-checks (optional): `/prompts:arch-audit-agent`, `/prompts:arch-audit-implementation-agent`, `/prompts:arch-qa-autotest`
+7) Code review: `/prompts:arch-codereview`
+8) PR finalization (optional): `/prompts:arch-open-pr`
 
 Next step selection rule:
 - Choose the earliest PENDING **non-optional** step in the selected flow.

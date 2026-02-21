@@ -115,6 +115,7 @@ gemini_install_skill:
 verify_install: verify_claude_install $(VERIFY_GEMINI)
 	@test -f ~/.codex/prompts/arch-new.md
 	@test -f ~/.codex/prompts/arch-flow.md
+	@test -f ~/.codex/prompts/arch-overbuild-protector.md
 	@test -f ~/.codex/prompts/lilarch-start.md
 	@test -f ~/.codex/prompts/lilarch-plan.md
 	@test -f ~/.codex/prompts/lilarch-finish.md
@@ -131,6 +132,7 @@ verify_install: verify_claude_install $(VERIFY_GEMINI)
 
 verify_claude_install:
 	@test -f ~/.claude/commands/prompts/arch-new.md
+	@test -f ~/.claude/commands/prompts/arch-overbuild-protector.md
 	@test -f ~/.claude/commands/prompts/lilarch-start.md
 	@test -f ~/.claude/commands/prompts/goal-loop-new.md
 	@test -f ~/.claude/skills/arch-skill/SKILL.md
@@ -139,8 +141,10 @@ verify_claude_install:
 
 verify_gemini_install:
 	@test -f ~/.gemini/commands/prompts/arch-new.toml
+	@test -f ~/.gemini/commands/prompts/arch-overbuild-protector.toml
 	@test -f ~/.gemini/arch_skill/prompts/arch-new.md
 	@test -f ~/.gemini/arch_skill/prompts/arch-flow.md
+	@test -f ~/.gemini/arch_skill/prompts/arch-overbuild-protector.md
 	@test -f ~/.gemini/skills/arch-skill/SKILL.md
 	@test -f ~/.gemini/skills/arch-flow/SKILL.md
 	@echo "OK: Gemini commands + prompts + skills installed"

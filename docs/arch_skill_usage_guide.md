@@ -105,6 +105,7 @@ Many prompts update the plan by replacing the content inside these markers (inst
 - `<!-- arch_skill:block:target_architecture:start --> … end -->`
 - `<!-- arch_skill:block:call_site_audit:start --> … end -->`
 - `<!-- arch_skill:block:phase_plan:start --> … end -->`
+- `<!-- arch_skill:block:overbuild_protector:start --> … end -->`
 - `<!-- arch_skill:block:review_gate:start --> … end -->`
 - `<!-- arch_skill:block:gaps_concerns:start --> … end -->`
 - `<!-- arch_skill:block:implementation_audit:start --> … end -->`
@@ -216,6 +217,11 @@ If the change touches UI/UX:
 Optional (recommended when you have specs/design docs you don’t want missed during implementation):
 - `/prompts:arch-fold-in docs/<...>.md <any number of ref doc paths/URLs> <short blurb>`
   - Folds references *into* the plan doc and wires binding obligations into the relevant phases.
+
+Optional (when you want to aggressively prevent scope creep / overbuild before implementation):
+- `/prompts:arch-overbuild-protector docs/<...>.md MODE=report` (default) or `MODE=apply`
+  - Classifies Phase Plan items as ship-blocking vs optional vs follow-ups (intentionally deferred) vs rejected bug vectors.
+  - MODE=apply rewrites the Phase Plan in-place so out-of-scope items cannot be mistaken as required work.
 
 Optional (when you want extremely granular, small-agent-executable tasks):
 - `/prompts:arch-phase-plan-granularize docs/<...>.md LEVEL=2`

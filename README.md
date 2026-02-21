@@ -66,7 +66,7 @@ Checks that key files are in place for Codex CLI, Claude Code, and Gemini CLI.
 
 Restart your Codex/Claude Code/Gemini CLI instance so it reloads the installed prompts/skills.
 
-## Prompt families (59 prompts)
+## Prompt families (60 prompts)
 
 The full catalog is in `skills/arch-skill/SKILL.md` and `skills/arch-skill/resources/PROMPT_INDEX.md`.
 
@@ -76,6 +76,7 @@ The core prompt family for structured architecture planning + execution. Support
 - `/prompts:arch-new` — create a new canonical plan doc
 - `/prompts:arch-mini-plan-agent` — one-pass research + deep dive + phase plan
 - `/prompts:arch-phase-plan-granularize` — optional: rewrite the Phase Plan into micro-phases + microtasks (single SSOT; good for smaller/dumber coding agents)
+- `/prompts:arch-overbuild-protector` — optional: scope triage to prevent overbuild; move scope creep to intentional follow-ups
 - `/prompts:arch-implement` / `arch-implement-agent` — ship the plan end-to-end
 - `/prompts:arch-fold-in` — fold reference docs/links into phases (high leverage when you have specs)
 - `/prompts:arch-audit-implementation` — strict "is code actually complete vs plan?" audit
