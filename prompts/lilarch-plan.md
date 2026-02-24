@@ -222,13 +222,13 @@ Run an external plan review prompt that:
 
 Suggested review command pattern (pipe prompt; do NOT pass positional args):
 ```bash
-if [ "$CLAUDECODE" = "1" ]; then
+if [ "$$CLAUDECODE" = "1" ]; then
   REVIEWER="codex exec --dangerously-bypass-approvals-and-sandbox"
 else
   REVIEWER="claude -p --dangerously-skip-permissions"
 fi
 
-cat <<'REVIEW_EOF' | $REVIEWER
+cat <<'REVIEW_EOF' | $$REVIEWER
 You are reviewing a small-feature plan doc at DOC_PATH="<DOC_PATH>".
 Task: audit the plan for implementability and idiomatic fit.
 Requirements:
