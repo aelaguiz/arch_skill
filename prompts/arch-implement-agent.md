@@ -92,6 +92,17 @@ If either is missing or contradictory, pause and ask for a quick doc edit before
 
 Read DOC_PATH fully. Treat the doc as the authoritative spec and checklist.
 
+Implementation ledger (lightweight completeness guard; do not turn this into ceremony)
+- Before editing code, derive a compact in-memory ledger of in-scope implementation obligations from DOC_PATH.
+- Build it from the strongest available planning artifacts, in this order:
+  - phase checklist items / phase tasks
+  - call-site audit rows and change-map entries
+  - migration notes / delete lists
+  - "include" items from pattern-consolidation or follow-through sweeps
+- Each ledger item should be concrete enough that you can later answer: implemented, deferred, blocked, or not actually in scope.
+- Prefer rows shaped like: `<area> | <file/symbol/call site> | <required change> | <status>`.
+- This ledger is working memory, not a second plan doc. Keep it compact. Only write it down when it materially helps explain status or blockers.
+
 Warn-first preflight (recommended planning pass sequence; do NOT hard-block)
 - Recommended flow before phase plan and implementation:
   1) Deep dive (pass 1): current/target architecture + call-site audit
@@ -110,6 +121,12 @@ Implementation discipline (optimize for steady execution, not ceremony):
   - At phase boundaries, re-check the North Star + UX scope + invariants in DOC_PATH.
   - If the plan needs sequencing tweaks, update DOC_PATH (Decision Log entry) and keep going unless it changes user-facing scope or requires a product decision.
 - Implement SYSTEMATICALLY: follow the phased plan (or the plan’s checklist) in order.
+- Completeness discipline (most important):
+  - Treat the implementation ledger as the completeness contract for this run.
+  - At each phase boundary, reconcile the ledger against the code you changed and the remaining planned work.
+  - Update each in-scope item to one of: `done`, `blocked`, `deferred`, or `still todo`.
+  - Do NOT silently drop items because the core path works; if something remains, keep it visible in the ledger and in DOC_PATH / WORKLOG_PATH when relevant.
+  - If a planned item turns out to be truly out of scope, record that explicitly with a short rationale; do not just forget it.
 - No-fallback policy (strict; do not propose):
   - Default: do NOT add runtime fallbacks, compatibility shims, placeholder behavior, or “best effort” paths that emulate success while being wrong.
     - Examples: swallowing errors and returning empty/null; silently defaulting to stale/cached data; “try old API if new fails”; leaving dev-only shims in prod.
@@ -170,6 +187,7 @@ Stop conditions (do not plow ahead):
 
 Finish criteria:
 - All phases / checklist items are complete and the North Star is satisfied.
+- Every in-scope implementation-ledger item is resolved: `done`, or explicitly `deferred` / `blocked` with evidence and rationale.
 - The doc reflects reality: no “done” claims without evidence.
 
 Finalization (after implementation is complete):
@@ -182,7 +200,15 @@ Finalization (after implementation is complete):
 3) External code review is a separate, opt-in step:
    - Do NOT launch another model from this prompt.
    - If the user explicitly asked for code review, stop after local verification and point to `/prompts:arch-codereview DOC_PATH` as the next command.
-4) Commit and push AFTER local verification (unless the user explicitly requested a different sequence).
+4) Do a final plan-to-work reconciliation before claiming completion:
+   - Re-read the implementation-relevant parts of DOC_PATH (phase checklist, call-site audit, migration/delete notes, in-scope follow-through items).
+   - Compare them against the implementation ledger and the files/symbols actually touched.
+   - Search for any planned call site, module, delete, or migration task that was never resolved.
+   - If anything remains unresolved, do NOT claim "done":
+     - either finish it now,
+     - or mark it explicitly as `deferred` / `blocked` with rationale and evidence,
+     - and describe the run as partial rather than complete.
+5) Commit and push AFTER local verification (unless the user explicitly requested a different sequence).
    - Stage only files you touched; ignore other dirty files.
 
 OUTPUT FORMAT (console only; USERNAME-style):
@@ -191,6 +217,9 @@ Include:
 - North Star reminder (1 line)
 - Punchline (1 line)
 - What you did / what changed
+- Completion status:
+  - State clearly whether the run is `complete` or `partial`.
+  - If `partial`, name the unresolved ledger items plainly; do not hide them in narrative.
 - Issues/Risks (if any)
 - Next action
 - Need from USERNAME (only if required)
