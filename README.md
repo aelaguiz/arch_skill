@@ -1,8 +1,20 @@
-# arch_skill (Codex CLI + Claude Code + Gemini CLI prompts)
+# arch_skill (skills first; legacy prompts included)
 
-This repo is a set of **custom prompts** (slash commands) for **Codex CLI**, **Claude Code**, and **Gemini CLI**, plus a small HTML template used by some prompts.
+This repo now ships a **skill suite** for **Codex CLI**, **Claude Code**, and **Gemini CLI**, plus the legacy prompt catalog and a small HTML template used by some prompts.
 
-In addition, it includes an optional **skill** (`arch-skill`) that acts as a router + invariants layer (single SSOT doc, question policy, flow selection). The skill is a **parallel mechanism**: prompts are still installed and used as-is.
+The primary skill surface is:
+
+- `arch-plan` — full research, deep dive, external research, phase plan, local implementation, and implementation audit
+- `arch-mini-plan` — one-pass mini architecture planning
+- `lilarch` — compact 1-3 phase feature flow
+- `bugs-flow` — evidence-first bug analyze/fix/review flow
+- `goal-loop` — open-ended goal-seeking loop
+- `north-star-investigation` — math-first investigation loop
+- `arch-flow` — read-only "what's next?" router for arch docs
+- `arch-skills-guide` — explains the suite and recommends the right subskill
+
+Prompts are still installed for legacy or non-skill use, but the new skills do not depend on saved prompts at runtime.
+For Codex specifically, default installs now remove this repo's legacy prompts from `~/.codex/prompts/` and install only the skill suite plus templates.
 
 ## Compatibility
 
@@ -31,18 +43,18 @@ make install NO_GEMINI=1
 ```
 
 **Codex CLI:**
-- Prompts → `~/.codex/prompts/`
+- Prompts → not installed by default; existing arch_skill prompts are moved to `~/.codex/prompts/_backup/`
 - Templates → `~/.codex/templates/arch_skill/`
-- Skills → `~/.codex/skills/arch-skill/`, `~/.codex/skills/arch-flow/`, `~/.codex/skills/codemagic-builds/`
+- Skills → `~/.codex/skills/arch-plan/`, `arch-mini-plan/`, `lilarch/`, `bugs-flow/`, `goal-loop/`, `north-star-investigation/`, `arch-flow/`, `arch-skills-guide/`, `codemagic-builds/`
 
 **Claude Code:**
 - Prompts → `~/.claude/commands/prompts/`
-- Skills → `~/.claude/skills/arch-skill/`, `~/.claude/skills/arch-flow/`
+- Skills → `~/.claude/skills/arch-plan/`, `arch-mini-plan/`, `lilarch/`, `bugs-flow/`, `goal-loop/`, `north-star-investigation/`, `arch-flow/`, `arch-skills-guide/`
 
 **Gemini CLI:**
 - Commands → `~/.gemini/commands/prompts/*.toml` (invoked as `/prompts:<name>`)
 - Prompts → `~/.gemini/arch_skill/prompts/`
-- Skills → `~/.gemini/skills/arch-skill/`, `~/.gemini/skills/arch-flow/`
+- Skills → `~/.gemini/skills/arch-plan/`, `arch-mini-plan/`, `lilarch/`, `bugs-flow/`, `goal-loop/`, `north-star-investigation/`, `arch-flow/`, `arch-skills-guide/`
 
 Note: prompts use a `USERNAME` placeholder. `make install` creates a `.env` file (if missing), ensures it contains `USERNAME=<whoami>`, then substitutes that value into the installed prompts. Edit `.env` to override.
 
@@ -62,13 +74,41 @@ Installs prompts + skills to Codex + Claude Code + Gemini CLI directories on the
 make verify_install
 ```
 
-Checks that key files are in place for Codex CLI, Claude Code, and Gemini CLI.
+Checks that Codex is using the skill-only install path and that Claude Code and Gemini still have the expected prompt and skill files.
 
 Restart your Codex/Claude Code/Gemini CLI instance so it reloads the installed prompts/skills.
 
-## Prompt families (60 prompts)
+## Skill suite
 
-The full catalog is in `skills/arch-skill/SKILL.md` and `skills/arch-skill/resources/PROMPT_INDEX.md`.
+The split plan and prompt-coverage mapping live in `docs/ARCH_SKILL_SUITE_SPLIT_PLAN_2026-03-30.md`.
+
+### `arch-plan`
+Use for the full arch workflow: real architecture planning, research grounding, deep dives, external research, phased plans, local implementation, and implementation audits.
+
+### `arch-mini-plan`
+Use when you want the one-pass "mini plan" version of arch: canonical blocks in one pass, without running the whole multi-step arch flow.
+
+### `lilarch`
+Use for small features or improvements that should fit in 1-3 phases.
+
+### `bugs-flow`
+Use for Sentry/log-driven bug analysis, minimal localized fixes, verification, and explicit-review-only follow-up.
+
+### `goal-loop`
+Use when the goal is clear but the path is not, and you want an SSOT controller doc plus append-only iteration log.
+
+### `north-star-investigation`
+Use for quant-heavy investigations where ranked hypotheses and fastest-learning brutal tests are the main job.
+
+### `arch-flow`
+Use when the question is "what's next?" on an arch or lilarch doc and you want the single best next move.
+
+### `arch-skills-guide`
+Use when the question is "which arch skill should I use?" or "what is the difference between these subskills?"
+
+## Legacy prompt families
+
+The prompt pack is still in `prompts/` for legacy use and for surfaces that still want slash commands.
 
 ### Architecture planning flow (`arch-*`)
 The core prompt family for structured architecture planning + execution. Supports a regular flow (multi-prompt, phase-gated) and a mini flow (one-pass planning for small tasks). Key prompts:
@@ -120,13 +160,15 @@ Deep investigation for optimization or root-cause analysis. Commander's Intent s
 
 ## Usage
 
-- Start typing `/prompts:` in Codex CLI, Claude Code, or Gemini CLI and pick the command you want.
-- Optional: in conversation, you can ask the agent to "use arch-skill" to activate the router + invariants layer (prompts remain the SSOT procedures).
+- Primary surface: ask the agent to use `arch-plan`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `goal-loop`, `north-star-investigation`, `arch-flow`, or `arch-skills-guide`.
+- Legacy surface: start typing `/prompts:` in Claude Code or Gemini CLI and pick the command you want.
+- Codex intentionally uses the skill suite only by default.
 - Optional (high leverage when you have specs/design docs you don't want missed): `/prompts:arch-fold-in`
   - Example: `/prompts:arch-fold-in docs/MY_PLAN.md docs/spec.md docs/ux_notes.md https://… "Fold these in; Phase 2 must obey the UX contract."`
 - Optional (when you want microtasks without creating a second checklist): `/prompts:arch-phase-plan-granularize docs/MY_PLAN.md LEVEL=2`
 - Sentry top-problems triage (client + server): `/prompts:sentry-triage`
 - Shortcut for "run automation on an existing sim/emulator and reopen plan issues if it fails": `/prompts:arch-qa-autotest`
+- Skill-suite split and prompt coverage: `docs/ARCH_SKILL_SUITE_SPLIT_PLAN_2026-03-30.md`
 - Regular flow vs mini flow guide: `docs/arch_skill_usage_guide.md`
 
 ## Known limitations (Gemini CLI)

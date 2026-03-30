@@ -1,16 +1,29 @@
 # arch_skill — Usage Guide
 
-This guide explains the **intended usage** of the prompts in `prompts/` across four operational workflows:
+This guide explains the **intended usage** of the repo workflows across the main workflow families plus the suite selector:
 
 - **Regular arch flow**: more prompts, more checkpoints; best for medium/large changes and anything risky.
-- **Mini flow**: fewer prompts, "one-pass planning"; best for small, contained changes.
+- **Mini arch modes**: `arch-mini-plan` for one-pass planning and `lilarch` for compact 1-3 phase feature work.
+- **Bug workflow**: evidence-first investigation, fix, and verification.
 - **Goal-seeking loops**: autonomous iteration for open-ended goals (optimization, investigation, metric improvement).
 - **North Star investigation**: deep hypothesis-driven investigation for root-cause analysis or optimization.
+- **Guide / selector**: explain the suite and recommend the right subskill.
 
 It also captures the conventions that make the flows work (doc blocks, worklog naming, subagent rules).
 
-Important: this repo is meant to be used via **installed prompts** (slash commands) in **Codex CLI** or **Claude Code**.
-It also ships an optional **router skill** (`arch-skill`) as a parallel mechanism — prompts remain the SSOT procedures.
+Important:
+
+- The primary runtime surface is now the split skill suite:
+  - `arch-plan`
+  - `arch-mini-plan`
+  - `lilarch`
+  - `bugs-flow`
+  - `goal-loop`
+  - `north-star-investigation`
+  - `arch-flow`
+  - `arch-skills-guide`
+- The prompt sections below remain useful as legacy slash-command guidance and parity references.
+- Codex default installs now remove this repo's prompt pack from `~/.codex/prompts/` so local Codex usage goes through the skill suite only.
 
 ---
 
@@ -29,13 +42,13 @@ Restart Codex/Claude Code after updating prompts/skills.
 What `make install` installs:
 
 **Codex CLI:**
-- Prompts → `~/.codex/prompts/`
+- Prompts → removed from active install by default; existing arch_skill prompts are moved to `~/.codex/prompts/_backup/`
 - Templates → `~/.codex/templates/arch_skill/`
-- Skills → `~/.codex/skills/arch-skill/`, `~/.codex/skills/arch-flow/`, `~/.codex/skills/codemagic-builds/`
+- Skills → `~/.codex/skills/arch-plan/`, `arch-mini-plan/`, `lilarch/`, `bugs-flow/`, `goal-loop/`, `north-star-investigation/`, `arch-flow/`, `arch-skills-guide/`, `codemagic-builds/`
 
 **Claude Code:**
 - Prompts → `~/.claude/commands/prompts/`
-- Skills → `~/.claude/skills/arch-skill/`, `~/.claude/skills/arch-flow/`
+- Skills → `~/.claude/skills/arch-plan/`, `arch-mini-plan/`, `lilarch/`, `bugs-flow/`, `goal-loop/`, `north-star-investigation/`, `arch-flow/`, `arch-skills-guide/`
 
 ---
 
@@ -81,10 +94,12 @@ Most prompts accept freeform text, but will try to resolve `DOC_PATH` from:
 Practical rule: **always include the plan doc path explicitly** once it exists.
 
 ### `arch-flow` (status + next-step helper)
-At any time, run:
-- `/prompts:arch-flow DOC_PATH`
+At any time, either:
 
-It prints a checklist of where you are in the regular/mini flow and recommends the next prompt (with an optional `RUN=1` mode to execute the next step immediately).
+- ask the agent to use `arch-flow`, or
+- run the legacy prompt `/prompts:arch-flow DOC_PATH`
+
+It prints a checklist of where you are in the regular/mini flow and recommends the next move.
 
 ### `WORKLOG_PATH` (the progress journal)
 Implementation- and progress-oriented prompts derive the worklog from the plan doc:

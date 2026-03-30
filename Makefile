@@ -1,10 +1,12 @@
-.PHONY: install env install_prompts install_templates install_skill claude_install_prompts claude_install_skill gemini_install gemini_install_prompts gemini_install_commands gemini_install_skill generate_gemini_commands verify_install verify_claude_install verify_gemini_install remote_install
+.PHONY: install env install_prompts clean_codex_prompts install_templates install_skill claude_install_prompts claude_install_skill gemini_install gemini_install_prompts gemini_install_commands gemini_install_skill generate_gemini_commands verify_install verify_claude_install verify_gemini_install remote_install
 
 ENV_FILE ?= .env
 DEFAULT_USERNAME := $(shell whoami)
-SKILLS := arch-skill arch-flow codemagic-builds
-CLAUDE_SKILLS := arch-skill arch-flow
-GEMINI_SKILLS := arch-skill arch-flow
+LEGACY_SKILLS := arch-skill
+SKILLS := arch-plan arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide codemagic-builds
+CLAUDE_SKILLS := arch-plan arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide
+GEMINI_SKILLS := arch-plan arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide
+PROMPT_FILES := $(notdir $(wildcard prompts/*.md))
 
 ifeq ($(NO_GEMINI),1)
 INSTALL_GEMINI :=
@@ -14,7 +16,7 @@ INSTALL_GEMINI := gemini_install
 VERIFY_GEMINI := verify_gemini_install
 endif
 
-install: env install_prompts install_templates install_skill claude_install_prompts claude_install_skill $(INSTALL_GEMINI)
+install: env clean_codex_prompts install_templates install_skill claude_install_prompts claude_install_skill $(INSTALL_GEMINI)
 
 env:
 	@if [ ! -f "$(ENV_FILE)" ]; then \
@@ -37,14 +39,28 @@ install_prompts: env
 		sed -e "s/USERNAME/$$ESCAPED_USERNAME/g" "$$src" > "$$dst"; \
 	done
 
+clean_codex_prompts:
+	@mkdir -p ~/.codex/prompts/_backup
+	@ts=$$(date +%Y%m%d_%H%M%S); \
+	backup_dir=~/.codex/prompts/_backup/arch_skill_disabled_$$ts; \
+	mkdir -p "$$backup_dir"; \
+	for prompt in $(PROMPT_FILES); do \
+		if [ -f ~/.codex/prompts/$$prompt ]; then \
+			mv -f ~/.codex/prompts/$$prompt "$$backup_dir"/; \
+		fi; \
+	done; \
+	rmdir "$$backup_dir" 2>/dev/null || true
+
 install_templates:
 	mkdir -p ~/.codex/templates/arch_skill
 	cp templates/*.html ~/.codex/templates/arch_skill/
 
 install_skill:
 	mkdir -p ~/.codex/skills
-	@for skill in $(SKILLS); do \
+	@for skill in $(LEGACY_SKILLS) $(SKILLS); do \
 		rm -rf ~/.codex/skills/$$skill; \
+	done
+	@for skill in $(SKILLS); do \
 		cp -R skills/$$skill ~/.codex/skills/$$skill; \
 	done
 
@@ -63,8 +79,10 @@ claude_install_prompts: env
 
 claude_install_skill:
 	mkdir -p ~/.claude/skills
-	@for skill in $(CLAUDE_SKILLS); do \
+	@for skill in $(LEGACY_SKILLS) $(CLAUDE_SKILLS); do \
 		rm -rf ~/.claude/skills/$$skill; \
+	done
+	@for skill in $(CLAUDE_SKILLS); do \
 		cp -R skills/$$skill ~/.claude/skills/$$skill; \
 	done
 
@@ -104,8 +122,10 @@ generate_gemini_commands:
 
 gemini_install_skill:
 	mkdir -p ~/.gemini/skills
-	@for skill in $(GEMINI_SKILLS); do \
+	@for skill in $(LEGACY_SKILLS) $(GEMINI_SKILLS); do \
 		rm -rf ~/.gemini/skills/$$skill; \
+	done
+	@for skill in $(GEMINI_SKILLS); do \
 		cp -R skills/$$skill ~/.gemini/skills/$$skill; \
 		f=~/.gemini/skills/$$skill/SKILL.md; \
 		tmp=$$f.tmp; \
@@ -113,30 +133,23 @@ gemini_install_skill:
 	done
 
 verify_install: verify_claude_install $(VERIFY_GEMINI)
-	@test -f ~/.codex/prompts/arch-new.md
-	@test -f ~/.codex/prompts/arch-flow.md
-	@test -f ~/.codex/prompts/arch-overbuild-protector.md
-	@test -f ~/.codex/prompts/lilarch-start.md
-	@test -f ~/.codex/prompts/lilarch-plan.md
-	@test -f ~/.codex/prompts/lilarch-finish.md
-	@test -f ~/.codex/prompts/bugs-analyze.md
-	@test -f ~/.codex/prompts/bugs-fix.md
-	@test -f ~/.codex/prompts/bugs-review.md
-	@test -f ~/.codex/prompts/goal-loop-new.md
-	@test -f ~/.codex/prompts/goal-loop-iterate.md
+	@for prompt in $(PROMPT_FILES); do \
+		test ! -f ~/.codex/prompts/$$prompt; \
+	done
 	@test -f ~/.codex/templates/arch_skill/arch_doc_template.html
-	@test -f ~/.codex/skills/arch-skill/SKILL.md
-	@test -f ~/.codex/skills/arch-flow/SKILL.md
-	@test -f ~/.codex/skills/codemagic-builds/SKILL.md
-	@echo "OK: Codex prompts + templates + skill installed"
+	@for skill in $(SKILLS); do \
+		test -f ~/.codex/skills/$$skill/SKILL.md; \
+	done
+	@echo "OK: Codex legacy prompts removed; templates + skills installed"
 
 verify_claude_install:
 	@test -f ~/.claude/commands/prompts/arch-new.md
 	@test -f ~/.claude/commands/prompts/arch-overbuild-protector.md
 	@test -f ~/.claude/commands/prompts/lilarch-start.md
 	@test -f ~/.claude/commands/prompts/goal-loop-new.md
-	@test -f ~/.claude/skills/arch-skill/SKILL.md
-	@test -f ~/.claude/skills/arch-flow/SKILL.md
+	@for skill in $(CLAUDE_SKILLS); do \
+		test -f ~/.claude/skills/$$skill/SKILL.md; \
+	done
 	@echo "OK: Claude Code prompts + skills installed"
 
 verify_gemini_install:
@@ -145,8 +158,9 @@ verify_gemini_install:
 	@test -f ~/.gemini/arch_skill/prompts/arch-new.md
 	@test -f ~/.gemini/arch_skill/prompts/arch-flow.md
 	@test -f ~/.gemini/arch_skill/prompts/arch-overbuild-protector.md
-	@test -f ~/.gemini/skills/arch-skill/SKILL.md
-	@test -f ~/.gemini/skills/arch-flow/SKILL.md
+	@for skill in $(GEMINI_SKILLS); do \
+		test -f ~/.gemini/skills/$$skill/SKILL.md; \
+	done
 	@echo "OK: Gemini commands + prompts + skills installed"
 
 remote_install:
@@ -170,21 +184,33 @@ remote_install:
 	for src in prompts/*.md; do \
 		sed -e "s/USERNAME/$$ESCAPED_USERNAME/g" "$$src" > "$$tmpdir/$$(basename $$src)"; \
 	done; \
-	scp $$tmpdir/*.md $(HOST):~/.codex/prompts/; \
 	scp $$tmpdir/*.md $(HOST):~/.claude/commands/prompts/; \
 	if [ "$(NO_GEMINI)" != "1" ]; then scp $$tmpdir/*.md $(HOST):~/.gemini/arch_skill/prompts/; fi; \
 	rm -rf "$$tmpdir"
 	@scp templates/*.html $(HOST):~/.codex/templates/arch_skill/
-	@ssh $(HOST) "rm -rf ~/.codex/skills/arch-skill ~/.codex/skills/arch-flow ~/.codex/skills/codemagic-builds"
-	@scp -r skills/arch-skill skills/arch-flow skills/codemagic-builds $(HOST):~/.codex/skills/
-	@ssh $(HOST) "rm -rf ~/.claude/skills/arch-skill ~/.claude/skills/arch-flow"
-	@scp -r skills/arch-skill skills/arch-flow $(HOST):~/.claude/skills/
+	@ssh $(HOST) "mkdir -p ~/.codex/prompts/_backup; ts=\$$(date +%Y%m%d_%H%M%S); backup_dir=~/.codex/prompts/_backup/arch_skill_disabled_\$$ts; mkdir -p \"\$$backup_dir\"; for prompt in $(PROMPT_FILES); do if [ -f ~/.codex/prompts/\$$prompt ]; then mv -f ~/.codex/prompts/\$$prompt \"\$$backup_dir\"/; fi; done; rmdir \"\$$backup_dir\" 2>/dev/null || true"
+	@for skill in $(LEGACY_SKILLS) $(SKILLS); do \
+		ssh $(HOST) "rm -rf ~/.codex/skills/$$skill"; \
+	done
+	@for skill in $(SKILLS); do \
+		scp -r skills/$$skill $(HOST):~/.codex/skills/; \
+	done
+	@for skill in $(LEGACY_SKILLS) $(CLAUDE_SKILLS); do \
+		ssh $(HOST) "rm -rf ~/.claude/skills/$$skill"; \
+	done
+	@for skill in $(CLAUDE_SKILLS); do \
+		scp -r skills/$$skill $(HOST):~/.claude/skills/; \
+	done
 	@if [ "$(NO_GEMINI)" != "1" ]; then \
 		tmpdir=$$(mktemp -d); \
 		python3 scripts/generate_gemini_commands.py --out-dir "$$tmpdir/prompts"; \
 		scp -r "$$tmpdir/prompts" $(HOST):~/.gemini/commands/; \
 		rm -rf "$$tmpdir"; \
-		ssh $(HOST) "rm -rf ~/.gemini/skills/arch-skill ~/.gemini/skills/arch-flow"; \
-			scp -r skills/arch-skill skills/arch-flow $(HOST):~/.gemini/skills/; \
-			ssh $(HOST) "for skill in $(GEMINI_SKILLS); do f=~/.gemini/skills/\$$skill/SKILL.md; tmp=\$$f.tmp; awk 'NR==1 && $$0==\"---\" {front=1; next} front && $$0==\"---\" {front=0; next} !front {print}' \"\$$f\" > \"\$$tmp\" && mv \"\$$tmp\" \"\$$f\"; done"; \
-		fi
+		for skill in $(LEGACY_SKILLS) $(GEMINI_SKILLS); do \
+			ssh $(HOST) "rm -rf ~/.gemini/skills/$$skill"; \
+		done; \
+		for skill in $(GEMINI_SKILLS); do \
+			scp -r skills/$$skill $(HOST):~/.gemini/skills/; \
+		done; \
+		ssh $(HOST) "for skill in $(GEMINI_SKILLS); do f=~/.gemini/skills/\$$skill/SKILL.md; tmp=\$$f.tmp; awk 'NR==1 && $$0==\"---\" {front=1; next} front && $$0==\"---\" {front=0; next} !front {print}' \"\$$f\" > \"\$$tmp\" && mv \"\$$tmp\" \"\$$f\"; done"; \
+	fi
