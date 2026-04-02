@@ -30,6 +30,13 @@ When creating a new bug doc, include at least:
   - investigation
 - fix-plan and implementation sections, even if initially skeletal
 
+Recommended additional sections when they add signal:
+
+- repro notes
+- suspected blast radius
+- verification plan
+- follow-ups or rejected theories
+
 ## Status progression
 
 Common status values:
@@ -60,6 +67,7 @@ Update both frontmatter status and the TL;DR status line together.
   - QA notes and repro steps
   - repo searches and code anchors
 - Use external research only when a library or framework behavior is genuinely ambiguous.
+- Quote exact stack frames, log messages, or event attributes only when they change the likely fix shape.
 
 ## Essential-info gate
 

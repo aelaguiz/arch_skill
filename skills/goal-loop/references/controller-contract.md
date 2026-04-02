@@ -7,6 +7,18 @@
   - `<DOC_DIR>/<DOC_BASENAME>_WORKLOG.md`
 - `WORKLOG_PATH` must exist before the loop is considered restart-safe.
 
+## New-controller minimum contract
+
+The controller should contain:
+
+- North Star
+- success metric or scoreboard
+- anti-sidetrack contract
+- lever inventory
+- iteration protocol
+- de-dupe rule
+- current state or best current belief
+
 ## Required controller blocks
 
 - `goal_loop:block:contract`

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Arch Flow"
+  short_description: "Inspect an arch-style doc read-only and recommend the single best next move"
+  default_prompt: "Use $arch-flow to inspect an arch-step, arch-mini-plan, or lilarch doc read-only, build the evidence-based checklist, and recommend the exact next move."
+
+policy:
+  allow_implicit_invocation: true

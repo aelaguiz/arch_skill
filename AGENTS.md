@@ -1,8 +1,9 @@
 # AGENTS.md
 
-This repo ships installable agent skills. `skills/` is the primary runtime
-surface, `prompts/` is legacy compatibility and reference, and `Makefile`
-plus `README.md` own the install surface for Codex, Claude Code, and Gemini.
+This repo ships installable agent skills. `skills/` is the live runtime
+surface, `archive/` and `docs/archive/` hold historical material, and
+`Makefile` plus `README.md` own the install surface for Codex, Claude Code,
+and Gemini.
 
 ## Build And Verify
 
@@ -10,7 +11,7 @@ plus `README.md` own the install surface for Codex, Claude Code, and Gemini.
 - Use `make verify_install` only when you intentionally changed or want to
   validate the installed skill surface.
 - If you change install behavior, also verify the affected paths and commands
-  in `README.md`, `Makefile`, and any touched `scripts/` files.
+  in `README.md`, `Makefile`, and any touched archive-cleanup paths.
 - If you change only doctrine or docs, re-read the edited files and verify any
   commands or paths you added with `rg`. Do not imply that code verification
   ran when it did not.
@@ -21,7 +22,7 @@ plus `README.md` own the install surface for Codex, Claude Code, and Gemini.
 - Required verification for that surface ran, or the final reply says plainly
   why it did not.
 - `README.md` or the relevant docs are updated when skill names, routing,
-  install behavior, or the prompt-vs-skill contract changed.
+  or install behavior changed.
 - New doctrine stays concise, command-first, and points to deeper truth
   instead of copying large reference text into always-on context.
 
@@ -29,14 +30,15 @@ plus `README.md` own the install surface for Codex, Claude Code, and Gemini.
 
 - Do not use external multi-model consultation workflows unless the user
   explicitly asks for a code review.
-- Do not make shipped skills depend on prompt files at runtime.
+- Do not make shipped skills depend on archived command files at runtime.
+- Do not revive archived command surfaces as part of the live runtime.
 - Skill doctrine must be self-contained. Do not explain it with historical
   backstory or the skill development process itself. The only exception is a
   coordinator skill whose job is to explain how other skills fit together.
 - Keep changes in the smallest owning surface: reusable workflow doctrine in
-  `skills/`, legacy prompt compatibility in `prompts/`, install behavior in
-  `Makefile`, `scripts/`, and `templates/`, and deeper reference material in
-  `docs/`.
+  `skills/`, install behavior and stale-surface cleanup in `Makefile`, and
+  deeper reference material in `docs/`. Historical material belongs under
+  `archive/` or `docs/archive/`.
 
 ## Skill Routing
 
@@ -44,7 +46,7 @@ plus `README.md` own the install surface for Codex, Claude Code, and Gemini.
   packages.
 - Use `$agents-md-authoring` for `AGENTS.md` authoring or refactors.
 - If the user wants to execute one of the shipped workflows, use the matching
-  split skill instead of reviving the legacy prompt surface.
+  split skill instead of reviving the archived pre-skill surface.
 - Use `$arch-step` when the user wants explicit full-arch commands such as
   `new`, `reformat`, `research`, `deep-dive`, `external-research`,
   `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`,
@@ -71,9 +73,8 @@ plus `README.md` own the install surface for Codex, Claude Code, and Gemini.
 
 - `README.md` for install targets, supported tools, and the current skill
   inventory.
-- `docs/arch_skill_usage_guide.md` for workflow selection, intended usage, and
-  legacy prompt parity.
-- `docs/ARCH_SKILL_SUITE_SPLIT_PLAN_2026-03-30.md` for current skill
-  boundaries, non-negotiables, and prompt-coverage decisions.
+- `docs/arch_skill_usage_guide.md` for workflow selection and intended usage.
 - `skills/<slug>/SKILL.md` for the runtime contract of a specific shipped
   skill.
+- `archive/` and `docs/archive/` for historical material that is not part of
+  the live runtime surface.

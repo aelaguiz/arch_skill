@@ -1,7 +1,7 @@
 interface:
   display_name: "Arch Step"
-  short_description: "Run one explicit full-arch command against one canonical plan artifact"
-  default_prompt: "Use $arch-step with one literal full-arch command like `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`, and move one canonical plan artifact closer to completion while doing it."
+  short_description: "Run the standalone full-arch workflow against one canonical plan artifact"
+  default_prompt: "Use $arch-step for the full arch workflow or one literal full-arch command like `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`, and move one canonical plan artifact closer to completion while doing it."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

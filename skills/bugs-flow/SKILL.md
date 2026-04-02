@@ -1,6 +1,6 @@
 ---
 name: bugs-flow
-description: "Evidence-first bug investigation, fix, and verification with a single bug doc. Use when a request includes symptoms, regressions, Sentry issues, logs, crashes, or 'why is this happening?' and you need to analyze, fix, and verify a bug. Not for planned feature work, full architecture planning, or open-ended optimization loops."
+description: "Run the standalone evidence-first bug workflow with a single bug doc: analyze, fix, and review. Use when a request includes symptoms, regressions, Sentry issues, logs, crashes, or 'why is this happening?' and you need to investigate, fix, and verify a bug. Not for feature planning, full-arch work, or open-ended optimization loops."
 metadata:
   short-description: "Analyze, fix, and verify bugs"
 ---
@@ -17,7 +17,7 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 
 ## When not to use
 
-- The work is planned feature delivery or architecture planning. Use `arch-plan`, `arch-mini-plan`, or `lilarch`.
+- The work is planned feature delivery or architecture planning. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
 - The task is open-ended optimization or a broad investigation loop rather than a concrete bug. Use `goal-loop` or `north-star-investigation`.
 
 ## Non-negotiables
@@ -28,16 +28,19 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 - Only move into fix mode when the bug doc is fix-ready.
 - Keep fixes minimal and localized. No runtime fallbacks, silent swallowing, or compatibility shims unless explicitly approved.
 - External cross-model review happens only if the user explicitly asks for review or code review.
+- Do not let "review" become an excuse to reopen generic architecture planning.
 
 ## First move
 
 1. Read `references/bug-doc-contract.md`.
-2. Resolve the mode:
+2. Read `references/shared-doctrine.md`.
+3. Resolve the mode:
    - analyze
    - fix
    - review
-3. Resolve `DOC_PATH` and read it fully if it already exists.
-4. If the user asked for fix or review but the doc is not ready, step back and repair the investigation first.
+4. Resolve `DOC_PATH` and read it fully if it already exists.
+5. If the user asked for fix or review but the doc is not ready, step back and repair the investigation first.
+6. Read the mode reference and `references/quality-bar.md`.
 
 ## Workflow
 
@@ -75,3 +78,8 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 ## Reference map
 
 - `references/bug-doc-contract.md` - bug doc structure, evidence rules, Sentry handling, and status transitions
+- `references/shared-doctrine.md` - evidence discipline, anti-fallback rules, and escalation boundaries
+- `references/analyze.md` - create or repair the bug doc and make the issue fix-ready
+- `references/fix.md` - implement the smallest credible fix and keep the doc truthful
+- `references/review.md` - explicit-review-only audit behavior
+- `references/quality-bar.md` - strong vs weak bars for evidence, fix-ready state, and verification

@@ -1,0 +1,7 @@
+interface:
+  display_name: "North Star Investigation"
+  short_description: "Run the standalone quantified investigation loop with ranked hypotheses and brutal tests"
+  default_prompt: "Use $north-star-investigation for a math-first investigation, keep measured versus assumed facts explicit, and run one highest-information brutal test at a time."
+
+policy:
+  allow_implicit_invocation: true

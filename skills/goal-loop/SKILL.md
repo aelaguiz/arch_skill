@@ -1,6 +1,6 @@
 ---
 name: goal-loop
-description: "Autonomous goal-seeking loop with a controller doc and append-only worklog. Use for open-ended optimization, investigation, or metric-improvement work where the goal is clear but the path is not. Not for fixed-scope architecture plans, small feature delivery, or ordinary bug fixes."
+description: "Run the standalone goal-seeking loop with a controller doc and append-only worklog. Use for open-ended optimization, investigation, or metric-improvement work where the goal is clear but the path is not. Not for fixed-scope architecture plans, small feature delivery, or ordinary bug fixes."
 metadata:
   short-description: "Open-ended goal-seeking loop"
 ---
@@ -17,7 +17,7 @@ Use this skill when the user has a North Star but does not yet know the best pat
 
 ## When not to use
 
-- The work already has a fixed-scope plan. Use `arch-plan`, `arch-mini-plan`, or `lilarch`.
+- The work already has a fixed-scope plan. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
 - The task is a concrete bug investigation or fix. Use `bugs-flow`.
 - The user needs a math-first Commander’s Intent investigation specifically. Use `north-star-investigation`.
 
@@ -28,16 +28,19 @@ Use this skill when the user has a North Star but does not yet know the best pat
 - One iteration means one bet with a pre-committed decision rule.
 - No reruns of the same bet without changing a lever or evidence surface.
 - Setup mode is docs-only. Code changes only happen during iteration mode.
+- Keep the loop honest about the best current belief and biggest uncertainty.
 
 ## First move
 
 1. Read `references/controller-contract.md`.
-2. Resolve the mode:
+2. Read `references/shared-doctrine.md`.
+3. Resolve the mode:
    - new or repair controller
    - readiness / flow-status
    - iterate
-3. Resolve `DOC_PATH` and `WORKLOG_PATH`.
-4. Read the most recent worklog entries before choosing a new bet.
+4. Resolve `DOC_PATH` and `WORKLOG_PATH`.
+5. Read the most recent worklog entries before choosing a new bet.
+6. Read the matching mode reference and `references/quality-bar.md`.
 
 ## Workflow
 
@@ -73,4 +76,10 @@ Use this skill when the user has a North Star but does not yet know the best pat
 
 ## Reference map
 
-- `references/controller-contract.md` - required blocks, worklog rules, and iteration protocol
+- `references/controller-contract.md` - required blocks, worklog rules, status rules, and loop contract
+- `references/shared-doctrine.md` - loop discipline, bet quality, and anti-sidetrack rules
+- `references/setup.md` - create or repair the controller and make the loop ready
+- `references/iterate.md` - choose one bet, pre-commit the rule, and append one honest worklog entry
+- `references/flow-status.md` - read-only readiness and next-bet recommendation rules
+- `references/context-digest.md` - write or refresh the restart-safe digest only when requested
+- `references/quality-bar.md` - strong vs weak controller state, bets, and worklog entries

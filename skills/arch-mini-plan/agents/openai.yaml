@@ -1,0 +1,7 @@
+interface:
+  display_name: "Arch Mini Plan"
+  short_description: "Write a standalone one-pass mini architecture plan and hand off follow-through to arch-step"
+  default_prompt: "Use $arch-mini-plan to create or repair a one-pass mini architecture plan with canonical arch blocks, then end with the exact arch-step handoff."
+
+policy:
+  allow_implicit_invocation: true

@@ -14,6 +14,13 @@ The investigation doc should contain:
 - first iteration plan
 - authoritative worklog
 
+Optional when they materially improve the investigation:
+
+- traps or toggles
+- oracles
+- measurement caveats
+- explicit dead hypotheses
+
 ## Worklog expectations
 
 Every loop should append the evidence trail:

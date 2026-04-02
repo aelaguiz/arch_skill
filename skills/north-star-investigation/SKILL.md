@@ -1,6 +1,6 @@
 ---
 name: north-star-investigation
-description: "Math-first investigation loop for optimization or root-cause hunts using a Commander's Intent doc, ranked hypotheses, and brutal tests. Use when a request needs quantitative sanity checks, fastest-learning bets, and an investigation worklog rather than a fixed implementation plan. Not for ordinary bug fixes, feature delivery, or generic goal loops that do not need this level of quantified hypothesis work."
+description: "Run the standalone math-first investigation loop using a Commander's Intent doc, ranked hypotheses, and brutal tests. Use when a request needs quantitative sanity checks, fastest-learning bets, and an investigation worklog rather than a fixed implementation plan. Not for ordinary bug fixes, feature delivery, or generic goal loops that do not need this level of quantified hypothesis work."
 metadata:
   short-description: "Quantitative investigation loop"
 ---
@@ -18,7 +18,7 @@ Use this skill for the investigation workflow where quantitative reasoning and f
 ## When not to use
 
 - The task is a straightforward bug fix with a normal bug doc. Use `bugs-flow`.
-- The task is planned feature or architecture delivery. Use `arch-plan`, `arch-mini-plan`, or `lilarch`.
+- The task is planned feature or architecture delivery. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
 - The user wants a generic open-ended goal loop without the quant-heavy investigation frame. Use `goal-loop`.
 
 ## Non-negotiables
@@ -28,15 +28,18 @@ Use this skill for the investigation workflow where quantitative reasoning and f
 - Prefer brutal tests, traps, toggles, oracles, and minimal repros over wide logging.
 - One highest-info bet at a time.
 - Bootstrap mode is docs-first. Keep detailed evidence in the worklog.
+- Keep ranked hypotheses current. Do not let stale theories linger as if they were equally likely.
 
 ## First move
 
 1. Read `references/investigation-contract.md`.
-2. Resolve the mode:
+2. Read `references/shared-doctrine.md`.
+3. Resolve the mode:
    - bootstrap or refresh the investigation doc
    - iterate on the next hypothesis
-3. Resolve `DOC_PATH` and its worklog.
-4. Re-read the North Star, scoreboard, and latest worklog before choosing the next bet.
+4. Resolve `DOC_PATH` and its worklog.
+5. Re-read the North Star, scoreboard, and latest worklog before choosing the next bet.
+6. Read the matching mode reference and `references/quality-bar.md`.
 
 ## Workflow
 
@@ -75,3 +78,7 @@ Use this skill for the investigation workflow where quantitative reasoning and f
 ## Reference map
 
 - `references/investigation-contract.md` - required doc components, worklog expectations, and loop rules
+- `references/shared-doctrine.md` - math-first doctrine, hypothesis discipline, and boundary rules
+- `references/bootstrap.md` - create or refresh the investigation doc and seed the first bets
+- `references/iterate.md` - choose one highest-information bet and update the ranked hypotheses
+- `references/quality-bar.md` - strong vs weak bars for quant models, hypotheses, and brutal tests

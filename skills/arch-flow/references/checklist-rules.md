@@ -8,14 +8,6 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
 - Derive `WORKLOG_PATH` as:
   - `<DOC_DIR>/<DOC_BASENAME>_WORKLOG.md`
 
-## Flow detection
-
-- Treat a doc as `lilarch` when it has lilarch-specific blocks such as:
-  - `lilarch:block:requirements`
-  - `lilarch:block:plan_audit`
-- Treat a doc as `arch-mini-plan` follow-through when it has the canonical arch blocks and phase plan, but no regular-flow kickoff marker.
-- Otherwise treat it as the full arch flow.
-
 ## Shared evidence signals
 
 - North Star confirmed:
@@ -76,7 +68,7 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
    - implementation audit
    - any explicit follow-up audit
 
-Recommend `arch-plan` as the governing skill once mini-plan is complete and the next move is execution or auditing.
+Recommend `arch-step` as the governing skill once mini-plan is complete and the next move is execution or auditing.
 
 ## Lilarch checklist
 
@@ -104,6 +96,6 @@ Recommend `arch-plan` as the governing skill once mini-plan is complete and the 
 
 ## Governing-skill recommendation
 
-- For full-arch docs where the user wants to execute the single next literal stage, recommend `arch-step`.
-- For full-arch asks that want a broader phase-family handoff or end-to-end continuation, `arch-plan` remains the broader option.
-- For arch-mini-plan follow-through into implementation or audits, recommend `arch-plan`.
+- For full-arch docs, recommend `arch-step`.
+- For arch-mini-plan follow-through into implementation or audits, recommend `arch-step`.
+- For lilarch docs that still fit lilarch, recommend `lilarch`.

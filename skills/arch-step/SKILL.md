@@ -1,18 +1,20 @@
 ---
 name: arch-step
-description: "Operate the explicit standalone full-arch workflow one command at a time against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`. Use when the user wants literal stage-by-stage control over a specific full architecture plan doc. Not for broader phase-family execution (`arch-plan`), read-only checklist routing (`arch-flow`), mini plans, lilarch, bugs, or open-ended loops."
+description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
 metadata:
-  short-description: "Explicit full-arch operator"
+  short-description: "Standalone full-arch operator"
 ---
 
 # Arch Step
 
-Use this skill when the user wants a literal, explicit, one-command-at-a-time full-arch workflow.
+Use this skill when the user wants the real full-arch workflow and one canonical plan doc should govern it end to end.
 
 The primary object is one canonical full-arch plan doc. Commands exist to move that doc toward a finished, internally consistent artifact. They are not independent mini-workflows.
 
 ## When to use
 
+- The user wants the full arch workflow for medium or large work and does not need a different workflow family.
+- The ask is generic full arch language such as "do the full arch flow," "continue this architecture doc," "implement the plan," or "audit implementation against the plan."
 - The user wants explicit stage control instead of a more holistic or phase-family-driven flow.
 - The ask is command-shaped: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`.
 - The user wants one specific plan-doc shape with exact headings, stable markers, and consistent stage ownership.
@@ -21,7 +23,6 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 
 ## When not to use
 
-- The user wants the broader, intent-driven full-arch workflow. Use `arch-plan`.
 - The user wants a read-only router or "what's next?" answer. Use `arch-flow`.
 - The task is a one-pass mini plan, a 1-3 phase small-feature flow, a bug flow, or an open-ended loop. Use `arch-mini-plan`, `lilarch`, `bugs-flow`, `goal-loop`, or `north-star-investigation`.
 - The user is asking which arch skill to use. Use `arch-skills-guide`.
@@ -46,16 +47,19 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 1. Read `references/artifact-contract.md`.
 2. Read `references/shared-doctrine.md`.
 3. Resolve the requested command and `DOC_PATH` when the command needs an existing doc.
-4. Inspect the current doc against:
+4. If the ask is generic full-arch execution rather than a named command:
+   - no full-arch doc yet: treat the first move as `new`
+   - doc exists or the user gave a doc path: treat the first move as `advance`
+5. Inspect the current doc against:
    - required frontmatter
    - `# TL;DR`
    - `planning_passes`
    - exact canonical headings
    - command-owned blocks
    - obvious contradictions across TL;DR, Section 0, target architecture, phase plan, verification, rollout, and decision log
-5. Read `references/section-quality.md` for the sections this command depends on.
-6. Read the matching command reference.
-7. If the command is `advance`, read `references/advance.md`, choose the one move that most improves artifact integrity or flow progress, and stop unless `RUN=1` explicitly asks for that one step to execute.
+6. Read `references/section-quality.md` for the sections this command depends on.
+7. Read the matching command reference.
+8. If the command is `advance`, read `references/advance.md`, choose the one move that most improves artifact integrity or flow progress, and stop unless `RUN=1` explicitly asks for that one step to execute.
 
 ## Workflow
 
@@ -128,6 +132,7 @@ Default placement is after `phase-plan` and before `implement`, unless the user 
 - Start with a one-line North Star reminder.
 - Then give the punchline plainly.
 - Put exhaustive detail in `DOC_PATH` or `WORKLOG_PATH`, not in console output.
+- For generic full-arch asks that did not name a command, say which command you resolved to and why.
 - `status` should emit:
   - one artifact line
   - one line per core stage

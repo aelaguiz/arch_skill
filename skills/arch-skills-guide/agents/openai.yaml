@@ -1,0 +1,7 @@
+interface:
+  display_name: "Arch Skills Guide"
+  short_description: "Recommend the right live arch skill and explain the boundaries between lookalikes"
+  default_prompt: "Use $arch-skills-guide to recommend the right live arch skill, with arch-step as the default full-arch answer when the task is real full-arch work."
+
+policy:
+  allow_implicit_invocation: true
