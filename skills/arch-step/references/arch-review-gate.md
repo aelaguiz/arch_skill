@@ -1,67 +1,87 @@
 # `review-gate` Command Contract
 
-Use this reference when the user runs `arch-step review-gate`.
+## What this command does
 
-## Shared doctrine to carry in
+- run a local idiomatic and completeness review against the plan and key repo anchors
+- integrate the feedback you agree with into the main plan
+- record the review outcome in one helper block
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for the sections most central to the current plan.
-- Keep this local. Do not turn it into external reviewer orchestration.
+## Shared references to carry in
 
-## Artifact sections this command reads for alignment
-
-- the full plan doc
-- the key code anchors relevant to the plan
-
-## Artifact sections or blocks this command updates
-
-- `arch_skill:block:review_gate`
-- any plan sections that should change after accepted review feedback
-
-## Quality bar for what this command touches
-
-- ask whether the plan is idiomatic and complete relative to the code and its own claims
-- identify plan drift, SSOT or contract violations, and missing work
-- recommend only high-signal verification, not negative-value tests
-- check whether sharp edges or new SSOTs need boundary comments
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for the plan sections most relevant to the current change
 
 ## Hard rules
 
-- Docs-only. Do not modify code.
-- Do the review locally. Do not use external reviewer CLIs or other-model consultations from this command.
-- Read `DOC_PATH` plus the key repo anchors needed to answer the review question.
-- If North Star or UX scope is contradictory, pause for a quick doc edit first.
-
-## Artifact preservation
-
-- Preserve the canonical scaffold and record review outcomes inside that artifact.
-- Prefer inserting the helper block near the end before the Decision Log.
-- If the doc is materially non-canonical, route to `reformat` before recording review guidance.
+- docs-only; do not modify code
+- keep this review local
+- do not use external reviewer CLIs or other-model consultations from this command
+- read `DOC_PATH` plus the key code anchors needed to answer the review question
+- if North Star or UX scope is contradictory, stop for a quick doc correction first
 
 ## Core review question
 
-- `Is this idiomatic and complete relative to the plan? What is missing? Where does the code or plan drift? Are there any SSOT or contract violations?`
+Ask the same question every time:
 
-Integrate the feedback you agree with by updating the real plan sections first. The helper block records what changed and why.
+- `Is this idiomatic and complete relative to DOC_PATH? What is missing? Where does code or plan drift? Are there any SSOT or contract violations?`
+
+If suggesting tests:
+
+- suggest only high-signal, refactor-resistant checks
+- reject negative-value tests such as deletion proofs, visual-constant noise, doc-driven gates, or mock-only interaction tests
+- if an existing test suite is obviously negative value, call out deletion or rewrite
+
+Also check:
+
+- whether sharp edges or new SSOTs need short, high-leverage boundary comments
+
+## Writes
+
+- `arch_skill:block:review_gate`
+- any real plan sections that should change after accepted review feedback
 
 ## Update rules
 
-Write or update:
+Integrate accepted changes into the main artifact first.
+
+Then write or update:
 
 - `arch_skill:block:review_gate`
 
-Capture:
+Use this block shape:
 
-- reviewers: self
-- question asked
-- feedback summary
-- integrated changes
-- proceed decision
+```text
+<!-- arch_skill:block:review_gate:start -->
+## Review Gate
+- Reviewers: self
+- Question asked: "Is this idiomatic and complete relative to the plan?"
+- Feedback summary:
+  - <item>
+- Integrated changes:
+  - <item>
+- Decision: proceed to next phase? (yes/no)
+<!-- arch_skill:block:review_gate:end -->
+```
+
+Insert near the end before the Decision Log when possible.
+
+## Quality bar
+
+- identify plan drift, missing work, SSOT issues, and contract violations
+- improve the main artifact rather than merely commenting on it
+- keep the helper block short and decision-oriented
+
+## Stop condition
+
+- if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+- if North Star or UX scope is contradictory, stop for a quick doc correction
+- otherwise stop after the accepted review feedback is integrated and the helper block is current
 
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - what the review changed
 - remaining risks
 - next action

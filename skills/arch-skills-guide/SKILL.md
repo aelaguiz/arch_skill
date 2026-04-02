@@ -52,7 +52,7 @@ Use this skill when the user needs help choosing or understanding the arch suite
    - recommend the best-fit skill for a concrete task
 2. Map the task to the suite:
    - medium/large multi-step planning or implementation audit -> `arch-plan`
-   - old saved-prompt style full-arch command control, helpers, `advance`, or concise full-arch status -> `arch-step`
+   - explicit full-arch command control, helpers, `advance`, or concise full-arch status -> `arch-step`
    - one-pass canonical mini plan -> `arch-mini-plan`
    - small 1-3 phase feature -> `lilarch`
    - bug, regression, crash, or Sentry issue -> `bugs-flow`

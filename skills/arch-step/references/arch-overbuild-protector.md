@@ -1,76 +1,83 @@
 # `overbuild-protector` Command Contract
 
-Use this reference when the user runs `arch-step overbuild-protector`.
+## What this command does
 
-## Shared doctrine to carry in
+- classify phase-plan work items into explicit scope buckets
+- separate ship-blocking work from optional work, follow-ups, and known bug vectors
+- in apply mode, rewrite the phase plan in place so the main checklist is mechanically scope-safe
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for Section `0)`, Section `7)`, and helper-block expectations.
-- The point of this command is mechanical scope discipline, not vague simplification advice.
+## Shared references to carry in
 
-## Artifact sections this command reads for alignment
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for Section 0, Section 7, and helper-block expectations
 
-- `# TL;DR`
-- `# 0) Holistic North Star`
-- `# 7) Depth-First Phased Implementation Plan`
-- in-scope and out-of-scope declarations
-- definition of done
+## Inputs and knobs
 
-## Artifact sections or blocks this command updates
+- `MODE=report|apply`
+  - default `report`
+- `STRICT=0|1`
+  - default `1`
+- `FOCUS="<text>"`
+  - optional bias toward a subset such as verification, tooling, or one phase
+
+## Scope authority
+
+Treat these as the scope contract when present:
+
+- TL;DR
+- Section 0.2 In scope
+- Section 0.3 Out of scope
+- Section 0.4 Definition of done
+- `fallback_policy`
+
+If those sections are vague, warn in the helper block but do not hard-block.
+
+## Writes
 
 - `arch_skill:block:overbuild_protector`
-- in `MODE=apply`, the existing phase-plan section in place
-
-## Quality bar for what this command touches
-
-- make scope decisions explicit
-- keep the phase plan as the one authoritative execution checklist
-- move out-of-scope work to intentional follow-ups rather than letting it hide in blocking tasks
-- reject known bug vectors and overbuilt ceremony by default
+- in `MODE=apply`, the existing phase plan rewritten in place
 
 ## Hard rules
 
-- Docs-only. Do not modify product code.
-- Single SSOT: the phase plan remains the authoritative execution checklist.
-- Resolve `DOC_PATH`.
-- Use the North Star and in-scope or out-of-scope sections as scope authority.
-- If no phase plan exists, stop and point to `phase-plan` rather than inventing a new format.
+- docs-only; do not modify product code
+- Section 7 remains the one authoritative execution checklist
+- if no phase plan exists, stop and point to `phase-plan`; do not invent a new plan format
+- use code and repo evidence only to validate parity or risk claims; do not invent obligations
 
-## Artifact preservation
+## Work-item extraction
 
-- Preserve the canonical scaffold and keep the authoritative phase plan inside that scaffold.
-- In `MODE=apply`, rewrite only the existing phase-plan section.
-- If the doc is materially non-canonical, route to `reformat` before scope triage.
-
-## Modes
-
-- `MODE=report`:
-  - write the triage block only
-- `MODE=apply`:
-  - write the triage block
-  - rewrite the existing phase plan in place so only ship-blocking work stays blocking
-
-Defaults:
-
-- `MODE=report`
-- `STRICT=1`
+- prefer explicit checkbox items
+- preserve stable task IDs if they exist
+- if there are no checkboxes, treat each top-level `Work` bullet as a work item
+- if the plan is too unstructured for reliable item extraction, classify at the phase level instead
 
 ## Classification buckets
 
 - `A` Explicit ask:
-  - directly requested by the user or locked in TL;DR or in-scope sections
+  - directly requested by the user, TL;DR, or in-scope sections
 - `B` North-Star necessary:
-  - required to satisfy the claim, done criteria, or explicit invariants
+  - required to satisfy the claim, definition of done, or explicit invariants
+  - common examples include call-site migrations, deletes or cleanup that remove parallel truth, correctness fixes, and minimal verification needed to trust the change
 - `C` Parity necessary:
-  - required to match an existing internal pattern or contract, with a real anchor
+  - required to match an existing internal pattern or contract, with a real repo anchor
 - `D` Risk mitigation necessary:
-  - minimal work required to avoid a concrete regression or correctness failure
+  - minimal work needed to avoid a concrete regression or correctness failure
 - `E` Optional quality:
-  - good improvement, but not required to ship the North Star
+  - nice to have, but not required to ship the North Star
 - `F` Scope creep:
-  - expands UX scope or adds unjustified work beyond the plan
+  - expands UX scope or adds unjustified new work
 - `G` Bug vector:
-  - introduces brittle gates, long-lived complexity, or wrong-by-default safety theater
+  - adds brittle gates, long-lived complexity, or wrong-by-default safety theater
+
+Default reject examples for `G` unless explicitly approved:
+
+- runtime fallbacks or shims when fallbacks are forbidden
+- new deleted-code proof tests
+- visual-constant or churn-heavy golden tests
+- coverage gates or bespoke coverage infrastructure
+- new remote-runner or distributed-execution wiring for local development tasks
+- new generators or frameworks introduced just to save small amounts of time
 
 Tie-breakers:
 
@@ -78,7 +85,8 @@ Tie-breakers:
   - ambiguity defaults to follow-up, not include
 - `STRICT=0`:
   - ambiguity defaults to optional, not include
-- parity is never assumed without an anchor
+- parity is never assumed without a real anchor
+- new tooling is follow-up unless `A-D` clearly applies
 
 ## Update rules
 
@@ -86,26 +94,62 @@ Write or update:
 
 - `arch_skill:block:overbuild_protector`
 
-Capture:
+Use this block shape:
 
-- summary counts
-- include ship-blocking items
-- optional items
-- follow-ups
-- rejected bug vectors
-- parity anchors
-- notes about scope-contract gaps
+```text
+<!-- arch_skill:block:overbuild_protector:start -->
+## Overbuild Protector (scope triage)
 
-If apply mode is used:
+Summary:
+- Mode: <report|apply>, Strict: <0|1>, Focus: <... or n/a>
+- Items reviewed: <n>
+- Include (ship-blocking): <n> (A: <n>, B: <n>, C: <n>, D: <n>)
+- Optional (timeboxed): <n>
+- Follow-ups (out of scope): <n>
+- Rejected (bug vectors): <n>
 
-- preserve completed checkbox items
+Include (ship-blocking):
+- <item> - Bucket <A|B|C|D> - Evidence: <doc sections> - Anchors: <paths/symbols if used>
+
+Optional (timeboxed):
+- <item> - Bucket <E> - Why optional: <...> - Evidence: <...>
+
+Follow-ups (out of scope / intentionally deferred):
+- <item> - Bucket <E|F> - Why deferred: <...> - Evidence: <...>
+
+Rejected (bug vectors):
+- <item> - Bucket <G> - Why reject: <...> - What to do instead: <smaller alternative>
+
+Parity anchors used (if any):
+- <path> - <pattern / contract>
+
+Notes:
+- Any scope-contract gaps that made classification lower-confidence:
+  - <gap>
+<!-- arch_skill:block:overbuild_protector:end -->
+```
+
+## Apply-mode rewrite rules
+
+If `MODE=apply`:
+
+- rewrite the existing phase plan in place
+- keep Section 7 as the one checklist
+- do not delete or rewrite already-completed checkbox items
+- preserve stable task IDs
 - remove follow-ups and rejected bug vectors from the phase plan
-- label optional items as optional rather than blocking
+- keep optional work in the phase plan but label it clearly as optional, for example by prefixing `OPTIONAL:` or appending `(optional)`
+
+## Stop condition
+
+- if there is no authoritative phase plan, stop and point to `phase-plan`
+- if the plan doc remains ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+- otherwise stop after classification is recorded, and after the phase plan is rewritten when `MODE=apply`
 
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - `DOC_PATH` plus `MODE` and `STRICT`
 - what was reclassified
 - next action

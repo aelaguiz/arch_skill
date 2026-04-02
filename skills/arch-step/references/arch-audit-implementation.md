@@ -1,43 +1,75 @@
 # `audit-implementation` Command Contract
 
-Use this reference when the user runs `arch-step audit-implementation`.
+## What this command does
 
-## Shared doctrine to carry in
+- verify whether the code really satisfies the plan
+- reopen false-complete phases when code work is missing
+- distinguish missing code from non-blocking manual QA
+- update the main artifact with evidence-anchored audit findings
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for Sections `5`, `6`, `7`, `WORKLOG_PATH`, and `implementation_audit`.
-- This is the highest-bar completeness check in the package. It exists to stop false-complete claims.
+## Audit North Star
 
-## Artifact sections this command reads for alignment
+After this command runs:
+
+- the plan doc reflects reality
+- false-complete phases are reopened
+- missing code work is explicit and evidence-anchored
+- manual QA remains visible but non-blocking
+- a reader can tell whether the implementation is actually code-complete without hand-waving
+
+## Shared references to carry in
+
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for Sections 5, 6, 7, `WORKLOG_PATH`, and `implementation_audit`
+
+## Inputs and `DOC_PATH` resolution
+
+- treat the user ask as steering, constraints, and any relevant context
+- if the ask includes a `docs/<...>.md` path, use it
+- otherwise resolve `DOC_PATH` from the conversation and repo context
+- if the doc path is truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+
+## Question policy
+
+- answer anything discoverable from code, tests, fixtures, logs, docs, or repo tooling
+- ask only for:
+  - product or UX decisions not encoded anywhere
+  - external constraints not present in the repo or doc
+  - doc-path ambiguity after best effort
+  - missing access or permissions
+- if a question is unavoidable, state where you looked first
+
+## Reads for alignment
 
 - the full plan doc
 - target architecture contracts
 - call-site audit and delete list
-- phase plan and phase statuses
+- phase plan and phase status
 - definition of done and evidence expectations
 - worklog when present
 
-## Artifact sections or blocks this command updates
+## Writes
 
 - `arch_skill:block:implementation_audit`
-- reopened phase status lines and `Missing (code):` notes
+- reopened phase status lines
+- `Missing (code):` notes
 - `Manual QA (non-blocking):` notes when needed
 
-## Quality bar for what this command touches
+## Communication contract
 
-- validate code completeness against plan reality
-- distinguish missing code from missing manual QA
-- reopen false-complete phases
-- keep missing items evidence-anchored and concrete
+- begin work immediately when the command is clear
+- do not preface with a mini-plan or restate the ask
+- keep console output short and high-signal
+- put exhaustive detail in `DOC_PATH`, not in console output
 
 ## Hard rules
 
-- Docs-only. Do not modify code.
-- Resolve `DOC_PATH`.
-- Code is ground truth.
-- This is a code-completeness audit, not a bureaucracy audit.
-- Missing manual QA evidence is non-blocking and should not by itself reopen phases.
-- Do not "fix it while you are here." Record gaps instead.
+- docs-only; do not modify code
+- code is ground truth
+- this is a code-completeness audit, not a bureaucracy audit
+- missing manual QA evidence is non-blocking and should not by itself reopen phases
+- do not fix the code while auditing; record gaps instead
 
 ## Highest-bar audit criteria
 
@@ -48,30 +80,61 @@ Check all of these:
 - architecture compliance:
   - SSOT is real
   - boundaries and contracts match the plan
-  - required deletes and cleanup actually happened
-  - no forbidden fallbacks or shims slipped in
+  - required deletes and cleanup happened
+  - no forbidden shims slipped in
 - idiomatic fit:
-  - the implementation aligns with existing repo patterns unless the plan explicitly justified divergence
+  - implementation aligns with existing repo patterns unless the plan justified divergence
 - call-site completeness:
   - every call site that should have migrated actually migrated
 
-## Artifact preservation
+## Evidence split
 
-- Preserve the canonical scaffold and record audit outcomes inside that artifact.
-- Prefer updating the existing phase sections and implementation-audit block rather than creating parallel audit structure.
-- If the doc is materially non-canonical, route to `reformat` before certifying completeness against it.
+Split plan evidence expectations into two buckets before judging completeness:
+
+- code-verifiable evidence:
+  - code paths
+  - call-site migrations
+  - deletes and cleanup
+  - tests, build signals, instrumentation, assertions, or other programmatic evidence
+- manual evidence:
+  - screenshots
+  - manual QA passes
+  - human validation checklists
+
+Only missing code-verifiable evidence can make the audit verdict `NOT COMPLETE`.
+Missing manual evidence should become non-blocking follow-up.
 
 ## Audit procedure
 
-- read `DOC_PATH` fully
-- extract target contracts, call-site audit items, phase plan, delete list, and done criteria
-- split evidence expectations into:
-  - code-verifiable evidence
-  - manual non-blocking evidence
-- validate each planned code change against repo reality
-- search for missed call sites or lingering superseded patterns
-- verify SSOT enforcement and cleanup
-- reopen phases only for missing or incorrect code work
+1. read `DOC_PATH` fully
+2. extract the plan's authoritative anchors:
+   - target architecture contracts, APIs, names, and paths
+   - call-site audit rows or equivalent migration inventory
+   - phase plan and any phases marked complete, done, or checked off
+   - delete list and cleanup expectations
+   - definition-of-done evidence expectations
+3. split evidence expectations into:
+   - code-verifiable evidence
+   - manual non-blocking evidence
+4. validate each planned code change against repo reality:
+   - verify each planned call-site change in code
+   - search for missed call sites or lingering old APIs, patterns, or paths
+   - verify SSOT enforcement and boundary compliance
+   - verify required deletes and cleanup through repo search, static analysis, build, or typecheck rather than proof tests
+   - verify claimed tests, assertions, or automation actually exist and hit the intended failure surface
+5. determine phase truth:
+   - if a phase is marked complete but code work is missing, reopen it
+   - if code is complete but manual QA is pending, do not reopen it
+6. write the audit block and any required in-place phase updates
+
+Always name phases as `Phase <n> (<what it does>)` using the phase heading text when available.
+
+## False-complete rules
+
+- reopen a phase only for missing or incorrect code work
+- do not reopen a phase solely because screenshots, manual QA, or human verification are still pending
+- if the plan says an old path should be deleted, removed, or unreachable, treat that as code work and audit it accordingly
+- if the implementation introduced a forbidden shim, fallback, or parallel source of truth, treat that as missing code correctness and reopen the responsible phase
 
 ## Update rules
 
@@ -79,17 +142,46 @@ Write or update:
 
 - `arch_skill:block:implementation_audit`
 
-The block must capture:
+Use this block shape:
 
-- date
-- code verdict: `COMPLETE` or `NOT COMPLETE`
-- manual QA status as non-blocking
-- code blockers
-- reopened phases
-- missing items with evidence anchors
-- non-blocking follow-ups
+```text
+<!-- arch_skill:block:implementation_audit:start -->
+# Implementation Audit (authoritative)
+Date: <YYYY-MM-DD>
+Verdict (code): <COMPLETE|NOT COMPLETE>
+Manual QA: <pending|complete|n/a> (non-blocking)
 
-If code work is missing, update the affected phase section in place with:
+## Code blockers (why code is not done)
+- <bullets only about missing or incorrect code>
+
+## Reopened phases (false-complete fixes)
+- Phase <n> (<what it does>) — reopened because:
+  - <missing items>
+
+## Missing items (code gaps; evidence-anchored; no tables)
+- <area>
+  - Evidence anchors:
+    - <path:line>
+  - Plan expects:
+    - <expected>
+  - Code reality:
+    - <actual>
+  - Fix:
+    - <fix>
+
+## Non-blocking follow-ups (manual QA / screenshots / human verification)
+- <follow-up item>
+<!-- arch_skill:block:implementation_audit:end -->
+```
+
+Placement rule:
+
+1. if `arch_skill:block:implementation_audit` already exists, replace inside it
+2. otherwise insert the block after `# TL;DR`
+3. if no TL;DR exists, insert after frontmatter
+4. if no frontmatter exists, insert at the top
+
+If code work is missing, update the affected phase in place with:
 
 - `Status: REOPENED (audit found missing code work)`
 - `Missing (code):`
@@ -97,12 +189,29 @@ If code work is missing, update the affected phase section in place with:
 If only manual QA is pending:
 
 - do not reopen the phase
-- update a `Manual QA (non-blocking):` note instead
+- add or update `Manual QA (non-blocking):`
+
+When reopening a phase:
+
+- use the phase heading text so the reopened phase is human-readable
+- keep the missing-code list concrete and anchored to files, symbols, deletes, or tests
+- do not erase prior truthful completion notes; correct them with the reopened status
+
+## Verdict rules
+
+- `Verdict (code): COMPLETE` only when no missing or incorrect code work remains
+- `Verdict (code): NOT COMPLETE` when any required code work, migration, delete, cleanup, contract enforcement, or anti-shim expectation is unmet
+- manual QA pending alone does not force `NOT COMPLETE`
+
+## Stop condition
+
+- if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+- otherwise stop after the audit block and any necessary phase reopenings or manual-QA notes are written
 
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - what the audit found and what changed in the doc
-- risks or blockers
+- real blockers or risks
 - next action

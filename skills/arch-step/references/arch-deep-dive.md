@@ -1,23 +1,28 @@
 # `deep-dive` Command Contract
 
-Use this reference when the user runs `arch-step deep-dive`.
+## What this command does
 
-## Shared doctrine to carry in
+- produce or sharpen the current architecture
+- fully specify the target architecture
+- make the call-site audit exhaustive enough to drive implementation and later audit
+- update the warn-first planning-pass state
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for Sections `4`, `5`, and `6`, plus `planning_passes`.
-- Carry forward the drift-proof rules from `shared-doctrine.md`: code is ground truth, no competing sources of truth, no fallback by default, idiomatic defaults, and scoped consolidation.
+## Shared references to carry in
 
-## Artifact sections this command reads for alignment
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for Sections 4, 5, 6, and `planning_passes`
+
+## Reads for alignment
 
 - `# TL;DR`
 - `# 0) Holistic North Star`
 - `# 1) Key Design Considerations`
 - `# 2) Problem Statement`
 - `# 3) Research Grounding`
-- any existing `External Research`
+- any existing external research
 
-## Artifact sections or blocks this command updates
+## Writes
 
 - `planning_passes`
 - `# 4) Current Architecture (as-is)`
@@ -27,67 +32,93 @@ Use this reference when the user runs `arch-step deep-dive`.
 - `arch_skill:block:target_architecture`
 - `arch_skill:block:call_site_audit`
 
-## Quality bar for what this command touches
-
-- Section 4 should describe the current structure, flows, ownership, and failure behavior concretely enough to plan against.
-- Section 5 should fully specify the target architecture: future structure, contracts, boundaries, SSOT, and no parallel paths.
-- Section 6 should be exhaustive enough to drive implementation and later audit.
-- If the plan introduces a central pattern, the consolidation sweep should capture include, defer, or exclude candidates rather than ignoring drift risk.
-
-## Consistency duties beyond local ownership
-
-- If Sections 4 through 6 materially sharpen the design, repair any clearly stale TL;DR, Section 0, or Section 1 claims that are now wrong.
-- If the architecture choice changed in a meaningful way, append or update a Decision Log entry instead of silently replacing history.
-- If the new target architecture invalidates the current phase plan, say so plainly and point the next move to `phase-plan`.
-
 ## Hard rules
 
-- Docs-only. Do not modify code.
-- Resolve `DOC_PATH`.
-- Read code and run read-only searches as needed.
-- If the North Star or UX scope is contradictory, pause for a quick doc edit.
-- Code is ground truth.
-- No fallback or shim design unless explicitly approved in the plan doc.
-- If multiple viable technical approaches exist, choose the most idiomatic default and note alternatives in the doc instead of punting the decision back to the user.
+- docs-only; do not modify code
+- code is ground truth
+- read code and run read-only searches as needed
+- if North Star or UX scope is contradictory, stop for a quick doc correction
+- no fallback or shim design unless the plan explicitly approves it
+- if multiple viable technical approaches exist, choose the most idiomatic default and note alternatives instead of punting the decision
 
-## Artifact preservation
+## Quality bar
 
-- Preserve the canonical scaffold when it already exists.
-- Preserve exact canonical headings and numbering for Sections 4, 5, and 6 in canonical docs.
-- If this command inserts missing sections into a canonical doc, use the exact headings from `artifact-contract.md`.
-- If the doc is materially non-canonical outside this command's safe repair boundary, stop and route to `reformat`.
+- Section 4 must describe current structure, flows, ownership, and failure behavior concretely enough to plan against
+- Section 5 must fully specify the future architecture, contracts, boundaries, SSOT, and no-parallel-path stance
+- Section 6 must be exhaustive enough to drive implementation and later audit
+- if the design introduces or sharpens a central pattern, the consolidation sweep must capture include, defer, or exclude candidates rather than ignoring drift risk
 
 ## Planning-passes update rule
 
-- Ensure the `planning_passes` block exists.
-- If external research already exists in the doc, mark:
+- ensure the `planning_passes` block exists near the top
+- if external research already exists, mark:
   - `deep_dive_pass_2: done <YYYY-MM-DD>`
-- Otherwise mark:
+- otherwise mark:
   - `deep_dive_pass_1: done <YYYY-MM-DD>`
-- Preserve existing timestamps and never wipe completed fields.
+- preserve existing timestamps and never wipe completed fields
 
 ## Pattern consolidation sweep
 
-- If this design introduces or sharpens a central pattern, look for other places that should adopt it.
-- Default dispositions:
+If the design introduces or updates a central pattern, contract, lifecycle primitive, or policy boundary:
+
+- look for other places that should adopt it
+- capture file paths or symbols
+- default dispositions:
   - clearly in scope -> include
-  - meaningful scope expansion -> defer or exclude and continue
+  - scope expansion -> defer or exclude
   - stop only if the plan is internally contradictory
 
-## Update rules
+## Placement and update rules
 
-This command writes or updates:
+Update in this order:
 
-- `arch_skill:block:current_architecture`
-- `arch_skill:block:target_architecture`
-- `arch_skill:block:call_site_audit`
+1. replace inside markers when they exist:
+   - `arch_skill:block:current_architecture`
+   - `arch_skill:block:target_architecture`
+   - `arch_skill:block:call_site_audit`
+2. otherwise update semantically matching sections in place
+3. otherwise insert the missing top-level sections after research/problem sections and before phase plan or verification sections
 
-Use semantic section replacement if blocks do not exist yet. Otherwise insert missing top-level sections in canonical order without degrading the surrounding canonical scaffold.
+If the doc is canonical, preserve exact headings and numbering for Sections 4, 5, and 6.
+
+Use this call-site section shape:
+
+```text
+<!-- arch_skill:block:call_site_audit:start -->
+# Call-Site Audit (exhaustive change inventory)
+
+## Change map (table)
+| Area | File | Symbol / Call site | Current behavior | Required change | Why | New API / contract | Tests impacted |
+| ---- | ---- | ------------------ | ---------------- | --------------- | --- | ------------------ | -------------- |
+| <module> | <path> | <fn/cls> | <today> | <diff> | <rationale> | <new usage> | <tests> |
+
+## Migration notes
+* Deprecated APIs (if any):
+* Delete list (what must be removed; include superseded shims/parallel paths if any):
+
+## Pattern Consolidation Sweep (anti-blinders; scoped by plan)
+| Area | File / Symbol | Pattern to adopt | Why (drift prevented) | Proposed scope (include/defer/exclude) |
+| ---- | ------------- | ---------------- | ---------------------- | ------------------------------------- |
+| <area> | <path> | <pattern> | <reason> | <include/defer/exclude> |
+<!-- arch_skill:block:call_site_audit:end -->
+```
+
+## Consistency duties beyond local ownership
+
+- if Sections 4 through 6 materially sharpen the design, repair clearly stale TL;DR, Section 0, or Section 1 claims that are now wrong
+- if the architecture changed in a meaningful way, append or update a Decision Log entry
+- if the new target architecture invalidates the current phase plan, say so plainly and point the next move to `phase-plan`
+
+## Stop condition
+
+- if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+- if North Star or UX scope is contradictory, stop for a quick doc correction
+- otherwise stop after Sections 4 through 6 and `planning_passes` are updated for this run
 
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - what changed in current architecture, target architecture, and call-site audit
-- issues or risks if real
+- real issues or risks only
 - next action

@@ -1,14 +1,18 @@
 # `phase-plan` Command Contract
 
-Use this reference when the user runs `arch-step phase-plan`.
+## What this command does
 
-## Shared doctrine to carry in
+- write or sharpen the authoritative phased implementation plan
+- convert architecture and audit material into execution order
+- keep the phase plan as the one execution checklist
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for Sections `5`, `6`, `7`, and `8`.
-- Carry forward the warn-first sequencing and anti-bureaucratic verification doctrine from the bundled doctrine.
+## Shared references to carry in
 
-## Artifact sections this command reads for alignment
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for Sections 5, 6, 7, and 8
+
+## Reads for alignment
 
 - `# TL;DR`
 - `# 0) Holistic North Star`
@@ -16,65 +20,52 @@ Use this reference when the user runs `arch-step phase-plan`.
 - `# 6) Call-Site Audit`
 - `planning_passes`
 
-## Artifact sections or blocks this command updates
+## Writes
 
 - `# 7) Depth-First Phased Implementation Plan (authoritative)`
 - `arch_skill:block:phase_plan`
-
-## Quality bar for what this command touches
-
-- Section 7 is the single authoritative execution checklist.
-- The plan should be foundational-first.
-- Each phase should have goal, work, verification, docs or comments when needed, exit criteria, and rollback.
-- Verification should be small, credible, and non-bureaucratic.
-- Helper blocks may constrain the phase plan, but they must not compete with it.
-
-## Consistency duties beyond local ownership
-
-- If the phase plan changes sequencing, scope shape, or verification expectations, repair the smallest stale claims in TL;DR, Section 0, and Section 8.
-- If new sequencing or scope decisions replace an earlier assumption, append or update Section 10 rather than silently rewriting history.
-- Section 7 must remain the one execution checklist even after helper blocks exist.
 
 ## Hard rules
 
-- Docs-only. Do not modify code.
-- Resolve `DOC_PATH`.
-- If North Star or UX scope is contradictory, pause for a quick doc edit first.
-- Do not hard-block if planning passes are incomplete; warn and continue.
-- If you discover missing work while planning, add it to the phase plan rather than leaving it implicit.
+- docs-only; do not modify code
+- if North Star or UX scope is contradictory, stop for a quick doc correction
+- if missing work is discovered while planning, add it to the phase plan rather than leaving it implicit
+- do not turn helper blocks into competing execution checklists
 
-## Artifact preservation
-
-- Preserve the canonical scaffold when it already exists.
-- Preserve the exact canonical heading and numbering for Section 7 in canonical docs.
-- If this command inserts the phase-plan section into a canonical doc, use the exact Section 7 heading from `artifact-contract.md`.
-- If the doc is materially non-canonical outside this command's safe repair boundary, stop and route to `reformat`.
-
-## Preflight
+## Warn-first preflight
 
 Before writing the phase plan:
 
-- inspect `planning_passes`
-- or infer from doc contents if the block is missing
-- if recommended sequencing is incomplete or unknown, warn but still write the phase plan
+- inspect `planning_passes` if present
+- otherwise infer from deep-dive and external-research content
+- if recommended sequencing is incomplete or unknown, do not stop
+- instead warn clearly and continue writing the plan
 
-## Update rules
+## Quality bar
 
-Write or update:
+- Section 7 must stay the one authoritative execution checklist
+- the plan must be foundational-first
+- each phase must have goal, work, verification, docs/comments when needed, exit criteria, and rollback
+- verification should be small, credible, and non-bureaucratic
+- required cleanup and deletes should not be buried
 
-- `arch_skill:block:phase_plan`
+## Placement and update rules
 
-If `DOC_PATH` is already canonical, preserve or insert the section as:
+Update in this order:
 
-- `# 7) Depth-First Phased Implementation Plan (authoritative)`
+1. replace inside `arch_skill:block:phase_plan` when it exists
+2. otherwise update an existing phase-plan or phased-implementation section in place
+3. otherwise insert a new top-level Section 7 after Call-Site Audit, after Target Architecture, or after Research/Problem sections
 
-Use this canonical block shape:
+If the doc is canonical, preserve exact Section 7 heading and numbering.
+
+Use this block shape:
 
 ```text
 <!-- arch_skill:block:phase_plan:start -->
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). No fallbacks/runtime shims — the system must work correctly or fail loudly (delete legacy paths). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
+> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
 
 ## Phase 1 — <foundation>
 
@@ -96,10 +87,22 @@ Use this canonical block shape:
 <!-- arch_skill:block:phase_plan:end -->
 ```
 
+## Consistency duties beyond local ownership
+
+- if the phase plan changes sequencing, scope shape, or verification expectations, repair the smallest stale claims in TL;DR, Section 0, and Section 8
+- if new sequencing or scope decisions replace an earlier assumption, append or update Section 10
+- Section 7 must remain the one execution checklist even after helper blocks exist
+
+## Stop condition
+
+- if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+- if North Star or UX scope is contradictory, stop for a quick doc correction
+- otherwise stop after the authoritative phase plan is updated and any warn-first caveats are surfaced
+
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - what changed in the phase plan
-- warn about missing prior passes when relevant
+- warn about missing earlier passes when relevant
 - next action

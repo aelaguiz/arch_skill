@@ -1,12 +1,10 @@
 # Arch Step Section Quality
 
-Use this file when you need to judge what a section is for, what strong looks like, and what weak looks like. This is the quality bar behind the canonical artifact.
+Execution grades:
 
-Use these bars as execution gates:
-
-- `strong`: later commands can trust the section directly
-- `decent`: later commands can proceed, but should do so carefully
-- `weak`: the section is not done for planning purposes
+- `strong`: downstream commands can trust it directly
+- `decent`: downstream can proceed, but should do so carefully
+- `weak`: not done for planning purposes
 - `missing`: the artifact has not reached this part yet
 
 ## `# TL;DR`
@@ -22,31 +20,26 @@ Strong when:
 - `Problem` is concrete
 - `Approach` names the actual architectural move
 - `Plan` names real phases or work slices
-- `Non-negotiables` materially constrain decisions
+- `Non-negotiables` materially constrain later decisions
 
 Weak when:
 
 - it reads like marketing copy
 - the plan is generic or empty
-- the non-negotiables do not actually rule anything out
+- the non-negotiables do not rule anything out
 - it disagrees with Section 0 or Section 7
-
-Must stay consistent with:
-
-- Section 0
-- Section 7
 
 Downstream can trust it when:
 
 - it gives one stable sentence for outcome, problem, approach, and plan shape
-- later commands do not need to reinterpret what this plan is trying to do
+- later commands do not need to reinterpret what the plan is trying to do
 
 ## `# 0) Holistic North Star`
 
 Purpose:
 
-- align the whole workflow before deeper planning
-- lock scope, evidence, and invariants early enough to prevent drift
+- align the workflow before deeper planning
+- lock scope, evidence, invariants, and fallback stance early enough to prevent drift
 
 Strong when:
 
@@ -54,9 +47,9 @@ Strong when:
 - in-scope and out-of-scope are explicit
 - definition of done is observable
 - evidence uses the smallest credible signal
-- invariants are actionable, not slogans
-- fallback policy is explicit and respected
-- it gives later commands a default answer for ordinary tradeoffs and scope calls
+- invariants are actionable
+- fallback stance is explicit and respected
+- later commands can answer ordinary scope and tradeoff questions from it
 
 Weak when:
 
@@ -64,12 +57,7 @@ Weak when:
 - scope boundaries are missing
 - definition of done depends on bespoke ceremony
 - invariants are generic platitudes
-- it reads like an inspirational statement instead of an execution contract
-
-Must stay consistent with:
-
-- TL;DR
-- Sections 1, 7, and 8
+- it reads like inspiration instead of an execution contract
 
 Downstream can trust it when:
 
@@ -92,13 +80,8 @@ Strong when:
 Weak when:
 
 - priorities are interchangeable
-- constraints are generic boilerplate
+- constraints are boilerplate
 - principles do not affect decisions
-
-Must stay consistent with:
-
-- Section 0
-- Section 5
 
 Downstream can trust it when:
 
@@ -108,13 +91,13 @@ Downstream can trust it when:
 
 Purpose:
 
-- explain the current reality and why change is justified
+- explain current reality and why change is justified
 
 Strong when:
 
 - current behavior is concrete
 - symptoms and root-cause hypotheses are specific
-- the why-now case is explicit
+- why-now is explicit
 - constraints flow from reality, not taste
 
 Weak when:
@@ -123,14 +106,9 @@ Weak when:
 - the current system is not actually described
 - root causes are hand-wavy
 
-Must stay consistent with:
-
-- Section 4
-- Section 6
-
 Downstream can trust it when:
 
-- the reason for change is specific enough to judge whether the target architecture really solves it
+- the reason for change is specific enough to judge whether the target architecture solves it
 
 ## `# 3) Research Grounding (external + internal “ground truth”)`
 
@@ -149,13 +127,7 @@ Weak when:
 
 - it is generic or unanchored
 - external references are decorative
-- open questions are just vague TODOs
-
-Must stay consistent with:
-
-- Section 2
-- Section 5
-- external research when present
+- open questions are vague TODOs
 
 Downstream can trust it when:
 
@@ -180,14 +152,9 @@ Weak when:
 - flows are missing
 - ownership and failure behavior are unclear
 
-Must stay consistent with:
-
-- Section 2
-- Section 6
-
 Downstream can trust it when:
 
-- the current control flow and ownership boundaries are concrete enough to audit planned changes against them
+- the current control flow and boundaries are concrete enough to audit planned changes against them
 
 ## `# 5) Target Architecture (to-be)`
 
@@ -197,11 +164,12 @@ Purpose:
 
 Strong when:
 
-- the future structure is concrete
+- future structure is concrete
 - contracts and boundaries are explicit
 - SSOT is clear
 - no parallel paths are tolerated without explicit approval
 - invariants are enforceable
+- migration shape is explicit where interfaces change
 
 Weak when:
 
@@ -209,16 +177,9 @@ Weak when:
 - boundaries are mushy
 - it leaves multiple plausible architectures open
 
-Must stay consistent with:
-
-- Section 1
-- Section 6
-- Section 7
-- Section 8
-
 Downstream can trust it when:
 
-- implementation can proceed without inventing missing contracts or choosing among multiple plausible architectures
+- implementation can proceed without inventing missing contracts or choosing among multiple architectures
 
 ## `# 6) Call-Site Audit (exhaustive change inventory)`
 
@@ -231,19 +192,14 @@ Strong when:
 
 - call sites are concrete and exhaustive enough to drive work
 - migration notes and delete list are explicit
+- tests impacted are called out when relevant
 - consolidation sweep names related adopters and default dispositions
 
 Weak when:
 
 - it only lists the obvious path
 - deletes and cleanup are absent
-- the audit cannot be used to verify completeness
-
-Must stay consistent with:
-
-- Section 4
-- Section 5
-- Section 7
+- it cannot be used to verify completeness
 
 Downstream can trust it when:
 
@@ -253,60 +209,47 @@ Downstream can trust it when:
 
 Purpose:
 
-- serve as the single authoritative execution checklist
-- convert the rest of the document into an implementation order that can actually ship
+- serve as the one authoritative execution checklist
+- convert the rest of the artifact into an implementation order that can actually ship
 
 Strong when:
 
 - the plan is foundational-first
-- each phase has goal, work, verification, exit criteria, and rollback
+- each phase has goal, work, verification, docs/comments when needed, exit criteria, and rollback
 - verification is small and credible
 - manual QA is deferred to finalization when appropriate
-- there is no second execution checklist elsewhere
-- phases make the required deletes, cleanup, and follow-through visible rather than burying them
+- there is no competing checklist elsewhere
+- required deletes, cleanup, and follow-through are visible rather than buried
 
 Weak when:
 
 - phases are generic or unordered
-- tasks are too vague to implement
+- work items are too vague to implement
 - helper blocks compete with the phase plan
 - sequencing hides required cleanup or migration work
 
-Must stay consistent with:
-
-- TL;DR
-- Section 5
-- Section 6
-- Section 8
-
 Downstream can trust it when:
 
-- implement can execute from it directly and audit can reopen work against it concretely
+- `implement` can execute from it directly and `audit-implementation` can reopen work against it concretely
 
 ## `# 8) Verification Strategy (common-sense; non-blocking)`
 
 Purpose:
 
-- explain how the plan will be trusted without turning verification into bureaucracy
-- define enough evidence to believe the work without inventing a second project
+- explain how the work will be trusted without turning verification into bureaucracy
 
 Strong when:
 
 - it prefers existing checks
 - unit, integration, or end-to-end signals are used only where they buy confidence
 - manual verification is short and purposeful
-- it explicitly avoids negative-value tests
+- it explicitly rejects negative-value tests
 
 Weak when:
 
-- it introduces a large new harness by default
+- it introduces large new harnesses by default
 - it depends on visual constants, doc gates, or deletion proofs
 - it conflicts with Section 0 evidence expectations
-
-Must stay consistent with:
-
-- Section 0
-- Section 7
 
 Downstream can trust it when:
 
@@ -328,11 +271,6 @@ Weak when:
 - it is absent for a change that clearly needs rollout or telemetry thought
 - it is generic boilerplate with no operational value
 
-Must stay consistent with:
-
-- Section 0
-- Section 5
-
 Downstream can trust it when:
 
 - rollout or operational follow-through is explicit enough that implementation and finalization will not forget it
@@ -352,12 +290,7 @@ Strong when:
 Weak when:
 
 - decisions disappear into narrative edits
-- exceptions are made without any record
-
-Must stay consistent with:
-
-- frontmatter
-- the rest of the plan after any meaningful drift
+- exceptions are made without a durable record
 
 Downstream can trust it when:
 
@@ -373,16 +306,16 @@ Strong when:
 
 - pass fields are updated additively
 - it reflects real planning progress
-- it helps status and advance choose the next move
-
-Downstream can trust it when:
-
-- it reflects what actually happened and does not mislead `status` or `advance`
+- it helps `status` and `advance` choose the next move
 
 Weak when:
 
 - it is missing from a canonical doc
 - fields are wiped or left misleadingly stale
+
+Downstream can trust it when:
+
+- it reflects what actually happened and does not mislead `status` or `advance`
 
 ## Supporting block: `external_research`
 
@@ -396,25 +329,102 @@ Strong when:
 - sources are authoritative
 - findings become adopt or reject guidance for this plan
 
+Weak when:
+
+- it sprawls
+- it summarizes without affecting the plan
+
 Downstream can trust it when:
 
-- target architecture or verification choices can cite it without cargo-culting
+- target architecture or verification choices can cite it without cargo culting
+
+## Helper block: `plan_enhancer`
+
+Purpose:
+
+- harden the main artifact toward the simplest, most idiomatic, most drift-resistant plan
+
+Strong when:
+
+- it sharpens the main plan instead of becoming a parallel plan
+- it makes enforceable rules explicit
+- it identifies must-change call sites, deletes, and drift-prone adopters
 
 Weak when:
 
-- it is broad research sprawl
-- it summarizes without affecting the plan
+- it repeats the main plan without improving it
+- it acts like a second checklist
+- it makes strong claims without grounding them in the actual plan or code
 
-## Helper blocks
+Downstream can trust it when:
 
-Use these to sharpen the main artifact, not compete with it.
+- it clearly hardens the main artifact and leaves Section 7 as the one execution checklist
 
-- `plan_enhancer`: best-possible-by-our-standards hardening
-- `reference_pack`: folded materials plus phase-aligned obligations
-- `overbuild_protector`: scope triage without creating a second checklist
-- `review_gate`: local idiomatic and completeness review record
+## Helper block: `reference_pack`
 
-Helper blocks are strong only when they improve the main artifact and keep Section 7 as the execution SSOT.
+Purpose:
+
+- make reference material impossible to miss during planning and implementation
+
+Strong when:
+
+- it distills binding obligations
+- it folds reference material into the main artifact
+- it wires obligations into the relevant phases
+
+Weak when:
+
+- it is just an inventory dump
+- obligations are vague or not phase-aligned
+- folded content is missing the parts implementation actually needs
+
+Downstream can trust it when:
+
+- implementation and review can see the real non-negotiables without chasing external docs
+
+## Helper block: `overbuild_protector`
+
+Purpose:
+
+- mechanically separate ship-blocking work from optional work, follow-ups, and bug vectors
+
+Strong when:
+
+- classifications are explicit
+- evidence anchors are cited
+- Section 7 remains the single execution checklist
+
+Weak when:
+
+- it classifies work without evidence
+- it creates a shadow execution surface
+- it leaves scope calls ambiguous
+
+Downstream can trust it when:
+
+- execution agents can tell what is ship-blocking versus optional or deferred without guessing
+
+## Helper block: `review_gate`
+
+Purpose:
+
+- record local idiomatic and completeness review before moving on
+
+Strong when:
+
+- it asks the right question
+- it records integrated changes and remaining risks
+- it improves the main plan rather than merely commenting on it
+
+Weak when:
+
+- it is generic or ceremonial
+- it records feedback without integrating it
+- it duplicates the plan instead of sharpening it
+
+Downstream can trust it when:
+
+- the artifact is more idiomatic and complete after the review than before it
 
 ## `WORKLOG_PATH`
 
@@ -426,11 +436,20 @@ Strong when:
 
 - it links to the plan
 - it records real progress at phase boundaries
+- entries name work completed, checks run, issues or deviations, and next steps
+- phase-boundary updates match the current phase status in Section 7
 - it does not become a second planning document
+
+Weak when:
+
+- it claims progress without evidence
+- it diverges from the plan
+- phase-boundary truth is missing or stale
+- it turns into a second checklist or backlog
 
 Downstream can trust it when:
 
-- implementation truth can be reconstructed quickly without rereading the entire code diff
+- implementation truth can be reconstructed quickly without rereading the whole diff
 
 ## `implementation_audit`
 
@@ -440,10 +459,20 @@ Purpose:
 
 Strong when:
 
+- verdict is explicit and honest
 - code blockers are concrete
+- reopened phases are updated in place
 - missing items cite evidence anchors
+- each missing item says what the plan expects, what code reality is, and what fix remains
 - false-complete phases are reopened
-- manual QA is tracked as non-blocking follow-up rather than missing code
+- manual QA is tracked as non-blocking follow-up instead of missing code
+
+Weak when:
+
+- it claims completeness without evidence
+- missing items are vague
+- code gaps and manual QA are mixed together
+- phases stay marked complete despite real code gaps
 
 Downstream can trust it when:
 

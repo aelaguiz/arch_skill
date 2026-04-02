@@ -1,23 +1,61 @@
 # Arch Step Shared Doctrine
 
-Use this file for the cross-cutting planning doctrine shared across `arch-step` stages. This is the quality layer above block placement.
+## Communication contract
+
+- Start console output with a one-line North Star reminder.
+- Then give the punchline plainly.
+- Then give a short natural-English update.
+- Do not dump logs, giant lists, or full inserted sections to the console.
+- Put deep detail in `DOC_PATH` or `WORKLOG_PATH`.
+- Never be pedantic or ceremony-heavy. Optimize for the real task.
+
+## Worktree and execution discipline
+
+- Do not block on unrelated dirty files.
+- Ignore unrecognized changes unless they directly conflict with the task.
+- If committing, stage only files you touched unless instructed otherwise.
+- When the command is clear, begin the work instead of restating the ask.
+- Planning commands are docs-only.
+- `implement` may change code and must respect branch discipline.
 
 ## Convergence rule
 
 - `arch-step` always works toward one finished full-arch artifact.
-- Local block ownership is real, but it is subordinate to artifact convergence.
-- If a command updates one part of the plan and can see that nearby sections are now stale, it should repair the smallest safe set of contradictions before it exits.
+- Local ownership is subordinate to artifact convergence.
+- If a command updates one part of the plan and can see that nearby sections are now stale, it should repair the smallest safe set of contradictions before exiting.
 
-## Repo-evidence-first question policy
+## Question policy
 
-- Answer everything discoverable from repo code, tests, fixtures, logs, docs, and tooling before asking the user.
-- Allowed questions are narrow:
-  - true product or UX decisions not encoded anywhere
-  - external constraints not present in repo or docs
-  - real doc-path ambiguity after best-effort resolution
-  - missing access or permissions
-- If a question is still necessary, say where you already looked first.
-- Do not ask the user technical questions that code or docs can answer.
+Use repo evidence first.
+
+You must answer anything discoverable from:
+
+- code
+- tests
+- fixtures
+- logs
+- docs
+- repo tooling
+- referenced materials already in the plan
+
+Allowed questions are narrow:
+
+- true product or UX decisions not encoded anywhere
+- external constraints not present in repo or docs
+- real doc-path ambiguity after best-effort resolution
+- missing access or permissions
+
+If a question is still necessary, say where you looked first.
+
+## DOC_PATH resolution defaults
+
+- Use an explicit `docs/<...>.md` path when present.
+- If multiple candidates exist, prefer the most plan-like doc:
+  - canonical headings
+  - stable `arch_skill:block:` markers
+  - frontmatter with `status` or `doc_type`
+- Never choose `*_WORKLOG.md` as `DOC_PATH`.
+- If ambiguity survives best effort, ask the user to choose from the top 2-3 candidates.
 
 ## Alignment checks before deeper work
 
@@ -25,35 +63,23 @@ The North Star is an alignment lock, not a mission statement.
 
 - TL;DR should say what is changing and why.
 - Section 0 should say what must remain true while we do it.
-- Later commands should use those sections to resolve ordinary tradeoffs without re-asking the user.
+- Later commands should be able to resolve ordinary tradeoffs from those sections without re-asking the user.
 
-Run these checks before any substantive planning or implementation step:
+Before substantive planning or implementation:
 
-- North Star:
-  - concrete and scoped
-  - falsifiable claim, not vibes
-  - smallest credible acceptance signal, preferably an existing check
-- UX scope:
-  - explicit in-scope and out-of-scope surfaces
-  - no silent scope expansion
-  - no contradiction with TL;DR, Section 0, or the phase plan
+- North Star must be concrete and scoped
+- claim must be falsifiable
+- smallest credible acceptance signal must be explicit
+- UX in-scope and out-of-scope surfaces must be explicit
+- scope must not silently expand
 
 If North Star or UX scope is unclear or contradictory, stop for a quick doc correction before going deeper.
-
-## Consistency repair doctrine
-
-- Do not knowingly leave the plan internally contradictory just because the local section you owned is now correct.
-- If target architecture changes, check TL;DR, Section 0, Section 1, Section 7, and Section 8 for stale claims.
-- If sequencing or verification changes, check TL;DR, Section 0, Section 7, Section 8, and Section 10.
-- If rollout or telemetry implications change, check Section 9 and Section 10.
-- Prefer minimal truthful edits over broad rewrites.
-- Record meaningful drift or approved exceptions in the Decision Log instead of silently rewriting history.
 
 ## Evidence philosophy
 
 - Prefer the smallest credible signal.
 - Prefer existing tests, typecheck, lint, build, instrumentation, or log signatures before new harnesses.
-- If no existing programmatic signal is cheap and credible, use a short manual checklist.
+- If no cheap programmatic signal exists, use a short manual checklist.
 - Manual QA is usually non-blocking until finalization and should not be mistaken for missing code.
 - Avoid verification bureaucracy.
 
@@ -64,12 +90,14 @@ Negative-value defaults to avoid:
 - doc-inventory gates
 - mock-only interaction tests with no behavior assertion
 - bespoke harnesses or frameworks added just to create ceremony
+- timing-hack tests when a behavior-level check or smaller signal would do
 
 ## Architecture doctrine
 
 - Code is ground truth.
 - Prefer the most idiomatic existing repo pattern unless there is a concrete reason not to.
-- Single source of truth is the default. Avoid parallel implementations, duplicate writers, and shadow contracts.
+- Single source of truth is the default.
+- Avoid parallel implementations, duplicate writers, and shadow contracts.
 - Boundaries and invariants should be enforceable, not merely described.
 - Prefer hard cutover, explicit deletes, and fail-loud boundaries over compatibility shims.
 - Runtime fallbacks or shims are forbidden unless the plan explicitly approves them via `fallback_policy: approved` plus a Decision Log entry with a removal plan.
@@ -83,21 +111,30 @@ Negative-value defaults to avoid:
 
 ## Warn-first sequencing
 
-The recommended core flow is:
+Recommended flow:
 
 1. Deep dive pass 1
-2. External research grounding when warranted
-3. Deep dive pass 2 if the external research materially changes the plan
+2. External research when warranted
+3. Deep dive pass 2 if external research materially changes the design
 4. Phase plan
 5. Implement
 
-This sequence is a warn-first quality guard, not a hard blocker. Missing passes should be surfaced clearly but should not automatically stop useful planning work.
+This is a quality guard, not a hard blocker. Missing passes should be surfaced clearly but should not automatically stop useful work.
+
+## Consistency repair doctrine
+
+- Do not knowingly leave the plan internally contradictory just because the local section you owned is now correct.
+- If target architecture changes, check TL;DR, Section 0, Section 1, Section 7, and Section 8 for stale claims.
+- If sequencing or verification changes, check TL;DR, Section 0, Section 7, Section 8, and Section 10.
+- If rollout or telemetry implications change, check Section 9 and Section 10.
+- Prefer minimal truthful edits over broad rewrites.
+- Record meaningful drift or approved exceptions in the Decision Log instead of silently rewriting history.
 
 ## Authoritative surfaces
 
 - `DOC_PATH` is the one planning source of truth.
 - `WORKLOG_PATH` is execution evidence, not a second plan.
-- The phase plan is the single authoritative execution checklist.
+- Section 7 is the one authoritative execution checklist.
 - Helper blocks may sharpen or constrain the plan, but they must not create competing execution surfaces.
 - The Decision Log is append-only and should capture real plan drift, approved exceptions, and meaningful sequencing changes.
 
@@ -106,13 +143,6 @@ This sequence is a warn-first quality guard, not a hard blocker. Missing passes 
 - When introducing a new SSOT, contract, lifecycle primitive, or non-obvious sharp edge, note where a short code comment should live at the canonical boundary.
 - Prefer a few high-leverage comments over comment spam.
 - The point is future drift prevention, not prose volume.
-
-## Console behavior
-
-- Start with a one-line North Star reminder.
-- Then give the punchline plainly.
-- Keep console output high-signal and natural.
-- Put exhaustive details in `DOC_PATH` or `WORKLOG_PATH`, not in console output.
 
 ## Quality principle
 

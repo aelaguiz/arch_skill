@@ -1,6 +1,6 @@
 interface:
   display_name: "Arch Step"
-  short_description: "Run one explicit full-arch command against the canonical plan artifact"
+  short_description: "Run one explicit full-arch command against one canonical plan artifact"
   default_prompt: "Use $arch-step with one literal full-arch command like `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`, and move one canonical plan artifact closer to completion while doing it."
 
 policy:

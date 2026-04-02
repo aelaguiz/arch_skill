@@ -103,7 +103,7 @@ At any time, either:
 It prints a checklist of where you are in the regular/mini flow and recommends the next move.
 
 ### `arch-step` (explicit full-arch operator)
-Use `arch-step` when you want the old saved-prompt full-arch feel back without depending on prompts at runtime. It should preserve the same plan artifact shape and the same phase ownership the saved prompts had.
+Use `arch-step` when you want command-level control over one canonical full-arch artifact without depending on prompts at runtime. It should preserve the same artifact shape, stage ownership, and stop conditions through its own skill package.
 
 Examples:
 
@@ -121,12 +121,15 @@ Examples:
 - `Use $arch-step audit-implementation docs/MY_PLAN.md`
 - `Use $arch-step status docs/MY_PLAN.md`
 - `Use $arch-step advance docs/MY_PLAN.md`
+- `Use $arch-step advance docs/MY_PLAN.md RUN=1`
 
 Practical split:
 
 - `arch-step` mutates one explicit full-arch stage at a time.
-- `arch-step` should stay prompt-close: same artifact, same block ownership, same stop conditions where they matter.
-- `arch-flow` stays read-only and gives the longer checklist surface.
+- `arch-step` should stay standalone and command-complete: same artifact, same block ownership, same stop conditions, and enough embedded doctrine that no external surface is required to understand what to do.
+- `arch-flow` stays read-only and gives the broader cross-workflow next-step surface.
+- `arch-step status` stays compact and stage-quality-focused.
+- `arch-step advance` owns the full checklist, exact next command, and optional one-step execution.
 - `arch-plan` remains the broader intent-driven full-arch skill.
 
 ### `WORKLOG_PATH` (the progress journal)

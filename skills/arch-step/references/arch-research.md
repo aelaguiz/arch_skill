@@ -1,68 +1,58 @@
 # `research` Command Contract
 
-Use this reference when the user runs `arch-step research`.
+## What this command does
 
-## Shared doctrine to carry in
+- ground the plan in internal code truth and relevant external anchors
+- write or update the Research Grounding section
+- surface evidence-based open questions
+- write likely code implications into the plan without implementing them
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for Sections `0`, `2`, and `3`.
-- Carry forward the strict question policy, alignment checks, and evidence philosophy from `shared-doctrine.md`.
+## Shared references to carry in
 
-## Artifact sections this command reads for alignment
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for TL;DR, Section 0, Section 2, and Section 3
+
+## Reads for alignment
 
 - `# TL;DR`
 - `# 0) Holistic North Star`
 - `# 2) Problem Statement`
-- any existing `# 3) Research Grounding`
+- any existing research or external research content
 
-## Artifact sections or blocks this command updates
+## Writes
 
 - `# 3) Research Grounding (external + internal “ground truth”)`
 - `arch_skill:block:research_grounding`
 
-## Quality bar for what this command touches
+## Hard rules
+
+- docs-only; do not modify code
+- use repo evidence first
+- read code and run read-only searches as needed
+- if research reveals likely code changes, write them into the plan with file anchors instead of implementing them
+- if North Star or UX scope is unclear or contradictory, stop for a quick doc correction before continuing
+
+## Quality bar
 
 Good research looks like:
 
-- internal ground truth with concrete file paths and why they are authoritative
-- reusable internal patterns so the plan does not reinvent them
-- optional external anchors with explicit adopt or reject logic
-- open questions framed as evidence needed, not vague TODOs
+- authoritative internal anchors with concrete file paths and what they define
+- reusable patterns named explicitly so later stages do not reinvent them
+- external anchors only when they add real value, each with adopt or reject reasoning
+- open questions framed as evidence needed rather than vague TODOs
 
 Research is weak when it is generic, unanchored, cargo-culted, or disconnected from the plan.
 
-## Consistency duties beyond local ownership
+## Placement and update rules
 
-- If research disproves an assumption already stated in TL;DR or Section 0, repair the smallest clearly stale claim so the doc stays honest.
-- If research materially changes likely architecture or verification choices, note that plainly and point the next move to `deep-dive` or `phase-plan` as appropriate.
-- Do not rewrite Sections 4 through 8 here, but do not leave obvious contradictions unmarked.
+Update the doc in this order:
 
-## Hard rules
+1. if `arch_skill:block:research_grounding` exists, replace inside it
+2. otherwise update an existing research-like section in place
+3. otherwise insert a new top-level Section 3 after the problem statement or after TL;DR/frontmatter if needed
 
-- Docs-only. Do not modify code.
-- Resolve `DOC_PATH`.
-- Respect the strict question policy from `shared-doctrine.md`.
-- If the North Star or UX scope is unclear or contradictory, pause for a quick doc edit before continuing.
-- If repo evidence reveals likely code changes, write them into `DOC_PATH` as anchored plan implications. Do not implement them here.
-
-## Artifact preservation
-
-- Preserve the canonical scaffold when it already exists.
-- If the doc uses the exact canonical heading, preserve that wording and numbering.
-- If this command needs to insert the section into a canonical doc, use the canonical Section 3 heading, not a loose variant.
-- If the doc is materially non-canonical outside this command's safe repair boundary, stop and route to `reformat`.
-
-## Update rules
-
-Placement order:
-
-1. replace inside `arch_skill:block:research_grounding`
-2. otherwise update an existing research-like section
-3. otherwise insert a new top-level research section
-
-If `DOC_PATH` is already canonical, preserve or insert the section as:
-
-- `# 3) Research Grounding (external + internal “ground truth”)`
+If the doc is canonical, preserve the exact Section 3 heading and numbering.
 
 Use this block shape:
 
@@ -83,11 +73,23 @@ Use this block shape:
 <!-- arch_skill:block:research_grounding:end -->
 ```
 
+## Consistency duties beyond local ownership
+
+- if research disproves an assumption already stated in TL;DR or Section 0, repair the smallest stale claim so the doc stays honest
+- if research materially changes likely architecture or verification choices, point the next move to `deep-dive` or `phase-plan` as appropriate
+- do not rewrite later sections here, but do not leave obvious contradictions unmarked
+
+## Stop condition
+
+- if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+- if North Star or UX scope is contradictory, stop for a quick doc correction
+- otherwise stop after the research block is updated and the next move is clear
+
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - what changed in research grounding
-- issues or risks only if real
+- real issues or risks only
 - next action
 - need from the user only if required

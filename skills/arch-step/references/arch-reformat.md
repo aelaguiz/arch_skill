@@ -1,72 +1,89 @@
 # `reformat` Command Contract
 
-Use this reference when the user runs `arch-step reformat`.
+## What this command does
 
-## Shared doctrine to carry in
+- take an existing architecture or plan doc that is not in canonical shape
+- convert it into the canonical `arch-step` artifact
+- preserve meaning-bearing content instead of rewriting from scratch
+- draft TL;DR plus Section 0 from the source evidence and stop for confirmation
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for `# TL;DR`, `# 0)`, and the canonical sections the source doc must be mapped into.
-- Treat the input doc as the source of truth for meaning-bearing content.
+## Shared references to carry in
 
-## Artifact sections this command reads
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for TL;DR, Section 0, and the sections the source content maps into
 
-- the source doc in full
-- any existing frontmatter, TL;DR, North Star, plan, decision notes, references, and open questions
+## Inputs
 
-## Artifact sections this command establishes or repairs
+- `DOC_PATH`:
+  - if the ask includes `OUT=...`, treat that as the output path and the first markdown path as the input doc
+  - otherwise use the markdown path from the ask
+  - if no path is clear, ask for the top 2-3 best candidates
+- treat the input doc as the source of truth for meaning-bearing content
 
-- the full canonical scaffold from `artifact-contract.md`
+## Exact artifact responsibility
+
+This command must restore:
+
+- canonical frontmatter
 - `# TL;DR`
 - `planning_passes`
 - `# 0)` through `# 10)`
-- `Appendix A` and `Appendix B` when needed
-
-## Why this command exists
-
-- recover the canonical full-arch artifact when the source doc has useful content but the wrong shape
-- preserve meaning while restoring one doc that later commands can trust
-- make TL;DR and Section 0 explicit enough that the rest of the workflow has a stable alignment lock
-
-## Quality bar for what this command touches
-
-- preserve all meaning-bearing content
-- infer only from explicit source evidence
-- mark uncertain synthesis as draft inference
-- use appendices rather than dropping or hallucinating content
-- normalize heading drift back to the canonical `arch-step` shape
-- repair obvious contradictions when source content can be reconciled safely
+- Appendix A and Appendix B when needed
 
 ## Hard rules
 
-- Docs-only. Do not modify code.
-- Do not rewrite from scratch.
-- Preserve links, code blocks, tables, decisions, TODOs, and open questions.
-- If content cannot be confidently placed, keep it in the output rather than dropping it.
-- If `OUT=...` is provided, write to the new path and leave the input doc unchanged.
-- Do not introduce new scope; only structure and lightly clarify existing content.
+- docs-only; do not modify code
+- do not rewrite from scratch
+- preserve links, code fences, tables, decisions, TODOs, open questions, and call-site notes
+- infer only from explicit source evidence
+- label uncertain synthesis as draft inference
+- if something is truly missing, leave a TODO or placeholder instead of inventing it
+- if content cannot be confidently placed, keep it in Appendix A instead of dropping it
+- do not introduce new scope
+- preserve the single-document rule
+
+## Quality bar
+
+- preserve all meaning-bearing content
+- map content into the canonical structure once where possible
+- keep original wording when it carries nuance
+- normalize heading drift back to the canonical shape
+- draft TL;DR and Section 0 concretely when the source supports it
+
+## Why this command exists
+
+The goal is not prettier markdown. The goal is to recover one plan artifact that later commands can trust:
+
+- same structure every time
+- same meaning preserved
+- same alignment lock up front
+- no content loss hiding in "cleanup"
+
+## Conversion procedure
+
+1. Read the input doc fully.
+2. Create the canonical skeleton from `artifact-contract.md`.
+3. Map source content into the best-fitting canonical sections.
+4. Preserve code fences, tables, and links exactly.
+5. Prefer placing content once unless duplication is the only safe way to avoid losing meaning.
+6. Draft TL;DR and Section 0 from source evidence.
+7. Preserve or insert the canonical `planning_passes` block.
+8. Add:
+   - `Appendix A) Imported Notes` for unplaced source content
+   - `Appendix B) Conversion Notes` for major moves and remaining gaps
+9. Make one final consistency pass across TL;DR, Section 0, and Section 7.
+10. Write in place unless `OUT=...` is provided.
 
 ## Consistency duties before stopping
 
-- TL;DR, Section 0, and the phase plan should not contradict each other after conversion.
-- Preserve the strongest explicit source claims about scope, evidence, fallbacks, and sequencing.
-- If the source doc is ambiguous, keep the ambiguity visible in draft form or appendices rather than hiding it.
-
-## Conversion behavior
-
-1. Read the source doc fully.
-2. Create the canonical skeleton from `artifact-contract.md`.
-3. Map existing material into the most appropriate canonical sections.
-4. Prefer placing content once, unless duplication is the only safe way to avoid losing meaning.
-5. Draft TL;DR and Section 0 from source evidence rather than invention.
-6. Add:
-   - `Appendix A) Imported Notes` for content that could not be confidently placed
-   - `Appendix B) Conversion Notes` for high-level moves and remaining gaps
-7. Preserve or insert the canonical `planning_passes` block.
-8. Make one final consistency pass across TL;DR, Section 0, and Section 7.
+- TL;DR, Section 0, and the phase plan should not contradict each other after conversion
+- preserve the strongest explicit source claims about scope, evidence, fallbacks, and sequencing
+- if the source remains ambiguous, keep that ambiguity visible instead of smoothing it away
 
 ## Stop condition
 
-After rewriting the doc into canonical format:
+After converting the doc:
 
 - print the drafted TL;DR
 - print the drafted North Star
@@ -75,9 +92,9 @@ After rewriting the doc into canonical format:
 
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - output doc path
 - drafted TL;DR
 - drafted North Star
-- ask for `yes/no` confirmation
+- ask for `yes` or edits

@@ -1,110 +1,107 @@
 # `new` Command Contract
 
-Use this reference when the user runs `arch-step new`.
+## What this command does
 
-## Shared doctrine to carry in
+- create a brand-new canonical full-arch plan doc in `docs/`
+- draft TL;DR plus Section 0 directly from the ask
+- seed the rest of the canonical scaffold so later commands work on one shared artifact
+- stop for explicit North Star confirmation before deeper planning
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for `# TL;DR`, `# 0) Holistic North Star`, and `planning_passes`.
-- Treat the freeform blurb as working intent, not as polished requirements.
+## Shared references to carry in
 
-## Artifact sections this command establishes
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for TL;DR, Section 0, Sections 1, 2, 8, 9, 10, and `planning_passes`
 
-- frontmatter
+## Inputs
+
+- treat the freeform user ask as working intent, not polished requirements
+- if the user already has an existing doc that should be converted, route to `reformat` instead of creating a second plan doc
+
+## Exact artifact responsibility
+
+This command owns the initial creation of:
+
+- required frontmatter
 - `# TL;DR`
 - `planning_passes`
 - `# 0) Holistic North Star`
-- the canonical top-level scaffold for `# 1)` through `# 10)`
-
-## Exact output shape this command must create
-
-Create one canonical doc with:
-
-- required frontmatter keys from `artifact-contract.md`
-- `# TL;DR`
-- the `planning_passes` block near the top
-- `# 0) Holistic North Star`
 - exact canonical headings for `# 1)` through `# 10)`
 
-This command is responsible for bootstrapping the whole artifact shape, not just drafting the first section.
+It is not enough to create a file with headings. This command bootstraps the whole artifact shape.
 
-## Why these sections matter
-
-- `# TL;DR` is the high-signal truth later stages should keep aligned with.
-- `# 0)` is the alignment lock for scope, evidence, invariants, and fallback policy.
-- The rest of the canonical scaffold exists so later steps sharpen one shared artifact instead of improvising their own structure.
-
-## North Star doctrine
+## Why TL;DR and Section 0 matter
 
 Treat TL;DR plus Section 0 as the planning lock:
 
-- TL;DR says the outcome, problem, approach, and plan shape in the fewest lines possible.
-- Section 0 says what is in scope, what is out of scope, what evidence is enough, what invariants must hold, and what fallback stance is allowed.
-- Strong North Stars reduce later ambiguity. Weak North Stars force later commands to re-guess scope, architecture, and verification.
-- This command should draft a North Star that is easy to confirm or correct, not a vague paragraph that only sounds thoughtful.
+- TL;DR says outcome, problem, approach, and plan shape in the fewest lines possible
+- Section 0 says scope, exclusions, evidence, invariants, and fallback stance
+- later commands should be able to resolve ordinary tradeoffs from these sections without guessing
 
-## Quality bar for what this command touches
-
-- `# TL;DR` must not be generic when the blurb gives enough signal to draft it concretely.
-- `# 0)` must be real enough to confirm or correct, not a placeholder disguised as prose.
-- Sections `# 1)` through `# 10)` may begin as canonical scaffolding, but their exact headings must already be present.
-- If the blurb clearly implies priorities, problem framing, verification bias, rollout implications, or a likely first decision-log entry, seed those sections lightly and truthfully instead of leaving pure ceremony behind.
+If they are weak, every later stage becomes soft.
 
 ## Hard rules
 
-- Docs-only. Do not modify code.
-- Name the file `docs/<TITLE_SCREAMING_SNAKE>_<YYYY-MM-DD>.md`.
-- Apply the single-document rule.
-- Do not create additional planning docs.
-- Do not leave placeholders in TL;DR or Section 0 when the blurb supports filling them.
-- `new` owns the full canonical scaffold from `artifact-contract.md`.
-- Start the doc as `status: draft`.
-- If the user confirms the North Star, update `status:` to `active` without silently changing scope.
+- docs-only; do not modify code
+- create exactly one plan doc; do not create sidecar planning docs
+- name the file `docs/<TITLE_SCREAMING_SNAKE>_<YYYY-MM-DD>.md`
+- derive a short 5-9 word screaming-snake title from the ask
+- start the doc as `status: draft`
+- do not leave placeholders in TL;DR or Section 0 when the ask supports drafting them concretely
+- if the user later confirms the North Star, update `status:` from `draft` to `active` without silently changing scope
+
+## Quality bar
+
+- TL;DR must be concrete enough to falsify
+- Section 0 must be real enough to confirm or correct
+- if the ask clearly implies priorities, problem framing, verification bias, rollout implications, or an immediate tradeoff, lightly seed the relevant later sections instead of leaving pure ceremony
+- lightly seeded sections must stay truthful and minimal
 
 ## Consistency duties before stopping
 
-- `title`, TL;DR, Section 0, and `fallback_policy` must tell the same story.
-- If the blurb makes scope boundaries obvious, reflect them consistently in TL;DR and Section 0.
-- If the blurb makes rollout or telemetry obviously irrelevant, Section 9 can say so briefly instead of pretending it is unknown.
-- If the blurb reveals an immediate tradeoff or constraint, seed Section 1 or Section 10 with that fact rather than forcing later stages to rediscover it.
+- `title`, TL;DR, Section 0, and `fallback_policy` must tell the same story
+- if the ask makes scope boundaries obvious, reflect them consistently in TL;DR and Section 0
+- if rollout or telemetry are obviously irrelevant, Section 9 can say so briefly
+- if the ask reveals a real constraint or tradeoff, seed Section 1 or Section 10 with it
 
 ## Procedure
 
-1. Derive the file name from the blurb.
-2. Write the canonical scaffold from `artifact-contract.md`.
-3. Draft TL;DR from the blurb:
+1. Derive the file name from the ask.
+2. Create the canonical frontmatter from `artifact-contract.md`.
+3. Write the exact canonical scaffold for TL;DR, `planning_passes`, and Sections `0` through `10`.
+4. Draft TL;DR:
    - falsifiable outcome
    - concrete problem
-   - real approach
-   - believable phased plan
+   - real architectural approach
+   - believable phase shape
    - non-negotiables that constrain later decisions
-4. Draft Section 0 from the blurb:
+5. Draft Section 0:
    - falsifiable claim
-   - in-scope and out-of-scope
+   - UX and technical in-scope
+   - UX and technical out-of-scope
    - smallest credible acceptance evidence
    - key invariants
-   - strict fallback policy
-5. Seed the remaining canonical sections without renaming them.
-6. Make minimal consistency passes so frontmatter, TL;DR, Section 0, and any lightly seeded later sections agree.
+   - strict fallback stance
+6. Lightly seed Sections `1`, `2`, `8`, `9`, and `10` when the ask clearly supports it.
 7. Insert the canonical `planning_passes` block near the top.
-8. Stop for North Star confirmation.
+8. Make one consistency pass across frontmatter, TL;DR, Section 0, and any lightly seeded later sections.
+9. Stop for North Star confirmation.
 
 ## Stop condition
 
-After creating the doc and drafting TL;DR plus Section 0:
+After writing the doc:
 
 - print the drafted TL;DR
 - print the drafted North Star
 - ask for confirmation or edits
-- stop
-
-Do not proceed into research or architecture execution from the same `new` command.
+- if edits arrive, update the doc and ask again
+- do not continue into research or deeper planning from the same `new` run
 
 ## Console contract
 
 - one-line North Star reminder
-- one-line punchline stating the doc is created and what confirmation is needed
+- one-line punchline stating that the doc exists and what confirmation is needed
 - doc path
 - drafted TL;DR
 - drafted North Star
-- ask for `yes/no` plus edits if needed
+- ask for `yes` or edits

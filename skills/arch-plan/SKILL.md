@@ -1,6 +1,6 @@
 ---
 name: arch-plan
-description: "Create, continue, implement, or audit full architecture-plan docs for medium/large changes: North Star setup, research grounding, deep dive, external research, phase plans, local implementation, and implementation audits. Use when a request mentions architecture plans, phased refactors, deep dives, external research, phase plans, implementation audits, or continuing a serious multi-phase plan. Not for the explicit one-step saved-prompt style surface (`arch-step`), tiny 1-3 phase changes (`lilarch`), one-pass mini plans (`arch-mini-plan`), bug triage (`bugs-flow`), or open-ended optimization loops (`goal-loop`, `north-star-investigation`)."
+description: "Create, continue, implement, or audit full architecture-plan docs for medium/large changes: North Star setup, research grounding, deep dive, external research, phase plans, local implementation, and implementation audits. Use when a request mentions architecture plans, phased refactors, deep dives, external research, phase plans, implementation audits, or continuing a serious multi-phase plan. Not for the explicit one-step full-arch command surface (`arch-step`), tiny 1-3 phase changes (`lilarch`), one-pass mini plans (`arch-mini-plan`), bug triage (`bugs-flow`), or open-ended optimization loops (`goal-loop`, `north-star-investigation`)."
 metadata:
   short-description: "Full arch planning and execution flow"
 ---
@@ -25,7 +25,7 @@ Prompts in this repo are legacy references only. Do not depend on saved prompts 
 - The task is primarily a bug report, regression, crash, or Sentry investigation. Use `bugs-flow`.
 - The goal is open-ended optimization or investigation where the path is unknown. Use `goal-loop` or `north-star-investigation`.
 - The user is only asking "what's next?" or wants a checklist/status readout. Use `arch-flow`.
-- The user wants the old saved-prompt style full-arch surface with one explicit stage at a time or a concise stage-quality readout. Use `arch-step`.
+- The user wants the explicit one-step full-arch surface with one stage at a time or a concise stage-quality readout. Use `arch-step`.
 
 ## Non-negotiables
 

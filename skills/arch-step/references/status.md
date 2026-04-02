@@ -1,12 +1,14 @@
 # Arch Step Status
 
-Use this file when `arch-step status` needs to summarize the exact artifact against the bundled quality bar, not just against heading presence.
+`status` is the compact read-only surface.
+
+Use `advance` when the user wants the full checklist, the exact next command, or optional one-step execution.
 
 ## What status inspects first
 
-Before grading stages, inspect the canonical artifact itself:
+Before grading stages, inspect the artifact itself:
 
-- required frontmatter keys
+- required frontmatter
 - `# TL;DR`
 - `planning_passes`
 - `# 0) Holistic North Star`
@@ -17,26 +19,18 @@ Before grading stages, inspect the canonical artifact itself:
 
 ## What status reports
 
-Report the artifact first:
+Report in this order:
 
 1. Plan artifact
-
-Then report the core arc in order:
-
-1. North Star
-2. Research
-3. Deep dive
-4. External research
-5. Phase plan
-6. Implementation
-7. Audit
-
-Then report a short helper summary:
-
-- plan enhancer
-- reference pack / fold-in
-- overbuild protector
-- review gate
+2. North Star
+3. Research
+4. Deep dive
+5. External research
+6. Phase plan
+7. Implementation
+8. Audit
+9. Helper summary
+10. Best next move
 
 ## Allowed grades
 
@@ -60,22 +54,22 @@ Inspect:
 - `# TL;DR`
 - `planning_passes`
 - exact canonical headings for `# 0)` through `# 10)`
+- whether the major sections agree with each other
 
 Grade:
 
-- `strong` when the doc is structurally canonical, the major sections are present with credible content, and the core sections agree with each other
-- `decent` when the structure is mostly canonical but one important section or heading-level expectation is thin
+- `strong` when the doc is structurally canonical, the major sections have credible content, and the core sections agree
+- `decent` when the structure is mostly canonical but one important section is thin
 - `weak` when the doc is usable but structurally drifted, partially canonical, missing multiple required sections, or internally inconsistent
-- `missing` when there is no credible canonical full-arch artifact yet
+- `missing` when there is no credible canonical full-arch artifact
 
-When the structure is weak, say why plainly, for example missing sections, heading drift, or absent `planning_passes`.
-A doc cannot be artifact-strong if TL;DR, Section 0, Section 5, Section 6, or Section 7 are still weak.
-
-Also check the "big 3" audit bar:
+Also apply the "big 3" readiness bar:
 
 - target architecture fully specified
 - architecture sufficiently idiomatic
 - call sites audited exhaustively enough to trust the plan
+
+A doc cannot be artifact-strong if TL;DR, Section 0, Section 5, Section 6, or Section 7 are still weak.
 
 ### North Star
 
@@ -88,27 +82,23 @@ Inspect:
 Grade:
 
 - `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable, evidence-aware, and `status` is `active` or `complete`
-- `decent` when the content is mostly real but still thin in one important place
-- `weak` when the draft is vague, contradictory, or still obviously placeholder-heavy
+- `decent` when the content is mostly real but thin in one important place
+- `weak` when the draft is vague, contradictory, or placeholder-heavy
 - `missing` when the doc is not credibly bootstrapped
-
-North Star cannot be stronger than the artifact that contains it.
 
 ### Research
 
 Inspect:
 
 - `arch_skill:block:research_grounding`
-- or an equivalent `Research Grounding` section with the canonical structure
+- or a semantically equivalent research section with the canonical structure
 
 Grade:
 
-- `strong` when the block is present with authoritative internal anchors, reusable patterns, explicit adopt or reject logic, and evidence-based open questions
-- `decent` when present but thinner than the contract expects
+- `strong` when the block has authoritative internal anchors, reusable patterns, explicit adopt or reject logic, and evidence-based open questions
+- `decent` when present but thinner than required
 - `weak` when present but generic or under-anchored
 - `missing` when absent
-
-Research cannot be stronger than the artifact that contains it.
 
 ### Deep dive
 
@@ -122,13 +112,11 @@ Inspect:
 Grade:
 
 - `strong` when current architecture is grounded, target architecture is fully specified, and the call-site audit is exhaustive enough to drive implementation and audit
-- `decent` when all are present but one is still thin
-- `weak` when one or more exist but do not meet the section-quality depth bar
+- `decent` when all exist but one is still thin
+- `weak` when one or more exist but do not meet the depth bar
 - `missing` when one or more are absent
 
-Also report whether pass 1 or pass 2 has been completed based on the planning-passes block.
-
-Deep dive cannot be stronger than the artifact that contains it.
+Also report whether pass 1 or pass 2 has been completed.
 
 ### External research
 
@@ -139,13 +127,11 @@ Inspect:
 
 Grade:
 
-- `strong` when the block exists, uses narrow relevant topics with authoritative sources, and clearly ties adopt or reject guidance back to this plan
+- `strong` when the block uses narrow relevant topics, authoritative sources, and clear adopt or reject guidance for this plan
 - `decent` when useful but thin
-- `weak` when present but not really synthesized
+- `weak` when present but not truly synthesized
 - `missing` when warranted but absent
 - `not needed` when the plan is repo-local and external best practice does not materially affect correctness or idiomatic design
-
-External research cannot be stronger than the artifact that contains it.
 
 ### Phase plan
 
@@ -157,10 +143,8 @@ Grade:
 
 - `strong` when the authoritative phased plan exists, remains the single execution checklist, and each phase has concrete work, verification, exit criteria, and rollback
 - `decent` when present but one or more phases are thin
-- `weak` when generic or incomplete
+- `weak` when generic, incomplete, or competing with helper checklists
 - `missing` when absent
-
-Phase plan cannot be stronger than the artifact that contains it.
 
 ### Implementation
 
@@ -168,16 +152,14 @@ Inspect:
 
 - `WORKLOG_PATH`
 - phase status updates in `DOC_PATH`
-- implementation progress notes that match the `arch-implement` contract
+- implementation progress notes that match the implementation contract
 
 Grade:
 
-- `strong` when worklog and doc both reflect real phased progress or completion, ledger-like completeness is visible, and the doc matches reality
+- `strong` when worklog and doc both reflect real phased progress or completion, Section 7 phase status lines match the worklog, ledger-like completeness is visible, and the doc matches reality
 - `decent` when implementation is real but progress truth is thin
 - `weak` when there are claims of progress without credible worklog or doc evidence
 - `missing` when no implementation evidence exists
-
-Implementation cannot be stronger than the artifact that contains it.
 
 ### Audit
 
@@ -188,12 +170,10 @@ Inspect:
 
 Grade:
 
-- `strong` when the implementation audit block is present, evidence-anchored, and clearly distinguishes missing code from non-blocking manual QA
+- `strong` when the audit block is evidence-anchored, reopened phases are updated in place, and missing code is clearly separated from non-blocking manual QA
 - `decent` when present but thin
 - `weak` when nominal but not convincingly reconciled
 - `missing` when absent
-
-Audit cannot be stronger than the artifact that contains it.
 
 ## Helper summary rules
 
@@ -202,20 +182,20 @@ Audit cannot be stronger than the artifact that contains it.
 - `overbuild-protector` is present when `arch_skill:block:overbuild_protector` exists
 - `review-gate` is present when `arch_skill:block:review_gate` exists
 
-Helpers should usually be summarized in one compact line, for example:
+Summarize helpers in one compact line. Example:
 
-- `Helpers are mixed: plan enhancer is strong, fold-in is missing, overbuild protector is not needed, review gate is decent.`
+- `Helpers are mixed: plan enhancer is strong, fold-in is decent, overbuild protector is missing, review gate is not needed.`
 
 ## Output shape
 
-Keep the status output compact and human:
+Keep the output compact and human:
 
-- one short line for the canonical artifact
+- one short line for the artifact
 - one short line per core stage
-- one short helper summary line
+- one short helper line
 - one short `Best next move:` line
 
-Do not emit the longer `arch-flow` checklist here.
+Do not emit the longer `advance` checklist here.
 
 ## Best-next-move rule
 
@@ -223,13 +203,10 @@ Choose the command that most improves artifact completeness or core-flow progres
 
 - no canonical doc yet -> `new`
 - non-canonical existing doc -> `reformat`
-- draft North Star -> no command yet; confirm and activate the doc before deeper work
-- weak TL;DR or weak Section 0 in an otherwise canonical doc -> `reformat`
+- draft or weak North Star -> confirm or repair via `reformat`
 - missing research -> `research`
 - weak or incomplete current architecture, target architecture, or call-site audit -> `deep-dive`
-- missing current/target/audit blocks -> `deep-dive`
 - warranted but missing external research -> `external-research`
 - weak or competing execution checklist -> `phase-plan`
-- missing phase plan -> `phase-plan`
 - code progress without worklog truth -> `implement`
 - missing implementation audit -> `audit-implementation`

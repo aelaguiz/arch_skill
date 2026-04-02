@@ -1,24 +1,37 @@
 # `plan-enhance` Command Contract
 
-Use this reference when the user runs `arch-step plan-enhance`.
+## What this command does
 
-## Shared doctrine to carry in
+- take an existing plan and harden it toward the simplest, most idiomatic, most drift-resistant version of itself
+- make SSOT, boundaries, deletes, and migration obligations explicit
+- leave behind a concrete helper block that sharpens the main artifact without competing with it
 
-- Read `shared-doctrine.md`.
-- Read `section-quality.md` for Sections `1`, `5`, `6`, `7`, and `8`.
-- Use the highest bar in this package: best possible by our standards, simplest viable design, correct by construction, SSOT, and hard to drift.
+## Shared references to carry in
 
-## Artifact sections this command reads for alignment
+- `artifact-contract.md`
+- `shared-doctrine.md`
+- `section-quality.md` for Sections 1, 5, 6, 7, and 8
+
+## Reads for alignment
 
 - the full plan doc
 - especially `# 0)`, `# 1)`, `# 5)`, `# 6)`, `# 7)`, and `# 8)`
 
-## Artifact sections or blocks this command updates
+## Writes
 
 - `arch_skill:block:plan_enhancer`
-- when a better contract is obvious and low-risk to state, the relevant plan sections should be sharpened too
+- the relevant main-plan sections when a better contract is obvious and low-risk to state directly
 
-## Quality bar for what this command touches
+## Hard rules
+
+- docs-only; do not modify code
+- read `DOC_PATH` fully and enough code to make real architectural decisions
+- code is ground truth
+- do not design fallbacks or compatibility shims by default
+- treat scope as authoritative; if consolidation expands work, default to follow-up or ignore rather than re-asking scope
+- ask only for true product, UX, or access gaps
+
+## Quality bar
 
 - make SSOT explicit
 - remove or reject parallel implementations
@@ -26,21 +39,7 @@ Use this reference when the user runs `arch-step plan-enhance`.
 - name required deletes and cleanup
 - identify must-change call sites and drift-prone adopters
 - keep the evidence plan common-sense and non-blocking
-
-## Hard rules
-
-- Docs-only. Do not modify code.
-- Read `DOC_PATH` fully and enough code to make real architectural decisions.
-- Treat code as ground truth.
-- Do not design fallbacks or compatibility shims by default.
-- Treat scope as authoritative. If consolidation expands scope, default to follow-up or ignore rather than asking for a new scope decision.
-- Questions are only for true product, UX, or access gaps.
-
-## Artifact preservation
-
-- Preserve the canonical scaffold and append the helper block without degrading canonical Sections 0 through 10.
-- Prefer inserting near the end before the Decision Log.
-- If the doc is materially non-canonical, route to `reformat` before hardening the plan.
+- explicitly note where a short boundary comment should live when future drift is likely
 
 ## Update rules
 
@@ -48,23 +47,62 @@ Write or update:
 
 - `arch_skill:block:plan_enhancer`
 
-The block should capture:
+Insert near the end before the Decision Log when possible.
 
-- concrete plan upgrades
-- whether the architecture is now best possible by our standards
-- drift-proofing rules
-- must-change call sites
-- deletes and cleanup
-- consolidation sweep with include, follow-up, or ignore calls
-- evidence plan
-- questions only if truly needed
+Use this block shape:
 
-The helper block is not a sidecar plan. It exists to harden the main artifact.
+```text
+<!-- arch_skill:block:plan_enhancer:start -->
+# Plan Enhancer Notes (authoritative)
+
+## What I changed (plan upgrades)
+- <bullets>
+
+## Architecture verdict
+- Is this now "best possible by our standards"? <yes/no>
+- Biggest remaining risks:
+  - <bullets>
+
+## Enforceable rules (drift-proofing)
+- <rules we will enforce architecturally, not socially>
+
+## Call sites + migration
+- Must-change call sites:
+  - `<path>` — <symbol> — <why>
+- Deletes / cleanup (no parallel paths):
+  - `<path>` — <what gets deleted>
+
+## Consolidation sweep (anti-blinders)
+- Other places that should adopt the new central pattern:
+  - <area> — Proposed: <include|follow-up|ignore> — <why>
+
+## Evidence (non-blocking)
+- Evidence we'll rely on:
+  - <existing test/check OR instrumentation/log signature OR manual checklist> — <what you'll look for>
+- What we will not block on:
+  - <item such as screen recordings or sim screenshot baselines>
+
+## Questions (ONLY if truly needed)
+- <product/UX scope decision> — default recommendation: <recommendation>
+<!-- arch_skill:block:plan_enhancer:end -->
+```
+
+## Consistency duties
+
+- if the helper block surfaces a better architecture, sharpen the main plan sections first and use the helper block to record the hardening
+- do not let the helper block become a parallel plan or second checklist
+- if the verdict exposes a real earlier mistake, record meaningful drift in Section 10
+
+## Stop condition
+
+- if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
+- if the plan has a true product or UX gap that cannot be derived, stop with a default recommendation
+- otherwise stop after the plan is hardened and the helper block reflects the upgrades
 
 ## Console contract
 
-- North Star reminder
-- punchline
+- one-line North Star reminder
+- one-line punchline
 - what upgrades were made to the plan
 - biggest remaining risks
 - next action

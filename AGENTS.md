@@ -9,3 +9,5 @@ Routing:
 - Use `$agents-md-authoring` for `AGENTS.md` authoring or refactors.
 - Use `$arch-step` for the old saved-prompt full-arch flow when the user wants prompt-close commands like `new`, `reformat`, `research`, `deep-dive`, `phase-plan`, `plan-enhance`, `fold-in`, `review-gate`, `implement`, `audit-implementation`, `advance`, or concise full-arch status.
 - Use `$arch-flow` for read-only checklist and next-step inspection.
+
+NO EXPOSITION IN SKILLS AND THEIR DOCTRINE MUST BE FULLY SELF CONTAINED NOT REFERENCING HISTORICAL TRUTHS OR THE SKILL DEVELOPMENT PROCESS ITSELF. Only exception is for skill coordinators which explicitely explain how to use other skills.

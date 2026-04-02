@@ -27,7 +27,7 @@ Start with the strongest discriminator first:
 | Skill | Use when | Do not default to it when | Example asks |
 | --- | --- | --- | --- |
 | `arch-plan` | medium/large multi-phase work, full arch planning, deep dive, external research, phase plans, implementation audits | the task is tiny, bug-shaped, open-ended with no fixed path, or the user wants literal one-step control | "Do the full arch flow", "give me the deep dive and phase plan", "audit implementation vs plan" |
-| `arch-step` | the user wants the old saved-prompt full-arch feel: explicit prompt-close commands, helpers, `advance`, or compact stage-quality status | they want the broader intent-driven full-arch flow handled more holistically or only need a read-only checklist | "Run research on this plan", "do the review gate", "advance the flow one step", "status on this arch doc" |
+| `arch-step` | the user wants explicit full-arch command control: one command at a time, helpers, `advance`, or compact stage-quality status | they want the broader intent-driven full-arch flow handled more holistically or only need a read-only checklist | "Run research on this plan", "do the review gate", "advance the flow one step", "status on this arch doc" |
 | `arch-mini-plan` | the user wants a compact one-pass plan but still wants canonical arch blocks | the work is tiny enough for `lilarch` or large enough for full arch | "Give me the mini plan version", "one-pass arch plan for this task" |
 | `lilarch` | contained 1-3 phase feature work | the task is migration-heavy, investigation-heavy, or broad | "Small feature, use lilarch", "tight feature flow for this improvement" |
 | `bugs-flow` | regressions, crashes, incidents, Sentry/log-driven fixes | planned feature work or open-ended optimization | "Analyze this Sentry issue", "fix this bug and verify it" |
@@ -41,11 +41,11 @@ Start with the strongest discriminator first:
   - use `arch-mini-plan` only when the user wants a compressed one-pass plan
   - otherwise use `arch-plan`
 - `arch-plan` vs `arch-step`:
-  - use `arch-step` when the user wants literal saved-prompt style command control, helpers, `advance`, or compact status
+  - use `arch-step` when the user wants literal command control, helpers, `advance`, or compact status
   - use `arch-plan` when they want the broader full-arch workflow handled by phase family or end-to-end
 - `arch-flow` vs `arch-step`:
   - use `arch-flow` for read-only checklist and next-step routing
-  - use `arch-step` when the user wants the concise stage-quality readout or wants the next full-arch step executed
+  - use `arch-step` when the user wants the concise stage-quality readout or wants `advance` to inspect and optionally execute one next full-arch step
 - `arch-mini-plan` vs `lilarch`:
   - use `lilarch` for true small-feature delivery with start/plan/finish
   - use `arch-mini-plan` when the user still wants canonical arch blocks
