@@ -11,11 +11,13 @@
 - When the changed behavior is agent- or LLM-driven, understand prompt surfaces, native model capabilities, and existing tool/file/context exposure before designing.
 - Prefer prompt engineering, grounding, and native-capability usage before custom harnesses, wrappers, parsers, OCR layers, or scripts.
 - Do not assume the model lacks capability when repo or runtime evidence can answer that first.
+- If the source material includes prompts, agent instructions, or other instruction-bearing doctrine, preserve explicit structure by default instead of silently condensing it.
 
 ## Small-feature discipline
 
 - Lilarch is for contained feature work, not miniature architecture theater.
 - Keep the doc short enough that an implementer can hold the whole plan in working memory.
+- Keep it compact without silently compressing instruction-bearing source material.
 - Requirements should resolve decisions, not restate the user prompt.
 - Plan audits are quality gates, not second plans.
 

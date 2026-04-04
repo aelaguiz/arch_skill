@@ -58,9 +58,9 @@ Inspect:
 
 Grade:
 
-- `strong` when the doc is structurally canonical, the major sections have credible content, and the core sections agree
+- `strong` when the doc is structurally canonical, the major sections have credible content, the core sections agree, and any instruction-bearing imported content is either preserved structurally or explicitly condensed with recoverable source text
 - `decent` when the structure is mostly canonical but one important section is thin
-- `weak` when the doc is usable but structurally drifted, partially canonical, missing multiple required sections, or internally inconsistent
+- `weak` when the doc is usable but structurally drifted, partially canonical, missing multiple required sections, internally inconsistent, or silently compresses instruction-bearing imported content
 - `missing` when there is no credible canonical full-arch artifact
 
 Also apply the "big 3" readiness bar:

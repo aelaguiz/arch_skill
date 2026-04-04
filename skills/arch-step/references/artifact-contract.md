@@ -24,6 +24,7 @@ Planning commands update `DOC_PATH` only. `implement` updates both. `audit-imple
 - If a command can safely repair the portion of scaffold it owns, repair it.
 - If the doc is materially non-canonical outside that safe boundary, route to `reformat`.
 - No command may silently delete, displace, or degrade unrelated canonical sections.
+- No command may silently condense instruction-bearing source material in a way that drops operational structure while claiming meaning was preserved.
 
 ## Required frontmatter
 
@@ -84,6 +85,8 @@ Optional appendices for `reformat`:
 
 - `# Appendix A) Imported Notes (unplaced; do not delete)`
 - `# Appendix B) Conversion Notes`
+
+Use Appendix A to retain exact imported instruction-bearing text when it cannot be safely re-homed without loss. Use Appendix B to record any intentional condensation of that content and why the operational meaning still survives.
 
 ## Exact section scaffold
 
@@ -428,6 +431,7 @@ Treat these as hard checks:
 - all planning and decision-making live in `DOC_PATH`
 - `WORKLOG_PATH` is execution evidence, not a second plan
 - do not create sidecar planning docs
+- if instruction-bearing content was intentionally condensed during `reformat` or `fold-in`, the artifact must still retain the exact source text somewhere recoverable
 
 ## Write-boundary rule
 

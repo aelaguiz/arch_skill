@@ -6,10 +6,12 @@
   - names the files or symbols that actually control the change
   - captures existing patterns worth reusing
   - when agent-backed, names prompt surfaces, native capabilities, and capability-first options before blessing tooling
+  - when instruction-bearing source exists, keeps explicit structure visible instead of paraphrasing it away
   - calls out real constraints
 - Weak:
   - generic repo tour
   - assumes the model lacks capability without grounded evidence
+  - silently condenses prompt or agent doctrine into vague summary bullets
   - no file anchors
   - "we should probably" language without evidence
 
@@ -19,6 +21,7 @@
   - explain where the behavior lives now
   - explain what changes after the work lands
   - when agent-backed, explain what belongs in prompt/native-capability use versus deterministic code
+  - preserve instruction-bearing operational structure when that content is being ported
   - make data flow and ownership obvious
 - Weak:
   - paraphrase the ticket
@@ -41,6 +44,7 @@
   - 1-2 real phases, optionally 3 for cleanup
   - each phase has goal, work, verification, and done bar
   - agent-backed plans prefer prompt, grounding, and native-capability changes before new tooling
+  - instruction-bearing imported content is preserved explicitly or escalated rather than silently compressed
   - explicit follow-ups separated from ship-blocking work
 - Weak:
   - pseudo-chronological task dump

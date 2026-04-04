@@ -24,7 +24,7 @@
 
 Ask the same question every time:
 
-- `Is this idiomatic, convergent, and complete relative to DOC_PATH? Are we routing through the canonical existing path? Did we add a new way to do something unnecessarily? Did we understand the relevant agent and model capabilities before designing? Are we replacing prompt or native-capability work with scaffolding? What is missing? Where does code or plan drift? Are there any SSOT, contract, behavior-preservation, or stale-live-doc gaps?`
+- `Is this idiomatic, convergent, and complete relative to DOC_PATH? Are we routing through the canonical existing path? Did we add a new way to do something unnecessarily? Did we understand the relevant agent and model capabilities before designing? Are we replacing prompt or native-capability work with scaffolding? Did we silently compress any instruction-bearing content while porting it? What is missing? Where does code or plan drift? Are there any SSOT, contract, behavior-preservation, or stale-live-doc gaps?`
 
 If suggesting tests:
 
@@ -38,6 +38,7 @@ Also check:
 - whether sharp edges or new SSOTs need short, high-leverage boundary comments
 - whether touched live docs, comments, or instructions should be deleted or rewritten instead of being left around as legacy explanation
 - whether the real lever is prompt repair, grounding, or existing capability use rather than new tooling
+- whether prompts, agent instructions, or other instruction-bearing content were condensed without an explicit rationale and recoverable source text
 
 ## Writes
 
@@ -58,7 +59,7 @@ Use this block shape:
 <!-- arch_skill:block:review_gate:start -->
 ## Review Gate
 - Reviewers: self
-- Question asked: "Is this idiomatic, convergent, and complete relative to DOC_PATH? Are we routing through the canonical existing path? Did we add a new way to do something unnecessarily? Did we understand the relevant agent and model capabilities before designing? Are we replacing prompt or native-capability work with scaffolding? What is missing? Where does code or plan drift? Are there any SSOT, contract, behavior-preservation, or stale-live-doc gaps?"
+- Question asked: "Is this idiomatic, convergent, and complete relative to DOC_PATH? Are we routing through the canonical existing path? Did we add a new way to do something unnecessarily? Did we understand the relevant agent and model capabilities before designing? Are we replacing prompt or native-capability work with scaffolding? Did we silently compress any instruction-bearing content while porting it? What is missing? Where does code or plan drift? Are there any SSOT, contract, behavior-preservation, or stale-live-doc gaps?"
 - Feedback summary:
   - <item>
 - Integrated changes:
@@ -71,7 +72,7 @@ Insert near the end before the Decision Log when possible.
 
 ## Quality bar
 
-- identify plan drift, missing work, SSOT issues, contract violations, needless new code paths, unjustified scaffolding around agent behavior, missing preservation evidence, and stale live docs/comments left behind
+- identify plan drift, missing work, SSOT issues, contract violations, needless new code paths, unjustified scaffolding around agent behavior, silent compression of instruction-bearing content, missing preservation evidence, and stale live docs/comments left behind
 - improve the main artifact rather than merely commenting on it
 - keep the helper block short and decision-oriented
 

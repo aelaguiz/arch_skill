@@ -81,6 +81,13 @@ If a question is still necessary, say where you looked first.
   - fuzzy retrieval wrappers when grounded file access and synthesis are the intended path
   - parser, wrapper, or orchestration layers whose main purpose is to make the model act deterministic instead of improving prompt or capability use
 
+## Instruction-fidelity rule for agent and prompt content
+
+- When porting prompts, agent instructions, behavioral doctrine, or other instruction-bearing content, default to structure-preserving transfer rather than summarization.
+- Preserve explicit order, step granularity, conditions, hard negatives, escalation logic, and recognition examples when they constrain behavior.
+- Do not condense instruction-bearing content unless the artifact explicitly records why that condensation is safe and keeps the original text recoverable.
+- Ordinary architecture prose may still be summarized when that does not erase behavioral constraints.
+
 ## Alignment checks before deeper work
 
 The North Star is an alignment lock, not a mission statement.
@@ -167,6 +174,7 @@ This is a quality guard, not a hard blocker. Missing passes should be surfaced c
 - If sequencing or verification changes, check TL;DR, Section 0, Section 7, Section 8, and Section 10.
 - If rollout or telemetry implications change, check Section 9 and Section 10.
 - If architecture, ownership, or behavior changes, check touched live docs, comments, and instructions and either delete dead truth surfaces or sync surviving ones to reality.
+- If prompts, agent instructions, or other instruction-bearing content are being re-homed, check that operational structure was preserved or that any intentional condensation is explicitly recorded with source text still recoverable.
 - Prefer minimal truthful edits over broad rewrites.
 - Record meaningful drift or approved exceptions in the Decision Log instead of silently rewriting history.
 

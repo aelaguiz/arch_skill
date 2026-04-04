@@ -6,10 +6,12 @@
   - concrete user-visible behavior
   - defaults are explicit
   - when agent-backed, it is clear whether the feature should lean on prompt/capability work versus deterministic code
+  - instruction-bearing source content keeps explicit structure when it shapes behavior
   - non-requirements cut off easy overbuild
 - Weak:
   - generic wish list
   - agent-backed behavior is under-specified and left to be solved with scaffolding later
+  - prompt or agent doctrine was silently compressed while being ported
   - no defaults
   - implied product decisions left unresolved
 
@@ -19,6 +21,7 @@
   - name the real files or modules
   - explain ownership before and after
   - when agent-backed, explain what behavior belongs in prompt/native-capability use versus deterministic code
+  - preserve explicit operational structure when instruction-bearing source is re-homed
   - capture the call-site blast radius
 - Weak:
   - vague "update UI and backend"
@@ -31,6 +34,7 @@
   - says why the plan is safe to implement
   - calls out remaining risk directly
   - catches prompt-first or capability-first misses before finish mode
+  - catches silent compression of instruction-bearing content before finish mode
   - catches scope creep before finish mode
 - Weak:
   - rubber-stamp approval

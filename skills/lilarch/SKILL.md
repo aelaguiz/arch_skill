@@ -32,6 +32,7 @@ Use this skill for contained feature work that is too small for the full arch fl
 - When the changed behavior is agent- or LLM-driven, inspect prompt surfaces, native model capabilities, and existing tool/file/context exposure before designing.
 - For agent-backed systems, prefer prompt engineering, grounding, and native-capability use before new harnesses, wrappers, parsers, OCR layers, or scripts.
 - If the real lever is prompt repair, say so plainly and recommend `prompt-authoring` instead of inventing deterministic scaffolding.
+- When source material includes prompts, agent instructions, or other instruction-bearing doctrine, preserve explicit structure by default instead of silently condensing it.
 - No runtime fallbacks or compatibility shims unless explicitly approved in the doc.
 - Escalation out of lilarch defaults to `arch-step reformat` so the same doc can continue under the full-arch surface.
 

@@ -93,6 +93,12 @@ Install removes stale pre-skill command surfaces and removed competing skill pac
 - If custom tooling is still needed, the plan should say why prompt-first and capability-first options were insufficient and keep the tool narrow.
 - When the real lever is prompt repair, call that out plainly and use `prompt-authoring` instead of building deterministic scaffolding around the model.
 
+### Preserve instruction fidelity when porting
+
+- When moving prompts, agent instructions, or other instruction-bearing doctrine, preserve explicit process structure by default.
+- Do not silently condense ordered steps, conditions, hard negatives, or escalation logic into vague summary bullets.
+- If condensation is truly appropriate, record why it is safe and keep the original text recoverable in the artifact.
+
 ### Delete dead truth
 
 - Git is the history for retired code paths, docs, comments, and instructions.

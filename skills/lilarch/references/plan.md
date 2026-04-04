@@ -12,6 +12,7 @@ Write the minimal architecture and delivery plan needed to ship the feature clea
    - representative call sites
    - tests or verification surfaces
    - prompt surfaces, native capabilities, and existing tool/file/context exposure when the feature is agent-backed
+   - instruction-bearing source content that must keep explicit structure if it is re-homed into the compact doc
 3. Write or repair:
    - `research_grounding`
    - `current_architecture`
@@ -20,6 +21,8 @@ Write the minimal architecture and delivery plan needed to ship the feature clea
    - `phase_plan`
    - make the capability-first choice explicit before adding custom tooling for agent-backed behavior
 4. Run the internal plan audit and write the result into `lilarch:block:plan_audit`.
+
+If preserving instruction-bearing source fidelity cleanly would no longer fit the compact doc, escalate to `arch-step reformat` instead of silently compressing it.
 
 ## Plan shape
 

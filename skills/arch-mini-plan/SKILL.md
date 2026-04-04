@@ -35,6 +35,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 - For agent-backed systems, prefer prompt engineering, grounding, and native-capability use before new harnesses, wrappers, parsers, OCR layers, or scripts.
 - If mini mode still concludes that custom tooling is needed for agent-backed behavior, say why prompt-first and capability-first options were insufficient.
 - If the real lever is prompt repair, say so plainly and recommend `prompt-authoring` instead of inventing deterministic scaffolding.
+- When source material includes prompts, agent instructions, or other instruction-bearing doctrine, preserve explicit structure by default instead of silently condensing it.
 - External guidance is optional and narrow. Do not turn mini mode into hidden full-arch research.
 
 ## First move

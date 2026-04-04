@@ -22,6 +22,7 @@ Write the canonical planning blocks in one pass without pretending the work was 
    - what matters
    - what constraints the code already imposes
    - what can be solved by prompt, grounding, or native-capability changes before new tooling
+   - what instruction-bearing source content must keep explicit structure instead of being summarized
 4. Write `current_architecture` and `target_architecture` together.
 5. Write the `call_site_audit`:
    - changed files
@@ -37,6 +38,7 @@ Write the canonical planning blocks in one pass without pretending the work was 
 7. End with a readiness verdict:
    - ready for `arch-step implement`
    - or too large / too weak, use `arch-step reformat`
+   - if preserving instruction-bearing source fidelity cleanly would need appendices or a fuller import surface, use `arch-step reformat`
 
 ## External guidance rule
 

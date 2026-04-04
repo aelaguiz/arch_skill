@@ -32,6 +32,7 @@
 - do not let folded obligations become ship-blocking execution work unless a core planning command later adopts them into the main plan
 - do not let the helper become a shadow execution checklist
 - read every reference fully
+- when a reference is instruction-bearing, preserve explicit operational structure; distilled obligations are supplemental, not a replacement
 - if a URL requires auth or cannot be fetched, stop and ask for pasted content or an export
 - if a diagram or image is referenced, extract a textual UX contract from it instead of hand-waving it
 
@@ -61,6 +62,7 @@ For each `R#`:
 - produce two layers:
   - distilled binding obligations
   - folded source content
+- when the source is instruction-bearing, also preserve equivalent explicit structure or keep the exact original text recoverable
 
 Local files:
 
@@ -116,6 +118,15 @@ Updated: <YYYY-MM-DD>
 ## Binding obligations (distilled; must satisfy)
 - <obligation> (From: R#)
 
+## Instruction-bearing structure (only when present; preserve exact or equivalent operational form)
+### R1 — <title>
+1. <step or rule>
+2. <step or rule>
+- Hard negatives:
+  - <must not do X>
+- Escalation or branch conditions:
+  - <if/then rule>
+
 ## Phase alignment guidance (advisory; core planning commands adopt into Section 7 if needed)
 ### Global (applies across phases)
 - <obligation> (From: R#)
@@ -138,9 +149,14 @@ Updated: <YYYY-MM-DD>
 
 - resolve the right plan doc deterministically
 - distill obligations, not just summaries
+- preserve explicit process structure when folded sources contain prompts, agent instructions, or other behavioral doctrine
 - make phase alignment explicit without turning it into authoritative phase work
 - keep the helper advisory and do not silently expand Section 7
 - make it impossible to miss the relevant constraints without creating a shadow checklist
+
+Weak when:
+
+- instruction-bearing references are collapsed into vague obligations and the original structure is no longer recoverable
 
 ## Stop condition
 

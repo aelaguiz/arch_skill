@@ -393,6 +393,7 @@ Strong when:
 
 - it distills binding obligations
 - it folds reference material into the main artifact
+- instruction-bearing references preserve explicit structure or keep the exact source text recoverable
 - it makes phase alignment explicit while staying advisory
 - it does not silently promote reference content into authoritative execution work
 
@@ -401,6 +402,7 @@ Weak when:
 - it is just an inventory dump
 - obligations are vague or not phase-aligned
 - folded content is missing the parts implementation actually needs
+- instruction-bearing source was condensed into generalities without explicit rationale and recoverable source text
 - it behaves like a shadow checklist or silently expands Section 7
 
 Downstream can trust it when:
@@ -442,6 +444,7 @@ Strong when:
 - it records integrated changes and remaining risks
 - it improves the main plan rather than merely commenting on it
 - it catches needless new code paths, unjustified scaffolding around agent-backed behavior, and missing preservation evidence
+- it catches silent compression of instruction-bearing content during re-homing or folding
 
 Weak when:
 
