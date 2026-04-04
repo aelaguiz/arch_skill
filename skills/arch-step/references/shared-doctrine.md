@@ -57,6 +57,13 @@ If a question is still necessary, say where you looked first.
 - Never choose `*_WORKLOG.md` as `DOC_PATH`.
 - If ambiguity survives best effort, ask the user to choose from the top 2-3 candidates.
 
+## Scope model
+
+- Requested behavior scope is authoritative for user-visible behavior.
+- Architectural convergence scope covers internal refactors needed to route the requested behavior through a canonical path, remove duplicate truth, migrate clearly related adopters, and prevent drift.
+- Architectural convergence may broaden touched files, symbols, or nearby adopters, but it must not broaden product capability.
+- Bad scope adds new commands, modes, templating, plugin or config layers, dry-run surfaces, speculative tooling, or operational surfaces that were not required by the ask.
+
 ## Alignment checks before deeper work
 
 The North Star is an alignment lock, not a mission statement.
@@ -70,10 +77,11 @@ Before substantive planning or implementation:
 - North Star must be concrete and scoped
 - claim must be falsifiable
 - smallest credible acceptance signal must be explicit
-- UX in-scope and out-of-scope surfaces must be explicit
+- requested behavior scope must be explicit
+- allowed architectural convergence scope must be explicit enough to tell convergence from product creep
 - scope must not silently expand
 
-If North Star or UX scope is unclear or contradictory, stop for a quick doc correction before going deeper.
+If the North Star, requested behavior scope, or allowed architectural convergence scope is unclear or contradictory, stop for a quick doc correction before going deeper.
 
 ## Evidence philosophy
 
@@ -92,10 +100,18 @@ Negative-value defaults to avoid:
 - bespoke harnesses or frameworks added just to create ceremony
 - timing-hack tests when a behavior-level check or smaller signal would do
 
+## Behavior-preservation rule
+
+- Any refactor, consolidation, shared-path extraction, or call-site migration must preserve existing behavior.
+- Prefer existing behavior-level checks, integration tests, targeted unit tests, builds, typechecks, instrumentation, or stable manual checklists over new machinery.
+- If refactor risk is real and no existing signal buys enough confidence, add the smallest behavior-level, structure-insensitive check that would fail for the right reason.
+- Do not call convergence work complete until the preservation signal has actually run.
+
 ## Architecture doctrine
 
 - Code is ground truth.
 - Prefer the most idiomatic existing repo pattern unless there is a concrete reason not to.
+- Search for the canonical existing path before designing a new abstraction or code path.
 - Single source of truth is the default.
 - Avoid parallel implementations, duplicate writers, and shadow contracts.
 - Boundaries and invariants should be enforceable, not merely described.
@@ -105,8 +121,9 @@ Negative-value defaults to avoid:
 ## Scope-authority defaults
 
 - Treat the plan's scope as authoritative.
-- If a related change is clearly in scope, include it and proceed.
-- If it expands scope or meaningfully increases work, default to follow-up, defer, or exclude and keep going.
+- If work is required to converge onto the canonical path, remove duplicate truth, migrate clearly related adopters, or avoid a concrete regression, include it and proceed.
+- If work adds new product functionality, alternate ways of doing the same thing, or speculative architecture, exclude it or record it as follow-up.
+- If a newly discovered item is ambiguous, default to follow-up, defer, or explicit note rather than silently promoting it into ship-blocking work.
 - Only stop and ask when the plan is internally contradictory, such as required work being declared out of scope.
 
 ## Warn-first sequencing

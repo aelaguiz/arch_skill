@@ -41,6 +41,8 @@ This command must restore:
 - if something is truly missing, leave a TODO or placeholder instead of inventing it
 - if content cannot be confidently placed, keep it in Appendix A instead of dropping it
 - do not introduce new scope
+- preserve or reconstruct the source's strongest claims about requested behavior scope, allowed architectural convergence scope, canonical owner path, and preservation evidence when the source supports them
+- if the source does not support one of those fields, keep the gap visible with draft inference or TODO text instead of collapsing back to a blurrier model
 - preserve the single-document rule
 
 ## Quality bar
@@ -50,6 +52,7 @@ This command must restore:
 - keep original wording when it carries nuance
 - normalize heading drift back to the canonical shape
 - draft TL;DR and Section 0 concretely when the source supports it
+- keep requested behavior scope, allowed convergence scope, canonical-path ownership, and preservation expectations visible when the source supports them
 
 ## Why this command exists
 
@@ -67,18 +70,19 @@ The goal is not prettier markdown. The goal is to recover one plan artifact that
 3. Map source content into the best-fitting canonical sections.
 4. Preserve code fences, tables, and links exactly.
 5. Prefer placing content once unless duplication is the only safe way to avoid losing meaning.
-6. Draft TL;DR and Section 0 from source evidence.
-7. Preserve or insert the canonical `planning_passes` block.
-8. Add:
+6. Draft TL;DR and Section 0 from source evidence, explicitly separating requested behavior scope from allowed architectural convergence scope when the source supports it.
+7. Preserve any explicit canonical owner-path or preservation-evidence claims; if they are only implied, label them as draft inference or TODO rather than inventing certainty.
+8. Preserve or insert the canonical `planning_passes` block.
+9. Add:
    - `Appendix A) Imported Notes` for unplaced source content
    - `Appendix B) Conversion Notes` for major moves and remaining gaps
-9. Make one final consistency pass across TL;DR, Section 0, and Section 7.
-10. Write in place unless `OUT=...` is provided.
+10. Make one final consistency pass across TL;DR, Section 0, and Section 7.
+11. Write in place unless `OUT=...` is provided.
 
 ## Consistency duties before stopping
 
 - TL;DR, Section 0, and the phase plan should not contradict each other after conversion
-- preserve the strongest explicit source claims about scope, evidence, fallbacks, and sequencing
+- preserve the strongest explicit source claims about requested behavior scope, allowed convergence scope, evidence, fallbacks, sequencing, and canonical ownership
 - if the source remains ambiguous, keep that ambiguity visible instead of smoothing it away
 
 ## Stop condition

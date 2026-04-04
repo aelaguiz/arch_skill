@@ -136,9 +136,10 @@ Canonical subsection shape:
 Required content:
 
 - claim that is falsifiable
-- explicit UX in-scope and UX out-of-scope surfaces
-- explicit technical scope and exclusions
+- explicit requested behavior scope and UX in-scope and out-of-scope surfaces
+- explicit technical scope, exclusions, and allowed architectural convergence scope
 - smallest credible acceptance evidence
+- smallest credible behavior-preservation evidence when refactor or consolidation is likely
 - invariant list
   - strong examples include `No fallbacks`, `Fail-loud boundaries`, `No dual sources of truth`, and `No undefined behavior`
 - strict fallback stance:
@@ -159,7 +160,7 @@ Required content:
 - ranked priorities
 - constraints across correctness, performance, latency, migration, and operations as relevant
 - enforceable architectural principles
-  - strong examples include fail-loud boundaries, DI rules, and no business logic in UI
+  - strong examples include fail-loud boundaries, DI rules, no business logic in UI, reuse the canonical path, and no new parallel paths
 - high-leverage pattern-propagation comments when introducing a new SSOT, contract, or tricky invariant
 
 ### `# 2) Problem Statement (existing architecture + why change)`
@@ -182,7 +183,10 @@ Required content:
 
 - adopt or reject reasoning for external anchors
 - authoritative internal behavior anchors with file paths
+- canonical owner path or boundary for the requested behavior
 - existing reusable patterns
+- duplicate or drifting paths relevant to the change
+- existing preservation signals when refactor or consolidation is likely
 - evidence-based open questions
 
 ### `# 4) Current Architecture (as-is)`
@@ -209,8 +213,10 @@ Required content:
 
 - future structure
 - future control paths
+- canonical owner path for the requested behavior
 - new or changed contracts and APIs
 - migration notes where APIs change
+- explicit convergence plan for duplicate or drifting paths
 - fail-loud boundaries
 - single source of truth
 - determinism and performance boundaries where relevant
@@ -239,8 +245,10 @@ Change-map table columns:
 
 Migration notes should capture:
 
+- canonical owner path / shared code path
 - deprecated APIs if any
 - delete list
+- behavior-preservation signals for refactors
 - cleanup and migration notes
 
 ### `# 7) Depth-First Phased Implementation Plan (authoritative)`
@@ -250,7 +258,7 @@ Canonical heading plus rule line:
 ```text
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
+> Rule: systematic build, foundational first; every phase has exit criteria + explicit verification plan (tests optional). Refactors, consolidations, and shared-path extractions must preserve existing behavior with the smallest credible signal. No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests (deletion checks, visual constants, doc-driven gates). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
 ```
 
 Canonical per-phase fields:
@@ -261,6 +269,8 @@ Canonical per-phase fields:
 - `Docs/comments (propagation; only if needed)`
 - `Exit criteria`
 - `Rollback`
+
+For refactor-heavy work, the verification line should say how preserved behavior will be proven.
 
 The phase plan is the one authoritative execution checklist.
 
@@ -286,6 +296,7 @@ Principle lines to preserve:
 - default to 1-3 checks total
 - do not invent new harnesses, frameworks, or scripts unless they already exist and are the cheapest guardrail
 - keep UI/manual verification as finalization by default
+- for refactors, prefer behavior-preservation checks that survive restructuring
 - do not create proof tests for deletions, visual constants, or doc inventories
 - document tricky invariants and gotchas at the SSOT or contract boundary
 
@@ -370,14 +381,14 @@ Primary ownership does not override global artifact preservation.
 
 Treat these as hard checks:
 
-- TL;DR, Section 0, and Section 7 may not disagree on goal, scope, or plan shape.
+- TL;DR, Section 0, and Section 7 may not disagree on goal, requested behavior scope, allowed convergence scope, or plan shape.
 - Section 1 should justify Section 5, not contradict it.
 - Section 2 should explain the current reality that Sections 4 and 6 make concrete.
 - Section 3 and External Research should sharpen Section 5 and Section 8, not float independently.
-- Section 5 and Section 6 must agree on contracts, migrations, deletes, and adoption scope.
+- Section 3, Section 5, and Section 6 must agree on the canonical owner path, migrations, deletes, and adoption scope.
 - Section 7 must be executable from Sections 5 and 6.
 - Section 7 phase status lines and `WORKLOG_PATH` should agree about actual progress.
-- Section 8 must match the evidence philosophy in Section 0 and the verification load implied by Section 7.
+- Section 8 must match the evidence philosophy in Section 0, including preservation checks for refactor-heavy work, and the verification load implied by Section 7.
 - Section 9 should stay proportional to the actual rollout and telemetry needs.
 - Section 10 records meaningful drift, approvals, and exceptions.
 

@@ -30,15 +30,19 @@
 - docs-only; do not modify code
 - use repo evidence first
 - read code and run read-only searches as needed
+- search for the canonical existing path before blessing a new abstraction or code path
 - if research reveals likely code changes, write them into the plan with file anchors instead of implementing them
-- if North Star or UX scope is unclear or contradictory, stop for a quick doc correction before continuing
+- if the North Star, requested behavior scope, or allowed architectural convergence scope is unclear or contradictory, stop for a quick doc correction before continuing
 
 ## Quality bar
 
 Good research looks like:
 
 - authoritative internal anchors with concrete file paths and what they define
+- the canonical owner path or boundary is named explicitly
 - reusable patterns named explicitly so later stages do not reinvent them
+- duplicate or drifting paths relevant to the change are called out early
+- existing preservation signals are named when refactor or consolidation is likely
 - external anchors only when they add real value, each with adopt or reject reasoning
 - open questions framed as evidence needed rather than vague TODOs
 
@@ -65,8 +69,14 @@ Use this block shape:
 ## Internal ground truth (code as spec)
 - Authoritative behavior anchors (do not reinvent):
   - `<path>` — <what it defines / guarantees>
+- Canonical path / owner to reuse:
+  - `<path>` — <behavior or contract this path should own>
 - Existing patterns to reuse:
   - `<path>` — <pattern name> — <how we reuse it>
+- Duplicate or drifting paths relevant to this change:
+  - `<path>` — <why it may need convergence or deletion>
+- Behavior-preservation signals already available:
+  - `<test/check>` — <what current behavior it protects>
 
 ## Open questions (evidence-based)
 - <question> — <what evidence would settle it>
@@ -76,13 +86,13 @@ Use this block shape:
 ## Consistency duties beyond local ownership
 
 - if research disproves an assumption already stated in TL;DR or Section 0, repair the smallest stale claim so the doc stays honest
-- if research materially changes likely architecture or verification choices, point the next move to `deep-dive` or `phase-plan` as appropriate
+- if research materially changes likely architecture, convergence scope, or verification choices, point the next move to `deep-dive` or `phase-plan` as appropriate
 - do not rewrite later sections here, but do not leave obvious contradictions unmarked
 
 ## Stop condition
 
 - if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
-- if North Star or UX scope is contradictory, stop for a quick doc correction
+- if the North Star, requested behavior scope, or allowed architectural convergence scope is contradictory, stop for a quick doc correction
 - otherwise stop after the research block is updated and the next move is clear
 
 ## Console contract

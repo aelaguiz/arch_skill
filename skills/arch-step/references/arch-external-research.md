@@ -34,7 +34,7 @@
 - keep the topic set narrow
 - prefer primary or clearly authoritative sources
 - if sources disagree, summarize the disagreement and choose a default recommendation
-- if North Star or UX scope is contradictory, stop for a quick doc correction before continuing
+- if the North Star, requested behavior scope, or allowed architectural convergence scope is contradictory, stop for a quick doc correction before continuing
 - do the research directly inside this command; do not rely on external model orchestration
 
 ## Relevance filter
@@ -118,14 +118,14 @@ Use this block shape:
 
 ## Consistency duties beyond local ownership
 
-- if external guidance changes architecture, sequencing, or verification stance, repair the smallest clearly stale claims elsewhere in the doc
+- if external guidance changes architecture, sequencing, or verification stance, repair the smallest clearly stale claims elsewhere in the doc without silently changing requested behavior scope or allowed architectural convergence scope
 - append or update a Decision Log entry when the research changes an earlier conclusion in a meaningful way
 - do not leave external research saying one thing while TL;DR, Section 0, or Section 8 still say another
 
 ## Stop condition
 
 - if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
-- if North Star or UX scope is contradictory, stop for a quick doc correction
+- if the North Star, requested behavior scope, or allowed architectural convergence scope is contradictory, stop for a quick doc correction
 - otherwise stop after the external research block, planning-pass update, and any required plan repairs are complete
 
 ## Console contract

@@ -74,11 +74,13 @@ By the end of the run:
 
 - read `DOC_PATH` fully before editing code
 - treat the doc as the authoritative spec and checklist
+- identify the canonical owner path before designing or extending a code path
+- if the work includes refactor, consolidation, or shared-path extraction, identify the preservation signal before editing code
 - build a compact in-memory implementation ledger from:
   - phase tasks
   - call-site audit items
   - migration notes and delete lists
-  - include items from consolidation or follow-through sweeps
+  - include items from consolidation or follow-through sweeps only when the plan marked them as ship-blocking convergence work
 - reconcile the ledger at phase boundaries
 - no fallbacks or shims unless the plan explicitly approves them
 - if the doc is materially non-canonical, repair it or route to `reformat` before treating it as authoritative
@@ -90,6 +92,8 @@ Before meaningful code changes:
 - North Star is concrete and scoped
 - smallest credible acceptance evidence is identifiable
 - UX in-scope and out-of-scope are explicit
+- the canonical owner path is identifiable or explicitly justified
+- preservation evidence for refactor-heavy work is identifiable
 - Section 7 is real enough to execute
 
 If those are contradictory, stop for a quick doc correction before continuing.
@@ -103,7 +107,7 @@ Derive it from the strongest planning artifacts in this order:
 1. phase checklist items or phase tasks
 2. call-site audit rows and change-map entries
 3. migration notes and delete lists
-4. include items from consolidation or follow-through sweeps
+4. include items from consolidation or follow-through sweeps only when they are marked as required convergence work
 
 Each ledger item should be concrete enough to classify later as:
 
@@ -135,12 +139,13 @@ Execute Section 7 in order.
 For each phase:
 
 1. Read the phase goal, work items, verification line, exit criteria, rollback, and any relevant call-site rows.
-2. Mark the phase `Status: IN PROGRESS` once real work starts.
-3. Implement the planned work for that phase before moving to later phases.
-4. If a later-phase task must be pulled forward to preserve correctness, record the sequencing change in Section 10 and update the affected phase descriptions so Section 7 stays truthful.
-5. After each meaningful chunk, and at least once per phase, run the smallest relevant programmatic signal.
-6. Reconcile the ledger against the changed code before leaving the phase.
-7. Update `DOC_PATH` and `WORKLOG_PATH` before moving on.
+2. Confirm which canonical path owns the behavior for this phase and which preservation signal must run if the phase refactors or consolidates code.
+3. Mark the phase `Status: IN PROGRESS` once real work starts.
+4. Implement the planned work for that phase before moving to later phases.
+5. If a later-phase task must be pulled forward to preserve correctness, record the sequencing change in Section 10 and update the affected phase descriptions so Section 7 stays truthful.
+6. After each meaningful chunk, and at least once per phase, run the smallest relevant programmatic signal.
+7. Reconcile the ledger against the changed code before leaving the phase.
+8. Update `DOC_PATH` and `WORKLOG_PATH` before moving on.
 
 Do not skip ahead just because the happy path works.
 Do not start the next phase while the current phase still has hidden `still todo` items.
@@ -202,6 +207,7 @@ At each phase boundary:
 
 - after each meaningful chunk, run the smallest credible programmatic signal
 - prefer existing checks before new tests or harnesses
+- any refactor, consolidation, or shared-path extraction must run a preservation signal before the phase can be called complete
 - write tests only when they buy real confidence
 - do not add negative-value proof machinery
 - defer manual QA and UI automation to finalization by default
@@ -210,15 +216,17 @@ At each phase boundary:
 Testing discipline:
 
 - default to compile, typecheck, lint, build, existing targeted tests, or instrumentation signatures before writing new tests
-- write tests only when they buy real confidence for new logic, regressions, state transitions, or user-facing behavior
+- write tests only when they buy real confidence for new logic, regressions, state transitions, user-facing behavior, or behavior preservation during refactor
+- prefer structure-insensitive, behavior-level checks over implementation-detail assertions
 - do not add tests that only prove deleted code is gone, enforce doc inventories, assert visual constants, or depend on timing hacks
 - if an existing negative-value test is blocking the run, prefer deleting it or rewriting it to a behavior-level assertion and record what replaced it
 
 ## Avoid blinders
 
 - when you introduce or upgrade a centralized pattern, contract, or SSOT, scan nearby call sites for other adopters that should migrate
-- if that work is clearly in scope, do it without asking
-- if it would materially expand UX scope or execution cost, record it as a follow-up with file or symbol anchors and continue
+- if that work is required to converge onto the same canonical path and avoid drift, do it without asking
+- if it would materially expand product scope or introduce speculative architecture, record it as a follow-up with file or symbol anchors and continue
+- if it is useful but not required for this run, record it as a follow-up and continue
 - stop and ask only when the plan is internally contradictory about whether the work is required
 
 ## Worklog contract
@@ -273,6 +281,8 @@ The worklog is execution evidence only:
 - all phases or checklist items needed for this run are resolved
 - every in-scope ledger item is `done`, `blocked`, or `deferred` with rationale
 - the North Star is satisfied by code and evidence
+- no new parallel path or duplicate writer was introduced
+- all required preservation checks for refactor-heavy work actually ran
 - the plan reflects reality
 
 Do not call the run `complete` if any planned call site, migration, delete, or required cleanup remains unresolved.
@@ -287,7 +297,8 @@ After implementation work is complete:
 4. do a final plan-to-work reconciliation before claiming completion:
    - re-read the implementation-relevant parts of `DOC_PATH`
    - compare them against the ledger and the files or symbols actually touched
-   - search for any planned call site, module, delete, or migration task that never got resolved
+   - search for any planned call site, module, delete, migration task, or canonical-path convergence task that never got resolved
+   - search for any lingering old path, duplicate writer, or skipped preservation signal
    - if anything remains unresolved, either finish it now or mark it explicitly as `deferred` or `blocked` with rationale and report the run as `partial`
 5. if the operating context calls for commit/push, do it only after local verification
 

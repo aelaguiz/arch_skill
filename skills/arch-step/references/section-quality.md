@@ -45,6 +45,7 @@ Strong when:
 
 - the claim is falsifiable
 - in-scope and out-of-scope are explicit
+- requested behavior scope and allowed convergence scope are distinguishable
 - definition of done is observable
 - evidence uses the smallest credible signal
 - invariants are actionable
@@ -55,13 +56,14 @@ Weak when:
 
 - the claim is vague or unmeasurable
 - scope boundaries are missing
+- convergence work and product scope are blurred together
 - definition of done depends on bespoke ceremony
 - invariants are generic platitudes
 - it reads like inspiration instead of an execution contract
 
 Downstream can trust it when:
 
-- later commands can answer "is this in scope?" and "what evidence is enough?" without guessing
+- later commands can answer "is this in scope?", "is this convergence or creep?", and "what evidence is enough?" without guessing
 - there is one clear fallback stance instead of hidden compatibility assumptions
 
 ## `# 1) Key Design Considerations (what matters most)`
@@ -119,7 +121,10 @@ Purpose:
 Strong when:
 
 - internal anchors cite concrete file paths and explain why they are authoritative
+- the canonical owner path is named explicitly
 - reusable patterns are named explicitly
+- duplicate or drifting paths are called out when they matter
+- preservation signals are named when refactor risk is real
 - external anchors use adopt or reject reasoning instead of cargo cult
 - open questions are framed as evidence needed
 
@@ -131,7 +136,7 @@ Weak when:
 
 Downstream can trust it when:
 
-- later commands can point to concrete repo anchors and prior art instead of rediscovering them
+- later commands can point to concrete repo anchors, the canonical owner path, and preservation signals instead of rediscovering them
 
 ## `# 4) Current Architecture (as-is)`
 
@@ -165,6 +170,7 @@ Purpose:
 Strong when:
 
 - future structure is concrete
+- the canonical owner path is explicit
 - contracts and boundaries are explicit
 - SSOT is clear
 - no parallel paths are tolerated without explicit approval
@@ -190,7 +196,8 @@ Purpose:
 
 Strong when:
 
-- call sites are concrete and exhaustive enough to drive work
+- call sites are concrete and exhaustive enough within approved scope to drive work
+- the canonical owner path and required convergence work are explicit
 - migration notes and delete list are explicit
 - tests impacted are called out when relevant
 - consolidation sweep names related adopters and default dispositions
@@ -198,6 +205,7 @@ Strong when:
 Weak when:
 
 - it only lists the obvious path
+- it mixes product creep or architecture theater into the required work
 - deletes and cleanup are absent
 - it cannot be used to verify completeness
 
@@ -216,6 +224,7 @@ Strong when:
 
 - the plan is foundational-first
 - each phase has goal, work, verification, docs/comments when needed, exit criteria, and rollback
+- refactor-heavy phases say how preserved behavior will be proven
 - verification is small and credible
 - manual QA is deferred to finalization when appropriate
 - there is no competing checklist elsewhere
@@ -225,6 +234,7 @@ Weak when:
 
 - phases are generic or unordered
 - work items are too vague to implement
+- product scope creep or architecture theater appears in the authoritative checklist
 - helper blocks compete with the phase plan
 - sequencing hides required cleanup or migration work
 
@@ -242,6 +252,7 @@ Strong when:
 
 - it prefers existing checks
 - unit, integration, or end-to-end signals are used only where they buy confidence
+- refactor-heavy work has behavior-preservation checks that survive restructuring
 - manual verification is short and purposeful
 - it explicitly rejects negative-value tests
 
@@ -348,7 +359,7 @@ Strong when:
 
 - it sharpens the main plan instead of becoming a parallel plan
 - it makes enforceable rules explicit
-- it identifies must-change call sites, deletes, and drift-prone adopters
+- it identifies must-change call sites, deletes, drift-prone adopters, and the canonical owner path
 
 Weak when:
 
@@ -364,34 +375,37 @@ Downstream can trust it when:
 
 Purpose:
 
-- make reference material impossible to miss during planning and implementation
+- make reference material impossible to miss during planning and implementation without turning it into a shadow checklist
 
 Strong when:
 
 - it distills binding obligations
 - it folds reference material into the main artifact
-- it wires obligations into the relevant phases
+- it makes phase alignment explicit while staying advisory
+- it does not silently promote reference content into authoritative execution work
 
 Weak when:
 
 - it is just an inventory dump
 - obligations are vague or not phase-aligned
 - folded content is missing the parts implementation actually needs
+- it behaves like a shadow checklist or silently expands Section 7
 
 Downstream can trust it when:
 
-- implementation and review can see the real non-negotiables without chasing external docs
+- implementation and review can see the real non-negotiables without chasing external docs, while core planning commands still own what becomes ship-blocking work
 
 ## Helper block: `overbuild_protector`
 
 Purpose:
 
-- mechanically separate ship-blocking work from optional work, follow-ups, and bug vectors
+- mechanically separate ship-blocking work from optional work, follow-ups, product scope creep, and architecture theater
 
 Strong when:
 
 - classifications are explicit
 - evidence anchors are cited
+- convergence work is clearly separated from product creep
 - Section 7 remains the single execution checklist
 
 Weak when:
@@ -402,7 +416,7 @@ Weak when:
 
 Downstream can trust it when:
 
-- execution agents can tell what is ship-blocking versus optional or deferred without guessing
+- execution agents can tell what is ship-blocking convergence work versus optional, deferred, or rejected work without guessing
 
 ## Helper block: `review_gate`
 
@@ -415,6 +429,7 @@ Strong when:
 - it asks the right question
 - it records integrated changes and remaining risks
 - it improves the main plan rather than merely commenting on it
+- it catches needless new code paths and missing preservation evidence
 
 Weak when:
 

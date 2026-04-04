@@ -2,8 +2,9 @@
 
 ## What this command does
 
+- expose the same scope-triage rubric that core commands should already be using
 - classify phase-plan work items into explicit scope buckets
-- separate ship-blocking work from optional work, follow-ups, and known bug vectors
+- separate ship-blocking work from optional work, follow-ups, product scope creep, and architecture theater
 - in apply mode, rewrite the phase plan in place so the main checklist is mechanically scope-safe
 
 ## Shared references to carry in
@@ -41,9 +42,10 @@ If those sections are vague, warn in the helper block but do not hard-block.
 ## Hard rules
 
 - docs-only; do not modify product code
+- this command is remediation and reporting, not the only overbuild defense in the skill
 - Section 7 remains the one authoritative execution checklist
 - if no phase plan exists, stop and point to `phase-plan`; do not invent a new plan format
-- use code and repo evidence only to validate parity or risk claims; do not invent obligations
+- use code and repo evidence only to validate convergence, parity, or risk claims; do not invent obligations
 
 ## Work-item extraction
 
@@ -56,22 +58,25 @@ If those sections are vague, warn in the helper block but do not hard-block.
 
 - `A` Explicit ask:
   - directly requested by the user, TL;DR, or in-scope sections
-- `B` North-Star necessary:
-  - required to satisfy the claim, definition of done, or explicit invariants
-  - common examples include call-site migrations, deletes or cleanup that remove parallel truth, correctness fixes, and minimal verification needed to trust the change
-- `C` Parity necessary:
+- `B` Convergence necessary:
+  - required to route the requested behavior through a canonical path, remove duplicate truth, or prevent a new parallel path
+  - common examples include shared-path extraction, touched-area call-site migrations, deletes or cleanup that remove parallel truth, and clearly related adopters that must converge now to avoid drift
+- `C` Anchored pattern or parity necessary:
   - required to match an existing internal pattern or contract, with a real repo anchor
-- `D` Risk mitigation necessary:
-  - minimal work needed to avoid a concrete regression or correctness failure
+- `D` Concrete regression or correctness risk necessary:
+  - minimal work needed to avoid a concrete regression, correctness failure, or refactor-induced behavior change
 - `E` Optional quality:
   - nice to have, but not required to ship the North Star
-- `F` Scope creep:
-  - expands UX scope or adds unjustified new work
-- `G` Bug vector:
-  - adds brittle gates, long-lived complexity, or wrong-by-default safety theater
+- `F` Product scope creep:
+  - expands requested UX or product capability beyond what the ask or Section 0 approved
+- `G` Architecture theater / speculative infra:
+  - adds new layers, surfaces, or complexity that are not required to ship the ask cleanly
 
-Default reject examples for `G` unless explicitly approved:
+Default reject examples for `F` or `G` unless explicitly approved:
 
+- new user-visible commands, modes, or toggles
+- template systems, plugin surfaces, or config layers not required by the ask
+- dry-run or preview surfaces for a simple feature request
 - runtime fallbacks or shims when fallbacks are forbidden
 - new deleted-code proof tests
 - visual-constant or churn-heavy golden tests
@@ -85,7 +90,7 @@ Tie-breakers:
   - ambiguity defaults to follow-up, not include
 - `STRICT=0`:
   - ambiguity defaults to optional, not include
-- parity is never assumed without a real anchor
+- convergence or parity is never assumed without a real anchor
 - new tooling is follow-up unless `A-D` clearly applies
 
 ## Update rules
@@ -105,8 +110,8 @@ Summary:
 - Items reviewed: <n>
 - Include (ship-blocking): <n> (A: <n>, B: <n>, C: <n>, D: <n>)
 - Optional (timeboxed): <n>
-- Follow-ups (out of scope): <n>
-- Rejected (bug vectors): <n>
+- Follow-ups (deferred): <n>
+- Rejected (creep / theater): <n>
 
 Include (ship-blocking):
 - <item> - Bucket <A|B|C|D> - Evidence: <doc sections> - Anchors: <paths/symbols if used>
@@ -117,7 +122,7 @@ Optional (timeboxed):
 Follow-ups (out of scope / intentionally deferred):
 - <item> - Bucket <E|F> - Why deferred: <...> - Evidence: <...>
 
-Rejected (bug vectors):
+Rejected (product creep / architecture theater):
 - <item> - Bucket <G> - Why reject: <...> - What to do instead: <smaller alternative>
 
 Parity anchors used (if any):
@@ -138,6 +143,7 @@ If `MODE=apply`:
 - do not delete or rewrite already-completed checkbox items
 - preserve stable task IDs
 - remove follow-ups and rejected bug vectors from the phase plan
+- remove product scope creep and architecture theater from the phase plan
 - keep optional work in the phase plan but label it clearly as optional, for example by prefixing `OPTIONAL:` or appending `(optional)`
 
 ## Stop condition

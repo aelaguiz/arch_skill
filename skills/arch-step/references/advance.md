@@ -72,6 +72,7 @@ Helper commands stay explicit:
 
 - if absent, they should usually remain `[OPTIONAL]`
 - only elevate a helper to the next move when the artifact clearly needs that helper's unique hardening
+- core commands should already be applying the same convergence, scope-triage, and preservation rules even when helpers are absent
 
 ## Evidence model
 
@@ -82,6 +83,7 @@ Helper commands stay explicit:
   - `not needed` -> `[OPTIONAL]`
 - for deep dive, call out whether pass 1 or pass 2 is done using `planning_passes`
 - for implementation, require both doc truth and worklog truth before calling it `[DONE]`
+- treat missing canonical-path analysis or missing preservation verification as real weakness, not optional polish
 
 ## Next-command selection rule
 
@@ -91,7 +93,7 @@ Choose exactly one next command using this precedence:
 2. existing doc is not canonical enough to trust -> `reformat`
 3. North Star is still draft or too weak -> stop for confirmation or repair via `reformat`
 4. earliest required structure or owned block is missing -> run the command that repairs it
-5. required structure exists but the next critical sections are still weak -> run the command that strengthens them
+5. required structure exists but the next critical sections are still weak, including canonical-path analysis or preservation verification -> run the command that strengthens them
 6. otherwise follow the core arc:
    - `research`
    - `deep-dive`

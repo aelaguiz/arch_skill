@@ -74,6 +74,18 @@ Install removes stale pre-skill command surfaces and removed competing skill pac
 - Default to fail-loud behavior, hard cutover, and explicit deletes.
 - Runtime shims, compatibility paths, and silent alternate behavior require explicit approval in the governing doc.
 
+### Converge on canonical paths
+
+- When full-arch work touches duplicated or drifting logic, converge onto the canonical existing path or extract one clean shared path.
+- Internal convergence work may widen beyond the directly touched file set when needed to remove duplicate truth or prevent a new parallel path.
+- Convergence work must not be used as an excuse to invent new product functionality, modes, or speculative infrastructure.
+
+### Preserve behavior during refactor
+
+- Any refactor, consolidation, or shared-path extraction needs a credible behavior-preservation check.
+- Prefer existing tests, typecheck, build, instrumentation, or stable behavior-level checks before adding new tests.
+- Do not write negative-value tests that only assert implementation details, deletions, or visual constants.
+
 ## Choosing a skill
 
 ### `arch-step`
@@ -91,6 +103,7 @@ Practical rule:
 
 - If the ask is generic full arch, the live answer is `arch-step`.
 - If the ask names a full-arch command, the live answer is also `arch-step`.
+- `arch-step` may widen internal refactor scope to converge on one tested path and remove duplicate truth, but it must not invent extra product functionality while doing it.
 - `arch-step status` is the concise readout.
 - `arch-step advance` owns the full checklist and exact next-command selection.
 

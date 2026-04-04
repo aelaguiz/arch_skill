@@ -66,8 +66,8 @@ Grade:
 Also apply the "big 3" readiness bar:
 
 - target architecture fully specified
-- architecture sufficiently idiomatic
-- call sites audited exhaustively enough to trust the plan
+- architecture sufficiently idiomatic and convergent
+- call sites audited exhaustively enough within approved scope to trust the plan
 
 A doc cannot be artifact-strong if TL;DR, Section 0, Section 5, Section 6, or Section 7 are still weak.
 
@@ -81,7 +81,7 @@ Inspect:
 
 Grade:
 
-- `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable, evidence-aware, and `status` is `active` or `complete`
+- `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable, evidence-aware, clearly distinguish requested behavior scope from allowed convergence scope, and `status` is `active` or `complete`
 - `decent` when the content is mostly real but thin in one important place
 - `weak` when the draft is vague, contradictory, or placeholder-heavy
 - `missing` when the doc is not credibly bootstrapped
@@ -95,7 +95,7 @@ Inspect:
 
 Grade:
 
-- `strong` when the block has authoritative internal anchors, reusable patterns, explicit adopt or reject logic, and evidence-based open questions
+- `strong` when the block has authoritative internal anchors, names the canonical owner path, names reusable patterns, names preservation signals when needed, and uses evidence-based open questions
 - `decent` when present but thinner than required
 - `weak` when present but generic or under-anchored
 - `missing` when absent
@@ -111,7 +111,7 @@ Inspect:
 
 Grade:
 
-- `strong` when current architecture is grounded, target architecture is fully specified, and the call-site audit is exhaustive enough to drive implementation and audit
+- `strong` when current architecture is grounded, target architecture is fully specified, the canonical owner path is explicit, and the call-site audit is exhaustive enough within approved scope to drive implementation and audit
 - `decent` when all exist but one is still thin
 - `weak` when one or more exist but do not meet the depth bar
 - `missing` when one or more are absent
@@ -141,9 +141,9 @@ Inspect:
 
 Grade:
 
-- `strong` when the authoritative phased plan exists, remains the single execution checklist, and each phase has concrete work, verification, exit criteria, and rollback
+- `strong` when the authoritative phased plan exists, remains the single execution checklist, each phase has concrete work, verification, exit criteria, and rollback, and refactor-heavy phases name preservation checks
 - `decent` when present but one or more phases are thin
-- `weak` when generic, incomplete, or competing with helper checklists
+- `weak` when generic, incomplete, mixes product creep into ship-blocking work, or competes with helper checklists
 - `missing` when absent
 
 ### Implementation
@@ -156,7 +156,7 @@ Inspect:
 
 Grade:
 
-- `strong` when worklog and doc both reflect real phased progress or completion, Section 7 phase status lines match the worklog, ledger-like completeness is visible, and the doc matches reality
+- `strong` when worklog and doc both reflect real phased progress or completion, Section 7 phase status lines match the worklog, ledger-like completeness is visible, refactor-heavy phases ran preservation checks, and the doc matches reality
 - `decent` when implementation is real but progress truth is thin
 - `weak` when there are claims of progress without credible worklog or doc evidence
 - `missing` when no implementation evidence exists
@@ -205,8 +205,8 @@ Choose the command that most improves artifact completeness or core-flow progres
 - non-canonical existing doc -> `reformat`
 - draft or weak North Star -> confirm or repair via `reformat`
 - missing research -> `research`
-- weak or incomplete current architecture, target architecture, or call-site audit -> `deep-dive`
+- weak or incomplete current architecture, target architecture, canonical-path analysis, or call-site audit -> `deep-dive`
 - warranted but missing external research -> `external-research`
-- weak or competing execution checklist -> `phase-plan`
+- weak, creep-heavy, or preservation-light execution checklist -> `phase-plan`
 - code progress without worklog truth -> `implement`
 - missing implementation audit -> `audit-implementation`

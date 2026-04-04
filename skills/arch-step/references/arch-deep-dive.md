@@ -4,7 +4,7 @@
 
 - produce or sharpen the current architecture
 - fully specify the target architecture
-- make the call-site audit exhaustive enough to drive implementation and later audit
+- make the call-site audit exhaustive enough within requested behavior plus required convergence work to drive implementation and later audit
 - update the warn-first planning-pass state
 
 ## Shared references to carry in
@@ -37,16 +37,19 @@
 - docs-only; do not modify code
 - code is ground truth
 - read code and run read-only searches as needed
-- if North Star or UX scope is contradictory, stop for a quick doc correction
+- if the North Star, requested behavior scope, or allowed architectural convergence scope is contradictory, stop for a quick doc correction
 - no fallback or shim design unless the plan explicitly approves it
+- search for the canonical existing path before proposing a new abstraction or code path
+- if the target design does not reuse the canonical path, justify why the existing path cannot own the change
 - if multiple viable technical approaches exist, choose the most idiomatic default and note alternatives instead of punting the decision
 
 ## Quality bar
 
 - Section 4 must describe current structure, flows, ownership, and failure behavior concretely enough to plan against
-- Section 5 must fully specify the future architecture, contracts, boundaries, SSOT, and no-parallel-path stance
-- Section 6 must be exhaustive enough to drive implementation and later audit
+- Section 5 must fully specify the future architecture, canonical owner path, contracts, boundaries, SSOT, and no-parallel-path stance
+- Section 6 must be exhaustive enough within approved scope to drive implementation and later audit
 - if the design introduces or sharpens a central pattern, the consolidation sweep must capture include, defer, or exclude candidates rather than ignoring drift risk
+- any required convergence or consolidation work must name the preservation signal that will prove behavior was not broken
 
 ## Planning-passes update rule
 
@@ -64,8 +67,9 @@ If the design introduces or updates a central pattern, contract, lifecycle primi
 - look for other places that should adopt it
 - capture file paths or symbols
 - default dispositions:
-  - clearly in scope -> include
-  - scope expansion -> defer or exclude
+  - required to converge onto the same canonical path and avoid drift -> include
+  - useful but not required for this run -> defer
+  - adds product functionality or speculative architecture -> exclude
   - stop only if the plan is internally contradictory
 
 ## Placement and update rules
@@ -93,8 +97,10 @@ Use this call-site section shape:
 | <module> | <path> | <fn/cls> | <today> | <diff> | <rationale> | <new usage> | <tests> |
 
 ## Migration notes
+* Canonical owner path / shared code path:
 * Deprecated APIs (if any):
 * Delete list (what must be removed; include superseded shims/parallel paths if any):
+* Behavior-preservation signals for refactors:
 
 ## Pattern Consolidation Sweep (anti-blinders; scoped by plan)
 | Area | File / Symbol | Pattern to adopt | Why (drift prevented) | Proposed scope (include/defer/exclude) |
@@ -105,14 +111,14 @@ Use this call-site section shape:
 
 ## Consistency duties beyond local ownership
 
-- if Sections 4 through 6 materially sharpen the design, repair clearly stale TL;DR, Section 0, or Section 1 claims that are now wrong
+- if Sections 4 through 6 materially sharpen the design, repair clearly stale TL;DR, Section 0, Section 1, or Section 8 claims that are now wrong
 - if the architecture changed in a meaningful way, append or update a Decision Log entry
 - if the new target architecture invalidates the current phase plan, say so plainly and point the next move to `phase-plan`
 
 ## Stop condition
 
 - if the doc path remains truly ambiguous after best effort, ask the user to choose from the top 2-3 candidates
-- if North Star or UX scope is contradictory, stop for a quick doc correction
+- if the North Star, requested behavior scope, or allowed architectural convergence scope is contradictory, stop for a quick doc correction
 - otherwise stop after Sections 4 through 6 and `planning_passes` are updated for this run
 
 ## Console contract

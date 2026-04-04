@@ -54,6 +54,8 @@ If they are weak, every later stage becomes soft.
 
 - TL;DR must be concrete enough to falsify
 - Section 0 must be real enough to confirm or correct
+- If the ask implies architectural convergence, Section 0 must make that internal scope explicit instead of leaving later stages to infer it.
+- If the ask implies refactor pressure, the initial evidence stance should name how preserved behavior will be trusted.
 - if the ask clearly implies priorities, problem framing, verification bias, rollout implications, or an immediate tradeoff, lightly seed the relevant later sections instead of leaving pure ceremony
 - lightly seeded sections must stay truthful and minimal
 
@@ -77,10 +79,14 @@ If they are weak, every later stage becomes soft.
    - non-negotiables that constrain later decisions
 5. Draft Section 0:
    - falsifiable claim
-   - UX and technical in-scope
+   - requested behavior in scope
+   - allowed architectural convergence scope
    - UX and technical out-of-scope
    - smallest credible acceptance evidence
+   - smallest credible behavior-preservation evidence when refactor or consolidation is likely
    - key invariants
+     - no new parallel paths
+     - no silent behavior drift during refactors
    - strict fallback stance
 6. Lightly seed Sections `1`, `2`, `8`, `9`, and `10` when the ask clearly supports it.
 7. Insert the canonical `planning_passes` block near the top.

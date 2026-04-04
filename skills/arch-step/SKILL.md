@@ -1,6 +1,6 @@
 ---
 name: arch-step
-description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
+description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status for work that may require architectural convergence onto canonical repo paths. Internal refactors may widen enough to remove duplicate truth or parallel paths, but the skill must not invent new product functionality, modes, or speculative infrastructure. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
 metadata:
   short-description: "Standalone full-arch operator"
 ---
@@ -15,6 +15,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 
 - The user wants the full arch workflow for medium or large work and does not need a different workflow family.
 - The ask is generic full arch language such as "do the full arch flow," "continue this architecture doc," "implement the plan," or "audit implementation against the plan."
+- The work needs one canonical plan doc plus real architectural convergence onto existing repo patterns, shared code paths, or single-source-of-truth boundaries.
 - The user wants explicit stage control instead of a more holistic or phase-family-driven flow.
 - The ask is command-shaped: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `audit-implementation`, `status`, or `advance`.
 - The user wants one specific plan-doc shape with exact headings, stable markers, and consistent stage ownership.
@@ -36,8 +37,13 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - If the doc is materially non-canonical, repair only the safe owned portion or route to `reformat`.
 - Keep one planning source of truth. Do not create sidecar plan docs or competing checklists.
 - All planning commands are docs-only. Only `implement` may change code.
+- Distinguish requested behavior scope from architectural convergence scope. Requested behavior scope governs user-visible behavior. Architectural convergence scope covers internal refactors needed to route the ask through canonical paths, remove duplicate truth, and prevent drift.
+- Search for the canonical existing path before designing a new one. Reuse it, minimally refactor it, or justify why it cannot own the change.
+- Internal convergence work may broaden touched files or nearby adopters when needed to avoid parallel paths or shadow contracts, but it must not invent new product functionality, modes, or speculative infrastructure.
+- Any refactor, shared-path extraction, or consolidation must preserve existing behavior and name a credible verification signal before it is considered done.
 - Use repo evidence first. Ask only for true product, UX, external-constraint, access, or doc-path gaps.
 - Default to fail-loud boundaries, hard cutover, and explicit deletes. Runtime shims are forbidden unless the plan explicitly approves them.
+- Core commands apply scope-triage and convergence rules even when helper commands are not run.
 - `advance` must choose from structure first, quality second, stage order third. Helper commands stay explicit.
 - `status` is compact, read-only, and grounded in the actual artifact.
 - `advance` owns the longer checklist surface and optional one-step execution.
@@ -56,7 +62,8 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
    - `planning_passes`
    - exact canonical headings
    - command-owned blocks
-   - obvious contradictions across TL;DR, Section 0, target architecture, phase plan, verification, rollout, and decision log
+   - obvious contradictions across TL;DR, Section 0, target architecture, call-site audit, phase plan, verification, rollout, and decision log
+   - canonical-path ownership and behavior-preservation claims
 6. Read `references/section-quality.md` for the sections this command depends on.
 7. Read the matching command reference.
 8. If the command is `advance`, read `references/advance.md`, choose the one move that most improves artifact integrity or flow progress, and stop unless `RUN=1` explicitly asks for that one step to execute.
@@ -91,7 +98,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - optional helper blocks folded into the same plan doc
 - `WORKLOG_PATH` once implementation begins
 
-The finished artifact is not just a heading set. It is one internally consistent plan that says the same thing about outcome, scope, architecture, verification, rollout, and drift history from multiple angles.
+The finished artifact is not just a heading set. It is one internally consistent plan that says the same thing about outcome, requested behavior scope, architectural convergence scope, architecture, verification, rollout, and drift history from multiple angles.
 
 ### `advance` selection rule
 
@@ -124,7 +131,7 @@ These stay explicit and do not auto-run from `advance`:
 - `overbuild-protector`
 - `review-gate`
 
-Default placement is after `phase-plan` and before `implement`, unless the user explicitly asks otherwise.
+Default placement is after `phase-plan` and before `implement`, unless the user explicitly asks otherwise. They are extra hardening surfaces, not the only place where scope, convergence, or preservation discipline exists.
 
 ### Output expectations
 
@@ -156,7 +163,7 @@ Default placement is after `phase-plan` and before `implement`, unless the user 
 - `references/arch-phase-plan.md` - authoritative phase-plan contract
 - `references/arch-plan-enhance.md` - best-possible hardening of the main plan
 - `references/arch-fold-in.md` - fold references into the main artifact and wire them into phases
-- `references/arch-overbuild-protector.md` - scope triage and de-scope guard without creating a second checklist
+- `references/arch-overbuild-protector.md` - explicit scope triage and remediation using the same rubric core commands should already apply
 - `references/arch-review-gate.md` - local idiomatic and completeness review
 - `references/arch-implement.md` - implementation, worklog, and completion discipline
 - `references/arch-audit-implementation.md` - code-completeness audit and phase reopening

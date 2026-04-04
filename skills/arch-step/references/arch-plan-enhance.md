@@ -3,7 +3,7 @@
 ## What this command does
 
 - take an existing plan and harden it toward the simplest, most idiomatic, most drift-resistant version of itself
-- make SSOT, boundaries, deletes, and migration obligations explicit
+- make SSOT, canonical path ownership, boundaries, deletes, migration obligations, and preservation checks explicit
 - leave behind a concrete helper block that sharpens the main artifact without competing with it
 
 ## Shared references to carry in
@@ -28,16 +28,19 @@
 - read `DOC_PATH` fully and enough code to make real architectural decisions
 - code is ground truth
 - do not design fallbacks or compatibility shims by default
-- treat scope as authoritative; if consolidation expands work, default to follow-up or ignore rather than re-asking scope
+- treat requested behavior scope as authoritative; architectural convergence may widen when needed to remove duplicate truth or prevent a new parallel path
+- if consolidation would add product behavior or speculative infrastructure, default to follow-up or ignore rather than re-asking scope
 - ask only for true product, UX, or access gaps
 
 ## Quality bar
 
 - make SSOT explicit
+- name the canonical path that should own the requested behavior
 - remove or reject parallel implementations
 - make boundaries and invariants enforceable
 - name required deletes and cleanup
 - identify must-change call sites and drift-prone adopters
+- name the behavior-preservation checks that make refactors safe
 - keep the evidence plan common-sense and non-blocking
 - explicitly note where a short boundary comment should live when future drift is likely
 
@@ -59,6 +62,7 @@ Use this block shape:
 - <bullets>
 
 ## Architecture verdict
+- Canonical owner path: <path or boundary>
 - Is this now "best possible by our standards"? <yes/no>
 - Biggest remaining risks:
   - <bullets>
@@ -77,13 +81,15 @@ Use this block shape:
   - <area> — Proposed: <include|follow-up|ignore> — <why>
 
 ## Evidence (non-blocking)
+- Behavior-preservation checks after refactor:
+  - <existing test/check OR smallest new behavior-level check> — <what it proves stayed the same>
 - Evidence we'll rely on:
   - <existing test/check OR instrumentation/log signature OR manual checklist> — <what you'll look for>
 - What we will not block on:
   - <item such as screen recordings or sim screenshot baselines>
 
 ## Questions (ONLY if truly needed)
-- <product/UX scope decision> — default recommendation: <recommendation>
+- <requested-behavior scope decision> — default recommendation: <recommendation>
 <!-- arch_skill:block:plan_enhancer:end -->
 ```
 
@@ -91,6 +97,7 @@ Use this block shape:
 
 - if the helper block surfaces a better architecture, sharpen the main plan sections first and use the helper block to record the hardening
 - do not let the helper block become a parallel plan or second checklist
+- if the helper block finds a simpler way to converge onto an existing path, update the main plan rather than merely praising the idea
 - if the verdict exposes a real earlier mistake, record meaningful drift in Section 10
 
 ## Stop condition

@@ -82,8 +82,11 @@ Check all of these:
   - boundaries and contracts match the plan
   - required deletes and cleanup happened
   - no forbidden shims slipped in
+  - no new parallel path or duplicate writer was introduced
 - idiomatic fit:
   - implementation aligns with existing repo patterns unless the plan justified divergence
+- behavior preservation:
+  - required refactors or consolidations have credible evidence that behavior was preserved
 - call-site completeness:
   - every call site that should have migrated actually migrated
 
@@ -95,6 +98,7 @@ Split plan evidence expectations into two buckets before judging completeness:
   - code paths
   - call-site migrations
   - deletes and cleanup
+  - refactor-preservation checks
   - tests, build signals, instrumentation, assertions, or other programmatic evidence
 - manual evidence:
   - screenshots
@@ -120,7 +124,9 @@ Missing manual evidence should become non-blocking follow-up.
    - verify each planned call-site change in code
    - search for missed call sites or lingering old APIs, patterns, or paths
    - verify SSOT enforcement and boundary compliance
+   - verify the implementation converged onto the planned canonical path instead of introducing a bypass
    - verify required deletes and cleanup through repo search, static analysis, build, or typecheck rather than proof tests
+   - verify required preservation signals actually ran and protect the intended behavior
    - verify claimed tests, assertions, or automation actually exist and hit the intended failure surface
 5. determine phase truth:
    - if a phase is marked complete but code work is missing, reopen it
@@ -135,6 +141,7 @@ Always name phases as `Phase <n> (<what it does>)` using the phase heading text 
 - do not reopen a phase solely because screenshots, manual QA, or human verification are still pending
 - if the plan says an old path should be deleted, removed, or unreachable, treat that as code work and audit it accordingly
 - if the implementation introduced a forbidden shim, fallback, or parallel source of truth, treat that as missing code correctness and reopen the responsible phase
+- if a refactor or convergence change lacks credible preservation evidence, treat that as missing code correctness and reopen the responsible phase
 
 ## Update rules
 
@@ -200,7 +207,7 @@ When reopening a phase:
 ## Verdict rules
 
 - `Verdict (code): COMPLETE` only when no missing or incorrect code work remains
-- `Verdict (code): NOT COMPLETE` when any required code work, migration, delete, cleanup, contract enforcement, or anti-shim expectation is unmet
+- `Verdict (code): NOT COMPLETE` when any required code work, migration, delete, cleanup, contract enforcement, preservation expectation, or anti-shim expectation is unmet
 - manual QA pending alone does not force `NOT COMPLETE`
 
 ## Stop condition
