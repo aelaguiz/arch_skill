@@ -9,7 +9,9 @@ import sys
 from pathlib import Path
 
 
-STATUS_MESSAGE = "arch-step implement-loop stop hook"
+STATUS_MESSAGE = (
+    "implement-loop: running fresh audit in a child Codex session; this can take a few minutes"
+)
 HOOK_SCRIPT_NAME = "implement_loop_stop_hook.py"
 
 

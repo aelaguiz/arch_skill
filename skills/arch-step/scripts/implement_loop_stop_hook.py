@@ -9,12 +9,20 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 
 
 STATE_RELATIVE_PATH = Path(".codex/implement-loop-state.json")
 EXPECTED_COMMAND = "implement-loop"
 VERDICT_PATTERN = re.compile(r"^Verdict \(code\): (COMPLETE|NOT COMPLETE)\s*$", re.MULTILINE)
+DETAIL_LIMIT = 800
+
+
+@dataclass
+class FreshAuditResult:
+    process: subprocess.CompletedProcess[str]
+    last_message: str | None
 
 
 def load_stop_payload() -> dict:
@@ -62,6 +70,29 @@ def block_with_message(message: str) -> None:
     raise SystemExit(2)
 
 
+def block_with_json(reason: str, system_message: str | None = None) -> None:
+    payload: dict[str, object] = {
+        "continue": True,
+        "decision": "block",
+        "reason": reason.strip(),
+    }
+    if system_message:
+        payload["systemMessage"] = system_message.strip()
+    sys.stdout.write(json.dumps(payload) + "\n")
+    raise SystemExit(0)
+
+
+def stop_with_json(stop_reason: str, system_message: str | None = None) -> None:
+    payload: dict[str, object] = {
+        "continue": False,
+        "stopReason": stop_reason.strip(),
+    }
+    if system_message:
+        payload["systemMessage"] = system_message.strip()
+    sys.stdout.write(json.dumps(payload) + "\n")
+    raise SystemExit(0)
+
+
 def resolve_doc_path(cwd: Path, doc_path_value: str) -> Path:
     doc_path = Path(doc_path_value)
     if not doc_path.is_absolute():
@@ -73,7 +104,7 @@ def derive_worklog_path(doc_path: Path) -> Path:
     return doc_path.with_name(f"{doc_path.stem}_WORKLOG.md")
 
 
-def run_fresh_audit(cwd: Path, doc_path_value: str) -> subprocess.CompletedProcess[str]:
+def run_fresh_audit(cwd: Path, doc_path_value: str) -> FreshAuditResult:
     codex = shutil.which("codex")
     if not codex:
         raise RuntimeError("`codex` is not available on PATH for the Stop hook")
@@ -86,7 +117,7 @@ def run_fresh_audit(cwd: Path, doc_path_value: str) -> subprocess.CompletedProce
 
     with tempfile.TemporaryDirectory(prefix="arch-step-implement-loop-") as temp_dir:
         last_message_path = Path(temp_dir) / "last_message.txt"
-        return subprocess.run(
+        process = subprocess.run(
             [
                 codex,
                 "exec",
@@ -105,6 +136,27 @@ def run_fresh_audit(cwd: Path, doc_path_value: str) -> subprocess.CompletedProce
             text=True,
             check=False,
         )
+        last_message = None
+        if last_message_path.exists():
+            last_message = last_message_path.read_text(encoding="utf-8").strip() or None
+        return FreshAuditResult(process=process, last_message=last_message)
+
+
+def summarize_child_output(
+    process: subprocess.CompletedProcess[str],
+    last_message: str | None,
+) -> str | None:
+    for detail in (
+        last_message,
+        process.stderr.strip(),
+        process.stdout.strip(),
+    ):
+        if detail:
+            compact = " ".join(detail.split())
+            if len(compact) > DETAIL_LIMIT:
+                return compact[: DETAIL_LIMIT - 3] + "..."
+            return compact
+    return None
 
 
 def read_verdict(doc_path: Path) -> str | None:
@@ -163,7 +215,7 @@ def main() -> int:
         )
 
     try:
-        result = run_fresh_audit(cwd, doc_path_value)
+        audit = run_fresh_audit(cwd, doc_path_value)
     except RuntimeError as exc:
         clear_state(state_path)
         block_with_message(
@@ -171,33 +223,56 @@ def main() -> int:
             "The loop was disarmed. Explain the blocker and stop."
         )
 
-    if result.returncode != 0:
+    child_summary = summarize_child_output(audit.process, audit.last_message)
+
+    if audit.process.returncode != 0:
         clear_state(state_path)
-        details = result.stderr.strip() or result.stdout.strip() or "unknown child-audit failure"
-        block_with_message(
-            "fresh implement-loop audit failed and the loop was disarmed.\n"
-            f"Failure: {details}\n"
-            "Treat the run as blocked, update the plan and worklog truthfully, explain the blocker, and stop."
+        failure = child_summary or "unknown child-audit failure"
+        block_with_json(
+            "implement-loop ran a fresh child audit, but that audit failed. "
+            f"Failure: {failure}. Treat the run as blocked, update the plan and worklog truthfully, explain the blocker, and stop.",
+            system_message="implement-loop fresh audit failed; review the blocker and stop honestly.",
         )
 
     verdict = read_verdict(doc_path)
     if verdict == "COMPLETE":
         clear_state(state_path)
-        return 0
+        stop_reason = (
+            "implement-loop fresh audit finished clean. "
+            f"Audit verdict is COMPLETE in {doc_path_value}."
+        )
+        if child_summary:
+            stop_reason += f" Audit summary: {child_summary}"
+        stop_with_json(
+            stop_reason,
+            system_message="implement-loop fresh audit finished clean.",
+        )
 
     if verdict == "NOT COMPLETE":
         worklog_path = derive_worklog_path(doc_path)
-        block_with_message(
-            "Fresh implement-loop audit returned Verdict (code): NOT COMPLETE.\n"
+        reason = (
+            "implement-loop ran a fresh child audit and found more code work. "
             f"Read the authoritative Implementation Audit block and reopened phases in {doc_path_value}, "
             f"implement the missing code work, update {worklog_path.relative_to(cwd)} if it exists, "
             "keep the loop armed, and stop again for another fresh audit."
         )
+        if child_summary:
+            reason += f" Audit summary: {child_summary}"
+        block_with_json(
+            reason,
+            system_message="implement-loop fresh audit finished; more work remains.",
+        )
 
     clear_state(state_path)
-    block_with_message(
-        f"fresh implement-loop audit did not leave a usable verdict in {doc_path_value}. "
+    reason = (
+        f"implement-loop ran a fresh child audit, but that audit did not leave a usable verdict in {doc_path_value}. "
         "The loop was disarmed. Treat the run as blocked, update the plan and worklog truthfully, explain the blocker, and stop."
+    )
+    if child_summary:
+        reason += f" Audit summary: {child_summary}"
+    block_with_json(
+        reason,
+        system_message="implement-loop fresh audit finished without a usable verdict.",
     )
 
 
