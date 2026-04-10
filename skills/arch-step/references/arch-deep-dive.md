@@ -58,7 +58,7 @@
 ## Planning-passes update rule
 
 - ensure the `planning_passes` block exists near the top
-- if external research already exists, mark:
+- if `deep_dive_pass_1` is already done, external research already exists, or an explicit controller is running the second architecture-hardening pass, mark:
   - `deep_dive_pass_2: done <YYYY-MM-DD>`
 - otherwise mark:
   - `deep_dive_pass_1: done <YYYY-MM-DD>`

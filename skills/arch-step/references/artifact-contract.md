@@ -13,7 +13,7 @@ This artifact is not a loose outline. It is one coherent plan doc that later com
   - `<DOC_DIR>/<DOC_BASENAME>_WORKLOG.md`
   - progress evidence only, never a second plan
 
-Planning commands update `DOC_PATH` only. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
+Planning commands update `DOC_PATH` only, except `auto-plan`, which also manages `.codex/auto-plan-state.json` as controller state. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
 
 ## Artifact convergence rule
 
@@ -124,6 +124,7 @@ Update rules:
 - preserve timestamps already present
 - never wipe completed fields
 - `deep-dive` marks pass 1 or pass 2
+- pass 2 may reflect either external-research follow-through or an explicit second architecture-hardening pass such as `auto-plan`
 - `external-research` marks `external_research_grounding`
 
 ### `# 0) Holistic North Star`
@@ -435,5 +436,5 @@ Treat these as hard checks:
 
 ## Write-boundary rule
 
-- `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, and `audit-implementation` are docs-only
+- `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, and `audit-implementation` are docs-only
 - `implement` and `implement-loop` are the code-writing commands in this skill

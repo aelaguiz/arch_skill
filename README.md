@@ -4,7 +4,7 @@ This repo ships a skills-only arch suite for Codex CLI, Claude Code, and Gemini 
 
 The live skill surface is:
 
-- `arch-step` — the only full-arch execution surface; owns the standalone full-arch workflow, command-level control, bounded `implement-loop` delivery, compact `status`, and guided `advance`
+- `arch-step` — the only full-arch execution surface; owns the standalone full-arch workflow, command-level control, bounded `auto-plan` and `implement-loop` controllers, compact `status`, and guided `advance`
 - `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `arch-step`
 - `lilarch` — compact 1-3 phase feature flow
 - `bugs-flow` — evidence-first bug analyze/fix/review flow
@@ -25,9 +25,9 @@ cd arch_skill
 make install
 ```
 
-This installs the live skill surface to `~/.agents/skills/`, wires the Codex runtime support for `implement-loop` through `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/implement_loop_stop_hook.py`, removes older `~/.codex/skills/<skill>` mirrors from previous installs, and also installs the Claude Code and Gemini CLI skill directories.
+This installs the live skill surface to `~/.agents/skills/`, wires the Codex runtime support for `auto-plan` and `implement-loop` through `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/implement_loop_stop_hook.py`, removes older `~/.codex/skills/<skill>` mirrors from previous installs, and also installs the Claude Code and Gemini CLI skill directories.
 
-Codex automatic `implement-loop` also requires the Codex feature flag:
+Codex automatic `auto-plan` and `implement-loop` also require the Codex feature flag:
 
 ```bash
 codex features enable codex_hooks
@@ -84,7 +84,7 @@ make remote_install HOST=user@host
 make verify_install
 ```
 
-This validates the installed active skill surface in `~/.agents/skills/`, checks that the Codex runtime support for `implement-loop` exists in `~/.codex/hooks.json` and points at the installed runner under `~/.agents/skills/`, confirms the old `~/.codex/skills/<skill>` mirrors are absent, and confirms removed competing skill packages are absent for the supported runtimes.
+This validates the installed active skill surface in `~/.agents/skills/`, checks that the Codex runtime support for `auto-plan` and `implement-loop` exists in `~/.codex/hooks.json` and points at the installed runner under `~/.agents/skills/`, confirms the old `~/.codex/skills/<skill>` mirrors are absent, and confirms removed competing skill packages are absent for the supported runtimes.
 
 To confirm the Codex feature gate is enabled:
 
@@ -106,6 +106,7 @@ Use `arch-step` for real full-arch work. It owns the standalone full-arch workfl
 - `deep-dive`
 - `external-research`
 - `phase-plan`
+- `auto-plan`
 - `plan-enhance`
 - `fold-in`
 - `overbuild-protector`
@@ -116,7 +117,9 @@ Use `arch-step` for real full-arch work. It owns the standalone full-arch workfl
 - `status`
 - `advance`
 
-`implement-loop` is the Codex-only automatic bounded loop. The user-facing command is still just `Use $arch-step implement-loop docs/MY_PLAN.md`. It is real only when the installed Codex runtime support is present in `~/.codex/hooks.json` and `codex_hooks` is enabled. Otherwise it must fail loud instead of pretending prompt-only repetition is enough.
+`auto-plan` is the Codex-only automatic planning controller. The user-facing command is still just `Use $arch-step auto-plan` or `Use $arch-step auto-plan docs/MY_PLAN.md`. It is real only when the installed Codex runtime support is present in `~/.codex/hooks.json` and `codex_hooks` is enabled. Otherwise it must fail loud instead of pretending prompt-only chaining is enough.
+
+`implement-loop` is the Codex-only automatic bounded delivery controller. The user-facing command is still just `Use $arch-step implement-loop docs/MY_PLAN.md`. It is real only when the installed Codex runtime support is present in `~/.codex/hooks.json` and `codex_hooks` is enabled. Otherwise it must fail loud instead of pretending prompt-only repetition is enough.
 
 If the user says "do the full arch flow," "continue this architecture doc," or "audit implementation against the plan," the right live skill is `arch-step`.
 
@@ -160,6 +163,7 @@ Examples:
 - `Use $arch-step new "build this"`
 - `Use $arch-step advance docs/MY_PLAN.md`
 - `Use $arch-step advance docs/MY_PLAN.md RUN=1`
+- `Use $arch-step auto-plan`
 - `Use $arch-step implement-loop docs/MY_PLAN.md`
 - `Use $arch-mini-plan docs/MY_PLAN.md`
 - `Use $lilarch for this small feature`

@@ -23,7 +23,7 @@ cd arch_skill
 make install
 ```
 
-For Codex automatic `implement-loop`, also enable the Codex feature once:
+For Codex automatic `auto-plan` and `implement-loop`, also enable the Codex feature once:
 
 ```bash
 codex features enable codex_hooks
@@ -41,7 +41,7 @@ Default local path:
 - `~/.agents/skills/arch-skills-guide/`
 - `~/.agents/skills/codemagic-builds/`
 
-Codex reads the same installed skills from `~/.agents/skills/`. `make install` also wires the Codex runtime support for `implement-loop` through `~/.codex/hooks.json` and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
+Codex reads the same installed skills from `~/.agents/skills/`. `make install` also wires the Codex runtime support for `auto-plan` and `implement-loop` through `~/.codex/hooks.json` and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
 
 Installed skills:
 
@@ -74,7 +74,7 @@ Installed skills:
   - `arch-flow`
   - `arch-skills-guide`
 
-Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs the runtime support for `implement-loop` in `~/.codex/hooks.json` pointing at the installed runner under `~/.agents/skills/arch-step/scripts/implement_loop_stop_hook.py`.
+Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs the runtime support for `auto-plan` and `implement-loop` in `~/.codex/hooks.json` pointing at the installed runner under `~/.agents/skills/arch-step/scripts/implement_loop_stop_hook.py`.
 
 ## Shared conventions
 
@@ -134,6 +134,7 @@ Use for full-arch planning, continuation, implementation, bounded implement/audi
 Examples:
 
 - `Use $arch-step "do the full arch flow for this change"`
+- `Use $arch-step auto-plan`
 - `Use $arch-step advance docs/MY_PLAN.md`
 - `Use $arch-step implement docs/MY_PLAN.md`
 - `Use $arch-step implement-loop docs/MY_PLAN.md`
@@ -147,9 +148,10 @@ Practical rule:
 - If capability-first analysis shows the main lever is prompt repair, `arch-step` should say so plainly and point to `prompt-authoring`.
 - `arch-step status` is the concise readout.
 - `arch-step advance` owns the full checklist and exact next-command selection.
+- `arch-step auto-plan` is the explicit bounded planning controller after North Star approval. It runs `research`, `deep-dive`, `deep-dive`, and `phase-plan`, then stops and says the doc is ready for `implement-loop`.
 - `arch-step implement-loop` is the explicit bounded controller when the user wants repeated implement then audit passes until the audit is clean or a real blocker stops the run.
-- In Codex, the user still invokes only `implement-loop`; it requires the installed runtime support in `~/.codex/hooks.json` and enabled `codex_hooks`.
-- If that hook path is absent or disabled, `implement-loop` should fail loud with the remediation commands instead of pretending a prompt-only loop exists.
+- In Codex, the user still invokes only `auto-plan` or `implement-loop`; each requires the installed runtime support in `~/.codex/hooks.json` and enabled `codex_hooks`.
+- If that hook path is absent or disabled, those commands should fail loud with the remediation commands instead of pretending a prompt-only loop exists.
 
 ### `arch-flow`
 

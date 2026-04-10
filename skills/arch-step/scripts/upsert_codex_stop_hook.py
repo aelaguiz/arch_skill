@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install or verify the arch-step implement-loop Stop hook in Codex hooks.json."""
+"""Install or verify the arch-step automatic controller Stop hook in Codex hooks.json."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 STATUS_MESSAGE = (
-    "implement-loop: running fresh audit in a child Codex session; this can take a few minutes"
+    "arch-step automatic controller is running; planning continuations are quick, fresh implement-loop audits can take a few minutes"
 )
 HOOK_SCRIPT_NAME = "implement_loop_stop_hook.py"
 
@@ -102,7 +102,7 @@ def verify_hook(hooks_file: Path, skills_dir: Path) -> None:
         if group == wanted:
             return
     raise SystemExit(
-        "missing arch-step implement-loop Stop hook entry in "
+        "missing arch-step automatic controller Stop hook entry in "
         f"{hooks_file}; expected command: {command}"
     )
 

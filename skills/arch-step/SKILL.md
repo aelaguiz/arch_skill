@@ -1,6 +1,6 @@
 ---
 name: arch-step
-description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status for work that may require architectural convergence onto canonical repo paths. Internal refactors may widen enough to remove duplicate truth or parallel paths, but the skill must not invent new product functionality, modes, or speculative infrastructure. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
+description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status for work that may require architectural convergence onto canonical repo paths. Internal refactors may widen enough to remove duplicate truth or parallel paths, but the skill must not invent new product functionality, modes, or speculative infrastructure. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
 metadata:
   short-description: "Standalone full-arch operator"
 ---
@@ -17,7 +17,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - The ask is generic full arch language such as "do the full arch flow," "continue this architecture doc," "implement the plan," or "audit implementation against the plan."
 - The work needs one canonical plan doc plus real architectural convergence onto existing repo patterns, shared code paths, or single-source-of-truth boundaries.
 - The user wants explicit stage control instead of a more holistic or phase-family-driven flow.
-- The ask is command-shaped: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `audit-implementation`, `status`, or `advance`.
+- The ask is command-shaped: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `audit-implementation`, `status`, or `advance`.
 - The user wants one specific plan-doc shape with exact headings, stable markers, and consistent stage ownership.
 - The user wants `advance` to print the full checklist, choose exactly one next command, and optionally execute that one step.
 - The user wants `status` to evaluate the actual plan artifact, not emit a generic checklist.
@@ -48,6 +48,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - If the real lever is prompt repair, say so plainly and recommend `prompt-authoring` instead of inventing deterministic scaffolding.
 - When porting agent instructions, prompt doctrine, or other instruction-bearing content, preserve explicit operational structure by default. Do not silently condense ordered steps, conditions, hard negatives, or escalation logic unless the artifact records why that condensation is safe and keeps the source text recoverable.
 - Default to fail-loud boundaries, hard cutover, and explicit deletes. Runtime shims are forbidden unless the plan explicitly approves them.
+- `auto-plan` is one command. It either runs a real bounded planning sequence or fails loud. Prompt-only chaining does not count as the feature.
 - `implement-loop` is one command. It either runs a real bounded implement-then-audit loop or fails loud. Prompt-only repetition does not count as the feature.
 - Git is the history for retired live truth surfaces. Do not preserve dead competing code paths, stale live docs, or stale comments for posterity. Delete them. If a touched doc, comment, or instruction still matters after the change, update it to current reality in the same run.
 - Core commands apply scope-triage and convergence rules even when helper commands are not run.
@@ -85,6 +86,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - `deep-dive`
 - `external-research`
 - `phase-plan`
+- `auto-plan`
 - `plan-enhance`
 - `fold-in`
 - `overbuild-protector`
@@ -145,7 +147,17 @@ Default placement is after `phase-plan` and before `implement`, unless the user 
 
 These stay explicit unless the user directly asks for them:
 
+- `auto-plan`
 - `implement-loop`
+
+`auto-plan` is a bounded planning controller. It runs `research`, then `deep-dive`, then `deep-dive` again, then `phase-plan` against the same `DOC_PATH`, then stops and says the doc is ready for `implement-loop`. The user-facing command stays simple:
+
+- run `$arch-step auto-plan`
+- or run `$arch-step auto-plan <DOC_PATH>`
+- prefer the current session's canonical full-arch doc when `DOC_PATH` is omitted
+- fail loud with exact remediation commands when the installed runtime support is absent, disabled, or the North Star is still unapproved
+- keep `.codex/auto-plan-state.json` aligned with the live run
+- if a stage stops early, clear `.codex/auto-plan-state.json` and stop honestly
 
 `implement-loop` is a bounded delivery controller. It runs `implement`, then `audit-implementation`, then repeats against the same `DOC_PATH` until the audit verdict is clean or a real blocker stops progress. Prefer a fresh audit context when the host runtime offers a truly isolated child session, subprocess, or subagent. Do not turn it into a generic open-ended loop.
 
@@ -185,6 +197,7 @@ User-facing invocation stays simple:
 - `references/arch-deep-dive.md` - current architecture, target architecture, call-site audit, and planning-pass rules
 - `references/arch-external-research.md` - external research contract and plan-integration rules
 - `references/arch-phase-plan.md` - authoritative phase-plan contract
+- `references/arch-auto-plan.md` - bounded planning controller over research, deep-dive twice, and phase-plan
 - `references/arch-plan-enhance.md` - best-possible hardening of the main plan
 - `references/arch-fold-in.md` - fold references into the main artifact and wire them into phases
 - `references/arch-overbuild-protector.md` - explicit scope triage and remediation using the same rubric core commands should already apply

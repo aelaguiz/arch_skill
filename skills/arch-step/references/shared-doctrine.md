@@ -51,6 +51,7 @@ If a question is still necessary, say where you looked first.
 ## DOC_PATH resolution defaults
 
 - Use an explicit `docs/<...>.md` path when present.
+- If the current session just created or most recently updated one canonical full-arch doc, prefer that doc for later `arch-step` commands that omit `DOC_PATH`.
 - If multiple candidates exist, prefer the most plan-like doc:
   - canonical headings
   - stable `arch_skill:block:` markers

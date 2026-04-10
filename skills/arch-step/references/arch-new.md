@@ -49,6 +49,7 @@ If they are weak, every later stage becomes soft.
 - start the doc as `status: draft`
 - do not leave placeholders in TL;DR or Section 0 when the ask supports drafting them concretely
 - if the user later confirms the North Star, update `status:` from `draft` to `active` without silently changing scope
+- if the current session later runs another `arch-step` command without an explicit `DOC_PATH`, prefer this newly created canonical doc unless a more specific doc is supplied
 
 ## Quality bar
 
@@ -102,6 +103,7 @@ After writing the doc:
 - ask for confirmation or edits
 - if edits arrive, update the doc and ask again
 - do not continue into research or deeper planning from the same `new` run
+- after confirmation, later `arch-step` commands in the same session should treat this doc as the default `DOC_PATH`
 
 ## Console contract
 
