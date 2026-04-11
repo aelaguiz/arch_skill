@@ -2,13 +2,20 @@
 
 The bias is delete-and-consolidate, not add-and-preserve.
 
-## Delete immediately
+## Commit, then delete
 
 - TEMP, DRAFT, WIP, OLD, or DEPRECATED files whose subject is already shipped, removed, or superseded
 - duplicate docs when another doc covers the same topic better
 - docs for features or systems that no longer exist
 - empty or near-empty stubs
 - obsolete working docs after their durable truth is promoted elsewhere
+
+Before deleting a bounded batch of these docs:
+
+- stage the docs in that delete batch
+- create a backup git commit first
+- do not stage unrelated dirty files elsewhere in the repo
+- if the commit cannot be created, stop instead of deleting
 
 ## Consolidate then delete
 

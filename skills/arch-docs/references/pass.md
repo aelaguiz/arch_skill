@@ -44,7 +44,10 @@ This file is scaffolding, not a shipped artifact.
 
 ## Trim
 
-- Delete stale or duplicate docs aggressively inside scope.
+- Before deleting a bounded batch of stale or duplicate docs, stage those docs and create a backup git commit first.
+- Stage only the docs in that delete batch, not unrelated dirty files elsewhere in the repo.
+- If the backup commit cannot be created, stop instead of deleting.
+- Delete stale or duplicate docs aggressively inside scope once the backup commit exists.
 - Retire obsolete working docs and completed plan/worklog residue once durable truth has been promoted.
 - Repair references after every delete.
 

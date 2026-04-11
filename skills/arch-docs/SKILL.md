@@ -35,8 +35,10 @@ Use this skill when the code is stable enough to ground documentation against cu
 - If explicit user context or active arch context exists, use it to narrow the audit intelligently. If not, audit the repo's docs surface directly.
 - Use a temporary repo-root `.doc-audit-ledger.md` while the cleanup is active. Delete it before the cleanup finishes.
 - Promote durable truth into evergreen docs, then delete obsolete working docs, plan/worklog residue, and stale duplicates in scope. Git is the archive.
+- Before deleting any bounded batch of docs, stage those docs and create a backup git commit first. Stage only the docs in that delete batch, not unrelated dirty files elsewhere in the repo.
 - Default behavior is one bounded cleanup pass. `auto` is the only explicit public mode.
 - `auto` is Codex-only and must be hook-backed; if the installed runtime support is absent or disabled, fail loud instead of pretending prompt repetition is automation.
+- If the backup commit for a delete batch cannot be created, stop instead of deleting.
 - If code truth is still unstable, external doc sources are required but unavailable, or the next pass would become speculative, stop and say so plainly.
 - The suite's internal auto evaluator is allowed only when the ask explicitly says it is the internal evaluator. Do not suggest or advertise that internal surface to users.
 
@@ -66,7 +68,7 @@ Use this skill when the code is stable enough to ground documentation against cu
 - Inventory the relevant doc-shaped surfaces for that scope.
 - Ground each topic against current code and current shipped behavior.
 - Collapse each topic to one canonical evergreen home.
-- Delete stale, duplicate, dead, TEMP/WIP, and obsolete working-doc residue inside scope.
+- Before deleting a bounded batch of stale, duplicate, dead, TEMP/WIP, or obsolete working-doc residue, stage those docs and make a backup commit, then delete them.
 - Repair links, indexes, and navigation for the surviving canonical docs.
 - Delete `.doc-audit-ledger.md` before finishing the run.
 
@@ -75,6 +77,7 @@ Use this skill when the code is stable enough to ground documentation against cu
 - Run the same cleanup discipline as the default pass, but only under real Codex Stop-hook continuation.
 - Create or refresh `.codex/arch-docs-auto-state.json` before the first pass.
 - Expect a fresh external evaluator after each stop point.
+- Apply the same pre-delete backup-commit rule during each pass in `auto`.
 - Continue only while another bounded pass is still credible inside the resolved scope.
 - Stop clean when the resolved stop condition is done, or stop blocked when the evaluator says the next pass would be speculative, scope-widening, taxonomy-imposing, or materially unchanged.
 

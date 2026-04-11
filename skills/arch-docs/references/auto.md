@@ -53,6 +53,7 @@ If `scope_kind` is `explicit-context` or `arch-context`, include non-empty `cont
 ## Loop rules
 
 - Run one truthful default `arch-docs` cleanup pass.
+- Apply the same pre-delete backup-commit rule inside each pass before any bounded delete batch.
 - Keep `.doc-audit-ledger.md` current while cleanup is still active.
 - Let Codex stop naturally.
 - Expect the installed Stop hook to launch a fresh external evaluator.
