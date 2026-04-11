@@ -1187,28 +1187,27 @@ def handle_arch_docs_auto(payload: dict) -> int:
         state["pass_index"] = pass_index
         write_state(state_path, state)
         reason = (
-            f"arch-docs auto ran a fresh child evaluation and found more bounded docs cleanup for {scope_summary}. "
+            f"arch-docs auto ran a fresh child evaluation and found more grounded docs cleanup for {scope_summary}. "
             "Continue now with the next required command: Use $arch-docs. "
-            f"Current scope remains {scope_summary}. "
             f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
         if summary:
             reason += f" Evaluator summary: {summary}"
         block_with_json(
             reason,
-            system_message="arch-docs auto evaluation finished; another bounded pass remains.",
+            system_message="arch-docs auto evaluation finished; another grounded pass remains.",
         )
 
     clear_state(state_path)
     reason = (
-        f"arch-docs auto ran a fresh child evaluation and stopped blocked for {scope_summary}. "
+        f"arch-docs auto ran a fresh child evaluation and found no credible grounded next pass for {scope_summary}. "
         "Do not keep looping. Explain the blocker and stop."
     )
     if summary:
         reason += f" Evaluator summary: {summary}"
     block_with_json(
         reason,
-        system_message="arch-docs auto evaluation stopped blocked.",
+        system_message="arch-docs auto evaluation stopped: no credible grounded next pass.",
     )
 
 

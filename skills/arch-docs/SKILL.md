@@ -36,10 +36,10 @@ Use this skill when the code is stable enough to ground documentation against cu
 - Use a temporary repo-root `.doc-audit-ledger.md` while the cleanup is active. Delete it before the cleanup finishes.
 - Promote durable truth into evergreen docs, then delete obsolete working docs, plan/worklog residue, and stale duplicates in scope. Git is the archive.
 - Before deleting any bounded batch of docs, stage those docs and create a backup git commit first. Stage only the docs in that delete batch, not unrelated dirty files elsewhere in the repo.
-- Default behavior is one bounded cleanup pass. `auto` is the only explicit public mode.
+- Default behavior is one grounded cleanup pass. `auto` is the only explicit public mode.
 - `auto` is Codex-only and must be hook-backed; if the installed runtime support is absent or disabled, fail loud instead of pretending prompt repetition is automation.
 - If the backup commit for a delete batch cannot be created, stop instead of deleting.
-- If code truth is still unstable, external doc sources are required but unavailable, or the next pass would become speculative, stop and say so plainly.
+- If code truth is still unstable, external doc sources are required but unavailable, or the next pass would become speculative or materially unchanged, stop and say so plainly.
 - The suite's internal auto evaluator is allowed only when the ask explicitly says it is the internal evaluator. Do not suggest or advertise that internal surface to users.
 
 ## First move
@@ -78,8 +78,9 @@ Use this skill when the code is stable enough to ground documentation against cu
 - Derive `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/arch-docs-auto-state.<SESSION_ID>.json` before the first pass.
 - Expect a fresh external evaluator after each stop point.
 - Apply the same pre-delete backup-commit rule during each pass in `auto`.
-- Continue only while another bounded pass is still credible inside the resolved scope.
-- Stop clean when the resolved stop condition is done, or stop blocked when the evaluator says the next pass would be speculative, scope-widening, taxonomy-imposing, or materially unchanged.
+- Continue only while another grounded pass is still credible for the resolved cleanup intent.
+- In repo-scope `auto`, later passes may widen across the repo docs surface when grounded cleanup still remains.
+- Stop clean when the resolved stop condition is done, or stop blocked when the evaluator says the next pass would become speculative, taxonomy-imposing, disconnected from a narrowed scope, or materially unchanged.
 
 ## Output expectations
 

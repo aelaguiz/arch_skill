@@ -1,6 +1,6 @@
 # Default DGTFO Pass
 
-The default `arch-docs` invocation runs one bounded DGTFO cleanup pass:
+The default `arch-docs` invocation runs one grounded DGTFO cleanup pass:
 
 - Discover
 - Ground-truth
@@ -32,7 +32,8 @@ This file is scaffolding, not a shipped artifact.
 ## Discover
 
 - Inventory every doc-shaped surface in the resolved scope.
-- If the run started with no narrower context, inventory the repo docs surface first, then choose the highest-confidence bounded topic cluster for the current pass.
+- If the run started with no narrower context, inventory the repo docs surface first, then choose the strongest grounded cleanup slice for the current pass.
+- In repo-scope `auto`, the next pass may widen or shift across the repo docs surface when discovery shows more grounded docs debt elsewhere.
 - Record file, location, topic, likely freshness, and overlap notes.
 - Check the last meaningful commit when staleness matters.
 
@@ -73,4 +74,4 @@ A pass is strong when:
 - durable truth was promoted before deletions
 - `.doc-audit-ledger.md` is deleted before the run finishes clean, or kept only while an explicitly continuing multi-pass cleanup is still active
 
-If those are not true yet, the pass should stop honestly with the next bounded move.
+If those are not true yet, the pass should stop honestly with the next grounded move.

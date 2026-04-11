@@ -1,4 +1,5 @@
 import importlib.util
+import io
 import json
 import subprocess
 import sys
@@ -50,6 +51,53 @@ class CodexStopHookTests(unittest.TestCase):
             text=True,
             check=False,
         )
+
+    def run_arch_docs_auto_handler(
+        self,
+        repo_root: Path,
+        session_id: str,
+        evaluator_payload: dict,
+    ) -> tuple[int, dict, str, Path]:
+        state_path = self.controller_state_path(
+            repo_root,
+            self.stop_module.ARCH_DOCS_AUTO_STATE_RELATIVE_PATH,
+            session_id,
+        )
+        self.write_json(
+            state_path,
+            {
+                "command": "arch-docs-auto",
+                "session_id": session_id,
+                "scope_kind": "repo",
+                "scope_summary": "repo docs surface",
+                "pass_index": 0,
+                "stop_condition": "clean docs scope",
+                "ledger_path": ".doc-audit-ledger.md",
+            },
+        )
+        evaluator_result = self.stop_module.FreshStructuredResult(
+            process=subprocess.CompletedProcess(args=["codex"], returncode=0, stdout="", stderr=""),
+            last_message=json.dumps(evaluator_payload),
+            payload=evaluator_payload,
+        )
+        original = self.stop_module.run_arch_docs_evaluator
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        self.stop_module.run_arch_docs_evaluator = lambda *args, **kwargs: evaluator_result
+        try:
+            saved_stdout = sys.stdout
+            saved_stderr = sys.stderr
+            sys.stdout = stdout
+            sys.stderr = stderr
+            with self.assertRaises(SystemExit) as raised:
+                self.stop_module.handle_arch_docs_auto(
+                    {"cwd": str(repo_root), "session_id": session_id}
+                )
+        finally:
+            self.stop_module.run_arch_docs_evaluator = original
+            sys.stdout = saved_stdout
+            sys.stderr = saved_stderr
+        return raised.exception.code, json.loads(stdout.getvalue()), stderr.getvalue(), state_path
 
     def test_install_hook_preserves_unrelated_and_collapses_repo_managed_entries(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -347,6 +395,64 @@ class CodexStopHookTests(unittest.TestCase):
             state = json.loads(state_path.read_text(encoding="utf-8"))
             self.assertEqual(state["session_id"], "session-1")
             self.assertEqual(state["stage_index"], 1)
+
+    def test_arch_docs_auto_continue_uses_grounded_repo_wide_wording(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+
+            exit_code, payload, stderr, state_path = self.run_arch_docs_auto_handler(
+                repo_root,
+                "session-1",
+                {
+                    "verdict": "continue",
+                    "summary": "More stale setup and usage docs remain elsewhere in the repo docs surface.",
+                    "next_action": "Use $arch-docs",
+                    "needs_another_pass": True,
+                    "reason": "Grounded cleanup remains.",
+                    "blockers": [],
+                },
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertTrue(payload["continue"])
+            self.assertIn("more grounded docs cleanup", payload["reason"])
+            self.assertNotIn("more bounded docs cleanup", payload["reason"])
+            self.assertNotIn("Current scope remains", payload["reason"])
+            self.assertEqual(
+                payload["systemMessage"],
+                "arch-docs auto evaluation finished; another grounded pass remains.",
+            )
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertEqual(state["pass_index"], 1)
+
+    def test_arch_docs_auto_blocked_uses_grounded_blocker_wording(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+
+            exit_code, payload, stderr, state_path = self.run_arch_docs_auto_handler(
+                repo_root,
+                "session-1",
+                {
+                    "verdict": "blocked",
+                    "summary": "The remaining work would be speculative taxonomy cleanup with no grounded canonical home.",
+                    "next_action": "Stop and explain the blocker.",
+                    "needs_another_pass": False,
+                    "reason": "No credible grounded next pass remains.",
+                    "blockers": ["speculative taxonomy cleanup"],
+                },
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertTrue(payload["continue"])
+            self.assertIn("no credible grounded next pass", payload["reason"])
+            self.assertNotIn("bounded", payload["reason"])
+            self.assertEqual(
+                payload["systemMessage"],
+                "arch-docs auto evaluation stopped: no credible grounded next pass.",
+            )
+            self.assertFalse(state_path.exists())
 
 
 if __name__ == "__main__":

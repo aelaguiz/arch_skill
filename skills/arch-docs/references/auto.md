@@ -4,7 +4,7 @@
 
 ## Goal
 
-Repeat bounded default passes with Stop-hook continuation and a fresh external evaluation until the resolved docs cleanup is clean or honestly blocked.
+Repeat grounded default passes with Stop-hook continuation and a fresh external evaluation until the resolved docs cleanup is clean or honestly blocked.
 
 ## Required runtime preflight
 
@@ -34,7 +34,7 @@ Minimum shape:
   "scope_summary": "repo docs surface",
   "context_sources": [],
   "pass_index": 0,
-  "stop_condition": "no high-confidence stale or duplicate topic cluster remains and every cleaned topic has one canonical evergreen home",
+  "stop_condition": "no meaningful stale, duplicate, or misleading docs remain in the resolved cleanup scope and every cleaned topic has one canonical evergreen home",
   "ledger_path": ".doc-audit-ledger.md"
 }
 ```
@@ -57,14 +57,16 @@ If `scope_kind` is `explicit-context` or `arch-context`, include non-empty `cont
 - Keep `.doc-audit-ledger.md` current while cleanup is still active.
 - Let Codex stop naturally.
 - Expect the installed Stop hook to launch a fresh external evaluator.
-- Continue only when another bounded pass is still credible inside the same resolved scope.
-- Stop blocked when the evaluator says the next pass would be speculative, scope-widening, taxonomy-imposing, or materially unchanged.
+- Continue only when another grounded pass is still credible for the resolved cleanup intent.
+- In repo scope, the next pass may widen across the repo docs surface when real grounded cleanup still remains.
+- In narrowed scopes, widen only enough to cover overlapping docs for the same topics.
+- Stop blocked when the evaluator says the next pass would be speculative, taxonomy-imposing, disconnected from a narrowed scope, or materially unchanged.
 - Stop clean only when the evaluator says the current stop condition is satisfied.
 
 ## Hard rules
 
 - Do not downgrade to prompt-only looping.
 - Keep the resolved scope explicit.
-- In repo mode, keep each pass bounded to the highest-confidence remaining topic cluster or explicit stop condition.
-- Do not let `auto` silently turn into an unbounded docs refactor.
+- In repo mode, keep each pass focused on a meaningful grounded cleanup slice, not the smallest possible topic cluster.
+- Do not let `auto` drift into speculative, taxonomy-first, or aesthetic-only docs refactoring.
 - The temporary ledger should survive only while cleanup is active. It must be deleted before the overall docs cleanup is declared complete.

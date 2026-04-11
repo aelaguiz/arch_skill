@@ -35,7 +35,7 @@ Read the armed controller state plus current repo docs and decide one of exactly
 - Has durable truth been promoted into one canonical evergreen home per topic?
 - Are obsolete working docs still present without good reason?
 - Are broken references or stale nav entries still present in touched scope?
-- Would the next pass stay inside the same resolved scope?
+- For narrowed scopes, would the next pass stay tied to the same requested topics or their grounded overlaps?
 - Did the last pass produce enough progress that another pass is still credible?
 
 ## Verdict rules
@@ -46,12 +46,13 @@ Read the armed controller state plus current repo docs and decide one of exactly
   - obsolete working-doc residue is retired or cleanly transformed in place
   - broken references in touched scope are repaired
 - `continue`:
-  - bounded cleanup still remains
+  - grounded cleanup still remains
   - another pass is credible
 - `blocked`:
   - code truth is still unstable
   - the canonical home is ambiguous
-  - the cleanup would need a wider or different scope than the resolved one
+  - for a narrowed scope, the cleanup would need a materially wider or different topic scope than the resolved one
+  - the next pass would drift into speculative or taxonomy-first reorganization
   - the latest pass did not materially improve the cleanup state
 
 ## Output contract

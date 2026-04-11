@@ -24,7 +24,8 @@ Use this file first so the cleanup adapts to the repo's actual doc system and re
   - profile the repo docs surface
   - inventory doc-shaped surfaces across the repo
   - group them by topic
-  - choose the highest-confidence stale, overlapping, or misleading topic cluster for the current bounded pass
+  - choose the strongest grounded cleanup slice for the current pass
+- In repo-scope `auto`, later passes may widen across the repo docs surface when the first slice exposed more grounded stale, overlapping, or misleading docs elsewhere.
 - Do not silently turn a pass into an aesthetic or taxonomy rewrite.
 
 ## Repo doc profile
@@ -66,4 +67,4 @@ Do not proceed with docs cleanup when:
 - current code truth is still changing materially in the same run
 - the cleanup needs external doc sources that are inaccessible from the repo and current context
 - active arch context exists but its implementation truth is still too unstable to trust
-- the only way to keep going would be a repo-wide reorganization that is no longer grounded in the current topics
+- the only way to keep going would be a speculative repo-wide reorganization that is no longer grounded in the current topics
