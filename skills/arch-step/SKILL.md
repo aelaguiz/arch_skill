@@ -176,7 +176,7 @@ User-facing invocation stays simple:
 - if the installed runtime support is absent or disabled, name the broken prerequisite and stop
 - do not hand control back to audit until the current implementation pass has credible proof for its claimed fixes
 - keep `.codex/implement-loop-state.json` aligned with the live run
-- if a real blocker appears before stopping, clear `.codex/implement-loop-state.json` and stop honestly
+- do not clear `.codex/implement-loop-state.json` from the implementation side before fresh `audit-implementation` has run, even if the pass believes the work is done
 - when the loop finishes clean, hand off to `Use $arch-docs`
 
 ### Output expectations

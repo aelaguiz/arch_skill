@@ -81,8 +81,9 @@ Lifecycle:
 - create or refresh it after preflight and before the implementation pass
 - let the first fresh-audit pass claim the current `session_id` into the state file
 - leave it armed while fresh auditing is active
-- delete it when the audit finishes clean
-- delete it before stopping on a real blocker so the loop does not re-enter falsely
+- let fresh `audit-implementation` own the clean-versus-not-clean decision before clearing it
+- do not clear it from the implementation side just because the pass thinks the work is done
+- clear it when the fresh audit finishes clean or when the audit path itself stops blocked
 
 ## Hard rules
 
@@ -91,6 +92,7 @@ Lifecycle:
 - each cycle must run `implement` first and `audit-implementation` second against the same `DOC_PATH`
 - before handing control back to fresh audit, the implementation pass must run the smallest credible programmatic proof for each claimed fix
 - in Codex, the fresh audit pass after an implementation stop point owns the continue-versus-stop decision
+- the implementation side must not clear loop state just because it believes the code is complete
 - when the fresh audit context launches, pass the explicit `DOC_PATH` and current repo working context; do not ask the fresh audit pass to rediscover the artifact from stale conversation state
 - `audit-implementation` remains docs-only; never fix code while auditing
 - if the audit verdict is `COMPLETE`, clear loop state and stop
@@ -108,7 +110,7 @@ Lifecycle:
 4. Create or refresh `.codex/implement-loop-state.json` for the current Codex session and `DOC_PATH`.
 5. Run one truthful implementation pass using the `implement` contract, including the smallest credible programmatic proof for each claimed fix.
 6. Sync `DOC_PATH` and `WORKLOG_PATH` to the resulting code reality and proof signals.
-7. If a real blocker stops progress before the run naturally stops, delete `.codex/implement-loop-state.json`, update the plan and worklog truthfully, and stop.
+7. If the implementation pass stops before the run naturally stops, update the plan and worklog truthfully but leave `.codex/implement-loop-state.json` armed so fresh `audit-implementation` still runs.
 8. Otherwise let Codex try to stop. The installed runtime should:
    - no-op when no active loop state matches the current session
    - launch a fresh `audit-implementation` child pass when the loop is active
