@@ -51,7 +51,8 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
 10. post-checks:
    - gaps audit
    - implementation audit
-11. explicit-review-only helpers such as code review or PR finalization
+11. docs cleanup handoff
+12. explicit-review-only helpers such as code review or PR finalization
 
 ## Arch-mini-plan follow-through checklist
 
@@ -66,6 +67,7 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
 4. implementation + worklog
 5. post-checks:
    - implementation audit
+   - docs cleanup handoff
    - any explicit follow-up audit
 
 Recommend `arch-step` as the governing skill once mini-plan is complete and the next move is execution or auditing.
@@ -96,6 +98,6 @@ Recommend `arch-step` as the governing skill once mini-plan is complete and the 
 
 ## Governing-skill recommendation
 
-- For full-arch docs, recommend `arch-step`.
-- For arch-mini-plan follow-through into implementation or audits, recommend `arch-step`.
+- For full-arch docs, recommend `arch-step` until the code audit is clean, then recommend `arch-docs`.
+- For arch-mini-plan follow-through into implementation or audits, recommend `arch-step` until the code audit is clean, then recommend `arch-docs`.
 - For lilarch docs that still fit lilarch, recommend `lilarch`.

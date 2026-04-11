@@ -84,6 +84,7 @@ By the end of the run:
 - if a phase proposes new tooling for agent-backed behavior, the plan must explain why prompt-first and capability-first options were insufficient
 - treat touched live docs, comments, and instructions as real implementation work when they would become false after the change
 - delete dead competing truth surfaces instead of preserving them for posterity; if a touched live doc/comment/instruction still matters, rewrite it to current reality in the same run
+- broader docs consolidation, evergreen promotion, and final plan/worklog retirement belong to `arch-docs` after the code audit is clean; do not silently stretch `implement` into that separate docs-cleanup workflow
 - build a compact in-memory implementation ledger from:
   - phase tasks
   - call-site audit items
@@ -181,6 +182,7 @@ Also update nearby plan sections when implementation changes the truth:
 - if architecture changed in a meaningful way, repair the smallest stale claims in TL;DR, Section 0, Section 5, Section 7, or Section 8
 - if a touched live doc, comment, or instruction would otherwise become stale, update or delete it in the same run and keep the phase notes truthful about that work
 - if a planned item turns out to be truly out of scope, record that explicitly with rationale instead of silently dropping it
+- if the code becomes clean before the broader feature docs are fully consolidated, leave the handoff visible for `arch-docs` instead of burying that remaining docs-cleanup work inside finish notes
 
 ## Completeness discipline
 

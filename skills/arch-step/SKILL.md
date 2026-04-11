@@ -25,6 +25,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 ## When not to use
 
 - The user wants a read-only router or "what's next?" answer. Use `arch-flow`.
+- The remaining job is docs cleanup or consolidation after full-arch code work is clean. Use `arch-docs`; it can use the current plan/worklog as context.
 - The task is a one-pass mini plan, a 1-3 phase small-feature flow, a bug flow, or an open-ended loop. Use `arch-mini-plan`, `lilarch`, `bugs-flow`, `goal-loop`, or `north-star-investigation`.
 - The user is asking which arch skill to use. Use `arch-skills-guide`.
 
@@ -51,6 +52,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - `auto-plan` is one command. It either runs a real bounded planning sequence or fails loud. Prompt-only chaining does not count as the feature.
 - `implement-loop` is one command. It either runs a real bounded implement-then-audit loop or fails loud. Prompt-only repetition does not count as the feature.
 - Git is the history for retired live truth surfaces. Do not preserve dead competing code paths, stale live docs, or stale comments for posterity. Delete them. If a touched doc, comment, or instruction still matters after the change, update it to current reality in the same run.
+- Broader docs audit, consolidation, and final plan/worklog retirement after a clean full-arch code audit belong to `arch-docs`, not to extra hidden `arch-step` commands.
 - Core commands apply scope-triage and convergence rules even when helper commands are not run.
 - `advance` must choose from structure first, quality second, stage order third. Helper commands stay explicit.
 - `status` is compact, read-only, and grounded in the actual artifact.
@@ -129,6 +131,7 @@ Choose exactly one next command using this precedence:
    - `phase-plan`
    - `implement`
    - `audit-implementation`
+7. If the code audit is clean and the feature still needs docs cleanup, hand off to `arch-docs`.
 
 Do not auto-run more than one command.
 
@@ -168,6 +171,7 @@ User-facing invocation stays simple:
 - fail loud with exact remediation commands when the installed runtime support is absent or disabled
 - keep `.codex/implement-loop-state.json` aligned with the live run
 - if a real blocker appears before stopping, clear `.codex/implement-loop-state.json` and stop honestly
+- when the loop finishes clean, hand off to `Use $arch-docs`
 
 ### Output expectations
 
@@ -183,7 +187,7 @@ User-facing invocation stays simple:
   - one best-next-move line
 - `advance` should emit:
   - the full ordered checklist with evidence notes
-  - the exact next `arch-step` command
+  - the exact next move, even when that handoff is `arch-docs`
   - optional one-step execution only when `RUN=1`
 
 ## Reference map

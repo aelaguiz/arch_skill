@@ -72,6 +72,7 @@ After this command runs:
 - this is a code-completeness audit, not a bureaucracy audit
 - missing manual QA evidence is non-blocking and should not by itself reopen phases
 - do not fix the code while auditing; record gaps instead
+- broader docs consolidation, evergreen promotion, and plan/worklog retirement belong to `arch-docs` after a clean audit unless the plan explicitly made a specific touched-doc cleanup item part of code-completeness
 
 ## Highest-bar audit criteria
 
@@ -219,6 +220,7 @@ When reopening a phase:
 - `Verdict (code): COMPLETE` only when no missing or incorrect code work remains
 - `Verdict (code): NOT COMPLETE` when any required code work, migration, delete, touched-doc cleanup, contract enforcement, preservation expectation, or anti-shim expectation is unmet
 - manual QA pending alone does not force `NOT COMPLETE`
+- a later `arch-docs` cleanup pass is expected after a clean verdict; that broader docs-cleanup work is not by itself a reason to keep `Verdict (code): NOT COMPLETE`
 
 ## Stop condition
 
@@ -231,4 +233,4 @@ When reopening a phase:
 - one-line punchline
 - what the audit found and what changed in the doc
 - real blockers or risks
-- next action
+- next action, which is `Use $arch-docs` when the code verdict is clean and the surviving docs still need cleanup, consolidation, or plan/worklog retirement

@@ -14,6 +14,13 @@
 - "Advance this doc and run the next step":
   - `arch-step`
 
+## Full arch vs docs cleanup
+
+- "Implement the plan and audit the code against it":
+  - `arch-step`
+- "The code is clean; now clean up the feature docs and retire the plan doc":
+  - `arch-docs`
+
 ## Mini plan vs lilarch
 
 - "Small feature, but I still want the canonical architecture blocks":

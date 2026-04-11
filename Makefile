@@ -1,9 +1,9 @@
 .PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 REMOVED_SKILLS := arch-skill arch-plan
-SKILLS := arch-step arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide codemagic-builds
-CLAUDE_SKILLS := arch-step arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide
-GEMINI_SKILLS := arch-step arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide
+SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide codemagic-builds
+CLAUDE_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide
+GEMINI_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow goal-loop north-star-investigation arch-flow arch-skills-guide
 ARCHIVED_COMMAND_FILES := $(notdir $(wildcard archive/prompts/*.md))
 AGENTS_SKILLS_DIR ?= $(HOME)/.agents/skills
 CODEX_SKILLS_DIR ?= $(HOME)/.codex/skills
@@ -109,7 +109,7 @@ gemini_install_skill:
 	done
 
 verify_install: verify_agents_install verify_codex_install verify_claude_install $(VERIFY_GEMINI)
-	@echo "OK: active skill surface installed for agents, Claude Code, and requested Gemini targets; Codex arch-step controller hook installed from ~/.agents/skills"
+	@echo "OK: active skill surface installed for agents, Claude Code, and requested Gemini targets; Codex arch-suite controller hook installed from ~/.agents/skills"
 
 verify_agents_install:
 	@for skill in $(SKILLS); do \
@@ -127,7 +127,7 @@ verify_codex_install:
 		test ! -d $(CODEX_SKILLS_DIR)/$$skill; \
 	done
 	@python3 skills/arch-step/scripts/upsert_codex_stop_hook.py --verify --hooks-file "$(CODEX_HOOKS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
-	@echo "OK: Codex arch-step controller hook installed from ~/.agents/skills; stale command surfaces and old Codex skill mirrors removed"
+	@echo "OK: Codex arch-suite controller hook installed from ~/.agents/skills; stale command surfaces and old Codex skill mirrors removed"
 
 verify_claude_install:
 	@for skill in $(CLAUDE_SKILLS); do \

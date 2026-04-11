@@ -1,6 +1,6 @@
 ---
 name: arch-mini-plan
-description: "Create or repair a standalone one-pass mini architecture plan that writes the canonical arch blocks into one doc and then hands follow-through to `arch-step`. Use when a request asks for a mini plan, compressed arch plan, or single-pass planning pass without running the full staged arch workflow. Not for tiny 1-3 phase features, bugs, open-ended loops, or full-arch execution."
+description: "Create or repair a standalone one-pass mini architecture plan that writes the canonical arch blocks into one doc and then hands follow-through to `arch-step`, with later docs cleanup handled by `arch-docs` using the finished artifact as context. Use when a request asks for a mini plan, compressed arch plan, or single-pass planning pass without running the full staged arch workflow. Not for tiny 1-3 phase features, bugs, open-ended loops, or full-arch execution."
 metadata:
   short-description: "Compressed one-pass arch planning"
 ---
@@ -14,7 +14,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 - The user explicitly asks for a mini plan or a one-pass architecture plan.
 - The task is small or medium-sized, but still benefits from the canonical arch blocks.
 - The user wants planning rigor without walking the full research -> deep dive -> external research -> phase plan sequence as separate steps.
-- The likely next step after planning is implementation against the same doc via `arch-step`.
+- The likely next steps after planning are implementation against the same doc via `arch-step`, then docs cleanup via `arch-docs`.
 
 ## When not to use
 
@@ -74,7 +74,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
   - punchline
   - which blocks changed
   - any "too big for mini mode" warning
-  - exact next move, usually `arch-step implement` or `arch-step reformat`
+  - exact next move, usually `arch-step implement` or `arch-step reformat`, with `arch-docs` as the later full-arch docs-cleanup handoff after clean code audit
 
 ## Reference map
 

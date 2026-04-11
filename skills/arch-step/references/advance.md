@@ -4,7 +4,7 @@
 
 - inspect one canonical full-arch artifact end to end
 - emit the full ordered checklist with evidence notes
-- choose exactly one next `arch-step` command
+- choose exactly one next move
 - optionally execute only that one next step when `RUN=1`
 
 ## Shared references to carry in
@@ -19,7 +19,7 @@
 - resolve `DOC_PATH` using the normal `arch-step` defaults
 - optional `RUN=1`:
   - default behavior is recommend only
-  - with `RUN=1`, execute exactly one chosen next command and stop
+  - with `RUN=1`, execute exactly one chosen next command when that move still belongs to `arch-step`
 
 ## What `advance` inspects first
 
@@ -67,6 +67,7 @@ Emit every line in this order:
 11. `review-gate` helper is present when needed
 12. Implementation progress is grounded in code, `DOC_PATH`, and `WORKLOG_PATH`
 13. Implementation audit is present and honest
+14. Docs cleanup is either clearly next or already retired from the live surface
 
 Helper commands stay explicit:
 
@@ -87,7 +88,7 @@ Helper commands stay explicit:
 
 ## Next-command selection rule
 
-Choose exactly one next command using this precedence:
+Choose exactly one next move using this precedence:
 
 1. no plan doc yet -> `new`
 2. existing doc is not canonical enough to trust -> `reformat`
@@ -103,7 +104,8 @@ Choose exactly one next command using this precedence:
    - `implement` by default
    - `implement-loop` when the user explicitly wants the bounded delivery loop to a clean audit
    - `audit-implementation`
-7. if all required stages are complete, say there is no required next `arch-step` move
+7. if the code audit is clean and the feature still needs docs cleanup, hand off to `Use $arch-docs`
+8. if all required stages are complete and the live feature residue is already retired, say there is no required next move
 
 Default helper placement:
 
@@ -118,19 +120,20 @@ These stay explicit unless the artifact clearly depends on one of them for corre
 
 When `RUN=1` is present:
 
-- print the checklist and chosen next command first
+- print the checklist and chosen next move first
 - then load the matching internal command reference from `references/`
-- execute only that one command against the same artifact
+- execute only that one command against the same artifact when the next move is still an `arch-step` command
 - do not chain into a second command
 - do not auto-run helper commands unless the chosen next command is itself that helper
 - if the next move is North Star confirmation rather than a command, stop and ask for confirmation instead of mutating further
+- if the next move is `arch-docs`, print the handoff and stop; do not silently auto-switch skills from inside `advance`
 
 ## Output shape
 
 - one-line North Star reminder
-- one-line punchline naming the next command
+- one-line punchline naming the next move
 - `DOC_PATH`
 - the full checklist with evidence notes
-- the exact next `arch-step` invocation
+- the exact next invocation
 - if `RUN=1` is absent, offer the next move without executing it
-- if `RUN=1` is present, execute the chosen command and stop after that command finishes
+- if `RUN=1` is present, execute the chosen `arch-step` command and stop after that command finishes

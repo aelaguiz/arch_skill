@@ -1,0 +1,7 @@
+interface:
+  display_name: "Arch Docs"
+  short_description: "Run a topic-first docs audit that grounds, trims, fixes, and organizes repo docs"
+  default_prompt: "Use $arch-docs when the job is cleaning up stale, overlapping, or misleading docs. With no extra mode, it should just run one normal DGTFO pass: orient to the repo doc system, inventory doc-shaped surfaces, ground topics against code, consolidate each topic to one canonical home, delete stale truth, and repair navigation. If active arch artifacts exist, use them as narrowing context rather than as the whole scope. Only use explicit `auto` when the user asks for hook-backed Codex automation."
+
+policy:
+  allow_implicit_invocation: true

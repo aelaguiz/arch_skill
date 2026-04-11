@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install or verify the arch-step automatic controller Stop hook in Codex hooks.json."""
+"""Install or verify the arch suite automatic controller Stop hook in Codex hooks.json."""
 
 from __future__ import annotations
 
@@ -10,9 +10,15 @@ from pathlib import Path
 
 
 STATUS_MESSAGE = (
-    "arch-step automatic controller is running; planning continuations are quick, fresh implement-loop audits can take a few minutes"
+    "arch suite automatic controller is running; planning continuations are quick, and fresh audits or docs evaluations can take a few minutes"
 )
-HOOK_SCRIPT_NAME = "implement_loop_stop_hook.py"
+LEGACY_STATUS_MESSAGES = {
+    "arch-step automatic controller is running; planning continuations are quick, fresh implement-loop audits can take a few minutes",
+}
+HOOK_SCRIPT_NAME = "arch_controller_stop_hook.py"
+LEGACY_HOOK_SCRIPT_NAMES = {
+    "implement_loop_stop_hook.py",
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -43,7 +49,7 @@ def load_hooks_file(hooks_file: Path) -> dict:
     return data
 
 
-def is_arch_step_group(group: object) -> bool:
+def is_arch_suite_group(group: object) -> bool:
     if not isinstance(group, dict):
         return False
     hooks = group.get("hooks")
@@ -53,7 +59,13 @@ def is_arch_step_group(group: object) -> bool:
         if not isinstance(hook, dict):
             continue
         command = str(hook.get("command", ""))
-        if hook.get("statusMessage") == STATUS_MESSAGE or command.endswith(HOOK_SCRIPT_NAME):
+        status_message = hook.get("statusMessage")
+        if (
+            status_message == STATUS_MESSAGE
+            or status_message in LEGACY_STATUS_MESSAGES
+            or command.endswith(HOOK_SCRIPT_NAME)
+            or any(command.endswith(script_name) for script_name in LEGACY_HOOK_SCRIPT_NAMES)
+        ):
             return True
     return False
 
@@ -80,7 +92,7 @@ def install_hook(hooks_file: Path, skills_dir: Path) -> None:
         raise SystemExit(f"{hooks_file} must contain a list at hooks.Stop")
 
     command = expected_command(skills_dir)
-    stop_groups = [group for group in stop_groups if not is_arch_step_group(group)]
+    stop_groups = [group for group in stop_groups if not is_arch_suite_group(group)]
     stop_groups.append(expected_group(command))
     data["hooks"]["Stop"] = stop_groups
 
@@ -98,11 +110,19 @@ def verify_hook(hooks_file: Path, skills_dir: Path) -> None:
 
     command = expected_command(skills_dir)
     wanted = expected_group(command)
+    legacy_groups: list[dict] = []
     for group in stop_groups:
+        if is_arch_suite_group(group) and group != wanted:
+            legacy_groups.append(group)
         if group == wanted:
+            if legacy_groups:
+                raise SystemExit(
+                    "stale arch suite Stop hook entries still exist in "
+                    f"{hooks_file}; rerun install to remove old runner paths"
+                )
             return
     raise SystemExit(
-        "missing arch-step automatic controller Stop hook entry in "
+        "missing arch suite automatic controller Stop hook entry in "
         f"{hooks_file}; expected command: {command}"
     )
 

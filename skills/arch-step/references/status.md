@@ -29,8 +29,9 @@ Report in this order:
 6. Phase plan
 7. Implementation
 8. Audit
-9. Helper summary
-10. Best next move
+9. Docs cleanup
+10. Helper summary
+11. Best next move
 
 ## Allowed grades
 
@@ -175,6 +176,21 @@ Grade:
 - `weak` when nominal but not convincingly reconciled
 - `missing` when absent
 
+### Docs cleanup
+
+Inspect:
+
+- whether `Verdict (code): COMPLETE` is already present
+- whether `DOC_PATH` and `WORKLOG_PATH` still exist as live feature residue
+- whether the next required move is now the `arch-docs` handoff
+
+Grade:
+
+- `strong` when the code audit is clean and the artifact is ready to hand off to `arch-docs`
+- `decent` when the code audit is close but still thin
+- `weak` when the code audit is incomplete or the docs-cleanup handoff is still unclear
+- `missing` when there is no credible audit state yet
+
 ## Helper summary rules
 
 - `plan-enhance` is present when `arch_skill:block:plan_enhancer` exists
@@ -210,3 +226,4 @@ Choose the command that most improves artifact completeness or core-flow progres
 - weak, creep-heavy, missing capability-first analysis, preservation-light, or stale-live-doc-light execution checklist -> `phase-plan`
 - code progress without worklog truth -> `implement`
 - missing implementation audit -> `audit-implementation`
+- clean implementation audit with remaining docs cleanup or plan/worklog retirement -> `Use $arch-docs`

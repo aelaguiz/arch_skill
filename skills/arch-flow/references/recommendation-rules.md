@@ -4,12 +4,14 @@
 
 - If the doc does not exist, recommend `arch-step new`.
 - If the doc exists but is too non-canonical to trust, recommend `arch-step reformat`.
-- Otherwise recommend the exact next `arch-step` move that matches the earliest missing or weak required stage.
+- If the code audit is clean and the feature still needs docs cleanup or plan/worklog retirement, recommend `arch-docs`.
+- Otherwise recommend the exact next move that matches the earliest missing or weak required stage.
 
 ## Arch-mini-plan docs
 
 - If planning blocks are still incomplete, recommend `arch-mini-plan`.
 - If the mini plan is ready for build, recommend `arch-step implement`.
+- If the code audit is clean and the feature still needs docs cleanup or plan/worklog retirement, recommend `arch-docs`.
 - If the mini plan outgrew mini mode or is structurally weak, recommend `arch-step reformat`.
 
 ## Lilarch docs

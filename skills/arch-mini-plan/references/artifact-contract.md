@@ -59,5 +59,6 @@ When the change is agent-backed, these blocks must make capability-first decisio
 ## Handoff contract
 
 - The default follow-through is `arch-step implement <DOC_PATH>` when the doc is strong enough to ship against.
+- After clean full-arch code audit, the expected docs-cleanup handoff is `arch-docs`.
 - If the doc is structurally weak or the work outgrew mini mode, the handoff is `arch-step reformat <DOC_PATH>`.
 - Mini mode does not create `WORKLOG_PATH`; execution creates it later.

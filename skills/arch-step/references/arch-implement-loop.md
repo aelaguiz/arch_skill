@@ -17,6 +17,7 @@ Running `implement-loop` should end in one of two honest states:
   - `DOC_PATH` is truthful
   - `WORKLOG_PATH` is truthful
   - `audit-implementation` says `Verdict (code): COMPLETE`
+  - the next required move is `Use $arch-docs`
 - `blocked`:
   - remaining missing work or blocker is explicit
   - the latest audit and phase status show that truth plainly
@@ -94,6 +95,7 @@ Lifecycle:
 - when the fresh audit context launches, pass the explicit `DOC_PATH` and current repo working context; do not ask the fresh audit pass to rediscover the artifact from stale conversation state
 - `audit-implementation` remains docs-only; never fix code while auditing
 - if the audit verdict is `COMPLETE`, clear loop state and stop
+- when the audit verdict is `COMPLETE`, hand off docs cleanup to `arch-docs` and let it use the current artifact as context instead of inventing another hidden `arch-step` phase
 - if the audit verdict is `NOT COMPLETE`, continue from the reopened phases and missing-code findings instead of hand-waving them away
 - do not spin mechanically; if the latest implement pass did not materially change the missing-code picture and there is no credible next move, clear loop state, stop, and report the blocker
 - no fallbacks or shims unless the plan explicitly approves them
@@ -135,4 +137,4 @@ Fresh means the audit should not rely on remembered implementation intent from t
 - one-line North Star reminder
 - one-line punchline that says either the loop finished clean or stopped blocked
 - brief per-pass updates only when they add real information
-- final next action
+- final next action, which is `Use $arch-docs` when the loop finished clean

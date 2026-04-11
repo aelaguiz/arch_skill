@@ -5,6 +5,7 @@ This guide describes the live workflow surface for the repo.
 The current skill suite is:
 
 - `arch-step`
+- `arch-docs`
 - `arch-mini-plan`
 - `lilarch`
 - `bugs-flow`
@@ -23,7 +24,7 @@ cd arch_skill
 make install
 ```
 
-For Codex automatic `auto-plan` and `implement-loop`, also enable the Codex feature once:
+For Codex automatic `auto-plan`, `implement-loop`, and `arch-docs auto`, also enable the Codex feature once:
 
 ```bash
 codex features enable codex_hooks
@@ -32,6 +33,7 @@ codex features enable codex_hooks
 Default local path:
 
 - `~/.agents/skills/arch-step/`
+- `~/.agents/skills/arch-docs/`
 - `~/.agents/skills/arch-mini-plan/`
 - `~/.agents/skills/lilarch/`
 - `~/.agents/skills/bugs-flow/`
@@ -41,12 +43,13 @@ Default local path:
 - `~/.agents/skills/arch-skills-guide/`
 - `~/.agents/skills/codemagic-builds/`
 
-Codex reads the same installed skills from `~/.agents/skills/`. `make install` also wires the Codex runtime support for `auto-plan` and `implement-loop` through `~/.codex/hooks.json` and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
+Codex reads the same installed skills from `~/.agents/skills/`. `make install` also wires the Codex runtime support for `auto-plan`, `implement-loop`, and `arch-docs auto` through `~/.codex/hooks.json` and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
 
 Installed skills:
 
 - Codex:
   - `arch-step`
+  - `arch-docs`
   - `arch-mini-plan`
   - `lilarch`
   - `bugs-flow`
@@ -57,6 +60,7 @@ Installed skills:
   - `codemagic-builds`
 - Claude Code:
   - `arch-step`
+  - `arch-docs`
   - `arch-mini-plan`
   - `lilarch`
   - `bugs-flow`
@@ -66,6 +70,7 @@ Installed skills:
   - `arch-skills-guide`
 - Gemini:
   - `arch-step`
+  - `arch-docs`
   - `arch-mini-plan`
   - `lilarch`
   - `bugs-flow`
@@ -74,7 +79,7 @@ Installed skills:
   - `arch-flow`
   - `arch-skills-guide`
 
-Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs the runtime support for `auto-plan` and `implement-loop` in `~/.codex/hooks.json` pointing at the installed runner under `~/.agents/skills/arch-step/scripts/implement_loop_stop_hook.py`.
+Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs the runtime support for `auto-plan`, `implement-loop`, and `arch-docs auto` in `~/.codex/hooks.json` pointing at the installed runner under `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`.
 
 ## Shared conventions
 
@@ -125,6 +130,12 @@ Install removes stale pre-skill command surfaces, removed competing skill packag
 - Do not keep dead competing truth surfaces around for legacy or archaeology.
 - If a touched live doc, comment, or instruction still matters after the change, rewrite it to present reality in the same run. If it no longer matters, delete it.
 
+### Full-arch finish handoff
+
+- `arch-step` owns planning, implementation, and code-completeness audit.
+- `arch-docs` owns the docs-audit cleanup pass after a clean full-arch code audit and can also run standalone in any repo.
+- A clean `implement-loop` or `audit-implementation` means the next required move is docs cleanup, not another generic full-arch command.
+
 ## Choosing a skill
 
 ### `arch-step`
@@ -150,8 +161,24 @@ Practical rule:
 - `arch-step advance` owns the full checklist and exact next-command selection.
 - `arch-step auto-plan` is the explicit bounded planning controller after North Star approval. It runs `research`, `deep-dive`, `deep-dive`, and `phase-plan`, then stops and says the doc is ready for `implement-loop`.
 - `arch-step implement-loop` is the explicit bounded controller when the user wants repeated implement then audit passes until the audit is clean or a real blocker stops the run.
+- After a clean full-arch code audit, `arch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
 - In Codex, the user still invokes only `auto-plan` or `implement-loop`; each requires the installed runtime support in `~/.codex/hooks.json` and enabled `codex_hooks`.
 - If that hook path is absent or disabled, those commands should fail loud with the remediation commands instead of pretending a prompt-only loop exists.
+
+### `arch-docs`
+
+Use when the code is clean enough to trust and the job is cleaning up stale, overlapping, or misleading docs.
+
+Examples:
+
+- `Use $arch-docs`
+- `Use $arch-docs auto`
+
+Practical rule:
+
+- With no extra mode, `arch-docs` runs the normal one-pass DGTFO cleanup and should resolve scope from explicit user context, active arch context, or the repo docs surface.
+- Use `arch-docs auto` only in Codex when you want hook-backed repeated cleanup passes with fresh external evaluation.
+- If a clean arch plan/worklog exists, `arch-docs` should use it as narrowing context rather than as the whole scope.
 
 ### `arch-flow`
 
@@ -164,7 +191,7 @@ Examples:
 
 ### `arch-mini-plan`
 
-Use when the task still needs canonical architecture blocks, but the planning should happen in one pass and follow-through should later happen in `arch-step`.
+Use when the task still needs canonical architecture blocks, but the planning should happen in one pass and follow-through should later happen in `arch-step`, then `arch-docs` for later docs cleanup.
 
 Examples:
 

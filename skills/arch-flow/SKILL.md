@@ -32,7 +32,8 @@ Read `references/detection.md`, `references/checklist-rules.md`, and `references
    - mark each required step `DONE`, `PENDING`, `OPTIONAL`, or `UNKNOWN`
    - include the evidence note for each line
 4. Recommend the single best next move:
-   - `arch-step` for full-arch execution or post-mini-plan follow-through
+   - `arch-step` for full-arch execution or post-mini-plan follow-through until the code audit is clean
+   - `arch-docs` for full-arch or post-mini-plan docs cleanup after the clean code audit
    - `lilarch` for lilarch steps
 5. If the user asks to run the next step, switch to the governing skill and do the work there.
 
