@@ -17,6 +17,11 @@ The current skill suite is:
 
 `arch-step` is the only live full-arch execution surface.
 
+Other shipped skills:
+
+- `agent-definition-auditor`
+- `codemagic-builds`
+
 ## Install
 
 ```bash
@@ -43,6 +48,7 @@ Default local path:
 - `~/.agents/skills/north-star-investigation/`
 - `~/.agents/skills/arch-flow/`
 - `~/.agents/skills/arch-skills-guide/`
+- `~/.agents/skills/agent-definition-auditor/`
 - `~/.agents/skills/codemagic-builds/`
 
 Codex reads the same installed skills from `~/.agents/skills/`. `make install` also writes one arch_skill-managed Codex `Stop` hook through `~/.codex/hooks.json`, points it at the installed suite runner under `~/.agents/skills/arch-step/scripts/`, repairs older two-hook arch_skill installs down to that one repo-managed entry, and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
@@ -60,6 +66,7 @@ Installed skills:
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
+  - `agent-definition-auditor`
   - `codemagic-builds`
 - Claude Code:
   - `arch-step`
@@ -72,6 +79,7 @@ Installed skills:
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
+  - `agent-definition-auditor`
 - Gemini:
   - `arch-step`
   - `arch-docs`
@@ -83,6 +91,7 @@ Installed skills:
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
+  - `agent-definition-auditor`
 
 Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs one repo-managed `Stop` hook in `~/.codex/hooks.json` pointing at the installed suite runner under `~/.agents/skills/arch-step/scripts/`; that one hook backs `arch-step` automatic controllers, `arch-docs auto`, and `audit-loop auto`.
 
@@ -235,6 +244,10 @@ Use when the work is a quantified investigation with ranked hypotheses and bruta
 ### `arch-skills-guide`
 
 Use when the question is which live arch skill should handle the task.
+
+### `agent-definition-auditor`
+
+Use when the user wants a cold-read score, rationale, and improvement plan for an `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompt, or other agent-definition markdown.
 
 ## Full-arch doc conventions
 

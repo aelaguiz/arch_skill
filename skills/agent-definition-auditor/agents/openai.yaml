@@ -1,0 +1,7 @@
+interface:
+  display_name: "Agent Definition Auditor"
+  short_description: "Audit and score AGENTS.md, system prompts, and other agent-definition markdown with a cold-reader rubric"
+  default_prompt: "Use $agent-definition-auditor to audit and score this AGENTS.md, system prompt, or other agent-definition markdown, with concrete findings, rationale, and fastest improvements."
+
+policy:
+  allow_implicit_invocation: true

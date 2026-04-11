@@ -1,8 +1,8 @@
 # arch_skill
 
-This repo ships a skills-only arch suite for Codex CLI, Claude Code, and Gemini CLI.
+This repo ships installable agent skills centered on the arch suite for Codex CLI, Claude Code, and Gemini CLI.
 
-The live skill surface is:
+The live arch suite is:
 
 - `arch-step` — the only full-arch execution surface; owns the standalone full-arch workflow, command-level control, bounded `auto-plan` and `implement-loop` controllers, compact `status`, and guided `advance`
 - `arch-docs` — standalone docs-audit and cleanup skill; owns topic-first stale-doc cleanup, consolidation onto canonical docs, working-doc retirement, and hook-backed Codex `auto` docs cleanup
@@ -16,6 +16,11 @@ The live skill surface is:
 - `arch-skills-guide` — explains the suite and recommends the right live subskill
 
 `arch-step` is the only full-arch execution surface.
+
+Other shipped skills are:
+
+- `agent-definition-auditor` — cold-reader scoring and findings for `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompts, and other agent-definition markdown
+- `codemagic-builds` — Codemagic CI/CD build monitoring and build control via the Codemagic REST API
 
 Historical pre-skill materials are archived under `archive/` and `docs/archive/`. They are repo history, not part of the runtime surface.
 
@@ -34,6 +39,12 @@ Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, and `audit-loop
 ```bash
 codex features enable codex_hooks
 ```
+
+Each Codex auto controller now uses a session-scoped repo-local state file such as
+`.codex/auto-plan-state.<SESSION_ID>.json` or `.codex/audit-loop-state.<SESSION_ID>.json`,
+where `<SESSION_ID>` is the current `CODEX_THREAD_ID`. Separate Codex sessions can
+run their own auto controllers concurrently in one repo. One session still must not
+arm more than one controller at once.
 
 To skip Gemini:
 
@@ -54,6 +65,7 @@ Installed skills:
   - `~/.agents/skills/north-star-investigation/`
   - `~/.agents/skills/arch-flow/`
   - `~/.agents/skills/arch-skills-guide/`
+  - `~/.agents/skills/agent-definition-auditor/`
   - `~/.agents/skills/codemagic-builds/`
 - Claude Code:
   - `~/.claude/skills/arch-step/`
@@ -66,6 +78,7 @@ Installed skills:
   - `~/.claude/skills/north-star-investigation/`
   - `~/.claude/skills/arch-flow/`
   - `~/.claude/skills/arch-skills-guide/`
+  - `~/.claude/skills/agent-definition-auditor/`
 - Gemini CLI:
   - `~/.gemini/skills/arch-step/`
   - `~/.gemini/skills/arch-docs/`
@@ -77,6 +90,7 @@ Installed skills:
   - `~/.gemini/skills/north-star-investigation/`
   - `~/.gemini/skills/arch-flow/`
   - `~/.gemini/skills/arch-skills-guide/`
+  - `~/.gemini/skills/agent-definition-auditor/`
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed competing skill packages, and older `~/.codex/skills/<skill>` mirrors so runtime routing stays unambiguous.
 
@@ -102,7 +116,7 @@ codex features list | rg '^codex_hooks\\s+.*\\strue$'
 
 Restart your Codex, Claude Code, or Gemini CLI session after install so it reloads skills.
 
-## Skill suite
+## Shipped skills
 
 ### `arch-step`
 
@@ -172,9 +186,13 @@ Use when the question is "what's next?" on an arch-style doc and you want the si
 
 Use when the question is "which arch skill should I use?" or "what is the difference between these live subskills?"
 
+### `agent-definition-auditor`
+
+Use when the user wants a cold-read score, rationale, and prioritized improvements for an `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompt, or other agent-definition markdown.
+
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `goal-loop`, `north-star-investigation`, `arch-flow`, or `arch-skills-guide`.
+- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, or `agent-definition-auditor`.
 - Full-arch execution defaults to `arch-step`.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -200,3 +218,4 @@ Examples:
 - `Use $north-star-investigation for this quantified performance hunt`
 - `Use $arch-flow docs/MY_PLAN.md`
 - `Use $arch-skills-guide for this request`
+- `Use $agent-definition-auditor to audit this AGENTS.md`

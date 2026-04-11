@@ -1,9 +1,9 @@
 .PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 REMOVED_SKILLS := arch-skill arch-plan
-SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop goal-loop north-star-investigation arch-flow arch-skills-guide codemagic-builds
-CLAUDE_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop goal-loop north-star-investigation arch-flow arch-skills-guide
-GEMINI_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop goal-loop north-star-investigation arch-flow arch-skills-guide
+SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor codemagic-builds
+CLAUDE_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor
+GEMINI_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor
 ARCHIVED_COMMAND_FILES := $(notdir $(wildcard archive/prompts/*.md))
 AGENTS_SKILLS_DIR ?= $(HOME)/.agents/skills
 CODEX_SKILLS_DIR ?= $(HOME)/.codex/skills
