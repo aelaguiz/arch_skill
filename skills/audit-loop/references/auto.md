@@ -7,7 +7,7 @@ Run bounded repo-audit passes until a fresh review says the repo is clean enough
 ## What `auto` does
 
 - verifies the Codex runtime preflight
-- creates or refreshes `.codex/audit-loop-state.json`
+- resolves `SESSION_ID` from `CODEX_THREAD_ID` and creates or refreshes `.codex/audit-loop-state.<SESSION_ID>.json`
 - runs one truthful `run` pass
 - lets the installed Stop hook launch a fresh `review` pass
 - continues only while the review verdict remains `CONTINUE`
@@ -27,7 +27,7 @@ If any check fails, name the broken prerequisite and stop.
 
 ## State file contract
 
-Create `.codex/audit-loop-state.json` before the first `run` pass.
+Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/audit-loop-state.<SESSION_ID>.json` before the first `run` pass.
 
 Minimal shape:
 
@@ -35,20 +35,16 @@ Minimal shape:
 {
   "version": 1,
   "command": "auto",
+  "session_id": "<SESSION_ID>",
   "ledger_path": "_audit_ledger.md",
   "gitignore_created": false,
   "gitignore_entry_added": true
 }
 ```
 
-Optional:
-
-- `session_id`
-
 Lifecycle:
 
 - create or refresh it after preflight and before the first `run`
-- let the first Stop hook claim `session_id`
 - keep it armed while verdicts are `CONTINUE`
 - delete it before stopping on `BLOCKED`
 - delete it on `CLEAN` before removing the ledger and `.gitignore` entry

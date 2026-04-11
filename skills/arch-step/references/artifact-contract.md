@@ -13,7 +13,7 @@ This artifact is not a loose outline. It is one coherent plan doc that later com
   - `<DOC_DIR>/<DOC_BASENAME>_WORKLOG.md`
   - progress evidence only, never a second plan
 
-Planning commands update `DOC_PATH` only, except `auto-plan`, which also manages `.codex/auto-plan-state.json` as controller state. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
+Planning commands update `DOC_PATH` only, except `auto-plan`, which also manages `.codex/auto-plan-state.<SESSION_ID>.json` as controller state. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
 
 ## Artifact convergence rule
 

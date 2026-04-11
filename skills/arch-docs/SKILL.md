@@ -75,7 +75,7 @@ Use this skill when the code is stable enough to ground documentation against cu
 ### 2) `auto`
 
 - Run the same cleanup discipline as the default pass, but only under real Codex Stop-hook continuation.
-- Create or refresh `.codex/arch-docs-auto-state.json` before the first pass.
+- Derive `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/arch-docs-auto-state.<SESSION_ID>.json` before the first pass.
 - Expect a fresh external evaluator after each stop point.
 - Apply the same pre-delete backup-commit rule during each pass in `auto`.
 - Continue only while another bounded pass is still credible inside the resolved scope.

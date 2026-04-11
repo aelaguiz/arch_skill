@@ -14,7 +14,7 @@ Read the armed controller state plus current repo docs and decide one of exactly
 
 ## Inputs
 
-- `STATE_PATH`: `.codex/arch-docs-auto-state.json`
+- `STATE_PATH`: the resolved `.codex/arch-docs-auto-state.<SESSION_ID>.json` path for the current session
 - scope metadata from the state file, including `scope_kind`, `scope_summary`, and any `context_sources` or `context_paths`
 - `.doc-audit-ledger.md` when it still exists
 - current repo docs in the resolved scope

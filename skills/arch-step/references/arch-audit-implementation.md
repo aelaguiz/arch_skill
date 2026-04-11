@@ -58,6 +58,8 @@ After this command runs:
 - `Missing (code):` notes
 - `Manual QA (non-blocking):` notes when needed
 
+When this command runs inside `implement-loop`, it alone owns the authoritative implementation-audit block, the `Verdict (code)` outcome, and the clean `Use $arch-docs` handoff.
+
 ## Communication contract
 
 - begin work immediately when the command is clear
@@ -72,6 +74,7 @@ After this command runs:
 - this is a code-completeness audit, not a bureaucracy audit
 - missing manual QA evidence is non-blocking and should not by itself reopen phases
 - do not fix the code while auditing; record gaps instead
+- when running inside `implement-loop`, do not let the parent implementation pass stand in for this audit or author the authoritative clean outcome
 - if the implementation claims a fix but does not provide credible code-verifiable proof for it, treat that as missing code completeness
 - broader docs consolidation, evergreen promotion, and plan/worklog retirement belong to `arch-docs` after a clean audit unless the plan explicitly made a specific touched-doc cleanup item part of code-completeness
 

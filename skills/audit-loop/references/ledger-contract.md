@@ -4,7 +4,7 @@
 
 - `_audit_ledger.md` lives at repo root.
 - The root `.gitignore` must contain `_audit_ledger.md` while the audit is active.
-- `.codex/audit-loop-state.json` exists only while Codex `auto` is armed.
+- `.codex/audit-loop-state.<SESSION_ID>.json` exists only while Codex `auto` is armed, with `SESSION_ID` taken from `CODEX_THREAD_ID`.
 
 ## Ledger shape
 

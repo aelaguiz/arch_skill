@@ -41,7 +41,7 @@ Use this skill when the job is to inspect a codebase for the next real defect or
    - `run`
    - `review`
    - `auto`
-4. Resolve repo root, root `.gitignore`, `_audit_ledger.md`, and `.codex/audit-loop-state.json` when in `auto`.
+4. Resolve repo root, root `.gitignore`, `_audit_ledger.md`, and `.codex/audit-loop-state.<SESSION_ID>.json` when in `auto`, with `SESSION_ID` taken from `CODEX_THREAD_ID`.
 5. Read the matching mode reference and `references/quality-bar.md`.
 
 ## Workflow
@@ -64,7 +64,7 @@ Use this skill when the job is to inspect a codebase for the next real defect or
 ### 3) `auto`
 
 - Run Codex-only preflight for hooks and feature flags.
-- Create or refresh `.codex/audit-loop-state.json`.
+- Derive `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/audit-loop-state.<SESSION_ID>.json`.
 - Run one truthful `run` pass.
 - Let the installed Stop hook launch a fresh `review` pass and continue only while the verdict stays `CONTINUE`.
 

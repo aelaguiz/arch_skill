@@ -47,7 +47,7 @@ User-facing invocation is just `auto-plan`. If the installed runtime support for
 
 - `DOC_PATH`
 - `planning_passes`
-- `.codex/auto-plan-state.json`
+- `.codex/auto-plan-state.<SESSION_ID>.json`
 
 ## Required runtime preflight
 
@@ -65,7 +65,7 @@ Do not downgrade to prompt-only same-session chaining.
 
 ## Active planning-state contract
 
-Create `.codex/auto-plan-state.json` before the first research pass.
+Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/auto-plan-state.<SESSION_ID>.json` before the first research pass.
 
 Minimal shape:
 
@@ -73,6 +73,7 @@ Minimal shape:
 {
   "version": 1,
   "command": "auto-plan",
+  "session_id": "<SESSION_ID>",
   "doc_path": "docs/<PLAN>.md",
   "stage_index": 0,
   "stages": ["research", "deep-dive-pass-1", "deep-dive-pass-2", "phase-plan"]
@@ -82,7 +83,7 @@ Minimal shape:
 Lifecycle:
 
 - create or refresh it after preflight and before the research pass
-- let the first continuation pass claim the current `session_id` into the state file
+- write the current `session_id` into the state file at arm time
 - leave it armed while automatic planning is active
 - advance `stage_index` only after the required canonical outputs for that stage were updated
 - delete it when phase-plan finishes
@@ -97,8 +98,8 @@ Lifecycle:
 - the second `deep-dive` pass is required for this controller even when external research was not run
 - in Codex, the installed runtime continuation path owns stage-to-stage continuation
 - planning stages stay in the same visible session; do not hide them in silent child planning runs
-- if a stage stops before it updates the required canonical outputs, clear `.codex/auto-plan-state.json`, stop, and report that truth plainly
-- after `phase-plan`, clear `.codex/auto-plan-state.json`, stop, and say the doc is ready for `implement-loop`
+- if a stage stops before it updates the required canonical outputs, clear `.codex/auto-plan-state.<SESSION_ID>.json`, stop, and report that truth plainly
+- after `phase-plan`, clear `.codex/auto-plan-state.<SESSION_ID>.json`, stop, and say the doc is ready for `implement-loop`
 - do not auto-run `external-research`, helper commands, `implement`, `implement-loop`, or `audit-implementation`
 
 ## Stage completion signals
@@ -122,7 +123,7 @@ Use these signals before continuing automatically:
 
 1. Read `DOC_PATH` fully and run the same alignment checks required by the planning commands it will invoke.
 2. Run the runtime preflight. If the installed continuation path or `codex_hooks` is unavailable, fail loud.
-3. Create or refresh `.codex/auto-plan-state.json` for the current Codex session and `DOC_PATH`.
+3. Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/auto-plan-state.<SESSION_ID>.json` for the current Codex session and `DOC_PATH`.
 4. Run one truthful `research` pass using the `research` contract.
 5. Let Codex try to stop. The installed runtime should:
    - no-op when no active auto-plan state matches the current session
@@ -131,7 +132,7 @@ Use these signals before continuing automatically:
    - after `deep-dive` pass 2, continue to `phase-plan`
    - after `phase-plan`, clear state and stop with the `implement-loop` handoff message
 6. On each hook-driven continuation, run the literal next planning command against the same `DOC_PATH`, keep the controller state aligned, and stop naturally after the stage finishes.
-7. If a stage ends early, does not update the required canonical outputs, or the next move is no longer credible, clear `.codex/auto-plan-state.json`, stop, and report that state plainly.
+7. If a stage ends early, does not update the required canonical outputs, or the next move is no longer credible, clear `.codex/auto-plan-state.<SESSION_ID>.json`, stop, and report that state plainly.
 
 ## Console contract
 

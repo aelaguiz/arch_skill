@@ -30,6 +30,42 @@ AUTO_PLAN_DISPLAY_NAME = "auto-plan"
 ARCH_DOCS_AUTO_DISPLAY_NAME = "arch-docs auto"
 AUDIT_LOOP_DISPLAY_NAME = "audit-loop auto"
 
+
+@dataclass(frozen=True)
+class ControllerStateSpec:
+    relative_path: Path
+    expected_command: str
+    display_name: str
+
+
+@dataclass(frozen=True)
+class ResolvedControllerState:
+    spec: ControllerStateSpec
+    state_path: Path
+    is_legacy: bool
+
+
+IMPLEMENT_LOOP_STATE_SPEC = ControllerStateSpec(
+    relative_path=IMPLEMENT_LOOP_STATE_RELATIVE_PATH,
+    expected_command=IMPLEMENT_LOOP_COMMAND,
+    display_name=IMPLEMENT_LOOP_DISPLAY_NAME,
+)
+AUTO_PLAN_STATE_SPEC = ControllerStateSpec(
+    relative_path=AUTO_PLAN_STATE_RELATIVE_PATH,
+    expected_command=AUTO_PLAN_COMMAND,
+    display_name=AUTO_PLAN_DISPLAY_NAME,
+)
+ARCH_DOCS_AUTO_STATE_SPEC = ControllerStateSpec(
+    relative_path=ARCH_DOCS_AUTO_STATE_RELATIVE_PATH,
+    expected_command=ARCH_DOCS_AUTO_COMMAND,
+    display_name=ARCH_DOCS_AUTO_DISPLAY_NAME,
+)
+AUDIT_LOOP_STATE_SPEC = ControllerStateSpec(
+    relative_path=AUDIT_LOOP_STATE_RELATIVE_PATH,
+    expected_command=AUDIT_LOOP_COMMAND,
+    display_name=AUDIT_LOOP_DISPLAY_NAME,
+)
+
 AUTO_PLAN_STAGES = (
     "research",
     "deep-dive-pass-1",
@@ -54,10 +90,10 @@ AUDIT_LOOP_CONTROLLER_START = "<!-- audit_loop:block:controller:start -->"
 AUDIT_LOOP_CONTROLLER_END = "<!-- audit_loop:block:controller:end -->"
 AUDIT_LOOP_VALID_VERDICTS = {"CONTINUE", "CLEAN", "BLOCKED"}
 CONTROLLER_STATE_SPECS = (
-    (IMPLEMENT_LOOP_STATE_RELATIVE_PATH, IMPLEMENT_LOOP_COMMAND, IMPLEMENT_LOOP_DISPLAY_NAME),
-    (AUTO_PLAN_STATE_RELATIVE_PATH, AUTO_PLAN_COMMAND, AUTO_PLAN_DISPLAY_NAME),
-    (ARCH_DOCS_AUTO_STATE_RELATIVE_PATH, ARCH_DOCS_AUTO_COMMAND, ARCH_DOCS_AUTO_DISPLAY_NAME),
-    (AUDIT_LOOP_STATE_RELATIVE_PATH, AUDIT_LOOP_COMMAND, AUDIT_LOOP_DISPLAY_NAME),
+    IMPLEMENT_LOOP_STATE_SPEC,
+    AUTO_PLAN_STATE_SPEC,
+    ARCH_DOCS_AUTO_STATE_SPEC,
+    AUDIT_LOOP_STATE_SPEC,
 )
 ARCH_DOCS_EVAL_SCHEMA = {
     "type": "object",
@@ -162,6 +198,21 @@ def display_path(path: Path, cwd: Path) -> str:
         return str(path)
 
 
+def current_session_id(payload: dict) -> str | None:
+    session_id = payload.get("session_id")
+    if isinstance(session_id, str) and session_id:
+        return session_id
+    return None
+
+
+def session_state_relative_path(relative_path: Path, session_id: str) -> Path:
+    return relative_path.with_name(f"{relative_path.stem}.{session_id}{relative_path.suffix}")
+
+
+def session_state_path(cwd: Path, relative_path: Path, session_id: str) -> Path:
+    return cwd / session_state_relative_path(relative_path, session_id)
+
+
 def derive_worklog_path(doc_path: Path) -> Path:
     return doc_path.with_name(f"{doc_path.stem}_WORKLOG.md")
 
@@ -178,28 +229,101 @@ def load_json_object_quiet(path: Path) -> dict | None:
     return payload
 
 
-def state_is_armed_for_session(
+def state_matches_session(
     state: dict | None,
     expected_command: str,
-    payload: dict,
+    session_id: str | None,
+    *,
+    allow_missing_session_id: bool,
 ) -> bool:
     if state is None or state.get("command") != expected_command:
         return False
-    session_id = state.get("session_id")
-    if session_id is None:
-        return True
-    return isinstance(session_id, str) and session_id == payload.get("session_id")
+    state_session_id = state.get("session_id")
+    if state_session_id is None:
+        return allow_missing_session_id
+    return isinstance(state_session_id, str) and session_id is not None and state_session_id == session_id
+
+
+def stop_for_duplicate_controller_states(
+    cwd: Path,
+    spec: ControllerStateSpec,
+    paths: list[Path],
+) -> None:
+    duplicate_paths = ", ".join(display_path(path, cwd) for path in paths)
+    stop_with_json(
+        f"Multiple {spec.display_name} controller states are armed for this repo/session: {duplicate_paths}. "
+        "Clear the duplicate state files so only one remains armed, then rerun the intended command.",
+        system_message="Duplicate arch_skill controller states are armed.",
+    )
+
+
+def legacy_state_is_active_for_session(
+    cwd: Path,
+    spec: ControllerStateSpec,
+    payload: dict,
+) -> bool:
+    legacy_path = cwd / spec.relative_path
+    legacy_state = load_json_object_quiet(legacy_path)
+    return state_matches_session(
+        legacy_state,
+        spec.expected_command,
+        current_session_id(payload),
+        allow_missing_session_id=True,
+    )
+
+
+def resolve_active_controller_state(
+    payload: dict,
+    spec: ControllerStateSpec,
+) -> ResolvedControllerState | None:
+    cwd = Path(payload["cwd"]).resolve()
+    session_id = current_session_id(payload)
+    session_path = (
+        session_state_path(cwd, spec.relative_path, session_id)
+        if session_id is not None
+        else None
+    )
+    legacy_path = cwd / spec.relative_path
+    legacy_active = legacy_state_is_active_for_session(cwd, spec, payload)
+    if session_path is not None and session_path.exists():
+        if legacy_active:
+            stop_for_duplicate_controller_states(cwd, spec, [session_path, legacy_path])
+        return ResolvedControllerState(spec=spec, state_path=session_path, is_legacy=False)
+    if legacy_active:
+        return ResolvedControllerState(spec=spec, state_path=legacy_path, is_legacy=True)
+    return None
+
+
+def resolve_controller_state_for_handler(
+    payload: dict,
+    spec: ControllerStateSpec,
+) -> ResolvedControllerState | None:
+    cwd = Path(payload["cwd"]).resolve()
+    session_id = current_session_id(payload)
+    session_path = (
+        session_state_path(cwd, spec.relative_path, session_id)
+        if session_id is not None
+        else None
+    )
+    legacy_path = cwd / spec.relative_path
+    legacy_active = legacy_state_is_active_for_session(cwd, spec, payload)
+    if session_path is not None and session_path.exists():
+        if legacy_active:
+            stop_for_duplicate_controller_states(cwd, spec, [session_path, legacy_path])
+        return ResolvedControllerState(spec=spec, state_path=session_path, is_legacy=False)
+    if legacy_path.exists():
+        return ResolvedControllerState(spec=spec, state_path=legacy_path, is_legacy=True)
+    return None
 
 
 def detect_active_controller_states(payload: dict) -> list[str]:
     cwd = Path(payload["cwd"]).resolve()
     active: list[str] = []
-    for relative_path, expected_command, display_name in CONTROLLER_STATE_SPECS:
-        state_path = cwd / relative_path
-        state = load_json_object_quiet(state_path)
-        if not state_is_armed_for_session(state, expected_command, payload):
+    for spec in CONTROLLER_STATE_SPECS:
+        resolved_state = resolve_active_controller_state(payload, spec)
+        if resolved_state is None:
             continue
-        active.append(f"{display_name} ({display_path(state_path, cwd)})")
+        active.append(f"{spec.display_name} ({display_path(resolved_state.state_path, cwd)})")
     return active
 
 
@@ -253,24 +377,73 @@ def summarize_child_output(
     return None
 
 
+def load_controller_state(
+    cwd: Path,
+    resolved_state: ResolvedControllerState | None,
+    command_name: str,
+    expected_command: str,
+) -> tuple[Path, dict, bool] | None:
+    if resolved_state is None:
+        return None
+    state_path = resolved_state.state_path
+    state = load_state(state_path, command_name)
+    if state is None:
+        return None
+    if state.get("command") != expected_command:
+        if resolved_state.is_legacy:
+            return None
+        clear_state(state_path)
+        block_with_message(
+            f"{command_name} controller state at {display_path(state_path, cwd)} had an unexpected command; "
+            "the controller was disarmed. Update the repo truthfully and stop."
+        )
+    return state_path, state, resolved_state.is_legacy
+
+
 def validate_session_id(
     payload: dict,
+    cwd: Path,
     state_path: Path,
     state: dict,
     command_name: str,
+    *,
+    allow_claim: bool,
 ) -> bool:
+    payload_session_id = current_session_id(payload)
+    if payload_session_id is None:
+        clear_state(state_path)
+        block_with_message(
+            f"{command_name} controller state at {display_path(state_path, cwd)} could not validate session ownership "
+            "because the Stop hook payload was missing session_id; the controller was disarmed. "
+            "Update the repo truthfully and stop."
+        )
+
     session_id = state.get("session_id")
     if session_id is None:
-        state["session_id"] = payload.get("session_id")
-        write_state(state_path, state)
-        return True
+        if allow_claim:
+            state["session_id"] = payload_session_id
+            write_state(state_path, state)
+            return True
+        clear_state(state_path)
+        block_with_message(
+            f"{command_name} controller state at {display_path(state_path, cwd)} was missing session_id; "
+            "the controller was disarmed. Update the repo truthfully and stop."
+        )
     if not isinstance(session_id, str):
         clear_state(state_path)
         block_with_message(
-            f"{command_name} controller state had a non-string session_id; "
+            f"{command_name} controller state at {display_path(state_path, cwd)} had a non-string session_id; "
             "the controller was disarmed. Update the repo truthfully and stop."
         )
-    return session_id == payload.get("session_id")
+    if session_id != payload_session_id:
+        if allow_claim:
+            return False
+        clear_state(state_path)
+        block_with_message(
+            f"{command_name} controller state at {display_path(state_path, cwd)} had a mismatched session_id; "
+            "the controller was disarmed. Update the repo truthfully and stop."
+        )
+    return True
 
 
 def normalize_optional_string_list(
@@ -458,14 +631,28 @@ def run_fresh_review(cwd: Path) -> FreshAuditResult:
         return FreshAuditResult(process=process, last_message=last_message)
 
 
-def validate_implement_loop_state(payload: dict, state_path: Path) -> tuple[Path, str] | None:
+def validate_implement_loop_state(
+    payload: dict,
+    resolved_state: ResolvedControllerState | None,
+) -> tuple[Path, str, Path] | None:
     cwd = Path(payload["cwd"]).resolve()
-    state = load_state(state_path, IMPLEMENT_LOOP_COMMAND)
-    if state is None:
+    loaded = load_controller_state(
+        cwd,
+        resolved_state,
+        IMPLEMENT_LOOP_COMMAND,
+        IMPLEMENT_LOOP_COMMAND,
+    )
+    if loaded is None:
         return None
-    if state.get("command") != IMPLEMENT_LOOP_COMMAND:
-        return None
-    if not validate_session_id(payload, state_path, state, IMPLEMENT_LOOP_COMMAND):
+    state_path, state, is_legacy = loaded
+    if not validate_session_id(
+        payload,
+        cwd,
+        state_path,
+        state,
+        IMPLEMENT_LOOP_COMMAND,
+        allow_claim=is_legacy,
+    ):
         return None
     doc_path_value = state.get("doc_path")
     if not isinstance(doc_path_value, str) or not doc_path_value.strip():
@@ -475,25 +662,32 @@ def validate_implement_loop_state(payload: dict, state_path: Path) -> tuple[Path
             "the loop was disarmed. Update the plan and worklog truthfully, then stop."
         )
     doc_path = resolve_path(cwd, doc_path_value)
-    return doc_path, doc_path_value
+    return doc_path, doc_path_value, state_path
 
 
-def validate_auto_plan_state(payload: dict, state_path: Path) -> tuple[Path, str, dict] | None:
+def validate_auto_plan_state(
+    payload: dict,
+    resolved_state: ResolvedControllerState | None,
+) -> tuple[Path, str, dict, Path] | None:
     cwd = Path(payload["cwd"]).resolve()
-    state = load_state(state_path, AUTO_PLAN_COMMAND)
-    if state is None:
+    loaded = load_controller_state(
+        cwd,
+        resolved_state,
+        AUTO_PLAN_COMMAND,
+        AUTO_PLAN_COMMAND,
+    )
+    if loaded is None:
         return None
-    if state.get("command") != AUTO_PLAN_COMMAND:
+    state_path, state, is_legacy = loaded
+    if not validate_session_id(
+        payload,
+        cwd,
+        state_path,
+        state,
+        AUTO_PLAN_COMMAND,
+        allow_claim=is_legacy,
+    ):
         return None
-    session_id = state.get("session_id")
-    if isinstance(session_id, str) and session_id != payload.get("session_id"):
-        return None
-    if session_id is not None and not isinstance(session_id, str):
-        clear_state(state_path)
-        block_with_message(
-            "auto-plan controller state had a non-string session_id; "
-            "the controller was disarmed. Update the plan truthfully and stop."
-        )
 
     doc_path_value = state.get("doc_path")
     if not isinstance(doc_path_value, str) or not doc_path_value.strip():
@@ -523,20 +717,31 @@ def validate_auto_plan_state(payload: dict, state_path: Path) -> tuple[Path, str
         )
 
     doc_path = resolve_path(cwd, doc_path_value)
-    return doc_path, doc_path_value, state
+    return doc_path, doc_path_value, state, state_path
 
 
 def validate_arch_docs_auto_state(
     payload: dict,
-    state_path: Path,
-) -> tuple[str, Path, dict] | None:
+    resolved_state: ResolvedControllerState | None,
+) -> tuple[str, Path, dict, Path] | None:
     cwd = Path(payload["cwd"]).resolve()
-    state = load_state(state_path, ARCH_DOCS_AUTO_COMMAND)
-    if state is None:
+    loaded = load_controller_state(
+        cwd,
+        resolved_state,
+        ARCH_DOCS_AUTO_COMMAND,
+        ARCH_DOCS_AUTO_COMMAND,
+    )
+    if loaded is None:
         return None
-    if state.get("command") != ARCH_DOCS_AUTO_COMMAND:
-        return None
-    if not validate_session_id(payload, state_path, state, ARCH_DOCS_AUTO_COMMAND):
+    state_path, state, is_legacy = loaded
+    if not validate_session_id(
+        payload,
+        cwd,
+        state_path,
+        state,
+        ARCH_DOCS_AUTO_COMMAND,
+        allow_claim=is_legacy,
+    ):
         return None
 
     scope_kind = state.get("scope_kind")
@@ -616,17 +821,31 @@ def validate_arch_docs_auto_state(
     ledger_path = resolve_path(cwd, ledger_path_value)
     if write_required:
         write_state(state_path, state)
-    return scope_summary, ledger_path, state
+    return scope_summary, ledger_path, state, state_path
 
 
-def validate_audit_loop_state(payload: dict, state_path: Path) -> tuple[Path, str, dict] | None:
+def validate_audit_loop_state(
+    payload: dict,
+    resolved_state: ResolvedControllerState | None,
+) -> tuple[Path, str, dict, Path] | None:
     cwd = Path(payload["cwd"]).resolve()
-    state = load_state(state_path, AUDIT_LOOP_DISPLAY_NAME)
-    if state is None:
+    loaded = load_controller_state(
+        cwd,
+        resolved_state,
+        AUDIT_LOOP_DISPLAY_NAME,
+        AUDIT_LOOP_COMMAND,
+    )
+    if loaded is None:
         return None
-    if state.get("command") != AUDIT_LOOP_COMMAND:
-        return None
-    if not validate_session_id(payload, state_path, state, AUDIT_LOOP_DISPLAY_NAME):
+    state_path, state, is_legacy = loaded
+    if not validate_session_id(
+        payload,
+        cwd,
+        state_path,
+        state,
+        AUDIT_LOOP_DISPLAY_NAME,
+        allow_claim=is_legacy,
+    ):
         return None
 
     ledger_path_value = state.get("ledger_path", str(AUDIT_LOOP_DEFAULT_LEDGER_RELATIVE_PATH))
@@ -638,7 +857,7 @@ def validate_audit_loop_state(payload: dict, state_path: Path) -> tuple[Path, st
         )
 
     ledger_path = resolve_path(cwd, ledger_path_value)
-    return ledger_path, ledger_path_value, state
+    return ledger_path, ledger_path_value, state, state_path
 
 
 def read_audit_loop_controller_fields(ledger_path: Path) -> dict[str, str] | None:
@@ -732,24 +951,24 @@ def auto_plan_stage_complete(doc_text: str, stage: str) -> bool:
     raise RuntimeError(f"unexpected auto-plan stage: {stage}")
 
 
-def auto_plan_continue_reason(doc_path_value: str, next_stage: str) -> str:
+def auto_plan_continue_reason(doc_path_value: str, next_stage: str, state_path_value: str) -> str:
     if next_stage == "deep-dive-pass-1":
         return (
             f"auto-plan finished research for {doc_path_value}. Continue now with the next required command: "
             f"Use $arch-step deep-dive {doc_path_value}. This is deep-dive pass 1 of 2. "
-            "Keep .codex/auto-plan-state.json armed and stop naturally when this command finishes."
+            f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
     if next_stage == "deep-dive-pass-2":
         return (
             f"auto-plan finished deep-dive pass 1 for {doc_path_value}. Continue now with the next required command: "
             f"Use $arch-step deep-dive {doc_path_value}. This is deep-dive pass 2 of 2. "
-            "Keep .codex/auto-plan-state.json armed and stop naturally when this command finishes."
+            f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
     if next_stage == "phase-plan":
         return (
             f"auto-plan finished deep-dive pass 2 for {doc_path_value}. Continue now with the next required command: "
             f"Use $arch-step phase-plan {doc_path_value}. "
-            "Keep .codex/auto-plan-state.json armed and stop naturally when this command finishes."
+            f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
     raise RuntimeError(f"unexpected next auto-plan stage: {next_stage}")
 
@@ -769,12 +988,12 @@ def arch_docs_eval_summary(result: dict) -> str:
 
 def handle_implement_loop(payload: dict) -> int:
     cwd = Path(payload["cwd"]).resolve()
-    state_path = cwd / IMPLEMENT_LOOP_STATE_RELATIVE_PATH
-    validated = validate_implement_loop_state(payload, state_path)
+    resolved_state = resolve_controller_state_for_handler(payload, IMPLEMENT_LOOP_STATE_SPEC)
+    validated = validate_implement_loop_state(payload, resolved_state)
     if validated is None:
         return 0
 
-    doc_path, doc_path_value = validated
+    doc_path, doc_path_value, state_path = validated
     if not doc_path.exists():
         clear_state(state_path)
         block_with_message(
@@ -848,12 +1067,13 @@ def handle_implement_loop(payload: dict) -> int:
 
 def handle_auto_plan(payload: dict) -> int:
     cwd = Path(payload["cwd"]).resolve()
-    state_path = cwd / AUTO_PLAN_STATE_RELATIVE_PATH
-    validated = validate_auto_plan_state(payload, state_path)
+    resolved_state = resolve_controller_state_for_handler(payload, AUTO_PLAN_STATE_SPEC)
+    validated = validate_auto_plan_state(payload, resolved_state)
     if validated is None:
         return 0
 
-    doc_path, doc_path_value, state = validated
+    doc_path, doc_path_value, state, state_path = validated
+    state_path_value = display_path(state_path, cwd)
     if not doc_path.exists():
         clear_state(state_path)
         block_with_message(
@@ -883,24 +1103,23 @@ def handle_auto_plan(payload: dict) -> int:
         )
 
     next_stage = AUTO_PLAN_STAGES[next_index]
-    if state.get("session_id") is None:
-        state["session_id"] = payload.get("session_id")
     state["stage_index"] = next_index
     write_state(state_path, state)
     block_with_json(
-        auto_plan_continue_reason(doc_path_value, next_stage),
+        auto_plan_continue_reason(doc_path_value, next_stage, state_path_value),
         system_message=f"auto-plan finished {auto_plan_stage_name(current_stage)}; continuing to {auto_plan_stage_name(next_stage)}.",
     )
 
 
 def handle_arch_docs_auto(payload: dict) -> int:
     cwd = Path(payload["cwd"]).resolve()
-    state_path = cwd / ARCH_DOCS_AUTO_STATE_RELATIVE_PATH
-    validated = validate_arch_docs_auto_state(payload, state_path)
+    resolved_state = resolve_controller_state_for_handler(payload, ARCH_DOCS_AUTO_STATE_SPEC)
+    validated = validate_arch_docs_auto_state(payload, resolved_state)
     if validated is None:
         return 0
 
-    scope_summary, ledger_path, state = validated
+    scope_summary, ledger_path, state, state_path = validated
+    state_path_value = display_path(state_path, cwd)
     try:
         evaluator = run_arch_docs_evaluator(
             cwd,
@@ -971,7 +1190,7 @@ def handle_arch_docs_auto(payload: dict) -> int:
             f"arch-docs auto ran a fresh child evaluation and found more bounded docs cleanup for {scope_summary}. "
             "Continue now with the next required command: Use $arch-docs. "
             f"Current scope remains {scope_summary}. "
-            "Keep .codex/arch-docs-auto-state.json armed and stop naturally when this command finishes."
+            f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
         if summary:
             reason += f" Evaluator summary: {summary}"
@@ -995,12 +1214,13 @@ def handle_arch_docs_auto(payload: dict) -> int:
 
 def handle_audit_loop(payload: dict) -> int:
     cwd = Path(payload["cwd"]).resolve()
-    state_path = cwd / AUDIT_LOOP_STATE_RELATIVE_PATH
-    validated = validate_audit_loop_state(payload, state_path)
+    resolved_state = resolve_controller_state_for_handler(payload, AUDIT_LOOP_STATE_SPEC)
+    validated = validate_audit_loop_state(payload, resolved_state)
     if validated is None:
         return 0
 
-    ledger_path, ledger_path_value, state = validated
+    ledger_path, ledger_path_value, state, state_path = validated
+    state_path_value = display_path(state_path, cwd)
 
     try:
         review = run_fresh_review(cwd)
@@ -1072,7 +1292,7 @@ def handle_audit_loop(payload: dict) -> int:
 
     reason = (
         f"audit-loop fresh review found more worthwhile work. Continue now with `Use $audit-loop`. "
-        f"Next area: {next_area}. Keep .codex/audit-loop-state.json armed and stop naturally when this pass finishes."
+        f"Next area: {next_area}. Keep {state_path_value} armed and stop naturally when this pass finishes."
     )
     if child_summary:
         reason += f" Review summary: {child_summary}"

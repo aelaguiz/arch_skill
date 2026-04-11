@@ -30,6 +30,9 @@ and Gemini.
 
 - Do not use external multi-model consultation workflows unless the user
   explicitly asks for a code review.
+- Do not delete user work, untracked files, or repo changes unless the user
+  explicitly asks for that exact cleanup. If you are not sure whether a file
+  came from your own run, leave it alone and ask.
 - Do not make shipped skills depend on archived command files at runtime.
 - Do not revive archived command surfaces as part of the live runtime.
 - Skill doctrine must be self-contained. Do not explain it with historical

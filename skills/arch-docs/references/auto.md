@@ -21,7 +21,7 @@ If any preflight fails, name the broken prerequisite and stop instead of pretend
 
 ## State contract
 
-Create or refresh `.codex/arch-docs-auto-state.json` before the first pass.
+Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/arch-docs-auto-state.<SESSION_ID>.json` before the first pass.
 
 Minimum shape:
 
@@ -29,6 +29,7 @@ Minimum shape:
 {
   "version": 1,
   "command": "arch-docs-auto",
+  "session_id": "<SESSION_ID>",
   "scope_kind": "repo",
   "scope_summary": "repo docs surface",
   "context_sources": [],
@@ -40,7 +41,6 @@ Minimum shape:
 
 Recommended extra fields:
 
-- `session_id`
 - `context_paths`
 - `candidate_topics`
 - `completed_topics`

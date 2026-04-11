@@ -161,10 +161,10 @@ These stay explicit unless the user directly asks for them:
 - or run `$arch-step auto-plan <DOC_PATH>`
 - prefer the current session's canonical full-arch doc when `DOC_PATH` is omitted
 - if the installed runtime support is absent, disabled, or the North Star is still unapproved, name the broken prerequisite and stop
-- keep `.codex/auto-plan-state.json` aligned with the live run
-- if a stage stops early, clear `.codex/auto-plan-state.json` and stop honestly
+- keep `.codex/auto-plan-state.<SESSION_ID>.json` aligned with the live run
+- if a stage stops early, clear `.codex/auto-plan-state.<SESSION_ID>.json` and stop honestly
 
-`implement-loop` is a bounded delivery controller. It runs `implement`, requires the implementation pass to prove its claimed fixes with credible programmatic signals, then runs `audit-implementation`, and repeats against the same `DOC_PATH` until the audit verdict is clean or a real blocker stops progress. Prefer a fresh audit context when the host runtime offers a truly isolated child session, subprocess, or subagent. Do not turn it into a generic open-ended loop.
+`implement-loop` is a bounded delivery controller. It runs `implement`, requires the implementation pass to prove its claimed fixes with credible programmatic signals, then runs `audit-implementation`, and repeats against the same `DOC_PATH` until the audit verdict is clean or a real blocker stops progress. In Codex, the parent implementation pass may ship code and sync plan/worklog truth, but only the fresh `audit-implementation` child may author the authoritative audit outcome, emit `Use $arch-docs`, or clear loop state. Do not turn it into a generic open-ended loop.
 
 `auto-implement` is an exact user-facing synonym for `implement-loop`. Resolve it to the same controller behavior and keep the internal runtime names, hook state, and file paths under `implement-loop`.
 
@@ -175,9 +175,13 @@ User-facing invocation stays simple:
 - do not introduce a second command, mode, or user-facing control surface
 - if the installed runtime support is absent or disabled, name the broken prerequisite and stop
 - do not hand control back to audit until the current implementation pass has credible proof for its claimed fixes
-- keep `.codex/implement-loop-state.json` aligned with the live run
-- do not clear `.codex/implement-loop-state.json` from the implementation side before fresh `audit-implementation` has run, even if the pass believes the work is done
-- when the loop finishes clean, hand off to `Use $arch-docs`
+- keep `.codex/implement-loop-state.<SESSION_ID>.json` aligned with the live run
+- do not clear `.codex/implement-loop-state.<SESSION_ID>.json` from the implementation side before fresh `audit-implementation` has run, even if the pass believes the work is done
+- do not let the parent implementation pass stand in for the clean auditor by writing the authoritative audit block or the `Use $arch-docs` handoff
+- when the fresh audit child finishes clean, hand off to `Use $arch-docs`
+
+For any Codex controller state in this skill, derive `<SESSION_ID>` from `CODEX_THREAD_ID`
+and arm the session-scoped `.codex/...<SESSION_ID>.json` path for the current session.
 
 ### Output expectations
 
