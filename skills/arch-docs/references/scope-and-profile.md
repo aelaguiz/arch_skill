@@ -10,7 +10,7 @@ Use this file first so the cleanup adapts to the repo's actual doc system and re
   - otherwise the repo docs surface itself
 - Standalone `arch-docs` must work even when there is no plan doc at all.
 - If arch artifacts exist, treat them as narrowing context, not as the whole scope by default.
-- In any mode, inventory broadly enough to find all docs that touch the chosen topics.
+- In any mode, inventory broadly enough to find all docs that touch the chosen topics or clearly should canonically cover them.
 
 ## Scope defaults
 
@@ -25,7 +25,7 @@ Use this file first so the cleanup adapts to the repo's actual doc system and re
   - inventory doc-shaped surfaces across the repo
   - group them by topic
   - choose the strongest grounded cleanup slice for the current pass
-- In repo-scope `auto`, later passes may widen across the repo docs surface when the first slice exposed more grounded stale, overlapping, or misleading docs elsewhere.
+- In repo-scope `auto`, later passes may widen across the repo docs surface when the first slice exposed more grounded stale, overlapping, misleading, or missing docs elsewhere.
 - Do not silently turn a pass into an aesthetic or taxonomy rewrite.
 
 ## Repo doc profile
@@ -59,6 +59,7 @@ Write the answers at the top of `.doc-audit-ledger.md`.
   - focused doc under `docs/`
   - module README when that is the established local pattern
 - Do not create a new doc home just because a cleanup pass wants a tidier taxonomy.
+- Do create a focused new canonical home when existing gravity cannot carry grounded reader-critical truth clearly without becoming worse.
 
 ## Stop and route back
 

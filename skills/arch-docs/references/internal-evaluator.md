@@ -32,8 +32,11 @@ Read the armed controller state plus current repo docs and decide one of exactly
 - Did the run actually profile the repo doc system?
 - Was discovery broad enough for the resolved scope?
 - Are stale or duplicate in-scope docs still present?
+- Are stale surviving docs still present in docs that clearly should have been updated?
 - Are obviously dated docs with no lasting reader value still present?
+- Are grounded topics still missing a viable canonical evergreen home?
 - Has durable truth been promoted into one canonical evergreen home per topic?
+- Are confusing docs still obscuring how readers should use, operate, or understand the system?
 - Are obsolete working docs still present without good reason?
 - Are broken references or stale nav entries still present in touched scope?
 - When time context mattered, did the run inspect git history and the last meaningful content change?
@@ -44,13 +47,16 @@ Read the armed controller state plus current repo docs and decide one of exactly
 
 - `clean`:
   - no meaningful stale in-scope docs remain
+  - no stale surviving docs remain in reader-critical docs that should have been updated
   - no obviously dated low-value docs remain unless they still serve a clear current reader need
+  - no grounded topic is still missing a viable canonical evergreen home
   - durable truth has surviving evergreen homes
+  - confusing docs that still matter have been clarified enough for current readers
   - obsolete working-doc residue is retired or cleanly transformed in place
   - broken references in touched scope are repaired
 - `continue`:
-  - grounded cleanup still remains
-  - more dated, low-value, or weakly justified docs can still be retired
+  - grounded docs-health work still remains
+  - more stale, missing, confusing, or low-value docs work remains
   - another pass is credible
 - `blocked`:
   - code truth is still unstable

@@ -4,7 +4,7 @@
 
 ## Goal
 
-Repeat grounded default passes with Stop-hook continuation and a fresh external evaluation until the resolved docs cleanup is clean or honestly blocked.
+Repeat grounded default passes with Stop-hook continuation and a fresh external evaluation until the resolved docs surface is healthy or honestly blocked.
 
 ## Required runtime preflight
 
@@ -34,7 +34,7 @@ Minimum shape:
   "scope_summary": "repo docs surface",
   "context_sources": [],
   "pass_index": 0,
-  "stop_condition": "no meaningful stale, duplicate, misleading, or obviously dated docs remain in the resolved cleanup scope and every cleaned topic has one canonical evergreen home",
+  "stop_condition": "no meaningful stale, duplicate, misleading, obviously dated, missing, or still-confusing docs remain in the resolved cleanup scope and every grounded topic has one canonical evergreen home",
   "ledger_path": ".doc-audit-ledger.md"
 }
 ```
@@ -52,15 +52,16 @@ If `scope_kind` is `explicit-context` or `arch-context`, include non-empty `cont
 
 ## Loop rules
 
-- Run one truthful default `arch-docs` cleanup pass.
+- Run one truthful default `arch-docs` docs-health pass.
 - Apply the same pre-delete backup-commit rule inside each pass before any bounded delete batch.
 - Keep `.doc-audit-ledger.md` current while cleanup is still active.
 - Let Codex stop naturally.
 - Expect the installed Stop hook to launch a fresh external evaluator.
-- Continue only when another grounded pass is still credible for the resolved cleanup intent.
-- In repo scope, the next pass may widen across the repo docs surface when real grounded cleanup still remains.
+- Continue only when another grounded pass is still credible for the resolved docs-health intent.
+- In repo scope, the next pass may widen across the repo docs surface when real grounded cleanup or missing evergreen truth still remains.
 - In narrowed scopes, widen only enough to cover overlapping docs for the same topics.
 - Use `git log` when a doc's lasting value depends on whether it was a one-off tied to some earlier point in time.
+- Do not degrade into a remover-only loop. Update stale surviving docs, clarify confusing docs, and create or expand canonical evergreen docs when the repo clearly needs them.
 - Stop blocked when the evaluator says the next pass would be speculative, taxonomy-imposing, disconnected from a narrowed scope, or materially unchanged.
 - Stop clean only when the evaluator says the current stop condition is satisfied.
 

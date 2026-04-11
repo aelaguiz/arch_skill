@@ -177,7 +177,7 @@ Practical rule:
 
 ### `arch-docs`
 
-Use when the code is clean enough to trust and the job is cleaning up stale, overlapping, misleading, or obviously dated docs.
+Use when the code is clean enough to trust and the job is cleaning up stale, overlapping, misleading, or obviously dated docs, updating stale survivors, clarifying confusing docs, or promoting grounded missing truth into evergreen docs.
 
 Examples:
 
@@ -186,7 +186,7 @@ Examples:
 
 Practical rule:
 
-- With no extra mode, `arch-docs` runs the normal one-pass DGTFO cleanup, should resolve scope from explicit user context, active arch context, or the repo docs surface, and should use git history when keep/delete judgment depends on whether a doc is an obsolete point-in-time artifact.
+- With no extra mode, `arch-docs` runs the normal one-pass DGTFO docs-health pass, should resolve scope from explicit user context, active arch context, or the repo docs surface, should use git history when keep/delete judgment depends on whether a doc is an obsolete point-in-time artifact, and should create or expand a canonical evergreen doc when grounded truth clearly lacks a viable home.
 - Use `arch-docs auto` only in Codex when you want hook-backed repeated cleanup passes with fresh external evaluation.
 - If a clean arch plan/worklog exists, `arch-docs` should use it as narrowing context rather than as the whole scope.
 

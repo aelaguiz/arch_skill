@@ -1,6 +1,14 @@
 # Cleanup Rules
 
-The bias is delete-and-consolidate, not add-and-preserve.
+The bias is delete stale truth and promote durable truth, not preserve every document.
+
+## Promote or author durable truth
+
+- Rewrite or expand the best existing canonical doc first when it can honestly carry the topic.
+- Create a focused new evergreen doc when grounded truth clearly needs a home and the existing README, docs index, or module docs cannot carry it cleanly.
+- Good additions are grounded, current, canonical, and clearly useful to current readers.
+- Bad additions are speculative, aspirational, duplicate, or taxonomy-first.
+- Do not delete the old wrapper until the durable truth actually lives in the surviving canonical home.
 
 ## Commit, then delete
 
@@ -41,6 +49,7 @@ Before deleting a bounded batch of these docs:
 ## Reference repair
 
 - After every delete or move, grep the repo for references to the deleted path.
+- After every substantive rewrite or new canonical doc, repair or add the references readers will actually use.
 - Fix or remove broken references in the same pass.
 - Broken internal links are a docs-cleanup failure, not optional polish.
 
