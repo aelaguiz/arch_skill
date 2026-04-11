@@ -1,6 +1,6 @@
 ---
 name: arch-step
-description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status for work that may require architectural convergence onto canonical repo paths. Internal refactors may widen enough to remove duplicate truth or parallel paths, but the skill must not invent new product functionality, modes, or speculative infrastructure. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
+description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `auto-implement`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status for work that may require architectural convergence onto canonical repo paths. Internal refactors may widen enough to remove duplicate truth or parallel paths, but the skill must not invent new product functionality, modes, or speculative infrastructure. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
 metadata:
   short-description: "Standalone full-arch operator"
 ---
@@ -17,7 +17,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - The ask is generic full arch language such as "do the full arch flow," "continue this architecture doc," "implement the plan," or "audit implementation against the plan."
 - The work needs one canonical plan doc plus real architectural convergence onto existing repo patterns, shared code paths, or single-source-of-truth boundaries.
 - The user wants explicit stage control instead of a more holistic or phase-family-driven flow.
-- The ask is command-shaped: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `audit-implementation`, `status`, or `advance`.
+- The ask is command-shaped: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `review-gate`, `implement`, `implement-loop`, `auto-implement`, `audit-implementation`, `status`, or `advance`.
 - The user wants one specific plan-doc shape with exact headings, stable markers, and consistent stage ownership.
 - The user wants `advance` to print the full checklist, choose exactly one next command, and optionally execute that one step.
 - The user wants `status` to evaluate the actual plan artifact, not emit a generic checklist.
@@ -95,6 +95,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - `review-gate`
 - `implement`
 - `implement-loop`
+- `auto-implement`
 - `audit-implementation`
 - `status`
 - `advance`
@@ -152,6 +153,7 @@ These stay explicit unless the user directly asks for them:
 
 - `auto-plan`
 - `implement-loop`
+- `auto-implement`
 
 `auto-plan` is a bounded planning controller. It runs `research`, then `deep-dive`, then `deep-dive` again, then `phase-plan` against the same `DOC_PATH`, then stops and says the doc is ready for `implement-loop`. The user-facing command stays simple:
 
@@ -164,9 +166,12 @@ These stay explicit unless the user directly asks for them:
 
 `implement-loop` is a bounded delivery controller. It runs `implement`, requires the implementation pass to prove its claimed fixes with credible programmatic signals, then runs `audit-implementation`, and repeats against the same `DOC_PATH` until the audit verdict is clean or a real blocker stops progress. Prefer a fresh audit context when the host runtime offers a truly isolated child session, subprocess, or subagent. Do not turn it into a generic open-ended loop.
 
+`auto-implement` is an exact user-facing synonym for `implement-loop`. Resolve it to the same controller behavior and keep the internal runtime names, hook state, and file paths under `implement-loop`.
+
 User-facing invocation stays simple:
 
 - run `$arch-step implement-loop <DOC_PATH>`
+- or run `$arch-step auto-implement <DOC_PATH>`
 - do not introduce a second command, mode, or user-facing control surface
 - if the installed runtime support is absent or disabled, name the broken prerequisite and stop
 - do not hand control back to audit until the current implementation pass has credible proof for its claimed fixes

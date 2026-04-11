@@ -121,13 +121,14 @@ Use `arch-step` for real full-arch work. It owns the standalone full-arch workfl
 - `review-gate`
 - `implement`
 - `implement-loop`
+- `auto-implement`
 - `audit-implementation`
 - `status`
 - `advance`
 
 `auto-plan` is the Codex-only automatic planning controller. The user-facing command is still just `Use $arch-step auto-plan` or `Use $arch-step auto-plan docs/MY_PLAN.md`. It is real only when the installed Codex runtime support is present in `~/.codex/hooks.json` and `codex_hooks` is enabled. Otherwise it must fail loud instead of pretending prompt-only chaining is enough.
 
-`implement-loop` is the Codex-only automatic bounded delivery controller. The user-facing command is still just `Use $arch-step implement-loop docs/MY_PLAN.md`. It is real only when the installed Codex runtime support is present in `~/.codex/hooks.json` and `codex_hooks` is enabled. Otherwise it must fail loud instead of pretending prompt-only repetition is enough.
+`implement-loop` is the Codex-only automatic bounded delivery controller. `auto-implement` is an exact user-facing synonym for the same controller. The user-facing command is `Use $arch-step implement-loop docs/MY_PLAN.md` or `Use $arch-step auto-implement docs/MY_PLAN.md`. It is real only when the installed Codex runtime support is present in `~/.codex/hooks.json` and `codex_hooks` is enabled. Otherwise it must fail loud instead of pretending prompt-only repetition is enough.
 
 If the user says "do the full arch flow," "continue this architecture doc," or "audit implementation against the plan," the right live skill is `arch-step`.
 
@@ -186,6 +187,7 @@ Examples:
 - `Use $arch-step advance docs/MY_PLAN.md RUN=1`
 - `Use $arch-step auto-plan`
 - `Use $arch-step implement-loop docs/MY_PLAN.md`
+- `Use $arch-step auto-implement docs/MY_PLAN.md`
 - `Use $arch-docs`
 - `Use $arch-docs auto`
 - `Use $arch-mini-plan docs/MY_PLAN.md`

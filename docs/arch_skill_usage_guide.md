@@ -148,6 +148,7 @@ Examples:
 - `Use $arch-step advance docs/MY_PLAN.md`
 - `Use $arch-step implement docs/MY_PLAN.md`
 - `Use $arch-step implement-loop docs/MY_PLAN.md`
+- `Use $arch-step auto-implement docs/MY_PLAN.md`
 - `Use $arch-step audit-implementation docs/MY_PLAN.md`
 
 Practical rule:
@@ -160,8 +161,9 @@ Practical rule:
 - `arch-step advance` owns the full checklist and exact next-command selection.
 - `arch-step auto-plan` is the explicit bounded planning controller after North Star approval. It runs `research`, `deep-dive`, `deep-dive`, and `phase-plan`, then stops and says the doc is ready for `implement-loop`.
 - `arch-step implement-loop` is the explicit bounded controller when the user wants repeated implement then audit passes until the audit is clean or a real blocker stops the run.
+- `arch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
 - After a clean full-arch code audit, `arch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
-- In Codex, the user still invokes only `auto-plan` or `implement-loop`; each requires the installed runtime support in `~/.codex/hooks.json` and enabled `codex_hooks`.
+- In Codex, the user still invokes only `auto-plan`, `implement-loop`, or `auto-implement`; the last two are the same controller and require the installed runtime support in `~/.codex/hooks.json` and enabled `codex_hooks`.
 - If that hook path is absent or disabled, those commands should fail loud with the remediation commands instead of pretending a prompt-only loop exists.
 
 ### `arch-docs`

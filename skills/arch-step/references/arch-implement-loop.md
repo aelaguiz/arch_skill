@@ -24,7 +24,7 @@ Running `implement-loop` should end in one of two honest states:
   - the latest audit and phase status show that truth plainly
   - the loop stops instead of pretending one more pass will magically fix it
 
-User-facing invocation is just `implement-loop`. If the installed runtime support for real automatic looping is absent or disabled, this command must fail loud instead of pretending prompt repetition is the same feature.
+User-facing invocation is `implement-loop` or `auto-implement`. `auto-implement` is an exact alias of `implement-loop`; keep the internal runtime state and hook behavior under `implement-loop`. If the installed runtime support for real automatic looping is absent or disabled, this command must fail loud instead of pretending prompt repetition is the same feature.
 
 ## Shared references to carry in
 
