@@ -22,13 +22,11 @@ Before arming the controller, verify all of these:
 - the installed suite controller runner exists under `~/.agents/skills/arch-step/scripts/`
 - the installed arch_skill-managed Codex Stop hook is present
 - `codex features list` shows `codex_hooks` enabled
-- the working tree is clean before the audit starts
 
 If any check fails, stop immediately and print the exact remediation:
 
 - `make install`
 - `codex features enable codex_hooks`
-- clean the working tree, then rerun `Use $audit-loop auto`
 
 ## State file contract
 

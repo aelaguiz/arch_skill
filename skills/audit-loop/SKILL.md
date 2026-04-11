@@ -30,7 +30,7 @@ Use this skill when the job is to inspect a codebase for the next real defect or
 - Prefer behavior-level verification and integration coverage on critical paths. Do not write negative-value tests.
 - Default invocation with no mode is `run`.
 - `review` is docs-only.
-- `auto` is Codex-only and must fail loud when hook support, `codex_hooks`, or a clean working tree is missing.
+- `auto` is Codex-only and must fail loud when hook support or `codex_hooks` is missing.
 - No auto commits. Keep the ledger truthful without relying on git history.
 
 ## First move
@@ -63,7 +63,7 @@ Use this skill when the job is to inspect a codebase for the next real defect or
 
 ### 3) `auto`
 
-- Run Codex-only preflight for hooks, feature flags, and clean worktree state.
+- Run Codex-only preflight for hooks and feature flags.
 - Create or refresh `.codex/audit-loop-state.json`.
 - Run one truthful `run` pass.
 - Let the installed Stop hook launch a fresh `review` pass and continue only while the verdict stays `CONTINUE`.

@@ -58,7 +58,7 @@ Use only when:
 Use when:
 
 - the next move depends on missing access, tooling, or evidence
-- the working tree or failing baseline makes the next pass unsafe
+- the failing baseline or current repo state makes the next pass unsafe
 - the next pass would rerun the same idea without a changed lever
 - the ledger is too weak to continue honestly without first repairing the investigation
 
