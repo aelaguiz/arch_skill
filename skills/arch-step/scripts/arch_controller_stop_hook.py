@@ -344,7 +344,7 @@ def run_fresh_audit(cwd: Path, doc_path_value: str) -> FreshAuditResult:
                 "codex_hooks",
                 "--cd",
                 str(cwd),
-                "--full-auto",
+                "--dangerously-bypass-approvals-and-sandbox",
                 "-o",
                 str(last_message_path),
                 prompt,

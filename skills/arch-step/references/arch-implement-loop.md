@@ -127,6 +127,11 @@ When the fresh audit launches, use this preference ladder:
 2. fresh isolated subagent or new thread when that is the cleanest available boundary
 3. same-session audit only when no real isolation surface exists
 
+For the Codex Stop-hook child subprocess, launch the fresh auditor with
+`codex exec --dangerously-bypass-approvals-and-sandbox`, not `--full-auto`, so
+repo verification runs against the real host context instead of the child
+sandbox.
+
 Fresh means the audit should not rely on remembered implementation intent from the parent run. It should rely on:
 
 - `DOC_PATH`
