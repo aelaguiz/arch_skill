@@ -36,6 +36,7 @@
 - `CONTINUE` names a concrete next automation risk front
 - `CLEAN` means there is no credible major unresolved automation pass worth the cost
 - `BLOCKED` names the real blocker plainly
+- repeated lane-independent provider failures with no meaningful app signal are classified plainly as provider blockers instead of being rerun as if they were app bugs
 
 ## Weak stop decisions
 
@@ -43,3 +44,5 @@
 - `CLEAN` while obvious `P0` or `P1` work still exists
 - `CLEAN` because one small lane landed even though the same larger journey gap still has open justified work
 - `BLOCKED` when the real issue is simply lack of triage discipline
+- `BLOCKED` when the only problem is that the current review context could not inspect the sanctioned runtime surface
+- `BLOCKED` or `CLEAN` because a child review deleted the state file or ledger and the controller trusted that deletion as truth

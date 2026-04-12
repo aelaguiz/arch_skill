@@ -51,6 +51,7 @@ Lifecycle:
 - keep it armed while verdicts are `CONTINUE`
 - delete it before stopping on `BLOCKED`
 - delete it on `CLEAN` before removing the ledger and `.gitignore` entry
+- if the state file or ledger disappears unexpectedly during `auto`, recreate it from fresh repo context before trusting any stop verdict that followed the deletion
 
 ## Hard rules
 
@@ -58,6 +59,7 @@ Lifecycle:
 - `auto` must not degrade into a tiny-safe-fix treadmill
 - do not refuse to arm only because the repo has unrelated dirty or untracked files
 - the review pass must run in fresh context
+- missing or deleted controller state is not verdict truth; repair the state file or ledger and re-check before honoring `BLOCKED` or `CLEAN`
 - `review` stays docs-only
 - do not continue after `BLOCKED`
 - do not continue after `CLEAN`
@@ -72,6 +74,7 @@ When the loop is armed, the installed suite Stop hook should:
 1. no-op when no active audit-loop-sim state matches the current session
 2. launch `codex exec --ephemeral --disable codex_hooks` with `$audit-loop-sim review`
 3. read the controller verdict from `_audit_sim_ledger.md`
-4. on `CONTINUE`, keep state armed and continue with the next `$audit-loop-sim` pass
-5. on `BLOCKED`, clear state and stop honestly
-6. on `CLEAN`, clear state, delete `_audit_sim_ledger.md`, and remove the `.gitignore` entry
+4. if the state file or ledger is missing, recreate it from fresh repo context before trusting the review result
+5. on `CONTINUE`, keep state armed and continue with the next `$audit-loop-sim` pass
+6. on `BLOCKED`, clear state and stop honestly
+7. on `CLEAN`, clear state, delete `_audit_sim_ledger.md`, and remove the `.gitignore` entry

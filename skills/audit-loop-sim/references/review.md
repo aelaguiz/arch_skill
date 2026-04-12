@@ -26,6 +26,7 @@ No product code changes are allowed in `review`.
    - whether the latest pass actually reduced the top open automation risk
    - whether the same automation risk front still has justified unresolved work
    - whether the latest pass produced the required simulator or device signal through the sanctioned surface, using `mobile-sim` when the repo provides it
+   - whether the sanctioned simulator or device surface is unavailable only because the current review context cannot inspect it cleanly, for example sandbox `EPERM`, host permission issues, or wrapper failures that are not yet evidence of app or harness breakage
    - whether a cross-platform front still needs Android confirmation before it can honestly be called done
    - treat unrelated dirty or untracked files as ordinary context, not as an automatic blocker
 4. Set the controller block:
@@ -73,6 +74,7 @@ Use when:
 - the remaining work would require inventing a parallel automation system instead of using the repo's existing surfaces
 
 If the latest pass only has Flutter unit or widget evidence where the current front required simulator or device proof, do not mark `CLEAN`. Mark `BLOCKED` and name the simulator blocker plainly.
+If the current review context cannot inspect the sanctioned simulator or device surface for review-only reasons, do not mark `BLOCKED` from that alone. Record live runtime state as `unknown` and base the verdict on the repo-local evidence you do have.
 
 `Stop Reason` is required.
 

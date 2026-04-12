@@ -50,6 +50,8 @@ Do stop when the next move would require a genuinely different journey story, a 
 9. Verify:
    - run the smallest targeted real-app signal that proves the fix
    - when the repo provides `mobile-sim`, use `mobile-sim` for simulator or device control
+   - if the sanctioned simulator or device surface fails before app signal, do one bounded recovery step before calling the front blocked
+   - use one bounded host-health recovery when the sanctioned surface lacks the needed repair command, for example simulator toolchain selection, current live-target re-bootstrap, or emulator cache trimming
    - iterate on iOS first when iOS is available and the risk is not platform-specific
    - before calling a cross-platform front done, run one Android confirmation on the same journey
 10. Update:
@@ -66,6 +68,8 @@ Do stop when the next move would require a genuinely different journey story, a 
 - Existing repo-native automation or harness surfaces are usually worth extending before building a new lane family.
 - Low-risk, low-churn, already-protected behavior is a good `SKIP`.
 - Unrelated dirty or untracked files do not justify stopping or downgrading the pass on their own.
+- If a current live target died, re-bootstrap a current live target before treating the miss as app breakage.
+- If repeated cloud runs fail with the same provider-side infrastructure error and no meaningful app signal, stop and record the provider blocker instead of queueing more identical reruns.
 
 ## Verification rules
 
@@ -74,3 +78,4 @@ Do stop when the next move would require a genuinely different journey story, a 
 - Do not substitute Flutter unit or widget tests when the current front requires simulator or device proof; spend real effort on the sanctioned simulator path first, then stop blocked if it still cannot produce the required signal.
 - If the best evidence is a targeted real-app lane plus a broader existing suite, run both.
 - If the repo has no credible automated signal for the fix, say so plainly in the ledger.
+- If the current review or run context cannot inspect the sanctioned simulator or device surface cleanly, record that state as `unknown` unless you have stronger evidence of a real blocker.

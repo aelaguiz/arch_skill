@@ -30,6 +30,10 @@
 - If a new lane exposes a same-story product bug, fix it. Do not treat "the test found it" as enough.
 - Prefer extending existing flow families and harness helpers over creating a brand-new automation island.
 - Use iOS for faster iteration when available and not contradicted by the evidence; close cross-platform fronts with one Android confirmation.
+- When the sanctioned simulator or device surface fails before app signal, do one bounded recovery step before calling the front blocked.
+- If the sanctioned wrapper lacks the host-health command you need, one bounded native-tool recovery is acceptable when it is restorative rather than exploratory.
+- If current review context cannot inspect the sanctioned runtime surface cleanly, record live state as `unknown` rather than promoting review-only access failure into a product blocker.
+- Repeated cloud failures with the same lane-independent provider error and no app signal are provider blockers, not invitations to rerun the same lane forever.
 - Do not build a second automation taxonomy just because the current one is imperfect.
 - Do not quietly swap a simulator-required risk front to Flutter unit or widget tests because simulator work is failing. Recover the sanctioned simulator path or stop blocked.
 
@@ -56,5 +60,8 @@ Record `unknown` instead of auto-installing any of these.
 - Spending the pass on a flaky low-priority screen instead of the highest-risk open journey.
 - Inventing a second simulator, runner, or harness story because the current one is annoying.
 - Deciding that simulator work is broken and calling Flutter unit or widget tests "good enough" for the same real-app risk front.
+- Marking a front `BLOCKED` only because the current review context cannot inspect the sanctioned runtime surface.
+- Treating missing auto state or a deleted ledger as if that alone proved the loop should stop.
+- Rerunning the same cloud lane after repeated lane-independent provider failures with no app signal.
 - Sneaking in formatting, linting, types, or tooling side quests that are not required by the finding.
 - Pretending a low-value assertion is meaningful because it makes the suite look busier.
