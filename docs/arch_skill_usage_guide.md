@@ -20,6 +20,7 @@ The current skill suite is:
 
 Other shipped skills:
 
+- `delay-poll`
 - `agent-definition-auditor`
 - `codemagic-builds`
 
@@ -31,7 +32,7 @@ cd arch_skill
 make install
 ```
 
-For Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, and `audit-loop-sim auto`, also enable the Codex feature once:
+For Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `audit-loop-sim auto`, and `delay-poll`, also enable the Codex feature once:
 
 ```bash
 codex features enable codex_hooks
@@ -52,6 +53,7 @@ Default local path:
 - `~/.agents/skills/north-star-investigation/`
 - `~/.agents/skills/arch-flow/`
 - `~/.agents/skills/arch-skills-guide/`
+- `~/.agents/skills/delay-poll/`
 - `~/.agents/skills/agent-definition-auditor/`
 - `~/.agents/skills/codemagic-builds/`
 
@@ -67,6 +69,7 @@ Installed skills:
   - `bugs-flow`
   - `audit-loop`
   - `audit-loop-sim`
+  - `delay-poll`
   - `goal-loop`
   - `north-star-investigation`
   - `arch-flow`
@@ -100,7 +103,9 @@ Installed skills:
   - `arch-skills-guide`
   - `agent-definition-auditor`
 
-Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs one repo-managed `Stop` hook in `~/.codex/hooks.json` pointing at the installed suite runner under `~/.agents/skills/arch-step/scripts/`; that one hook backs `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, and `audit-loop-sim auto`.
+Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs one repo-managed `Stop` hook in `~/.codex/hooks.json` pointing at the installed suite runner under `~/.agents/skills/arch-step/scripts/`; that one hook backs `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `audit-loop-sim auto`, and `delay-poll`.
+
+`delay-poll` is installed only on the agents/Codex surface because it depends on the Codex `Stop` hook runtime and is not a real feature on Claude Code or Gemini CLI.
 
 ## Shared conventions
 
@@ -257,6 +262,14 @@ Examples:
 ### `goal-loop`
 
 Use when the goal is clear but the path is unknown and you want a controller doc plus append-only iteration log.
+
+### `delay-poll`
+
+Use when the user wants Codex to wait on some external condition, re-check it every 30 minutes, every hour, or similar, and continue the same visible thread only after that condition becomes true.
+
+Examples:
+
+- `Use $delay-poll every 30 minutes check whether branch blah has been fully pushed; when it is, pull it and integrate it in`
 
 ### `north-star-investigation`
 

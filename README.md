@@ -20,6 +20,7 @@ The live arch suite is:
 
 Other shipped skills are:
 
+- `delay-poll` — Codex-only delay-and-check controller that waits inside the installed `Stop` hook, re-runs a read-only condition check on a fixed interval, and resumes the same thread when the condition becomes true
 - `agent-definition-auditor` — cold-reader scoring and findings for `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompts, and other agent-definition markdown
 - `codemagic-builds` — Codemagic CI/CD build monitoring and build control via the Codemagic REST API
 
@@ -35,7 +36,7 @@ make install
 
 This installs the live skill surface to `~/.agents/skills/`, writes one arch_skill-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at the installed suite runner under `~/.agents/skills/arch-step/scripts/`, repairs older two-hook arch_skill installs down to that one repo-managed entry, removes older `~/.codex/skills/<skill>` mirrors from previous installs, and also installs the Claude Code and Gemini CLI skill directories.
 
-Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, and `audit-loop-sim auto` also require the Codex feature flag:
+Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `audit-loop-sim auto`, and `delay-poll` also require the Codex feature flag:
 
 ```bash
 codex features enable codex_hooks
@@ -44,7 +45,7 @@ codex features enable codex_hooks
 For any of those Codex auto controllers, do not run the Stop hook yourself. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
 
 Each Codex auto controller now uses a session-scoped repo-local state file such as
-`.codex/auto-plan-state.<SESSION_ID>.json`, `.codex/audit-loop-state.<SESSION_ID>.json`, or `.codex/audit-loop-sim-state.<SESSION_ID>.json`,
+`.codex/auto-plan-state.<SESSION_ID>.json`, `.codex/audit-loop-state.<SESSION_ID>.json`, `.codex/audit-loop-sim-state.<SESSION_ID>.json`, or `.codex/delay-poll-state.<SESSION_ID>.json`,
 where `<SESSION_ID>` is the current `CODEX_THREAD_ID`. Separate Codex sessions can
 run their own auto controllers concurrently in one repo. One session still must not
 arm more than one controller at once.
@@ -69,6 +70,7 @@ Installed skills:
   - `~/.agents/skills/north-star-investigation/`
   - `~/.agents/skills/arch-flow/`
   - `~/.agents/skills/arch-skills-guide/`
+  - `~/.agents/skills/delay-poll/`
   - `~/.agents/skills/agent-definition-auditor/`
   - `~/.agents/skills/codemagic-builds/`
 - Claude Code:
@@ -99,6 +101,8 @@ Installed skills:
   - `~/.gemini/skills/agent-definition-auditor/`
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed competing skill packages, and older `~/.codex/skills/<skill>` mirrors so runtime routing stays unambiguous.
+
+`delay-poll` is installed only on the agents/Codex surface because it depends on the Codex `Stop` hook runtime and is not a real feature on Claude Code or Gemini CLI.
 
 ### Remote install
 
@@ -187,6 +191,10 @@ Use for repo-wide audit passes, systematic defect hunts, dead-code deletion, dup
 
 Use for repo-wide real-app automation passes, simulator or emulator gap hunts, impactful mobile end-to-end coverage work, and Codex-only leave-it-running continuation that keeps pushing on the biggest unresolved automation risks instead of cashing out on tiny safe test tweaks.
 
+### `delay-poll`
+
+Use when the user wants Codex to wait on some external condition, re-check it every 30 minutes, every hour, or similar, and continue the same visible thread only after that condition becomes true.
+
 ### `goal-loop`
 
 Use when the goal is clear but the path is not, and you want a controller doc plus append-only iteration log.
@@ -209,7 +217,7 @@ Use when the user wants a cold-read score, rationale, and prioritized improvemen
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, or `agent-definition-auditor`.
+- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `audit-loop-sim`, `delay-poll`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, or `agent-definition-auditor`.
 - Full-arch execution defaults to `arch-step`.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -235,6 +243,7 @@ Examples:
 - `Use $audit-loop-sim`
 - `Use $audit-loop-sim review`
 - `Use $audit-loop-sim auto`
+- `Use $delay-poll every 30 minutes check whether branch blah has been fully pushed; when it is, pull it and integrate it in`
 - `Use $goal-loop for this metric problem`
 - `Use $north-star-investigation for this quantified performance hunt`
 - `Use $arch-flow docs/MY_PLAN.md`

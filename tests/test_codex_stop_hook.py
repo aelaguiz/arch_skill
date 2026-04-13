@@ -174,6 +174,91 @@ class CodexStopHookTests(unittest.TestCase):
             ledger_path,
         )
 
+    def structured_result(
+        self,
+        payload: dict | None,
+        *,
+        returncode: int = 0,
+        last_message: str | None = None,
+    ):
+        if last_message is None and payload is not None:
+            last_message = json.dumps(payload)
+        return self.stop_module.FreshStructuredResult(
+            process=subprocess.CompletedProcess(
+                args=["codex"],
+                returncode=returncode,
+                stdout="",
+                stderr="",
+            ),
+            last_message=last_message,
+            payload=payload,
+        )
+
+    def run_delay_poll_handler(
+        self,
+        repo_root: Path,
+        session_id: str,
+        *,
+        state_payload: dict,
+        check_results: list,
+        start_time: int,
+    ) -> tuple[int, dict, str, Path, list[int], int]:
+        state_path = self.controller_state_path(
+            repo_root,
+            self.stop_module.DELAY_POLL_STATE_RELATIVE_PATH,
+            session_id,
+        )
+        self.write_json(state_path, state_payload)
+
+        result_iter = iter(check_results)
+        sleeps: list[int] = []
+        fake_now = {"value": start_time}
+
+        def fake_run_delay_poll_check(*args, **kwargs):
+            result = next(result_iter)
+            if isinstance(result, Exception):
+                raise result
+            return result
+
+        def fake_time():
+            return fake_now["value"]
+
+        def fake_sleep(seconds: int):
+            sleeps.append(seconds)
+            fake_now["value"] += seconds
+
+        original_run = self.stop_module.run_delay_poll_check
+        original_time = self.stop_module.current_epoch_seconds
+        original_sleep = self.stop_module.sleep_for_seconds
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        self.stop_module.run_delay_poll_check = fake_run_delay_poll_check
+        self.stop_module.current_epoch_seconds = fake_time
+        self.stop_module.sleep_for_seconds = fake_sleep
+        try:
+            saved_stdout = sys.stdout
+            saved_stderr = sys.stderr
+            sys.stdout = stdout
+            sys.stderr = stderr
+            with self.assertRaises(SystemExit) as raised:
+                self.stop_module.handle_delay_poll(
+                    {"cwd": str(repo_root), "session_id": session_id}
+                )
+        finally:
+            self.stop_module.run_delay_poll_check = original_run
+            self.stop_module.current_epoch_seconds = original_time
+            self.stop_module.sleep_for_seconds = original_sleep
+            sys.stdout = saved_stdout
+            sys.stderr = saved_stderr
+        return (
+            raised.exception.code,
+            json.loads(stdout.getvalue()),
+            stderr.getvalue(),
+            state_path,
+            sleeps,
+            fake_now["value"],
+        )
+
     def test_install_hook_preserves_unrelated_and_collapses_repo_managed_entries(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
@@ -288,6 +373,25 @@ class CodexStopHookTests(unittest.TestCase):
                 self.upsert_module.verify_hook(hooks_file, skills_dir)
             self.assertIn("expected exactly one arch_skill-managed Stop hook entry", str(raised.exception))
 
+    def test_verify_hook_fails_when_repo_managed_timeout_is_stale(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_root = Path(temp_dir)
+            hooks_file = temp_root / "hooks.json"
+            skills_dir = temp_root / "installed-skills"
+            expected_group = self.upsert_module.expected_group(
+                self.upsert_module.expected_command(skills_dir)
+            )
+            stale_group = json.loads(json.dumps(expected_group))
+            stale_group["hooks"][0]["timeoutSec"] = 1200
+            hooks_file.write_text(
+                json.dumps({"hooks": {"Stop": [stale_group]}}, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(SystemExit) as raised:
+                self.upsert_module.verify_hook(hooks_file, skills_dir)
+            self.assertIn("stale arch_skill Stop hook entry still exists", str(raised.exception))
+
     def test_stop_hook_blocks_when_same_session_has_multiple_controller_states(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
@@ -387,6 +491,82 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, msg=process.stderr)
             self.assertEqual(process.stdout, "")
             self.assertEqual(process.stderr, "")
+
+    def test_stop_hook_ignores_delay_poll_state_from_other_session(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            self.write_json(
+                self.controller_state_path(
+                    repo_root,
+                    self.stop_module.DELAY_POLL_STATE_RELATIVE_PATH,
+                    "session-2",
+                ),
+                {
+                    "version": 1,
+                    "command": "delay-poll",
+                    "session_id": "session-2",
+                    "interval_seconds": 1800,
+                    "armed_at": 100,
+                    "deadline_at": 1000,
+                    "check_prompt": "See whether branch blah is pushed.",
+                    "resume_prompt": "Pull it and integrate it in.",
+                    "attempt_count": 0,
+                    "last_check_at": None,
+                    "last_summary": "",
+                },
+            )
+
+            process = self.run_stop_hook(repo_root, "session-1")
+
+            self.assertEqual(process.returncode, 0, msg=process.stderr)
+            self.assertEqual(process.stdout, "")
+            self.assertEqual(process.stderr, "")
+
+    def test_stop_hook_blocks_when_delay_poll_and_other_controller_states_share_session(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            self.write_json(
+                self.controller_state_path(
+                    repo_root,
+                    self.stop_module.DELAY_POLL_STATE_RELATIVE_PATH,
+                    "session-1",
+                ),
+                {
+                    "version": 1,
+                    "command": "delay-poll",
+                    "session_id": "session-1",
+                    "interval_seconds": 1800,
+                    "armed_at": 100,
+                    "deadline_at": 1000,
+                    "check_prompt": "See whether branch blah is pushed.",
+                    "resume_prompt": "Pull it and integrate it in.",
+                    "attempt_count": 0,
+                    "last_check_at": None,
+                    "last_summary": "",
+                },
+            )
+            self.write_json(
+                self.controller_state_path(
+                    repo_root,
+                    self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
+                    "session-1",
+                ),
+                {
+                    "command": "auto-plan",
+                    "session_id": "session-1",
+                    "doc_path": "docs/PLAN.md",
+                    "stage_index": 0,
+                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
+                },
+            )
+
+            process = self.run_stop_hook(repo_root, "session-1")
+
+            self.assertEqual(process.returncode, 0, msg=process.stderr)
+            payload = json.loads(process.stdout)
+            self.assertFalse(payload["continue"])
+            self.assertIn(".codex/delay-poll-state.session-1.json", payload["stopReason"])
+            self.assertIn(".codex/auto-plan-state.session-1.json", payload["stopReason"])
 
     def test_stop_hook_uses_only_matching_same_mode_session_state(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -856,6 +1036,230 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertEqual(payload["systemMessage"], "audit-loop-sim review omitted Next Area.")
             self.assertFalse(state_path.exists())
             self.assertTrue(ledger_path.exists())
+
+    def test_delay_poll_ready_immediately_clears_state_and_continues(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            exit_code, payload, stderr, state_path, sleeps, final_time = self.run_delay_poll_handler(
+                repo_root,
+                "session-1",
+                state_payload={
+                    "version": 1,
+                    "command": "delay-poll",
+                    "session_id": "session-1",
+                    "interval_seconds": 1800,
+                    "armed_at": 100,
+                    "deadline_at": 1000,
+                    "check_prompt": "Check whether branch blah has been fully pushed yet.",
+                    "resume_prompt": "Pull branch blah and integrate it in.",
+                    "attempt_count": 0,
+                    "last_check_at": None,
+                    "last_summary": "",
+                },
+                check_results=[
+                    self.structured_result(
+                        {
+                            "ready": True,
+                            "summary": "Remote now shows the expected branch tip.",
+                            "evidence": ["origin/blah points at abc123"],
+                        }
+                    )
+                ],
+                start_time=100,
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertTrue(payload["continue"])
+            self.assertEqual(
+                payload["systemMessage"],
+                "delay-poll condition is now true; continuing the task.",
+            )
+            self.assertIn("Pull branch blah and integrate it in.", payload["reason"])
+            self.assertIn("Remote now shows the expected branch tip.", payload["reason"])
+            self.assertFalse(state_path.exists())
+            self.assertEqual(sleeps, [])
+            self.assertEqual(final_time, 100)
+
+    def test_delay_poll_repeats_until_ready(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            exit_code, payload, stderr, state_path, sleeps, final_time = self.run_delay_poll_handler(
+                repo_root,
+                "session-1",
+                state_payload={
+                    "version": 1,
+                    "command": "delay-poll",
+                    "session_id": "session-1",
+                    "interval_seconds": 1800,
+                    "armed_at": 100,
+                    "deadline_at": 5000,
+                    "check_prompt": "Check whether branch blah has been fully pushed yet.",
+                    "resume_prompt": "Pull branch blah and integrate it in.",
+                    "attempt_count": 0,
+                    "last_check_at": None,
+                    "last_summary": "",
+                },
+                check_results=[
+                    self.structured_result(
+                        {
+                            "ready": False,
+                            "summary": "Remote still does not show the expected pushed commit.",
+                            "evidence": ["origin/blah still points at the old commit"],
+                        }
+                    ),
+                    self.structured_result(
+                        {
+                            "ready": True,
+                            "summary": "Remote now shows the expected pushed commit.",
+                            "evidence": ["origin/blah now points at abc123"],
+                        }
+                    ),
+                ],
+                start_time=100,
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertTrue(payload["continue"])
+            self.assertEqual(
+                payload["systemMessage"],
+                "delay-poll condition is now true; continuing the task.",
+            )
+            self.assertIn("Remote now shows the expected pushed commit.", payload["reason"])
+            self.assertEqual(sleeps, [1800])
+            self.assertEqual(final_time, 1900)
+            self.assertFalse(state_path.exists())
+
+    def test_delay_poll_times_out_cleanly(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            exit_code, payload, stderr, state_path, sleeps, final_time = self.run_delay_poll_handler(
+                repo_root,
+                "session-1",
+                state_payload={
+                    "version": 1,
+                    "command": "delay-poll",
+                    "session_id": "session-1",
+                    "interval_seconds": 1800,
+                    "armed_at": 100,
+                    "deadline_at": 2000,
+                    "check_prompt": "Check whether branch blah has been fully pushed yet.",
+                    "resume_prompt": "Pull branch blah and integrate it in.",
+                    "attempt_count": 0,
+                    "last_check_at": None,
+                    "last_summary": "",
+                },
+                check_results=[
+                    self.structured_result(
+                        {
+                            "ready": False,
+                            "summary": "Remote still does not show the expected pushed commit.",
+                            "evidence": ["origin/blah still points at the old commit"],
+                        }
+                    ),
+                    self.structured_result(
+                        {
+                            "ready": False,
+                            "summary": "Remote still does not show the expected pushed commit after another poll.",
+                            "evidence": ["origin/blah still points at the old commit"],
+                        }
+                    ),
+                ],
+                start_time=100,
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertFalse(payload["continue"])
+            self.assertEqual(payload["systemMessage"], "delay-poll timed out without success.")
+            self.assertIn("timed out before the waited-on condition became true", payload["stopReason"])
+            self.assertIn("Remote still does not show the expected pushed commit after another poll.", payload["stopReason"])
+            self.assertEqual(sleeps, [1800, 100])
+            self.assertEqual(final_time, 2000)
+            self.assertFalse(state_path.exists())
+
+    def test_delay_poll_stops_when_checker_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            exit_code, payload, stderr, state_path, sleeps, final_time = self.run_delay_poll_handler(
+                repo_root,
+                "session-1",
+                state_payload={
+                    "version": 1,
+                    "command": "delay-poll",
+                    "session_id": "session-1",
+                    "interval_seconds": 1800,
+                    "armed_at": 100,
+                    "deadline_at": 1000,
+                    "check_prompt": "Check whether branch blah has been fully pushed yet.",
+                    "resume_prompt": "Pull branch blah and integrate it in.",
+                    "attempt_count": 0,
+                    "last_check_at": None,
+                    "last_summary": "",
+                },
+                check_results=[
+                    self.structured_result(
+                        {
+                            "ready": False,
+                            "summary": "network blocked",
+                            "evidence": ["proxy denied the request"],
+                        },
+                        returncode=1,
+                        last_message="network blocked",
+                    )
+                ],
+                start_time=100,
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertFalse(payload["continue"])
+            self.assertEqual(payload["systemMessage"], "delay-poll fresh check failed.")
+            self.assertIn("delay-poll ran a fresh check, but that check failed.", payload["stopReason"])
+            self.assertFalse(state_path.exists())
+            self.assertEqual(sleeps, [])
+            self.assertEqual(final_time, 100)
+
+    def test_delay_poll_stops_when_checker_output_is_invalid(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            exit_code, payload, stderr, state_path, sleeps, final_time = self.run_delay_poll_handler(
+                repo_root,
+                "session-1",
+                state_payload={
+                    "version": 1,
+                    "command": "delay-poll",
+                    "session_id": "session-1",
+                    "interval_seconds": 1800,
+                    "armed_at": 100,
+                    "deadline_at": 1000,
+                    "check_prompt": "Check whether branch blah has been fully pushed yet.",
+                    "resume_prompt": "Pull branch blah and integrate it in.",
+                    "attempt_count": 0,
+                    "last_check_at": None,
+                    "last_summary": "",
+                },
+                check_results=[
+                    self.structured_result(
+                        None,
+                        last_message="not json",
+                    )
+                ],
+                start_time=100,
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertFalse(payload["continue"])
+            self.assertEqual(
+                payload["systemMessage"],
+                "delay-poll fresh check returned unusable output.",
+            )
+            self.assertIn("did not return usable structured JSON", payload["stopReason"])
+            self.assertFalse(state_path.exists())
+            self.assertEqual(sleeps, [])
+            self.assertEqual(final_time, 100)
 
 
 if __name__ == "__main__":

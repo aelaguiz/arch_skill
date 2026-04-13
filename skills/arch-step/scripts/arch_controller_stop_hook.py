@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,6 +19,7 @@ AUTO_PLAN_STATE_RELATIVE_PATH = Path(".codex/auto-plan-state.json")
 ARCH_DOCS_AUTO_STATE_RELATIVE_PATH = Path(".codex/arch-docs-auto-state.json")
 AUDIT_LOOP_STATE_RELATIVE_PATH = Path(".codex/audit-loop-state.json")
 AUDIT_LOOP_SIM_STATE_RELATIVE_PATH = Path(".codex/audit-loop-sim-state.json")
+DELAY_POLL_STATE_RELATIVE_PATH = Path(".codex/delay-poll-state.json")
 ARCH_DOCS_DEFAULT_LEDGER_RELATIVE_PATH = Path(".doc-audit-ledger.md")
 AUDIT_LOOP_DEFAULT_LEDGER_RELATIVE_PATH = Path("_audit_ledger.md")
 AUDIT_LOOP_SIM_DEFAULT_LEDGER_RELATIVE_PATH = Path("_audit_sim_ledger.md")
@@ -27,12 +29,14 @@ AUTO_PLAN_COMMAND = "auto-plan"
 ARCH_DOCS_AUTO_COMMAND = "arch-docs-auto"
 AUDIT_LOOP_COMMAND = "auto"
 AUDIT_LOOP_SIM_COMMAND = "auto"
+DELAY_POLL_COMMAND = "delay-poll"
 
 IMPLEMENT_LOOP_DISPLAY_NAME = "implement-loop"
 AUTO_PLAN_DISPLAY_NAME = "auto-plan"
 ARCH_DOCS_AUTO_DISPLAY_NAME = "arch-docs auto"
 AUDIT_LOOP_DISPLAY_NAME = "audit-loop auto"
 AUDIT_LOOP_SIM_DISPLAY_NAME = "audit-loop-sim auto"
+DELAY_POLL_DISPLAY_NAME = "delay-poll"
 
 
 @dataclass(frozen=True)
@@ -74,6 +78,11 @@ AUDIT_LOOP_SIM_STATE_SPEC = ControllerStateSpec(
     expected_command=AUDIT_LOOP_SIM_COMMAND,
     display_name=AUDIT_LOOP_SIM_DISPLAY_NAME,
 )
+DELAY_POLL_STATE_SPEC = ControllerStateSpec(
+    relative_path=DELAY_POLL_STATE_RELATIVE_PATH,
+    expected_command=DELAY_POLL_COMMAND,
+    display_name=DELAY_POLL_DISPLAY_NAME,
+)
 
 AUTO_PLAN_STAGES = (
     "research",
@@ -112,6 +121,7 @@ CONTROLLER_STATE_SPECS = (
     ARCH_DOCS_AUTO_STATE_SPEC,
     AUDIT_LOOP_STATE_SPEC,
     AUDIT_LOOP_SIM_STATE_SPEC,
+    DELAY_POLL_STATE_SPEC,
 )
 ARCH_DOCS_EVAL_SCHEMA = {
     "type": "object",
@@ -134,6 +144,23 @@ ARCH_DOCS_EVAL_SCHEMA = {
         "needs_another_pass": {"type": "boolean"},
         "reason": {"type": "string"},
         "blockers": {
+            "type": "array",
+            "items": {"type": "string"},
+        },
+    },
+}
+DELAY_POLL_CHECK_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "ready",
+        "summary",
+        "evidence",
+    ],
+    "properties": {
+        "ready": {"type": "boolean"},
+        "summary": {"type": "string"},
+        "evidence": {
             "type": "array",
             "items": {"type": "string"},
         },
@@ -172,6 +199,15 @@ def clear_state(state_path: Path) -> None:
 def write_state(state_path: Path, state: dict) -> None:
     state_path.parent.mkdir(parents=True, exist_ok=True)
     state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+
+
+def current_epoch_seconds() -> int:
+    return int(time.time())
+
+
+def sleep_for_seconds(seconds: int) -> None:
+    if seconds > 0:
+        time.sleep(seconds)
 
 
 def block_with_message(message: str) -> None:
@@ -543,8 +579,10 @@ def run_fresh_audit(cwd: Path, doc_path_value: str) -> FreshAuditResult:
 
     prompt = (
         f"Use $arch-step audit-implementation {doc_path_value}\n"
-        "Fresh context only. Update the authoritative implementation audit block and any reopened "
-        "phase statuses in DOC_PATH. Keep the final response short."
+        "Fresh context only. Audit against the approved plan in DOC_PATH, not against any narrower "
+        "execution-side rewrite. Update the authoritative implementation audit block and any reopened "
+        "phase statuses in DOC_PATH. If implementation weakened requirements, scope, acceptance "
+        "criteria, or phase obligations to hide unfinished work, fail it. Keep the final response short."
     )
 
     with tempfile.TemporaryDirectory(prefix="arch-step-implement-loop-") as temp_dir:
@@ -708,6 +746,61 @@ def run_fresh_sim_review(cwd: Path) -> FreshAuditResult:
         if last_message_path.exists():
             last_message = last_message_path.read_text(encoding="utf-8").strip() or None
         return FreshAuditResult(process=process, last_message=last_message)
+
+
+def run_delay_poll_check(cwd: Path, check_prompt: str) -> FreshStructuredResult:
+    codex = shutil.which("codex")
+    if not codex:
+        raise RuntimeError("`codex` is not available on PATH for the Stop hook")
+
+    prompt = (
+        "Use $delay-poll check\n"
+        "Fresh context only. Stay read-only. Evaluate whether the waited-on condition is satisfied yet.\n"
+        "<check_prompt>\n"
+        f"{check_prompt.strip()}\n"
+        "</check_prompt>\n"
+        "Return structured JSON only."
+    )
+
+    with tempfile.TemporaryDirectory(prefix="delay-poll-check-") as temp_dir:
+        temp_root = Path(temp_dir)
+        schema_path = temp_root / "schema.json"
+        last_message_path = temp_root / "last_message.json"
+        schema_path.write_text(json.dumps(DELAY_POLL_CHECK_SCHEMA), encoding="utf-8")
+        process = subprocess.run(
+            [
+                codex,
+                "exec",
+                "--ephemeral",
+                "--disable",
+                "codex_hooks",
+                "--cd",
+                str(cwd),
+                "--sandbox",
+                "read-only",
+                "--output-schema",
+                str(schema_path),
+                "-o",
+                str(last_message_path),
+                prompt,
+            ],
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        last_message = None
+        payload = None
+        if last_message_path.exists():
+            last_message = last_message_path.read_text(encoding="utf-8").strip() or None
+            if last_message:
+                try:
+                    parsed = json.loads(last_message)
+                except json.JSONDecodeError:
+                    parsed = None
+                if isinstance(parsed, dict):
+                    payload = parsed
+        return FreshStructuredResult(process=process, last_message=last_message, payload=payload)
 
 
 def validate_implement_loop_state(
@@ -975,6 +1068,121 @@ def validate_audit_loop_sim_state(
     return ledger_path, ledger_path_value, state, state_path
 
 
+def validate_delay_poll_state(
+    payload: dict,
+    resolved_state: ResolvedControllerState | None,
+) -> tuple[dict, Path] | None:
+    cwd = Path(payload["cwd"]).resolve()
+    loaded = load_controller_state(
+        cwd,
+        resolved_state,
+        DELAY_POLL_DISPLAY_NAME,
+        DELAY_POLL_COMMAND,
+    )
+    if loaded is None:
+        return None
+    state_path, state, is_legacy = loaded
+    if not validate_session_id(
+        payload,
+        cwd,
+        state_path,
+        state,
+        DELAY_POLL_DISPLAY_NAME,
+        allow_claim=is_legacy,
+    ):
+        return None
+
+    write_required = False
+
+    version = state.get("version")
+    if version is None:
+        state["version"] = 1
+        write_required = True
+    elif version != 1:
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state had an unsupported version; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+
+    interval_seconds = state.get("interval_seconds")
+    if not isinstance(interval_seconds, int) or interval_seconds <= 0:
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state was missing a positive interval_seconds; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+
+    armed_at = state.get("armed_at")
+    if not isinstance(armed_at, int) or armed_at <= 0:
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state was missing a valid armed_at timestamp; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+
+    deadline_at = state.get("deadline_at")
+    if not isinstance(deadline_at, int) or deadline_at <= armed_at:
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state was missing a valid deadline_at timestamp; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+
+    check_prompt = state.get("check_prompt")
+    if not isinstance(check_prompt, str) or not check_prompt.strip():
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state was missing check_prompt; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+    state["check_prompt"] = check_prompt.strip()
+
+    resume_prompt = state.get("resume_prompt")
+    if not isinstance(resume_prompt, str) or not resume_prompt.strip():
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state was missing resume_prompt; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+    state["resume_prompt"] = resume_prompt.strip()
+
+    attempt_count = state.get("attempt_count")
+    if attempt_count is None:
+        state["attempt_count"] = 0
+        write_required = True
+    elif not isinstance(attempt_count, int) or attempt_count < 0:
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state had an invalid attempt_count; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+
+    last_check_at = state.get("last_check_at")
+    if last_check_at is not None:
+        if not isinstance(last_check_at, int) or last_check_at < armed_at:
+            clear_state(state_path)
+            block_with_message(
+                "delay-poll controller state had an invalid last_check_at; "
+                "the controller was disarmed. Update the wait state truthfully and stop."
+            )
+
+    last_summary = state.get("last_summary")
+    if last_summary is None:
+        state["last_summary"] = ""
+        write_required = True
+    elif not isinstance(last_summary, str):
+        clear_state(state_path)
+        block_with_message(
+            "delay-poll controller state had a non-string last_summary; "
+            "the controller was disarmed. Update the wait state truthfully and stop."
+        )
+
+    if write_required:
+        write_state(state_path, state)
+    return state, state_path
+
+
 def read_audit_loop_controller_fields(ledger_path: Path) -> dict[str, str] | None:
     if not ledger_path.exists():
         return None
@@ -1148,6 +1356,26 @@ def arch_docs_eval_summary(result: dict) -> str:
     return compact
 
 
+def delay_poll_result_summary(summary: str, evidence: list[str]) -> str:
+    parts = [summary.strip()]
+    cleaned_evidence = [item.strip() for item in evidence if item.strip()]
+    if cleaned_evidence:
+        parts.append("Evidence: " + "; ".join(cleaned_evidence))
+    compact = " ".join(part for part in parts if part)
+    if len(compact) > DETAIL_LIMIT:
+        return compact[: DETAIL_LIMIT - 3] + "..."
+    return compact
+
+
+def delay_poll_sleep_reason(
+    next_due_at: int,
+    deadline_at: int,
+) -> int:
+    now = current_epoch_seconds()
+    wait_until = min(next_due_at, deadline_at)
+    return max(wait_until - now, 0)
+
+
 def handle_implement_loop(payload: dict) -> int:
     cwd = Path(payload["cwd"]).resolve()
     resolved_state = resolve_controller_state_for_handler(payload, IMPLEMENT_LOOP_STATE_SPEC)
@@ -1205,6 +1433,8 @@ def handle_implement_loop(payload: dict) -> int:
             f"Read the authoritative Implementation Audit block and reopened phases in {doc_path_value}, "
             f"implement the missing code work, run the smallest credible proof checks for the claimed fixes, "
             f"update {display_path(worklog_path, cwd)} if it exists, keep the loop armed, "
+            "and do not rewrite plan requirements, scope, acceptance criteria, or phase obligations while coding. "
+            "If the audit shows the plan itself needs to change, stop and repair the plan instead of continuing on a rewritten story, "
             "and only then stop again for another fresh audit."
         )
         if child_summary:
@@ -1563,6 +1793,126 @@ def handle_audit_loop_sim(payload: dict) -> int:
     block_with_json(reason, system_message="audit-loop-sim review found more work.")
 
 
+def handle_delay_poll(payload: dict) -> int:
+    cwd = Path(payload["cwd"]).resolve()
+    resolved_state = resolve_controller_state_for_handler(payload, DELAY_POLL_STATE_SPEC)
+    validated = validate_delay_poll_state(payload, resolved_state)
+    if validated is None:
+        return 0
+
+    state, state_path = validated
+    state_path_value = display_path(state_path, cwd)
+
+    while True:
+        now = current_epoch_seconds()
+        deadline_at = state["deadline_at"]
+        last_check_at = state.get("last_check_at")
+        interval_seconds = state["interval_seconds"]
+        next_due_at = state["armed_at"] if last_check_at is None else last_check_at + interval_seconds
+
+        if now >= deadline_at and now < next_due_at:
+            clear_state(state_path)
+            stop_reason = (
+                "delay-poll timed out before the waited-on condition became true. "
+                f"The controller reached its deadline with {state['attempt_count']} completed checks."
+            )
+            if state["last_summary"].strip():
+                stop_reason += f" Last check summary: {state['last_summary'].strip()}"
+            stop_with_json(stop_reason, system_message="delay-poll timed out without success.")
+
+        if now < next_due_at:
+            sleep_for_seconds(delay_poll_sleep_reason(next_due_at, deadline_at))
+            continue
+
+        try:
+            check = run_delay_poll_check(cwd, state["check_prompt"])
+        except RuntimeError as exc:
+            clear_state(state_path)
+            stop_with_json(
+                f"delay-poll could not start a fresh check: {exc}. The controller was disarmed.",
+                system_message="delay-poll fresh check could not start.",
+            )
+
+        child_summary = summarize_child_output(check.process, check.last_message)
+        if check.process.returncode != 0:
+            clear_state(state_path)
+            stop_reason = "delay-poll ran a fresh check, but that check failed."
+            if child_summary:
+                stop_reason += f" Failure: {child_summary}."
+            stop_with_json(
+                stop_reason + " Treat the wait as blocked and stop honestly.",
+                system_message="delay-poll fresh check failed.",
+            )
+
+        result = check.payload
+        if not isinstance(result, dict):
+            clear_state(state_path)
+            reason = (
+                "delay-poll ran a fresh check, but the checker did not return usable structured JSON. "
+                "The controller was disarmed."
+            )
+            if child_summary:
+                reason += f" Checker output: {child_summary}"
+            stop_with_json(
+                reason,
+                system_message="delay-poll fresh check returned unusable output.",
+            )
+
+        ready = result.get("ready")
+        summary = result.get("summary")
+        evidence = result.get("evidence")
+        if not isinstance(ready, bool) or not isinstance(summary, str) or not isinstance(evidence, list):
+            clear_state(state_path)
+            stop_with_json(
+                "delay-poll fresh check returned an invalid payload. The controller was disarmed.",
+                system_message="delay-poll fresh check returned an invalid payload.",
+            )
+
+        cleaned_evidence: list[str] = []
+        for item in evidence:
+            if not isinstance(item, str) or not item.strip():
+                clear_state(state_path)
+                stop_with_json(
+                    "delay-poll fresh check returned invalid evidence entries. The controller was disarmed.",
+                    system_message="delay-poll fresh check returned invalid evidence entries.",
+                )
+            cleaned_evidence.append(item.strip())
+
+        summary_text = summary.strip()
+        if not summary_text:
+            clear_state(state_path)
+            stop_with_json(
+                "delay-poll fresh check returned a blank summary. The controller was disarmed.",
+                system_message="delay-poll fresh check returned a blank summary.",
+            )
+
+        state["attempt_count"] += 1
+        state["last_check_at"] = now
+        state["last_summary"] = summary_text
+        write_state(state_path, state)
+
+        result_summary = delay_poll_result_summary(summary_text, cleaned_evidence)
+        if ready:
+            clear_state(state_path)
+            reason = (
+                f"{state['resume_prompt']} Latest check summary: {result_summary}. "
+                f"Resume from this new truth and continue the same task. Former wait state: {state_path_value}."
+            )
+            block_with_json(
+                reason,
+                system_message="delay-poll condition is now true; continuing the task.",
+            )
+
+        if current_epoch_seconds() >= deadline_at:
+            clear_state(state_path)
+            stop_reason = (
+                "delay-poll timed out before the waited-on condition became true. "
+                f"The controller reached its deadline with {state['attempt_count']} completed checks. "
+                f"Last check summary: {result_summary}"
+            )
+            stop_with_json(stop_reason, system_message="delay-poll timed out without success.")
+
+
 def main() -> int:
     payload = load_stop_payload()
     stop_for_conflicting_controller_states(payload)
@@ -1571,6 +1921,7 @@ def main() -> int:
     handle_arch_docs_auto(payload)
     handle_audit_loop(payload)
     handle_audit_loop_sim(payload)
+    handle_delay_poll(payload)
     return 0
 
 

@@ -1,9 +1,11 @@
 .PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 REMOVED_SKILLS := arch-skill arch-plan
-SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor codemagic-builds
+SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide delay-poll agent-definition-auditor codemagic-builds
 CLAUDE_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor
 GEMINI_SKILLS := arch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor
+NON_CLAUDE_SKILLS := $(filter-out $(CLAUDE_SKILLS),$(SKILLS))
+NON_GEMINI_SKILLS := $(filter-out $(GEMINI_SKILLS),$(SKILLS))
 ARCHIVED_COMMAND_FILES := $(notdir $(wildcard archive/prompts/*.md))
 AGENTS_SKILLS_DIR ?= $(HOME)/.agents/skills
 CODEX_SKILLS_DIR ?= $(HOME)/.codex/skills
@@ -87,7 +89,7 @@ codex_install_hook:
 
 claude_install_skill:
 	mkdir -p $(CLAUDE_SKILLS_DIR)
-	@for skill in $(REMOVED_SKILLS) $(CLAUDE_SKILLS); do \
+	@for skill in $(REMOVED_SKILLS) $(SKILLS); do \
 		rm -rf $(CLAUDE_SKILLS_DIR)/$$skill; \
 	done
 	@for skill in $(CLAUDE_SKILLS); do \
@@ -98,7 +100,7 @@ gemini_install: clean_gemini_stale_surfaces gemini_install_skill
 
 gemini_install_skill:
 	mkdir -p $(GEMINI_SKILLS_DIR)
-	@for skill in $(REMOVED_SKILLS) $(GEMINI_SKILLS); do \
+	@for skill in $(REMOVED_SKILLS) $(SKILLS); do \
 		rm -rf $(GEMINI_SKILLS_DIR)/$$skill; \
 	done
 	@for skill in $(GEMINI_SKILLS); do \
@@ -133,6 +135,9 @@ verify_claude_install:
 	@for skill in $(CLAUDE_SKILLS); do \
 		test -f $(CLAUDE_SKILLS_DIR)/$$skill/SKILL.md; \
 	done
+	@for skill in $(NON_CLAUDE_SKILLS); do \
+		test ! -d $(CLAUDE_SKILLS_DIR)/$$skill; \
+	done
 	@for file in $(ARCHIVED_COMMAND_FILES); do \
 		test ! -f ~/.claude/commands/prompts/$$file; \
 	done
@@ -143,6 +148,9 @@ verify_claude_install:
 verify_gemini_install:
 	@for skill in $(GEMINI_SKILLS); do \
 		test -f $(GEMINI_SKILLS_DIR)/$$skill/SKILL.md; \
+	done
+	@for skill in $(NON_GEMINI_SKILLS); do \
+		test ! -d $(GEMINI_SKILLS_DIR)/$$skill; \
 	done
 	@for file in $(ARCHIVED_COMMAND_FILES); do \
 		test ! -f ~/.gemini/arch_skill/prompts/$$file; \
@@ -176,14 +184,14 @@ remote_install:
 		ssh $(HOST) "rm -rf ~/.codex/skills/$$skill"; \
 	done
 	@ssh $(HOST) "python3 ~/.agents/skills/arch-step/scripts/upsert_codex_stop_hook.py --hooks-file ~/.codex/hooks.json --skills-dir ~/.agents/skills"
-	@for skill in $(REMOVED_SKILLS) $(CLAUDE_SKILLS); do \
+	@for skill in $(REMOVED_SKILLS) $(SKILLS); do \
 		ssh $(HOST) "rm -rf ~/.claude/skills/$$skill"; \
 	done
 	@for skill in $(CLAUDE_SKILLS); do \
 		scp -r skills/$$skill $(HOST):~/.claude/skills/; \
 	done
 	@if [ "$(NO_GEMINI)" != "1" ]; then \
-		for skill in $(REMOVED_SKILLS) $(GEMINI_SKILLS); do \
+		for skill in $(REMOVED_SKILLS) $(SKILLS); do \
 			ssh $(HOST) "rm -rf ~/.gemini/skills/$$skill"; \
 		done; \
 		for skill in $(GEMINI_SKILLS); do \

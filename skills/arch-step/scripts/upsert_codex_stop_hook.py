@@ -10,14 +10,16 @@ from pathlib import Path
 
 
 STATUS_MESSAGE = (
-    "arch_skill automatic controllers are running; planning continuations are quick, and fresh audits or docs evaluations can take a few minutes"
+    "arch_skill automatic controllers are running; planning continuations are quick, fresh audits or docs evaluations can take a few minutes, and delay polls can wait much longer"
 )
 LEGACY_STATUS_MESSAGES = {
+    "arch_skill automatic controllers are running; planning continuations are quick, and fresh audits or docs evaluations can take a few minutes",
     "arch suite automatic controller is running; planning continuations are quick, and fresh audits or docs evaluations can take a few minutes",
     "arch-step automatic controller is running; planning continuations are quick, fresh implement-loop audits can take a few minutes",
     "audit-loop automatic controller is running; fresh review passes can take a few minutes",
 }
 HOOK_SCRIPT_NAME = "arch_controller_stop_hook.py"
+HOOK_TIMEOUT_SEC = 90000
 LEGACY_HOOK_SCRIPT_NAMES = {
     "implement_loop_stop_hook.py",
     "audit_loop_stop_hook.py",
@@ -83,7 +85,7 @@ def expected_group(command: str) -> dict:
             {
                 "type": "command",
                 "command": command,
-                "timeoutSec": 1200,
+                "timeoutSec": HOOK_TIMEOUT_SEC,
                 "statusMessage": STATUS_MESSAGE,
             }
         ]
