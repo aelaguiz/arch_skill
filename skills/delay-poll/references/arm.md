@@ -9,11 +9,12 @@ Arm a real Codex wait controller that keeps checking a condition on a fixed inte
 Before arming the controller, verify all of these:
 
 - Codex is the active host runtime
-- installed Stop-hook support exists in `~/.codex/hooks.json`
-- the installed suite controller runner exists under `~/.agents/skills/arch-step/scripts/`
+- `~/.codex/hooks.json` contains the arch_skill-managed `Stop` entry
+- that `Stop` entry points at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
 - `codex features list` shows `codex_hooks` enabled
 
 If any check fails, name the missing prerequisite and stop instead of pretending prompt-only waiting is the same feature.
+Do not look for a dedicated delay-specific runner such as `delay_poll_controller.py`; `delay-poll` is backed by the shared suite hook at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, the same installed runner that owns the other arch_skill auto controllers.
 
 ## State file contract
 
@@ -44,3 +45,7 @@ Minimum shape:
 - Default maximum wait window is 24 hours unless the user says otherwise.
 - After the controller is armed, tell the user plainly to end the turn and let the installed Stop hook own the wait.
 - Do not claim the feature is real if the current runtime cannot actually arm the state and rely on the installed Stop hook.
+- Real missing prerequisites here are:
+  - no usable arch_skill-managed `Stop` entry in `~/.codex/hooks.json`
+  - no installed shared runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
+  - `codex_hooks` disabled

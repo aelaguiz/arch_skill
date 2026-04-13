@@ -420,6 +420,28 @@ class CodexStopHookTests(unittest.TestCase):
             fake_now["value"],
         )
 
+    def capture_codex_exec_args(self, callback) -> list[str]:
+        recorded: dict[str, list[str]] = {}
+
+        def fake_run(args, **kwargs):
+            recorded["args"] = list(args)
+            if "-o" in args:
+                output_path = Path(args[args.index("-o") + 1])
+                output_path.write_text("", encoding="utf-8")
+            return subprocess.CompletedProcess(args=args, returncode=0, stdout="", stderr="")
+
+        original_which = self.stop_module.shutil.which
+        original_run = self.stop_module.subprocess.run
+        self.stop_module.shutil.which = lambda name: "/usr/bin/codex" if name == "codex" else None
+        self.stop_module.subprocess.run = fake_run
+        try:
+            callback()
+        finally:
+            self.stop_module.shutil.which = original_which
+            self.stop_module.subprocess.run = original_run
+
+        return recorded["args"]
+
     def test_install_hook_preserves_unrelated_and_collapses_repo_managed_entries(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
@@ -561,6 +583,68 @@ class CodexStopHookTests(unittest.TestCase):
                 self.assertIn(REQUIRED_RUNNER_PATH_TEXT, text)
                 for forbidden_text in FORBIDDEN_HOOK_PATH_TEXTS:
                     self.assertNotIn(forbidden_text, text)
+
+    def test_run_fresh_review_uses_unsandboxed_exec(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            args = self.capture_codex_exec_args(
+                lambda: self.stop_module.run_fresh_review(Path(temp_dir))
+            )
+
+        self.assertIn("--dangerously-bypass-approvals-and-sandbox", args)
+        self.assertNotIn("--full-auto", args)
+        self.assertEqual(args[-1].splitlines()[0], "Use $audit-loop review")
+
+    def test_run_fresh_comment_review_uses_unsandboxed_exec(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            args = self.capture_codex_exec_args(
+                lambda: self.stop_module.run_fresh_comment_review(Path(temp_dir))
+            )
+
+        self.assertIn("--dangerously-bypass-approvals-and-sandbox", args)
+        self.assertNotIn("--full-auto", args)
+        self.assertEqual(args[-1].splitlines()[0], "Use $comment-loop review")
+
+    def test_run_fresh_sim_review_uses_unsandboxed_exec(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            args = self.capture_codex_exec_args(
+                lambda: self.stop_module.run_fresh_sim_review(Path(temp_dir))
+            )
+
+        self.assertIn("--dangerously-bypass-approvals-and-sandbox", args)
+        self.assertNotIn("--full-auto", args)
+        self.assertEqual(args[-1].splitlines()[0], "Use $audit-loop-sim review")
+
+    def test_run_arch_docs_evaluator_stays_read_only(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            args = self.capture_codex_exec_args(
+                lambda: self.stop_module.run_arch_docs_evaluator(
+                    repo_root,
+                    "repo docs surface",
+                    repo_root / ".codex/arch-docs-auto-state.session-1.json",
+                    ".doc-audit-ledger.md",
+                )
+            )
+
+        self.assertIn("--sandbox", args)
+        self.assertEqual(args[args.index("--sandbox") + 1], "read-only")
+        self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", args)
+        self.assertEqual(args[-1].splitlines()[0], "Use $arch-docs for the suite's INTERNAL AUTO EVALUATOR.")
+
+    def test_run_delay_poll_check_stays_read_only(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            args = self.capture_codex_exec_args(
+                lambda: self.stop_module.run_delay_poll_check(
+                    repo_root,
+                    "See whether the waited-on condition is satisfied yet.",
+                )
+            )
+
+        self.assertIn("--sandbox", args)
+        self.assertEqual(args[args.index("--sandbox") + 1], "read-only")
+        self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", args)
+        self.assertEqual(args[-1].splitlines()[0], "Use $delay-poll check")
 
     def test_stop_hook_blocks_when_same_session_has_multiple_controller_states(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

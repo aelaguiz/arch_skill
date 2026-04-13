@@ -77,7 +77,7 @@ Lifecycle:
 When the loop is armed, the installed suite Stop hook should:
 
 1. no-op when no active audit-loop-sim state matches the current session
-2. launch `codex exec --ephemeral --disable codex_hooks` with `$audit-loop-sim review`
+2. launch `codex exec --ephemeral --disable codex_hooks --dangerously-bypass-approvals-and-sandbox` with `$audit-loop-sim review`
 3. read the controller verdict from `_audit_sim_ledger.md`
 4. if the state file or ledger is missing, recreate it from fresh repo context before trusting the review result
 5. on `CONTINUE`, keep state armed and continue with the next `$audit-loop-sim` pass, whether the next area is unfinished mapping work or a ranked automation risk front

@@ -73,7 +73,7 @@ Lifecycle:
 When the loop is armed, the installed suite Stop hook should:
 
 1. no-op when no active audit-loop state matches the current session
-2. launch `codex exec --ephemeral --disable codex_hooks` with `$audit-loop review`
+2. launch `codex exec --ephemeral --disable codex_hooks --dangerously-bypass-approvals-and-sandbox` with `$audit-loop review`
 3. read the controller verdict from `_audit_ledger.md`
 4. on `CONTINUE`, keep state armed and continue with the next `$audit-loop` pass, whether the next area is unfinished mapping work or a ranked risk front
 5. on `BLOCKED`, clear state and stop honestly

@@ -73,7 +73,7 @@ Lifecycle:
 When the loop is armed, the installed suite Stop hook should:
 
 1. no-op when no active comment-loop state matches the current session
-2. launch `codex exec --ephemeral --disable codex_hooks` with `$comment-loop review`
+2. launch `codex exec --ephemeral --disable codex_hooks --dangerously-bypass-approvals-and-sandbox` with `$comment-loop review`
 3. read the controller verdict from `_comment_ledger.md`
 4. on `CONTINUE`, keep state armed and continue with the next `$comment-loop` pass, whether the next area is unfinished mapping work or a ranked comment front
 5. on `BLOCKED`, clear state and stop honestly

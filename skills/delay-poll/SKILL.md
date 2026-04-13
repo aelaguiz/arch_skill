@@ -24,12 +24,13 @@ Use this skill when the user wants the same visible Codex thread to wait, re-che
 
 ## Non-negotiables
 
-- `delay-poll` is Codex-only and must be real hook-backed behavior. If the installed Stop-hook path or `codex_hooks` is missing, fail loud.
+- `delay-poll` is Codex-only and must be real hook-backed behavior. The installed runner is the shared suite hook at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`. If that runner, the `~/.codex/hooks.json` entry pointing to it, or `codex_hooks` is missing, fail loud.
 - Keep the waited-on condition as a literal `check_prompt` and the continuation as a literal `resume_prompt`. Do not invent git-specific, CI-specific, or service-specific heuristics.
 - Do one immediate grounded check before arming the wait state. If the condition is already true, do not arm the controller.
 - Default maximum wait window is 24 hours unless the user explicitly sets a different cap.
 - Later polling checks stay read-only. Mutation belongs only to the resumed main thread after the condition becomes true.
 - One session can arm only one arch_skill auto controller at a time.
+- Do not look for or require a dedicated delay-specific runner file such as `delay_poll_controller.py`. `delay-poll` is owned by the shared suite hook, not a separate controller binary.
 - Do not run the Stop hook yourself. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
 - Internal `check` mode is suite-only. Do not advertise it as a public user workflow.
 
@@ -52,8 +53,8 @@ Use this skill when the user wants the same visible Codex thread to wait, re-che
 - If the user did not supply a resume prompt, use: `The waited-on condition is now satisfied. Continue the same task using this new truth and the latest check summary below.`
 - Verify all runtime prerequisites:
   - Codex is the active host runtime
-  - installed Stop-hook support exists in `~/.codex/hooks.json`
-  - the installed suite controller runner exists under `~/.agents/skills/arch-step/scripts/`
+  - `~/.codex/hooks.json` contains the arch_skill-managed `Stop` entry
+  - that `Stop` entry points at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
   - `codex features list` shows `codex_hooks` enabled
 - Run one immediate grounded read-only check against the literal `check_prompt`.
 - If the condition is already true, continue immediately from the current turn with the `resume_prompt` plus the latest summary and do not arm state.
