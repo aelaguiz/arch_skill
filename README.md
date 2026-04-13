@@ -10,6 +10,7 @@ The live arch suite is:
 - `lilarch` — compact 1-3 phase feature flow
 - `bugs-flow` — evidence-first bug analyze/fix/review flow
 - `audit-loop` — exhaustive map-first repo audit loop with a root audit ledger and Codex-only `auto` continuation
+- `comment-loop` — exhaustive map-first repo comment hardening loop with a root comment ledger and Codex-only `auto` continuation
 - `audit-loop-sim` — exhaustive map-first real-app automation audit loop with a root simulator ledger and Codex-only `auto` continuation
 - `goal-loop` — open-ended goal-seeking loop
 - `north-star-investigation` — math-first investigation loop
@@ -36,7 +37,7 @@ make install
 
 This installs the live skill surface to `~/.agents/skills/`, writes one arch_skill-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, repairs older two-hook arch_skill installs down to that one repo-managed entry, removes older `~/.codex/skills/<skill>` mirrors from previous installs, and also installs the Claude Code and Gemini CLI skill directories.
 
-Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `audit-loop-sim auto`, and `delay-poll` also require the Codex feature flag:
+Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, and `delay-poll` also require the Codex feature flag:
 
 ```bash
 codex features enable codex_hooks
@@ -45,7 +46,7 @@ codex features enable codex_hooks
 For any of those Codex auto controllers, do not run the Stop hook yourself. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
 
 Each Codex auto controller now uses a session-scoped repo-local state file such as
-`.codex/auto-plan-state.<SESSION_ID>.json`, `.codex/audit-loop-state.<SESSION_ID>.json`, `.codex/audit-loop-sim-state.<SESSION_ID>.json`, or `.codex/delay-poll-state.<SESSION_ID>.json`,
+`.codex/auto-plan-state.<SESSION_ID>.json`, `.codex/audit-loop-state.<SESSION_ID>.json`, `.codex/comment-loop-state.<SESSION_ID>.json`, `.codex/audit-loop-sim-state.<SESSION_ID>.json`, or `.codex/delay-poll-state.<SESSION_ID>.json`,
 where `<SESSION_ID>` is the current `CODEX_THREAD_ID`. Separate Codex sessions can
 run their own auto controllers concurrently in one repo. One session still must not
 arm more than one controller at once.
@@ -65,6 +66,7 @@ Installed skills:
   - `~/.agents/skills/lilarch/`
   - `~/.agents/skills/bugs-flow/`
   - `~/.agents/skills/audit-loop/`
+  - `~/.agents/skills/comment-loop/`
   - `~/.agents/skills/audit-loop-sim/`
   - `~/.agents/skills/goal-loop/`
   - `~/.agents/skills/north-star-investigation/`
@@ -80,6 +82,7 @@ Installed skills:
   - `~/.claude/skills/lilarch/`
   - `~/.claude/skills/bugs-flow/`
   - `~/.claude/skills/audit-loop/`
+  - `~/.claude/skills/comment-loop/`
   - `~/.claude/skills/audit-loop-sim/`
   - `~/.claude/skills/goal-loop/`
   - `~/.claude/skills/north-star-investigation/`
@@ -93,6 +96,7 @@ Installed skills:
   - `~/.gemini/skills/lilarch/`
   - `~/.gemini/skills/bugs-flow/`
   - `~/.gemini/skills/audit-loop/`
+  - `~/.gemini/skills/comment-loop/`
   - `~/.gemini/skills/audit-loop-sim/`
   - `~/.gemini/skills/goal-loop/`
   - `~/.gemini/skills/north-star-investigation/`
@@ -187,6 +191,10 @@ Use for Sentry/log-driven bug analysis, narrow fixes, and explicit-review-only f
 
 Use for repo-wide audit passes where the agent should exhaustively map the codebase and current proof surface before editing, then rank and attack the biggest real unresolved risks by consequence instead of picking something convenient.
 
+### `comment-loop`
+
+Use for repo-wide code comment hardening passes where the agent should exhaustively map the repo, current proof surface, and current explanatory coverage before editing, then rank and attack the biggest shared explanation gaps around contracts, conventions, gotchas, and subtle behavior instead of writing narration wherever it feels helpful.
+
 ### `audit-loop-sim`
 
 Use for repo-wide real-app automation passes where the agent should exhaustively map the app, journeys, and current automation surface before editing, then rank and attack the biggest unresolved automation risks by consequence instead of cashing out on tiny safe test tweaks.
@@ -217,7 +225,7 @@ Use when the user wants a cold-read score, rationale, and prioritized improvemen
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `audit-loop-sim`, `delay-poll`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, or `agent-definition-auditor`.
+- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `delay-poll`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, or `agent-definition-auditor`.
 - Full-arch execution defaults to `arch-step`.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -240,6 +248,9 @@ Examples:
 - `Use $audit-loop`
 - `Use $audit-loop review`
 - `Use $audit-loop auto`
+- `Use $comment-loop`
+- `Use $comment-loop review`
+- `Use $comment-loop auto`
 - `Use $audit-loop-sim`
 - `Use $audit-loop-sim review`
 - `Use $audit-loop-sim auto`

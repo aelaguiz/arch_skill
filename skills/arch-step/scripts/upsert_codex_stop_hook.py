@@ -10,9 +10,10 @@ from pathlib import Path
 
 
 STATUS_MESSAGE = (
-    "arch_skill automatic controllers are running; planning continuations are quick, fresh audits or docs evaluations can take a few minutes, and delay polls can wait much longer"
+    "arch_skill automatic controllers are running; planning continuations are quick, fresh reviews or docs evaluations can take a few minutes, and delay polls can wait much longer"
 )
 LEGACY_STATUS_MESSAGES = {
+    "arch_skill automatic controllers are running; planning continuations are quick, fresh audits or docs evaluations can take a few minutes, and delay polls can wait much longer",
     "arch_skill automatic controllers are running; planning continuations are quick, and fresh audits or docs evaluations can take a few minutes",
     "arch suite automatic controller is running; planning continuations are quick, and fresh audits or docs evaluations can take a few minutes",
     "arch-step automatic controller is running; planning continuations are quick, fresh implement-loop audits can take a few minutes",

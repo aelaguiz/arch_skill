@@ -10,6 +10,7 @@ The current skill suite is:
 - `lilarch`
 - `bugs-flow`
 - `audit-loop`
+- `comment-loop`
 - `audit-loop-sim`
 - `goal-loop`
 - `north-star-investigation`
@@ -32,7 +33,7 @@ cd arch_skill
 make install
 ```
 
-For Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `audit-loop-sim auto`, and `delay-poll`, also enable the Codex feature once:
+For Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, and `delay-poll`, also enable the Codex feature once:
 
 ```bash
 codex features enable codex_hooks
@@ -48,6 +49,7 @@ Default local path:
 - `~/.agents/skills/lilarch/`
 - `~/.agents/skills/bugs-flow/`
 - `~/.agents/skills/audit-loop/`
+- `~/.agents/skills/comment-loop/`
 - `~/.agents/skills/audit-loop-sim/`
 - `~/.agents/skills/goal-loop/`
 - `~/.agents/skills/north-star-investigation/`
@@ -68,6 +70,7 @@ Installed skills:
   - `lilarch`
   - `bugs-flow`
   - `audit-loop`
+  - `comment-loop`
   - `audit-loop-sim`
   - `delay-poll`
   - `goal-loop`
@@ -83,6 +86,7 @@ Installed skills:
   - `lilarch`
   - `bugs-flow`
   - `audit-loop`
+  - `comment-loop`
   - `audit-loop-sim`
   - `goal-loop`
   - `north-star-investigation`
@@ -96,6 +100,7 @@ Installed skills:
   - `lilarch`
   - `bugs-flow`
   - `audit-loop`
+  - `comment-loop`
   - `audit-loop-sim`
   - `goal-loop`
   - `north-star-investigation`
@@ -103,7 +108,7 @@ Installed skills:
   - `arch-skills-guide`
   - `agent-definition-auditor`
 
-Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs one repo-managed `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`; that one hook backs `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `audit-loop-sim auto`, and `delay-poll`.
+Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs one repo-managed `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`; that one hook backs `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, and `delay-poll`.
 
 `delay-poll` is installed only on the agents/Codex surface because it depends on the Codex `Stop` hook runtime and is not a real feature on Claude Code or Gemini CLI.
 
@@ -248,6 +253,16 @@ Examples:
 - `Use $audit-loop`
 - `Use $audit-loop review`
 - `Use $audit-loop auto`
+
+### `comment-loop`
+
+Use for repo-wide code comment hardening passes or "deeply understand this repo, then explain the conventions and gotchas in code" requests when the agent should first exhaustively map the repo, current proof surface, and current explanatory coverage before choosing where comments actually matter.
+
+Examples:
+
+- `Use $comment-loop`
+- `Use $comment-loop review`
+- `Use $comment-loop auto`
 
 ### `audit-loop-sim`
 

@@ -22,6 +22,9 @@ HOOK_CONTRACT_TEXT_PATHS = [
     Path("skills/audit-loop/SKILL.md"),
     Path("skills/audit-loop/agents/openai.yaml"),
     Path("skills/audit-loop/references/auto.md"),
+    Path("skills/comment-loop/SKILL.md"),
+    Path("skills/comment-loop/agents/openai.yaml"),
+    Path("skills/comment-loop/references/auto.md"),
     Path("skills/audit-loop-sim/SKILL.md"),
     Path("skills/audit-loop-sim/agents/openai.yaml"),
     Path("skills/audit-loop-sim/references/auto.md"),
@@ -184,6 +187,81 @@ class CodexStopHookTests(unittest.TestCase):
                 )
         finally:
             self.stop_module.run_fresh_sim_review = original
+            sys.stdout = saved_stdout
+            sys.stderr = saved_stderr
+        return (
+            raised.exception.code,
+            json.loads(stdout.getvalue()),
+            stderr.getvalue(),
+            state_path,
+            ledger_path,
+        )
+
+    def run_comment_loop_handler(
+        self,
+        repo_root: Path,
+        session_id: str,
+        *,
+        controller_fields: dict[str, str],
+        review_summary: str | None = None,
+        gitignore_text: str | None = None,
+        gitignore_created: bool = False,
+    ) -> tuple[int, dict, str, Path, Path]:
+        state_path = self.controller_state_path(
+            repo_root,
+            self.stop_module.COMMENT_LOOP_STATE_RELATIVE_PATH,
+            session_id,
+        )
+        ledger_path = repo_root / "_comment_ledger.md"
+        controller_block = "\n".join(
+            [
+                "<!-- comment_loop:block:controller:start -->",
+                f"Verdict: {controller_fields.get('Verdict', '')}",
+                f"Next Area: {controller_fields.get('Next Area', '')}",
+                f"Stop Reason: {controller_fields.get('Stop Reason', '')}",
+                f"Last Review: {controller_fields.get('Last Review', '')}",
+                "<!-- comment_loop:block:controller:end -->",
+            ]
+        )
+        ledger_path.write_text(
+            "# Comment Ledger\n"
+            "Started: 2026-04-13\n"
+            "Last updated: 2026-04-13\n\n"
+            f"{controller_block}\n",
+            encoding="utf-8",
+        )
+        self.write_json(
+            state_path,
+            {
+                "command": "auto",
+                "session_id": session_id,
+                "ledger_path": "_comment_ledger.md",
+                "gitignore_created": gitignore_created,
+                "gitignore_entry_added": True,
+            },
+        )
+        if gitignore_text is not None:
+            (repo_root / ".gitignore").write_text(gitignore_text, encoding="utf-8")
+
+        review_result = self.stop_module.FreshAuditResult(
+            process=subprocess.CompletedProcess(args=["codex"], returncode=0, stdout="", stderr=""),
+            last_message=review_summary,
+        )
+        original = self.stop_module.run_fresh_comment_review
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        self.stop_module.run_fresh_comment_review = lambda *args, **kwargs: review_result
+        try:
+            saved_stdout = sys.stdout
+            saved_stderr = sys.stderr
+            sys.stdout = stdout
+            sys.stderr = stderr
+            with self.assertRaises(SystemExit) as raised:
+                self.stop_module.handle_comment_loop(
+                    {"cwd": str(repo_root), "session_id": session_id}
+                )
+        finally:
+            self.stop_module.run_fresh_comment_review = original
             sys.stdout = saved_stdout
             sys.stderr = saved_stderr
         return (
@@ -494,6 +572,42 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertFalse(payload["continue"])
             self.assertIn(".codex/auto-plan-state.session-1.json", payload["stopReason"])
             self.assertIn(".codex/audit-loop-sim-state.session-1.json", payload["stopReason"])
+
+    def test_stop_hook_blocks_when_same_session_has_comment_loop_and_other_controller_states(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            self.write_json(
+                self.controller_state_path(
+                    repo_root,
+                    self.stop_module.COMMENT_LOOP_STATE_RELATIVE_PATH,
+                    "session-1",
+                ),
+                {
+                    "command": "auto",
+                    "session_id": "session-1",
+                    "ledger_path": "_comment_ledger.md",
+                },
+            )
+            self.write_json(
+                self.controller_state_path(
+                    repo_root,
+                    self.stop_module.IMPLEMENT_LOOP_STATE_RELATIVE_PATH,
+                    "session-1",
+                ),
+                {
+                    "command": "implement-loop",
+                    "session_id": "session-1",
+                    "doc_path": "docs/PLAN.md",
+                },
+            )
+
+            process = self.run_stop_hook(repo_root, "session-1")
+
+            self.assertEqual(process.returncode, 0, msg=process.stderr)
+            payload = json.loads(process.stdout)
+            self.assertFalse(payload["continue"])
+            self.assertIn(".codex/comment-loop-state.session-1.json", payload["stopReason"])
+            self.assertIn(".codex/implement-loop-state.session-1.json", payload["stopReason"])
 
     def test_stop_hook_ignores_other_session_controller_states(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -964,6 +1078,110 @@ class CodexStopHookTests(unittest.TestCase):
                 "arch-docs auto evaluation stopped: no credible grounded next pass.",
             )
             self.assertFalse(state_path.exists())
+
+    def test_comment_loop_continue_keeps_state_armed(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+
+            exit_code, payload, stderr, state_path, ledger_path = self.run_comment_loop_handler(
+                repo_root,
+                "session-1",
+                controller_fields={
+                    "Verdict": "CONTINUE",
+                    "Next Area": "payment lifecycle invariants and retry gotchas",
+                    "Stop Reason": "",
+                    "Last Review": "2026-04-13",
+                },
+                review_summary="The canonical payment owner path still lacks its authoritative convention comment.",
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertTrue(payload["continue"])
+            self.assertIn("more worthwhile comment work", payload["reason"])
+            self.assertIn("Use $comment-loop", payload["reason"])
+            self.assertIn("payment lifecycle invariants and retry gotchas", payload["reason"])
+            self.assertEqual(payload["systemMessage"], "comment-loop review found more work.")
+            self.assertTrue(state_path.exists())
+            self.assertTrue(ledger_path.exists())
+
+    def test_comment_loop_clean_removes_runtime_artifacts(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+
+            exit_code, payload, stderr, state_path, ledger_path = self.run_comment_loop_handler(
+                repo_root,
+                "session-1",
+                controller_fields={
+                    "Verdict": "CLEAN",
+                    "Next Area": "",
+                    "Stop Reason": "",
+                    "Last Review": "2026-04-13",
+                },
+                review_summary="No credible high-impact explanation gap remains.",
+                gitignore_text="_comment_ledger.md\n",
+                gitignore_created=True,
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertFalse(payload["continue"])
+            self.assertIn("fresh review finished clean", payload["stopReason"])
+            self.assertEqual(payload["systemMessage"], "comment-loop completed clean.")
+            self.assertFalse(state_path.exists())
+            self.assertFalse(ledger_path.exists())
+            self.assertFalse((repo_root / ".gitignore").exists())
+
+    def test_comment_loop_blocked_disarms_state(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+
+            exit_code, payload, stderr, state_path, ledger_path = self.run_comment_loop_handler(
+                repo_root,
+                "session-1",
+                controller_fields={
+                    "Verdict": "BLOCKED",
+                    "Next Area": "",
+                    "Stop Reason": "The behavior is still ambiguous and belongs to audit-loop first.",
+                    "Last Review": "2026-04-13",
+                },
+                review_summary="The highest-priority front would freeze an unsettled contract into comments.",
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertFalse(payload["continue"])
+            self.assertIn(
+                "The behavior is still ambiguous and belongs to audit-loop first.",
+                payload["stopReason"],
+            )
+            self.assertEqual(payload["systemMessage"], "comment-loop stopped blocked.")
+            self.assertFalse(state_path.exists())
+            self.assertTrue(ledger_path.exists())
+
+    def test_comment_loop_continue_without_next_area_disarms_state(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+
+            exit_code, payload, stderr, state_path, ledger_path = self.run_comment_loop_handler(
+                repo_root,
+                "session-1",
+                controller_fields={
+                    "Verdict": "CONTINUE",
+                    "Next Area": "",
+                    "Stop Reason": "",
+                    "Last Review": "2026-04-13",
+                },
+                review_summary="The review forgot to name the next explanation front.",
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertFalse(payload["continue"])
+            self.assertIn("CONTINUE without Next Area", payload["stopReason"])
+            self.assertEqual(payload["systemMessage"], "comment-loop review omitted Next Area.")
+            self.assertFalse(state_path.exists())
+            self.assertTrue(ledger_path.exists())
 
     def test_audit_loop_sim_continue_keeps_state_armed(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

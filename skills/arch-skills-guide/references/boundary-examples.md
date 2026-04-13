@@ -28,6 +28,20 @@
 - "Scan the repo for the next real bugs and keep cleaning until it is not worth continuing":
   - `audit-loop`
 
+## Docs cleanup vs comment loop
+
+- "The code is stable; explain the conventions and gotchas in code comments":
+  - `comment-loop`
+- "The code is stable; clean up the docs and retire stale working notes":
+  - `arch-docs`
+
+## Comment loop vs audit loop
+
+- "Deeply map this repo, then add the comments that actually matter":
+  - `comment-loop`
+- "Deeply map this repo, then fix the biggest real bugs and proof gaps":
+  - `audit-loop`
+
 ## Mini plan vs lilarch
 
 - "Small feature, but I still want the canonical architecture blocks":
