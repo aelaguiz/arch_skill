@@ -89,6 +89,7 @@ By the end of the run:
 - broader docs consolidation, evergreen promotion, and final plan/worklog retirement belong to `arch-docs` after the code audit is clean; do not silently stretch `implement` into that separate docs-cleanup workflow
 - do not start coding from a plan that is not decision-complete
 - do not silently cut approved behavior or required implementation work because it is larger than expected
+- do not rewrite plan requirements, scope, acceptance criteria, or phase obligations during execution to make partial work look intentional; if the approved plan itself needs to change, stop and route back to planning or the user
 - build a compact in-memory implementation ledger from:
   - phase tasks
   - call-site audit items
@@ -177,16 +178,17 @@ Under the current phase heading, add or update only the smallest truthful execut
 - `Status: COMPLETE` when the phase exit criteria are actually met
 - `Status: BLOCKED` when a real blocker stops the phase
 - `Completed work:` for brief high-signal bullets
-- `Deferred:` for explicit carry-forwards that are still in scope but not done in this run
+- `Deferred:` only for explicit carry-forwards the user or approved plan already allowed; never use it to shrink required work discovered during execution
 - `Blocked on:` for the current blocking fact
 - `Manual QA (non-blocking):` for short end-of-run human checks
 
-Also update nearby plan sections when implementation changes the truth:
+Also update only the nearby execution-truth surfaces needed to keep the artifact honest:
 
 - if sequencing or assumptions drift materially, append a Section 10 Decision Log entry
-- if architecture changed in a meaningful way, repair the smallest stale claims in TL;DR, Section 0, Section 5, Section 7, or Section 8
 - if a touched live doc, comment, or instruction would otherwise become stale, update or delete it in the same run and keep the phase notes truthful about that work
-- if a planned item turns out to be truly out of scope because the user or the existing plan already says so, record that explicitly with rationale instead of silently dropping it
+- do not rewrite TL;DR, Section 0, Section 5, Section 7, or Section 8 to weaken requirements, narrow scope, or lower the acceptance bar during implementation
+- if execution reveals that requirements, scope, architecture commitments, or acceptance criteria really need to change, stop and route back to planning or the user instead of editing the plan to fit the current code
+- do not decide mid-run that a planned item is out of scope unless the user or already-approved plan text had already excluded it before execution started
 - if a planned item's requiredness turns out to depend on an unresolved user decision, stop and ask instead of silently downgrading it
 - if the code becomes clean before the broader feature docs are fully consolidated, leave the handoff visible for `arch-docs` instead of burying that remaining docs-cleanup work inside finish notes
 
@@ -202,6 +204,7 @@ At each phase boundary classify every in-scope ledger item as:
 - `still todo`
 
 Do not claim completion while ledger items remain hidden.
+Do not use `deferred` to hide originally required work unless that carry-forward was already explicitly allowed before execution began.
 
 At each phase boundary:
 

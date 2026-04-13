@@ -532,6 +532,8 @@ Strong when:
 - missing items cite evidence anchors
 - each missing item says what the plan expects, what code reality is, and what fix remains
 - false-complete phases are reopened
+- it catches execution-side plan drift instead of accepting a narrowed after-the-fact story
+- it checks explicit details and sub-obligations, not just broad feature impressions
 - stale touched live docs/comments are treated as implementation gaps when the plan required cleanup
 - unjustified scaffolding around agent-backed behavior is treated as an implementation gap when the plan required prompt-first or capability-first handling
 - manual QA is tracked as non-blocking follow-up instead of missing code
@@ -542,6 +544,8 @@ Weak when:
 - missing items are vague
 - code gaps and manual QA are mixed together
 - phases stay marked complete despite real code gaps
+- it accepts broad "done" language while explicit plan details are still missing
+- execution-side plan rewrites are allowed to stand as truth
 
 Downstream can trust it when:
 

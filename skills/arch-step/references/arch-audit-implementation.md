@@ -76,6 +76,9 @@ When this command runs inside `implement-loop`, it alone owns the authoritative 
 - do not fix the code while auditing; record gaps instead
 - when running inside `implement-loop`, do not let the parent implementation pass stand in for this audit or author the authoritative clean outcome
 - if the implementation claims a fix but does not provide credible code-verifiable proof for it, treat that as missing code completeness
+- audit against the approved plan's explicit promises, not against a narrower story execution wrote after the fact
+- if execution rewrote requirements, scope, acceptance criteria, or phase obligations to make unfinished work disappear, treat that as `NOT COMPLETE`
+- do not accept "mostly done", "core path done", or similar broad completion claims when explicit plan details or sub-obligations are still missing
 - broader docs consolidation, evergreen promotion, and plan/worklog retirement belong to `arch-docs` after a clean audit unless the plan explicitly made a specific touched-doc cleanup item part of code-completeness
 
 ## Highest-bar audit criteria
@@ -84,6 +87,7 @@ Check all of these:
 
 - absolute completeness:
   - if the plan says something is done, it is actually built
+  - if the plan promises a detail, sub-obligation, migration, delete, cleanup, or proof item, it is actually satisfied
 - architecture compliance:
   - SSOT is real
   - boundaries and contracts match the plan
@@ -123,6 +127,7 @@ Missing manual evidence should become non-blocking follow-up.
 
 1. read `DOC_PATH` fully
 2. extract the plan's authoritative anchors:
+   - explicit requirements, exclusions, and acceptance criteria
    - target architecture contracts, APIs, names, and paths
    - call-site audit rows or equivalent migration inventory
    - phase plan and any phases marked complete, done, or checked off
@@ -133,6 +138,8 @@ Missing manual evidence should become non-blocking follow-up.
    - code-verifiable evidence
    - manual non-blocking evidence
 4. validate each planned code change against repo reality:
+   - verify the implementation did not weaken or rewrite the plan to hide unfinished work
+   - verify every explicit requirement and sub-obligation in the plan, not just the main happy path
    - verify each planned call-site change in code
    - search for missed call sites or lingering old APIs, patterns, or paths
    - verify SSOT ownership and boundary compliance in shipped code, runtime routing, or real contract surfaces
@@ -162,6 +169,7 @@ Always name phases as `Phase <n> (<what it does>)` using the phase heading text 
 - if the implementation introduced capability-replacing scaffolding for agent-backed behavior without explicit plan justification, treat that as missing code correctness and reopen the responsible phase
 - if a refactor or convergence change lacks credible preservation evidence, treat that as missing code correctness and reopen the responsible phase
 - if a claimed fix lacks credible code-verifiable proof, treat that as missing code correctness and reopen the responsible phase
+- if execution-side plan edits weakened requirements, scope, acceptance criteria, or phase obligations to match partial code, treat that as missing code correctness and reopen the responsible phase
 - do not reopen a phase solely because someone failed to add a keyword grep, docs-audit script, absence check, or repo-structure policing gate that the user never asked for
 
 ## Update rules
