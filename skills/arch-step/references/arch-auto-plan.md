@@ -70,7 +70,7 @@ Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not
 
 ## Active planning-state contract
 
-Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/auto-plan-state.<SESSION_ID>.json` before the first research pass.
+Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/auto-plan-state.<SESSION_ID>.json` after preflight and `DOC_PATH` resolution.
 
 Minimal shape:
 
@@ -79,19 +79,19 @@ Minimal shape:
   "version": 1,
   "command": "auto-plan",
   "session_id": "<SESSION_ID>",
-  "doc_path": "docs/<PLAN>.md",
-  "stage_index": 0,
-  "stages": ["research", "deep-dive-pass-1", "deep-dive-pass-2", "phase-plan", "consistency-pass"]
+  "doc_path": "docs/<PLAN>.md"
 }
 ```
 
 Lifecycle:
 
-- create or refresh it after preflight and before the research pass
-- write the current `session_id` into the state file at arm time
+- create or refresh it after preflight and `DOC_PATH` resolution
+- write the current `session_id` and `doc_path` into the state file at arm time
 - leave it armed while automatic planning is active
-- only the Stop hook may advance `stage_index`, and only after the required canonical outputs for that stage were updated
-- only the Stop hook may delete it after successful `phase-plan`
+- treat `DOC_PATH` as the only planning-progress ledger
+- treat the state file as armed controller state for one doc and one session, not as a progress ledger
+- on reruns, let the Stop hook reconcile from doc truth and continue from the first incomplete stage
+- only the Stop hook may delete it after successful planning completion
 - delete it before stopping on a blocker, ambiguity, or other early stop so the controller does not re-enter falsely
 
 ## Hard rules
@@ -103,6 +103,7 @@ Lifecycle:
 - the second `deep-dive` pass is required for this controller even when external research was not run
 - in Codex, the installed runtime continuation path owns stage-to-stage continuation
 - the initial parent `auto-plan` pass must run only `research`, then end its turn naturally
+- rerunning `auto-plan` on a partially complete doc is legal; re-arm the controller and let the Stop hook resume from the first incomplete stage in `DOC_PATH`
 - later planning stages are hook-owned only; the parent pass must not self-run `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, or `consistency-pass` in the same turn
 - the parent pass must not clear successful controller state, claim the planning arc is complete, or emit the `implement-loop` handoff
 - planning stages stay in the same visible Codex thread across separate turns; do not hide them in silent child planning runs or collapse them into one long same-turn chain
@@ -125,7 +126,7 @@ Right pattern:
 Use these signals before the Stop hook continues automatically:
 
 - `research`:
-  - `arch_skill:block:research_grounding` is present and was updated in this stage
+  - `arch_skill:block:research_grounding` is present
 - `deep-dive` pass 1:
   - `arch_skill:block:current_architecture` is present
   - `arch_skill:block:target_architecture` is present
@@ -135,9 +136,9 @@ Use these signals before the Stop hook continues automatically:
   - the same three architecture blocks are present
   - `planning_passes` marks `deep_dive_pass_2: done <YYYY-MM-DD>`
 - `phase-plan`:
-  - `arch_skill:block:phase_plan` is present and was updated in this stage
+  - `arch_skill:block:phase_plan` is present
 - `consistency-pass`:
-  - `arch_skill:block:consistency_pass` is present and was updated in this stage
+  - `arch_skill:block:consistency_pass` is present
   - the helper block says `Decision-complete: yes`
   - the helper block says `Unresolved decisions: none`
   - the helper block says `Decision: proceed to implement? yes`
@@ -148,15 +149,19 @@ Use these signals before the Stop hook continues automatically:
 1. Read `DOC_PATH` fully and run the same alignment checks required by the planning commands it will invoke.
 2. Run the runtime preflight. If the `~/.codex/hooks.json` entry, the installed runner, or `codex_hooks` is unavailable, fail loud.
 3. Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/auto-plan-state.<SESSION_ID>.json` for the current Codex session and `DOC_PATH`.
-4. Run one truthful `research` pass using the `research` contract. The parent `auto-plan` pass stops there; it must not self-run later planning stages in the same turn.
+4. Use `DOC_PATH` as the planning ledger:
+   - if the doc has no planning progress yet, run one truthful `research` pass and stop there
+   - if the doc already has partial progress, do not rerun completed stages; let the Stop hook continue from the first incomplete stage
+   - if the doc is already complete through `consistency-pass`, stop ready for `implement-loop`
 5. Let Codex try to stop. The installed runtime should:
    - no-op when no active auto-plan state matches the current session
-   - after `research`, feed `Use $arch-step deep-dive <DOC_PATH>` as deep-dive pass 1
-   - after `deep-dive` pass 1, feed `Use $arch-step deep-dive <DOC_PATH>` as deep-dive pass 2
-   - after `deep-dive` pass 2, feed `Use $arch-step phase-plan <DOC_PATH>`
-   - after `phase-plan`, feed `Use $arch-step consistency-pass <DOC_PATH>`
+   - read the doc and find the first incomplete stage
+   - if the first incomplete stage is `deep-dive` pass 1, feed `Use $arch-step deep-dive <DOC_PATH>`
+   - if the first incomplete stage is `deep-dive` pass 2, feed `Use $arch-step deep-dive <DOC_PATH>`
+   - if the first incomplete stage is `phase-plan`, feed `Use $arch-step phase-plan <DOC_PATH>`
+   - if the first incomplete stage is `consistency-pass`, feed `Use $arch-step consistency-pass <DOC_PATH>`
    - after `consistency-pass` with `Decision-complete: yes` and `Decision: proceed to implement? yes`, clear state and stop with the `implement-loop` handoff message
-6. On each hook-driven continuation, run the literal next planning command against the same `DOC_PATH`, keep the controller state aligned, and stop naturally after that one stage finishes.
+6. On each hook-driven continuation, run the literal next planning command against the same `DOC_PATH`, keep the controller state armed, and stop naturally after that one stage finishes.
 7. If a stage ends early, does not update the required canonical outputs, uncovers a blocker question, or the next move is no longer credible, clear `.codex/auto-plan-state.<SESSION_ID>.json`, stop, and report that state plainly.
 8. If `consistency-pass` ends with `Decision: proceed to implement? no`, clear `.codex/auto-plan-state.<SESSION_ID>.json`, stop, and report that the doc still needs planning repair before implementation.
 

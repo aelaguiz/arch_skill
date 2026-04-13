@@ -15,7 +15,7 @@ Decision-complete means the main artifact has no unresolved plan-shaping decisio
   - `<DOC_DIR>/<DOC_BASENAME>_WORKLOG.md`
   - progress evidence only, never a second plan
 
-Planning commands update `DOC_PATH` only, except `auto-plan`, which also arms `.codex/auto-plan-state.<SESSION_ID>.json` as controller state for hook-owned later stages. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
+Planning commands update `DOC_PATH` only, except `auto-plan`, which also arms `.codex/auto-plan-state.<SESSION_ID>.json` as controller state for hook-owned later stages. For `auto-plan`, `DOC_PATH` remains the planning-progress ledger; the state file is only armed controller state for that doc/session. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
 
 ## Artifact convergence rule
 

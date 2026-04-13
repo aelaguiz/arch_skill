@@ -557,10 +557,6 @@ def pass_is_done(pass_value: str | None) -> bool:
     return pass_value.lower().startswith("done")
 
 
-def doc_updated_since_state(doc_path: Path, state_path: Path) -> bool:
-    return doc_path.stat().st_mtime_ns > state_path.stat().st_mtime_ns
-
-
 def extract_marked_block(doc_text: str, marker_key: str) -> str | None:
     start_marker = BLOCK_MARKERS[marker_key]
     end_marker = start_marker.replace(":start -->", ":end -->")
@@ -916,25 +912,6 @@ def validate_auto_plan_state(
         clear_state(state_path)
         block_with_message(
             "auto-plan controller state was missing doc_path; "
-            "the controller was disarmed. Update the plan truthfully and stop."
-        )
-
-    stages = state.get("stages")
-    if stages is None:
-        state["stages"] = list(AUTO_PLAN_STAGES)
-        stages = state["stages"]
-    if stages != list(AUTO_PLAN_STAGES):
-        clear_state(state_path)
-        block_with_message(
-            "auto-plan controller state had an unexpected stages list; "
-            "the controller was disarmed. Update the plan truthfully and stop."
-        )
-
-    stage_index = state.get("stage_index")
-    if not isinstance(stage_index, int) or not 0 <= stage_index < len(AUTO_PLAN_STAGES):
-        clear_state(state_path)
-        block_with_message(
-            "auto-plan controller state had an invalid stage_index; "
             "the controller was disarmed. Update the plan truthfully and stop."
         )
 
@@ -1427,6 +1404,13 @@ def auto_plan_stage_complete(doc_text: str, stage: str) -> bool:
     raise RuntimeError(f"unexpected auto-plan stage: {stage}")
 
 
+def next_incomplete_auto_plan_stage(doc_text: str) -> str | None:
+    for stage in AUTO_PLAN_STAGES:
+        if not auto_plan_stage_complete(doc_text, stage):
+            return stage
+    return None
+
+
 def auto_plan_stage_blocked(doc_text: str, stage: str) -> bool:
     if stage != "consistency-pass":
         return False
@@ -1436,25 +1420,29 @@ def auto_plan_stage_blocked(doc_text: str, stage: str) -> bool:
 def auto_plan_continue_reason(doc_path_value: str, next_stage: str, state_path_value: str) -> str:
     if next_stage == "deep-dive-pass-1":
         return (
-            f"auto-plan finished research for {doc_path_value}. Continue now with the next required command: "
+            f"auto-plan is armed for {doc_path_value}. The first incomplete planning stage in the doc is deep-dive pass 1. "
+            "Continue now with the next required command: "
             f"Use $arch-step deep-dive {doc_path_value}. This is deep-dive pass 1 of 2. "
             f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
     if next_stage == "deep-dive-pass-2":
         return (
-            f"auto-plan finished deep-dive pass 1 for {doc_path_value}. Continue now with the next required command: "
+            f"auto-plan is armed for {doc_path_value}. The first incomplete planning stage in the doc is deep-dive pass 2. "
+            "Continue now with the next required command: "
             f"Use $arch-step deep-dive {doc_path_value}. This is deep-dive pass 2 of 2. "
             f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
     if next_stage == "phase-plan":
         return (
-            f"auto-plan finished deep-dive pass 2 for {doc_path_value}. Continue now with the next required command: "
+            f"auto-plan is armed for {doc_path_value}. The first incomplete planning stage in the doc is phase-plan. "
+            "Continue now with the next required command: "
             f"Use $arch-step phase-plan {doc_path_value}. "
             f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
     if next_stage == "consistency-pass":
         return (
-            f"auto-plan finished phase-plan for {doc_path_value}. Continue now with the next required command: "
+            f"auto-plan is armed for {doc_path_value}. The first incomplete planning stage in the doc is consistency-pass. "
+            "Continue now with the next required command: "
             f"Use $arch-step consistency-pass {doc_path_value}. This is the required end-to-end consistency cold read. "
             f"Keep {state_path_value} armed and stop naturally when this command finishes."
         )
@@ -1591,36 +1579,9 @@ def handle_auto_plan(payload: dict) -> int:
             "The controller was disarmed. Update the plan truthfully and stop."
         )
 
-    stage_index = state["stage_index"]
-    current_stage = AUTO_PLAN_STAGES[stage_index]
     doc_text = read_doc_text(doc_path)
-    if not doc_updated_since_state(doc_path, state_path):
-        clear_state(state_path)
-        stop_with_json(
-            f"auto-plan stopped before {auto_plan_stage_name(current_stage)} completed for {doc_path_value}. "
-            "The controller was disarmed. Resolve the blocker or finish the stage manually, then rerun "
-            f"`Use $arch-step auto-plan {doc_path_value}` if you still want automatic planning continuation.",
-            system_message=f"auto-plan stopped before {auto_plan_stage_name(current_stage)} completed.",
-        )
-    if auto_plan_stage_blocked(doc_text, current_stage):
-        clear_state(state_path)
-        stop_with_json(
-            f"auto-plan stopped after consistency-pass for {doc_path_value}. "
-            "The helper block does not currently approve implementation. Resolve the remaining inconsistencies in the main "
-            f"artifact, then rerun `Use $arch-step auto-plan {doc_path_value}` if you still want automatic planning continuation.",
-            system_message="auto-plan consistency-pass did not approve implementation.",
-        )
-    if not auto_plan_stage_complete(doc_text, current_stage):
-        clear_state(state_path)
-        stop_with_json(
-            f"auto-plan stopped before {auto_plan_stage_name(current_stage)} completed for {doc_path_value}. "
-            "The controller was disarmed. Resolve the blocker or finish the stage manually, then rerun "
-            f"`Use $arch-step auto-plan {doc_path_value}` if you still want automatic planning continuation.",
-            system_message=f"auto-plan stopped before {auto_plan_stage_name(current_stage)} completed.",
-        )
-
-    next_index = stage_index + 1
-    if next_index >= len(AUTO_PLAN_STAGES):
+    next_stage = next_incomplete_auto_plan_stage(doc_text)
+    if next_stage is None:
         clear_state(state_path)
         stop_with_json(
             f"auto-plan completed for {doc_path_value}. Research, deep-dive pass 1, deep-dive pass 2, phase-plan, and consistency-pass are in place. "
@@ -1628,12 +1589,37 @@ def handle_auto_plan(payload: dict) -> int:
             system_message="auto-plan completed; the doc is ready for implement-loop.",
         )
 
-    next_stage = AUTO_PLAN_STAGES[next_index]
-    state["stage_index"] = next_index
-    write_state(state_path, state)
+    if auto_plan_stage_blocked(doc_text, next_stage):
+        clear_state(state_path)
+        stop_with_json(
+            f"auto-plan stopped after consistency-pass for {doc_path_value}. "
+            "The helper block does not currently approve implementation. Resolve the remaining inconsistencies in the main "
+            f"artifact, then rerun `Use $arch-step auto-plan {doc_path_value}` if you still want automatic planning continuation.",
+            system_message="auto-plan consistency-pass did not approve implementation.",
+        )
+
+    if next_stage == "research":
+        clear_state(state_path)
+        stop_with_json(
+            f"auto-plan stopped before research completed for {doc_path_value}. "
+            "The controller was disarmed. Resolve the blocker or finish the stage manually, then rerun "
+            f"`Use $arch-step auto-plan {doc_path_value}` if you still want automatic planning continuation.",
+            system_message="auto-plan stopped before research completed.",
+        )
+
+    changed = False
+    if "stage_index" in state:
+        state.pop("stage_index", None)
+        changed = True
+    if "stages" in state:
+        state.pop("stages", None)
+        changed = True
+    if changed:
+        write_state(state_path, state)
+
     block_with_json(
         auto_plan_continue_reason(doc_path_value, next_stage, state_path_value),
-        system_message=f"auto-plan finished {auto_plan_stage_name(current_stage)}; continuing to {auto_plan_stage_name(next_stage)}.",
+        system_message=f"auto-plan continuing with {auto_plan_stage_name(next_stage)}.",
     )
 
 

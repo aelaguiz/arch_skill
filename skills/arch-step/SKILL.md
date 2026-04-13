@@ -126,9 +126,10 @@ Choose exactly one next command using this precedence:
 1. No plan doc yet: run `new`.
 2. Existing doc is not canonical enough to trust: run `reformat`.
 3. North Star is still draft or too weak to support planning: stop for confirmation or repair the artifact with `reformat`.
-4. Earliest required structure or owned block is missing: run the command that repairs it.
-5. Required structure exists but the next critical sections are still weak or still contain unresolved decisions: run the command that strengthens them or stop and ask the user the exact blocker question.
-6. Otherwise follow the canonical core arc:
+4. After North Star confirmation, stop and wait for the user's explicit next command; do not auto-advance into `research` or any later stage.
+5. Earliest required structure or owned block is missing: run the command that repairs it.
+6. Required structure exists but the next critical sections are still weak or still contain unresolved decisions: run the command that strengthens them or stop and ask the user the exact blocker question.
+7. Otherwise follow the canonical core arc:
    - `new` or `reformat`
    - North Star confirmation
    - `research`
@@ -138,7 +139,7 @@ Choose exactly one next command using this precedence:
    - `phase-plan`
    - `implement`
    - `audit-implementation`
-7. If the code audit is clean and the feature still needs docs cleanup, hand off to `arch-docs`.
+8. If the code audit is clean and the feature still needs docs cleanup, hand off to `arch-docs`.
 
 Do not auto-run more than one command.
 
@@ -162,19 +163,20 @@ These stay explicit unless the user directly asks for them:
 - `implement-loop`
 - `auto-implement`
 
-`auto-plan` is a bounded planning controller. In Codex, the initial `auto-plan` pass arms `.codex/auto-plan-state.<SESSION_ID>.json`, runs only `research` against the same `DOC_PATH`, then ends its turn naturally. It must not self-run `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, or `consistency-pass` in that same turn. After that first turn, the installed Stop hook owns stage-to-stage continuation: it feeds exactly one literal next command per later turn, keeps the controller state aligned, and only after `consistency-pass` clears state and says the doc is decision-complete and ready for `implement-loop`. The user-facing command stays simple:
+`auto-plan` is a bounded planning controller. In Codex, `DOC_PATH` is the planning ledger and `.codex/auto-plan-state.<SESSION_ID>.json` is only the armed controller state for that doc/session. On a fresh doc, the initial `auto-plan` pass arms state, runs only `research` against the same `DOC_PATH`, then ends its turn naturally. On reruns, the parent pass re-arms state against the same `DOC_PATH` and lets the installed Stop hook continue from the first incomplete stage already visible in the doc. It must not self-run `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, or `consistency-pass` in that same turn. After that first turn, the installed Stop hook owns stage-to-stage continuation: it reads doc truth, feeds exactly one literal next command per later turn, and only after `consistency-pass` clears state and says the doc is decision-complete and ready for `implement-loop`. The user-facing command stays simple:
 
 - run `$arch-step auto-plan`
 - or run `$arch-step auto-plan <DOC_PATH>`
 - do not run the Stop hook yourself; after the controller is armed, just end the turn and let Codex run the installed Stop hook
 - the initial `auto-plan` pass must run only `research`, then end the turn
+- rerunning `auto-plan` on a partially complete doc is legal; the hook resumes from the first incomplete stage already visible in `DOC_PATH`
 - later planning stages are hook-owned only; one literal next command per turn through `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, and `consistency-pass`
 - the parent `auto-plan` pass must not clear successful controller state, claim the planning arc is complete, or emit the `implement-loop` handoff while any decision gaps remain
 - prefer the current session's canonical full-arch doc when `DOC_PATH` is omitted
 - preflight the real continuation surface: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, and that installed runner must exist
 - do not preflight against a copied hook file under `~/.codex/hooks/`; that is not the install contract
 - if that `hooks.json` entry, the installed runner, `codex_hooks`, or the North Star approval is missing, name the broken prerequisite and stop
-- keep `.codex/auto-plan-state.<SESSION_ID>.json` aligned with the live run
+- keep `.codex/auto-plan-state.<SESSION_ID>.json` armed for the live run; treat `DOC_PATH` as the progress ledger
 - if a stage stops early, clear `.codex/auto-plan-state.<SESSION_ID>.json` and stop honestly
 
 `implement-loop` is a bounded delivery controller. It runs `implement`, requires the implementation pass to prove its claimed fixes with credible programmatic signals, then runs `audit-implementation`, and repeats against the same approved `DOC_PATH` until the audit verdict is clean or a real blocker stops progress. In Codex, the parent implementation pass may ship code and sync plan/worklog truth, but only the fresh `audit-implementation` child may author the authoritative audit outcome, emit `Use $arch-docs`, or clear loop state. Execution does not get to change requirements, scope, acceptance criteria, or phase obligations while coding; if the plan itself needs to change, stop and repair the plan instead of continuing on a rewritten story. Do not turn it into a generic open-ended loop.

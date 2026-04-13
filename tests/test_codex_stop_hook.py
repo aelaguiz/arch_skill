@@ -4,7 +4,6 @@ import json
 import subprocess
 import sys
 import tempfile
-import time
 import unittest
 from pathlib import Path
 
@@ -65,6 +64,70 @@ class CodexStopHookTests(unittest.TestCase):
         if session_id is None:
             return repo_root / relative_path
         return repo_root / self.stop_module.session_state_relative_path(relative_path, session_id)
+
+    def auto_plan_state(
+        self,
+        *,
+        session_id: str = "session-1",
+        doc_path: str = "docs/PLAN.md",
+        legacy_progress: bool = False,
+        stage_index: int = 0,
+    ) -> dict:
+        state = {
+            "command": "auto-plan",
+            "session_id": session_id,
+            "doc_path": doc_path,
+        }
+        if legacy_progress:
+            state["stage_index"] = stage_index
+            state["stages"] = list(self.stop_module.AUTO_PLAN_STAGES)
+        return state
+
+    def auto_plan_doc_text(
+        self,
+        *,
+        research: bool = False,
+        deep_dive_pass_1: bool = False,
+        deep_dive_pass_2: bool = False,
+        phase_plan: bool = False,
+        consistency_decision: str | None = None,
+    ) -> str:
+        lines = ["# Plan"]
+        if research:
+            lines.append(self.stop_module.BLOCK_MARKERS["research_grounding"])
+        if deep_dive_pass_1 or deep_dive_pass_2:
+            lines.extend(
+                [
+                    self.stop_module.BLOCK_MARKERS["current_architecture"],
+                    self.stop_module.BLOCK_MARKERS["target_architecture"],
+                    self.stop_module.BLOCK_MARKERS["call_site_audit"],
+                ]
+            )
+        if deep_dive_pass_1:
+            lines.append("deep_dive_pass_1: done 2026-04-13")
+        if deep_dive_pass_2:
+            lines.append("deep_dive_pass_2: done 2026-04-13")
+        if phase_plan:
+            lines.append(self.stop_module.BLOCK_MARKERS["phase_plan"])
+        if consistency_decision is not None:
+            lines.extend(
+                [
+                    self.stop_module.BLOCK_MARKERS["consistency_pass"],
+                    "## Consistency Pass",
+                    "- Reviewers: explorer 1, explorer 2, self-integrator",
+                    "- Scope checked:",
+                    "  - full artifact",
+                    "- Findings summary:",
+                    "  - none",
+                    "- Integrated repairs:",
+                    "  - none",
+                    "- Remaining inconsistencies:",
+                    "  - none",
+                    f"- Decision: proceed to implement? {consistency_decision}",
+                    self.stop_module.BLOCK_MARKERS["consistency_pass"].replace(":start -->", ":end -->"),
+                ]
+            )
+        return "\n".join(lines) + "\n"
 
     def run_stop_hook(self, repo_root: Path, session_id: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
@@ -544,13 +607,7 @@ class CodexStopHookTests(unittest.TestCase):
                     self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                     "session-1",
                 ),
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 0,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
+                self.auto_plan_state(),
             )
             self.write_json(
                 self.controller_state_path(
@@ -694,13 +751,7 @@ class CodexStopHookTests(unittest.TestCase):
                     self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                     "session-1",
                 ),
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 0,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
+                self.auto_plan_state(),
             )
 
             process = self.run_stop_hook(repo_root, "session-1")
@@ -724,13 +775,7 @@ class CodexStopHookTests(unittest.TestCase):
                     self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                     "session-1",
                 ),
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN1.md",
-                    "stage_index": 0,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
+                self.auto_plan_state(doc_path="docs/PLAN1.md"),
             )
             session_two_path = self.controller_state_path(
                 repo_root,
@@ -739,13 +784,7 @@ class CodexStopHookTests(unittest.TestCase):
             )
             self.write_json(
                 session_two_path,
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-2",
-                    "doc_path": "docs/PLAN2.md",
-                    "stage_index": 0,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
+                self.auto_plan_state(session_id="session-2", doc_path="docs/PLAN2.md"),
             )
 
             process = self.run_stop_hook(repo_root, "session-1")
@@ -766,13 +805,7 @@ class CodexStopHookTests(unittest.TestCase):
                     self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                     "session-1",
                 ),
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 0,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
+                self.auto_plan_state(),
             )
             self.write_json(
                 self.controller_state_path(
@@ -782,8 +815,6 @@ class CodexStopHookTests(unittest.TestCase):
                 {
                     "command": "auto-plan",
                     "doc_path": "docs/PLAN.md",
-                    "stage_index": 0,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
                 },
             )
 
@@ -806,17 +837,10 @@ class CodexStopHookTests(unittest.TestCase):
             )
             self.write_json(
                 state_path,
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 0,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
+                self.auto_plan_state(legacy_progress=True),
             )
-            time.sleep(0.01)
             (docs_dir / "PLAN.md").write_text(
-                "<!-- arch_skill:block:research_grounding:start -->\n",
+                self.auto_plan_doc_text(research=True),
                 encoding="utf-8",
             )
 
@@ -825,12 +849,46 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, msg=process.stderr)
             payload = json.loads(process.stdout)
             self.assertTrue(payload["continue"])
-            self.assertIn("docs/PLAN.md", payload["reason"])
+            self.assertIn("Use $arch-step deep-dive docs/PLAN.md", payload["reason"])
             self.assertIn(".codex/auto-plan-state.json", payload["reason"])
+            self.assertEqual(
+                payload["systemMessage"],
+                "auto-plan continuing with deep-dive pass 1.",
+            )
 
             state = json.loads(state_path.read_text(encoding="utf-8"))
             self.assertEqual(state["session_id"], "session-1")
-            self.assertEqual(state["stage_index"], 1)
+            self.assertNotIn("stage_index", state)
+            self.assertNotIn("stages", state)
+
+    def test_stop_hook_reconciles_minimal_auto_plan_state_from_doc_truth(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            docs_dir = repo_root / "docs"
+            docs_dir.mkdir()
+            state_path = self.controller_state_path(
+                repo_root,
+                self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
+                "session-1",
+            )
+            self.write_json(state_path, self.auto_plan_state())
+            (docs_dir / "PLAN.md").write_text(
+                self.auto_plan_doc_text(research=True),
+                encoding="utf-8",
+            )
+
+            process = self.run_stop_hook(repo_root, "session-1")
+
+            self.assertEqual(process.returncode, 0, msg=process.stderr)
+            payload = json.loads(process.stdout)
+            self.assertTrue(payload["continue"])
+            self.assertIn("Use $arch-step deep-dive docs/PLAN.md", payload["reason"])
+            self.assertEqual(
+                payload["systemMessage"],
+                "auto-plan continuing with deep-dive pass 1.",
+            )
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertEqual(state, self.auto_plan_state())
 
     def test_stop_hook_advances_auto_plan_from_phase_plan_to_consistency_pass(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -842,19 +900,14 @@ class CodexStopHookTests(unittest.TestCase):
                 self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                 "session-1",
             )
-            self.write_json(
-                state_path,
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 3,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
-            )
-            time.sleep(0.01)
+            self.write_json(state_path, self.auto_plan_state())
             (docs_dir / "PLAN.md").write_text(
-                "<!-- arch_skill:block:phase_plan:start -->\n",
+                self.auto_plan_doc_text(
+                    research=True,
+                    deep_dive_pass_1=True,
+                    deep_dive_pass_2=True,
+                    phase_plan=True,
+                ),
                 encoding="utf-8",
             )
 
@@ -866,11 +919,11 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertIn("Use $arch-step consistency-pass docs/PLAN.md", payload["reason"])
             self.assertEqual(
                 payload["systemMessage"],
-                "auto-plan finished phase-plan; continuing to consistency-pass.",
+                "auto-plan continuing with consistency-pass.",
             )
 
             state = json.loads(state_path.read_text(encoding="utf-8"))
-            self.assertEqual(state["stage_index"], 4)
+            self.assertEqual(state, self.auto_plan_state())
 
     def test_stop_hook_completes_auto_plan_after_consistency_pass_yes(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -882,36 +935,15 @@ class CodexStopHookTests(unittest.TestCase):
                 self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                 "session-1",
             )
-            self.write_json(
-                state_path,
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 4,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
-            )
-            time.sleep(0.01)
+            self.write_json(state_path, self.auto_plan_state())
             (docs_dir / "PLAN.md").write_text(
-                "\n".join(
-                    [
-                        "<!-- arch_skill:block:consistency_pass:start -->",
-                        "## Consistency Pass",
-                        "- Reviewers: explorer 1, explorer 2, self-integrator",
-                        "- Scope checked:",
-                        "  - full artifact",
-                        "- Findings summary:",
-                        "  - none",
-                        "- Integrated repairs:",
-                        "  - none",
-                        "- Remaining inconsistencies:",
-                        "  - none",
-                        "- Decision: proceed to implement? yes",
-                        "<!-- arch_skill:block:consistency_pass:end -->",
-                    ]
-                )
-                + "\n",
+                self.auto_plan_doc_text(
+                    research=True,
+                    deep_dive_pass_1=True,
+                    deep_dive_pass_2=True,
+                    phase_plan=True,
+                    consistency_decision="yes",
+                ),
                 encoding="utf-8",
             )
 
@@ -928,7 +960,7 @@ class CodexStopHookTests(unittest.TestCase):
             )
             self.assertFalse(state_path.exists())
 
-    def test_stop_hook_disarms_auto_plan_when_consistency_pass_block_is_missing(self) -> None:
+    def test_stop_hook_disarms_auto_plan_when_research_is_still_incomplete(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
             docs_dir = repo_root / "docs"
@@ -938,19 +970,9 @@ class CodexStopHookTests(unittest.TestCase):
                 self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                 "session-1",
             )
-            self.write_json(
-                state_path,
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 4,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
-            )
-            time.sleep(0.01)
+            self.write_json(state_path, self.auto_plan_state())
             (docs_dir / "PLAN.md").write_text(
-                "# Plan\nConsistency pass did not write its helper block.\n",
+                "# Plan\nResearch never landed in the canonical doc.\n",
                 encoding="utf-8",
             )
 
@@ -959,10 +981,10 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, msg=process.stderr)
             payload = json.loads(process.stdout)
             self.assertFalse(payload["continue"])
-            self.assertIn("stopped before consistency-pass completed", payload["stopReason"])
+            self.assertIn("stopped before research completed", payload["stopReason"])
             self.assertEqual(
                 payload["systemMessage"],
-                "auto-plan stopped before consistency-pass completed.",
+                "auto-plan stopped before research completed.",
             )
             self.assertFalse(state_path.exists())
 
@@ -976,36 +998,15 @@ class CodexStopHookTests(unittest.TestCase):
                 self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
                 "session-1",
             )
-            self.write_json(
-                state_path,
-                {
-                    "command": "auto-plan",
-                    "session_id": "session-1",
-                    "doc_path": "docs/PLAN.md",
-                    "stage_index": 4,
-                    "stages": list(self.stop_module.AUTO_PLAN_STAGES),
-                },
-            )
-            time.sleep(0.01)
+            self.write_json(state_path, self.auto_plan_state())
             (docs_dir / "PLAN.md").write_text(
-                "\n".join(
-                    [
-                        "<!-- arch_skill:block:consistency_pass:start -->",
-                        "## Consistency Pass",
-                        "- Reviewers: explorer 1, explorer 2, self-integrator",
-                        "- Scope checked:",
-                        "  - full artifact",
-                        "- Findings summary:",
-                        "  - owner path and phase sequencing still disagree",
-                        "- Integrated repairs:",
-                        "  - tightened section 7 wording",
-                        "- Remaining inconsistencies:",
-                        "  - section 5 and section 6 still disagree",
-                        "- Decision: proceed to implement? no",
-                        "<!-- arch_skill:block:consistency_pass:end -->",
-                    ]
-                )
-                + "\n",
+                self.auto_plan_doc_text(
+                    research=True,
+                    deep_dive_pass_1=True,
+                    deep_dive_pass_2=True,
+                    phase_plan=True,
+                    consistency_decision="no",
+                ),
                 encoding="utf-8",
             )
 

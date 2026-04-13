@@ -95,10 +95,11 @@ Choose exactly one next move using this precedence:
 1. no plan doc yet -> `new`
 2. existing doc is not canonical enough to trust -> `reformat`
 3. North Star is still draft or too weak -> stop for confirmation or repair via `reformat`
-4. unresolved decision gap remains that repo truth cannot settle -> ask the user the exact blocker question
-5. earliest required structure or owned block is missing -> run the command that repairs it
-6. required structure exists but the next critical sections are still weak, including canonical-path analysis, preservation verification, or decision-completeness -> run the command that strengthens them
-6. otherwise follow the core arc:
+4. after North Star confirmation, stop and wait for the user's explicit next command; do not auto-advance into `research` or any later stage
+5. unresolved decision gap remains that repo truth cannot settle -> ask the user the exact blocker question
+6. earliest required structure or owned block is missing -> run the command that repairs it
+7. required structure exists but the next critical sections are still weak, including canonical-path analysis, preservation verification, or decision-completeness -> run the command that strengthens them
+8. otherwise follow the core arc:
    - `research`
    - `deep-dive`
    - `external-research` when warranted
