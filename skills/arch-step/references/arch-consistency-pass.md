@@ -58,12 +58,12 @@ The parent pass owns integration:
 
 Ask the same question every time:
 
-- `Does this artifact still say the same thing end to end about outcome, requested behavior scope, allowed convergence scope, canonical owner path, required deletes or migrations, authoritative execution order, verification expectations, rollout obligations, and approved exceptions? Are any plan-shaping decisions still unresolved? Did the artifact silently cut any approved behavior or required work? If anything is off, what must change in the main doc before implementation should begin?`
+- `Does this artifact still say the same thing end to end about outcome, requested behavior scope, allowed convergence scope, adjacent surfaces that must stay in sync, compatibility posture, canonical owner path, required deletes or migrations, authoritative execution order, verification expectations, rollout obligations, and approved exceptions? Are any plan-shaping decisions still unresolved? Did the artifact silently cut any approved behavior or required work, or silently assume backward compatibility? If anything is off, what must change in the main doc before implementation should begin?`
 
 Anchor that question using `artifact-contract.md` and `section-quality.md`:
 
 - TL;DR, Section 0, and Section 7 must agree on goal, scope, and plan shape
-- Section 3, Section 5, Section 6, and Section 7 must agree on the canonical owner path, migrations, deletes, and adoption scope
+- Section 3, Section 5, Section 6, and Section 7 must agree on the canonical owner path, adjacent surfaces, compatibility posture, migrations, deletes, and adoption scope
 - Section 7 must be executable from Sections 5 and 6 without hidden work
 - Section 8 and Section 9 must still match the execution burden implied by Section 7
 - helper blocks must not drift into competing execution surfaces
@@ -106,6 +106,7 @@ Insert near the end before the Decision Log when possible.
 - catches real cross-section contradictions, not just awkward wording
 - repairs the main artifact instead of parking issues in the helper block
 - makes it obvious whether implementation should proceed now
+- catches silent parity omissions and hidden compatibility assumptions before implementation starts
 - keeps remaining inconsistencies explicit when the answer is `no`
 - makes unresolved decisions and unauthorized scope cuts explicit
 - stays short and decision-oriented once the repairs are integrated

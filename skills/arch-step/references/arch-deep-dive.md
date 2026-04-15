@@ -40,6 +40,8 @@
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is contradictory, stop and ask the exact blocker question
 - no fallback or shim design unless the plan explicitly approves it
 - search for the canonical existing path before proposing a new abstraction or code path
+- inspect adjacent surfaces tied to the same contract family, source of truth, migration boundary, or parity story before treating the obvious path as exhaustive
+- compatibility posture is separate from `fallback_policy`; do not leave preservation versus clean cutover implicit in the authoritative plan
 - when the change is agent-backed, decide what behavior belongs in prompt or native-capability usage versus deterministic code before designing new tooling
 - if the target design does not reuse the canonical path, justify why the existing path cannot own the change
 - if the change retires or reroutes a live truth surface, name the code paths, docs, comments, or instructions that must be deleted or rewritten
@@ -50,6 +52,8 @@
 - Section 4 must describe current structure, flows, ownership, and failure behavior concretely enough to plan against
 - Section 5 must fully specify the future architecture, canonical owner path, contracts, boundaries, SSOT, no-parallel-path stance, and capability-first versus deterministic responsibilities when the system is agent-backed
 - Section 6 must be exhaustive enough within approved scope to drive implementation and later audit
+- Section 6 must explicitly capture adjacent surfaces that move with the same contract family or are intentionally deferred or excluded
+- Section 6 must make compatibility posture explicit enough that later planning does not have to guess whether the plan preserves the contract, cuts over cleanly, or carries an approved bridge
 - Section 6 must explicitly capture touched live docs, comments, or instructions that need deletion or rewrite because the change would otherwise leave stale truth behind
 - Section 6 must call out capability-replacing harnesses, wrappers, or side paths that should be deleted or explicitly justified when the system is agent-backed
 - if the design introduces or sharpens a central pattern, the consolidation sweep must capture only decisions that are already resolved from repo truth or explicit scope text; otherwise it must surface a blocker question
@@ -66,12 +70,12 @@
 
 ## Pattern consolidation sweep
 
-If the design introduces or updates a central pattern, contract, lifecycle primitive, or policy boundary:
+If the design introduces or updates a central pattern, contract family, format surface, lifecycle primitive, or policy boundary:
 
 - look for other places that should adopt it
 - capture file paths or symbols
 - default dispositions:
-  - required to converge onto the same canonical path and avoid drift -> include
+  - required to converge onto the same canonical path, keep the same contract family honest, or avoid contradictory sibling surfaces -> include
   - explicitly non-blocking by approved scope text -> defer
   - explicitly out of scope or clearly new product behavior -> exclude
   - if requiredness is still unclear -> ask the user instead of guessing
@@ -100,10 +104,14 @@ Use this call-site section shape:
 | ---- | ---- | ------------------ | ---------------- | --------------- | --- | ------------------ | -------------- |
 | <module> | <path> | <fn/cls> | <today> | <diff> | <rationale> | <new usage> | <tests> |
 
+Rows may name non-code surfaces when they participate in the same contract family or migration boundary.
+
 ## Migration notes
 * Canonical owner path / shared code path:
 * Deprecated APIs (if any):
 * Delete list (what must be removed; include superseded shims/parallel paths if any):
+* Adjacent surfaces tied to the same contract family:
+* Compatibility posture / cutover plan:
 * Capability-replacing harnesses to delete or justify:
 * Live docs/comments/instructions to update or delete:
 * Behavior-preservation signals for refactors:

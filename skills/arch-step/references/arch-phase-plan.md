@@ -30,11 +30,13 @@
 - docs-only; do not modify code
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is contradictory, stop and ask the exact blocker question
 - if missing work is discovered while planning, add it to the phase plan only when repo truth plus approved scope make it clearly required; if requiredness depends on an unresolved user decision, stop and ask instead of downgrading it by taste
+- if adjacent-surface disposition or compatibility posture is still unresolved, stop and ask instead of hiding the fork in Section 7
 - for agent-backed systems, prompt, grounding, and native-capability changes get first right of refusal before new harnesses, wrappers, parsers, OCR layers, or scripts
 - if a phase includes new tooling for agent-backed behavior, say why prompt-first and capability-first options were insufficient
 - do not add scripts, tests, CI checks, or validation steps whose primary job is auditing docs/help, checking keyword absence, policing repo layout, or proving deletions by grep
 - only ship-blocking work belongs in the authoritative checklist
 - if the change would leave touched live docs, comments, or instructions stale, update-or-delete work for those surfaces belongs in the phase plan
+- do not assume backward compatibility by default; the phase plan must encode the chosen preservation, clean-cutover, or approved-bridge story explicitly
 - do not turn helper blocks into competing execution checklists
 - do not leave the authoritative checklist holding unresolved branches, `if needed` work, or alternative execution paths
 - split Section 7 into the smallest reasonable sequence of coherent self-contained units that can be completed, verified, and built on later
@@ -63,6 +65,7 @@ Before writing the phase plan:
 - `Exit criteria` must be exhaustive, concrete, and all required
 - refactor-heavy phases must say how preserved behavior will be proven
 - agent-backed phases must make capability-first choices explicit before adding custom tooling
+- adjacent-surface follow-through and migration or cutover work must be visible in the relevant phases instead of being left implicit
 - verification should be credible, proportionate, and non-bureaucratic
 - verification must stay tied to shipped behavior, runtime ownership, or real contract boundaries rather than repo-policing heuristics
 - required cleanup, deletes, and touched doc/comment reality-sync work should not be buried
@@ -85,7 +88,7 @@ Use this block shape:
 <!-- arch_skill:block:phase_plan:start -->
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: systematic build, foundational first; split Section 7 into the smallest reasonable sequence of coherent self-contained units that can be completed, verified, and built on later. If two decompositions are both valid, bias toward more phases than fewer. `Work` explains the unit; `Checklist (must all be done)` is the authoritative must-do list inside the phase; `Exit criteria (all required)` names the concrete done conditions. Refactors, consolidations, and shared-path extractions must preserve existing behavior with credible evidence proportional to the risk. For agent-backed systems, prefer prompt, grounding, and native-capability changes before new harnesses or scripts. No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). The authoritative checklist must name the actual chosen work, not unresolved branches or "if needed" placeholders. Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests and heuristic gates (deletion checks, visual constants, doc-driven gates, keyword or absence gates, repo-shape policing). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
+> Rule: systematic build, foundational first; split Section 7 into the smallest reasonable sequence of coherent self-contained units that can be completed, verified, and built on later. If two decompositions are both valid, bias toward more phases than fewer. `Work` explains the unit; `Checklist (must all be done)` is the authoritative must-do list inside the phase; `Exit criteria (all required)` names the concrete done conditions. Resolve adjacent-surface dispositions and compatibility posture before writing the checklist. Refactors, consolidations, and shared-path extractions must preserve existing behavior with credible evidence proportional to the risk. For agent-backed systems, prefer prompt, grounding, and native-capability changes before new harnesses or scripts. No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). If a bridge is explicitly approved, timebox it and include removal work; otherwise plan either clean cutover or preservation work directly. The authoritative checklist must name the actual chosen work, not unresolved branches or "if needed" placeholders. Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests and heuristic gates (deletion checks, visual constants, doc-driven gates, keyword or absence gates, repo-shape policing). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
 
 ## Phase 1 — <most fundamental coherent unit>
 
@@ -110,6 +113,7 @@ Use this block shape:
 ```
 
 Use `Work` to describe the coherent unit and why it is isolated in that phase. Use `Checklist` for the exhaustive must-do items inside that unit. If a planned item could be left undone while the phase still sounds "basically complete," the phase is underspecified and should be split or tightened.
+If the change spans a contract family or migration boundary, encode the chosen adjacent-surface follow-through and the chosen cutover, preservation, or approved-bridge work directly in the relevant phase instead of leaving that choice implicit.
 Use `Docs/comments` to delete dead live docs/comments or rewrite surviving ones to present truth when the phase changes what is real. Do not keep legacy explanation in live surfaces just because Git already preserves the old version.
 
 ## Consistency duties beyond local ownership

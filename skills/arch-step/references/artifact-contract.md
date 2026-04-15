@@ -2,7 +2,7 @@
 
 This artifact is not a loose outline. It is one coherent plan doc that later commands keep sharpening. A command is not successful if it writes its local block but leaves the artifact structurally drifted, internally contradictory, too vague for the next stage to trust, or not decision-complete enough for readiness claims.
 
-Decision-complete means the main artifact has no unresolved plan-shaping decisions left about requested behavior, canonical owner path, target architecture, required deletes or migrations, fallback policy, acceptance evidence, or required implementation scope.
+Decision-complete means the main artifact has no unresolved plan-shaping decisions left about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, canonical owner path, target architecture, required deletes or migrations, fallback policy, acceptance evidence, or required implementation scope.
 
 ## Canonical state objects
 
@@ -145,6 +145,11 @@ Required content:
 - claim that is falsifiable
 - explicit requested behavior scope and UX in-scope and out-of-scope surfaces
 - explicit technical scope, exclusions, and allowed architectural convergence scope
+- explicit adjacent-surface scope when the change touches a contract family, source of truth, or migration boundary
+- explicit compatibility posture for changed contracts or migration boundaries:
+  - preserve the existing contract
+  - clean cutover or breaking change allowed
+  - approved timeboxed bridge with removal plan
 - when the change is agent-backed, explicit capability-first stance for prompt/native-capability work versus deterministic support tooling
 - credible acceptance evidence proportional to the work and risk
 - credible behavior-preservation evidence when refactor or consolidation is likely
@@ -193,6 +198,8 @@ Required content:
 - adopt or reject reasoning for external anchors
 - authoritative internal behavior anchors with file paths
 - canonical owner path or boundary for the requested behavior
+- adjacent surfaces tied to the same contract family, source of truth, or migration boundary
+- compatibility posture and why it is the right cutover or preservation story
 - when agent-backed, current prompt surfaces, native model capabilities, and existing tool/file/context exposure relevant to the change
 - existing reusable patterns
 - duplicate or drifting paths relevant to the change
@@ -229,6 +236,8 @@ Required content:
 - future structure
 - future control paths
 - canonical owner path for the requested behavior
+- compatibility posture for changed contracts or migration boundaries, separate from `fallback_policy`
+- approved bridge shape and removal plan when a bridge is explicitly allowed
 - when agent-backed, explicit split between behavior carried by prompting/native capability use and behavior carried by deterministic code or tooling
 - new or changed contracts and APIs
 - migration notes where APIs change
@@ -259,11 +268,15 @@ Change-map table columns:
 - `New API / contract`
 - `Tests impacted`
 
+Rows may include non-code surfaces when they participate in the same contract family, migration boundary, or parity story.
+
 Migration notes should capture:
 
 - canonical owner path / shared code path
 - deprecated APIs if any
 - delete list
+- adjacent surfaces that must move with the same contract or may be explicitly deferred
+- compatibility posture / cutover notes
 - live docs/comments/instructions to update or delete
 - behavior-preservation signals for refactors
 - cleanup and migration notes
@@ -275,7 +288,7 @@ Canonical heading plus rule line:
 ```text
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: systematic build, foundational first; split Section 7 into the smallest reasonable sequence of coherent self-contained units that can be completed, verified, and built on later. If two decompositions are both valid, bias toward more phases than fewer. `Work` explains the unit; `Checklist (must all be done)` is the authoritative must-do list inside the phase; `Exit criteria (all required)` names the concrete done conditions. Refactors, consolidations, and shared-path extractions must preserve existing behavior with credible evidence proportional to the risk. For agent-backed systems, prefer prompt, grounding, and native-capability changes before new harnesses or scripts. No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests and heuristic gates (deletion checks, visual constants, doc-driven gates, keyword or absence gates, repo-shape policing). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
+> Rule: systematic build, foundational first; split Section 7 into the smallest reasonable sequence of coherent self-contained units that can be completed, verified, and built on later. If two decompositions are both valid, bias toward more phases than fewer. `Work` explains the unit; `Checklist (must all be done)` is the authoritative must-do list inside the phase; `Exit criteria (all required)` names the concrete done conditions. Resolve adjacent-surface dispositions and compatibility posture before writing the checklist. Refactors, consolidations, and shared-path extractions must preserve existing behavior with credible evidence proportional to the risk. For agent-backed systems, prefer prompt, grounding, and native-capability changes before new harnesses or scripts. No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). If a bridge is explicitly approved, timebox it and include removal work; otherwise plan either clean cutover or preservation work directly. Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests and heuristic gates (deletion checks, visual constants, doc-driven gates, keyword or absence gates, repo-shape policing). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
 ```
 
 Canonical per-phase fields:
@@ -290,6 +303,7 @@ Canonical per-phase fields:
 
 Each phase should own one coherent self-contained unit of work that later phases can build upon directly. Earlier phases should establish the most fundamental primitives, owner paths, contracts, prompt surfaces, or migration prerequisites. If two decompositions are both valid, prefer more phases than fewer.
 `Work` describes the unit. `Checklist` is the authoritative must-do list within that phase. `Exit criteria` are exhaustive concrete done conditions, and all of them are required.
+If the change spans a contract family or migration boundary, the phase plan should encode the chosen adjacent-surface follow-through and the chosen cutover, preservation, or approved-bridge work directly instead of leaving that choice implicit.
 For refactor-heavy work, the verification line should say how preserved behavior will be proven.
 Use `Docs/comments` for live docs, comments, and instructions that must be updated or deleted so touched truth surfaces match shipped reality. Do not use it to preserve legacy explanation.
 

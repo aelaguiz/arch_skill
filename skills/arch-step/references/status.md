@@ -59,9 +59,9 @@ Inspect:
 
 Grade:
 
-- `strong` when the doc is structurally canonical, the major sections have credible content, the core sections agree, the artifact is decision-complete, and any instruction-bearing imported content is either preserved structurally or explicitly condensed with recoverable source text
+- `strong` when the doc is structurally canonical, the major sections have credible content, the core sections agree, adjacent-surface and compatibility-posture decisions are explicit, the artifact is decision-complete, and any instruction-bearing imported content is either preserved structurally or explicitly condensed with recoverable source text
 - `decent` when the structure is mostly canonical but one important section is thin
-- `weak` when the doc is usable but structurally drifted, partially canonical, missing multiple required sections, internally inconsistent, still contains unresolved plan-shaping decisions, or silently compresses instruction-bearing imported content
+- `weak` when the doc is usable but structurally drifted, partially canonical, missing multiple required sections, internally inconsistent, still contains unresolved plan-shaping decisions, silently omits adjacent surfaces or compatibility posture, or silently compresses instruction-bearing imported content
 - `missing` when there is no credible canonical full-arch artifact
 
 Also apply the "big 3" readiness bar:
@@ -82,7 +82,7 @@ Inspect:
 
 Grade:
 
-- `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable, evidence-aware, clearly distinguish requested behavior scope from allowed convergence scope, contain no unresolved plan-shaping decisions, and `status` is `active` or `complete`
+- `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable, evidence-aware, clearly distinguish requested behavior scope from allowed convergence scope, make adjacent-surface scope and compatibility posture explicit, contain no unresolved plan-shaping decisions, and `status` is `active` or `complete`
 - `decent` when the content is mostly real but thin in one important place
 - `weak` when the draft is vague, contradictory, placeholder-heavy, or still leaves plan-shaping decisions unresolved
 - `missing` when the doc is not credibly bootstrapped
@@ -96,7 +96,7 @@ Inspect:
 
 Grade:
 
-- `strong` when the block has authoritative internal anchors, names the canonical owner path, names reusable patterns, grounds prompt and capability surfaces when the system is agent-backed, names preservation signals when needed, and turns any remaining decision gaps into explicit blockers instead of hiding them
+- `strong` when the block has authoritative internal anchors, names the canonical owner path, names adjacent surfaces and compatibility posture, names reusable patterns, grounds prompt and capability surfaces when the system is agent-backed, names preservation signals when needed, and turns any remaining decision gaps into explicit blockers instead of hiding them
 - `decent` when present but thinner than required
 - `weak` when present but generic or under-anchored
 - `missing` when absent
@@ -112,7 +112,7 @@ Inspect:
 
 Grade:
 
-- `strong` when current architecture is grounded, target architecture is fully specified, the canonical owner path is explicit, agent-backed behavior is split cleanly between prompt/capability use and deterministic code when relevant, the call-site audit is exhaustive enough within approved scope to drive implementation and audit, and no architecture-shaping decisions remain unresolved
+- `strong` when current architecture is grounded, target architecture is fully specified, the canonical owner path is explicit, adjacent surfaces and compatibility posture are explicit, agent-backed behavior is split cleanly between prompt/capability use and deterministic code when relevant, the call-site audit is exhaustive enough within approved scope to drive implementation and audit, and no architecture-shaping decisions remain unresolved
 - `decent` when all exist but one is still thin
 - `weak` when one or more exist but do not meet the depth bar
 - `missing` when one or more are absent
@@ -142,7 +142,7 @@ Inspect:
 
 Grade:
 
-- `strong` when the authoritative phased plan exists, remains the single execution checklist, each phase owns one coherent self-contained unit, the decomposition is foundational-first and biases toward more phases than fewer when both are valid, each phase has concrete work, an explicit exhaustive checklist, verification, exhaustive exit criteria, and rollback, refactor-heavy phases name preservation checks, touched live docs/comments that would otherwise go stale are either deleted or rewritten in the plan, agent-backed tooling is explicitly justified against prompt-first options, and the checklist contains no unresolved branches or "decide later" language
+- `strong` when the authoritative phased plan exists, remains the single execution checklist, each phase owns one coherent self-contained unit, the decomposition is foundational-first and biases toward more phases than fewer when both are valid, each phase has concrete work, an explicit exhaustive checklist, verification, exhaustive exit criteria, and rollback, refactor-heavy phases name preservation checks, adjacent-surface and cutover or preservation work are explicit, touched live docs/comments that would otherwise go stale are either deleted or rewritten in the plan, agent-backed tooling is explicitly justified against prompt-first options, and the checklist contains no unresolved branches or "decide later" language
 - `decent` when present but one or more phases are thin
 - `weak` when generic, incomplete, blends coherent units into oversized phases, omits or underspecifies phase checklists, mixes product creep into ship-blocking work, leaves touched live docs/comments cleanup implicit, competes with helper checklists, or still contains unresolved execution choices
 - `missing` when absent
@@ -224,7 +224,7 @@ Choose the command that most improves artifact completeness or core-flow progres
 - missing research -> `research`
 - weak or incomplete current architecture, target architecture, canonical-path analysis, or call-site audit -> `deep-dive`
 - warranted but missing external research -> `external-research`
-- weak, creep-heavy, missing capability-first analysis, preservation-light, or stale-live-doc-light execution checklist -> `phase-plan`
+- weak, creep-heavy, missing capability-first analysis, preservation-light, adjacent-surface-light, compatibility-implicit, or stale-live-doc-light execution checklist -> `phase-plan`
 - execution-grade plan still has obvious end-to-end consistency drift that warrants a dedicated cold read -> `consistency-pass`
 - unresolved decision gap that repo truth cannot settle -> ask the user the exact blocker question and do not route to implementation
 - code progress without worklog truth -> `implement`

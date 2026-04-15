@@ -48,6 +48,8 @@ Strong when:
 - the claim is falsifiable
 - in-scope and out-of-scope are explicit
 - requested behavior scope and allowed convergence scope are distinguishable
+- adjacent-surface scope is explicit when the change touches a contract family, source of truth, or migration boundary
+- compatibility posture is explicit instead of being left as a hidden safety assumption
 - when agent-backed, it is explicit that prompt/native-capability work gets first right of refusal before new tooling
 - definition of done is observable
 - evidence uses credible proof proportional to the work and risk
@@ -61,6 +63,8 @@ Weak when:
 - the claim is vague or unmeasurable
 - scope boundaries are missing
 - convergence work and product scope are blurred together
+- adjacent surfaces that would become contradictory are left implicit
+- compatibility posture is left to implication instead of being stated
 - it assumes the model or agent lacks capability without evidence
 - definition of done depends on bespoke ceremony
 - invariants are generic platitudes
@@ -70,6 +74,7 @@ Weak when:
 Downstream can trust it when:
 
 - later commands can answer "is this in scope?", "is this convergence or creep?", and "what evidence is enough?" without guessing
+- later commands can answer which sibling surfaces move together and whether the plan preserves the contract or cuts over cleanly without guessing
 - there is one clear fallback stance instead of hidden compatibility assumptions
 
 ## `# 1) Key Design Considerations (what matters most)`
@@ -128,6 +133,8 @@ Strong when:
 
 - internal anchors cite concrete file paths and explain why they are authoritative
 - the canonical owner path is named explicitly
+- adjacent surfaces tied to the same contract family or migration boundary are named explicitly
+- compatibility posture is grounded explicitly instead of being implied
 - when agent-backed, current prompt surfaces, native model capabilities, and existing tool/file/context exposure are anchored explicitly
 - reusable patterns are named explicitly
 - duplicate or drifting paths are called out when they matter
@@ -139,6 +146,8 @@ Strong when:
 Weak when:
 
 - it is generic or unanchored
+- it treats the obvious path as the whole change and leaves sibling surfaces uninspected
+- it leaves preservation versus clean cutover implicit
 - it jumps to scripts, wrappers, or harnesses without first grounding prompt and capability options
 - external references are decorative
 - plan-shaping decisions remain unresolved
@@ -180,6 +189,7 @@ Strong when:
 
 - future structure is concrete
 - the canonical owner path is explicit
+- the cutover, preservation, or approved-bridge story is explicit for changed contracts
 - when agent-backed, the target architecture clearly says what behavior belongs in prompt/capability usage versus deterministic code
 - contracts and boundaries are explicit
 - SSOT is clear
@@ -192,6 +202,7 @@ Weak when:
 
 - it describes aspirations instead of contracts
 - boundaries are mushy
+- it relies on hidden compatibility assumptions or leaves multiple migration stories open
 - it treats agent-backed behavior as if only deterministic scaffolding can own it
 - it leaves multiple plausible architectures open
 
@@ -211,6 +222,8 @@ Strong when:
 - call sites are concrete and exhaustive enough within approved scope to drive work
 - the canonical owner path and required convergence work are explicit
 - migration notes and delete list are explicit
+- adjacent surfaces such as sibling formats, readers/writers, fixtures, examples, or docs are captured when they move with the same contract family
+- compatibility posture and cutover notes are explicit
 - touched live docs/comments/instructions to delete or rewrite are explicit when the change would otherwise leave stale truth behind
 - tests impacted are called out when relevant
 - consolidation sweep names related adopters and default dispositions
@@ -219,6 +232,7 @@ Strong when:
 Weak when:
 
 - it only lists the obvious path
+- it ignores non-code sibling surfaces that would drift with the same contract
 - it mixes product creep or architecture theater into the required work
 - deletes and cleanup are absent
 - it cannot be used to verify completeness
@@ -245,6 +259,7 @@ Strong when:
 - `Exit criteria` are exhaustive, concrete, and all required
 - refactor-heavy phases say how preserved behavior will be proven
 - agent-backed phases prefer prompt, grounding, and native-capability changes before new tooling, and any new tooling is explicitly justified
+- phases encode the chosen adjacent-surface follow-through and the chosen cutover, preservation, or approved-bridge work directly
 - verification is small and credible
 - manual QA is deferred to finalization when appropriate
 - there is no competing checklist elsewhere
@@ -259,6 +274,7 @@ Weak when:
 - a phase could be marked complete without satisfying all of its planned obligations
 - product scope creep or architecture theater appears in the authoritative checklist
 - agent-backed work jumps to deterministic harnesses or wrappers without a capability-first rationale
+- adjacent-surface follow-through or compatibility posture is left implicit
 - touched live docs/comments that would go stale are left implicit
 - helper blocks compete with the phase plan
 - sequencing hides required cleanup or migration work

@@ -48,6 +48,19 @@ Allowed questions are narrow:
 
 If a question is still necessary, say where you looked first and ask the exact blocker question instead of offering a guess as if the plan were already decided.
 
+## Blocker-question shape
+
+- Ask only when repo truth plus approved intent leave two credible branches and the choice materially changes scope, migration burden, compatibility posture, or user-visible truth.
+- When you ask, present:
+  - what you found
+  - the default recommendation
+  - why that default is strongest
+  - what changes if the answer flips
+- Strong example:
+  - `I found the YAML schema generator plus a neighboring JSON example tied to the same contract. Default: update both now so the contract story stays single-source. If you want a YAML-only first cut, say so; otherwise I will include the JSON example in the same change.`
+- Weak example:
+  - `Should I also update the JSON example?`
+
 ## DOC_PATH resolution defaults
 
 - Use an explicit `docs/<...>.md` path when present.
@@ -65,6 +78,30 @@ If a question is still necessary, say where you looked first and ask the exact b
 - Architectural convergence scope covers internal refactors needed to route the requested behavior through a canonical path, remove duplicate truth, migrate clearly related adopters, and prevent drift.
 - Architectural convergence may broaden touched files, symbols, or nearby adopters, but it must not broaden product capability.
 - Bad scope adds new commands, modes, templating, plugin or config layers, dry-run surfaces, speculative tooling, or operational surfaces that were not required by the ask.
+
+## Adjacent-surface rule
+
+- Before locking target architecture or the authoritative phase plan, inspect adjacent surfaces tied to the same contract, source of truth, migration boundary, or parity story.
+- Common adjacent surfaces include sibling formats, readers and writers, embedded examples, fixtures, generated artifacts, mirrored config, live docs, and agent instructions.
+- For each adjacent surface, classify one truthful disposition:
+  - include now
+  - explicitly defer
+  - explicitly out of scope
+  - blocker question
+- If repo truth plus approved intent make the disposition obvious, decide it without asking.
+- Do not silently leave a sibling surface contradictory just because the user did not spell it out.
+
+## Compatibility posture
+
+- Compatibility posture is a separate plan decision from `fallback_policy`.
+- Resolve one truthful posture for each changed contract or migration boundary:
+  - preserve the existing contract
+  - clean cutover or breaking change allowed
+  - timeboxed bridge with explicit removal plan
+- Do not assume compatibility merely because it feels safer.
+- Do not assume a breaking cutover merely because it looks cleaner.
+- If repo truth and approved intent do not settle the posture, ask the exact blocker question before deeper planning.
+- `fallback_policy` still governs runtime shims and fail-loud exceptions, not whether a planned cutover is breaking.
 
 ## Capability-first rule for agent-backed systems
 
@@ -95,7 +132,7 @@ The North Star is an alignment lock, not a mission statement.
 
 - TL;DR should say what is changing and why.
 - Section 0 should say what must remain true while we do it.
-- Later commands should be able to resolve ordinary tradeoffs from those sections without re-asking the user.
+- Later commands should be able to resolve ordinary tradeoffs, adjacent-surface scope, and compatibility posture from those sections without re-asking the user.
 
 Before substantive planning or implementation:
 
@@ -104,10 +141,12 @@ Before substantive planning or implementation:
 - credible acceptance evidence proportional to the work and risk must be explicit
 - requested behavior scope must be explicit
 - allowed architectural convergence scope must be explicit enough to tell convergence from product creep
+- adjacent-surface dispositions must be explicit enough to tell include-now work from intentional defers or exclusions
+- compatibility posture must be explicit enough to tell contract preservation from clean cutover or an approved bridge
 - scope must not silently expand
 - plan-shaping decisions must be resolved explicitly enough that later commands do not need to guess, invent alternatives, or silently cut requested behavior
 
-If the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is unclear, contradictory, or still branchy, stop, repair what repo evidence can settle, and ask the user the remaining exact blocker question before going deeper.
+If the North Star, requested behavior scope, allowed architectural convergence scope, adjacent-surface scope, compatibility posture, or any other plan-shaping decision is unclear, contradictory, or still branchy, stop, repair what repo evidence can settle, and ask the user the remaining exact blocker question before going deeper.
 
 ## Evidence philosophy
 
@@ -182,6 +221,7 @@ This is a quality guard, not a hard blocker. Missing passes should be surfaced c
 - If target architecture changes, check TL;DR, Section 0, Section 1, Section 7, and Section 8 for stale claims.
 - If sequencing or verification changes, check TL;DR, Section 0, Section 7, Section 8, and Section 10.
 - If rollout or telemetry implications change, check Section 9 and Section 10.
+- If adjacent-surface scope or compatibility posture changes, check TL;DR, Section 0, Section 3, Section 6, Section 7, and Section 10.
 - If architecture, ownership, or behavior changes, check touched live docs, comments, and instructions and either delete dead truth surfaces or sync surviving ones to reality.
 - If prompts, agent instructions, or other instruction-bearing content are being re-homed, check that operational structure was preserved or that any intentional condensation is explicitly recorded with source text still recoverable.
 - Prefer direct truthful edits over broad rewrites.

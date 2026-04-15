@@ -35,7 +35,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - Every invocation must check both structure and quality before doing command-local work.
 - No command may leave the doc less canonical, less honest, or more contradictory than it found it.
 - Present-but-weak sections are not done.
-- A plan is not ready, complete, or implementation-ready while any unresolved decision remains about requested behavior, architecture, canonical owner path, required deletes, fallback policy, acceptance evidence, or implementation scope.
+- A plan is not ready, complete, or implementation-ready while any unresolved decision remains about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, architecture, canonical owner path, required deletes, fallback policy, acceptance evidence, or implementation scope.
 - Correctness and approved intent outrank speed, scope trimming, or "minimum implementation."
 - The agent has no authority to cut requested behavior, acceptance criteria, or required implementation work unless the user or the governing plan already marked that item out of scope.
 - Section 7 phases should split work into coherent self-contained units, with the most fundamental units first and later phases clearly building on earlier ones.
@@ -53,6 +53,8 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - Any refactor, shared-path extraction, or consolidation must preserve existing behavior and name a credible verification signal before it is considered done.
 - Use repo evidence first. Ask only for true product, UX, external-constraint, access, or doc-path gaps.
 - If repo evidence cannot settle a plan-shaping decision, ask the user instead of guessing, defaulting, or parking the choice as a pseudo-complete plan.
+- Before hardening target architecture or Section 7, inspect adjacent surfaces tied to the same contract family, source of truth, migration boundary, or parity story. Include them now, explicitly defer or exclude them, or ask the exact blocker question when repo truth and approved intent do not settle the disposition.
+- Compatibility posture is a first-class plan decision separate from `fallback_policy`. Resolve whether the change preserves the existing contract, performs a clean cutover, or uses an explicitly approved timeboxed bridge. Do not silently assume backward compatibility just because it feels safer.
 - When the changed behavior is agent- or LLM-driven, inspect current prompt surfaces, runtime or agent configuration, native model capabilities, and existing tool/file/context exposure before designing. If that capability picture is still unclear after inspection, ask narrowly instead of assuming the agent cannot do it.
 - For agent-backed systems, prefer prompt engineering, grounding/context shaping, and better use of native capabilities before custom harnesses, wrappers, parsers, OCR stacks, fuzzy matchers, or deterministic sidecars.
 - Any new tooling for agent-backed behavior must justify why prompt-first and capability-first options were insufficient, and it must augment the agent instead of replacing the reasoning the product is supposed to get from the model.
