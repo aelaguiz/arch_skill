@@ -46,19 +46,19 @@ Optional only when the task truly needs them:
 - `arch_skill:block:external_research`
 - `arch_skill:block:reference_pack`
 
-Use the same marker shapes that `arch-step` expects so follow-through can continue without migration work.
+Use the same marker shapes that `miniarch-step` and `arch-step` expect so follow-through can continue without migration work.
 
-When the change is agent-backed, these blocks must make capability-first decisions visible enough that `arch-step` can continue without inventing whether prompting, grounding, native capability use, or custom tooling should own the behavior.
+When the change is agent-backed, these blocks must make capability-first decisions visible enough that `miniarch-step` or `arch-step` can continue without inventing whether prompting, grounding, native capability use, or custom tooling should own the behavior.
 
 ## Status rules
 
 - New or unconfirmed docs stay `status: draft`.
 - Planning-complete docs move to `status: active`.
-- Do not set `status: complete` in mini-plan mode. Implementation belongs to `arch-step`.
+- Do not set `status: complete` in mini-plan mode. Implementation belongs to `miniarch-step` or `arch-step`.
 
 ## Handoff contract
 
-- The default follow-through is `arch-step implement <DOC_PATH>` when the doc is strong enough to ship against.
+- The default follow-through is `miniarch-step implement <DOC_PATH>` when the doc is strong enough to ship against.
 - After clean full-arch code audit, the expected docs-cleanup handoff is `arch-docs`.
-- If the doc is structurally weak or the work outgrew mini mode, the handoff is `arch-step reformat <DOC_PATH>`.
+- If the doc is structurally weak or the work outgrew the faster full-arch tier, the handoff is `arch-step reformat <DOC_PATH>`.
 - Mini mode does not create `WORKLOG_PATH`; execution creates it later.

@@ -24,7 +24,8 @@
 ## Escalation targets
 
 - Escalate to `lilarch` when the task is actually a small 1-3 phase feature flow.
-- Escalate to `arch-step reformat <DOC_PATH>` when the work is now real full-arch work.
+- Escalate to `miniarch-step` when the work now needs faster full-arch execution against the same canonical doc.
+- Escalate to `arch-step reformat <DOC_PATH>` when the work is now broader or more ambiguous real full-arch work.
 - Escalate to `bugs-flow` when investigation dominates.
 - Escalate to `goal-loop` or `north-star-investigation` when the path is intentionally open-ended.
 
@@ -33,6 +34,6 @@
 - Event handler rename across two call sites with one follow-up delete:
   - still mini mode
 - Storage-layer migration plus rollout concerns plus compatibility decisions:
-  - escalate to `arch-step`
+  - escalate to `miniarch-step` or `arch-step`
 - Tiny UX tweak with one implementation pass:
   - use `lilarch`

@@ -1,0 +1,252 @@
+# Arch Step Shared Doctrine
+
+## Communication contract
+
+- Start console output with a one-line North Star reminder.
+- Then give the punchline plainly.
+- Then give a short natural-English update.
+- Do not dump logs, giant lists, or full inserted sections to the console.
+- Put deep detail in `DOC_PATH` or `WORKLOG_PATH`.
+- Never be pedantic or ceremony-heavy. Optimize for the real task.
+
+## Worktree and execution discipline
+
+- Do not block on unrelated dirty files.
+- Ignore unrecognized changes unless they directly conflict with the task.
+- If committing, stage only files you touched unless instructed otherwise.
+- When the command is clear, begin the work instead of restating the ask.
+- Planning commands are docs-only.
+- `implement` and `implement-loop` may change code and must respect branch discipline.
+
+## Convergence rule
+
+- `miniarch-step` always works toward one finished full-arch artifact.
+- Local ownership is subordinate to artifact convergence.
+- If a command updates one part of the plan and can see that nearby sections are now stale, it should repair the necessary safe set of contradictions before exiting.
+
+## Question policy
+
+Use repo evidence first.
+
+You must answer anything discoverable from:
+
+- code
+- prompt files or agent instructions
+- tests
+- fixtures
+- logs
+- docs
+- repo tooling
+- referenced materials already in the plan
+
+Allowed questions are narrow:
+
+- true product or UX decisions not encoded anywhere
+- external constraints not present in repo or docs
+- real doc-path ambiguity after best-effort resolution
+- missing access or permissions
+
+If a question is still necessary, say where you looked first and ask the exact blocker question instead of offering a guess as if the plan were already decided.
+
+## Blocker-question shape
+
+- Ask only when repo truth plus approved intent leave two credible branches and the choice materially changes scope, migration burden, compatibility posture, or user-visible truth.
+- When you ask, present:
+  - what you found
+  - the default recommendation
+  - why that default is strongest
+  - what changes if the answer flips
+- Strong example:
+  - `I found the YAML schema generator plus a neighboring JSON example tied to the same contract. Default: update both now so the contract story stays single-source. If you want a YAML-only first cut, say so; otherwise I will include the JSON example in the same change.`
+- Weak example:
+  - `Should I also update the JSON example?`
+
+## DOC_PATH resolution defaults
+
+- Use an explicit `docs/<...>.md` path when present.
+- If the current session just created or most recently updated one canonical full-arch doc, prefer that doc for later `miniarch-step` commands that omit `DOC_PATH`.
+- If multiple candidates exist, prefer the most plan-like doc:
+  - canonical headings
+  - stable `arch_skill:block:` markers
+  - frontmatter with `status` or `doc_type`
+- Never choose `*_WORKLOG.md` as `DOC_PATH`.
+- If ambiguity survives best effort, ask the user to choose from the top 2-3 candidates.
+
+## Scope model
+
+- Requested behavior scope is authoritative for user-visible behavior.
+- Architectural convergence scope covers internal refactors needed to route the requested behavior through a canonical path, remove duplicate truth, migrate clearly related adopters, and prevent drift.
+- Architectural convergence may broaden touched files, symbols, or nearby adopters, but it must not broaden product capability.
+- Bad scope adds new commands, modes, templating, plugin or config layers, dry-run surfaces, speculative tooling, or operational surfaces that were not required by the ask.
+
+## Adjacent-surface rule
+
+- Before locking target architecture or the authoritative phase plan, inspect adjacent surfaces tied to the same contract, source of truth, migration boundary, or parity story.
+- Common adjacent surfaces include sibling formats, readers and writers, embedded examples, fixtures, generated artifacts, mirrored config, live docs, and agent instructions.
+- For each adjacent surface, classify one truthful disposition:
+  - include now
+  - explicitly defer
+  - explicitly out of scope
+  - blocker question
+- If repo truth plus approved intent make the disposition obvious, decide it without asking.
+- Do not silently leave a sibling surface contradictory just because the user did not spell it out.
+
+## Compatibility posture
+
+- Compatibility posture is a separate plan decision from `fallback_policy`.
+- Resolve one truthful posture for each changed contract or migration boundary:
+  - preserve the existing contract
+  - clean cutover or breaking change allowed
+  - timeboxed bridge with explicit removal plan
+- Do not assume compatibility merely because it feels safer.
+- Do not assume a breaking cutover merely because it looks cleaner.
+- If repo truth and approved intent do not settle the posture, ask the exact blocker question before deeper planning.
+- `fallback_policy` still governs runtime shims and fail-loud exceptions, not whether a planned cutover is breaking.
+
+## Capability-first rule for agent-backed systems
+
+- If the changed behavior is meaningfully agent- or LLM-driven, understand the current prompt surfaces, runtime or agent configuration, native model capabilities, and existing tool/file/context exposure before designing.
+- Do not design around presumed incapability when that fact is discoverable from the repo or runtime surface.
+- If capability details remain unclear after inspection, ask narrowly instead of assuming the model lacks them.
+- Default decision ladder for agent-backed systems:
+  1. prompt change or prompt-structure change
+  2. grounding or context-shaping change
+  3. better use of existing files, tools, or native capabilities
+  4. narrow deterministic support tooling only if the earlier options are insufficient
+- Custom tooling for agent-backed behavior must explain which capability-first options were considered, why they were insufficient, and why the tool augments rather than replaces the intended model reasoning.
+- Default anti-examples:
+  - OCR layers when the runtime already has native vision
+  - fuzzy retrieval wrappers when grounded file access and synthesis are the intended path
+  - parser, wrapper, or orchestration layers whose main purpose is to make the model act deterministic instead of improving prompt or capability use
+
+## Instruction-fidelity rule for agent and prompt content
+
+- When porting prompts, agent instructions, behavioral doctrine, or other instruction-bearing content, default to structure-preserving transfer rather than summarization.
+- Preserve explicit order, step granularity, conditions, hard negatives, escalation logic, and recognition examples when they constrain behavior.
+- Do not condense instruction-bearing content unless the artifact explicitly records why that condensation is safe and keeps the original text recoverable.
+- Ordinary architecture prose may still be summarized when that does not erase behavioral constraints.
+
+## Alignment checks before deeper work
+
+The North Star is an alignment lock, not a mission statement.
+
+- TL;DR should say what is changing and why.
+- Section 0 should say what must remain true while we do it.
+- Later commands should be able to resolve ordinary tradeoffs, adjacent-surface scope, and compatibility posture from those sections without re-asking the user.
+
+Before substantive planning or implementation:
+
+- North Star must be concrete and scoped
+- claim must be falsifiable
+- credible acceptance evidence proportional to the work and risk must be explicit
+- requested behavior scope must be explicit
+- allowed architectural convergence scope must be explicit enough to tell convergence from product creep
+- adjacent-surface dispositions must be explicit enough to tell include-now work from intentional defers or exclusions
+- compatibility posture must be explicit enough to tell contract preservation from clean cutover or an approved bridge
+- scope must not silently expand
+- plan-shaping decisions must be resolved explicitly enough that later commands do not need to guess, invent alternatives, or silently cut requested behavior
+
+If the North Star, requested behavior scope, allowed architectural convergence scope, adjacent-surface scope, compatibility posture, or any other plan-shaping decision is unclear, contradictory, or still branchy, stop, repair what repo evidence can settle, and ask the user the remaining exact blocker question before going deeper.
+
+## Evidence philosophy
+
+- Prefer existing credible signals that genuinely prove the claim.
+- For agent-backed systems, prefer prompt, grounding, and native-capability changes before new harnesses or scripts.
+- Prefer existing tests, typecheck, lint, build, instrumentation, or log signatures before new harnesses.
+- Prefer direct code-path convergence, real runtime guards, or existing behavior checks before inventing any repo-policing validation.
+- If no cheap programmatic signal exists, use a short manual checklist.
+- Manual QA is usually non-blocking until finalization and should not be mistaken for missing code.
+- Avoid verification bureaucracy.
+
+Negative-value defaults to avoid:
+
+- deleted-code proof tests
+- visual-constant or unstable-golden tests
+- doc-inventory gates
+- keyword or stale-term grep gates
+- file-absence or folder-absence proof checks
+- repo-structure policing tests
+- CI checks whose primary job is enforcing doc, taxonomy, comment, or naming cleanliness
+- helper scripts whose main purpose is auditing docs/help or checking that certain strings are absent
+- mock-only interaction tests with no behavior assertion
+- bespoke harnesses or frameworks added just to create ceremony
+- bespoke harnesses, wrappers, OCR stacks, parsers, or fuzzy match layers added mainly to avoid using native agent or model capabilities
+- timing-hack tests when a behavior-level check or smaller signal would do
+
+## Behavior-preservation rule
+
+- Any refactor, consolidation, shared-path extraction, or call-site migration must preserve existing behavior.
+- Prefer existing behavior-level checks, integration tests, targeted unit tests, builds, typechecks, instrumentation, or stable manual checklists over new machinery.
+- If refactor risk is real and no existing signal buys enough confidence, add a targeted behavior-level, structure-insensitive check that would fail for the right reason.
+- Do not call convergence work complete until the preservation signal has actually run.
+
+## Architecture doctrine
+
+- Code is ground truth.
+- Prefer the most idiomatic existing repo pattern unless there is a concrete reason not to.
+- Search for the canonical existing path before designing a new abstraction or code path.
+- Single source of truth is the default.
+- Avoid parallel implementations, duplicate writers, and shadow contracts.
+- Git is the history for retired live truth surfaces. Do not keep dead competing code paths, stale live docs, stale comments, or stale instructions for archaeology.
+- If a touched live doc, comment, or instruction still matters after the change, update it to current truth in the same run instead of leaving a legacy explanation behind.
+- Boundaries and invariants should be real in shipped code, runtime routing, types, APIs, or behavior, not outsourced to keyword greps, absence checks, or docs-audit scripts.
+- Prefer hard cutover, explicit deletes, and fail-loud boundaries over compatibility shims.
+- Runtime fallbacks or shims are forbidden unless the plan explicitly approves them via `fallback_policy: approved` plus a Decision Log entry with a removal plan.
+
+## Scope-authority defaults
+
+- Treat the plan's scope as authoritative.
+- If work is required to converge onto the canonical path, remove duplicate truth, migrate clearly related adopters, or avoid a concrete regression, include it and proceed.
+- If work adds new product functionality, alternate ways of doing the same thing, or speculative architecture, exclude it or record it as follow-up.
+- For agent-backed systems, tooling that substitutes for prompt work or native capability use without necessity is architecture theater by default.
+- If requiredness is not derivable from repo truth plus the approved plan, ask the user. Do not downgrade that uncertainty into follow-up, defer, optional, or a silent scope cut.
+- Do not remove or relabel approved behavior just because it looks larger than expected. Only the user or explicit plan text can narrow approved intent.
+- Stop and ask whenever the plan cannot truthfully become decision-complete without a user choice.
+
+## Warn-first sequencing
+
+Recommended flow:
+
+1. Research
+2. Deep dive
+3. Phase plan
+4. Consistency pass
+5. Implement
+
+This is a quality guard, not a hard blocker. Missing passes should be surfaced clearly but should not automatically stop useful work.
+
+## Consistency repair doctrine
+
+- Do not knowingly leave the plan internally contradictory just because the local section you owned is now correct.
+- If target architecture changes, check TL;DR, Section 0, Section 1, Section 7, and Section 8 for stale claims.
+- If sequencing or verification changes, check TL;DR, Section 0, Section 7, Section 8, and Section 10.
+- If rollout or telemetry implications change, check Section 9 and Section 10.
+- If adjacent-surface scope or compatibility posture changes, check TL;DR, Section 0, Section 3, Section 6, Section 7, and Section 10.
+- If architecture, ownership, or behavior changes, check touched live docs, comments, and instructions and either delete dead truth surfaces or sync surviving ones to reality.
+- If prompts, agent instructions, or other instruction-bearing content are being re-homed, check that operational structure was preserved or that any intentional condensation is explicitly recorded with source text still recoverable.
+- Prefer direct truthful edits over broad rewrites.
+- Record meaningful drift or approved exceptions in the Decision Log instead of silently rewriting history.
+
+## Authoritative surfaces
+
+- `DOC_PATH` is the one planning source of truth.
+- `WORKLOG_PATH` is execution evidence, not a second plan.
+- Section 7 is the one authoritative execution checklist.
+- Helper blocks may sharpen or constrain the plan, but they must not create competing execution surfaces.
+- The Decision Log is append-only and should capture real plan drift, approved exceptions, and meaningful sequencing changes.
+- Append-only plan history does not justify stale live product docs, stale comments, or retired competing instructions elsewhere in the repo.
+
+## Pattern propagation
+
+- When introducing a new SSOT, contract, lifecycle primitive, or non-obvious sharp edge, note where a short code comment should live at the canonical boundary.
+- Prefer a few high-leverage comments over comment spam.
+- The point is future drift prevention, not prose volume.
+
+## Quality principle
+
+Presence is not enough.
+
+- A section is only useful when it is concrete enough for later phases to trust.
+- A stage is only complete when the sections it owns are both present and strong enough to support downstream decisions without guesswork.
+- A plan is not implementation-ready until its plan-shaping decisions are resolved in the main artifact.
+- Consistency across sections matters as much as local section quality.

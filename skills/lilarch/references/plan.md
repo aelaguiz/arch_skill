@@ -22,7 +22,7 @@ Write the minimal architecture and delivery plan needed to ship the feature clea
    - make the capability-first choice explicit before adding custom tooling for agent-backed behavior
 4. Run the internal plan audit and write the result into `lilarch:block:plan_audit`.
 
-If preserving instruction-bearing source fidelity cleanly would no longer fit the compact doc, escalate to `arch-step reformat` instead of silently compressing it.
+If preserving instruction-bearing source fidelity cleanly would no longer fit the compact doc, escalate to `miniarch-step reformat` or `arch-step reformat` instead of silently compressing it.
 
 ## Plan shape
 
@@ -35,4 +35,5 @@ If preserving instruction-bearing source fidelity cleanly would no longer fit th
 
 ## Escalation rule
 
-- If the plan wants a fourth phase, broad rollout logic, or heavy plan shaping, stop and escalate to `arch-step reformat`.
+- If the plan wants a fourth phase, stop and escalate to `miniarch-step reformat`.
+- If the work also brings broad rollout logic or heavy plan shaping, stop and escalate to `arch-step reformat`.

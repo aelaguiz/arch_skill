@@ -1,6 +1,6 @@
 ---
 name: arch-skills-guide
-description: "Explain the arch skill suite, distinguish the live subskills, and recommend the right one for a user's task. Use when a request asks which arch skill to use, what the difference is between `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `goal-loop`, `north-star-investigation`, `arch-flow`, or wants a quick tour of the arch suite. Not for actually running the underlying workflow."
+description: "Explain the arch skill suite, distinguish the live subskills, and recommend the right one for a user's task. Use when a request asks which arch skill to use, what the difference is between `arch-step`, `miniarch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `goal-loop`, `north-star-investigation`, `arch-flow`, or wants a quick tour of the arch suite. Not for actually running the underlying workflow."
 metadata:
   short-description: "Guide and selector for the arch skill suite"
 ---
@@ -34,7 +34,8 @@ Use this skill when the user needs help choosing or understanding the arch suite
 
 1. Read `references/skill-map.md`.
 2. Classify the ask into one of these families:
-   - full arch
+   - broad full arch
+   - faster full arch
    - docs cleanup
    - mini-plan
    - lilarch
@@ -54,7 +55,8 @@ Use this skill when the user needs help choosing or understanding the arch suite
    - compare two or more subskills
    - recommend the best-fit skill for a concrete task
 2. Map the task to the suite:
-   - full arch planning, implementation, or implementation audit -> `arch-step`
+   - broad full arch planning, implementation, or implementation audit -> `arch-step`
+   - faster full arch planning, implementation, or implementation audit for smaller well-defined features -> `miniarch-step`
    - docs cleanup, stale-doc consolidation, or post-arch plan/worklog retirement -> `arch-docs`
    - one-pass canonical mini plan -> `arch-mini-plan`
    - small 1-3 phase feature -> `lilarch`

@@ -71,5 +71,6 @@ Escalate away from `lilarch` when:
 Recommended escalation:
 
 - `arch-mini-plan` when the task is still moderate but wants a one-pass canonical plan
-- `arch-step reformat <DOC_PATH>` when the task is now real full-arch work
+- `miniarch-step reformat <DOC_PATH>` when the task outgrew 1-3 phases but still looks like smaller well-defined full-arch work
+- `arch-step reformat <DOC_PATH>` when the task is now broader or more ambiguous real full-arch work
 - `bugs-flow` when investigation becomes the dominant problem

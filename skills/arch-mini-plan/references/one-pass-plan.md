@@ -36,8 +36,8 @@ Write the canonical planning blocks in one pass without pretending the work was 
    - capability-first work before custom tooling when agent-backed
    - explicit deletes and follow-ups
 7. End with a readiness verdict:
-   - ready for `arch-step implement`
-   - or too large / too weak, use `arch-step reformat`
+   - ready for `miniarch-step implement`
+   - or outgrew the faster full-arch tier / is too weak, use `arch-step reformat`
    - if preserving instruction-bearing source fidelity cleanly would need appendices or a fuller import surface, use `arch-step reformat`
 
 ## External guidance rule

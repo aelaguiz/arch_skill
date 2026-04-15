@@ -49,7 +49,7 @@ Parent implementation pass:
 - product code
 - `WORKLOG_PATH`
 - phase status and Decision Log in `DOC_PATH`
-- `.codex/implement-loop-state.<SESSION_ID>.json`
+- `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
 
 Fresh `audit-implementation` child only:
 
@@ -73,14 +73,14 @@ Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not
 
 ## Active loop-state contract
 
-Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/implement-loop-state.<SESSION_ID>.json` before the first implementation pass.
+Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` before the first implementation pass.
 
 Minimal shape:
 
 ```json
 {
   "version": 1,
-  "command": "implement-loop",
+  "command": "miniarch-step-implement-loop",
   "session_id": "<SESSION_ID>",
   "doc_path": "docs/<PLAN>.md"
 }
@@ -104,7 +104,7 @@ Lifecycle:
 - before handing control back to fresh audit, the implementation pass must finish the current reachable ordered plan frontier or hit a real blocker, and the claimed phase work must have credible programmatic proof
 - for modern Section 7 docs, fresh audit must validate both `Checklist (must all be done)` and `Exit criteria (all required)` before any phase can stay complete or the loop can finish clean
 - in Codex, the fresh audit pass after an implementation stop point owns the continue-versus-stop decision
-- inside `implement-loop`, only the fresh `audit-implementation` child may write or replace `arch_skill:block:implementation_audit`, conclude the controller is clean, write the `Use $arch-docs` handoff, or delete `.codex/implement-loop-state.<SESSION_ID>.json`
+- inside `implement-loop`, only the fresh `audit-implementation` child may write or replace `arch_skill:block:implementation_audit`, conclude the controller is clean, write the `Use $arch-docs` handoff, or delete `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
 - the implementation side must not act as the authoritative auditor just because it believes the code is complete
 - if execution discovers that the approved plan itself needs requirement, scope, or acceptance-bar changes, stop honestly and repair the plan instead of continuing on a rewritten story
 - when the fresh audit context launches, pass the explicit `DOC_PATH` and current repo working context; do not ask the fresh audit pass to rediscover the artifact from stale conversation state
@@ -120,17 +120,17 @@ Lifecycle:
 1. Read `DOC_PATH` fully and run the same alignment checks required by `implement`.
 2. Run the runtime preflight. If the `~/.codex/hooks.json` entry, the installed runner, or `codex_hooks` is unavailable, fail loud.
 3. Build or refresh the compact implementation ledger from Section 7, Section 6, migration notes, and touched live docs/comments/instructions.
-4. Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/implement-loop-state.<SESSION_ID>.json` for the current Codex session and `DOC_PATH`.
+4. Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` for the current Codex session and `DOC_PATH`.
 5. Run one truthful implementation pass using the `implement` contract, starting from the earliest incomplete or reopened phase and continuing through the remaining approved phases in order until the current reachable frontier is done or genuinely blocked. Run the required credible proof along the way, but do not stop just because one local fix is green.
 6. Sync `DOC_PATH` and `WORKLOG_PATH` to the resulting execution truth and proof signals, but do not replace `arch_skill:block:implementation_audit`, write clean-handoff language from the parent implementation pass, or rewrite requirements, scope, acceptance criteria, or phase obligations to fit partial code.
-7. If the implementation pass stops before the run naturally stops, update the plan and worklog truthfully as awaiting fresh audit, leave `.codex/implement-loop-state.<SESSION_ID>.json` armed, and let fresh `audit-implementation` author the authoritative audit outcome.
+7. If the implementation pass stops before the run naturally stops, update the plan and worklog truthfully as awaiting fresh audit, leave `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` armed, and let fresh `audit-implementation` author the authoritative audit outcome.
 8. Otherwise let Codex try to stop. The installed runtime should:
    - no-op when no active loop state matches the current session
    - launch a fresh `audit-implementation` child pass when the loop is active
    - allow stop when the audit is clean
    - inject a continuation prompt when the audit finds missing code
 9. On each hook-driven continuation, read the refreshed audit findings, resume from the earliest reopened or incomplete phase, continue linearly through the remaining approved phases, prove the claimed work as you go, update execution truth, and keep the loop armed while awaiting the next fresh audit.
-10. If a fresh audit concludes that the next pass would be speculative, blocked, or materially unchanged from the last failed audit, let the fresh audit path clear `.codex/implement-loop-state.<SESSION_ID>.json`, stop, and report that state plainly.
+10. If a fresh audit concludes that the next pass would be speculative, blocked, or materially unchanged from the last failed audit, let the fresh audit path clear `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`, stop, and report that state plainly.
 
 ## Fresh-audit requirement
 

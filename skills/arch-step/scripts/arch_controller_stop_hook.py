@@ -16,6 +16,10 @@ from pathlib import Path
 
 IMPLEMENT_LOOP_STATE_RELATIVE_PATH = Path(".codex/implement-loop-state.json")
 AUTO_PLAN_STATE_RELATIVE_PATH = Path(".codex/auto-plan-state.json")
+MINIARCH_STEP_IMPLEMENT_LOOP_STATE_RELATIVE_PATH = Path(
+    ".codex/miniarch-step-implement-loop-state.json"
+)
+MINIARCH_STEP_AUTO_PLAN_STATE_RELATIVE_PATH = Path(".codex/miniarch-step-auto-plan-state.json")
 ARCH_DOCS_AUTO_STATE_RELATIVE_PATH = Path(".codex/arch-docs-auto-state.json")
 AUDIT_LOOP_STATE_RELATIVE_PATH = Path(".codex/audit-loop-state.json")
 COMMENT_LOOP_STATE_RELATIVE_PATH = Path(".codex/comment-loop-state.json")
@@ -28,6 +32,8 @@ AUDIT_LOOP_SIM_DEFAULT_LEDGER_RELATIVE_PATH = Path("_audit_sim_ledger.md")
 
 IMPLEMENT_LOOP_COMMAND = "implement-loop"
 AUTO_PLAN_COMMAND = "auto-plan"
+MINIARCH_STEP_IMPLEMENT_LOOP_COMMAND = "miniarch-step-implement-loop"
+MINIARCH_STEP_AUTO_PLAN_COMMAND = "miniarch-step-auto-plan"
 ARCH_DOCS_AUTO_COMMAND = "arch-docs-auto"
 AUDIT_LOOP_COMMAND = "auto"
 COMMENT_LOOP_COMMAND = "auto"
@@ -36,6 +42,8 @@ DELAY_POLL_COMMAND = "delay-poll"
 
 IMPLEMENT_LOOP_DISPLAY_NAME = "implement-loop"
 AUTO_PLAN_DISPLAY_NAME = "auto-plan"
+MINIARCH_STEP_IMPLEMENT_LOOP_DISPLAY_NAME = "miniarch-step implement-loop"
+MINIARCH_STEP_AUTO_PLAN_DISPLAY_NAME = "miniarch-step auto-plan"
 ARCH_DOCS_AUTO_DISPLAY_NAME = "arch-docs auto"
 AUDIT_LOOP_DISPLAY_NAME = "audit-loop auto"
 COMMENT_LOOP_DISPLAY_NAME = "comment-loop auto"
@@ -66,6 +74,16 @@ AUTO_PLAN_STATE_SPEC = ControllerStateSpec(
     relative_path=AUTO_PLAN_STATE_RELATIVE_PATH,
     expected_command=AUTO_PLAN_COMMAND,
     display_name=AUTO_PLAN_DISPLAY_NAME,
+)
+MINIARCH_STEP_IMPLEMENT_LOOP_STATE_SPEC = ControllerStateSpec(
+    relative_path=MINIARCH_STEP_IMPLEMENT_LOOP_STATE_RELATIVE_PATH,
+    expected_command=MINIARCH_STEP_IMPLEMENT_LOOP_COMMAND,
+    display_name=MINIARCH_STEP_IMPLEMENT_LOOP_DISPLAY_NAME,
+)
+MINIARCH_STEP_AUTO_PLAN_STATE_SPEC = ControllerStateSpec(
+    relative_path=MINIARCH_STEP_AUTO_PLAN_STATE_RELATIVE_PATH,
+    expected_command=MINIARCH_STEP_AUTO_PLAN_COMMAND,
+    display_name=MINIARCH_STEP_AUTO_PLAN_DISPLAY_NAME,
 )
 ARCH_DOCS_AUTO_STATE_SPEC = ControllerStateSpec(
     relative_path=ARCH_DOCS_AUTO_STATE_RELATIVE_PATH,
@@ -100,6 +118,12 @@ AUTO_PLAN_STAGES = (
     "phase-plan",
     "consistency-pass",
 )
+MINIARCH_STEP_AUTO_PLAN_STAGES = (
+    "research",
+    "deep-dive",
+    "phase-plan",
+    "consistency-pass",
+)
 
 VERDICT_PATTERN = re.compile(r"^Verdict \(code\): (COMPLETE|NOT COMPLETE)\s*$", re.MULTILINE)
 PLANNING_PASS_PATTERN = re.compile(
@@ -129,6 +153,8 @@ LOOP_VALID_VERDICTS = {"CONTINUE", "CLEAN", "BLOCKED"}
 CONTROLLER_STATE_SPECS = (
     IMPLEMENT_LOOP_STATE_SPEC,
     AUTO_PLAN_STATE_SPEC,
+    MINIARCH_STEP_IMPLEMENT_LOOP_STATE_SPEC,
+    MINIARCH_STEP_AUTO_PLAN_STATE_SPEC,
     ARCH_DOCS_AUTO_STATE_SPEC,
     AUDIT_LOOP_STATE_SPEC,
     COMMENT_LOOP_STATE_SPEC,
@@ -580,13 +606,19 @@ def consistency_pass_decision(doc_text: str) -> str | None:
     return match.group(1).lower()
 
 
-def run_fresh_audit(cwd: Path, doc_path_value: str) -> FreshAuditResult:
+def run_fresh_audit(
+    cwd: Path,
+    doc_path_value: str,
+    *,
+    skill_name: str = "arch-step",
+    temp_prefix: str = "arch-step-implement-loop-",
+) -> FreshAuditResult:
     codex = shutil.which("codex")
     if not codex:
         raise RuntimeError("`codex` is not available on PATH for the Stop hook")
 
     prompt = (
-        f"Use $arch-step audit-implementation {doc_path_value}\n"
+        f"Use ${skill_name} audit-implementation {doc_path_value}\n"
         "Fresh context only. Audit against the full approved ordered plan frontier in DOC_PATH, not against "
         "any narrower execution-side rewrite. Update the authoritative implementation audit block and any "
         "reopened phase statuses in DOC_PATH. If implementation weakened requirements, scope, acceptance "
@@ -594,7 +626,7 @@ def run_fresh_audit(cwd: Path, doc_path_value: str) -> FreshAuditResult:
         "the real remaining frontier instead of one tiny gap. Keep the final response short."
     )
 
-    with tempfile.TemporaryDirectory(prefix="arch-step-implement-loop-") as temp_dir:
+    with tempfile.TemporaryDirectory(prefix=temp_prefix) as temp_dir:
         last_message_path = Path(temp_dir) / "last_message.txt"
         process = subprocess.run(
             [
@@ -913,6 +945,76 @@ def validate_auto_plan_state(
         clear_state(state_path)
         block_with_message(
             "auto-plan controller state was missing doc_path; "
+            "the controller was disarmed. Update the plan truthfully and stop."
+        )
+
+    doc_path = resolve_path(cwd, doc_path_value)
+    return doc_path, doc_path_value, state, state_path
+
+
+def validate_miniarch_step_implement_loop_state(
+    payload: dict,
+    resolved_state: ResolvedControllerState | None,
+) -> tuple[Path, str, Path] | None:
+    cwd = Path(payload["cwd"]).resolve()
+    loaded = load_controller_state(
+        cwd,
+        resolved_state,
+        MINIARCH_STEP_IMPLEMENT_LOOP_COMMAND,
+        MINIARCH_STEP_IMPLEMENT_LOOP_COMMAND,
+    )
+    if loaded is None:
+        return None
+    state_path, state, is_legacy = loaded
+    if not validate_session_id(
+        payload,
+        cwd,
+        state_path,
+        state,
+        MINIARCH_STEP_IMPLEMENT_LOOP_COMMAND,
+        allow_claim=is_legacy,
+    ):
+        return None
+    doc_path_value = state.get("doc_path")
+    if not isinstance(doc_path_value, str) or not doc_path_value.strip():
+        clear_state(state_path)
+        block_with_message(
+            "miniarch-step implement-loop controller state was missing doc_path; "
+            "the loop was disarmed. Update the plan and worklog truthfully, then stop."
+        )
+    doc_path = resolve_path(cwd, doc_path_value)
+    return doc_path, doc_path_value, state_path
+
+
+def validate_miniarch_step_auto_plan_state(
+    payload: dict,
+    resolved_state: ResolvedControllerState | None,
+) -> tuple[Path, str, dict, Path] | None:
+    cwd = Path(payload["cwd"]).resolve()
+    loaded = load_controller_state(
+        cwd,
+        resolved_state,
+        MINIARCH_STEP_AUTO_PLAN_COMMAND,
+        MINIARCH_STEP_AUTO_PLAN_COMMAND,
+    )
+    if loaded is None:
+        return None
+    state_path, state, is_legacy = loaded
+    if not validate_session_id(
+        payload,
+        cwd,
+        state_path,
+        state,
+        MINIARCH_STEP_AUTO_PLAN_COMMAND,
+        allow_claim=is_legacy,
+    ):
+        return None
+
+    doc_path_value = state.get("doc_path")
+    if not isinstance(doc_path_value, str) or not doc_path_value.strip():
+        clear_state(state_path)
+        block_with_message(
+            "miniarch-step auto-plan controller state was missing doc_path; "
             "the controller was disarmed. Update the plan truthfully and stop."
         )
 
@@ -1450,6 +1552,75 @@ def auto_plan_continue_reason(doc_path_value: str, next_stage: str, state_path_v
     raise RuntimeError(f"unexpected next auto-plan stage: {next_stage}")
 
 
+def miniarch_step_auto_plan_stage_name(stage: str) -> str:
+    return {
+        "research": "research",
+        "deep-dive": "deep-dive",
+        "phase-plan": "phase-plan",
+        "consistency-pass": "consistency-pass",
+    }[stage]
+
+
+def miniarch_step_auto_plan_stage_complete(doc_text: str, stage: str) -> bool:
+    planning_passes = parse_planning_passes(doc_text)
+    if stage == "research":
+        return BLOCK_MARKERS["research_grounding"] in doc_text
+    if stage == "deep-dive":
+        return (
+            BLOCK_MARKERS["current_architecture"] in doc_text
+            and BLOCK_MARKERS["target_architecture"] in doc_text
+            and BLOCK_MARKERS["call_site_audit"] in doc_text
+            and pass_is_done(planning_passes.get("deep_dive_pass_1"))
+        )
+    if stage == "phase-plan":
+        return BLOCK_MARKERS["phase_plan"] in doc_text
+    if stage == "consistency-pass":
+        return consistency_pass_decision(doc_text) == "yes"
+    raise RuntimeError(f"unexpected miniarch-step auto-plan stage: {stage}")
+
+
+def next_incomplete_miniarch_step_auto_plan_stage(doc_text: str) -> str | None:
+    for stage in MINIARCH_STEP_AUTO_PLAN_STAGES:
+        if not miniarch_step_auto_plan_stage_complete(doc_text, stage):
+            return stage
+    return None
+
+
+def miniarch_step_auto_plan_stage_blocked(doc_text: str, stage: str) -> bool:
+    if stage != "consistency-pass":
+        return False
+    return consistency_pass_decision(doc_text) == "no"
+
+
+def miniarch_step_auto_plan_continue_reason(
+    doc_path_value: str,
+    next_stage: str,
+    state_path_value: str,
+) -> str:
+    if next_stage == "deep-dive":
+        return (
+            f"miniarch-step auto-plan is armed for {doc_path_value}. The first incomplete planning stage in the doc is deep-dive. "
+            "Continue now with the next required command: "
+            f"Use $miniarch-step deep-dive {doc_path_value}. This is the one required deep-dive pass. "
+            f"Keep {state_path_value} armed and stop naturally when this command finishes."
+        )
+    if next_stage == "phase-plan":
+        return (
+            f"miniarch-step auto-plan is armed for {doc_path_value}. The first incomplete planning stage in the doc is phase-plan. "
+            "Continue now with the next required command: "
+            f"Use $miniarch-step phase-plan {doc_path_value}. "
+            f"Keep {state_path_value} armed and stop naturally when this command finishes."
+        )
+    if next_stage == "consistency-pass":
+        return (
+            f"miniarch-step auto-plan is armed for {doc_path_value}. The first incomplete planning stage in the doc is consistency-pass. "
+            "Continue now with the next required command: "
+            f"Use $miniarch-step consistency-pass {doc_path_value}. This is the required end-to-end consistency cold read. "
+            f"Keep {state_path_value} armed and stop naturally when this command finishes."
+        )
+    raise RuntimeError(f"unexpected next miniarch-step auto-plan stage: {next_stage}")
+
+
 def arch_docs_eval_summary(result: dict) -> str:
     summary = str(result.get("summary", "")).strip()
     reason = str(result.get("reason", "")).strip()
@@ -1622,6 +1793,162 @@ def handle_auto_plan(payload: dict) -> int:
     block_with_json(
         auto_plan_continue_reason(doc_path_value, next_stage, state_path_value),
         system_message=f"auto-plan continuing with {auto_plan_stage_name(next_stage)}.",
+    )
+
+
+def handle_miniarch_step_implement_loop(payload: dict) -> int:
+    cwd = Path(payload["cwd"]).resolve()
+    resolved_state = resolve_controller_state_for_handler(
+        payload,
+        MINIARCH_STEP_IMPLEMENT_LOOP_STATE_SPEC,
+    )
+    validated = validate_miniarch_step_implement_loop_state(payload, resolved_state)
+    if validated is None:
+        return 0
+
+    doc_path, doc_path_value, state_path = validated
+    if not doc_path.exists():
+        clear_state(state_path)
+        block_with_message(
+            f"miniarch-step implement-loop doc path does not exist: {doc_path_value}. "
+            "The loop was disarmed. Update the plan and worklog truthfully, then stop."
+        )
+
+    try:
+        audit = run_fresh_audit(
+            cwd,
+            doc_path_value,
+            skill_name="miniarch-step",
+            temp_prefix="miniarch-step-implement-loop-",
+        )
+    except RuntimeError as exc:
+        clear_state(state_path)
+        block_with_message(
+            f"fresh miniarch-step implement-loop audit could not start: {exc}. "
+            "The loop was disarmed. Explain the blocker and stop."
+        )
+
+    child_summary = summarize_child_output(audit.process, audit.last_message)
+
+    if audit.process.returncode != 0:
+        clear_state(state_path)
+        failure = child_summary or "unknown child-audit failure"
+        block_with_json(
+            "miniarch-step implement-loop ran a fresh child audit, but that audit failed. "
+            f"Failure: {failure}. Treat the run as blocked, update the plan and worklog truthfully, explain the blocker, and stop.",
+            system_message="miniarch-step implement-loop fresh audit failed; review the blocker and stop honestly.",
+        )
+
+    verdict = read_verdict(doc_path)
+    if verdict == "COMPLETE":
+        clear_state(state_path)
+        stop_reason = (
+            "miniarch-step implement-loop fresh audit finished clean. "
+            f"Audit verdict is COMPLETE in {doc_path_value}. "
+            f"The next required move is `Use $arch-docs`. Current DOC_PATH: {doc_path_value}."
+        )
+        if child_summary:
+            stop_reason += f" Audit summary: {child_summary}"
+        stop_with_json(
+            stop_reason,
+            system_message="miniarch-step implement-loop fresh audit finished clean; hand off to arch-docs.",
+        )
+
+    if verdict == "NOT COMPLETE":
+        worklog_path = derive_worklog_path(doc_path)
+        reason = (
+            "miniarch-step implement-loop ran a fresh child audit and found more code work. "
+            f"Read the authoritative Implementation Audit block and reopened phases in {doc_path_value}, "
+            "resume from the earliest reopened or incomplete phase, continue linearly through the remaining "
+            "approved phases, run the required credible proof for the claimed work as you go, "
+            f"update {display_path(worklog_path, cwd)} if it exists, keep the loop armed, "
+            "and do not rewrite plan requirements, scope, acceptance criteria, or phase obligations while coding. "
+            "If the audit shows the plan itself needs to change, stop and repair the plan instead of continuing on a rewritten story, "
+            "and only then stop again for another fresh audit after the current reachable frontier is done or genuinely blocked."
+        )
+        if child_summary:
+            reason += f" Audit summary: {child_summary}"
+        block_with_json(
+            reason,
+            system_message="miniarch-step implement-loop fresh audit finished; more work remains.",
+        )
+
+    clear_state(state_path)
+    reason = (
+        f"miniarch-step implement-loop ran a fresh child audit, but that audit did not leave a usable verdict in {doc_path_value}. "
+        "The loop was disarmed. Treat the run as blocked, update the plan and worklog truthfully, explain the blocker, and stop."
+    )
+    if child_summary:
+        reason += f" Audit summary: {child_summary}"
+    block_with_json(
+        reason,
+        system_message="miniarch-step implement-loop fresh audit finished without a usable verdict.",
+    )
+
+
+def handle_miniarch_step_auto_plan(payload: dict) -> int:
+    cwd = Path(payload["cwd"]).resolve()
+    resolved_state = resolve_controller_state_for_handler(
+        payload,
+        MINIARCH_STEP_AUTO_PLAN_STATE_SPEC,
+    )
+    validated = validate_miniarch_step_auto_plan_state(payload, resolved_state)
+    if validated is None:
+        return 0
+
+    doc_path, doc_path_value, state, state_path = validated
+    state_path_value = display_path(state_path, cwd)
+    if not doc_path.exists():
+        clear_state(state_path)
+        block_with_message(
+            f"miniarch-step auto-plan doc path does not exist: {doc_path_value}. "
+            "The controller was disarmed. Update the plan truthfully and stop."
+        )
+
+    doc_text = read_doc_text(doc_path)
+    next_stage = next_incomplete_miniarch_step_auto_plan_stage(doc_text)
+    if next_stage is None:
+        clear_state(state_path)
+        stop_with_json(
+            f"miniarch-step auto-plan completed for {doc_path_value}. Research, deep-dive, phase-plan, and consistency-pass are in place. "
+            f"The doc is ready for `Use $miniarch-step implement-loop {doc_path_value}`.",
+            system_message="miniarch-step auto-plan completed; the doc is ready for implement-loop.",
+        )
+
+    if miniarch_step_auto_plan_stage_blocked(doc_text, next_stage):
+        clear_state(state_path)
+        stop_with_json(
+            f"miniarch-step auto-plan stopped after consistency-pass for {doc_path_value}. "
+            "The helper block does not currently approve implementation. Resolve the remaining inconsistencies in the main "
+            f"artifact, then rerun `Use $miniarch-step auto-plan {doc_path_value}` if you still want automatic planning continuation.",
+            system_message="miniarch-step auto-plan consistency-pass did not approve implementation.",
+        )
+
+    if next_stage == "research":
+        clear_state(state_path)
+        stop_with_json(
+            f"miniarch-step auto-plan stopped before research completed for {doc_path_value}. "
+            "The controller was disarmed. Resolve the blocker or finish the stage manually, then rerun "
+            f"`Use $miniarch-step auto-plan {doc_path_value}` if you still want automatic planning continuation.",
+            system_message="miniarch-step auto-plan stopped before research completed.",
+        )
+
+    changed = False
+    if "stage_index" in state:
+        state.pop("stage_index", None)
+        changed = True
+    if "stages" in state:
+        state.pop("stages", None)
+        changed = True
+    if changed:
+        write_state(state_path, state)
+
+    block_with_json(
+        miniarch_step_auto_plan_continue_reason(doc_path_value, next_stage, state_path_value),
+        system_message=(
+            "miniarch-step auto-plan continuing with "
+            f"{miniarch_step_auto_plan_stage_name(next_stage)}."
+        ),
     )
 
 
@@ -2109,7 +2436,9 @@ def handle_delay_poll(payload: dict) -> int:
 def main() -> int:
     payload = load_stop_payload()
     stop_for_conflicting_controller_states(payload)
+    handle_miniarch_step_implement_loop(payload)
     handle_implement_loop(payload)
+    handle_miniarch_step_auto_plan(payload)
     handle_auto_plan(payload)
     handle_arch_docs_auto(payload)
     handle_audit_loop(payload)

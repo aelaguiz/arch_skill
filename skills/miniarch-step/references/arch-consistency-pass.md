@@ -22,7 +22,7 @@
 ## Hard rules
 
 - docs-only; do not modify code
-- this helper stays optional in ordinary manual `arch-step` usage, but `auto-plan` must run it after `phase-plan`
+- this helper stays optional in ordinary manual `miniarch-step` usage, but `auto-plan` must run it after `phase-plan`
 - treat the artifact as a set of truth claims that must agree end to end; this is not copy editing or prose cleanup
 - use the cross-section consistency rules in `artifact-contract.md` as the primary rubric
 - integrate accepted repairs into the main artifact first, then write or update the helper block

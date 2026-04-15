@@ -54,7 +54,7 @@
 Before writing the phase plan:
 
 - inspect `planning_passes` if present
-- otherwise infer from deep-dive and external-research content
+- otherwise infer from research and deep-dive content
 - if recommended sequencing is incomplete or unknown, do not stop
 - instead warn clearly and continue writing the plan
 

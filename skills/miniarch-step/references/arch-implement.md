@@ -146,7 +146,7 @@ This ledger is working memory, not a second plan doc. Write it down only when it
   - `<!-- arch_skill:block:planning_passes:start -->`
   - `<!-- arch_skill:block:planning_passes:end -->`
 - if the block exists, use it
-- if it does not, infer pass completion from deep-dive and external-research content, but treat deep-dive pass 2 as unknown
+- if it does not, infer pass completion from research and deep-dive content
 - if recommended earlier passes are incomplete or unknown, warn clearly but continue
 - continue to respect North Star, scope, and invariants; do not wing it
 

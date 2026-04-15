@@ -5,6 +5,7 @@ This guide describes the live workflow surface for the repo.
 The current skill suite is:
 
 - `arch-step`
+- `miniarch-step`
 - `arch-docs`
 - `arch-mini-plan`
 - `lilarch`
@@ -17,7 +18,7 @@ The current skill suite is:
 - `arch-flow`
 - `arch-skills-guide`
 
-`arch-step` is the only live full-arch execution surface.
+Use `miniarch-step` for smaller well-defined full-arch work. Use `arch-step` for broader, more ambiguous, or helper-heavy full-arch work.
 
 Other shipped skills:
 
@@ -44,6 +45,7 @@ For any of those Codex auto controllers, do not run the Stop hook yourself. Afte
 Default local path:
 
 - `~/.agents/skills/arch-step/`
+- `~/.agents/skills/miniarch-step/`
 - `~/.agents/skills/arch-docs/`
 - `~/.agents/skills/arch-mini-plan/`
 - `~/.agents/skills/lilarch/`
@@ -65,6 +67,7 @@ Installed skills:
 
 - Codex:
   - `arch-step`
+  - `miniarch-step`
   - `arch-docs`
   - `arch-mini-plan`
   - `lilarch`
@@ -81,6 +84,7 @@ Installed skills:
   - `codemagic-builds`
 - Claude Code:
   - `arch-step`
+  - `miniarch-step`
   - `arch-docs`
   - `arch-mini-plan`
   - `lilarch`
@@ -95,6 +99,7 @@ Installed skills:
   - `agent-definition-auditor`
 - Gemini:
   - `arch-step`
+  - `miniarch-step`
   - `arch-docs`
   - `arch-mini-plan`
   - `lilarch`
@@ -165,7 +170,7 @@ Install removes stale pre-skill command surfaces, removed competing skill packag
 
 ### `arch-step`
 
-Use for full-arch planning, continuation, implementation, full-frontier implement/audit delivery, or implementation audit.
+Use for broad or ambiguity-heavy full-arch planning, continuation, implementation, helper-assisted hardening, full-frontier implement/audit delivery, or implementation audit.
 
 Examples:
 
@@ -202,6 +207,30 @@ Practical rule:
 - Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
 - If that `hooks.json` entry, the installed runner path, or `codex_hooks` is missing, those commands should fail loud with the remediation commands instead of pretending a prompt-only loop exists. Do not check for a copied hook file under `~/.codex/hooks/`.
 
+### `miniarch-step`
+
+Use for smaller well-defined features that still need a canonical full-arch doc, phased execution, consistency gating, and real Codex auto controllers, but do not need the broader `arch-step` helper surface.
+
+Examples:
+
+- `Use $miniarch-step "do the faster full arch flow for this feature"`
+- `Use $miniarch-step auto-plan`
+- `Use $miniarch-step implement docs/MY_PLAN.md`
+- `Use $miniarch-step implement-loop docs/MY_PLAN.md`
+- `Use $miniarch-step auto-implement docs/MY_PLAN.md`
+- `Use $miniarch-step audit-implementation docs/MY_PLAN.md`
+
+Practical rule:
+
+- If the task is bigger than `lilarch`, but still small and crisp enough that one research pass plus one deep-dive pass is the right shape, use `miniarch-step`.
+- `miniarch-step auto-plan` is the shorter bounded planning controller. In Codex, `DOC_PATH` is the planning ledger and `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` is only armed controller state. On a fresh doc, the parent pass runs only `research`, then ends its turn. On reruns, the installed Stop hook reads the doc and feeds `deep-dive`, `phase-plan`, or `consistency-pass` from the first incomplete stage it finds, then stops and says the doc is decision-complete and ready for `implement-loop`.
+- `miniarch-step implement-loop` is the explicit full-frontier controller when the user wants repeated implement then audit passes until the audit is clean or a real blocker stops the run.
+- `miniarch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
+- In that controller, implementation scope is the full approved Section 7 frontier in order. It must arm `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` before implementation work, resume from the earliest incomplete or reopened phase, continue through later reachable phases, and only then hand control to fresh audit unless a real blocker stops progress.
+- After a clean code audit, `miniarch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
+- In Codex, these commands still rely on the repo-managed `Stop` entry in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py` plus enabled `codex_hooks`.
+- Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
+
 ### `arch-docs`
 
 Use when the code is clean enough to trust and the job is cleaning up stale, overlapping, misleading, or obviously dated docs, updating stale survivors, clarifying confusing docs, or promoting grounded missing truth into evergreen docs.
@@ -230,7 +259,7 @@ Examples:
 
 ### `arch-mini-plan`
 
-Use when the task still needs canonical architecture blocks, but the planning should happen in one pass and follow-through should later happen in `arch-step`, then `arch-docs` for later docs cleanup.
+Use when the task still needs canonical architecture blocks, but the planning should happen in one pass and follow-through should later happen in `miniarch-step` or `arch-step`, then `arch-docs` for later docs cleanup.
 
 Examples:
 
@@ -246,7 +275,7 @@ Examples:
 - `Use $lilarch for this small feature`
 - "Use little arch for this improvement"
 
-If lilarch stops fitting, escalate to `arch-step reformat`.
+If lilarch stops fitting, escalate to `miniarch-step reformat` first, and to `arch-step reformat` when the work is broader or more ambiguous than the faster full-arch tier.
 
 ### `bugs-flow`
 
@@ -308,7 +337,7 @@ Use when the user wants a cold-read score, rationale, and improvement plan for a
 
 ## Full-arch doc conventions
 
-`arch-step` and `arch-mini-plan` both work against a canonical full-arch doc shape. The main stable markers are:
+`arch-step`, `miniarch-step`, and `arch-mini-plan` all work against a canonical full-arch doc shape. The main stable markers are:
 
 - `arch_skill:block:planning_passes`
 - `arch_skill:block:research_grounding`

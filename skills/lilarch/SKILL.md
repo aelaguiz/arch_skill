@@ -19,7 +19,7 @@ Use this skill for contained feature work that is too small for the full arch fl
 
 - The task is a migration, a broad refactor, or clearly larger than 3 phases.
 - The user wants a compressed one-pass arch plan instead of a start/plan/finish flow. Use `arch-mini-plan`.
-- The user wants the full arch workflow or the doc already behaves like a full-arch artifact. Use `arch-step`.
+- The user wants the full arch workflow or the doc already behaves like a full-arch artifact. Use `miniarch-step` or `arch-step`.
 - Investigation dominates because the root cause is unknown. Use `bugs-flow` or `north-star-investigation`.
 
 ## Non-negotiables
@@ -34,7 +34,7 @@ Use this skill for contained feature work that is too small for the full arch fl
 - If the real lever is prompt repair, say so plainly and recommend `prompt-authoring` instead of inventing deterministic scaffolding.
 - When source material includes prompts, agent instructions, or other instruction-bearing doctrine, preserve explicit structure by default instead of silently condensing it.
 - No runtime fallbacks or compatibility shims unless explicitly approved in the doc.
-- Escalation out of lilarch defaults to `arch-step reformat` so the same doc can continue under the full-arch surface.
+- Escalation out of lilarch defaults to `miniarch-step reformat`, and then to `arch-step reformat` when the work is broader or more ambiguous than the faster full-arch tier.
 
 ## First move
 

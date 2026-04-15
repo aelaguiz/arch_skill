@@ -4,9 +4,10 @@ This repo ships installable agent skills centered on the arch suite for Codex CL
 
 The live arch suite is:
 
-- `arch-step` — the only full-arch execution surface; owns the standalone full-arch workflow, command-level control, bounded `auto-plan`, full-frontier `implement-loop`, compact `status`, and guided `advance`
+- `arch-step` — the broad full-arch execution surface; owns the full staged workflow, extended helper passes, bounded `auto-plan`, full-frontier `implement-loop`, compact `status`, and guided `advance`
+- `miniarch-step` — the faster full-arch middle tier for smaller well-defined features; keeps canonical arch docs, phasing, consistency, and real auto controllers without the broader `arch-step` helper surface
 - `arch-docs` — standalone docs-audit and cleanup skill; owns topic-first stale-doc cleanup, consolidation onto canonical docs, working-doc retirement, and hook-backed Codex `auto` docs cleanup
-- `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `arch-step`
+- `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `miniarch-step` or `arch-step`
 - `lilarch` — compact 1-3 phase feature flow
 - `bugs-flow` — evidence-first bug analyze/fix/review flow
 - `audit-loop` — exhaustive map-first repo audit loop with a root audit ledger, mandatory post-change self-audit, and Codex-only `auto` continuation
@@ -17,7 +18,7 @@ The live arch suite is:
 - `arch-flow` — read-only "what's next?" router for arch docs
 - `arch-skills-guide` — explains the suite and recommends the right live subskill
 
-`arch-step` is the only full-arch execution surface.
+Use `miniarch-step` when the work still needs a real full-arch artifact and auto continuation, but the feature is small and well-defined enough that one research pass plus one deep-dive pass is the right shape. Use `arch-step` when the work is broader, more ambiguous, or needs the full helper surface.
 
 Other shipped skills are:
 
@@ -37,7 +38,7 @@ make install
 
 This installs the live skill surface to `~/.agents/skills/`, writes one arch_skill-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, repairs older two-hook arch_skill installs down to that one repo-managed entry, removes older `~/.codex/skills/<skill>` mirrors from previous installs, and also installs the Claude Code and Gemini CLI skill directories.
 
-Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, and `delay-poll` also require the Codex feature flag:
+Codex automatic `auto-plan`, `implement-loop`, `auto-implement`, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, and `delay-poll` also require the Codex feature flag:
 
 ```bash
 codex features enable codex_hooks
@@ -46,7 +47,7 @@ codex features enable codex_hooks
 For any of those Codex auto controllers, do not run the Stop hook yourself. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
 
 Each Codex auto controller now uses a session-scoped repo-local state file such as
-`.codex/auto-plan-state.<SESSION_ID>.json`, `.codex/audit-loop-state.<SESSION_ID>.json`, `.codex/comment-loop-state.<SESSION_ID>.json`, `.codex/audit-loop-sim-state.<SESSION_ID>.json`, or `.codex/delay-poll-state.<SESSION_ID>.json`,
+`.codex/auto-plan-state.<SESSION_ID>.json`, `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json`, `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`, `.codex/audit-loop-state.<SESSION_ID>.json`, `.codex/comment-loop-state.<SESSION_ID>.json`, `.codex/audit-loop-sim-state.<SESSION_ID>.json`, or `.codex/delay-poll-state.<SESSION_ID>.json`,
 where `<SESSION_ID>` is the current `CODEX_THREAD_ID`. Separate Codex sessions can
 run their own auto controllers concurrently in one repo. One session still must not
 arm more than one controller at once.
@@ -61,6 +62,7 @@ Installed skills:
 
 - Default local path:
   - `~/.agents/skills/arch-step/`
+  - `~/.agents/skills/miniarch-step/`
   - `~/.agents/skills/arch-docs/`
   - `~/.agents/skills/arch-mini-plan/`
   - `~/.agents/skills/lilarch/`
@@ -77,6 +79,7 @@ Installed skills:
   - `~/.agents/skills/codemagic-builds/`
 - Claude Code:
   - `~/.claude/skills/arch-step/`
+  - `~/.claude/skills/miniarch-step/`
   - `~/.claude/skills/arch-docs/`
   - `~/.claude/skills/arch-mini-plan/`
   - `~/.claude/skills/lilarch/`
@@ -91,6 +94,7 @@ Installed skills:
   - `~/.claude/skills/agent-definition-auditor/`
 - Gemini CLI:
   - `~/.gemini/skills/arch-step/`
+  - `~/.gemini/skills/miniarch-step/`
   - `~/.gemini/skills/arch-docs/`
   - `~/.gemini/skills/arch-mini-plan/`
   - `~/.gemini/skills/lilarch/`
@@ -134,7 +138,7 @@ Restart your Codex, Claude Code, or Gemini CLI session after install so it reloa
 
 ### `arch-step`
 
-Use `arch-step` for real full-arch work. It owns the standalone full-arch workflow, including:
+Use `arch-step` for broad or ambiguity-heavy full-arch work. It owns the standalone full-arch workflow, including:
 
 - `new`
 - `reformat`
@@ -171,6 +175,32 @@ Section 7 phase plans should split work into one coherent self-contained unit pe
 
 If the user says "do the full arch flow," "continue this architecture doc," or "audit implementation against the plan," the right live skill is `arch-step`.
 
+### `miniarch-step`
+
+Use `miniarch-step` for smaller well-defined features that still need a canonical full-arch doc, phased execution, consistency gating, and real Codex auto controllers, but do not need `arch-step`'s broader staged helper surface.
+
+It keeps the same full-arch artifact shape and the same clean-audit handoff to `arch-docs`, but with a shorter command surface:
+
+- `new`
+- `reformat`
+- `research`
+- `deep-dive`
+- `phase-plan`
+- `auto-plan`
+- `consistency-pass`
+- `implement`
+- `implement-loop`
+- `auto-implement`
+- `audit-implementation`
+- `status`
+- `advance`
+
+`miniarch-step auto-plan` is the shorter bounded planning controller. In Codex, `DOC_PATH` is the planning ledger and `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` is only the armed controller state. On a fresh doc, the parent pass runs only `research`, then ends its turn. On reruns, the installed Stop hook resumes from the first incomplete stage through `deep-dive`, `phase-plan`, and `consistency-pass`, then owns the successful `implement-loop` handoff.
+
+`miniarch-step implement-loop` and `miniarch-step auto-implement` share the same full-frontier delivery controller. They arm `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`, implement the full approved remaining frontier, and let fresh `audit-implementation` decide whether the loop is clean or more work remains.
+
+Use `miniarch-step` when the feature is too serious for `lilarch`, but still small and crisp enough that a faster full-arch pass is the best fit.
+
 ### `arch-docs`
 
 Use when the job is leaving repo docs healthier: cleaning up stale, overlapping, misleading, or obviously dated docs, updating stale survivors, clarifying confusing docs, and promoting grounded missing truth into evergreen docs. It works in any repo and, after full-arch work, uses the plan/worklog as narrowing context instead of as the whole scope.
@@ -183,7 +213,7 @@ For any of these Codex auto controllers, do not run the Stop hook yourself. Afte
 
 ### `arch-mini-plan`
 
-Use when the task still needs canonical arch blocks, but the planning should be done in one pass and follow-through should happen later via `arch-step`, then `arch-docs` for later docs cleanup.
+Use when the task still needs canonical arch blocks, but the planning should be done in one pass and follow-through should happen later via `miniarch-step` or `arch-step`, then `arch-docs` for later docs cleanup.
 
 ### `lilarch`
 
@@ -232,7 +262,7 @@ Use when the user wants a cold-read score, rationale, and prioritized improvemen
 ## Usage
 
 - Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `delay-poll`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, or `agent-definition-auditor`.
-- Full-arch execution defaults to `arch-step`.
+- Full-arch execution defaults to `miniarch-step` for smaller well-defined work and `arch-step` for broader or helper-heavy work.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
 
@@ -246,6 +276,10 @@ Examples:
 - `Use $arch-step consistency-pass docs/MY_PLAN.md`
 - `Use $arch-step implement-loop docs/MY_PLAN.md`
 - `Use $arch-step auto-implement docs/MY_PLAN.md`
+- `Use $miniarch-step "do the faster full arch flow for this feature"`
+- `Use $miniarch-step auto-plan`
+- `Use $miniarch-step implement-loop docs/MY_PLAN.md`
+- `Use $miniarch-step auto-implement docs/MY_PLAN.md`
 - `Use $arch-docs`
 - `Use $arch-docs auto`
 - `Use $arch-mini-plan docs/MY_PLAN.md`

@@ -1,4 +1,4 @@
-# Arch Step Status
+# Miniarch Step Status
 
 `status` is the compact read-only surface.
 
@@ -25,13 +25,11 @@ Report in this order:
 2. North Star
 3. Research
 4. Deep dive
-5. External research
-6. Phase plan
-7. Implementation
-8. Audit
-9. Docs cleanup
-10. Helper summary
-11. Best next move
+5. Phase plan
+6. Implementation
+7. Audit
+8. Docs cleanup
+9. Best next move
 
 ## Allowed grades
 
@@ -41,9 +39,6 @@ Use exactly:
 - `decent`
 - `weak`
 - `missing`
-- `not needed`
-
-`not needed` is only for external research and helper commands.
 
 ## Artifact evidence rules
 
@@ -117,22 +112,7 @@ Grade:
 - `weak` when one or more exist but do not meet the depth bar
 - `missing` when one or more are absent
 
-Also report whether pass 1 or pass 2 has been completed.
-
-### External research
-
-Inspect:
-
-- `arch_skill:block:external_research`
-- `planning_passes.external_research_grounding`
-
-Grade:
-
-- `strong` when the block uses narrow relevant topics, authoritative sources, and clear adopt or reject guidance for this plan
-- `decent` when useful but thin
-- `weak` when present but not truly synthesized
-- `missing` when warranted but absent
-- `not needed` when the plan is repo-local and external best practice does not materially affect correctness or idiomatic design
+Also report whether the single deep-dive pass has been completed.
 
 ### Phase plan
 
@@ -142,10 +122,9 @@ Inspect:
 
 Grade:
 
-- `strong` when the authoritative phased plan exists, remains the single execution checklist, each phase owns one coherent self-contained unit, the decomposition is foundational-first and biases toward more phases than fewer when both are valid, each phase has concrete work, an explicit exhaustive checklist, verification, exhaustive exit criteria, and rollback, refactor-heavy phases name preservation checks, adjacent-surface and cutover or preservation work are explicit, touched live docs/comments that would otherwise go stale are either deleted or rewritten in the plan, agent-backed tooling is explicitly justified against prompt-first options, and the checklist contains no unresolved branches or "decide later" language
-- `strong` also requires that `Work` stay explanatory, no required obligation is stranded outside `Checklist` or `Exit criteria`, and the exit criteria are concrete enough for audit to validate without guessing
+- `strong` when the authoritative phased plan exists, remains the single execution checklist, each phase owns one coherent self-contained unit, the decomposition is foundational-first and biases toward more phases than fewer when both are valid, each phase has concrete work, an explicit exhaustive checklist, verification, exhaustive exit criteria, and rollback, refactor-heavy phases name preservation checks, adjacent-surface and cutover or preservation work are explicit, touched live docs/comments that would otherwise go stale are either deleted or rewritten in the plan, and the checklist contains no unresolved branches or "decide later" language
 - `decent` when present but one or more phases are thin
-- `weak` when generic, incomplete, blends coherent units into oversized phases, omits or underspecifies phase checklists, strands required obligations outside the authoritative phase-exit surface, uses vague or non-auditable exit criteria, mixes product creep into ship-blocking work, leaves touched live docs/comments cleanup implicit, competes with helper checklists, or still contains unresolved execution choices
+- `weak` when generic, incomplete, blends coherent units into oversized phases, omits or underspecifies phase checklists, strands required obligations outside the authoritative phase-exit surface, uses vague or non-auditable exit criteria, mixes product creep into ship-blocking work, leaves touched live docs/comments cleanup implicit, or still contains unresolved execution choices
 - `missing` when absent
 
 ### Implementation
@@ -158,7 +137,7 @@ Inspect:
 
 Grade:
 
-- `strong` when worklog and doc both reflect real phased progress or completion against the Section 7 checklist and exit criteria, required proof and required docs/comments propagation are visible where phase completeness depends on them, Section 7 phase status lines match the worklog, ledger-like completeness is visible, refactor-heavy phases ran preservation checks, touched live docs/comments that would otherwise go stale were cleaned up when needed, agent-backed changes leaned on the planned prompt or capability path before new tooling, and the doc matches reality
+- `strong` when worklog and doc both reflect real phased progress or completion against the Section 7 checklist and exit criteria, required proof and required docs/comments propagation are visible where phase completeness depends on them, Section 7 phase status lines match the worklog, ledger-like completeness is visible, refactor-heavy phases ran preservation checks, touched live docs/comments that would otherwise go stale were cleaned up when needed, and the doc matches reality
 - `decent` when implementation is real but progress truth is thin
 - `weak` when there are claims of progress or completion without credible worklog or doc evidence for checklist completion, required proof, or exit-criteria satisfaction
 - `missing` when no implementation evidence exists
@@ -192,25 +171,12 @@ Grade:
 - `weak` when the code audit is incomplete or the docs-cleanup handoff is still unclear
 - `missing` when there is no credible audit state yet
 
-## Helper summary rules
-
-- `plan-enhance` is present when `arch_skill:block:plan_enhancer` exists
-- `fold-in` is present when `arch_skill:block:reference_pack` exists
-- `overbuild-protector` is present when `arch_skill:block:overbuild_protector` exists
-- `consistency-pass` is present when `arch_skill:block:consistency_pass` exists
-- `review-gate` is present when `arch_skill:block:review_gate` exists
-
-Summarize helpers in one compact line. Example:
-
-- `Helpers are mixed: plan enhancer is strong, fold-in is decent, overbuild protector is missing, consistency pass is strong, review gate is not needed.`
-
 ## Output shape
 
 Keep the output compact and human:
 
 - one short line for the artifact
 - one short line per core stage
-- one short helper line
 - one short `Best next move:` line
 
 Do not emit the longer `advance` checklist here.
@@ -219,15 +185,20 @@ Do not emit the longer `advance` checklist here.
 
 Choose the command that most improves artifact completeness or core-flow progress:
 
-- no canonical doc yet -> `new`
-- non-canonical existing doc -> `reformat`
-- draft or weak North Star -> confirm or repair via `reformat`
-- missing research -> `research`
-- weak or incomplete current architecture, target architecture, canonical-path analysis, or call-site audit -> `deep-dive`
-- warranted but missing external research -> `external-research`
-- weak, creep-heavy, missing capability-first analysis, preservation-light, adjacent-surface-light, compatibility-implicit, or stale-live-doc-light execution checklist -> `phase-plan`
-- execution-grade plan still has obvious end-to-end consistency drift that warrants a dedicated cold read -> `consistency-pass`
-- unresolved decision gap that repo truth cannot settle -> ask the user the exact blocker question and do not route to implementation
-- code progress without worklog truth -> `implement`
-- missing implementation audit -> `audit-implementation`
-- clean implementation audit with remaining docs cleanup or plan/worklog retirement -> `Use $arch-docs`
+1. no plan doc yet -> `new`
+2. existing doc is not canonical enough to trust -> `reformat`
+3. North Star is still draft or too weak -> stop for confirmation or repair via `reformat`
+4. after North Star confirmation, stop and wait for the user's explicit next command; do not auto-advance into `research` or any later stage
+5. unresolved decision gap remains that repo truth cannot settle -> ask the user the exact blocker question
+6. earliest required structure or owned block is missing -> run the command that repairs it
+7. required structure exists but the next critical sections are still weak, including canonical-path analysis, preservation verification, or decision-completeness -> run the command that strengthens them
+8. otherwise follow the core arc:
+   - `research`
+   - `deep-dive`
+   - `phase-plan`
+   - `consistency-pass` when the artifact clearly needs an end-to-end cold-read repair or the user explicitly wants it
+   - `implement` by default
+   - `implement-loop` when the user explicitly wants the full-frontier delivery loop to a clean audit
+   - `audit-implementation`
+9. if the code audit is clean and the feature still needs docs cleanup, hand off to `Use $arch-docs`
+10. if all required stages are complete and the live feature residue is already retired, say there is no required next move

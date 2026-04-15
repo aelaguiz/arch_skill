@@ -1,5 +1,19 @@
 # Arch Skills Guide Boundary Examples
 
+## Broad full arch vs faster full arch
+
+- "This is still full arch work, but the feature is small and well-defined. Go fast":
+  - `miniarch-step`
+- "This migration is broad, ambiguous, or needs the helper passes":
+  - `arch-step`
+
+## Faster full arch vs mini plan
+
+- "I want the faster full arch workflow, not just a one-pass plan":
+  - `miniarch-step`
+- "Give me the mini plan version in one pass":
+  - `arch-mini-plan`
+
 ## Full arch vs mini plan
 
 - "Do the full arch flow for this migration":
@@ -41,6 +55,13 @@
   - `comment-loop`
 - "Deeply map this repo, then fix the biggest real bugs and proof gaps":
   - `audit-loop`
+
+## Faster full arch vs lilarch
+
+- "This is too serious for lilarch, but still a small well-defined feature":
+  - `miniarch-step`
+- "This should fit in 1-3 phases, use little arch":
+  - `lilarch`
 
 ## Mini plan vs lilarch
 

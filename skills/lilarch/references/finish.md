@@ -25,5 +25,5 @@ Mark the doc complete only when:
 
 ## Escalation during finish mode
 
-- If the change stops fitting the compact plan, stop and escalate to `arch-step reformat <DOC_PATH>`.
+- If the change stops fitting the compact plan, stop and escalate to `miniarch-step reformat <DOC_PATH>` or `arch-step reformat <DOC_PATH>`, depending on how broad the work became.
 - Do not quietly grow lilarch into a second full-arch workflow.

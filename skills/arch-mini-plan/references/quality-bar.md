@@ -55,7 +55,7 @@
 ## Ready verdict
 
 - Ready:
-  - the implementer can start with `arch-step implement` and does not need to invent architecture
+  - the implementer can start with `miniarch-step implement` and does not need to invent architecture
 - Not ready:
   - open architecture questions still control the plan
   - the doc needs full-arch restructuring first

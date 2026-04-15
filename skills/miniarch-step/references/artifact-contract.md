@@ -15,7 +15,7 @@ Decision-complete means the main artifact has no unresolved plan-shaping decisio
   - `<DOC_DIR>/<DOC_BASENAME>_WORKLOG.md`
   - progress evidence only, never a second plan
 
-Planning commands update `DOC_PATH` only, except `auto-plan`, which also arms `.codex/auto-plan-state.<SESSION_ID>.json` as controller state for hook-owned later stages. For `auto-plan`, `DOC_PATH` remains the planning-progress ledger; the state file is only armed controller state for that doc/session. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
+Planning commands update `DOC_PATH` only, except `auto-plan`, which also arms `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` as controller state for hook-owned later stages. For `auto-plan`, `DOC_PATH` remains the planning-progress ledger; the state file is only armed controller state for that doc/session. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
 
 ## Artifact convergence rule
 
@@ -114,9 +114,7 @@ This warn-first bookkeeping block belongs near the top of the doc:
 <!--
 arch_skill:planning_passes
 deep_dive_pass_1: not started
-external_research_grounding: not started
-deep_dive_pass_2: not started
-recommended_flow: deep dive -> external research grounding -> deep dive again -> phase plan -> implement
+recommended_flow: research -> deep dive -> phase plan -> consistency pass -> implement
 note: This block tracks stage order only. It never overrides readiness blockers caused by unresolved decisions.
 -->
 <!-- arch_skill:block:planning_passes:end -->
@@ -126,9 +124,7 @@ Update rules:
 
 - preserve timestamps already present
 - never wipe completed fields
-- `deep-dive` marks pass 1 or pass 2
-- pass 2 may reflect either external-research follow-through or an explicit second architecture-hardening pass such as `auto-plan`
-- `external-research` marks `external_research_grounding`
+- `deep-dive` marks `deep_dive_pass_1`
 
 ### `# 0) Holistic North Star`
 
@@ -372,16 +368,11 @@ Keep these markers stable when present:
 
 - `arch_skill:block:planning_passes`
 - `arch_skill:block:research_grounding`
-- `arch_skill:block:external_research`
 - `arch_skill:block:current_architecture`
 - `arch_skill:block:target_architecture`
 - `arch_skill:block:call_site_audit`
 - `arch_skill:block:phase_plan`
-- `arch_skill:block:reference_pack`
-- `arch_skill:block:plan_enhancer`
-- `arch_skill:block:overbuild_protector`
 - `arch_skill:block:consistency_pass`
-- `arch_skill:block:review_gate`
 - `arch_skill:block:implementation_audit`
 
 If a matching semantic section exists without the marker, update it in place rather than duplicating it.
@@ -398,10 +389,6 @@ If a matching semantic section exists without the marker, update it in place rat
   - primary writer: `deep-dive`
 - `# 7)`:
   - primary writer: `phase-plan`
-- `External Research` block:
-  - primary writer: `external-research`
-- helper blocks:
-  - primary writers: matching helper commands
 - `WORKLOG_PATH`:
   - primary writer: `implement`
 - `implementation_audit`:
@@ -461,9 +448,9 @@ Treat these as hard checks:
 - all planning and decision-making live in `DOC_PATH`
 - `WORKLOG_PATH` is execution evidence, not a second plan
 - do not create sidecar planning docs
-- if instruction-bearing content was intentionally condensed during `reformat` or `fold-in`, the artifact must still retain the exact source text somewhere recoverable
+- if instruction-bearing content was intentionally condensed during `reformat`, the artifact must still retain the exact source text somewhere recoverable
 
 ## Write-boundary rule
 
-- `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `consistency-pass`, `review-gate`, and `audit-implementation` are docs-only
+- `new`, `reformat`, `research`, `deep-dive`, `phase-plan`, `auto-plan`, `consistency-pass`, and `audit-implementation` are docs-only
 - `implement` and `implement-loop` are the code-writing commands in this skill

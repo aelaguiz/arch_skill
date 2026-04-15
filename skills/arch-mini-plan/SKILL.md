@@ -1,6 +1,6 @@
 ---
 name: arch-mini-plan
-description: "Create or repair a standalone one-pass mini architecture plan that writes the canonical arch blocks into one doc and then hands follow-through to `arch-step`, with later docs cleanup handled by `arch-docs` using the finished artifact as context. Use when a request asks for a mini plan, compressed arch plan, or single-pass planning pass without running the full staged arch workflow. Not for tiny 1-3 phase features, bugs, open-ended loops, or full-arch execution."
+description: "Create or repair a standalone one-pass mini architecture plan that writes the canonical arch blocks into one doc and then hands follow-through to `miniarch-step` or `arch-step`, with later docs cleanup handled by `arch-docs` using the finished artifact as context. Use when a request asks for a mini plan, compressed arch plan, or single-pass planning pass without running the full staged arch workflow. Not for tiny 1-3 phase features, bugs, open-ended loops, or full-arch execution."
 metadata:
   short-description: "Compressed one-pass arch planning"
 ---
@@ -14,7 +14,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 - The user explicitly asks for a mini plan or a one-pass architecture plan.
 - The task is small or medium-sized, but still benefits from the canonical arch blocks.
 - The user wants planning rigor without walking the full research -> deep dive -> external research -> phase plan sequence as separate steps.
-- The likely next steps after planning are implementation against the same doc via `arch-step`, then docs cleanup via `arch-docs`.
+- The likely next steps after planning are implementation against the same doc via `miniarch-step` or `arch-step`, then docs cleanup via `arch-docs`.
 
 ## When not to use
 
@@ -29,7 +29,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 - Keep one canonical `DOC_PATH` as the source of truth.
 - Use the same canonical arch markers and compatible section shapes that `arch-step` expects.
 - Keep the phase plan tight: usually 1-2 phases, optionally 3 if cleanup truly needs its own pass.
-- If the scope expands beyond a compact one-pass plan, escalate to `arch-step reformat` rather than pretending mini mode still fits.
+- If the scope expands beyond a compact one-pass plan, escalate to `miniarch-step` or `arch-step reformat` rather than pretending mini mode still fits.
 - Ask questions only when repo/docs/tools cannot answer them.
 - When the changed behavior is agent- or LLM-driven, inspect prompt surfaces, native model capabilities, and existing tool/file/context exposure before designing.
 - For agent-backed systems, prefer prompt engineering, grounding, and native-capability use before new harnesses, wrappers, parsers, OCR layers, or scripts.
@@ -54,7 +54,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 1. Confirm this is the right mode:
    - smaller task
    - still needs real architecture grounding
-   - not a `lilarch` fit and not a staged `arch-step` fit
+   - not a `lilarch` fit and not an immediate staged full-arch execution fit
 2. Gather the minimum evidence needed:
    - internal ground truth and reusable patterns first
    - external guidance only if correctness depends on it
@@ -74,7 +74,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
   - punchline
   - which blocks changed
   - any "too big for mini mode" warning
-  - exact next move, usually `arch-step implement` or `arch-step reformat`, with `arch-docs` as the later full-arch docs-cleanup handoff after clean code audit
+  - exact next move, usually `miniarch-step implement`, `miniarch-step reformat`, or `arch-step reformat`, with `arch-docs` as the later full-arch docs-cleanup handoff after clean code audit
 
 ## Reference map
 
