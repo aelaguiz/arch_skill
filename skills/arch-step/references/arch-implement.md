@@ -66,6 +66,10 @@ By the end of the run:
 - never implement directly on the default branch
 - if already on `main` or equivalent, create a feature branch before doing the work
 - do not let unrelated dirty files block progress
+- before editing a task-relevant file, work from current file contents rather than stale assumptions
+- if a task-relevant file changes unexpectedly after inspection or while applying edits, re-read it once to determine whether the change is unrelated and safely composable
+- if the unexpected change overlaps the intended edit or changes the meaning of the target area, do not revert, overwrite, or merge through it; stop and report the path, the intended edit, and that the user should say when they are done editing the file so work can resume
+- never use `git checkout`, reset, or reverse patches to remove user edits
 
 ## Communication contract
 

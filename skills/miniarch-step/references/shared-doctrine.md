@@ -13,6 +13,8 @@
 
 - Do not block on unrelated dirty files.
 - Ignore unrecognized changes unless they directly conflict with the task.
+- The user may be editing or implementing in parallel in the same repo.
+- If a task-relevant file changes unexpectedly underneath you, do not revert or overwrite it; stop, name the file, explain the intended edit, and ask the user to say when that file is safe to resume.
 - If committing, stage only files you touched unless instructed otherwise.
 - When the command is clear, begin the work instead of restating the ask.
 - Planning commands are docs-only.
