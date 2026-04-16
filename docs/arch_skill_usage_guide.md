@@ -236,7 +236,7 @@ Practical rule:
 
 ### `arch-docs`
 
-Use when the code is clean enough to trust and the job is cleaning up stale, overlapping, misleading, or obviously dated docs, updating stale survivors, clarifying confusing docs, or promoting grounded missing truth into evergreen docs.
+Use when the code is clean enough to trust and the job is aggressively retiring stale point-in-time docs, folding durable truth into real evergreen homes, and only keeping surviving docs that still earn a current-reader need from code.
 
 Examples:
 
@@ -245,9 +245,10 @@ Examples:
 
 Practical rule:
 
-- With no extra mode, `arch-docs` runs the normal one-pass DGTFO docs-health pass, should resolve scope from explicit user context, active arch context, or the repo docs surface, should use git history when keep/delete judgment depends on whether a doc is an obsolete point-in-time artifact, and should create or expand a canonical evergreen doc only when that is the right canonical result.
+- With no extra mode, `arch-docs` runs the normal one-pass DGTFO docs-health pass, should resolve scope from explicit user context, active arch context, or the repo docs surface, should use git history when keep/delete judgment depends on whether a doc is an obsolete point-in-time artifact, and should treat point-in-time docs older than 30 days as presumptively stale unless the pass can show an explicit code-grounded current-reader need.
 - Repo posture is evidence-based: default to `private/internal` when unclear, but in `public OSS` repos treat `README`, `LICENSE*`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, and `SUPPORT.md` as expected standalone docs.
-- Beyond that public baseline, create a focused new doc only when the topic is durable, differentiated, and something readers would likely seek directly, and when forcing it into the current home would make the docs worse.
+- Do not trust folder names or freshness headers such as `docs/living`, `Status: LIVING`, or `Last verified`; those are claims to verify against code, not evidence that a doc should survive.
+- Beyond that public baseline, create a focused new doc only when the topic is durable, differentiated, and something readers would likely seek directly, and when forcing it into the current home would make the docs worse. Otherwise fold the durable truth into an existing evergreen home and delete the stale wrapper.
 - Use `arch-docs auto` only in Codex when you want hook-backed repeated cleanup passes with fresh external evaluation.
 - If a clean arch plan/worklog exists, `arch-docs` should use it as narrowing context rather than as the whole scope.
 
