@@ -1,0 +1,7 @@
+interface:
+  display_name: "Prompt Authoring"
+  short_description: "Write, edit, refactor, and audit prompts"
+  default_prompt: "Use $prompt-authoring to write, edit, refactor, or audit a prompt so it stays intent-driven and anti-heuristic."
+
+policy:
+  allow_implicit_invocation: true

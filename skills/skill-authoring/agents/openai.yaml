@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skill Authoring"
+  short_description: "Create high-impact reusable skills"
+  default_prompt: "Use $skill-authoring to design or repair a high-impact skill with precise triggers, lean packaging, and self-contained references."
+
+policy:
+  allow_implicit_invocation: true

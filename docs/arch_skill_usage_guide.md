@@ -22,10 +22,19 @@ Use `miniarch-step` for full-arch work when you want the trimmed command surface
 
 Other shipped skills:
 
+- `arch-loop`
 - `delay-poll`
+- `wait`
 - `agent-definition-auditor`
+- `agents-md-authoring`
+- `prompt-authoring`
+- `skill-authoring`
 - `codemagic-builds`
 - `amir-publish`
+- `codex-review-yolo`
+- `code-review`
+
+Examples in this guide use Codex `$skill` notation. In Claude Code, invoke the same skill as `/skill`.
 
 ## Install
 
@@ -35,13 +44,15 @@ cd arch_skill
 make install
 ```
 
-For Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, and `delay-poll`, also enable the Codex feature once:
+For Codex automatic `auto-plan`, `implement-loop`, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, `arch-loop`, `delay-poll`, and `wait`, also enable the Codex feature once:
 
 ```bash
 codex features enable codex_hooks
 ```
 
-For any of those Codex auto controllers, do not run the Stop hook yourself. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
+Claude Code uses the installed settings-level `Stop` hook and does not depend on the Codex feature flag. Claude controllers that need fresh child review or check passes launch hook-suppressed child runs with `claude -p --settings '{"disableAllHooks":true}'`, so that child path must work with the machine's normal Claude auth.
+
+For any supported auto controller in Codex or Claude Code, do not run the Stop hook yourself. After the controller is armed, just end the turn and let the installed Stop hook run.
 
 Default local path:
 
@@ -58,12 +69,19 @@ Default local path:
 - `~/.agents/skills/north-star-investigation/`
 - `~/.agents/skills/arch-flow/`
 - `~/.agents/skills/arch-skills-guide/`
+- `~/.agents/skills/arch-loop/`
 - `~/.agents/skills/delay-poll/`
+- `~/.agents/skills/wait/`
 - `~/.agents/skills/agent-definition-auditor/`
+- `~/.agents/skills/agents-md-authoring/`
+- `~/.agents/skills/prompt-authoring/`
+- `~/.agents/skills/skill-authoring/`
 - `~/.agents/skills/codemagic-builds/`
 - `~/.agents/skills/amir-publish/`
+- `~/.agents/skills/codex-review-yolo/`
+- `~/.agents/skills/code-review/`
 
-Codex reads the same installed skills from `~/.agents/skills/`. `make install` also writes one arch_skill-managed Codex `Stop` hook through `~/.codex/hooks.json`, points it at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, repairs older two-hook arch_skill installs down to that one repo-managed entry, and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
+Codex reads the same installed skills from `~/.agents/skills/`. `make install` also writes one arch_skill-managed Codex `Stop` hook through `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, writes one arch_skill-managed Claude Code `Stop` hook through `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`, repairs older repo-managed hook entries down to one active entry per runtime, and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
 
 Installed skills:
 
@@ -77,14 +95,21 @@ Installed skills:
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
+  - `arch-loop`
   - `delay-poll`
+  - `wait`
   - `goal-loop`
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
   - `agent-definition-auditor`
+  - `agents-md-authoring`
+  - `prompt-authoring`
+  - `skill-authoring`
   - `codemagic-builds`
   - `amir-publish`
+  - `codex-review-yolo`
+  - `code-review`
 - Claude Code:
   - `arch-step`
   - `miniarch-step`
@@ -95,11 +120,19 @@ Installed skills:
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
+  - `arch-loop`
+  - `delay-poll`
+  - `wait`
   - `goal-loop`
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
   - `agent-definition-auditor`
+  - `agents-md-authoring`
+  - `prompt-authoring`
+  - `skill-authoring`
+  - `codex-review-yolo`
+  - `code-review`
 - Gemini:
   - `arch-step`
   - `miniarch-step`
@@ -115,10 +148,14 @@ Installed skills:
   - `arch-flow`
   - `arch-skills-guide`
   - `agent-definition-auditor`
+  - `agents-md-authoring`
+  - `prompt-authoring`
+  - `skill-authoring`
+  - `codex-review-yolo`
 
-Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. For Codex, it installs one repo-managed `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`; that one hook backs `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, and `delay-poll`.
+Install removes stale pre-skill command surfaces, removed competing skill packages, and older Codex skill mirrors. It installs one repo-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` and one repo-managed Claude Code `Stop` hook in `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`. Those entries back `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, `arch-loop`, and `delay-poll`.
 
-`delay-poll`, `codemagic-builds`, and `amir-publish` are installed only on the agents/Codex surface. `delay-poll` depends on the Codex `Stop` hook runtime; the others are local operator shortcuts.
+`codemagic-builds` and `amir-publish` are installed only on the agents/Codex surface. `arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface. Gemini still has no hook-backed auto-controller surface, so none of those three are installed there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict, mirroring the `code-review` exception: the Claude host can arm and drive the loop, but the evaluator subprocess itself must always be Codex. `code-review` is installed on the agents/Codex and Claude Code surfaces only; Claude may host the Stop hook, but the review subprocess itself always shells out to fresh Codex.
 
 ## Shared conventions
 
@@ -197,7 +234,7 @@ Practical rule:
 - `arch-step status` is the concise readout.
 - `arch-step advance` owns the full checklist and exact next-command selection.
 - `arch-step consistency-pass` is the optional end-to-end cold-read helper before implementation. In Codex it uses two parallel explorer reads, and `auto-plan` includes it automatically after `phase-plan`. When it runs, `Decision: proceed to implement? yes` is only legal if the artifact is decision-complete and has no unresolved plan-shaping decisions left.
-- `arch-step auto-plan` is the explicit bounded planning controller after North Star approval. In Codex, `DOC_PATH` is the planning ledger and `.codex/auto-plan-state.<SESSION_ID>.json` is only armed controller state. On a fresh doc, the parent pass runs only `research`, then ends its turn. On reruns, the installed Stop hook reads the doc and feeds `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, or `consistency-pass` from the first incomplete stage it finds, then stops and says the doc is decision-complete and ready for `implement-loop`. If a real unresolved decision remains, `auto-plan` must stop, clear controller state, and ask the user the exact blocker question.
+- `arch-step auto-plan` is the explicit bounded planning controller after North Star approval. `DOC_PATH` is the planning ledger and the armed controller state lives under `.codex/` in Codex or `.claude/arch_skill/` in Claude Code. On a fresh doc, the parent pass runs only `research`, then ends its turn. On reruns, the installed Stop hook reads the doc and feeds `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, or `consistency-pass` from the first incomplete stage it finds, then stops and says the doc is decision-complete and ready for `implement-loop`. If a real unresolved decision remains, `auto-plan` must stop, clear controller state, and ask the user the exact blocker question.
 - `arch-step` does not get to silently cut approved behavior, acceptance criteria, or required implementation work because the agent wants to narrow scope on its own. If repo evidence cannot settle a plan-shaping choice, it must ask the user instead of guessing.
 - Section 7 phase plans should split work into one coherent self-contained unit per phase, with the most fundamental units first and later phases clearly building on earlier ones.
 - When two decompositions are both valid, `arch-step` should prefer more, smaller phases than fewer blended phases.
@@ -206,13 +243,13 @@ Practical rule:
 - `arch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
 - In that controller, implementation scope is the full approved Section 7 frontier in order. It must arm loop state before implementation work, resume from the earliest incomplete or reopened phase, continue through later reachable phases, and only then hand control to fresh audit unless a real blocker stops progress.
 - After a clean full-arch code audit, `arch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
-- In Codex, the user still invokes only `auto-plan`, `implement-loop`, or `auto-implement`; the last two are the same controller and require the repo-managed `Stop` entry in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py` plus enabled `codex_hooks`.
-- Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
-- If that `hooks.json` entry, the installed runner path, or `codex_hooks` is missing, those commands should fail loud with the remediation commands instead of pretending a prompt-only loop exists. Do not check for a copied hook file under `~/.codex/hooks/`.
+- In Codex, the user still invokes only `auto-plan`, `implement-loop`, or `auto-implement`; the last two are the same controller. In Codex they require the repo-managed `Stop` entry in `~/.codex/hooks.json` plus enabled `codex_hooks`. In Claude Code they require the repo-managed `Stop` entry in `~/.claude/settings.json`.
+- Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let the installed Stop hook run.
+- If the active runtime's hook entry, the installed runner path, or Codex's `codex_hooks` feature flag is missing, those commands should fail loud with the remediation commands instead of pretending a prompt-only loop exists. Do not check for a copied hook file under `~/.codex/hooks/`.
 
 ### `miniarch-step`
 
-Use when the work still needs a canonical full-arch doc, phased execution, and real Codex auto controllers, but does not need the broader `arch-step` helper surface. This is a trimmed command surface, not a lower-effort workflow.
+Use when the work still needs a canonical full-arch doc, phased execution, and real auto controllers in Codex or Claude Code, but does not need the broader `arch-step` helper surface. This is a trimmed command surface, not a lower-effort workflow.
 
 Examples:
 
@@ -226,13 +263,13 @@ Examples:
 Practical rule:
 
 - If the task no longer fits `lilarch`, but does not need `arch-step`'s broader helper surface, use `miniarch-step`.
-- `miniarch-step auto-plan` is the planning controller for the trimmed surface. In Codex, `DOC_PATH` is the planning ledger and `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` is only armed controller state. On a fresh doc, the parent pass runs only `research`, then ends its turn. On reruns, the installed Stop hook reads the doc and feeds `deep-dive` or `phase-plan` from the first incomplete stage it finds, then stops and says the doc is decision-complete and ready for `implement-loop`.
+- `miniarch-step auto-plan` is the planning controller for the trimmed surface. `DOC_PATH` is the planning ledger and the armed controller state lives under `.codex/` in Codex or `.claude/arch_skill/` in Claude Code. On a fresh doc, the parent pass runs only `research`, then ends its turn. On reruns, the installed Stop hook reads the doc and feeds `deep-dive` or `phase-plan` from the first incomplete stage it finds, then stops and says the doc is decision-complete and ready for `implement-loop`.
 - `miniarch-step implement-loop` is the explicit full-frontier controller when the user wants repeated implement then audit passes until the audit is clean or a real blocker stops the run.
 - `miniarch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
-- In that controller, implementation scope is the full approved Section 7 frontier in order. It must arm `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` before implementation work, resume from the earliest incomplete or reopened phase, continue through later reachable phases, and only then hand control to fresh audit unless a real blocker stops progress. In Codex, that fresh miniarch audit child runs with `gpt-5.4-mini` at `xhigh` reasoning effort.
+- In that controller, implementation scope is the full approved Section 7 frontier in order. It must arm runtime-local controller state under `.codex/` in Codex or `.claude/arch_skill/` in Claude Code before implementation work, resume from the earliest incomplete or reopened phase, continue through later reachable phases, and only then hand control to fresh audit unless a real blocker stops progress. In Codex, that fresh miniarch audit child runs with `gpt-5.4-mini` at `xhigh` reasoning effort.
 - After a clean code audit, `miniarch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
-- In Codex, these commands still rely on the repo-managed `Stop` entry in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py` plus enabled `codex_hooks`.
-- Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let Codex run the installed Stop hook.
+- These commands still rely on the repo-managed `Stop` entry for the active host runtime: `~/.codex/hooks.json` plus enabled `codex_hooks` in Codex, or `~/.claude/settings.json` in Claude Code.
+- Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let the installed Stop hook run.
 
 ### `arch-docs`
 
@@ -249,7 +286,7 @@ Practical rule:
 - Repo posture is evidence-based: default to `private/internal` when unclear, but in `public OSS` repos treat `README`, `LICENSE*`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, and `SUPPORT.md` as expected standalone docs.
 - Do not trust folder names or freshness headers such as `docs/living`, `Status: LIVING`, or `Last verified`; those are claims to verify against code, not evidence that a doc should survive.
 - Beyond that public baseline, create a focused new doc only when the topic is durable, differentiated, and something readers would likely seek directly, and when forcing it into the current home would make the docs worse. Otherwise fold the durable truth into an existing evergreen home and delete the stale wrapper.
-- Use `arch-docs auto` only in Codex when you want hook-backed repeated cleanup passes with fresh external evaluation.
+- Use `arch-docs auto` in Codex or Claude Code when you want hook-backed repeated cleanup passes with fresh external evaluation.
 - If a clean arch plan/worklog exists, `arch-docs` should use it as narrowing context rather than as the whole scope.
 
 ### `arch-flow`
@@ -319,13 +356,44 @@ Examples:
 
 Use when the goal is clear but the path is unknown and you want a controller doc plus append-only iteration log.
 
+### `arch-loop`
+
+Use when the user wants a generic hook-backed completion loop with no prescribed map-first flow: free-form requirements, optional named-skill audit obligations such as `$agent-linter` or `$code-review`, optional runtime/cadence/iteration caps, and a fresh unsandboxed Codex `gpt-5.4` `xhigh` external evaluator that is the only authority allowed to emit `clean` or `blocked` and stop the loop.
+
+Examples:
+
+- `Use $arch-loop tighten the onboarding copy across the marketing site until it reads cleanly on mobile`
+- `Use $arch-loop rewrite this AGENTS.md file with $agent-linter as a required clean audit`
+- `Use $arch-loop every 30 minutes check whether staging.api.internal is reachable and keep fixing infra until it is, max 8 hours`
+
+Practical rule:
+
+- Use `arch-loop` for open-ended "keep going until this is done" work that does not map cleanly to `audit-loop`, `comment-loop`, `audit-loop-sim`, or any of the full-arch auto controllers.
+- Use `delay-poll` instead when the job is purely "wait and re-check a condition" with no parent work happening between checks.
+- Use the specialized audit loops (`audit-loop`, `comment-loop`, `audit-loop-sim`) instead when the user actually wants that skill's prescribed map-first flow and artifact contract.
+- Named audits are declared by writing `$skill-name` in the requirements; the evaluator treats each named audit as a required clean verdict before `clean` is legal.
+- Runtime caps come from the requirements themselves (`max 8 hours`, `every 30 minutes`, `max 12 iterations`). The evaluator extracts the strictest cap and must fail loud on ambiguous duration text rather than guess.
+- Continue verdicts split between `parent_work` (run another parent implementation turn now) and `wait_recheck` (sleep `cadence_seconds` inside the installed `Stop` hook, then re-run the evaluator without spending a parent turn).
+- Controller state lives under `.codex/arch-loop-state.<SESSION_ID>.json` in Codex and `.claude/arch_skill/arch-loop-state.<SESSION_ID>.json` in Claude Code.
+- The evaluator subprocess is always fresh Codex `gpt-5.4` `xhigh` with `-p yolo --ephemeral --disable codex_hooks --dangerously-bypass-approvals-and-sandbox`, even when Claude hosts the Stop hook.
+- Preflight must verify the active runtime's repo-managed `Stop` entry, the installed shared runner, and in Codex the `codex_hooks` feature flag. Do not preflight against a copied hook file under `~/.codex/hooks/`.
+- Do not run the Stop hook yourself. After the controller is armed, just end the turn and let the installed Stop hook run.
+
 ### `delay-poll`
 
-Use when the user wants Codex to wait on some external condition, re-check it every 30 minutes, every hour, or similar, and continue the same visible thread only after that condition becomes true.
+Use when the user wants Codex or Claude Code to wait on some external condition, re-check it every 30 minutes, every hour, or similar, and continue the same visible thread only after that condition becomes true.
 
 Examples:
 
 - `Use $delay-poll every 30 minutes check whether branch blah has been fully pushed; when it is, pull it and integrate it in`
+
+### `wait`
+
+Use when the user wants Codex or Claude Code to sleep for a specific parsed duration (for example `30m`, `1h30m`, `90s`, `2d`) and then continue the same visible thread with a literal resume prompt exactly once. The Stop hook sleeps and fires one resume, with no polling, no re-checking, and no fresh child run during the wait. For condition re-checking use `delay-poll`; for recurring or scheduled work use `/loop` or `schedule`.
+
+Examples:
+
+- `Use $wait 1h30m then continue investigating the flaky test`
 
 ### `north-star-investigation`
 
@@ -339,6 +407,30 @@ Use when the question is which live arch skill should handle the task.
 
 Use when the user wants a cold-read score, rationale, and improvement plan for an `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompt, or other agent-definition markdown.
 
+### `agents-md-authoring`
+
+Use when the user wants to write, edit, refactor, or audit a repo-root or path-local `AGENTS.md` so it stays command-first, scope-aware, and about current repo truth only.
+
+Examples:
+
+- `Use $agents-md-authoring to tighten this AGENTS.md`
+
+### `prompt-authoring`
+
+Use when the user wants to write, edit, refactor, or audit a reusable prompt contract so it stays intent-driven, section-correct, and anti-heuristic.
+
+Examples:
+
+- `Use $prompt-authoring to refactor this prompt`
+
+### `skill-authoring`
+
+Use when the user wants to write, edit, refactor, or audit a reusable agent skill package with precise triggers, lean packaging, and self-contained references.
+
+Examples:
+
+- `Use $skill-authoring to audit this skill package`
+
 ### `amir-publish`
 
 Use when Amir wants to publish this skills repo across his usual machines: commit and push the current local work, install locally, then SSH to the fixed host list, skip the current host, pull the same branch from the same directory, and install remotely.
@@ -346,6 +438,25 @@ Use when Amir wants to publish this skills repo across his usual machines: commi
 Examples:
 
 - `Use $amir-publish`
+
+### `code-review`
+
+Use when the user wants a real, deterministic code review — on an uncommitted diff, a branch comparison, a commit range, an explicit path set, or a "is this approved plan phase actually complete?" completion-claim. `code-review` never makes the caller model the reviewer. It always shells out to a fresh unsandboxed Codex `gpt-5.4` `xhigh` synthesis subprocess, with parallel fresh Codex `gpt-5.4-mini` `xhigh` subprocesses for the required per-lens review coverage (`correctness`, `architecture`, `proof`, `docs-drift`, `security`, and a conditional `agent-linter` lens when the change touches agent-building or instruction-bearing surfaces).
+
+The runner writes a namespaced per-run artifact tree (per-lens prompts, stream logs, final outputs, and a single synthesized `ReviewVerdict`). Direct invocation runs the runner as a one-shot. Hook-backed invocation arms state under `.codex/code-review-state.<SESSION_ID>.json` or `.claude/arch_skill/code-review-state.<SESSION_ID>.json`; the shared `arch-step` Stop-hook dispatcher then invokes the same runner. The Claude-host path is an intentional exception to the broader native-auto-loop direction: the Stop hook runs under Claude, but the review subprocess itself must always be Codex. Generic Claude auto-controllers stay Claude-native; `code-review` does not. `code-review` is review-only — it never edits the reviewed repo and never writes a "suggested patch" block.
+
+Examples:
+
+- `Use $code-review on the uncommitted diff`
+- `Use $code-review branch-diff --base main --head feature/ingest-fix`
+- `Use $code-review paths src/ingest/pipeline.py src/ingest/schema.py`
+- `Use $code-review completion-claim docs/MY_PLAN.md 3`
+
+Practical rule:
+
+- Use `code-review` when the user wants an automated finding-set with explicit coverage guarantees, including docs-drift and agent-surface checks.
+- Use `codex-review-yolo` when the user wants a narrower, more interactive `-p yolo` fresh-eyes consult on a specific artifact rather than a full lens-by-lens review.
+- Gemini is intentionally not supported; the skill package is never installed on Gemini because the runner always launches fresh Codex subprocesses.
 
 ## Full-arch doc conventions
 

@@ -6,25 +6,26 @@ Run repeated strong repo comment-hardening passes until the exhaustive map is co
 
 ## What `auto` does
 
-- verifies the Codex runtime preflight
-- resolves `SESSION_ID` from `CODEX_THREAD_ID` and creates or refreshes `.codex/comment-loop-state.<SESSION_ID>.json`
+- verifies the active host runtime preflight
+- creates or refreshes the host-aware `comment-loop` controller state
 - runs one truthful `run` pass
 - lets the installed Stop hook launch a fresh `review` pass
 - continues only while the review verdict remains `CONTINUE`
 
 The first turns may be mapping-only. That is correct behavior, not a failure to make progress.
 
-User-facing invocation is just `Use $comment-loop auto`. If real hook support is absent or disabled, fail loud instead of pretending prompt-only repetition is the same feature.
-Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let Codex run the installed Stop hook.
+User-facing invocation is just `comment-loop auto` in the active host runtime. If real hook support is absent or disabled, fail loud instead of pretending prompt-only repetition is the same feature.
+Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
 
 ## Required runtime preflight
 
 Before arming the controller, verify all of these:
 
-- Codex runtime is the active host
+- the active host runtime is Codex or Claude Code
 - the installed suite controller runner exists at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
-- `~/.codex/hooks.json` contains the arch_skill-managed `Stop` hook entry pointing at that runner
-- `codex features list` shows `codex_hooks` enabled
+- in Codex, `~/.codex/hooks.json` contains the arch_skill-managed `Stop` entry pointing at that runner; in Claude Code, `~/.claude/settings.json` contains the equivalent entry
+- in Codex, `codex features list` shows `codex_hooks` enabled
+- in Claude Code, hook-suppressed child runs via `claude -p --settings '{"disableAllHooks":true}'` work with the machine's normal Claude auth for fresh review passes
 
 If any check fails, name the broken prerequisite and stop.
 Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not the install contract.
@@ -33,7 +34,10 @@ Dirty or untracked files are not part of this runtime preflight. A dirty worktre
 
 ## State file contract
 
-Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/comment-loop-state.<SESSION_ID>.json` before the first `run` pass.
+Create the host-aware state path before the first `run` pass:
+
+- Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/comment-loop-state.<SESSION_ID>.json`
+- Claude Code: prefer `.claude/arch_skill/comment-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/comment-loop-state.json` and let the first Stop-hook turn claim session ownership
 
 Minimal shape:
 
@@ -73,7 +77,9 @@ Lifecycle:
 When the loop is armed, the installed suite Stop hook should:
 
 1. no-op when no active comment-loop state matches the current session
-2. launch `codex exec --ephemeral --disable codex_hooks --dangerously-bypass-approvals-and-sandbox` with `$comment-loop review`
+2. launch the fresh review in the active host runtime:
+   - Codex: `codex exec --ephemeral --disable codex_hooks --dangerously-bypass-approvals-and-sandbox` with `$comment-loop review`
+   - Claude Code: `claude -p --settings '{"disableAllHooks":true}'` with explicit context and `/comment-loop review`
 3. read the controller verdict from `_comment_ledger.md`
 4. on `CONTINUE`, keep state armed and continue with the next `$comment-loop` pass, whether the next area is unfinished mapping work or a ranked comment front
 5. on `BLOCKED`, clear state and stop honestly

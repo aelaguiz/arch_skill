@@ -76,3 +76,27 @@
   - `north-star-investigation`
 - "We know the goal but not the path, keep iterating bets":
   - `goal-loop`
+
+## Specialized loops vs generic completion loop
+
+- "Keep tightening the onboarding copy across the marketing site until it reads well on mobile":
+  - `arch-loop`
+- "Rewrite this AGENTS.md file with `$agent-linter` as a required clean audit":
+  - `arch-loop`
+- "Every 30 minutes check whether staging is reachable and keep fixing infra until it is, max 8 hours":
+  - `arch-loop`
+- "Scan this repo for bugs and fix what matters, consequence-first":
+  - `audit-loop`
+- "Deeply map this repo, then add the comments that actually matter":
+  - `comment-loop`
+- "Find the biggest automation blind spots in the real app and keep closing them":
+  - `audit-loop-sim`
+
+## Generic completion loop vs pure wait/poll
+
+- "Wait 1h30m then continue investigating the flaky test":
+  - `wait`
+- "Every 30 minutes check whether branch X has been pushed; when it is, integrate it":
+  - `delay-poll`
+- "Every 30 minutes check whether staging is reachable and keep fixing infra until it is, max 8 hours":
+  - `arch-loop` (parent work between checks, external evaluator decides when to stop)

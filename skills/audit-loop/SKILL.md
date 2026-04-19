@@ -1,6 +1,6 @@
 ---
 name: audit-loop
-description: "Run the standalone repo-audit workflow with a root audit ledger: exhaustively map the codebase and current proof surface before any edits, rank risk fronts by consequence and proof weakness, then fix the biggest real bugs, dead code, duplication, and high-value regression gaps without changing contracts. Every editful pass must then audit its own diff for safety, unintended downstream consequences, elegance, and duplication before it can count as done. Use when the user wants a repo-wide audit pass, wants the agent to build a full mental model before acting, or wants to leave the audit running in Codex until no credible audit work remains. Not for a single known bug, feature planning, or generic optimization loops."
+description: "Run the standalone repo-audit workflow with a root audit ledger: exhaustively map the codebase and current proof surface before any edits, rank risk fronts by consequence and proof weakness, then fix the biggest real bugs, dead code, duplication, and high-value regression gaps without changing contracts. Every editful pass must then audit its own diff for safety, unintended downstream consequences, elegance, and duplication before it can count as done. Use when the user wants a repo-wide audit pass, wants the agent to build a full mental model before acting, or wants to leave the audit running in Codex or Claude Code until no credible audit work remains. Not for a single known bug, feature planning, or generic optimization loops."
 metadata:
   short-description: "Exhaustive map-first repo audit loop"
 ---
@@ -14,7 +14,7 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 - The user wants a repo-wide audit pass rather than help with one already-known bug.
 - The user wants the agent to build a full mental model of the repo before acting.
 - The user wants to find and fix real bugs, dead code, duplication, or missing high-value tests in priority order.
-- The user wants to run one manual pass now or leave the audit running in Codex until the worthwhile work is exhausted.
+- The user wants to run one manual pass now or leave the audit running in Codex or Claude Code until the worthwhile work is exhausted.
 
 ## When not to use
 
@@ -44,7 +44,7 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 - Unrelated dirty or untracked files are not a blocker. Leave them alone unless they directly conflict with the current risk front or make verification unsafe.
 - Default invocation with no mode is `run`.
 - `review` is docs-only.
-- `auto` is Codex-only and must fail loud when the repo-managed `Stop` entry in `~/.codex/hooks.json`, the installed runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, or `codex_hooks` is missing.
+- `auto` is hook-backed in Codex and Claude Code and must fail loud when the active host runtime lacks the repo-managed `Stop` entry for the installed runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py` (Codex reads it from `~/.codex/hooks.json`; Claude Code reads it from `~/.claude/settings.json`). In Codex that also includes the `codex_hooks` feature gate.
 - No auto commits. Keep the ledger truthful without relying on git history.
 
 ## First move
@@ -55,7 +55,7 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
    - `run`
    - `review`
    - `auto`
-4. Resolve repo root, root `.gitignore`, `_audit_ledger.md`, and `.codex/audit-loop-state.<SESSION_ID>.json` when in `auto`, with `SESSION_ID` taken from `CODEX_THREAD_ID`.
+4. Resolve repo root, root `.gitignore`, `_audit_ledger.md`, and the host-aware `auto` controller state path described in `references/auto.md`.
 5. Read the matching mode reference and `references/quality-bar.md`.
 
 ## Workflow
@@ -85,9 +85,9 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 
 ### 3) `auto`
 
-- Run Codex-only preflight for hooks and feature flags.
-- Derive `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/audit-loop-state.<SESSION_ID>.json`.
-- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let Codex run the installed Stop hook.
+- Run host-aware preflight for hooks and feature flags.
+- Arm the host-aware `auto` controller state described in `references/auto.md`.
+- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
 - Run one truthful `run` pass. The first turns may be mapping-only.
 - Let the installed Stop hook launch a fresh `review` pass and continue only while the verdict stays `CONTINUE` because mapping work or real unresolved risk still remains.
 
@@ -107,5 +107,5 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 - `references/shared-doctrine.md` - prioritization, fix discipline, and anti-patterns
 - `references/run.md` - mapping-aware audit or fix pass
 - `references/review.md` - fresh docs-only verdict pass
-- `references/auto.md` - Codex-only controller contract and state file
+- `references/auto.md` - Codex and Claude Code controller contract and state file
 - `references/quality-bar.md` - strong vs weak triage, findings, tests, and stop decisions

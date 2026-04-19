@@ -1,9 +1,9 @@
-.PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
+.PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill claude_install_hook gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 REMOVED_SKILLS := arch-skill arch-plan
-SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide delay-poll agent-definition-auditor codemagic-builds amir-publish codex-review-yolo
-CLAUDE_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor codex-review-yolo
-GEMINI_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor codex-review-yolo
+SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring codemagic-builds amir-publish codex-review-yolo code-review
+CLAUDE_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring codex-review-yolo code-review
+GEMINI_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring codex-review-yolo
 NON_CLAUDE_SKILLS := $(filter-out $(CLAUDE_SKILLS),$(SKILLS))
 NON_GEMINI_SKILLS := $(filter-out $(GEMINI_SKILLS),$(SKILLS))
 ARCHIVED_COMMAND_FILES := $(notdir $(wildcard archive/prompts/*.md))
@@ -11,6 +11,7 @@ AGENTS_SKILLS_DIR ?= $(HOME)/.agents/skills
 CODEX_SKILLS_DIR ?= $(HOME)/.codex/skills
 CODEX_HOOKS_FILE ?= $(HOME)/.codex/hooks.json
 CLAUDE_SKILLS_DIR ?= $(HOME)/.claude/skills
+CLAUDE_SETTINGS_FILE ?= $(HOME)/.claude/settings.json
 GEMINI_SKILLS_DIR ?= $(HOME)/.gemini/skills
 
 ifeq ($(NO_GEMINI),1)
@@ -21,7 +22,7 @@ INSTALL_GEMINI := gemini_install
 VERIFY_GEMINI := verify_gemini_install
 endif
 
-install: clean_codex_stale_surfaces clean_claude_stale_surfaces install_skill claude_install_skill $(INSTALL_GEMINI)
+install: clean_codex_stale_surfaces clean_claude_stale_surfaces install_skill claude_install_skill claude_install_hook $(INSTALL_GEMINI)
 
 clean_codex_stale_surfaces:
 	@mkdir -p ~/.codex/prompts/_backup
@@ -96,6 +97,9 @@ claude_install_skill:
 		cp -R skills/$$skill $(CLAUDE_SKILLS_DIR)/$$skill; \
 	done
 
+claude_install_hook:
+	@python3 skills/arch-step/scripts/upsert_claude_stop_hook.py --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
+
 gemini_install: clean_gemini_stale_surfaces gemini_install_skill
 
 gemini_install_skill:
@@ -111,7 +115,7 @@ gemini_install_skill:
 	done
 
 verify_install: verify_agents_install verify_codex_install verify_claude_install $(VERIFY_GEMINI)
-	@echo "OK: active skill surface installed for agents, Claude Code, and requested Gemini targets; one arch_skill Codex controller hook installed from ~/.agents/skills"
+	@echo "OK: active skill surface installed for agents, Claude Code, and requested Gemini targets; one arch_skill Codex hook and one arch_skill Claude hook installed from ~/.agents/skills"
 
 verify_agents_install:
 	@for skill in $(SKILLS); do \
@@ -143,7 +147,8 @@ verify_claude_install:
 	done
 	@test ! -d $(CLAUDE_SKILLS_DIR)/arch-plan
 	@test ! -d $(CLAUDE_SKILLS_DIR)/arch-skill
-	@echo "OK: Claude Code active skills installed; stale command surfaces removed"
+	@python3 skills/arch-step/scripts/upsert_claude_stop_hook.py --verify --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
+	@echo "OK: Claude Code active skills installed; one arch_skill Claude Stop hook installed from ~/.agents/skills; stale command surfaces removed"
 
 verify_gemini_install:
 	@for skill in $(GEMINI_SKILLS); do \
@@ -190,6 +195,7 @@ remote_install:
 	@for skill in $(CLAUDE_SKILLS); do \
 		scp -r skills/$$skill $(HOST):~/.claude/skills/; \
 	done
+	@ssh $(HOST) "python3 ~/.agents/skills/arch-step/scripts/upsert_claude_stop_hook.py --settings-file ~/.claude/settings.json --skills-dir ~/.agents/skills"
 	@if [ "$(NO_GEMINI)" != "1" ]; then \
 		for skill in $(REMOVED_SKILLS) $(SKILLS); do \
 			ssh $(HOST) "rm -rf ~/.gemini/skills/$$skill"; \

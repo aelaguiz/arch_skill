@@ -21,6 +21,7 @@ LEGACY_STATUS_MESSAGES = {
 }
 HOOK_SCRIPT_NAME = "arch_controller_stop_hook.py"
 HOOK_TIMEOUT_SEC = 90000
+HOOK_RUNTIME = "codex"
 LEGACY_HOOK_SCRIPT_NAMES = {
     "implement_loop_stop_hook.py",
     "audit_loop_stop_hook.py",
@@ -37,7 +38,16 @@ def parse_args() -> argparse.Namespace:
 
 def expected_command(skills_dir: Path) -> str:
     hook_script = skills_dir / "arch-step" / "scripts" / HOOK_SCRIPT_NAME
-    return f"python3 {hook_script}"
+    return f"python3 {hook_script} --runtime {HOOK_RUNTIME}"
+
+
+def command_mentions_repo_runner(command: str) -> bool:
+    command_parts = command.split()
+    return any(
+        part.endswith(HOOK_SCRIPT_NAME)
+        or any(part.endswith(script_name) for script_name in LEGACY_HOOK_SCRIPT_NAMES)
+        for part in command_parts
+    )
 
 
 def load_hooks_file(hooks_file: Path) -> dict:
@@ -69,8 +79,7 @@ def is_repo_managed_group(group: object) -> bool:
         if (
             status_message == STATUS_MESSAGE
             or status_message in LEGACY_STATUS_MESSAGES
-            or command.endswith(HOOK_SCRIPT_NAME)
-            or any(command.endswith(script_name) for script_name in LEGACY_HOOK_SCRIPT_NAMES)
+            or command_mentions_repo_runner(command)
         ):
             return True
     return False

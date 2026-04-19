@@ -148,21 +148,23 @@ These stay explicit unless the user directly asks for them:
 - `implement-loop`
 - `auto-implement`
 
-`auto-plan` is the planning controller for this trimmed full-arch surface. In Codex, `DOC_PATH` is the planning ledger and `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` is only the armed controller state for that doc/session. On a fresh doc, the initial `auto-plan` pass arms state, runs only `research` against the same `DOC_PATH`, then ends its turn naturally. On reruns, the parent pass re-arms state against the same `DOC_PATH` and lets the installed Stop hook continue from the first incomplete stage already visible in the doc. It must not self-run `deep-dive` or `phase-plan` in that same turn. After that first turn, the installed Stop hook owns stage-to-stage continuation: it reads doc truth, feeds exactly one literal next command per later turn, and after `phase-plan` clears state and says the doc is decision-complete and ready for `implement-loop`.
+`auto-plan` is the planning controller for this trimmed full-arch surface in Codex and Claude Code. `DOC_PATH` is the planning ledger and the armed controller state lives under `.codex/` in Codex and under `.claude/arch_skill/` in Claude Code. On a fresh doc, the initial `auto-plan` pass arms state, runs only `research` against the same `DOC_PATH`, then ends its turn naturally. On reruns, the parent pass re-arms state against the same `DOC_PATH` and lets the installed Stop hook continue from the first incomplete stage already visible in the doc. It must not self-run `deep-dive` or `phase-plan` in that same turn. After that first turn, the installed Stop hook owns stage-to-stage continuation: it reads doc truth, feeds exactly one literal next command per later turn, and after `phase-plan` clears state and says the doc is decision-complete and ready for `implement-loop`.
 
 User-facing invocation stays simple:
 
 - run `$miniarch-step auto-plan`
 - or run `$miniarch-step auto-plan <DOC_PATH>`
-- do not run the Stop hook yourself; after the controller is armed, just end the turn and let Codex run the installed Stop hook
+- do not run the Stop hook yourself; after the controller is armed, just end the turn and let the installed Stop hook run
 - the initial `auto-plan` pass must run only `research`, then end the turn
 - rerunning `auto-plan` on a partially complete doc is legal; the hook resumes from the first incomplete stage already visible in `DOC_PATH`
 - later planning stages are hook-owned only: `deep-dive` and `phase-plan`
 - the parent `auto-plan` pass must not clear successful controller state, claim the planning arc is complete, or emit the `implement-loop` handoff while any decision gaps remain
 - prefer the current session's canonical mini/full-arch doc when `DOC_PATH` is omitted
-- preflight the real continuation surface: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, and that installed runner must exist
-- keep `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` armed for the live run; treat `DOC_PATH` as the progress ledger
-- if a stage stops early, clear `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` and stop honestly
+- preflight the real continuation surface for the active host runtime:
+  - Codex: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, that installed runner must exist, and `codex_hooks` must be enabled
+  - Claude Code: `~/.claude/settings.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude`, and that installed runner must exist
+- keep the runtime-local auto-plan state armed for the live run and treat `DOC_PATH` as the progress ledger
+- if a stage stops early, clear the runtime-local auto-plan state and stop honestly
 
 `implement-loop` is a full-frontier delivery controller. It arms state before implementation work, runs `implement` across the current approved Section 7 frontier in order from the earliest incomplete or reopened phase through later reachable phases, requires credible programmatic proof along the way, then runs `audit-implementation`, and repeats against the same approved `DOC_PATH` until the audit verdict is clean or a real blocker stops progress.
 
@@ -172,17 +174,22 @@ User-facing invocation stays simple:
 
 - run `$miniarch-step implement-loop <DOC_PATH>`
 - or run `$miniarch-step auto-implement <DOC_PATH>`
-- do not run the Stop hook yourself; after the controller is armed, just end the turn and let Codex run the installed Stop hook
-- preflight the real loop surface: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, and that installed runner must exist
-- arm `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` before implementation work so the live loop cannot be forgotten mid-run
+- do not run the Stop hook yourself; after the controller is armed, just end the turn and let the installed Stop hook run
+- preflight the real loop surface for the active host runtime:
+  - Codex: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, that installed runner must exist, and `codex_hooks` must be enabled
+  - Claude Code: `~/.claude/settings.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude`, that installed runner must exist, and hook-suppressed Claude child runs via `claude -p --settings '{"disableAllHooks":true}'` must work with the machine's normal Claude auth for fresh audit cycles
+- arm runtime-local implement-loop state before implementation work so the live loop cannot be forgotten mid-run
 - do not hand control back to audit until the current full ordered implementation frontier is done or genuinely blocked, and its phase claims have credible proof
-- keep `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` aligned with the live run
-- do not clear `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` from the implementation side before fresh `audit-implementation` has run, even if the pass believes the work is done
+- keep the runtime-local implement-loop state aligned with the live run
+- do not clear that state from the implementation side before fresh `audit-implementation` has run, even if the pass believes the work is done
 - do not let the parent implementation pass stand in for the clean auditor by writing the authoritative audit block or the `Use $arch-docs` handoff
 - in Codex, the Stop-hook fresh audit child for this mini controller runs with `--model gpt-5.4-mini` and `-c model_reasoning_effort="xhigh"`
 - when the fresh audit child finishes clean, hand off to `Use $arch-docs`
 
-For any Codex controller state in this skill, derive `<SESSION_ID>` from `CODEX_THREAD_ID` and arm the session-scoped `.codex/...<SESSION_ID>.json` path for the current session.
+For controller state in this skill:
+
+- Codex should derive `<SESSION_ID>` from `CODEX_THREAD_ID` and arm the session-scoped `.codex/...<SESSION_ID>.json` path for the current session.
+- Claude Code should arm `.claude/arch_skill/...` for the active controller. When Claude exposes session id before the first Stop-hook turn, use the session-scoped path there too. Otherwise arm the unsuffixed runtime-local path and let the first Stop-hook turn claim session ownership.
 
 ### Output expectations
 

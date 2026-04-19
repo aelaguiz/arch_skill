@@ -50,6 +50,9 @@ class CodexStopHookTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.upsert_module = load_module(UPSERT_HOOK_PATH, "arch_skill_upsert_codex_stop_hook")
         cls.stop_module = load_module(STOP_HOOK_PATH, "arch_skill_arch_controller_stop_hook")
+        cls.stop_module.ACTIVE_RUNTIME = cls.stop_module.HOOK_RUNTIME_SPECS[
+            cls.stop_module.RUNTIME_CODEX
+        ]
 
     def write_json(self, path: Path, payload: dict) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -143,7 +146,7 @@ class CodexStopHookTests(unittest.TestCase):
 
     def run_stop_hook(self, repo_root: Path, session_id: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            [sys.executable, str(STOP_HOOK_PATH)],
+            [sys.executable, str(STOP_HOOK_PATH), "--runtime", "codex"],
             input=json.dumps({"cwd": str(repo_root), "session_id": session_id}),
             capture_output=True,
             text=True,
@@ -1893,6 +1896,375 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertFalse(state_path.exists())
             self.assertEqual(sleeps, [])
             self.assertEqual(final_time, 100)
+
+
+class WaitDurationParserTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.stop_module = load_module(STOP_HOOK_PATH, "arch_skill_arch_controller_stop_hook")
+
+    def test_parse_wait_duration_accepts_90s(self) -> None:
+        self.assertEqual(self.stop_module.parse_wait_duration("90s"), 90)
+
+    def test_parse_wait_duration_accepts_30m(self) -> None:
+        self.assertEqual(self.stop_module.parse_wait_duration("30m"), 1800)
+
+    def test_parse_wait_duration_accepts_1h(self) -> None:
+        self.assertEqual(self.stop_module.parse_wait_duration("1h"), 3600)
+
+    def test_parse_wait_duration_accepts_2d(self) -> None:
+        self.assertEqual(self.stop_module.parse_wait_duration("2d"), 172800)
+
+    def test_parse_wait_duration_accepts_1h30m(self) -> None:
+        self.assertEqual(self.stop_module.parse_wait_duration("1h30m"), 5400)
+
+    def test_parse_wait_duration_accepts_2h15m30s(self) -> None:
+        self.assertEqual(self.stop_module.parse_wait_duration("2h15m30s"), 8130)
+
+    def test_parse_wait_duration_accepts_unordered_components(self) -> None:
+        self.assertEqual(self.stop_module.parse_wait_duration("30s1h"), 3630)
+
+    def test_parse_wait_duration_rejects_empty(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("")
+
+    def test_parse_wait_duration_rejects_leading_whitespace(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration(" 1h")
+
+    def test_parse_wait_duration_rejects_trailing_whitespace(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("1h ")
+
+    def test_parse_wait_duration_rejects_embedded_whitespace(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("1 h")
+
+    def test_parse_wait_duration_rejects_unknown_unit_w(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("1w")
+
+    def test_parse_wait_duration_rejects_unknown_unit_y(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("1y")
+
+    def test_parse_wait_duration_rejects_unknown_unit_ms(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("1ms")
+
+    def test_parse_wait_duration_rejects_zero_component(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("0m")
+
+    def test_parse_wait_duration_rejects_negative_component(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("-1h")
+
+    def test_parse_wait_duration_rejects_duplicate_unit(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("1h2h")
+
+    def test_parse_wait_duration_rejects_natural_language_half_an_hour(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("half an hour")
+
+    def test_parse_wait_duration_rejects_natural_language_30_minutes(self) -> None:
+        with self.assertRaises(ValueError):
+            self.stop_module.parse_wait_duration("30 minutes")
+
+
+class WaitHandlerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.stop_module = load_module(STOP_HOOK_PATH, "arch_skill_arch_controller_stop_hook")
+        cls.stop_module.ACTIVE_RUNTIME = cls.stop_module.HOOK_RUNTIME_SPECS[
+            cls.stop_module.RUNTIME_CODEX
+        ]
+
+    def _write_json(self, path: Path, payload: dict) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+    def _session_wait_state_path(self, repo_root: Path, session_id: str) -> Path:
+        relative = self.stop_module.WAIT_STATE_RELATIVE_PATH
+        return repo_root / self.stop_module.session_state_relative_path(relative, session_id)
+
+    def _run_handle_wait(
+        self,
+        repo_root: Path,
+        session_id: str,
+        *,
+        start_time: int,
+    ) -> tuple[int, dict, str, list[int], int]:
+        sleeps: list[int] = []
+        fake_now = {"value": start_time}
+
+        def fake_time() -> int:
+            return fake_now["value"]
+
+        def fake_sleep(seconds: int) -> None:
+            sleeps.append(seconds)
+            if seconds > 0:
+                fake_now["value"] += seconds
+
+        original_time = self.stop_module.current_epoch_seconds
+        original_sleep = self.stop_module.sleep_for_seconds
+        self.stop_module.current_epoch_seconds = fake_time
+        self.stop_module.sleep_for_seconds = fake_sleep
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        saved_stdout = sys.stdout
+        saved_stderr = sys.stderr
+        sys.stdout = stdout
+        sys.stderr = stderr
+        try:
+            try:
+                self.stop_module.handle_wait(
+                    {"cwd": str(repo_root), "session_id": session_id}
+                )
+                exit_code = 0
+            except SystemExit as exc:
+                exit_code = int(exc.code) if exc.code is not None else 0
+        finally:
+            self.stop_module.current_epoch_seconds = original_time
+            self.stop_module.sleep_for_seconds = original_sleep
+            sys.stdout = saved_stdout
+            sys.stderr = saved_stderr
+        stdout_text = stdout.getvalue()
+        payload = json.loads(stdout_text) if stdout_text.strip() else {}
+        return exit_code, payload, stderr.getvalue(), sleeps, fake_now["value"]
+
+    def _valid_wait_state(
+        self,
+        *,
+        session_id: str = "session-1",
+        armed_at: int = 100,
+        deadline_at: int = 700,
+        resume_prompt: str = "say the wait fired",
+    ) -> dict:
+        return {
+            "version": 1,
+            "command": "wait",
+            "session_id": session_id,
+            "armed_at": armed_at,
+            "deadline_at": deadline_at,
+            "resume_prompt": resume_prompt,
+        }
+
+    def test_handle_wait_pre_deadline_sleeps_then_fires(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-1")
+            self._write_json(state_path, self._valid_wait_state(armed_at=100, deadline_at=700))
+            exit_code, payload, stderr, sleeps, final_time = self._run_handle_wait(
+                repo_root, "session-1", start_time=100
+            )
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertTrue(payload["continue"])
+            self.assertEqual(payload["decision"], "block")
+            self.assertIn("say the wait fired", payload["reason"])
+            self.assertIn("The requested wait elapsed", payload["reason"])
+            self.assertEqual(payload["systemMessage"], "wait elapsed; continuing the task.")
+            self.assertEqual(sleeps, [600])
+            self.assertEqual(final_time, 700)
+            self.assertFalse(state_path.exists())
+
+    def test_handle_wait_past_deadline_fires_without_sleep(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-1")
+            self._write_json(state_path, self._valid_wait_state(armed_at=100, deadline_at=700))
+            exit_code, payload, stderr, sleeps, final_time = self._run_handle_wait(
+                repo_root, "session-1", start_time=9_000
+            )
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(stderr, "")
+            self.assertTrue(payload["continue"])
+            self.assertEqual(sleeps, [0])
+            self.assertEqual(final_time, 9_000)
+            self.assertFalse(state_path.exists())
+
+    def test_handle_wait_ignores_state_from_other_session(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-2")
+            self._write_json(state_path, self._valid_wait_state(session_id="session-2"))
+            exit_code, payload, stderr, sleeps, final_time = self._run_handle_wait(
+                repo_root, "session-1", start_time=100
+            )
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(payload, {})
+            self.assertEqual(stderr, "")
+            self.assertEqual(sleeps, [])
+            self.assertEqual(final_time, 100)
+            self.assertTrue(state_path.exists())
+
+    def test_handle_wait_clears_state_before_firing(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-1")
+            self._write_json(state_path, self._valid_wait_state(armed_at=100, deadline_at=150))
+
+            original_block = self.stop_module.block_with_json
+            observed: dict[str, bool] = {}
+
+            def recording_block(reason: str, system_message: str | None = None) -> None:
+                observed["state_gone_at_block"] = not state_path.exists()
+                original_block(reason, system_message)
+
+            self.stop_module.block_with_json = recording_block
+            try:
+                self._run_handle_wait(repo_root, "session-1", start_time=100)
+            finally:
+                self.stop_module.block_with_json = original_block
+            self.assertTrue(observed.get("state_gone_at_block"))
+            self.assertFalse(state_path.exists())
+
+    def _assert_forbidden_field_rejected(self, field_name: str, value: object) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-1")
+            state = self._valid_wait_state()
+            state[field_name] = value
+            self._write_json(state_path, state)
+            exit_code, payload, stderr, sleeps, final_time = self._run_handle_wait(
+                repo_root, "session-1", start_time=100
+            )
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload, {})
+            self.assertIn(field_name, stderr)
+            self.assertIn("delay-poll-only field", stderr)
+            self.assertEqual(sleeps, [])
+            self.assertFalse(state_path.exists())
+
+    def test_handle_wait_rejects_interval_seconds(self) -> None:
+        self._assert_forbidden_field_rejected("interval_seconds", 1800)
+
+    def test_handle_wait_rejects_check_prompt(self) -> None:
+        self._assert_forbidden_field_rejected("check_prompt", "check something")
+
+    def test_handle_wait_rejects_attempt_count(self) -> None:
+        self._assert_forbidden_field_rejected("attempt_count", 0)
+
+    def test_handle_wait_rejects_last_check_at(self) -> None:
+        self._assert_forbidden_field_rejected("last_check_at", None)
+
+    def test_handle_wait_rejects_last_summary(self) -> None:
+        self._assert_forbidden_field_rejected("last_summary", "")
+
+    def test_handle_wait_rejects_bad_version(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-1")
+            state = self._valid_wait_state()
+            state["version"] = 2
+            self._write_json(state_path, state)
+            exit_code, _, stderr, _, _ = self._run_handle_wait(
+                repo_root, "session-1", start_time=100
+            )
+            self.assertEqual(exit_code, 2)
+            self.assertIn("unsupported version", stderr)
+            self.assertFalse(state_path.exists())
+
+    def test_handle_wait_rejects_deadline_not_after_armed_at(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-1")
+            self._write_json(
+                state_path,
+                self._valid_wait_state(armed_at=500, deadline_at=500),
+            )
+            exit_code, _, stderr, _, _ = self._run_handle_wait(
+                repo_root, "session-1", start_time=100
+            )
+            self.assertEqual(exit_code, 2)
+            self.assertIn("deadline_at", stderr)
+            self.assertFalse(state_path.exists())
+
+    def test_handle_wait_rejects_empty_resume_prompt(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state_path = self._session_wait_state_path(repo_root, "session-1")
+            state = self._valid_wait_state()
+            state["resume_prompt"] = "   "
+            self._write_json(state_path, state)
+            exit_code, _, stderr, _, _ = self._run_handle_wait(
+                repo_root, "session-1", start_time=100
+            )
+            self.assertEqual(exit_code, 2)
+            self.assertIn("resume_prompt", stderr)
+            self.assertFalse(state_path.exists())
+
+
+class WaitConflictGateTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.stop_module = load_module(STOP_HOOK_PATH, "arch_skill_arch_controller_stop_hook")
+
+    def test_arming_wait_beside_another_controller_halts_with_conflict(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            wait_relative = self.stop_module.session_state_relative_path(
+                self.stop_module.WAIT_STATE_RELATIVE_PATH, "session-1"
+            )
+            delay_relative = self.stop_module.session_state_relative_path(
+                self.stop_module.DELAY_POLL_STATE_RELATIVE_PATH, "session-1"
+            )
+            wait_path = repo_root / wait_relative
+            delay_path = repo_root / delay_relative
+            wait_path.parent.mkdir(parents=True, exist_ok=True)
+            wait_path.write_text(
+                json.dumps(
+                    {
+                        "version": 1,
+                        "command": "wait",
+                        "session_id": "session-1",
+                        "armed_at": 100,
+                        "deadline_at": 200,
+                        "resume_prompt": "continue",
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            delay_path.write_text(
+                json.dumps(
+                    {
+                        "version": 1,
+                        "command": "delay-poll",
+                        "session_id": "session-1",
+                        "interval_seconds": 1800,
+                        "armed_at": 100,
+                        "deadline_at": 1000,
+                        "check_prompt": "checker",
+                        "resume_prompt": "resume",
+                        "attempt_count": 0,
+                        "last_check_at": None,
+                        "last_summary": "",
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            process = subprocess.run(
+                [sys.executable, str(STOP_HOOK_PATH), "--runtime", "codex"],
+                input=json.dumps({"cwd": str(repo_root), "session_id": "session-1"}),
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(process.returncode, 0, msg=process.stderr)
+            payload = json.loads(process.stdout)
+            self.assertFalse(payload["continue"])
+            self.assertIn(str(wait_relative), payload["stopReason"])
+            self.assertIn(str(delay_relative), payload["stopReason"])
+            self.assertIn("Multiple suite controller states are armed", payload["stopReason"])
+            self.assertTrue(wait_path.exists())
+            self.assertTrue(delay_path.exists())
 
 
 if __name__ == "__main__":

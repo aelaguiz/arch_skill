@@ -4,7 +4,9 @@
 
 - `_comment_ledger.md` lives at repo root.
 - The root `.gitignore` must contain `_comment_ledger.md` while the comment loop is active.
-- `.codex/comment-loop-state.<SESSION_ID>.json` exists only while Codex `auto` is armed, with `SESSION_ID` taken from `CODEX_THREAD_ID`.
+- the active-runtime comment-loop state exists only while `auto` is armed:
+  - Codex: `.codex/comment-loop-state.<SESSION_ID>.json`, with `SESSION_ID` taken from `CODEX_THREAD_ID`
+  - Claude Code: `.claude/arch_skill/comment-loop-state(.<SESSION_ID>).json`
 
 ## Ledger shape
 

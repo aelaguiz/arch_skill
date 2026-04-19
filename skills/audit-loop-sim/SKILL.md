@@ -1,6 +1,6 @@
 ---
 name: audit-loop-sim
-description: "Run the standalone real-app automation audit workflow with a root simulator audit ledger: exhaustively map the app, journeys, and current automation surface before any edits, rank automation risk fronts by consequence and proof weakness, then fix the biggest end-to-end automation gaps and same-story bugs without changing contracts. Every editful pass must then audit its own diff for safety, unintended downstream consequences, elegance, and duplication before it can count as done. Use when the user wants repo-wide simulator or emulator automation work, wants the agent to build a full mental model before acting, or wants to leave the automation audit running in Codex until no credible work remains. Not for a single known bug, generic repo audit, or manual QA-only work."
+description: "Run the standalone real-app automation audit workflow with a root simulator audit ledger: exhaustively map the app, journeys, and current automation surface before any edits, rank automation risk fronts by consequence and proof weakness, then fix the biggest end-to-end automation gaps and same-story bugs without changing contracts. Every editful pass must then audit its own diff for safety, unintended downstream consequences, elegance, and duplication before it can count as done. Use when the user wants repo-wide simulator or emulator automation work, wants the agent to build a full mental model before acting, or wants to leave the automation audit running in Codex or Claude Code until no credible work remains. Not for a single known bug, generic repo audit, or manual QA-only work."
 metadata:
   short-description: "Exhaustive map-first real-app automation loop"
 ---
@@ -14,7 +14,7 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 - The user wants a repo-wide simulator or emulator automation pass rather than help with one already-known bug.
 - The user wants the agent to build a full mental model of the app and automation surface before acting.
 - The user wants to find and close real-app blind spots, weak critical-path automation, or missing end-to-end coverage in priority order.
-- The user wants to run one manual pass now or leave the automation audit running in Codex until the worthwhile work is exhausted.
+- The user wants to run one manual pass now or leave the automation audit running in Codex or Claude Code until the worthwhile work is exhausted.
 
 ## When not to use
 
@@ -50,7 +50,7 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 - Unrelated dirty or untracked files are not a blocker. Leave them alone unless they directly conflict with the current automation risk front or make verification unsafe.
 - Default invocation with no mode is `run`.
 - `review` is docs-only.
-- `auto` is Codex-only and must fail loud when the repo-managed `Stop` entry in `~/.codex/hooks.json`, the installed runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, or `codex_hooks` is missing.
+- `auto` is hook-backed in Codex and Claude Code and must fail loud when the active host runtime lacks the repo-managed `Stop` entry for the installed runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py` (Codex reads it from `~/.codex/hooks.json`; Claude Code reads it from `~/.claude/settings.json`). In Codex that also includes the `codex_hooks` feature gate.
 - Missing or deleted auto-controller state is not verdict truth. Repair the state file or ledger from fresh repo context before honoring a stop decision.
 - No auto commits. Keep the ledger truthful without relying on git history.
 
@@ -62,7 +62,7 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
    - `run`
    - `review`
    - `auto`
-4. Resolve repo root, root `.gitignore`, `_audit_sim_ledger.md`, and `.codex/audit-loop-sim-state.<SESSION_ID>.json` when in `auto`, with `SESSION_ID` taken from `CODEX_THREAD_ID`.
+4. Resolve repo root, root `.gitignore`, `_audit_sim_ledger.md`, and the host-aware `auto` controller state path described in `references/auto.md`.
 5. Read the matching mode reference and `references/quality-bar.md`.
 
 ## Workflow
@@ -91,9 +91,9 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 
 ### 3) `auto`
 
-- Run Codex-only preflight for hooks and feature flags.
-- Derive `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/audit-loop-sim-state.<SESSION_ID>.json`.
-- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let Codex run the installed Stop hook.
+- Run host-aware preflight for hooks and feature flags.
+- Arm the host-aware `auto` controller state described in `references/auto.md`.
+- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
 - Run one truthful `run` pass. The first turns may be mapping-only.
 - Let the installed Stop hook launch a fresh `review` pass and continue only while the verdict stays `CONTINUE` because mapping work or real unresolved automation risk still remains.
 
@@ -113,5 +113,5 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 - `references/shared-doctrine.md` - prioritization, fix discipline, and anti-patterns
 - `references/run.md` - mapping-aware automation audit or fix pass
 - `references/review.md` - fresh docs-only automation verdict pass
-- `references/auto.md` - Codex-only controller contract and state file
+- `references/auto.md` - Codex and Claude Code controller contract and state file
 - `references/quality-bar.md` - strong vs weak triage, findings, tests, and stop decisions

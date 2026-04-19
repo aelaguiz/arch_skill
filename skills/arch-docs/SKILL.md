@@ -1,6 +1,6 @@
 ---
 name: arch-docs
-description: "Aggressively retire stale repo documentation with the DGTFO loop: ground every topic against current code, treat old point-in-time docs as delete candidates by default, fold durable truth into real evergreen homes, and only keep or author standalone docs when current readers genuinely need them. Use when stale worklogs, implementation docs, misleading `living` docs, outdated READMEs, dead migration notes, or explicit Codex hook-backed `auto` docs cleanup need a code-grounded delete-first pass. Not for generic copy editing, open-ended aspirational doc authoring, or speculative taxonomy redesign."
+description: "Aggressively retire stale repo documentation with the DGTFO loop: ground every topic against current code, treat old point-in-time docs as delete candidates by default, fold durable truth into real evergreen homes, and only keep or author standalone docs when current readers genuinely need them. Use when stale worklogs, implementation docs, misleading `living` docs, outdated READMEs, dead migration notes, or explicit hook-backed `auto` docs cleanup in Codex or Claude Code need a code-grounded delete-first pass. Not for generic copy editing, open-ended aspirational doc authoring, or speculative taxonomy redesign."
 metadata:
   short-description: "Delete-first docs audit and retirement"
 ---
@@ -15,7 +15,7 @@ Use this skill when the code is stable enough to ground documentation against cu
 - A repo needs topic-first cleanup where one topic may be spread across several files and several files may overlap on the same topic.
 - A full-arch plan and worklog should be treated as context, mined for durable truth, and then retired or transformed into evergreen docs.
 - The user wants to run the DGTFO loop directly in a repo with no requirement that an arch plan already exists.
-- The user explicitly wants `arch-docs auto` in Codex and expects real hook-backed continuation with a fresh external evaluation after each pass.
+- The user explicitly wants `arch-docs auto` in Codex or Claude Code and expects real hook-backed continuation with a fresh external evaluation after each pass.
 
 ## When not to use
 
@@ -50,7 +50,7 @@ Use this skill when the code is stable enough to ground documentation against cu
 - Do not make a dead doc look current by editing freshness metadata alone. If the body was not materially re-grounded against current code in the same pass, the doc is still stale and should usually be deleted or folded forward.
 - Before deleting any bounded batch of docs, stage those docs and create a backup git commit first. Stage only the docs in that delete batch, not unrelated dirty files elsewhere in the repo.
 - Default behavior is one grounded docs-health pass. `auto` is the only explicit public mode.
-- `auto` is Codex-only and must be hook-backed; if the installed runtime support is absent or disabled, fail loud instead of pretending prompt repetition is automation.
+- `auto` is hook-backed in Codex and Claude Code; if the installed runtime support is absent or disabled, fail loud instead of pretending prompt repetition is automation.
 - If the backup commit for a delete batch cannot be created, stop instead of deleting.
 - If code truth is still unstable, external doc sources are required but unavailable, or the next pass would become speculative or materially unchanged, stop and say so plainly.
 - Do not use age alone as the whole verdict. Use history and current code as evidence, but keep the 30-day presumption strong: old point-in-time docs should earn survival, not the other way around.
@@ -97,9 +97,9 @@ Use this skill when the code is stable enough to ground documentation against cu
 
 ### 2) `auto`
 
-- Run the same docs-health discipline as the default pass, but only under real Codex Stop-hook continuation.
-- Derive `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/arch-docs-auto-state.<SESSION_ID>.json` before the first pass.
-- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let Codex run the installed Stop hook.
+- Run the same docs-health discipline as the default pass, but only under real runtime-native Stop-hook continuation.
+- Arm the host-aware `arch-docs auto` controller state described in `references/auto.md` before the first pass.
+- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
 - Expect a fresh external evaluator after each stop point.
 - Apply the same pre-delete backup-commit rule during each pass in `auto`.
 - Continue only while another grounded pass is still credible for the resolved docs-health intent.
@@ -125,5 +125,5 @@ Use this skill when the code is stable enough to ground documentation against cu
 - `references/canonical-home-judgment.md` - resolve repo posture, public-repo baseline docs, and split-versus-expand decisions for new docs
 - `references/cleanup-rules.md` - deletion bias, canonical-home rules, working-doc retirement, and link-repair rules
 - `references/pass.md` - the default DGTFO pass contract and ledger shape
-- `references/auto.md` - hook-backed Codex auto controller contract, preflight, and state rules
+- `references/auto.md` - hook-backed Codex and Claude Code auto-controller contract, preflight, and state rules
 - `references/internal-evaluator.md` - suite-only read-only evaluator contract used by the Stop-hook child run

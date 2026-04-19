@@ -1,5 +1,6 @@
 .env
 gemini/
-.codex/implement-loop-state.json
+.codex/*-state*.json
+.claude/arch_skill/
 __pycache__/
 *.py[cod]

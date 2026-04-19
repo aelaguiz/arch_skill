@@ -1,6 +1,6 @@
 ---
 name: comment-loop
-description: "Run the standalone repo comment-hardening workflow with a root comment ledger: exhaustively map the repo, current proof surface, and current explanatory coverage before any edits, then add or repair only high-leverage code comments, docstrings, and doc comments for shared contracts, conventions, gotchas, and subtle behavior without changing contracts or spamming obvious narration. Use when the user wants a repo-wide code-comment pass, wants the agent to deeply understand the codebase before explaining it, or wants to leave the comment audit running in Codex until no credible high-impact explanation gaps remain. Not for generic docs cleanup, a one-off local comment tweak, or bug fixing."
+description: "Run the standalone repo comment-hardening workflow with a root comment ledger: exhaustively map the repo, current proof surface, and current explanatory coverage before any edits, then add or repair only high-leverage code comments, docstrings, and doc comments for shared contracts, conventions, gotchas, and subtle behavior without changing contracts or spamming obvious narration. Use when the user wants a repo-wide code-comment pass, wants the agent to deeply understand the codebase before explaining it, or wants to leave the comment audit running in Codex or Claude Code until no credible high-impact explanation gaps remain. Not for generic docs cleanup, a one-off local comment tweak, or bug fixing."
 metadata:
   short-description: "Exhaustive map-first repo comment hardening loop"
 ---
@@ -14,7 +14,7 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
 - The user wants a repo-wide code-comment pass rather than one local comment tweak.
 - The user wants the agent to deeply understand the repo before explaining conventions, contracts, or gotchas.
 - The user wants to explain shared contracts, subtle behavior, counterintuitive flows, or high-impact conventions in code comments without changing behavior.
-- The user wants to run one manual pass now or leave the explanatory hardening loop running in Codex until no credible high-impact comment work remains.
+- The user wants to run one manual pass now or leave the explanatory hardening loop running in Codex or Claude Code until no credible high-impact comment work remains.
 
 ## When not to use
 
@@ -43,7 +43,7 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
 - Unrelated dirty or untracked files are not a blocker. Leave them alone unless they directly conflict with the current comment front or make verification unsafe.
 - Default invocation with no mode is `run`.
 - `review` is docs-only.
-- `auto` is Codex-only and must fail loud when the repo-managed `Stop` entry in `~/.codex/hooks.json`, the installed runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`, or `codex_hooks` is missing.
+- `auto` is hook-backed in Codex and Claude Code and must fail loud when the active host runtime lacks the repo-managed `Stop` entry for the installed runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py` (Codex reads it from `~/.codex/hooks.json`; Claude Code reads it from `~/.claude/settings.json`). In Codex that also includes the `codex_hooks` feature gate.
 - No auto commits. Keep the ledger truthful without relying on git history.
 
 ## First move
@@ -55,7 +55,7 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
    - `run`
    - `review`
    - `auto`
-5. Resolve repo root, root `.gitignore`, `_comment_ledger.md`, and `.codex/comment-loop-state.<SESSION_ID>.json` when in `auto`, with `SESSION_ID` taken from `CODEX_THREAD_ID`.
+5. Resolve repo root, root `.gitignore`, `_comment_ledger.md`, and the host-aware `auto` controller state path described in `references/auto.md`.
 6. Read the matching mode reference and `references/quality-bar.md`.
 
 ## Workflow
@@ -81,9 +81,9 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
 
 ### 3) `auto`
 
-- Run Codex-only preflight for hooks and feature flags.
-- Derive `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/comment-loop-state.<SESSION_ID>.json`.
-- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let Codex run the installed Stop hook.
+- Run host-aware preflight for hooks and feature flags.
+- Arm the host-aware `auto` controller state described in `references/auto.md`.
+- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
 - Run one truthful `run` pass. The first turns may be mapping-only.
 - Let the installed Stop hook launch a fresh `review` pass and continue only while the verdict stays `CONTINUE` because mapping work or high-impact unresolved explanation work still remains.
 
@@ -104,5 +104,5 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
 - `references/commenting-principles.md` - distilled external best practices for useful comments
 - `references/run.md` - mapping-aware comment or cleanup pass
 - `references/review.md` - fresh docs-only verdict pass
-- `references/auto.md` - Codex-only controller contract and state file
+- `references/auto.md` - Codex and Claude Code controller contract and state file
 - `references/quality-bar.md` - strong vs weak triage, findings, comments, and stop decisions

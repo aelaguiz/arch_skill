@@ -18,17 +18,21 @@ Start with the strongest discriminator first:
    - use `comment-loop`
 6. Is it a repo-wide audit pass, systematic defect hunt, or leave-it-running cleanup loop?
    - use `audit-loop`
-7. Is it a bug, regression, crash, incident, or Sentry/log investigation?
+7. Is it a repo-wide real-app automation audit loop with a simulator ledger?
+   - use `audit-loop-sim`
+8. Is the ask a generic hook-backed completion loop over free-form requirements, with no prescribed map-first flow, optional `$skill` audit obligations, and optional runtime/cadence/iteration caps?
+   - use `arch-loop`
+9. Is it a bug, regression, crash, incident, or Sentry/log investigation?
    - use `bugs-flow`
-8. Is the path unknown and the work open-ended?
+10. Is the path unknown and the work open-ended?
    - use `goal-loop`
-9. Is it a quant-heavy optimization or root-cause hunt with ranked hypotheses and brutal tests?
+11. Is it a quant-heavy optimization or root-cause hunt with ranked hypotheses and brutal tests?
    - use `north-star-investigation`
-10. Is it a small feature or improvement that should fit in 1-3 phases?
+12. Is it a small feature or improvement that should fit in 1-3 phases?
    - use `lilarch`
-11. Does the user want a one-pass mini plan with canonical arch blocks?
+13. Does the user want a one-pass mini plan with canonical arch blocks?
    - use `arch-mini-plan`
-12. Otherwise, default to `arch-step`.
+14. Otherwise, default to `arch-step`.
 
 ## Skill map
 
@@ -42,6 +46,8 @@ Start with the strongest discriminator first:
 | `bugs-flow` | regressions, crashes, incidents, Sentry/log-driven fixes | planned feature work or open-ended optimization | "Analyze this Sentry issue", "fix this bug and verify it" |
 | `comment-loop` | the user wants a repo-wide code comment pass, wants the agent to deeply understand the repo before explaining it, or wants shared contracts, conventions, gotchas, and subtle behavior documented in code | the job is docs cleanup, one local comment tweak, or bug fixing | "Map this repo and add the comments that actually matter", "deeply understand the codebase before commenting conventions", "keep hardening the high-value code comments until the real gaps are gone" |
 | `audit-loop` | the user wants a repo-wide audit pass, the next worthwhile defect fixed, or a bounded cleanup loop that keeps going until review says stop | there is already one concrete known bug or the main job is docs cleanup | "Scan this repo for bugs and fix what matters", "do one audit pass", "keep cleaning this codebase until no worthwhile audit work remains" |
+| `audit-loop-sim` | the user wants a repo-wide real-app automation pass with a simulator ledger and a consequence-first ranking | the real job is one concrete regression, docs cleanup, or non-automation audit | "Find the biggest automation blind spots in the real app", "keep running the simulator audit loop" |
+| `arch-loop` | the user wants a generic hook-backed completion loop over free-form requirements, optional named-skill audit obligations (e.g. `$agent-linter`, `$code-review`), and optional runtime/cadence/iteration caps, with a fresh Codex `gpt-5.4` `xhigh` external evaluator as the only stop authority | the work fits a prescribed map-first loop (`audit-loop`, `comment-loop`, `audit-loop-sim`), is a pure condition-poll (`delay-poll`), or is a one-shot sleep (`wait`) | "Tighten this onboarding copy until it reads cleanly on mobile", "rewrite this AGENTS.md with `$agent-linter` as a required clean audit", "every 30 minutes check whether staging is reachable and keep fixing infra until it is, max 8 hours" |
 | `goal-loop` | the goal is clear but the path is unknown; repeated bets matter | the task already has a fixed implementation plan | "We need to improve this metric but don't know the path" |
 | `north-star-investigation` | the user wants a quantified investigation with ranked hypotheses and brutal tests | the task is just a normal bug fix or plain goal loop | "Run a deep investigation on this performance issue" |
 | `arch-flow` | the user already has a plan doc and wants a read-only checklist or next-step routing | they actually want the work performed | "What's next on this doc?", "give me the checklist before we run anything" |
@@ -66,6 +72,18 @@ Start with the strongest discriminator first:
 - `comment-loop` vs `audit-loop`:
   - use `comment-loop` when the repo mainly needs clearer explanation of existing contracts, conventions, or gotchas
   - use `audit-loop` when the repo mainly needs the next real bug, dead code, duplication, or proof gap fixed
+- `arch-loop` vs specialized loops (`audit-loop`, `comment-loop`, `audit-loop-sim`):
+  - use the specialized loop when the user actually wants that skill's prescribed map-first flow, artifact contract, and ranking
+  - use `arch-loop` when the requirements are free-form, the "done" signal is an external Codex evaluator verdict, or the user wants named `$skill` audit obligations and optional runtime/cadence/iteration caps
+- `arch-loop` vs `delay-poll`:
+  - use `delay-poll` when the job is purely "wait and re-check a condition" with no parent work happening between checks
+  - use `arch-loop` when the loop has actual requirements to satisfy, or needs repeat parent work until a Codex evaluator says `clean` or `blocked`
+- `arch-loop` vs `wait`:
+  - use `wait` when the user wants a one-shot sleep then a single literal resume prompt
+  - use `arch-loop` when the loop must run until completion requirements are met, not on a fixed clock
+- `arch-loop` vs `goal-loop`:
+  - use `goal-loop` when the user wants the controller-doc plus append-only iteration log shape
+  - use `arch-loop` when the user wants native hook-backed repeat turns and an external Codex evaluator as the stop authority
 - `arch-docs` vs `audit-loop`:
   - use `arch-docs` when the main job is documentation cleanup grounded in already-stable code truth
   - use `audit-loop` when the main job is code audit, defect finding, dead-code deletion, or duplication cleanup
@@ -104,6 +122,8 @@ When the user wants a tour:
   - `miniarch-step`
   - `comment-loop`
   - `audit-loop`
+  - `audit-loop-sim`
+  - `arch-loop`
   - `bugs-flow`
   - `goal-loop`
   - `north-star-investigation`

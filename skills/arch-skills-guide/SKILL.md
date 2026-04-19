@@ -1,6 +1,6 @@
 ---
 name: arch-skills-guide
-description: "Explain the arch skill suite, distinguish the live subskills, and recommend the right one for a user's task. Use when a request asks which arch skill to use, what the difference is between `arch-step`, `miniarch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `goal-loop`, `north-star-investigation`, `arch-flow`, or wants a quick tour of the arch suite. Not for actually running the underlying workflow."
+description: "Explain the arch skill suite, distinguish the live subskills, and recommend the right one for a user's task. Use when a request asks which arch skill to use, what the difference is between `arch-step`, `miniarch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `goal-loop`, `north-star-investigation`, `arch-flow`, or wants a quick tour of the arch suite. Not for actually running the underlying workflow."
 metadata:
   short-description: "Guide and selector for the arch skill suite"
 ---
@@ -42,6 +42,8 @@ Use this skill when the user needs help choosing or understanding the arch suite
    - bug flow
    - audit loop
    - comment loop
+   - audit loop sim
+   - arch loop (generic hook-backed completion loop)
    - goal loop
    - north-star investigation
    - flow-status / "what's next?"
@@ -63,6 +65,8 @@ Use this skill when the user needs help choosing or understanding the arch suite
    - bug, regression, crash, or Sentry issue -> `bugs-flow`
    - repo-wide explanation hardening, high-value code comments, or map-first convention/gotcha comments -> `comment-loop`
    - repo-wide audit pass, systematic defect hunt, or leave-it-running cleanup loop -> `audit-loop`
+   - repo-wide real-app automation audit loop with a simulator ledger -> `audit-loop-sim`
+   - generic hook-backed completion loop with free-form requirements, optional `$skill` audits, optional runtime/cadence/iteration caps, and an external Codex evaluator stop authority -> `arch-loop`
    - open-ended goal where the path is unknown -> `goal-loop`
    - quant-heavy investigation with ranked hypotheses -> `north-star-investigation`
    - read-only checklist or next-step routing on an arch doc -> `arch-flow`

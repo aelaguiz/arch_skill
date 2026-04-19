@@ -1,0 +1,7 @@
+interface:
+  display_name: "AGENTS.md Authoring"
+  short_description: "Write and audit repo-present plain-English AGENTS.md files"
+  default_prompt: "Use $agents-md-authoring to write, edit, refactor, or audit an AGENTS.md for a coding project so it stays concise, repo-present, plain-English, command-first, and scope-aware. Keep the file about current repo truth only; do not add planning talk, author narration, or self-referential instructions about this skill unless the repo genuinely needs that rule. By default, include a short plain-English communication invariant in the owning layer: lead with the concrete answer, use natural English, and translate repo shorthand immediately."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,7 +1,7 @@
 # `auto` Mode
 
-`auto` is the real Codex controller for repeated docs-audit passes. It is not prompt-only chaining.
-Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let Codex run the installed Stop hook.
+`auto` is the real controller for repeated docs-audit passes in Codex and Claude Code. It is not prompt-only chaining.
+Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
 
 ## Goal
 
@@ -11,10 +11,11 @@ Repeat grounded default passes with Stop-hook continuation and a fresh external 
 
 Before arming the controller, verify all of these:
 
-- Codex is the active host runtime
-- installed Stop-hook support exists in `~/.codex/hooks.json`
+- the active host runtime is Codex or Claude Code
+- installed Stop-hook support exists for the active runtime: `~/.codex/hooks.json` in Codex or `~/.claude/settings.json` in Claude Code
 - the installed suite controller runner exists under `~/.agents/skills/arch-step/scripts/`
-- `codex features list` shows `codex_hooks` enabled
+- in Codex, `codex features list` shows `codex_hooks` enabled
+- in Claude Code, hook-suppressed child runs via `claude -p --settings '{"disableAllHooks":true}'` work with the machine's normal Claude auth for the fresh evaluator
 - current code truth is stable enough to ground docs
 - if active arch context exists, the implementation audit is clean enough to trust that context as a narrowing input
 
@@ -22,7 +23,10 @@ If any preflight fails, name the broken prerequisite and stop instead of pretend
 
 ## State contract
 
-Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/arch-docs-auto-state.<SESSION_ID>.json` before the first pass.
+Create or refresh the host-aware state path before the first pass:
+
+- Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/arch-docs-auto-state.<SESSION_ID>.json`
+- Claude Code: prefer `.claude/arch_skill/arch-docs-auto-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/arch-docs-auto-state.json` and let the first Stop-hook turn claim session ownership
 
 Minimum shape:
 
@@ -59,7 +63,7 @@ If `scope_kind` is `explicit-context` or `arch-context`, include non-empty `cont
 - Run one truthful default `arch-docs` docs-health pass.
 - Apply the same pre-delete backup-commit rule inside each pass before any bounded delete batch.
 - Keep `.doc-audit-ledger.md` current while cleanup is still active.
-- Let Codex stop naturally.
+- Let the installed runtime stop naturally.
 - Expect the installed Stop hook to launch a fresh external evaluator.
 - Continue only when another grounded pass is still credible for the resolved docs-health intent.
 - In repo scope, the next pass may widen across the repo docs surface when real grounded cleanup or missing evergreen truth still remains.

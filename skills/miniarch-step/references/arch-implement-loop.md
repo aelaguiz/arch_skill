@@ -6,7 +6,7 @@
 - arm the repo-local loop state needed for fresh auditing
 - arm loop state before implementation work starts so the live loop cannot be forgotten mid-run
 - require each implementation pass to prove its claimed phase work before fresh auditing
-- run a fresh `audit-implementation` pass when Codex reaches a stop point and have it exhaustively validate the authoritative phase-exit contract
+- run a fresh `audit-implementation` pass when the active host runtime reaches a stop point and have it exhaustively validate the authoritative phase-exit contract
 - repeat that full-frontier implement, prove, then audit cycle until the audit is clean or a real blocker stops progress
 - keep the code, `DOC_PATH`, and `WORKLOG_PATH` aligned after each implementation pass, then let the fresh audit child author the authoritative audit block
 
@@ -25,7 +25,7 @@ Running `implement-loop` should end in one of two honest states:
   - the latest audit and phase status show that truth plainly
   - the loop stops instead of pretending one more pass will magically fix it
 
-User-facing invocation is `implement-loop` or `auto-implement`. `auto-implement` is an exact alias of `implement-loop`; keep the internal runtime state and hook behavior under `implement-loop`. Do not run the Stop hook yourself. After the controller is armed, just end the turn and let Codex run the installed Stop hook. If the installed runtime support for real automatic looping is absent or disabled, this command must fail loud instead of pretending prompt repetition is the same feature.
+User-facing invocation is `implement-loop` or `auto-implement`. `auto-implement` is an exact alias of `implement-loop`; keep the internal runtime state and hook behavior under `implement-loop`. Do not run the Stop hook yourself. After the controller is armed, just end the turn and let the installed Stop hook run. If the installed runtime support for real automatic looping is absent or disabled, this command must fail loud instead of pretending prompt repetition is the same feature.
 
 ## Shared references to carry in
 
@@ -49,7 +49,9 @@ Parent implementation pass:
 - product code
 - `WORKLOG_PATH`
 - phase status and Decision Log in `DOC_PATH`
-- `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
+- the host-aware miniarch-step implement-loop controller state path:
+  - Codex: `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
+  - Claude Code: `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when session id is available before the first Stop-hook turn, otherwise `.claude/arch_skill/miniarch-step-implement-loop-state.json` until the first Stop-hook turn claims session ownership
 
 Fresh `audit-implementation` child only:
 
@@ -61,10 +63,11 @@ Fresh `audit-implementation` child only:
 
 Before arming the loop, verify all of these:
 
-- Codex runtime is the active host
-- `~/.codex/hooks.json` contains the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
+- the active host runtime is Codex or Claude Code
+- the active host runtime has the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` in Codex or `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude` in Claude Code
 - the installed `arch-step` runner exists at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
-- `codex features list` shows `codex_hooks` enabled
+- in Codex, `codex features list` shows `codex_hooks` enabled
+- in Claude Code, hook-suppressed child runs via `claude -p --settings '{"disableAllHooks":true}'` work with the machine's normal Claude auth for fresh audit cycles
 
 If any check fails, name the broken prerequisite and stop.
 
@@ -73,7 +76,10 @@ Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not
 
 ## Active loop-state contract
 
-Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` before the first implementation pass.
+Resolve the controller state path for the active host runtime before the first implementation pass:
+
+- Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
+- Claude Code: prefer `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/miniarch-step-implement-loop-state.json` and let the first Stop-hook turn claim session ownership
 
 Minimal shape:
 
@@ -104,7 +110,7 @@ Lifecycle:
 - before handing control back to fresh audit, the implementation pass must finish the current reachable ordered plan frontier or hit a real blocker, and the claimed phase work must have credible programmatic proof
 - for modern Section 7 docs, fresh audit must validate both `Checklist (must all be done)` and `Exit criteria (all required)` before any phase can stay complete or the loop can finish clean
 - in Codex, the fresh audit pass after an implementation stop point owns the continue-versus-stop decision
-- inside `implement-loop`, only the fresh `audit-implementation` child may write or replace `arch_skill:block:implementation_audit`, conclude the controller is clean, write the `Use $arch-docs` handoff, or delete `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
+- inside `implement-loop`, only the fresh `audit-implementation` child may write or replace `arch_skill:block:implementation_audit`, conclude the controller is clean, write the `arch-docs` handoff, or delete the armed implement-loop state
 - the implementation side must not act as the authoritative auditor just because it believes the code is complete
 - if execution discovers that the approved plan itself needs requirement, scope, or acceptance-bar changes, stop honestly and repair the plan instead of continuing on a rewritten story
 - when the fresh audit context launches, pass the explicit `DOC_PATH` and current repo working context; do not ask the fresh audit pass to rediscover the artifact from stale conversation state
@@ -118,32 +124,30 @@ Lifecycle:
 ## Loop procedure
 
 1. Read `DOC_PATH` fully and run the same alignment checks required by `implement`.
-2. Run the runtime preflight. If the `~/.codex/hooks.json` entry, the installed runner, or `codex_hooks` is unavailable, fail loud.
+2. Run the runtime preflight. If the active runtime's hook entry, the installed runner, the Codex feature gate, or Claude hook-suppressed child-run auth is unavailable, fail loud.
 3. Build or refresh the compact implementation ledger from Section 7, Section 6, migration notes, and touched live docs/comments/instructions.
-4. Resolve `SESSION_ID` from `CODEX_THREAD_ID`, then create or refresh `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` for the current Codex session and `DOC_PATH`.
+4. Resolve the active runtime controller state path, then create or refresh the armed miniarch-step implement-loop state for the current session and `DOC_PATH`.
 5. Run one truthful implementation pass using the `implement` contract, starting from the earliest incomplete or reopened phase and continuing through the remaining approved phases in order until the current reachable frontier is done or genuinely blocked. Run the required credible proof along the way, but do not stop just because one local fix is green.
 6. Sync `DOC_PATH` and `WORKLOG_PATH` to the resulting execution truth and proof signals, but do not replace `arch_skill:block:implementation_audit`, write clean-handoff language from the parent implementation pass, or rewrite requirements, scope, acceptance criteria, or phase obligations to fit partial code.
-7. If the implementation pass stops before the run naturally stops, update the plan and worklog truthfully as awaiting fresh audit, leave `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` armed, and let fresh `audit-implementation` author the authoritative audit outcome.
-8. Otherwise let Codex try to stop. The installed runtime should:
+7. If the implementation pass stops before the run naturally stops, update the plan and worklog truthfully as awaiting fresh audit, leave the armed miniarch-step implement-loop state in place, and let fresh `audit-implementation` author the authoritative audit outcome.
+8. Otherwise let the installed runtime try to stop. The Stop hook should:
    - no-op when no active loop state matches the current session
    - launch a fresh `audit-implementation` child pass when the loop is active
    - allow stop when the audit is clean
    - inject a continuation prompt when the audit finds missing code
 9. On each hook-driven continuation, read the refreshed audit findings, resume from the earliest reopened or incomplete phase, continue linearly through the remaining approved phases, prove the claimed work as you go, update execution truth, and keep the loop armed while awaiting the next fresh audit.
-10. If a fresh audit concludes that the next pass would be speculative, blocked, or materially unchanged from the last failed audit, let the fresh audit path clear `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`, stop, and report that state plainly.
+10. If a fresh audit concludes that the next pass would be speculative, blocked, or materially unchanged from the last failed audit, let the fresh audit path clear the armed miniarch-step implement-loop state, stop, and report that state plainly.
 
 ## Fresh-audit requirement
 
-For Codex `implement-loop`, the authoritative audit must come from the fresh Stop-hook child run.
-When `codex_hooks` is enabled and the `~/.codex/hooks.json` entry points at the installed runner, same-session audit is forbidden.
+For `implement-loop`, the authoritative audit must come from the fresh Stop-hook child run.
+When the active runtime hook entry points at the installed runner, same-session audit is forbidden.
 If the required fresh child cannot start, stop blocked instead of letting the parent implementation pass author the audit outcome.
 
-For the Codex Stop-hook child subprocess, launch the fresh auditor with
-`codex exec --dangerously-bypass-approvals-and-sandbox`, not `--full-auto`, so
-repo verification runs against the real host context instead of the child
-sandbox. The miniarch fresh audit child is intentionally pinned to
-`--model gpt-5.4-mini` and `-c model_reasoning_effort="xhigh"` so the
-workflow still gets a high-effort independent audit.
+Use host-native child execution:
+
+- Codex: launch the fresh auditor with `codex exec --dangerously-bypass-approvals-and-sandbox`, not `--full-auto`, so repo verification runs against the real host context instead of the child sandbox. The miniarch fresh audit child is intentionally pinned to `--model gpt-5.4-mini` and `-c model_reasoning_effort="xhigh"` so the workflow still gets a high-effort independent audit.
+- Claude Code: launch the fresh auditor with `claude -p --settings '{"disableAllHooks":true}'` plus explicit context so the audit runs without hook recursion while keeping normal host auth.
 
 Fresh means the audit should not rely on remembered implementation intent from the parent run. It should rely on:
 
