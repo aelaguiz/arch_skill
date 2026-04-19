@@ -26,7 +26,7 @@ If any preflight fails, name the broken prerequisite and stop instead of pretend
 Create or refresh the host-aware state path before the first pass:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/arch-docs-auto-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/arch-docs-auto-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/arch-docs-auto-state.json` and let the first Stop-hook turn claim session ownership
+- Claude Code: prefer `.claude/arch_skill/arch-docs-auto-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/arch-docs-auto-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
 
 Minimum shape:
 

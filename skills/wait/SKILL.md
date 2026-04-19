@@ -30,7 +30,7 @@ Use this skill when the user wants the same visible Codex or Claude Code thread 
 - Parse the duration exactly as specified in `references/arm.md`. Accept only the documented grammar; reject natural-language forms, negative or zero components, unknown units, and embedded whitespace. An unparseable duration means refuse to arm.
 - Keep the continuation as a literal `resume_prompt`. Do not rewrite, summarize, or interpret it.
 - Default maximum wait window is 24 hours unless the user explicitly sets a larger cap at arm time. Reject negative or zero durations.
-- One session holds at most one arm_skill controller state at a time. The shared runner's conflict gate halts the turn if two or more are armed for the same session, listing the offending state files. Arming `wait` alongside another already-armed controller kind for the same session is a user-visible conflict, not a priority race.
+- One session holds at most one arch_skill controller state at a time. The shared runner's conflict gate halts the turn if two or more are armed for the same session, listing the offending state files. Arming `wait` alongside another already-armed controller kind for the same session is a user-visible conflict, not a priority race.
 - `wait` is single-slot per session. Re-arming `wait` in a session that already has a `wait` state file overwrites the prior state; only one resume will fire.
 - Do not look for or require a dedicated `wait_controller.py`. `wait` is owned by the shared suite hook, not a separate controller binary.
 - Do not run the Stop hook yourself. After the controller is armed, just end the turn and let the installed Stop hook sleep and fire.

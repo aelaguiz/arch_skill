@@ -23,9 +23,9 @@ If any prerequisite is missing, name the broken item and stop. Do not downgrade 
 ## State file path by runtime
 
 - Codex: `.codex/arch-loop-state.<SESSION_ID>.json` (derive `SESSION_ID` from `CODEX_THREAD_ID`)
-- Claude Code: `.claude/arch_skill/arch-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise `.claude/arch_skill/arch-loop-state.json` until the first Stop-hook turn claims session ownership
+- Claude Code: `.claude/arch_skill/arch-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise `.claude/arch_skill/arch-loop-state.json` as a legacy single-slot fallback until the first Stop-hook turn claims it into the session-scoped path
 
-One session may arm multiple arch_skill auto controllers of different kinds, but not two `arch-loop` state files. The shared runner's duplicate-controller check fails loud if two `arch-loop` state files are armed for the same session.
+One session may arm only one arch_skill controller kind at a time. The shared runner's duplicate-controller check fails loud if `arch-loop` and any other controller state, or two `arch-loop` state files, are armed for the same session.
 
 ## State schema (version 1)
 

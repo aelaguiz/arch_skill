@@ -187,7 +187,7 @@ These stay explicit unless the user directly asks for them:
 - do not preflight against a copied hook file under `~/.codex/hooks/`; that is not the install contract
 - if the active runtime hook entry, the installed runner, the Codex feature flag, or the North Star approval is missing, name the broken prerequisite and stop
 - keep the runtime-local controller state armed for the live run and treat `DOC_PATH` as the progress ledger
-- if a stage stops early, clear the runtime-local controller state and stop honestly
+- if a stage stops early after controller state is armed, stop honestly and let the Stop hook clear the matching state
 
 `implement-loop` is a full-frontier delivery controller in Codex and Claude Code. It arms state before implementation work, runs `implement` across the current approved Section 7 frontier in order from the earliest incomplete or reopened phase through later reachable phases, requires credible programmatic proof along the way, then runs `audit-implementation`, and repeats against the same approved `DOC_PATH` until the audit verdict is clean or a real blocker stops progress. The parent implementation pass may ship code and sync plan/worklog truth, but only the fresh `audit-implementation` child may author the authoritative audit outcome, emit the `arch-docs` handoff, or clear loop state. Execution does not get to change requirements, scope, acceptance criteria, or phase obligations while coding; if the plan itself needs to change, stop and repair the plan instead of continuing on a rewritten story. Do not turn it into a generic open-ended loop.
 
@@ -214,7 +214,7 @@ User-facing invocation stays simple:
 For controller state in this skill:
 
 - Codex should derive `<SESSION_ID>` from `CODEX_THREAD_ID` and arm the session-scoped `.codex/...<SESSION_ID>.json` path for the current session.
-- Claude Code should arm `.claude/arch_skill/...` for the active controller. When Claude exposes session id before the first Stop-hook turn, use the session-scoped path there too. Otherwise arm the unsuffixed runtime-local path and let the first Stop-hook turn claim session ownership.
+- Claude Code should arm `.claude/arch_skill/...` for the active controller. When Claude exposes session id before the first Stop-hook turn, use the session-scoped path there too. Otherwise the unsuffixed runtime-local path is only a legacy single-slot fallback; the first Stop-hook turn must claim it into the session-scoped path.
 
 ### Output expectations
 

@@ -53,7 +53,7 @@ User-facing invocation is just `auto-plan`. Do not run the Stop hook yourself. A
 - `planning_passes`
 - the host-aware auto-plan controller state path:
   - Codex: `.codex/auto-plan-state.<SESSION_ID>.json`
-  - Claude Code: `.claude/arch_skill/auto-plan-state.<SESSION_ID>.json` when session id is available before the first Stop-hook turn, otherwise `.claude/arch_skill/auto-plan-state.json` until the first Stop-hook turn claims session ownership
+  - Claude Code: `.claude/arch_skill/auto-plan-state.<SESSION_ID>.json` when session id is available before the first Stop-hook turn, otherwise `.claude/arch_skill/auto-plan-state.json` as a legacy single-slot fallback until the first Stop-hook turn claims it into the session-scoped path
 
 ## Required runtime preflight
 
@@ -75,7 +75,7 @@ Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not
 Resolve the controller state path for the active host runtime after preflight and `DOC_PATH` resolution:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/auto-plan-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/auto-plan-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/auto-plan-state.json` and let the first Stop-hook turn claim session ownership
+- Claude Code: prefer `.claude/arch_skill/auto-plan-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/auto-plan-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
 
 Minimal shape:
 
@@ -97,8 +97,8 @@ Lifecycle:
 - treat `DOC_PATH` as the only planning-progress ledger
 - treat the state file as armed controller state for one doc and one session, not as a progress ledger
 - on reruns, let the Stop hook reconcile from doc truth and continue from the first incomplete stage
-- only the Stop hook may delete it after successful planning completion
-- delete it before stopping on a blocker, ambiguity, or other early stop so the controller does not re-enter falsely
+- only the Stop hook may delete it after controller state is armed, including successful completion, blockers, ambiguity, and other early stops
+- parent stages must not run `rm` or guess a controller state path after arming; stop honestly and let the Stop hook clear the matching state
 
 ## Hard rules
 
@@ -113,8 +113,8 @@ Lifecycle:
 - later planning stages are hook-owned only; the parent pass must not self-run `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, or `consistency-pass` in the same turn
 - the parent pass must not clear successful controller state, claim the planning arc is complete, or emit the `implement-loop` handoff
 - planning stages stay in the same visible thread across separate turns; do not hide them in silent child planning runs or collapse them into one long same-turn chain
-- if a stage stops before it updates the required canonical outputs, clear the armed auto-plan state, stop, and report that truth plainly
-- if any stage uncovers an unresolved decision that repo truth cannot settle, clear the armed auto-plan state, stop, and ask the exact blocker question instead of continuing
+- if a stage stops before it updates the required canonical outputs, stop and report that truth plainly; the Stop hook clears the matching armed state
+- if any stage uncovers an unresolved decision that repo truth cannot settle, stop and ask the exact blocker question instead of continuing; the Stop hook clears the matching armed state
 - if `consistency-pass` leaves `Decision: proceed to implement? no`, the Stop hook clears the armed auto-plan state, stops, and reports that the doc is not ready for `implement-loop`
 - after successful `consistency-pass`, the Stop hook clears the armed auto-plan state, stops, and says the doc is decision-complete and ready for `implement-loop`
 - do not auto-run `external-research`, helper commands other than the required `consistency-pass`, `implement`, `implement-loop`, or `audit-implementation`
@@ -168,8 +168,8 @@ Use these signals before the Stop hook continues automatically:
    - if the first incomplete stage is `consistency-pass`, feed `Use $arch-step consistency-pass <DOC_PATH>`
    - after `consistency-pass` with `Decision-complete: yes` and `Decision: proceed to implement? yes`, clear state and stop with the `implement-loop` handoff message
 6. On each hook-driven continuation, run the literal next planning command against the same `DOC_PATH`, keep the controller state armed, and stop naturally after that one stage finishes.
-7. If a stage ends early, does not update the required canonical outputs, uncovers a blocker question, or the next move is no longer credible, clear the armed auto-plan state, stop, and report that state plainly.
-8. If `consistency-pass` ends with `Decision: proceed to implement? no`, clear the armed auto-plan state, stop, and report that the doc still needs planning repair before implementation.
+7. If a stage ends early, does not update the required canonical outputs, uncovers a blocker question, or the next move is no longer credible, stop and report that state plainly; the Stop hook clears the matching armed state.
+8. If `consistency-pass` ends with `Decision: proceed to implement? no`, stop and report that the doc still needs planning repair before implementation; the Stop hook clears the matching armed state.
 
 ## Console contract
 

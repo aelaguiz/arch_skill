@@ -11,6 +11,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 UPSERT_HOOK_PATH = REPO_ROOT / "skills/arch-step/scripts/upsert_codex_stop_hook.py"
 STOP_HOOK_PATH = REPO_ROOT / "skills/arch-step/scripts/arch_controller_stop_hook.py"
+CODE_REVIEW_RUNNER_PATH = REPO_ROOT / "skills/code-review/scripts/run_code_review.py"
 HOOK_CONTRACT_TEXT_PATHS = [
     Path("README.md"),
     Path("docs/arch_skill_usage_guide.md"),
@@ -34,6 +35,22 @@ FORBIDDEN_HOOK_PATH_TEXTS = (
     "~/.codex/hooks/arch_controller_stop_hook.py",
     "/Users/example/.codex/hooks/arch_controller_stop_hook.py",
 )
+AUTO_PLAN_CLEANUP_CONTRACT_TEXT_PATHS = [
+    Path("README.md"),
+    Path("docs/arch_skill_usage_guide.md"),
+    Path("skills/arch-step/SKILL.md"),
+    Path("skills/arch-step/references/arch-auto-plan.md"),
+    Path("skills/miniarch-step/SKILL.md"),
+    Path("skills/miniarch-step/references/arch-auto-plan.md"),
+]
+FORBIDDEN_PARENT_CLEANUP_TEXTS = (
+    "delete it before stopping",
+    "clear the runtime-local controller state",
+    "clear the runtime-local auto-plan state",
+    "clear the armed auto-plan state",
+    "clear the armed miniarch-step auto-plan state",
+    "must stop, clear controller state",
+)
 
 
 def load_module(path: Path, module_name: str):
@@ -50,6 +67,10 @@ class CodexStopHookTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.upsert_module = load_module(UPSERT_HOOK_PATH, "arch_skill_upsert_codex_stop_hook")
         cls.stop_module = load_module(STOP_HOOK_PATH, "arch_skill_arch_controller_stop_hook")
+        cls.code_review_module = load_module(
+            CODE_REVIEW_RUNNER_PATH,
+            "arch_skill_code_review_runner",
+        )
         cls.stop_module.ACTIVE_RUNTIME = cls.stop_module.HOOK_RUNTIME_SPECS[
             cls.stop_module.RUNTIME_CODEX
         ]
@@ -727,6 +748,38 @@ class CodexStopHookTests(unittest.TestCase):
                 for forbidden_text in FORBIDDEN_HOOK_PATH_TEXTS:
                     self.assertNotIn(forbidden_text, text)
 
+    def test_auto_plan_contracts_do_not_make_parent_delete_controller_state(self) -> None:
+        for relative_path in AUTO_PLAN_CLEANUP_CONTRACT_TEXT_PATHS:
+            with self.subTest(path=str(relative_path)):
+                text = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
+                for forbidden_text in FORBIDDEN_PARENT_CLEANUP_TEXTS:
+                    self.assertNotIn(forbidden_text, text)
+
+    def test_code_review_run_dirs_do_not_collide_for_same_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_root = Path(temp_dir)
+            target = self.code_review_module.ReviewTarget(
+                mode="paths",
+                paths=["skills/arch-step/scripts/arch_controller_stop_hook.py"],
+            )
+            original_datetime = self.code_review_module._dt.datetime
+
+            class FixedDateTime:
+                @classmethod
+                def now(cls):
+                    return original_datetime(2026, 4, 19, 12, 0, 0)
+
+            self.code_review_module._dt.datetime = FixedDateTime
+            try:
+                first = self.code_review_module.make_run_dir(output_root, None, target)
+                second = self.code_review_module.make_run_dir(output_root, None, target)
+            finally:
+                self.code_review_module._dt.datetime = original_datetime
+
+            self.assertNotEqual(first, second)
+            self.assertTrue(first.exists())
+            self.assertTrue(second.exists())
+
     def test_run_fresh_review_uses_unsandboxed_exec(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             args = self.capture_codex_exec_args(
@@ -1095,7 +1148,7 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertIn(".codex/auto-plan-state.session-1.json", payload["stopReason"])
             self.assertIn(".codex/auto-plan-state.json", payload["stopReason"])
 
-    def test_stop_hook_legacy_state_still_works(self) -> None:
+    def test_stop_hook_migrates_legacy_state_to_session_scoped_path(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
             docs_dir = repo_root / "docs"
@@ -1119,13 +1172,19 @@ class CodexStopHookTests(unittest.TestCase):
             payload = json.loads(process.stdout)
             self.assertTrue(payload["continue"])
             self.assertIn("Use $arch-step deep-dive docs/PLAN.md", payload["reason"])
-            self.assertIn(".codex/auto-plan-state.json", payload["reason"])
+            self.assertIn(".codex/auto-plan-state.session-1.json", payload["reason"])
             self.assertEqual(
                 payload["systemMessage"],
                 "auto-plan continuing with deep-dive pass 1.",
             )
 
-            state = json.loads(state_path.read_text(encoding="utf-8"))
+            session_state_path = self.controller_state_path(
+                repo_root,
+                self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
+                "session-1",
+            )
+            self.assertFalse(state_path.exists())
+            state = json.loads(session_state_path.read_text(encoding="utf-8"))
             self.assertEqual(state["session_id"], "session-1")
             self.assertNotIn("stage_index", state)
             self.assertNotIn("stages", state)

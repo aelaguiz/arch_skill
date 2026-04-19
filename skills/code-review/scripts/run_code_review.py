@@ -23,6 +23,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import uuid
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Iterable
@@ -314,7 +315,8 @@ def make_run_dir(output_root: Path, explicit: Path | None, target: ReviewTarget)
         return explicit
     ts = _dt.datetime.now().strftime("%Y%m%d_%H%M%S")
     hashed = hashlib.sha256(json.dumps(asdict(target), sort_keys=True).encode()).hexdigest()[:8]
-    run_dir = output_root / f"{ts}_{hashed}"
+    nonce = uuid.uuid4().hex[:8]
+    run_dir = output_root / f"{ts}_{hashed}_{nonce}"
     run_dir.mkdir(parents=True, exist_ok=False)
     return run_dir
 

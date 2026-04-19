@@ -57,7 +57,7 @@ Do not look for a dedicated wait-specific runner such as `wait_controller.py`; `
 Create the host-aware state path only after the duration has parsed and the runtime preflight has passed:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/wait-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/wait-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/wait-state.json` and let the first Stop-hook turn claim session ownership via the same legacy-claim branch `delay-poll` uses
+- Claude Code: prefer `.claude/arch_skill/wait-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/wait-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
 
 Exact shape (this is the only schema the runner's `validate_wait_state` accepts):
 
@@ -76,7 +76,7 @@ Field rules enforced by `validate_wait_state`:
 
 - `version` must equal `1`.
 - `command` must equal `"wait"`.
-- `session_id` must match the hook's current session (or the legacy-claim branch applies for unsuffixed Claude Code state only).
+- `session_id` must match the hook's current session (or the legacy-claim branch migrates unsuffixed Claude Code state into the session-scoped path).
 - `armed_at` must be a positive integer epoch-seconds value.
 - `deadline_at` must be an integer strictly greater than `armed_at`.
 - `resume_prompt` must be a non-empty trimmed string. The runner stores it with leading/trailing whitespace stripped.

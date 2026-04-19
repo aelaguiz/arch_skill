@@ -35,7 +35,7 @@ Use this skill when the user wants the same visible Codex or Claude Code thread 
 - Cadence windows that cannot fit inside the installed Stop-hook timeout fail loud. Do not turn an interval request into a manual reminder.
 - Named skill audits such as `$agent-linter` are real audit obligations. The parent runs the named skill during work passes; the external evaluator verifies passing evidence before allowing `clean`.
 - `required_skill_audits[].status` must be exactly `pending`, `pass`, `fail`, `missing`, or `inapplicable`. Use `pending` while work or audit proof is still in progress; put words like `completed` or `fixing_in_progress` in `latest_summary`, not `status`.
-- One session may arm multiple arch_skill auto controllers; the installed Stop hook drives one per turn. `arch-loop` is one of them and shares the duplicate-controller registry.
+- One session may arm only one arch_skill controller kind at a time. `arch-loop` shares the duplicate-controller registry, so another armed controller state for the same session is a conflict.
 - Do not run the Stop hook yourself. After the controller is armed, end the turn naturally and let the installed Stop hook own continuation.
 - Do not introduce a separate `arch_loop_controller.py` runner. `arch-loop` is owned by the shared suite hook.
 - Do not use this skill as a long-form alternative to `delay-poll` for pure waiting; route pure `wait-until-true` requests there.

@@ -22,7 +22,7 @@ Do not look for a dedicated delay-specific runner such as `delay_poll_controller
 Create the host-aware state path only after the immediate first check says the condition is still false:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/delay-poll-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/delay-poll-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/delay-poll-state.json` and let the first Stop-hook turn claim session ownership
+- Claude Code: prefer `.claude/arch_skill/delay-poll-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/delay-poll-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
 
 Minimum shape:
 

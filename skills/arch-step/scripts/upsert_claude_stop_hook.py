@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 
@@ -56,6 +57,17 @@ def load_settings_file(settings_file: Path) -> dict:
     return data
 
 
+def write_json_file(path: Path, data: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        tmp_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        os.replace(tmp_path, path)
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
+
+
 def is_repo_managed_group(group: object) -> bool:
     if not isinstance(group, dict):
         return False
@@ -102,8 +114,7 @@ def install_hook(settings_file: Path, skills_dir: Path) -> None:
     stop_groups.append(expected_group(command))
     data["hooks"]["Stop"] = stop_groups
 
-    settings_file.parent.mkdir(parents=True, exist_ok=True)
-    settings_file.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    write_json_file(settings_file, data)
 
 
 def verify_hook(settings_file: Path, skills_dir: Path) -> None:

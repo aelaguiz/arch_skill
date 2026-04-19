@@ -393,6 +393,21 @@ def write_state(state_path: Path, state: dict) -> None:
     state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
 
 
+def claim_legacy_state_for_session(
+    state_path: Path,
+    state: dict,
+    payload_session_id: str,
+) -> Path:
+    claimed_path = state_path.with_name(
+        f"{state_path.stem}.{payload_session_id}{state_path.suffix}"
+    )
+    state["session_id"] = payload_session_id
+    write_state(claimed_path, state)
+    if claimed_path != state_path:
+        clear_state(state_path)
+    return claimed_path
+
+
 def current_epoch_seconds() -> int:
     return int(time.time())
 
@@ -560,8 +575,6 @@ def resolve_active_controller_state(
     )
     legacy_path = cwd / controller_state_relative_path(spec)
     if session_path is not None and session_path.exists():
-        if legacy_state_is_active_for_session(cwd, spec, payload):
-            clear_state(legacy_path)
         return ResolvedControllerState(spec=spec, state_path=session_path, is_legacy=False)
     if legacy_state_is_active_for_session(cwd, spec, payload):
         return ResolvedControllerState(spec=spec, state_path=legacy_path, is_legacy=True)
@@ -581,8 +594,6 @@ def resolve_controller_state_for_handler(
     )
     legacy_path = cwd / controller_state_relative_path(spec)
     if session_path is not None and session_path.exists():
-        if legacy_state_is_active_for_session(cwd, spec, payload):
-            clear_state(legacy_path)
         return ResolvedControllerState(spec=spec, state_path=session_path, is_legacy=False)
     if legacy_path.exists():
         return ResolvedControllerState(spec=spec, state_path=legacy_path, is_legacy=True)
@@ -657,7 +668,7 @@ def validate_session_id(
     command_name: str,
     *,
     allow_claim: bool,
-) -> bool:
+) -> Path | None:
     payload_session_id = current_session_id(payload)
     if payload_session_id is None:
         clear_state(state_path)
@@ -670,9 +681,11 @@ def validate_session_id(
     session_id = state.get("session_id")
     if session_id is None:
         if allow_claim:
-            state["session_id"] = payload_session_id
-            write_state(state_path, state)
-            return True
+            return claim_legacy_state_for_session(
+                state_path,
+                state,
+                payload_session_id,
+            )
         clear_state(state_path)
         block_with_message(
             f"{command_name} controller state at {display_path(state_path, cwd)} was missing session_id; "
@@ -686,13 +699,19 @@ def validate_session_id(
         )
     if session_id != payload_session_id:
         if allow_claim:
-            return False
+            return None
         clear_state(state_path)
         block_with_message(
             f"{command_name} controller state at {display_path(state_path, cwd)} had a mismatched session_id; "
             "the controller was disarmed. Update the repo truthfully and stop."
         )
-    return True
+    if allow_claim:
+        return claim_legacy_state_for_session(
+            state_path,
+            state,
+            payload_session_id,
+        )
+    return state_path
 
 
 def normalize_optional_string_list(
@@ -1328,15 +1347,17 @@ def validate_implement_loop_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         IMPLEMENT_LOOP_COMMAND,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
     doc_path_value = state.get("doc_path")
     if not isinstance(doc_path_value, str) or not doc_path_value.strip():
         clear_state(state_path)
@@ -1362,15 +1383,17 @@ def validate_auto_plan_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         AUTO_PLAN_COMMAND,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     doc_path_value = state.get("doc_path")
     if not isinstance(doc_path_value, str) or not doc_path_value.strip():
@@ -1398,15 +1421,17 @@ def validate_miniarch_step_implement_loop_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         MINIARCH_STEP_IMPLEMENT_LOOP_COMMAND,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
     doc_path_value = state.get("doc_path")
     if not isinstance(doc_path_value, str) or not doc_path_value.strip():
         clear_state(state_path)
@@ -1432,15 +1457,17 @@ def validate_miniarch_step_auto_plan_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         MINIARCH_STEP_AUTO_PLAN_COMMAND,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     doc_path_value = state.get("doc_path")
     if not isinstance(doc_path_value, str) or not doc_path_value.strip():
@@ -1468,15 +1495,17 @@ def validate_arch_docs_auto_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         ARCH_DOCS_AUTO_COMMAND,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     scope_kind = state.get("scope_kind")
     if not isinstance(scope_kind, str) or not scope_kind.strip():
@@ -1572,15 +1601,17 @@ def validate_audit_loop_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         AUDIT_LOOP_DISPLAY_NAME,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     ledger_path_value = state.get("ledger_path", str(AUDIT_LOOP_DEFAULT_LEDGER_RELATIVE_PATH))
     if not isinstance(ledger_path_value, str) or not ledger_path_value.strip():
@@ -1608,15 +1639,17 @@ def validate_comment_loop_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         COMMENT_LOOP_DISPLAY_NAME,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     ledger_path_value = state.get("ledger_path", str(COMMENT_LOOP_DEFAULT_LEDGER_RELATIVE_PATH))
     if not isinstance(ledger_path_value, str) or not ledger_path_value.strip():
@@ -1644,15 +1677,17 @@ def validate_audit_loop_sim_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         AUDIT_LOOP_SIM_DISPLAY_NAME,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     ledger_path_value = state.get("ledger_path", str(AUDIT_LOOP_SIM_DEFAULT_LEDGER_RELATIVE_PATH))
     if not isinstance(ledger_path_value, str) or not ledger_path_value.strip():
@@ -1680,15 +1715,17 @@ def validate_delay_poll_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         DELAY_POLL_DISPLAY_NAME,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     write_required = False
 
@@ -1795,15 +1832,17 @@ def validate_code_review_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         CODE_REVIEW_DISPLAY_NAME,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     version = state.get("version")
     if version != 1:
@@ -1939,15 +1978,17 @@ def validate_wait_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         WAIT_DISPLAY_NAME,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     version = state.get("version")
     if version != 1:
@@ -2348,15 +2389,17 @@ def validate_arch_loop_state(
     if loaded is None:
         return None
     state_path, state, is_legacy = loaded
-    if not validate_session_id(
+    claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         ARCH_LOOP_DISPLAY_NAME,
         allow_claim=is_legacy,
-    ):
+    )
+    if claimed_path is None:
         return None
+    state_path = claimed_path
 
     write_required = False
 

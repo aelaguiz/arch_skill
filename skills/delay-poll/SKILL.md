@@ -29,7 +29,7 @@ Use this skill when the user wants the same visible Codex or Claude Code thread 
 - Do one immediate grounded check before arming the wait state. If the condition is already true, do not arm the controller.
 - Default maximum wait window is 24 hours unless the user explicitly sets a different cap.
 - Later polling checks stay read-only. Mutation belongs only to the resumed main thread after the condition becomes true.
-- One session may arm multiple arch_skill auto controllers of different kinds; the installed Stop hook drives one per turn in priority order (`delay-poll` is last in that order) and the rest wait until an earlier controller clears its state.
+- One session may arm only one arch_skill controller kind at a time. If another controller state is already armed for the same session, the installed Stop hook stops with a conflict message naming the files.
 - Do not look for or require a dedicated delay-specific runner file such as `delay_poll_controller.py`. `delay-poll` is owned by the shared suite hook, not a separate controller binary.
 - Do not run the Stop hook yourself. After the controller is armed, just end the turn and let the installed Stop hook run.
 - Internal `check` mode is suite-only. Do not advertise it as a public user workflow.

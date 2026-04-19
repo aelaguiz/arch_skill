@@ -37,7 +37,7 @@ Dirty or untracked files are not part of this runtime preflight. A dirty worktre
 Create the host-aware state path before the first `run` pass:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/audit-loop-sim-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/audit-loop-sim-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/audit-loop-sim-state.json` and let the first Stop-hook turn claim session ownership
+- Claude Code: prefer `.claude/arch_skill/audit-loop-sim-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/audit-loop-sim-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
 
 Minimal shape:
 
@@ -56,8 +56,8 @@ Lifecycle:
 
 - create or refresh it after preflight and before the first `run`
 - keep it armed while verdicts are `CONTINUE`
-- delete it before stopping on `BLOCKED`
-- delete it on `CLEAN` before removing the ledger and `.gitignore` entry
+- the Stop hook deletes it before stopping on `BLOCKED`
+- the Stop hook deletes it on `CLEAN` before removing the ledger and `.gitignore` entry
 - if the state file or ledger disappears unexpectedly during `auto`, recreate it from fresh repo context before trusting any stop verdict that followed the deletion
 
 ## Hard rules

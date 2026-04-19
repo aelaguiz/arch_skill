@@ -164,7 +164,7 @@ User-facing invocation stays simple:
   - Codex: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, that installed runner must exist, and `codex_hooks` must be enabled
   - Claude Code: `~/.claude/settings.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude`, and that installed runner must exist
 - keep the runtime-local auto-plan state armed for the live run and treat `DOC_PATH` as the progress ledger
-- if a stage stops early, clear the runtime-local auto-plan state and stop honestly
+- if a stage stops early after auto-plan state is armed, stop honestly and let the Stop hook clear the matching state
 
 `implement-loop` is a full-frontier delivery controller. It arms state before implementation work, runs `implement` across the current approved Section 7 frontier in order from the earliest incomplete or reopened phase through later reachable phases, requires credible programmatic proof along the way, then runs `audit-implementation`, and repeats against the same approved `DOC_PATH` until the audit verdict is clean or a real blocker stops progress.
 
@@ -189,7 +189,7 @@ User-facing invocation stays simple:
 For controller state in this skill:
 
 - Codex should derive `<SESSION_ID>` from `CODEX_THREAD_ID` and arm the session-scoped `.codex/...<SESSION_ID>.json` path for the current session.
-- Claude Code should arm `.claude/arch_skill/...` for the active controller. When Claude exposes session id before the first Stop-hook turn, use the session-scoped path there too. Otherwise arm the unsuffixed runtime-local path and let the first Stop-hook turn claim session ownership.
+- Claude Code should arm `.claude/arch_skill/...` for the active controller. When Claude exposes session id before the first Stop-hook turn, use the session-scoped path there too. Otherwise the unsuffixed runtime-local path is only a legacy single-slot fallback; the first Stop-hook turn must claim it into the session-scoped path.
 
 ### Output expectations
 

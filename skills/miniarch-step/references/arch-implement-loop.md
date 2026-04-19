@@ -51,7 +51,7 @@ Parent implementation pass:
 - phase status and Decision Log in `DOC_PATH`
 - the host-aware miniarch-step implement-loop controller state path:
   - Codex: `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
-  - Claude Code: `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when session id is available before the first Stop-hook turn, otherwise `.claude/arch_skill/miniarch-step-implement-loop-state.json` until the first Stop-hook turn claims session ownership
+  - Claude Code: `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when session id is available before the first Stop-hook turn, otherwise `.claude/arch_skill/miniarch-step-implement-loop-state.json` as a legacy single-slot fallback until the first Stop-hook turn claims it into the session-scoped path
 
 Fresh `audit-implementation` child only:
 
@@ -79,7 +79,7 @@ Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not
 Resolve the controller state path for the active host runtime before the first implementation pass:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/miniarch-step-implement-loop-state.json` and let the first Stop-hook turn claim session ownership
+- Claude Code: prefer `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/miniarch-step-implement-loop-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
 
 Minimal shape:
 
