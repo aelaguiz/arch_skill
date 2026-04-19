@@ -1,12 +1,12 @@
 .PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill claude_install_hook gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 # Purge removed packages from installed skill dirs before copying the active set.
-REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio amir-publish
+REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio
 # `SKILLS` is the active agents/Codex surface. Claude mirrors it; Gemini omits
-# skills that require same-thread Stop-hook continuation or the code-review runner.
-SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring codex-review-yolo code-review
-CLAUDE_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring codex-review-yolo code-review
-GEMINI_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring codex-review-yolo
+# Stop-hook and code-review-runner skills.
+SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring amir-publish codex-review-yolo code-review
+CLAUDE_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring amir-publish codex-review-yolo code-review
+GEMINI_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring amir-publish codex-review-yolo
 NON_CLAUDE_SKILLS := $(filter-out $(CLAUDE_SKILLS),$(SKILLS))
 NON_GEMINI_SKILLS := $(filter-out $(GEMINI_SKILLS),$(SKILLS))
 # Prompt-era command files are no longer runtime sources; these names drive

@@ -29,6 +29,7 @@ Other shipped skills:
 - `agents-md-authoring`
 - `prompt-authoring`
 - `skill-authoring`
+- `amir-publish`
 - `codex-review-yolo`
 - `code-review`
 
@@ -74,6 +75,7 @@ Default local path:
 - `~/.agents/skills/agents-md-authoring/`
 - `~/.agents/skills/prompt-authoring/`
 - `~/.agents/skills/skill-authoring/`
+- `~/.agents/skills/amir-publish/`
 - `~/.agents/skills/codex-review-yolo/`
 - `~/.agents/skills/code-review/`
 
@@ -102,6 +104,7 @@ Installed skills:
   - `agents-md-authoring`
   - `prompt-authoring`
   - `skill-authoring`
+  - `amir-publish`
   - `codex-review-yolo`
   - `code-review`
 - Claude Code:
@@ -125,6 +128,7 @@ Installed skills:
   - `agents-md-authoring`
   - `prompt-authoring`
   - `skill-authoring`
+  - `amir-publish`
   - `codex-review-yolo`
   - `code-review`
 - Gemini:
@@ -145,6 +149,7 @@ Installed skills:
   - `agents-md-authoring`
   - `prompt-authoring`
   - `skill-authoring`
+  - `amir-publish`
   - `codex-review-yolo`
 
 Install removes stale pre-skill command surfaces, removed skill packages, and older Codex skill mirrors. It installs one repo-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` and one repo-managed Claude Code `Stop` hook in `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`. Those entries back `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, `arch-loop`, and `delay-poll`.
@@ -424,6 +429,14 @@ Use when the user wants to write, edit, refactor, or audit a reusable agent skil
 Examples:
 
 - `Use $skill-authoring to audit this skill package`
+
+### `amir-publish`
+
+Use when Amir wants to publish this skills repo across his usual machines: commit and push the current local work, install locally, then SSH to the fixed host list, skip the current host, pull the same branch from the same directory, and install remotely.
+
+Examples:
+
+- `Use $amir-publish`
 
 ### `code-review`
 
