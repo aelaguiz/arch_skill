@@ -72,6 +72,11 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - `advance` must choose from structure first, quality second, stage order third. Helper commands stay explicit.
 - `status` is compact, read-only, and grounded in the actual artifact.
 - `advance` owns the longer checklist surface and optional one-step execution.
+- **No-progress rule.** After two consecutive parent passes with no real change (no repo file edit, no plan/doc edit, no new evidence the audit/evaluator has not seen), end with `requested_yield: {kind: "await_user", reason: "no progress after 2 passes: ..."}` instead of firing another identical pass. See `skills/_shared/controller-contract.md` §Parent-pass discipline.
+- **No invented budgets.** The hook owns timing (`deadline_at`, iteration cap, parsed cadence). Do not self-declare `blocked` or "outside in-session budget" because remaining work feels expensive or the auditor is costly. Take the next reachable step, arm `requested_yield: sleep_for` for a paced pause, or yield `await_user` if the armed window is genuinely too small. Terminal verdicts come from the controller, not from invented budgets.
+- **Exhaust the frontier before handing to audit.** Ending the turn is not a cheap checkpoint — each turn end pays for a full fresh audit or evaluator child run. End the turn when you believe you are done with everything reachable (full plan frontier, every reachable phase, every named audit), not after one local fix. If a blocker stops you short, yield explicitly via `await_user` or `sleep_for`; do not drop the turn silently mid-frontier.
+- **Respect the tree state the user gave you.** Do not stash changes, create new branches, split the work across multiple PRs, or rewrite history. Commit hygiene, branch strategy, and PR shape are the user's decisions.
+- **Parallel-agent edits are a pause signal, not a revert signal.** If the working tree contains edits this pass did not make (foreign file, unexpected compiler error, unfamiliar commit), pause via `requested_yield: {kind: "sleep_for", seconds: 300, ...}` to let the other agent land its fix. Do not revert. Escalate via `await_user` only after two pause-retry cycles fail.
 
 ## First move
 

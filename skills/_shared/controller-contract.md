@@ -168,6 +168,110 @@ ends the turn; the Stop hook verifies and disarms.
 
 ---
 
+## Parent-pass discipline
+
+The parent pass is the turn the model runs between hook firings. It must
+advance real state or yield honestly. Five rules govern it universally across
+every hook-backed skill in this suite. Individual controllers may extend these
+rules but never relax them.
+
+### No-progress rule
+
+If two consecutive parent passes produce no real change, the next parent pass
+must end with:
+
+```jsonc
+"requested_yield": {
+  "kind": "await_user",
+  "reason": "no progress after 2 passes: <brief reason>"
+}
+```
+
+and end the turn. The Stop hook honors `await_user` by stopping with
+`continue=False` and leaving the controller armed, so the next user turn
+naturally resumes dispatch. Do not fire a third identical pass expecting a
+different verdict; that wastes tokens and keeps the hook tight-looping.
+
+"Real change" is measured client-side by the parent itself. It means at least
+one of:
+
+- a repo file edit that did not already exist
+- a plan or doc edit that changed decision content, not just wording
+- a new evidence entry the fresh evaluator or audit child has not already seen
+
+Re-reading the plan, re-running a command with the same output, or re-typing
+the same summary is not real change.
+
+### No invented budgets
+
+Timing belongs to the hook. `deadline_at`, the controller's iteration cap, and
+the parsed cadence are the real termination conditions on top of the
+controller's terminal verdicts (`clean`, `blocked`, condition-true). The
+parent pass does not have a separate "in-session budget," "wall-time budget,"
+or "token budget" on top of those.
+
+Do not self-declare `blocked` because remaining work feels expensive, the
+wall-time estimate looks large, or the external auditor is costly. If a next
+step is reachable, take it, or arm a paced pause via `requested_yield:
+{kind: "sleep_for", seconds: <int>, reason: "..."}`. If the armed window is
+genuinely too small for the work, say so plainly in the turn text and yield
+with `await_user` so the user can widen the window or rescope. Do not quietly
+halt.
+
+### Exhaust the frontier before handing to audit
+
+Ending the parent turn is not a cheap checkpoint. Each turn end pays for a
+full fresh audit or evaluator child run:
+
+- arch-step / miniarch-step `implement-loop`: a fresh `audit-implementation`
+  child against the full plan artifact.
+- arch-loop: a fresh Codex `gpt-5.4` `xhigh` external evaluator run.
+- arch-step / miniarch-step `auto-plan`: a fresh planning-stage dispatch.
+
+End the turn when you genuinely believe you are done with everything you can
+reach right now — the entire current plan frontier, every named audit, every
+reachable phase — not after one small local fix, one convenient subset, or
+one phase while later approved phases are still reachable. "I made a change,
+let me see what the audit says" is the wrong mental model. "I am as done as I
+can be; please verify" is the right one.
+
+If a genuine blocker stops you short of the frontier (missing information,
+parallel-agent edit, external dependency not ready), yield explicitly via
+`requested_yield: await_user` or `requested_yield: sleep_for`. Do not end the
+turn silently mid-frontier and let the audit re-discover the blocker at full
+cost.
+
+### Respect the tree state the user gave you
+
+Work on the branch and working tree the user set. Do not stash changes,
+create new branches, split the work across multiple PRs, or rewrite history.
+Do not "clean up" untracked files. Commit hygiene, branch strategy, and PR
+shape are the user's decisions. If a scope cut genuinely needs its own
+branch, surface the ask — do not act unilaterally.
+
+### Parallel-agent edits are a pause signal, not a revert signal
+
+If the working tree contains edits the current pass did not make — an
+unfamiliar commit, a foreign file, a new compiler error that came from
+outside this pass — treat it as a likely parallel-agent artifact. Do not
+revert, overwrite, or rewrite it to match what you expected. Pause briefly
+via:
+
+```jsonc
+"requested_yield": {
+  "kind": "sleep_for",
+  "seconds": 300,
+  "reason": "unfamiliar tree state; letting parallel agent land its fix"
+}
+```
+
+Five minutes is the default; extend only when a long external build or known
+parallel job is in flight. After the pause, re-read tree truth and continue.
+Escalate to the user via `await_user` only after two consecutive pause-retry
+cycles fail to resolve the foreign state.
+
+---
+
 ## Conflict gate
 
 One session may arm only one controller kind at a time. If two or more controller
