@@ -37,6 +37,7 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - A plan is not ready, complete, or implementation-ready while any unresolved decision remains about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, architecture, canonical owner path, required deletes, fallback policy, acceptance evidence, or implementation scope.
 - Correctness and approved intent outrank convenience or scope trimming.
 - The agent has no authority to cut requested behavior, acceptance criteria, or required implementation work unless the user or the governing plan already marked that item out of scope.
+- Cutting, downgrading, deferring, or "simplifying away" approved behavior, acceptance criteria, or phase obligations is a hard stop. Surface to the user with what you want to cut, why, what Section 0 / TL;DR / Section 7 say about it, and the exact approval you need. Do not proceed until the user explicitly approves; record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape.
 - `miniarch-step` is a trimmed command surface, not a lower-effort workflow.
 - Section 7 phases should split work into coherent self-contained units, with the most fundamental units first and later phases clearly building on earlier ones.
 - If two valid decompositions exist, bias toward more distinct coherent phases rather than fewer blended phases.
@@ -54,6 +55,7 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - Internal convergence work may broaden touched files or nearby adopters when needed to avoid parallel paths or shadow contracts, but it must not invent new product functionality, modes, or speculative infrastructure.
 - Any refactor, shared-path extraction, or consolidation must preserve existing behavior and name a credible verification signal before it is considered done.
 - Use repo evidence first. Ask only for true product, UX, external-constraint, access, or doc-path gaps.
+- Before asking the user any plan-shaping question, consult approved intent on the plan doc: Section 0 (North Star), TL;DR, and the Section 7 phase frontier. Only ask when intent plus repo evidence genuinely leave two credible branches. Record intent-derived resolutions in the Decision Log using the `Intent-derived` shape.
 - If repo evidence cannot settle a plan-shaping decision, ask the user instead of guessing, defaulting, or parking the choice as a pseudo-complete plan.
 - Before hardening target architecture or Section 7, inspect adjacent surfaces tied to the same contract family, source of truth, migration boundary, or parity story.
 - Compatibility posture is a first-class plan decision separate from `fallback_policy`.
@@ -148,48 +150,41 @@ These stay explicit unless the user directly asks for them:
 - `implement-loop`
 - `auto-implement`
 
-`auto-plan` is the planning controller for this trimmed full-arch surface in Codex and Claude Code. `DOC_PATH` is the planning ledger and the armed controller state lives under `.codex/` in Codex and under `.claude/arch_skill/` in Claude Code. On a fresh doc, the initial `auto-plan` pass arms state, runs only `research` against the same `DOC_PATH`, then ends its turn naturally. On reruns, the parent pass re-arms state against the same `DOC_PATH` and lets the installed Stop hook continue from the first incomplete stage already visible in the doc. It must not self-run `deep-dive` or `phase-plan` in that same turn. After that first turn, the installed Stop hook owns stage-to-stage continuation: it reads doc truth, feeds exactly one literal next command per later turn, and after `phase-plan` clears state and says the doc is decision-complete and ready for `implement-loop`.
+**Arm first, disarm never.** This skill is hook-owned for the controller commands above. The very first step of every invocation runs `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` and then writes a session-scoped controller state file; the very last step of the parent turn is to end the turn. Parent turns do not run the Stop hook, do not delete state, and do not clean up early — the Stop hook is the only process that clears state, and it does so only on `CLEAN`, `BLOCKED`, or deadline. Core doctrine, arm-time ensure-install, session-id rules, conflict gate, staleness sweep, and manual recovery live in `skills/_shared/controller-contract.md`. The rules below describe only what is specific to `miniarch-step`.
 
-User-facing invocation stays simple:
+#### `auto-plan`
 
-- run `$miniarch-step auto-plan`
-- or run `$miniarch-step auto-plan <DOC_PATH>`
-- do not run the Stop hook yourself; after the controller is armed, just end the turn and let the installed Stop hook run
-- the initial `auto-plan` pass must run only `research`, then end the turn
-- rerunning `auto-plan` on a partially complete doc is legal; the hook resumes from the first incomplete stage already visible in `DOC_PATH`
-- later planning stages are hook-owned only: `deep-dive` and `phase-plan`
-- the parent `auto-plan` pass must not clear successful controller state, claim the planning arc is complete, or emit the `implement-loop` handoff while any decision gaps remain
-- prefer the current session's canonical mini/full-arch doc when `DOC_PATH` is omitted
-- preflight the real continuation surface for the active host runtime:
-  - Codex: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, that installed runner must exist, and `codex_hooks` must be enabled
-  - Claude Code: `~/.claude/settings.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude`, and that installed runner must exist
-- keep the runtime-local auto-plan state armed for the live run and treat `DOC_PATH` as the progress ledger
-- if a stage stops early after auto-plan state is armed, stop honestly and let the Stop hook clear the matching state
+The planning controller for this trimmed full-arch surface. `DOC_PATH` is the planning ledger; state is session-scoped at `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json` (Codex) or `.claude/arch_skill/miniarch-step-auto-plan-state.<SESSION_ID>.json` (Claude Code).
 
-`implement-loop` is a full-frontier delivery controller. It arms state before implementation work, runs `implement` across the current approved Section 7 frontier in order from the earliest incomplete or reopened phase through later reachable phases, requires credible programmatic proof along the way, then runs `audit-implementation`, and repeats against the same approved `DOC_PATH` until the audit verdict is clean or a real blocker stops progress.
+Workflow:
 
-`auto-implement` is an exact user-facing synonym for `implement-loop`. Resolve it to the same controller behavior and keep the internal runtime names, hook state, and file paths under `implement-loop`.
+1. **Arm**: ensure-install → resolve session id → write state file → end the turn. On a fresh doc, the parent pass may additionally run only `research` before ending. It must not self-run `deep-dive` or `phase-plan` in the same turn. On Claude Code, resolve the session id first via `arch_controller_stop_hook.py --current-session`; abort with the tool's error message if it fails.
+2. **Body** (hook-owned): the Stop hook reads doc truth and feeds exactly one literal next command per later turn, through `deep-dive` and `phase-plan`.
+3. **Disarm** (hook-owned): after `phase-plan` clears decision gaps and the doc is implementation-ready, the Stop hook clears state and emits the `implement-loop` handoff.
 
-User-facing invocation stays simple:
+`miniarch-step`-specific rules:
 
-- run `$miniarch-step implement-loop <DOC_PATH>`
-- or run `$miniarch-step auto-implement <DOC_PATH>`
-- do not run the Stop hook yourself; after the controller is armed, just end the turn and let the installed Stop hook run
-- preflight the real loop surface for the active host runtime:
-  - Codex: `~/.codex/hooks.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, that installed runner must exist, and `codex_hooks` must be enabled
-  - Claude Code: `~/.claude/settings.json` must contain the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude`, that installed runner must exist, and hook-suppressed Claude child runs via `claude -p --settings '{"disableAllHooks":true}'` must work with the machine's normal Claude auth for fresh audit cycles
-- arm runtime-local implement-loop state before implementation work so the live loop cannot be forgotten mid-run
-- do not hand control back to audit until the current full ordered implementation frontier is done or genuinely blocked, and its phase claims have credible proof
-- keep the runtime-local implement-loop state aligned with the live run
-- do not clear that state from the implementation side before fresh `audit-implementation` has run, even if the pass believes the work is done
-- do not let the parent implementation pass stand in for the clean auditor by writing the authoritative audit block or the `Use $arch-docs` handoff
-- in Codex, the Stop-hook fresh audit child for this mini controller runs with `--model gpt-5.4-mini` and `-c model_reasoning_effort="xhigh"`
-- when the fresh audit child finishes clean, hand off to `Use $arch-docs`
+- User-facing invocation: `$miniarch-step auto-plan` or `$miniarch-step auto-plan <DOC_PATH>`.
+- Rerunning `auto-plan` on a partially complete doc is legal; the hook resumes from the first incomplete stage already visible in `DOC_PATH`.
+- Prefer the current session's canonical mini/full-arch doc when `DOC_PATH` is omitted.
+- The parent pass must not clear state, claim the planning arc is complete, or emit the `implement-loop` handoff while any decision gaps remain.
 
-For controller state in this skill:
+#### `implement-loop` / `auto-implement`
 
-- Codex should derive `<SESSION_ID>` from `CODEX_THREAD_ID` and arm the session-scoped `.codex/...<SESSION_ID>.json` path for the current session.
-- Claude Code should arm `.claude/arch_skill/...` for the active controller. When Claude exposes session id before the first Stop-hook turn, use the session-scoped path there too. Otherwise the unsuffixed runtime-local path is only a legacy single-slot fallback; the first Stop-hook turn must claim it into the session-scoped path.
+`implement-loop` is a full-frontier delivery controller; `auto-implement` is an exact user-facing synonym resolving to the same behavior. State lives at `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json` (Codex) or `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` (Claude Code).
+
+Workflow:
+
+1. **Arm**: ensure-install → resolve session id → write state file → end the turn. The parent pass may run one bounded implementation pass before ending; it must not hand back to audit mid-pass or claim clean from the implementation side. On Claude Code, resolve the session id first via `arch_controller_stop_hook.py --current-session`; abort with the tool's error message if it fails.
+2. **Body** (hook-owned): the Stop hook runs `audit-implementation` as a fresh child (on Codex: `--model gpt-5.4-mini` at `xhigh`; on Claude Code: hook-suppressed child run via `claude -p --settings '{"disableAllHooks":true}'`). If audit is not clean, the hook continues with another implementation pass.
+3. **Disarm** (hook-owned): when the fresh audit child finishes clean, the hook clears state and the parent hands off to `$arch-docs`.
+
+`miniarch-step`-specific rules:
+
+- User-facing invocation: `$miniarch-step implement-loop <DOC_PATH>` or `$miniarch-step auto-implement <DOC_PATH>`.
+- Implementation covers the full approved Section 7 frontier in order, from the earliest incomplete or reopened phase through later reachable phases.
+- The parent pass never writes the authoritative audit block or the `Use $arch-docs` handoff; only the fresh audit child may.
+- The parent pass never clears state from the implementation side before fresh `audit-implementation` has run.
 
 ### Output expectations
 
@@ -219,7 +214,7 @@ For controller state in this skill:
 - `references/arch-phase-plan.md` - authoritative phase-plan contract
 - `references/arch-auto-plan.md` - planning controller over research, one deep-dive pass, and phase-plan
 - `references/arch-implement.md` - implementation, worklog, and completion discipline
-- `references/arch-implement-loop.md` - full-frontier implement/audit loop, required runtime preflight, and loop-state contract
+- `references/arch-implement-loop.md` - full-frontier implement/audit loop, required ensure-install step, and loop-state contract
 - `references/arch-audit-implementation.md` - code-completeness audit and phase reopening
 - `references/status.md` - compact artifact-first status rules
 - `references/advance.md` - full checklist, next-command selection, and optional one-step execution

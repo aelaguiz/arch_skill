@@ -51,7 +51,7 @@ Parent implementation pass:
 - phase status and Decision Log in `DOC_PATH`
 - the host-aware miniarch-step implement-loop controller state path:
   - Codex: `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
-  - Claude Code: `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when session id is available before the first Stop-hook turn, otherwise `.claude/arch_skill/miniarch-step-implement-loop-state.json` as a legacy single-slot fallback until the first Stop-hook turn claims it into the session-scoped path
+  - Claude Code: `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json`
 
 Fresh `audit-implementation` child only:
 
@@ -59,27 +59,23 @@ Fresh `audit-implementation` child only:
 - authoritative clean-or-not-clean audit outcome in `DOC_PATH`
 - clean handoff text such as `Use $arch-docs`
 
-## Required runtime preflight
+## Required arm-time install
 
-Before arming the loop, verify all of these:
+Arm-time ensure-install and dispatch-time loud verify are documented in `skills/_shared/controller-contract.md`. Before arming, run:
 
-- the active host runtime is Codex or Claude Code
-- the active host runtime has the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` in Codex or `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude` in Claude Code
-- the installed `arch-step` runner exists at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
-- in Codex, `codex features list` shows `codex_hooks` enabled
-- in Claude Code, hook-suppressed child runs via `claude -p --settings '{"disableAllHooks":true}'` work with the machine's normal Claude auth for fresh audit cycles
+```bash
+python3 ~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py \
+  --ensure-installed --runtime <codex|claude>
+```
 
-If any check fails, name the broken prerequisite and stop.
-
-Do not downgrade to prompt-only same-session looping.
-Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not the install contract.
+Proceed only if it returns 0. The installer is idempotent and flock-guarded; it writes the canonical Stop entry (and the SessionStart entry on Claude) without races. If it fails loud, repair the named prerequisite and rerun — do not downgrade to prompt-only same-session looping.
 
 ## Active loop-state contract
 
 Resolve the controller state path for the active host runtime before the first implementation pass:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/miniarch-step-implement-loop-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/miniarch-step-implement-loop-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
+- Claude Code: resolve the session id via `arch_controller_stop_hook.py --current-session`, then create `.claude/arch_skill/miniarch-step-implement-loop-state.<SESSION_ID>.json`. If the helper fails (SessionStart cache missing), abort with its message — do not write an unsuffixed file.
 
 Minimal shape:
 
@@ -94,7 +90,7 @@ Minimal shape:
 
 Lifecycle:
 
-- create or refresh it immediately after preflight and before any implementation work
+- create or refresh it immediately after ensure-install succeeds and before any implementation work
 - leave it armed while fresh auditing is active
 - let fresh `audit-implementation` own the clean-versus-not-clean decision before clearing it
 - the implementation side never deletes it
@@ -124,7 +120,7 @@ Lifecycle:
 ## Loop procedure
 
 1. Read `DOC_PATH` fully and run the same alignment checks required by `implement`.
-2. Run the runtime preflight. If the active runtime's hook entry, the installed runner, the Codex feature gate, or Claude hook-suppressed child-run auth is unavailable, fail loud.
+2. Run arm-time ensure-install (`arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>`). It fails loud on drift; do not proceed unless it returns 0.
 3. Build or refresh the compact implementation ledger from Section 7, Section 6, migration notes, and touched live docs/comments/instructions.
 4. Resolve the active runtime controller state path, then create or refresh the armed miniarch-step implement-loop state for the current session and `DOC_PATH`.
 5. Run one truthful implementation pass using the `implement` contract, starting from the earliest incomplete or reopened phase and continuing through the remaining approved phases in order until the current reachable frontier is done or genuinely blocked. Run the required credible proof along the way, but do not stop just because one local fix is green.

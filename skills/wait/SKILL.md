@@ -37,23 +37,22 @@ Use this skill when the user wants the same visible Codex or Claude Code thread 
 
 ## First move
 
-1. Read `references/arm.md`.
+1. Read `references/wait-controller.md`.
 2. Parse the user-supplied duration with the `parse_wait_duration` grammar. If the string does not parse, name the failure and stop.
-3. Verify every runtime preflight leg listed in `references/arm.md`. If any leg fails, name the missing prerequisite and stop.
-4. Resolve the host-aware `wait` controller state path described in `references/arm.md`.
+3. Run `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` as described in `skills/_shared/controller-contract.md`. The installer fails loud if it cannot write the canonical Stop entry; do not proceed on failure.
+4. Resolve the host-aware `wait` controller state path described in `references/wait-controller.md`.
 
 ## Workflow
 
-### Default arm mode
+**Arm first, disarm never.** This skill is hook-owned. The very first step of every invocation writes a session-scoped controller state file; the very last step of the parent turn is to end the turn. Parent turns do not run the Stop hook, do not delete state, and do not clean up early — the Stop hook is the only process that clears state, and it does so only when the deadline elapses. Core doctrine, arm-time ensure-install, session-id rules, conflict gate, staleness sweep, and manual recovery live in `skills/_shared/controller-contract.md`. `wait` is a one-shot resume controller (documented in the shared contract's Deviations section): it sleeps inside the Stop hook, fires `resume_prompt` back into the same thread exactly once when the deadline elapses, and never launches a child run. State lives at `.codex/wait-state.<SESSION_ID>.json` (Codex) or `.claude/arch_skill/wait-state.<SESSION_ID>.json` (Claude Code); see `references/wait-controller.md` for the state schema.
 
-- Resolve the literal `resume_prompt`. If the user did not supply one explicitly, ask. Never invent a prompt.
-- Parse the duration into `duration_seconds` using the grammar documented in `references/arm.md`.
-- If `duration_seconds` is 0 or negative, or exceeds 24 hours without an explicit cap override from the user, refuse to arm and say why.
-- Compute `armed_at = current_epoch_seconds()` and `deadline_at = armed_at + duration_seconds`.
-- Write the state JSON from `references/arm.md` to the host-aware path and confirm it is the only `arch_skill` controller state currently armed for this session.
-- Tell the user plainly to end the turn and let the installed Stop hook own the wait. The next visible turn begins exactly once the deadline elapses.
+Workflow:
 
-There is no `check` mode. There is no other mode.
+1. **Arm**: ensure-install the Stop hook (`arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>`; fails loud on drift) → resolve the session id (on Claude Code via `arch_controller_stop_hook.py --current-session`; abort with its error if it fails) → resolve the literal `resume_prompt` (if the user did not supply one explicitly, ask; never invent a prompt) → parse the duration into `duration_seconds` (refuse to arm if 0, negative, or exceeds 24 hours without an explicit cap override) → compute `armed_at = current_epoch_seconds()` and `deadline_at = armed_at + duration_seconds` → write state → end the turn.
+2. **Body** (hook-owned): the installed Stop hook sleeps until `deadline_at` and then injects `resume_prompt` verbatim back into the same visible thread exactly once.
+3. **Disarm** (hook-owned): the Stop hook clears state when the deadline fires.
+
+There is no `check` mode. There is no other mode. `wait` never launches a child run, so no child-run health check is needed.
 
 ## Output expectations
 
@@ -67,4 +66,4 @@ There is no `check` mode. There is no other mode.
 
 ## Reference map
 
-- `references/arm.md` - duration grammar, runtime preflight, state file contract, arm-mode behavior, and fail-loud conditions
+- `references/wait-controller.md` - duration grammar, state file schema, and arm-mode behavior (core doctrine, arm-time ensure-install, and recovery live in `skills/_shared/controller-contract.md`)

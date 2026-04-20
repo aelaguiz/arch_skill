@@ -50,29 +50,25 @@ User-facing invocation is just `auto-plan`. Do not run the Stop hook yourself. A
 - `planning_passes`
 - the host-aware miniarch-step auto-plan controller state path:
   - Codex: `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json`
-  - Claude Code: `.claude/arch_skill/miniarch-step-auto-plan-state.<SESSION_ID>.json` when session id is available before the first Stop-hook turn, otherwise `.claude/arch_skill/miniarch-step-auto-plan-state.json` as a legacy single-slot fallback until the first Stop-hook turn claims it into the session-scoped path
+  - Claude Code: `.claude/arch_skill/miniarch-step-auto-plan-state.<SESSION_ID>.json`
 
-## Required runtime preflight
+## Required arm-time install
 
-Before arming the controller, verify all of these:
+Arm-time ensure-install and dispatch-time loud verify are documented in `skills/_shared/controller-contract.md`. Before arming, run:
 
-- the active host runtime is Codex or Claude Code
-- the active host runtime has the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` in Codex or `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude` in Claude Code
-- the installed shared runner exists at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
-- in Codex, `codex features list` shows `codex_hooks` enabled
-- the target doc exists and frontmatter `status` is `active` or `complete`
+```bash
+python3 ~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py \
+  --ensure-installed --runtime <codex|claude>
+```
 
-If any check fails, name the broken prerequisite and stop.
-
-Do not downgrade to prompt-only same-session chaining.
-Do not preflight against a copied hook file under `~/.codex/hooks/`; that is not the install contract.
+Proceed only if it returns 0. The installer is idempotent and flock-guarded; it writes the canonical Stop entry (and the SessionStart entry on Claude) without races. The target doc must also exist with frontmatter `status` of `active` or `complete`. Do not downgrade to prompt-only same-session chaining.
 
 ## Active planning-state contract
 
-Resolve the controller state path for the active host runtime after preflight and `DOC_PATH` resolution:
+Resolve the controller state path for the active host runtime after ensure-install and `DOC_PATH` resolution:
 
 - Codex: derive `SESSION_ID` from `CODEX_THREAD_ID`, then create `.codex/miniarch-step-auto-plan-state.<SESSION_ID>.json`
-- Claude Code: prefer `.claude/arch_skill/miniarch-step-auto-plan-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise create `.claude/arch_skill/miniarch-step-auto-plan-state.json` only as a legacy single-slot fallback and let the first Stop-hook turn claim it into the session-scoped path
+- Claude Code: resolve the session id via `arch_controller_stop_hook.py --current-session`, then create `.claude/arch_skill/miniarch-step-auto-plan-state.<SESSION_ID>.json`. If the helper fails (SessionStart cache missing), abort with its message — do not write an unsuffixed file.
 
 Minimal shape:
 
@@ -87,9 +83,9 @@ Minimal shape:
 
 Lifecycle:
 
-- create or refresh it after preflight and `DOC_PATH` resolution
+- create or refresh it after ensure-install and `DOC_PATH` resolution
 - write the current `doc_path` into the state file at arm time
-- write `session_id` at arm time when the host runtime exposes it before the first Stop-hook turn; otherwise let the first Stop-hook turn claim it
+- write `session_id` at arm time; resolution must succeed before writing state
 - leave it armed while automatic planning is active
 - treat `DOC_PATH` as the only planning-progress ledger
 - treat the state file as armed controller state for one doc and one session, not as a progress ledger
@@ -141,7 +137,7 @@ Use these signals before the Stop hook continues automatically:
 ## Controller Procedure
 
 1. Read `DOC_PATH` fully and run the same alignment checks required by the planning commands it will invoke.
-2. Run the runtime preflight. If the active runtime's hook entry, the installed runner, or the Codex feature gate is unavailable, fail loud.
+2. Run arm-time ensure-install (`arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>`). It fails loud on drift; do not proceed unless it returns 0.
 3. Resolve the active runtime controller state path, then create or refresh the armed miniarch-step auto-plan state for this session and `DOC_PATH`.
 4. Use `DOC_PATH` as the planning ledger:
    - if the doc has no planning progress yet, run one truthful `research` pass and stop there

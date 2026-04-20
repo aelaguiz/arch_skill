@@ -62,7 +62,7 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
    - `run`
    - `review`
    - `auto`
-4. Resolve repo root, root `.gitignore`, `_audit_sim_ledger.md`, and the host-aware `auto` controller state path described in `references/auto.md`.
+4. Resolve repo root, root `.gitignore`, `_audit_sim_ledger.md`, and the host-aware `auto` controller state path described in `references/audit-loop-sim-controller.md`.
 5. Read the matching mode reference and `references/quality-bar.md`.
 
 ## Workflow
@@ -91,11 +91,21 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 
 ### 3) `auto`
 
-- Run host-aware preflight for hooks and feature flags.
-- Arm the host-aware `auto` controller state described in `references/auto.md`.
-- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
-- Run one truthful `run` pass. The first turns may be mapping-only.
-- Let the installed Stop hook launch a fresh `review` pass and continue only while the verdict stays `CONTINUE` because mapping work or real unresolved automation risk still remains.
+**Arm first, disarm never.** This skill is hook-owned for `auto`. The very first step of every invocation writes a session-scoped controller state file; the very last step of the parent turn is to end the turn. Parent turns do not run the Stop hook, do not delete state, and do not clean up early — the Stop hook is the only process that clears state, and it does so only on `CLEAN`, `BLOCKED`, or deadline. Core doctrine, arm-time ensure-install, session-id rules, conflict gate, staleness sweep, and manual recovery live in `skills/_shared/controller-contract.md`. The rules below describe only what is specific to `audit-loop-sim auto`. State lives at `.codex/audit-loop-sim-state.<SESSION_ID>.json` (Codex) or `.claude/arch_skill/audit-loop-sim-state.<SESSION_ID>.json` (Claude Code); see `references/audit-loop-sim-controller.md` for the state schema.
+
+Workflow:
+
+1. **Arm**: run `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` → resolve session id → write state file → end the turn. The parent pass may run one truthful `run` pass (mapping-only is correct on the first turns) before ending. On Claude Code, resolve the session id first via `arch_controller_stop_hook.py --current-session`; abort with the tool's error message if it fails.
+2. **Body** (hook-owned): the Stop hook launches a fresh `review` pass in the active host runtime, reads the verdict from `_audit_sim_ledger.md`, and on `CONTINUE` starts the next `$audit-loop-sim` pass.
+3. **Disarm** (hook-owned): on `CLEAN`, the hook clears state, deletes `_audit_sim_ledger.md`, and removes the `.gitignore` entry; on `BLOCKED`, the hook clears state and stops honestly.
+
+`audit-loop-sim`-specific rules:
+
+- User-facing invocation is just `audit-loop-sim auto`.
+- Missing or deleted controller state is not verdict truth. Repair the state file or ledger from fresh repo context before honoring a stop decision.
+- Dirty or untracked files are not a blocker. Do not refuse to arm only because the repo has unrelated dirty or untracked files.
+- `auto` must not downgrade real-app simulator risk into Flutter unit or widget tests. If the sanctioned simulator path cannot produce the required signal, stop blocked and name the blocker plainly.
+- Do not auto-commit findings.
 
 ## Output expectations
 
@@ -113,5 +123,5 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 - `references/shared-doctrine.md` - prioritization, fix discipline, and anti-patterns
 - `references/run.md` - mapping-aware automation audit or fix pass
 - `references/review.md` - fresh docs-only automation verdict pass
-- `references/auto.md` - Codex and Claude Code controller contract and state file
+- `references/audit-loop-sim-controller.md` - audit-loop-sim controller state schema and verdict source (core doctrine lives in `skills/_shared/controller-contract.md`)
 - `references/quality-bar.md` - strong vs weak triage, findings, tests, and stop decisions

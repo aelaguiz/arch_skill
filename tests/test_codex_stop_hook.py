@@ -15,25 +15,41 @@ CODE_REVIEW_RUNNER_PATH = REPO_ROOT / "skills/code-review/scripts/run_code_revie
 HOOK_CONTRACT_TEXT_PATHS = [
     Path("README.md"),
     Path("docs/arch_skill_usage_guide.md"),
+    Path("skills/_shared/controller-contract.md"),
     Path("skills/arch-step/SKILL.md"),
     Path("skills/arch-step/agents/openai.yaml"),
     Path("skills/arch-step/references/arch-auto-plan.md"),
     Path("skills/arch-step/references/arch-implement-loop.md"),
+    Path("skills/miniarch-step/SKILL.md"),
+    Path("skills/miniarch-step/agents/openai.yaml"),
+    Path("skills/miniarch-step/references/arch-auto-plan.md"),
+    Path("skills/miniarch-step/references/arch-implement-loop.md"),
+    Path("skills/arch-docs/SKILL.md"),
     Path("skills/audit-loop/SKILL.md"),
     Path("skills/audit-loop/agents/openai.yaml"),
-    Path("skills/audit-loop/references/auto.md"),
     Path("skills/comment-loop/SKILL.md"),
     Path("skills/comment-loop/agents/openai.yaml"),
-    Path("skills/comment-loop/references/auto.md"),
     Path("skills/audit-loop-sim/SKILL.md"),
     Path("skills/audit-loop-sim/agents/openai.yaml"),
-    Path("skills/audit-loop-sim/references/auto.md"),
+    Path("skills/arch-loop/SKILL.md"),
+    Path("skills/arch-loop/agents/openai.yaml"),
+    Path("skills/arch-loop/references/controller-contract.md"),
+    Path("skills/wait/SKILL.md"),
+    Path("skills/wait/agents/openai.yaml"),
+    Path("skills/delay-poll/SKILL.md"),
+    Path("skills/delay-poll/agents/openai.yaml"),
+    Path("skills/code-review/SKILL.md"),
 ]
-REQUIRED_HOOKS_FILE_TEXT = "~/.codex/hooks.json"
-REQUIRED_RUNNER_PATH_TEXT = "~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py"
+REQUIRED_ENSURE_INSTALL_TEXT = "--ensure-installed"
 FORBIDDEN_HOOK_PATH_TEXTS = (
     "~/.codex/hooks/arch_controller_stop_hook.py",
     "/Users/example/.codex/hooks/arch_controller_stop_hook.py",
+)
+FORBIDDEN_LEGACY_HOOK_TEXTS = (
+    "verify the installed shared runner",
+    "legacy single-slot fallback",
+    "upgrade safety net",
+    "otherwise create `.claude/arch_skill/",
 )
 AUTO_PLAN_CLEANUP_CONTRACT_TEXT_PATHS = [
     Path("README.md"),
@@ -606,11 +622,12 @@ class CodexStopHookTests(unittest.TestCase):
 
         return recorded["args"]
 
-    def test_install_hook_preserves_unrelated_and_collapses_repo_managed_entries(self) -> None:
+    def test_install_hook_preserves_unrelated_and_updates_repo_managed_entry(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir)
             hooks_file = temp_root / "hooks.json"
             skills_dir = temp_root / "installed-skills"
+            stale_command = f"python3 /tmp/old/{self.upsert_module.HOOK_SCRIPT_NAME} --runtime codex"
             hooks_file.write_text(
                 json.dumps(
                     {
@@ -630,25 +647,9 @@ class CodexStopHookTests(unittest.TestCase):
                                     "hooks": [
                                         {
                                             "type": "command",
-                                            "command": "python3 /tmp/implement_loop_stop_hook.py",
+                                            "command": stale_command,
                                             "timeoutSec": 1200,
-                                            "statusMessage": (
-                                                "arch-step automatic controller is running; planning continuations "
-                                                "are quick, fresh implement-loop audits can take a few minutes"
-                                            ),
-                                        }
-                                    ]
-                                },
-                                {
-                                    "hooks": [
-                                        {
-                                            "type": "command",
-                                            "command": "python3 /tmp/audit_loop_stop_hook.py",
-                                            "timeoutSec": 1200,
-                                            "statusMessage": (
-                                                "audit-loop automatic controller is running; fresh review passes "
-                                                "can take a few minutes"
-                                            ),
+                                            "statusMessage": self.upsert_module.STATUS_MESSAGE,
                                         }
                                     ]
                                 },
@@ -694,19 +695,7 @@ class CodexStopHookTests(unittest.TestCase):
                         "hooks": {
                             "Stop": [
                                 expected_group,
-                                {
-                                    "hooks": [
-                                        {
-                                            "type": "command",
-                                            "command": "python3 /tmp/audit_loop_stop_hook.py",
-                                            "timeoutSec": 1200,
-                                            "statusMessage": (
-                                                "audit-loop automatic controller is running; fresh review passes "
-                                                "can take a few minutes"
-                                            ),
-                                        }
-                                    ]
-                                },
+                                json.loads(json.dumps(expected_group)),
                             ]
                         }
                     },
@@ -718,7 +707,7 @@ class CodexStopHookTests(unittest.TestCase):
 
             with self.assertRaises(SystemExit) as raised:
                 self.upsert_module.verify_hook(hooks_file, skills_dir)
-            self.assertIn("expected exactly one arch_skill-managed Stop hook entry", str(raised.exception))
+            self.assertIn("multiple Stop hook entries found", str(raised.exception))
 
     def test_verify_hook_fails_when_repo_managed_timeout_is_stale(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -737,15 +726,16 @@ class CodexStopHookTests(unittest.TestCase):
 
             with self.assertRaises(SystemExit) as raised:
                 self.upsert_module.verify_hook(hooks_file, skills_dir)
-            self.assertIn("stale arch_skill Stop hook entry still exists", str(raised.exception))
+            self.assertIn("stale Stop hook entry in", str(raised.exception))
 
-    def test_hook_contract_docs_anchor_preflight_to_hooks_json(self) -> None:
+    def test_hook_contract_docs_anchor_ensure_install(self) -> None:
         for relative_path in HOOK_CONTRACT_TEXT_PATHS:
             with self.subTest(path=str(relative_path)):
                 text = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
-                self.assertIn(REQUIRED_HOOKS_FILE_TEXT, text)
-                self.assertIn(REQUIRED_RUNNER_PATH_TEXT, text)
+                self.assertIn(REQUIRED_ENSURE_INSTALL_TEXT, text)
                 for forbidden_text in FORBIDDEN_HOOK_PATH_TEXTS:
+                    self.assertNotIn(forbidden_text, text)
+                for forbidden_text in FORBIDDEN_LEGACY_HOOK_TEXTS:
                     self.assertNotIn(forbidden_text, text)
 
     def test_auto_plan_contracts_do_not_make_parent_delete_controller_state(self) -> None:
@@ -1117,77 +1107,6 @@ class CodexStopHookTests(unittest.TestCase):
             self.assertIn("docs/PLAN1.md", payload["stopReason"])
             self.assertNotIn("docs/PLAN2.md", payload["stopReason"])
             self.assertTrue(session_two_path.exists())
-
-    def test_stop_hook_blocks_when_session_scoped_and_legacy_state_both_exist(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            repo_root = Path(temp_dir)
-            self.write_json(
-                self.controller_state_path(
-                    repo_root,
-                    self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
-                    "session-1",
-                ),
-                self.auto_plan_state(),
-            )
-            self.write_json(
-                self.controller_state_path(
-                    repo_root,
-                    self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
-                ),
-                {
-                    "command": "auto-plan",
-                    "doc_path": "docs/PLAN.md",
-                },
-            )
-
-            process = self.run_stop_hook(repo_root, "session-1")
-
-            self.assertEqual(process.returncode, 0, msg=process.stderr)
-            payload = json.loads(process.stdout)
-            self.assertFalse(payload["continue"])
-            self.assertIn(".codex/auto-plan-state.session-1.json", payload["stopReason"])
-            self.assertIn(".codex/auto-plan-state.json", payload["stopReason"])
-
-    def test_stop_hook_migrates_legacy_state_to_session_scoped_path(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            repo_root = Path(temp_dir)
-            docs_dir = repo_root / "docs"
-            docs_dir.mkdir()
-            state_path = self.controller_state_path(
-                repo_root,
-                self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
-            )
-            self.write_json(
-                state_path,
-                self.auto_plan_state(legacy_progress=True),
-            )
-            (docs_dir / "PLAN.md").write_text(
-                self.auto_plan_doc_text(research=True),
-                encoding="utf-8",
-            )
-
-            process = self.run_stop_hook(repo_root, "session-1")
-
-            self.assertEqual(process.returncode, 0, msg=process.stderr)
-            payload = json.loads(process.stdout)
-            self.assertTrue(payload["continue"])
-            self.assertIn("Use $arch-step deep-dive docs/PLAN.md", payload["reason"])
-            self.assertIn(".codex/auto-plan-state.session-1.json", payload["reason"])
-            self.assertEqual(
-                payload["systemMessage"],
-                "auto-plan continuing with deep-dive pass 1.",
-            )
-
-            session_state_path = self.controller_state_path(
-                repo_root,
-                self.stop_module.AUTO_PLAN_STATE_RELATIVE_PATH,
-                "session-1",
-            )
-            self.assertFalse(state_path.exists())
-            state = json.loads(session_state_path.read_text(encoding="utf-8"))
-            self.assertEqual(state["session_id"], "session-1")
-            self.assertNotIn("stage_index", state)
-            self.assertNotIn("stages", state)
 
     def test_stop_hook_reconciles_minimal_auto_plan_state_from_doc_truth(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -2324,6 +2243,79 @@ class WaitConflictGateTests(unittest.TestCase):
             self.assertIn("Multiple suite controller states are armed", payload["stopReason"])
             self.assertTrue(wait_path.exists())
             self.assertTrue(delay_path.exists())
+
+
+class DoctorSessionStartAssertionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.stop = load_module(STOP_HOOK_PATH, "arch_skill_doctor_session_start_test")
+
+    def _write_claude_settings(self, home: Path, *, include_stop: bool, include_session_start: bool) -> Path:
+        runner_path = home / ".agents/skills/arch-step/scripts/arch_controller_stop_hook.py"
+        settings = home / ".claude/settings.json"
+        settings.parent.mkdir(parents=True, exist_ok=True)
+        groups = []
+        if include_stop:
+            groups_key = {
+                "Stop": [
+                    {
+                        "hooks": [
+                            {
+                                "type": "command",
+                                "command": f"python3 {runner_path} --runtime claude",
+                                "timeout": 90000,
+                            }
+                        ]
+                    }
+                ]
+            }
+        else:
+            groups_key = {"Stop": []}
+        if include_session_start:
+            groups_key["SessionStart"] = [
+                {
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": f"python3 {runner_path} --session-start-cache",
+                            "timeout": 10000,
+                        }
+                    ]
+                }
+            ]
+        settings.write_text(json.dumps({"hooks": groups_key}), encoding="utf-8")
+        runner_path.parent.mkdir(parents=True, exist_ok=True)
+        runner_path.write_text("#!/usr/bin/env python3\n", encoding="utf-8")
+        return settings
+
+    def _run_doctor_with_home(self, home: Path) -> tuple[int, str]:
+        import os
+        import unittest.mock as mock
+
+        out = io.StringIO()
+        with mock.patch.dict(os.environ, {"HOME": str(home)}, clear=False), \
+             mock.patch.object(self.stop.Path, "home", classmethod(lambda cls: home)), \
+             mock.patch.object(self.stop.sys, "stdout", out):
+            rc = self.stop.cmd_doctor()
+        return rc, out.getvalue()
+
+    def test_doctor_flags_missing_session_start_entry(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            self._write_claude_settings(home, include_stop=True, include_session_start=False)
+            rc, output = self._run_doctor_with_home(home)
+            self.assertEqual(rc, 2)
+            self.assertIn("SessionStart hook", output)
+            self.assertIn("--session-start-cache", output)
+
+    def test_doctor_passes_when_both_hooks_wired(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            self._write_claude_settings(home, include_stop=True, include_session_start=True)
+            rc, output = self._run_doctor_with_home(home)
+            self.assertEqual(rc, 0, msg=output)
+            self.assertIn("claude Stop hook wired", output)
+            self.assertIn("claude SessionStart hook wired", output)
 
 
 if __name__ == "__main__":

@@ -74,7 +74,7 @@ Use this skill when the code is stable enough to ground documentation against cu
 6. Read `references/cleanup-rules.md`.
 7. Read the mode reference:
    - `references/pass.md`
-   - `references/auto.md`
+   - `references/arch-docs-controller.md`
    - `references/internal-evaluator.md` for the suite-only evaluator
 
 ## Workflow
@@ -97,17 +97,22 @@ Use this skill when the code is stable enough to ground documentation against cu
 
 ### 2) `auto`
 
-- Run the same docs-health discipline as the default pass, but only under real runtime-native Stop-hook continuation.
-- Arm the host-aware `arch-docs auto` controller state described in `references/auto.md` before the first pass.
-- Do not run the Stop hook yourself. After `auto` is armed, just end the turn and let the installed Stop hook run.
-- Expect a fresh external evaluator after each stop point.
+**Arm first, disarm never.** This skill is hook-owned for `auto`. The very first step of every invocation writes a session-scoped controller state file; the very last step of the parent turn is to end the turn. Parent turns do not run the Stop hook, do not delete state, and do not clean up early — the Stop hook is the only process that clears state, and it does so only on `CLEAN`, `BLOCKED`, or deadline. Core doctrine, arm-time ensure-install, session-id rules, conflict gate, staleness sweep, and manual recovery live in `skills/_shared/controller-contract.md`. The rules below describe only what is specific to `arch-docs auto`. State lives at `.codex/arch-docs-auto-state.<SESSION_ID>.json` (Codex) or `.claude/arch_skill/arch-docs-auto-state.<SESSION_ID>.json` (Claude Code); see `references/arch-docs-controller.md` for the state schema.
+
+Workflow:
+
+1. **Arm**: run `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` → resolve session id → write state file → end the turn. The parent pass may run one grounded default DGTFO pass before ending. On Claude Code, resolve the session id first via `arch_controller_stop_hook.py --current-session`; abort with the tool's error message if it fails.
+2. **Body** (hook-owned): the Stop hook launches a fresh external evaluator (see `references/internal-evaluator.md`) against the ledger and current code. On `CONTINUE`, the hook starts the next `$arch-docs` pass.
+3. **Disarm** (hook-owned): on `CLEAN` or `BLOCKED`, the hook clears state; on `CLEAN` the ledger lifecycle in `references/pass.md` applies.
+
+`arch-docs`-specific rules:
+
+- User-facing invocation is `arch-docs auto` only when the ask explicitly says `auto`.
 - Apply the same pre-delete backup-commit rule during each pass in `auto`.
-- Continue only while another grounded pass is still credible for the resolved docs-health intent.
-- In repo-scope `auto`, later passes may widen across the repo docs surface when grounded docs-health work still remains.
 - Keep sweeping while obviously dated docs, stale surviving docs, confusing docs, missing required public-repo docs, or missing grounded evergreen docs still remain.
 - In this repo family, keep treating point-in-time docs older than 30 days as presumptively stale until the pass records explicit code-grounded current-reader value for each survivor.
-- Stop treating metadata refreshes as progress. A pass that mainly refreshed labels like `Status: LIVING` or `Last verified` without materially re-grounding the body is still a stale-doc pass that needs more delete-first cleanup.
-- Stop clean when the resolved stop condition is done, or stop blocked when the evaluator says the next pass would become speculative, taxonomy-imposing, disconnected from a narrowed scope, or materially unchanged.
+- A pass that mainly refreshed labels like `Status: LIVING` or `Last verified` without materially re-grounding the body is still a stale-doc pass that needs more delete-first cleanup.
+- Stop blocked when the evaluator says the next pass would become speculative, taxonomy-imposing, disconnected from a narrowed scope, or materially unchanged.
 
 ## Output expectations
 
@@ -125,5 +130,5 @@ Use this skill when the code is stable enough to ground documentation against cu
 - `references/canonical-home-judgment.md` - resolve repo posture, public-repo baseline docs, and split-versus-expand decisions for new docs
 - `references/cleanup-rules.md` - deletion bias, canonical-home rules, working-doc retirement, and link-repair rules
 - `references/pass.md` - the default DGTFO pass contract and ledger shape
-- `references/auto.md` - hook-backed Codex and Claude Code auto-controller contract, preflight, and state rules
+- `references/arch-docs-controller.md` - arch-docs auto-controller state schema and verdict source (core doctrine lives in `skills/_shared/controller-contract.md`)
 - `references/internal-evaluator.md` - suite-only read-only evaluator contract used by the Stop-hook child run

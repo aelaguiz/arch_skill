@@ -40,26 +40,20 @@ Use this skill when the user wants the same visible Codex or Claude Code thread 
    - default arm mode
    - `check` only when the invocation explicitly says `check`
 2. Read the matching reference:
-   - `references/arm.md`
+   - `references/delay-poll-controller.md`
    - `references/check.md`
-3. Resolve repo root and the host-aware `delay-poll` controller state path described in `references/arm.md`.
-4. In default arm mode, run the runtime preflight before creating controller state.
+3. Resolve repo root and the host-aware `delay-poll` controller state path described in `references/delay-poll-controller.md`.
+4. In default arm mode, run `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` as described in `skills/_shared/controller-contract.md` before creating controller state. The installer fails loud if it cannot write the canonical Stop entry; do not proceed on failure.
 
 ## Workflow
 
+**Arm first, disarm never.** This skill is hook-owned. The very first step of every invocation writes a session-scoped controller state file; the very last step of the parent turn is to end the turn. Parent turns do not run the Stop hook, do not delete state, and do not clean up early — the Stop hook is the only process that clears state, and it does so only when the condition becomes true, the deadline elapses, or the evaluator blocks. Core doctrine, arm-time ensure-install, session-id rules, conflict gate, staleness sweep, and manual recovery live in `skills/_shared/controller-contract.md`. `delay-poll` uses a documented conditional-arm deviation (shared contract, Deviations section): the parent runs one immediate grounded check before arming so a condition that is already true does not cost a useless sleep. If the pre-check passes, the parent continues from the same turn without arming state. State lives at `.codex/delay-poll-state.<SESSION_ID>.json` (Codex) or `.claude/arch_skill/delay-poll-state.<SESSION_ID>.json` (Claude Code); see `references/delay-poll-controller.md` for the state schema.
+
 ### 1) Default arm mode
 
-- Resolve the literal `check_prompt`, polling interval, maximum wait window, and `resume_prompt`.
-- If the user did not supply a resume prompt, use: `The waited-on condition is now satisfied. Continue the same task using this new truth and the latest check summary below.`
-- Verify all runtime prerequisites:
-  - the active host runtime is Codex or Claude Code
-  - the active host runtime has the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` in Codex or `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude` in Claude Code
-  - in Codex, `codex features list` shows `codex_hooks` enabled
-  - in Claude Code, hook-suppressed child checks via `claude -p --settings '{"disableAllHooks":true}'` work with the machine's normal Claude auth
-- Run one immediate grounded read-only check against the literal `check_prompt`.
-- If the condition is already true, continue immediately from the current turn with the `resume_prompt` plus the latest summary and do not arm state.
-- If the condition is not yet true, arm the host-aware `delay-poll` controller state described in `references/arm.md` and keep it aligned with the live wait.
-- Once the controller is armed, end the turn naturally. The installed Stop hook now owns sleeping, re-checking, timeout handling, and continuation.
+1. **Arm**: ensure-install the Stop hook (`arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>`; fails loud on drift) → resolve the session id (on Claude Code via `arch_controller_stop_hook.py --current-session`; abort with its error if it fails) → resolve literal `check_prompt`, polling interval, maximum wait window, and `resume_prompt` (default resume prompt when the user did not supply one: `The waited-on condition is now satisfied. Continue the same task using this new truth and the latest check summary below.`) → run one immediate grounded read-only check against the literal `check_prompt`. If the condition is already true, continue from the same turn with the `resume_prompt` plus the latest summary and do not arm state. If the condition is not yet true, write the session-scoped state file and end the turn.
+2. **Body** (hook-owned): the installed Stop hook sleeps, launches a fresh read-only `check` child on the configured interval (Codex: `codex exec --ephemeral`; Claude Code: `claude -p --settings '{"disableAllHooks":true}'`), parses `ready`/`summary`/`evidence`, and resumes the parent thread with `resume_prompt` and the latest summary when `ready` is true.
+3. **Disarm** (hook-owned): the Stop hook clears state when the condition becomes true, the deadline elapses, or a fresh evaluator blocks.
 
 ### 2) `check` mode
 
@@ -83,5 +77,5 @@ Use this skill when the user wants the same visible Codex or Claude Code thread 
 
 ## Reference map
 
-- `references/arm.md` - runtime preflight, state file contract, and arm-mode behavior
+- `references/delay-poll-controller.md` - state schema, conditional-arm deviation, and arm-mode behavior (core doctrine and recovery live in `skills/_shared/controller-contract.md`)
 - `references/check.md` - suite-only read-only checker contract and JSON output rules

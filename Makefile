@@ -1,4 +1,4 @@
-.PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill claude_install_hook gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
+.PHONY: install install_skill agents_install_skill clean_codex_skill_mirror codex_install_hook claude_install_skill claude_install_hook gemini_install gemini_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_hook_runner verify_gemini_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces ensure_installed
 
 # Purge removed packages from installed skill dirs before copying the active set.
 REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio
@@ -165,6 +165,7 @@ claude_install_skill:
 
 claude_install_hook:
 	@python3 skills/arch-step/scripts/upsert_claude_stop_hook.py --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
+	@python3 skills/arch-step/scripts/upsert_claude_session_start_hook.py --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
 
 gemini_install: clean_gemini_stale_surfaces gemini_install_skill
 
@@ -180,8 +181,16 @@ gemini_install_skill:
 		awk 'NR==1 && $$0=="---" {front=1; next} front && $$0=="---" {front=0; next} !front {print}' "$$f" > "$$tmp" && mv "$$tmp" "$$f"; \
 	done
 
-verify_install: verify_agents_install verify_codex_install verify_claude_install $(VERIFY_GEMINI)
+verify_install: verify_agents_install verify_codex_install verify_claude_install verify_hook_runner $(VERIFY_GEMINI)
 	@echo "OK: active skill surface installed for agents, Claude Code, and requested Gemini targets; one arch_skill Codex hook and one arch_skill Claude hook installed from ~/.agents/skills"
+
+verify_hook_runner:
+	@python3 $(AGENTS_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py --doctor
+	@echo "OK: shared Stop-hook runner reports healthy wiring"
+
+ensure_installed:
+	@python3 $(AGENTS_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py --ensure-installed --runtime claude
+	@python3 $(AGENTS_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py --ensure-installed --runtime codex
 
 verify_agents_install:
 	@for skill in $(SKILLS); do \
@@ -216,7 +225,8 @@ verify_claude_install:
 		test ! -d $(CLAUDE_SKILLS_DIR)/$$skill; \
 	done
 	@python3 skills/arch-step/scripts/upsert_claude_stop_hook.py --verify --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
-	@echo "OK: Claude Code active skills installed; one arch_skill Claude Stop hook installed from ~/.agents/skills; stale command surfaces removed"
+	@python3 skills/arch-step/scripts/upsert_claude_session_start_hook.py --verify --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
+	@echo "OK: Claude Code active skills installed; arch_skill Claude Stop + SessionStart hooks installed from ~/.agents/skills; stale command surfaces removed"
 
 verify_gemini_install:
 	@for skill in $(GEMINI_SKILLS); do \
@@ -265,6 +275,7 @@ remote_install:
 		scp -r skills/$$skill $(HOST):~/.claude/skills/; \
 	done
 	@ssh $(HOST) "python3 ~/.agents/skills/arch-step/scripts/upsert_claude_stop_hook.py --settings-file ~/.claude/settings.json --skills-dir ~/.agents/skills"
+	@ssh $(HOST) "python3 ~/.agents/skills/arch-step/scripts/upsert_claude_session_start_hook.py --settings-file ~/.claude/settings.json --skills-dir ~/.agents/skills"
 	@if [ "$(NO_GEMINI)" != "1" ]; then \
 		for skill in $(REMOVED_SKILLS) $(SKILLS); do \
 			ssh $(HOST) "rm -rf ~/.gemini/skills/$$skill"; \

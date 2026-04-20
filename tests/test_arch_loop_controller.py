@@ -1,3 +1,4 @@
+import hashlib
 import importlib.util
 import io
 import json
@@ -6,6 +7,10 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+
+def _sha256(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -207,12 +212,16 @@ class ArchLoopStateValidationTests(unittest.TestCase):
         self.stop.ACTIVE_RUNTIME = self.stop.HOOK_RUNTIME_SPECS[self.stop.RUNTIME_CODEX]
 
     def _valid_state(self, **overrides) -> dict:
+        raw_requirements = overrides.pop(
+            "raw_requirements", "Implement this and ship."
+        )
         state = {
-            "version": 1,
+            "version": 2,
             "command": "arch-loop",
             "runtime": "codex",
             "session_id": "session-1",
-            "raw_requirements": "Implement this and ship.",
+            "raw_requirements": raw_requirements,
+            "raw_requirements_hash": _sha256(raw_requirements),
             "created_at": 1000,
             "iteration_count": 0,
             "check_count": 0,
@@ -273,8 +282,118 @@ class ArchLoopStateValidationTests(unittest.TestCase):
 
     def test_rejects_bad_version(self) -> None:
         with self.assertRaises(SystemExit) as ctx:
-            self._run(self._valid_state(version=2))
+            self._run(self._valid_state(version=1))
         self.assertEqual(ctx.exception.code, 2)
+
+    def test_rejects_missing_raw_requirements_hash(self) -> None:
+        state = self._valid_state()
+        del state["raw_requirements_hash"]
+        stderr = io.StringIO()
+        saved_stderr = sys.stderr
+        sys.stderr = stderr
+        try:
+            with self.assertRaises(SystemExit):
+                self._run(state)
+        finally:
+            sys.stderr = saved_stderr
+        self.assertIn("raw_requirements_hash", stderr.getvalue())
+
+    def test_rejects_mutated_raw_requirements(self) -> None:
+        # Parent narrows the goal after arming — hash no longer matches.
+        state = self._valid_state(
+            raw_requirements="Ship it and pass the agent-linter audit."
+        )
+        state["raw_requirements"] = "Ship it."  # narrowed; hash now stale
+        stderr = io.StringIO()
+        saved_stderr = sys.stderr
+        sys.stderr = stderr
+        try:
+            with self.assertRaises(SystemExit):
+                self._run(state)
+        finally:
+            sys.stderr = saved_stderr
+        self.assertIn("raw_requirements mutation detected", stderr.getvalue())
+
+    def test_rejects_mutated_audit_status_on_continuation(self) -> None:
+        # Seed fingerprint from (skill, target, requirement, status=fail),
+        # then flip on-disk status to pass on a continuation pass. The stored
+        # fingerprint no longer matches the on-disk audit tuple → clear state.
+        audits = [
+            {
+                "skill": "agent-linter",
+                "target": "skills/arch-loop",
+                "requirement": "clean",
+                "status": "fail",
+                "latest_summary": "",
+                "evidence_path": "",
+            }
+        ]
+        fingerprint = self.stop._arch_loop_audits_fingerprint(audits)
+        mutated_audits = [dict(audits[0])]
+        mutated_audits[0]["status"] = "pass"
+        state = self._valid_state(
+            iteration_count=1,
+            required_skill_audits=mutated_audits,
+            audits_authoritative_fingerprint=fingerprint,
+        )
+        stderr = io.StringIO()
+        saved_stderr = sys.stderr
+        sys.stderr = stderr
+        try:
+            with self.assertRaises(SystemExit):
+                self._run(state)
+        finally:
+            sys.stderr = saved_stderr
+        self.assertIn("audit status mutation detected", stderr.getvalue())
+
+    def test_rejects_missing_fingerprint_on_continuation(self) -> None:
+        # iteration_count > 0 or check_count > 0 → fingerprint is required.
+        state = self._valid_state(iteration_count=1)
+        stderr = io.StringIO()
+        saved_stderr = sys.stderr
+        sys.stderr = stderr
+        try:
+            with self.assertRaises(SystemExit):
+                self._run(state)
+        finally:
+            sys.stderr = saved_stderr
+        self.assertIn(
+            "audits_authoritative_fingerprint", stderr.getvalue()
+        )
+
+    def test_first_entry_seeds_fingerprint(self) -> None:
+        # iteration==0 and check==0 → hook seeds the fingerprint and persists.
+        audits = [
+            {
+                "skill": "agent-linter",
+                "target": "skills/arch-loop",
+                "requirement": "clean",
+                "status": "pending",
+                "latest_summary": "",
+                "evidence_path": "",
+            }
+        ]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            state = self._valid_state(required_skill_audits=audits)
+            state_path = self._write_state(repo_root, state)
+            payload = {"cwd": str(repo_root), "session_id": state["session_id"]}
+            resolved = self.stop.resolve_controller_state_for_handler(
+                payload, self.stop.ARCH_LOOP_STATE_SPEC
+            )
+            result = self.stop.validate_arch_loop_state(payload, resolved)
+            self.assertIsNotNone(result)
+            loaded_state, loaded_path = result
+            self.assertEqual(
+                loaded_state["audits_authoritative_fingerprint"],
+                self.stop._arch_loop_audits_fingerprint(audits),
+            )
+            # Re-read from disk to confirm the seeded fingerprint was persisted.
+            persisted = json.loads(loaded_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                persisted["audits_authoritative_fingerprint"],
+                self.stop._arch_loop_audits_fingerprint(audits),
+            )
 
     def test_rejects_unsupported_runtime(self) -> None:
         with self.assertRaises(SystemExit):
@@ -454,11 +573,12 @@ class ArchLoopDuplicateControllerTests(unittest.TestCase):
             arch_loop_path.write_text(
                 json.dumps(
                     {
-                        "version": 1,
+                        "version": 2,
                         "command": "arch-loop",
                         "runtime": "codex",
                         "session_id": "session-1",
                         "raw_requirements": "ship it",
+                        "raw_requirements_hash": _sha256("ship it"),
                         "created_at": 100,
                         "iteration_count": 0,
                         "check_count": 0,
@@ -527,12 +647,14 @@ class ArchLoopHandlerLifecycleTests(unittest.TestCase):
         next_due_at: int | None = None,
         required_skill_audits: list | None = None,
     ) -> dict:
+        raw_requirements = "keep running until the evaluator is happy"
         state: dict = {
-            "version": 1,
+            "version": 2,
             "command": "arch-loop",
             "runtime": "codex",
             "session_id": session_id,
-            "raw_requirements": "keep running until the evaluator is happy",
+            "raw_requirements": raw_requirements,
+            "raw_requirements_hash": _sha256(raw_requirements),
             "created_at": 1_000,
             "iteration_count": iteration_count,
             "check_count": check_count,
@@ -547,6 +669,12 @@ class ArchLoopHandlerLifecycleTests(unittest.TestCase):
             state["next_due_at"] = next_due_at
         if required_skill_audits is not None:
             state["required_skill_audits"] = required_skill_audits
+            if iteration_count > 0 or check_count > 0:
+                state["audits_authoritative_fingerprint"] = self.stop._arch_loop_audits_fingerprint(
+                    required_skill_audits
+                )
+        elif iteration_count > 0 or check_count > 0:
+            state["audits_authoritative_fingerprint"] = self.stop._arch_loop_audits_fingerprint([])
         return state
 
     def _structured_result(
@@ -660,7 +788,9 @@ class ArchLoopHandlerLifecycleTests(unittest.TestCase):
         eval_payload = {
             "verdict": "clean",
             "summary": "everything satisfied",
-            "satisfied_requirements": ["ship it"],
+            "satisfied_requirements": [
+                {"requirement": "ship it", "evidence": "repo state clean"}
+            ],
             "unsatisfied_requirements": [],
             "required_skill_audits": [],
             "continue_mode": "none",
@@ -725,7 +855,9 @@ class ArchLoopHandlerLifecycleTests(unittest.TestCase):
         clean_payload = {
             "verdict": "clean",
             "summary": "host now reachable",
-            "satisfied_requirements": ["reachable"],
+            "satisfied_requirements": [
+                {"requirement": "reachable", "evidence": "curl returned 200"}
+            ],
             "unsatisfied_requirements": [],
             "required_skill_audits": [],
             "continue_mode": "none",
@@ -964,7 +1096,9 @@ class ArchLoopHandlerLifecycleTests(unittest.TestCase):
         bad = {
             "verdict": "clean",
             "summary": "premature clean",
-            "satisfied_requirements": ["x"],
+            "satisfied_requirements": [
+                {"requirement": "x", "evidence": "x.md:1"}
+            ],
             "unsatisfied_requirements": [],
             "required_skill_audits": [
                 {
@@ -991,7 +1125,9 @@ class ArchLoopHandlerLifecycleTests(unittest.TestCase):
         bad = {
             "verdict": "clean",
             "summary": "premature clean",
-            "satisfied_requirements": ["x"],
+            "satisfied_requirements": [
+                {"requirement": "x", "evidence": "x.md:1"}
+            ],
             "unsatisfied_requirements": ["still pending"],
             "required_skill_audits": [],
             "continue_mode": "none",
@@ -1028,6 +1164,150 @@ class ArchLoopHandlerLifecycleTests(unittest.TestCase):
         self.assertIn("invalid verdict", payload["stopReason"])
         self.assertFalse(state_path.exists())
 
+    # --- drift-prevention: hook-owned audit status + evidence enforcement ---
+
+    def test_evaluator_verdict_overwrites_state_audit_status(self) -> None:
+        # Parent seeded status=pending. Evaluator returns continue + status=fail.
+        # Handler must copy fail into state's audit entry, recompute the
+        # fingerprint, and persist before the verdict dispatch so a later
+        # parent-side edit is caught by the fingerprint guard.
+        state = self._valid_state(
+            max_iterations=3,
+            required_skill_audits=[
+                {
+                    "skill": "agent-linter",
+                    "target": "skills/arch-loop",
+                    "requirement": "clean",
+                    "status": "pending",
+                    "latest_summary": "",
+                    "evidence_path": "",
+                }
+            ],
+        )
+        eval_payload = {
+            "verdict": "continue",
+            "summary": "linter still reports one finding",
+            "satisfied_requirements": [],
+            "unsatisfied_requirements": ["fix the lint warning"],
+            "required_skill_audits": [
+                {
+                    "skill": "agent-linter",
+                    "status": "fail",
+                    "evidence": "rg 'TODO' skills/arch-loop/SKILL.md",
+                }
+            ],
+            "continue_mode": "parent_work",
+            "next_task": "remove the TODO at SKILL.md:12",
+            "blocker": "",
+        }
+        code, payload, _, _, _, _, saved = self._run_handler(
+            state=state,
+            evaluator_results=[self._structured_result(eval_payload)],
+        )
+        self.assertEqual(code, 0)
+        self.assertTrue(payload["continue"])
+        self.assertIsNotNone(saved)
+        self.assertEqual(
+            saved["required_skill_audits"][0]["status"], "fail"
+        )
+        # Evaluator evidence was copied into latest_summary as the current
+        # snapshot the parent can read.
+        self.assertEqual(
+            saved["required_skill_audits"][0]["latest_summary"],
+            "rg 'TODO' skills/arch-loop/SKILL.md",
+        )
+        # Fingerprint matches the newly-written audit tuple, so the next
+        # parent pass may refresh latest_summary/evidence_path but not status.
+        expected_fp = self.stop._arch_loop_audits_fingerprint(
+            saved["required_skill_audits"]
+        )
+        self.assertEqual(
+            saved["audits_authoritative_fingerprint"], expected_fp
+        )
+
+    def test_evaluator_missing_satisfied_evidence_fails_loud(self) -> None:
+        state = self._valid_state()
+        bad = {
+            "verdict": "clean",
+            "summary": "claiming clean without evidence",
+            "satisfied_requirements": [
+                {"requirement": "ship it", "evidence": ""}
+            ],
+            "unsatisfied_requirements": [],
+            "required_skill_audits": [],
+            "continue_mode": "none",
+            "next_task": "",
+            "blocker": "",
+        }
+        code, payload, _, state_path, _, _, _ = self._run_handler(
+            state=state,
+            evaluator_results=[self._structured_result(bad)],
+        )
+        self.assertEqual(code, 0)
+        self.assertFalse(payload["continue"])
+        self.assertIn("evidence", payload["stopReason"])
+        self.assertFalse(state_path.exists())
+
+    def test_evaluator_satisfied_requirement_must_be_object(self) -> None:
+        # String-form satisfied_requirements are a legacy schema shape. The
+        # runner must reject them so evaluators cannot downgrade to the old
+        # no-evidence form.
+        state = self._valid_state()
+        bad = {
+            "verdict": "clean",
+            "summary": "legacy string form",
+            "satisfied_requirements": ["ship it"],
+            "unsatisfied_requirements": [],
+            "required_skill_audits": [],
+            "continue_mode": "none",
+            "next_task": "",
+            "blocker": "",
+        }
+        code, payload, _, state_path, _, _, _ = self._run_handler(
+            state=state,
+            evaluator_results=[self._structured_result(bad)],
+        )
+        self.assertEqual(code, 0)
+        self.assertFalse(payload["continue"])
+        self.assertIn("requirement+evidence", payload["stopReason"])
+        self.assertFalse(state_path.exists())
+
+    def test_evaluator_audit_missing_evidence_fails_loud(self) -> None:
+        state = self._valid_state(
+            required_skill_audits=[
+                {
+                    "skill": "agent-linter",
+                    "target": "skills/arch-loop",
+                    "requirement": "clean",
+                    "status": "pending",
+                }
+            ],
+        )
+        bad = {
+            "verdict": "continue",
+            "summary": "audit without evidence pointer",
+            "satisfied_requirements": [],
+            "unsatisfied_requirements": ["still work to do"],
+            "required_skill_audits": [
+                {
+                    "skill": "agent-linter",
+                    "status": "fail",
+                    "evidence": "",
+                }
+            ],
+            "continue_mode": "parent_work",
+            "next_task": "fix it",
+            "blocker": "",
+        }
+        code, payload, _, state_path, _, _, _ = self._run_handler(
+            state=state,
+            evaluator_results=[self._structured_result(bad)],
+        )
+        self.assertEqual(code, 0)
+        self.assertFalse(payload["continue"])
+        self.assertIn("evidence", payload["stopReason"])
+        self.assertFalse(state_path.exists())
+
 
 class ArchLoopEvaluatorCommandTests(unittest.TestCase):
     """Capture the exact Codex argv used by run_arch_loop_evaluator so the
@@ -1040,15 +1320,18 @@ class ArchLoopEvaluatorCommandTests(unittest.TestCase):
         cls.stop.ACTIVE_RUNTIME = cls.stop.HOOK_RUNTIME_SPECS[cls.stop.RUNTIME_CODEX]
 
     def test_codex_command_shape(self) -> None:
+        raw_requirements = "keep going until clean"
         state = {
-            "version": 1,
+            "version": 2,
             "command": "arch-loop",
             "runtime": "codex",
             "session_id": "sess",
-            "raw_requirements": "keep going until clean",
+            "raw_requirements": raw_requirements,
+            "raw_requirements_hash": _sha256(raw_requirements),
             "created_at": 1_000,
             "iteration_count": 1,
             "check_count": 0,
+            "audits_authoritative_fingerprint": self.stop._arch_loop_audits_fingerprint([]),
         }
         recorded: dict[str, list[str]] = {}
 
@@ -1124,18 +1407,26 @@ class ArchLoopPhase6CodexProofTests(unittest.TestCase):
         self.addCleanup(self._tempdir.cleanup)
 
     def _state(self, **overrides) -> dict:
+        raw_requirements = "keep going until $agent-linter is clean"
         state: dict = {
-            "version": 1,
+            "version": 2,
             "command": "arch-loop",
             "runtime": "codex",
             "session_id": "session-phase6-codex",
-            "raw_requirements": "keep going until $agent-linter is clean",
+            "raw_requirements": raw_requirements,
+            "raw_requirements_hash": _sha256(raw_requirements),
             "created_at": 1_000,
             "iteration_count": 0,
             "check_count": 0,
             "deadline_at": 10_000,
         }
         state.update(overrides)
+        iteration_count = int(state.get("iteration_count") or 0)
+        check_count = int(state.get("check_count") or 0)
+        if (iteration_count > 0 or check_count > 0) and "audits_authoritative_fingerprint" not in state:
+            state["audits_authoritative_fingerprint"] = self.stop._arch_loop_audits_fingerprint(
+                state.get("required_skill_audits") or []
+            )
         return state
 
     def _run(
@@ -1229,7 +1520,9 @@ class ArchLoopPhase6CodexProofTests(unittest.TestCase):
         eval_payload = {
             "verdict": "continue",
             "summary": "host became reachable but smoke test still failing",
-            "satisfied_requirements": ["host responds"],
+            "satisfied_requirements": [
+                {"requirement": "host responds", "evidence": "curl example.com"}
+            ],
             "unsatisfied_requirements": ["smoke test failing"],
             "required_skill_audits": [],
             "continue_mode": "parent_work",
@@ -1312,7 +1605,10 @@ class ArchLoopPhase6CodexProofTests(unittest.TestCase):
             "verdict": "clean",
             "summary": "agent-linter is clean against skills/arch-loop",
             "satisfied_requirements": [
-                "skills/arch-loop passes $agent-linter"
+                {
+                    "requirement": "skills/arch-loop passes $agent-linter",
+                    "evidence": "agent-linter run: 0 findings",
+                }
             ],
             "unsatisfied_requirements": [],
             "required_skill_audits": [
@@ -1356,7 +1652,12 @@ class ArchLoopPhase6CodexProofTests(unittest.TestCase):
         eval_payload = {
             "verdict": "clean",
             "summary": "premature clean without audit evidence",
-            "satisfied_requirements": ["skills/arch-loop ships"],
+            "satisfied_requirements": [
+                {
+                    "requirement": "skills/arch-loop ships",
+                    "evidence": "skills/arch-loop/SKILL.md:1",
+                }
+            ],
             "unsatisfied_requirements": [],
             "required_skill_audits": [
                 {
@@ -1414,12 +1715,14 @@ class ArchLoopPhase6ClaudeRuntimeProofTests(unittest.TestCase):
         suffixed = self.stop.session_state_relative_path(claude_relative, session_id)
         self.assertIn(session_id, suffixed.name)
 
+        raw_requirements = "keep going until clean"
         state = {
-            "version": 1,
+            "version": 2,
             "command": "arch-loop",
             "runtime": "claude",
             "session_id": session_id,
-            "raw_requirements": "keep going until clean",
+            "raw_requirements": raw_requirements,
+            "raw_requirements_hash": _sha256(raw_requirements),
             "created_at": 1_000,
             "iteration_count": 0,
             "check_count": 0,
@@ -1432,7 +1735,12 @@ class ArchLoopPhase6ClaudeRuntimeProofTests(unittest.TestCase):
         eval_payload = {
             "verdict": "clean",
             "summary": "Claude runtime path probe satisfied",
-            "satisfied_requirements": ["claude shared runner reachable"],
+            "satisfied_requirements": [
+                {
+                    "requirement": "claude shared runner reachable",
+                    "evidence": "controller_state_relative_path returned .claude/arch_skill/",
+                }
+            ],
             "unsatisfied_requirements": [],
             "required_skill_audits": [],
             "continue_mode": "none",

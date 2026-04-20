@@ -103,6 +103,8 @@ By the end of the run:
 - reconcile the ledger at phase boundaries
 - no fallbacks or shims unless the plan explicitly approves them
 - if the doc is materially non-canonical, repair it or route to `reformat` before treating it as authoritative
+- when an implementation blocker arises, re-read Section 0 (North Star), TL;DR, and the current phase's Checklist and Exit criteria before forming any question. If approved intent resolves the blocker, proceed and append an `Intent-derived` entry to the Decision Log naming the blocker, the sections consulted, the constraint intent imposes, and the decision taken. This is required, not optional.
+- the feature-cut hard stop applies with equal force mid-implementation. Never silently reshape, downgrade, defer, or simplify away approved behavior, acceptance criteria, or phase obligations. Surface to the user with what you want to cut, why, what intent says, and what you need; wait for explicit user approval; record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape.
 
 ## Quick alignment checks
 

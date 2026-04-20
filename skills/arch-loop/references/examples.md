@@ -11,7 +11,7 @@ These examples illustrate how `arch-loop` preserves free-form requirements, pars
 - captures the full ask literally in `raw_requirements`
 - parses `max runtime 5h` → `deadline_at = created_at + 18000`, `cap_evidence: [{type: "runtime", source_text: "Max runtime 5h", normalized: "deadline_at=<+18000s>"}]`
 - detects `$agent-linter` → `required_skill_audits: [{skill: "agent-linter", target: "skills/agents-md-authoring", requirement: "clean bill of health", status: "pending", ...}]`
-- runs runtime preflight; aborts loudly if the active host runtime's repo-managed Stop entry or the installed runner is missing
+- runs arm-time ensure-install (`arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>`); aborts loudly if the installer fails
 - writes the runtime-specific state file (`.codex/arch-loop-state.<SESSION_ID>.json` or `.claude/arch_skill/arch-loop-state.<SESSION_ID>.json`)
 - does one bounded implementation pass toward the plan doc's Section 7 frontier
 - runs `$agent-linter` during that pass, updates its `required_skill_audits` entry with `status`, `latest_summary`, and an optional `evidence_path`
@@ -70,6 +70,34 @@ These examples illustrate how `arch-loop` preserves free-form requirements, pars
 - the hook blocks with the next task; the parent does one more bounded pass
 - after the second parent pass, `iteration_count` reaches `max_iterations`; if the evaluator still returns `continue`, the hook clears state and stops with a max-iterations summary that includes `unsatisfied_requirements`
 - if the evaluator returns `clean` before the cap, the loop stops clean
+
+## 4) Drift catch: evaluator reverses a parent-claimed `pass`
+
+**Ask:** "Keep working on `skills/example-skill` and do not stop until `$agent-linter` is clean on the package. Max runtime 1h."
+
+**What `arch-loop` does on the initial invocation:**
+
+- captures the ask literally and computes `raw_requirements_hash = sha256(raw_requirements)`
+- seeds `required_skill_audits: [{skill: "agent-linter", target: "skills/example-skill", requirement: "clean", status: "pending", ...}]`
+- parses `max runtime 1h` → `deadline_at = created_at + 3600`
+- does one bounded implementation pass, runs `$agent-linter`, sees one lingering warning on `skills/example-skill/SKILL.md:12`
+- refreshes the audit entry's `latest_summary` ("one warning remains at SKILL.md:12") without touching `status`
+- ends the turn; the Stop hook runs the evaluator, copies `status: fail` into state, and asks the parent to fix the warning
+
+**What the next parent pass does under drift pressure (and what the hook catches):**
+
+- parent pass edits the warned line, reruns the linter locally, sees clean output in its own shell, and — drifting — writes `status: pass` directly into `required_skill_audits[0].status` alongside a reassuring `latest_summary`
+- parent ends the turn
+- Stop hook reads state, recomputes `audits_authoritative_fingerprint` over `(skill, target, requirement, status)`, and sees it no longer matches the fingerprint the hook stored after the last evaluator run
+- hook clears state with `audit status mutation detected` and a loud one-line reason; the parent must re-arm with truthful state
+
+**Alternate path (no parent cheating):**
+
+- parent refreshes only `latest_summary` / `evidence_path`, leaves `status` untouched, ends the turn
+- hook launches the fresh evaluator; the evaluator reads the repo directly (not the parent's narrative), finds the linter actually reports a different warning the parent missed, and returns `status: fail` with `evidence: "npx skills check skills/example-skill"` and a specific `next_task`
+- hook copies the evaluator's `fail` into state, recomputes the fingerprint, and dispatches `continue` + `parent_work`
+
+**Stop condition:** `clean` only when the evaluator — running its own repo check — returns `status: pass` with a reproducible `evidence` pointer. A parent-written `pass` never reaches `clean`.
 
 ## Anti-case: pure wait-until-true (use `$delay-poll` instead)
 

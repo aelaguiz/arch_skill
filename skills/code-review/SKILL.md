@@ -62,11 +62,25 @@ The runner is deterministic orchestration only — target resolution, artifact c
 
 ## Workflow
 
-1. **Prepare.** Resolve target, confirm Codex is reachable, and decide whether this is a direct invocation or a hook-backed invocation. For hook-backed runs, arm `.codex/code-review-state.<SESSION_ID>.json` (Codex host) or `.claude/arch_skill/code-review-state.<SESSION_ID>.json` (Claude host) with the target and objective, then let the installed Stop hook drive the run.
+`code-review` has two invocation paths: **direct** and **hook-backed**. Direct invocation runs `scripts/run_code_review.py` synchronously as a shell command and does not use the arm-first controller contract at all. Hook-backed invocation is the loop-skill form and follows the shared doctrine.
+
+### Direct invocation
+
+1. **Prepare.** Resolve target, confirm Codex is reachable.
 2. **Run.** Invoke `scripts/run_code_review.py`. The runner writes prompts, stream logs, per-lens outputs, a final synthesis output, and a coverage summary into a namespaced run directory under the chosen output root.
 3. **Consume.** Read the final synthesis output. It begins with findings and ends with the `ReviewVerdict` block defined in `references/output-contract.md`.
 4. **Relay.** Report the verdict to the user. Name the run directory so they can read the full synthesis and per-lens outputs.
 5. **Do not fix code here.** If blocking findings need fixing, that is a separate turn. This skill is review-only.
+
+### Hook-backed invocation
+
+**Arm first, disarm never.** When `code-review` is armed as a hook-backed controller, the very first step of the invocation writes a session-scoped state file; the very last step of the parent turn is to end the turn. Parent turns do not run the Stop hook, do not delete state, and do not clean up early — the Stop hook is the only process that clears state, and it does so only when the review run completes (CLEAN on reviewer success, BLOCKED on reviewer failure or missing coverage). Core doctrine, arm-time ensure-install, session-id rules, conflict gate, staleness sweep, and manual recovery live in `skills/_shared/controller-contract.md`. This invocation path is documented as an optional deviation in the shared contract. State lives at `.codex/code-review-state.<SESSION_ID>.json` (Codex) or `.claude/arch_skill/code-review-state.<SESSION_ID>.json` (Claude Code).
+
+1. **Arm**: ensure-install the Stop hook (`arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>`; fails loud on drift) → resolve the session id (on Claude Code via `arch_controller_stop_hook.py --current-session`; abort with its error if it fails) → resolve target and objective → write the session-scoped state file → end the turn.
+2. **Body** (hook-owned): the installed Stop hook shells out to the same fresh unsandboxed Codex `gpt-5.4` `xhigh` reviewer subprocess (always Codex, even when Claude hosts the hook), captures the run directory, and parses the `ReviewVerdict`.
+3. **Disarm** (hook-owned): the Stop hook clears state when the reviewer finishes, writes the verdict reference into the turn surface, and stops.
+
+The review subprocess is identical in both paths. Only the orchestration differs.
 
 ## Output expectations
 

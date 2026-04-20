@@ -364,7 +364,25 @@ Canonical entry shape:
 - `Consequences`
 - `Follow-ups`
 
-This section is append-only. Do not silently rewrite history when real plan drift occurs.
+Additional canonical entry shape for intent-derived resolutions (required whenever the agent resolves a would-be blocker question from approved intent rather than asking the user):
+
+- `## <YYYY-MM-DD> - Intent-derived: <title>`
+- `Blocker:` what was unclear or looked like it needed a user question
+- `Consulted:` the specific sections read (Section 0 / TL;DR / Section 7.X / other)
+- `Intent says:` the relevant constraint, quoted or tightly paraphrased
+- `Decision:` what was chosen and why it aligns with approved intent
+- `Consequences:` effect on plan or code; any follow-ups
+
+Additional canonical entry shape for user-approved scope cuts (required whenever the user approves narrowing approved scope, acceptance criteria, or a phase obligation):
+
+- `## <YYYY-MM-DD> - Scope cut (user-approved): <title>`
+- `Cut:` what was removed, downgraded, or deferred
+- `Why it looked necessary:` the real reason
+- `Intent evidence checked:` the Section 0 / TL;DR / Section 7 references consulted
+- `User approval:` when asked, how the user responded
+- `Consequences:` plan updates, follow-ups, any phases reopened
+
+This section is append-only. Do not silently rewrite history when real plan drift occurs. Silent narrowing of approved scope is forbidden; every intent-derived resolution and every approved scope cut must appear here.
 
 ## Stable block inventory
 

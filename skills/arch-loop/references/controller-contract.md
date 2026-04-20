@@ -1,5 +1,12 @@
 # `arch-loop` Controller Contract
 
+Core doctrine and lifecycle live in `skills/_shared/controller-contract.md`.
+This file documents only the `arch-loop`-specific state schema and the
+external-evaluator verdict source. `arch-loop` is the single controller whose
+terminal verdict comes from a fresh external Codex `gpt-5.4` `xhigh`
+evaluator; that deviation is documented in the shared contract's Deviations
+section.
+
 ## What this contract governs
 
 - the runtime-aware controller state file for one armed `arch-loop` session
@@ -9,33 +16,35 @@
 
 The shared runner at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py` owns hook dispatch, state validation, cap enforcement, cadence scheduling, evaluator launch, and verdict handling. `arch-loop` does not introduce a separate controller binary.
 
-## Runtime preflight (required before arming)
+## Required arm-time install
 
-- the active host runtime is Codex or Claude Code
-- the active host runtime has the repo-managed `Stop` entry pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` in `~/.codex/hooks.json` (Codex) or `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime claude` in `~/.claude/settings.json` (Claude Code)
-- the installed runner exists at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`
-- in Codex, `codex features list` shows `codex_hooks` enabled
-- in Claude Code, hook-suppressed child runs via `claude -p --settings '{"disableAllHooks":true}'` work with the machine's normal Claude auth (required only when a Claude child is the named audit runner; the external evaluator is always Codex)
-- the evaluator prompt exists at `<skills-root>/arch-loop/references/evaluator-prompt.md` where `<skills-root>` is `~/.agents/skills` when running from the installed runner or `skills/` when running from the repo source
+Arm-time ensure-install and dispatch-time loud verify are documented in `skills/_shared/controller-contract.md`. Before arming, run:
 
-If any prerequisite is missing, name the broken item and stop. Do not downgrade to prompt-only repetition and do not preflight against a copied hook file under `~/.codex/hooks/`.
+```bash
+python3 ~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py \
+  --ensure-installed --runtime <codex|claude>
+```
+
+Proceed only if it returns 0. The installer is idempotent and flock-guarded; it writes the canonical Stop entry (and the SessionStart entry on Claude) without races. The evaluator prompt must also exist at `<skills-root>/arch-loop/references/evaluator-prompt.md` (`<skills-root>` is `~/.agents/skills` when running from the installed runner or `skills/` when running from the repo source). The external evaluator is always Codex `gpt-5.4` `xhigh`, even when Claude hosts the Stop hook.
 
 ## State file path by runtime
 
 - Codex: `.codex/arch-loop-state.<SESSION_ID>.json` (derive `SESSION_ID` from `CODEX_THREAD_ID`)
-- Claude Code: `.claude/arch_skill/arch-loop-state.<SESSION_ID>.json` when the session id is available before the first Stop-hook turn; otherwise `.claude/arch_skill/arch-loop-state.json` as a legacy single-slot fallback until the first Stop-hook turn claims it into the session-scoped path
+- Claude Code: `.claude/arch_skill/arch-loop-state.<SESSION_ID>.json` (resolve via `arch_controller_stop_hook.py --current-session`; abort with its error if the SessionStart cache is missing — never write an unsuffixed file)
 
 One session may arm only one arch_skill controller kind at a time. The shared runner's duplicate-controller check fails loud if `arch-loop` and any other controller state, or two `arch-loop` state files, are armed for the same session.
 
-## State schema (version 1)
+## State schema (version 2)
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "command": "arch-loop",
   "session_id": "<CODEX_THREAD_ID or runtime session id>",
   "runtime": "codex",
   "raw_requirements": "<literal user requirements>",
+  "raw_requirements_hash": "<sha256 hex of raw_requirements UTF-8 bytes>",
+  "audits_authoritative_fingerprint": "<sha256 hex of canonical audit tuples>",
   "created_at": 1770000000,
   "deadline_at": 1770018000,
   "interval_seconds": 1800,
@@ -76,16 +85,18 @@ One session may arm only one arch_skill controller kind at a time. The shared ru
 
 ### Required fields
 
-- `version` (always `1` for this release)
+- `version` (always `2` for this release; version `1` state is cleared with a one-line "re-arm required due to arch-loop schema upgrade")
 - `command` (always `"arch-loop"`)
 - `session_id`
 - `runtime` (`"codex"` or `"claude"`)
 - `raw_requirements` (literal user prose, never rewritten)
+- `raw_requirements_hash` (parent writes this at arm; must equal `sha256(raw_requirements)` on every read)
 - `created_at` (epoch seconds)
 - `iteration_count` (starts at `0`, incremented by the Stop hook after each completed parent work pass)
 
 ### Optional (enforced when present)
 
+- `audits_authoritative_fingerprint` (Stop-hook-owned; seeded on first hook dispatch, required on every continuation read; `sha256` over the canonical serialization of every audit's `(skill, target, requirement, status)` tuple sorted by `(skill, target)`)
 - `deadline_at` (epoch seconds)
 - `interval_seconds` (positive integer; required when `continue_mode=wait_recheck`)
 - `next_due_at` (epoch seconds; maintained by the Stop hook during cadence waits)
@@ -106,7 +117,7 @@ Each required audit preserves the requirement source and its current status:
 - `latest_summary`: short human-readable result string
 - `evidence_path`: optional path to a longer artifact when the audit output is too long to inline
 
-The parent agent runs named skills during work passes and updates evidence. The external evaluator verifies that evidence before allowing `clean`. A required audit with `status` other than `pass` or `inapplicable` prevents `clean`.
+The parent seeds each entry with `status: pending` at arm and may refresh `latest_summary` / `evidence_path` on every continuation pass. After the first Stop-hook dispatch, `status` is hook-owned: the runner copies it from the evaluator's JSON output, recomputes `audits_authoritative_fingerprint`, and rejects any parent-side edit to `(skill, target, requirement, status)` at the next read. A required audit with `status` other than `pass` or `inapplicable` prevents `clean`.
 
 ## Writes by actor
 
@@ -114,28 +125,32 @@ The parent agent runs named skills during work passes and updates evidence. The 
 
 - creates or refreshes the runtime-specific state file before any work pass starts
 - captures `raw_requirements` literally; never normalizes or shortens the user's request
+- computes `raw_requirements_hash = sha256(raw_requirements_bytes_utf8)` at arm and writes it to state; never rewrites the hash across turns
 - writes parsed caps/cadence into `deadline_at`, `interval_seconds`, `max_iterations`, and `cap_evidence`
-- detects named audits and seeds `required_skill_audits` as `pending`
-- runs named audits during the work pass and updates each entry's `status`, `latest_summary`, and optional `evidence_path`
+- detects named audits and seeds `required_skill_audits` entries with `status: pending` at arm only; after the first Stop-hook dispatch, `status` is hook-owned and any parent-side edit is rejected at the next read
+- runs named audits during the work pass and refreshes each entry's `latest_summary` and optional `evidence_path` (never `status`)
 - writes `last_work_summary` and `last_verification_summary`
-- never writes `last_evaluator_verdict`, `last_evaluator_summary`, `last_next_task`, `last_continue_mode`, `iteration_count`, `check_count`, or `next_due_at`; the Stop hook owns those fields
+- never writes `last_evaluator_verdict`, `last_evaluator_summary`, `last_next_task`, `last_continue_mode`, `iteration_count`, `check_count`, `next_due_at`, `audits_authoritative_fingerprint`, or `required_skill_audits[].status` after the initial arm seed; the Stop hook owns those fields
 - never clears the state file; only the Stop hook may delete state
 
 ### Stop hook
 
+- validates `raw_requirements_hash` on every read; any mismatch clears state with `raw_requirements mutation detected`
+- validates `audits_authoritative_fingerprint` on every continuation read; any mismatch clears state with `audit status mutation detected`
 - increments `iteration_count` for a parent work pass that just completed
 - increments `check_count` for each cadence-owned evaluator/check pass
 - enforces `deadline_at` and `max_iterations` before launching the evaluator
 - schedules `next_due_at` and sleeps until `min(next_due_at, deadline_at)` when cadence is armed and the last verdict was `wait_recheck`
 - launches the fresh Codex `gpt-5.4` `xhigh` evaluator with the prompt at `references/evaluator-prompt.md`
+- copies each evaluator `required_skill_audits[].status` and `evidence` pointer into the matching state entry (by `skill` name), recomputes `audits_authoritative_fingerprint`, and persists state before dispatching the verdict
 - writes `last_evaluator_verdict`, `last_evaluator_summary`, `last_next_task`, `last_continue_mode`
-- clears state on `clean`, `blocked`, timeout, max-iterations, or any controller failure (invalid state, missing evaluator prompt, failed child, invalid JSON)
+- clears state on `clean`, `blocked`, timeout, max-iterations, or any controller failure (invalid state, missing evaluator prompt, failed child, invalid JSON, missing `evidence` on any `satisfied_requirements` or `required_skill_audits` entry)
 
 ## Lifecycle
 
 ### 1) Arm
 
-- parent preflight succeeds, state file is written, one bounded work pass runs, named audits are refreshed, the turn ends naturally
+- parent ensure-install returns 0, state file is written, one bounded work pass runs, named audits are refreshed, the turn ends naturally
 
 ### 2) Stop hook evaluation
 
@@ -179,10 +194,12 @@ The parent agent runs named skills during work passes and updates evidence. The 
 
 The Stop hook treats any of the following as invalid state and clears it rather than guessing:
 
-- missing required field (`version`, `command`, `session_id`, `runtime`, `raw_requirements`, `created_at`, `iteration_count`)
-- `version` other than `1`
+- missing required field (`version`, `command`, `session_id`, `runtime`, `raw_requirements`, `raw_requirements_hash`, `created_at`, `iteration_count`)
+- `version` other than `2` (version-`1` state is cleared with `re-arm required due to arch-loop schema upgrade`)
 - `command` other than `"arch-loop"`
-- `session_id` that does not match the current hook payload (after normal legacy-path reconciliation)
+- `session_id` that does not match the current hook payload
+- `sha256(raw_requirements) != raw_requirements_hash` (cleared with `raw_requirements mutation detected`)
+- `audits_authoritative_fingerprint` missing or mismatched on a continuation read (cleared with `audit status mutation detected`)
 - `interval_seconds <= 0`, `max_iterations <= 0`, or `deadline_at` earlier than `created_at`
 - `required_skill_audits` entries with an unknown `status`
 - `next_due_at` later than `deadline_at`

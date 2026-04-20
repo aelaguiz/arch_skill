@@ -79,7 +79,7 @@ Default local path:
 - `~/.agents/skills/codex-review-yolo/`
 - `~/.agents/skills/code-review/`
 
-Codex reads the same installed skills from `~/.agents/skills/`. `make install` also writes one arch_skill-managed Codex `Stop` hook through `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, writes one arch_skill-managed Claude Code `Stop` hook through `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`, repairs older repo-managed hook entries down to one active entry per runtime, and removes older `~/.codex/skills/<skill>` mirrors from previous installs.
+Codex reads the same installed skills from `~/.agents/skills/`. `make install` also writes one arch_skill-managed Codex `Stop` hook through `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex`, writes one arch_skill-managed Claude Code `Stop` hook plus one `SessionStart` hook through `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`, and removes older `~/.codex/skills/<skill>` mirrors from previous installs. Every loop-skill arm also reruns `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` so the canonical hook entries cannot drift between runs; drift is fail-loud at dispatch with the exact repair command.
 
 Installed skills:
 
@@ -152,7 +152,7 @@ Installed skills:
   - `amir-publish`
   - `codex-review-yolo`
 
-Install removes stale pre-skill command surfaces, removed skill packages, and older Codex skill mirrors. It installs one repo-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` and one repo-managed Claude Code `Stop` hook in `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`. Those entries back `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, `arch-loop`, and `delay-poll`.
+Install removes stale pre-skill command surfaces, removed skill packages, and older Codex skill mirrors. It installs one repo-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` and one repo-managed Claude Code `Stop` hook plus one `SessionStart` hook in `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`. Every loop-skill arm also reruns `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` so the canonical hook entries cannot drift between runs. Those entries back `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, `arch-loop`, and `delay-poll`.
 
 `arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface. Gemini still has no hook-backed auto-controller surface, so none of those three are installed there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict, mirroring the `code-review` exception: the Claude host can arm and drive the loop, but the evaluator subprocess itself must always be Codex. `code-review` is installed on the agents/Codex and Claude Code surfaces only; Claude may host the Stop hook, but the review subprocess itself always shells out to fresh Codex.
 
@@ -242,9 +242,8 @@ Practical rule:
 - `arch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
 - In that controller, implementation scope is the full approved Section 7 frontier in order. It must arm loop state before implementation work, resume from the earliest incomplete or reopened phase, continue through later reachable phases, and only then hand control to fresh audit unless a real blocker stops progress.
 - After a clean full-arch code audit, `arch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
-- In Codex, the user still invokes only `auto-plan`, `implement-loop`, or `auto-implement`; the last two are the same controller. In Codex they require the repo-managed `Stop` entry in `~/.codex/hooks.json` plus enabled `codex_hooks`. In Claude Code they require the repo-managed `Stop` entry in `~/.claude/settings.json`.
+- In Codex, the user still invokes only `auto-plan`, `implement-loop`, or `auto-implement`; the last two are the same controller. Every arm runs `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` first; the installer is idempotent and flock-guarded and writes the canonical `Stop` entry (and the `SessionStart` entry on Claude). If `--ensure-installed` fails loud, repair the named prerequisite and rerun.
 - Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let the installed Stop hook run.
-- If the active runtime's hook entry, the installed runner path, or Codex's `codex_hooks` feature flag is missing, those commands should fail loud with the remediation commands instead of pretending a prompt-only loop exists. Do not check for a copied hook file under `~/.codex/hooks/`.
 
 ### `miniarch-step`
 
@@ -267,7 +266,7 @@ Practical rule:
 - `miniarch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
 - In that controller, implementation scope is the full approved Section 7 frontier in order. It must arm runtime-local controller state under `.codex/` in Codex or `.claude/arch_skill/` in Claude Code before implementation work, resume from the earliest incomplete or reopened phase, continue through later reachable phases, and only then hand control to fresh audit unless a real blocker stops progress. In Codex, that fresh miniarch audit child runs with `gpt-5.4-mini` at `xhigh` reasoning effort.
 - After a clean code audit, `miniarch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
-- These commands still rely on the repo-managed `Stop` entry for the active host runtime: `~/.codex/hooks.json` plus enabled `codex_hooks` in Codex, or `~/.claude/settings.json` in Claude Code.
+- Every arm runs `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` first; the installer is idempotent and flock-guarded and writes the canonical `Stop` entry (and the `SessionStart` entry on Claude). If `--ensure-installed` fails loud, repair the named prerequisite and rerun.
 - Do not run the Stop hook yourself for any of those controllers. After the controller is armed, just end the turn and let the installed Stop hook run.
 
 ### `arch-docs`
@@ -375,7 +374,7 @@ Practical rule:
 - Continue verdicts split between `parent_work` (run another parent implementation turn now) and `wait_recheck` (sleep `cadence_seconds` inside the installed `Stop` hook, then re-run the evaluator without spending a parent turn).
 - Controller state lives under `.codex/arch-loop-state.<SESSION_ID>.json` in Codex and `.claude/arch_skill/arch-loop-state.<SESSION_ID>.json` in Claude Code.
 - The evaluator subprocess is always fresh Codex `gpt-5.4` `xhigh` with `-p yolo --ephemeral --disable codex_hooks --dangerously-bypass-approvals-and-sandbox`, even when Claude hosts the Stop hook.
-- Preflight must verify the active runtime's repo-managed `Stop` entry, the installed shared runner, and in Codex the `codex_hooks` feature flag. Do not preflight against a copied hook file under `~/.codex/hooks/`.
+- Every arm runs `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` first; the installer is idempotent and flock-guarded and writes the canonical `Stop` entry (and the `SessionStart` entry on Claude). If `--ensure-installed` fails loud, repair the named prerequisite and rerun.
 - Do not run the Stop hook yourself. After the controller is armed, just end the turn and let the installed Stop hook run.
 
 ### `delay-poll`

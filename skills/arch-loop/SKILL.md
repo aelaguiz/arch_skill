@@ -1,94 +1,78 @@
 ---
 name: arch-loop
-description: "Run a generic hook-backed completion loop from free-form requirements until a fresh external Codex gpt-5.4 xhigh audit says the requirements are clean, more work is needed, the loop should wait/recheck on a parsed cadence, blocked, or a parsed runtime/cadence/iteration cap is reached. Use when the user explicitly asks to keep working or keep checking until stated requirements, named audits, or completion conditions are satisfied. Not for specialized full-arch plans, repo audits, comment loops, pure delay polling better owned by delay-poll, one-shot reviews, or ordinary implementation that should finish in one turn."
+description: "Run a hook-backed completion loop from free-form user requirements until a fresh external Codex gpt-5.4 xhigh auditor says the requirements are satisfied, blocks, or a parsed runtime/cadence/iteration cap fires. Use when the user explicitly asks to keep working or keep checking against stated requirements or named audits (for example `keep iterating until $agent-linter is clean` or `every 30 min check host X for 6h`). Not for canonical full-arch plans (use `arch-step`), repo-wide audit ledgers (use `audit-loop`), pure wait-until-true polling (use `delay-poll`), one-shot reviews, or work that fits in one turn."
 metadata:
-  short-description: "Generic hook-backed completion loop with external Codex audit"
+  short-description: "Hook-backed completion loop with fresh external Codex audit"
 ---
 
 # Arch Loop
 
-Use this skill when the user wants the same visible Codex or Claude Code thread to keep working or keep checking against free-form requirements until a fresh external Codex `gpt-5.4` `xhigh` audit says the requirements are clean, blocked, or capped out.
+Hook-backed loop that keeps the parent agent working against the user's literal requirements until a fresh external Codex `gpt-5.4` `xhigh` auditor says the loop may stop.
 
 ## When to use
 
 - The user names a stop contract in prose: "implement this and do not stop until `$agent-linter` is clean", "keep checking this host every 30 minutes for the next 6 hours", "iterate up to 5 times until tests pass".
 - The user wants real hook-backed continuation in Codex or Claude Code, not prompt-only repetition.
-- The user explicitly wants the termination decision to come from a fresh external auditor, not from the parent agent's self-assessment.
-- The user wants to bind a named skill audit such as `$agent-linter` or `$audit` into the loop's stop condition.
+- The user wants the termination decision from a fresh external auditor, not the parent agent's self-assessment.
+- The user wants a named skill audit (such as `$agent-linter` or `$audit`) bound into the stop condition.
 
 ## When not to use
 
 - The user wants the canonical full-arch flow with a plan doc. Use `arch-step` (`implement-loop` / `auto-implement`).
 - The user wants a repo-wide audit pass with a root ledger. Use `audit-loop`, `audit-loop-sim`, or `comment-loop`.
 - The user wants the docs-only suite continuation. Use `arch-docs auto`.
-- The request is pure "wait until this external condition is true, then continue once" — that belongs to `delay-poll`.
+- The request is pure "wait until this external condition is true, then continue once". Use `delay-poll`.
 - The runtime is neither Codex nor Claude Code, or the installed Stop hook is unavailable.
 - The work fits in one turn and does not actually need an external auditor.
 - The user wants a background daemon or remote scheduling that survives the session.
 
 ## Non-negotiables
 
-- `arch-loop` must be real hook-backed behavior. The installed runner is the shared suite hook at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`. In Codex that runner is wired through `~/.codex/hooks.json` with `--runtime codex`; in Claude Code through `~/.claude/settings.json` with `--runtime claude`. If the runner or the active runtime's repo-managed `Stop` entry is missing, fail loud.
-- The termination verdict comes from a fresh unsandboxed Codex `gpt-5.4` `xhigh` evaluator. The parent agent never self-certifies completion.
-- Free-form prose is the product surface. Preserve the user's full request literally in `raw_requirements`. Do not collapse it into a synthetic flag grammar.
-- Cap and cadence enforcement is deterministic. Only unambiguous duration/window, iteration, and cadence phrases parse into machine constraints; ambiguous cap/cadence text fails loud before the loop arms (see `references/cap-extraction.md`).
-- Cadence windows that cannot fit inside the installed Stop-hook timeout fail loud. Do not turn an interval request into a manual reminder.
-- Named skill audits such as `$agent-linter` are real audit obligations. The parent runs the named skill during work passes; the external evaluator verifies passing evidence before allowing `clean`.
-- `required_skill_audits[].status` must be exactly `pending`, `pass`, `fail`, `missing`, or `inapplicable`. Use `pending` while work or audit proof is still in progress; put words like `completed` or `fixing_in_progress` in `latest_summary`, not `status`.
-- One session may arm only one arch_skill controller kind at a time. `arch-loop` shares the duplicate-controller registry, so another armed controller state for the same session is a conflict.
-- Do not run the Stop hook yourself. After the controller is armed, end the turn naturally and let the installed Stop hook own continuation.
-- Do not introduce a separate `arch_loop_controller.py` runner. `arch-loop` is owned by the shared suite hook.
-- Do not use this skill as a long-form alternative to `delay-poll` for pure waiting; route pure `wait-until-true` requests there.
+- **Real hook-backed behavior.** The installed runner is `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py`. Codex wires it via `~/.codex/hooks.json` with `--runtime codex`; Claude Code wires it via `~/.claude/settings.json` with `--runtime claude`. If the runner or the repo-managed `Stop` entry for the active runtime is missing, fail loud.
+- **Fresh external verdict.** Termination comes from a Codex `gpt-5.4` `xhigh` child launched by the hook. The parent never self-certifies completion.
+- **`raw_requirements` is pinned.** Capture the user's full request literally and never edit it across turns. The runner stores `sha256(raw_requirements)` as `raw_requirements_hash` at arm time and recomputes it on every read; mismatch clears state with `raw_requirements mutation detected`.
+- **Audit status is evaluator-owned.** After the initial `pending` seed at arm, parent passes may update `latest_summary` and `evidence_path` but must not touch `required_skill_audits[].status`. The runner pins `(skill, target, requirement, status)` as `audits_authoritative_fingerprint`; any parent-side edit to those four fields clears state with `audit status mutation detected`.
+- **Allowed status vocabulary is `pending`, `pass`, `fail`, `missing`, `inapplicable`.** Use `pending` while proof is in progress; put narrative words like `completed` or `fixing_in_progress` in `latest_summary`.
+- **Deterministic cap parsing.** Only unambiguous runtime/iteration/cadence phrases parse into machine constraints; ambiguous text fails loud before the loop arms (see `references/cap-extraction.md`).
+- **One controller per session.** `arch-loop` shares the duplicate-controller registry, so any other armed controller state for the same session is a conflict.
+- **Do not run the Stop hook yourself.** After arming, end the turn naturally and let the hook own continuation.
+- **No separate runner.** `arch-loop` is owned by the shared suite hook; do not fork a dedicated controller binary.
 
 ## First move
 
-1. Read `references/controller-contract.md`.
-2. Read `references/cap-extraction.md`.
-3. Read `references/evaluator-prompt.md`.
-4. Resolve the active host runtime, then run the runtime preflight described in `references/controller-contract.md`.
-5. Capture the raw user requirements verbatim and parse only the unambiguous caps documented in `references/cap-extraction.md`.
+Read these in order before writing state:
+
+1. `references/controller-contract.md` — state schema (including `raw_requirements_hash` and `audits_authoritative_fingerprint`), runtime state paths, lifecycle, continuation outcomes, writes matrix, and named-audit evidence shape.
+2. `references/cap-extraction.md` — duration/window, cadence, and iteration phrase families; ambiguity handling; strictest-cap selection; hook-timeout fit.
+3. `references/evaluator-prompt.md` — the fresh Codex evaluator's contract and its structured JSON output shape.
+
+Then resolve the active host runtime, run `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` (it fails loud if the canonical Stop entry cannot be written), and only once that succeeds capture `raw_requirements` verbatim and parse the unambiguous caps.
 
 ## Workflow
 
+**Arm first, disarm never.** This skill is hook-owned. The first step of every invocation writes a session-scoped controller state file; the last step of the parent turn is to end the turn. Parent turns do not run the Stop hook, do not delete state, and do not clean up early — the Stop hook is the only process that clears state, and only on a fresh evaluator verdict (`clean` / `blocked`), a deadline, the iteration cap, or a controller failure.
+
 ### 1) Initial invocation
 
-- Capture `raw_requirements` literally. Do not normalize, summarize, or shorten the user's request.
-- Run the deterministic cap/cadence parser. Preserve every source phrase in `cap_evidence`.
-- Detect explicitly named audits (for example `$agent-linter`, `$audit`) and add them to `required_skill_audits` as `pending` with the success condition copied from `raw_requirements`.
-- Run runtime preflight. If any prerequisite is missing, name it and stop.
-- Write the runtime-specific `arch-loop` state file before any work pass starts so the loop cannot be forgotten mid-turn.
-- Do one bounded work pass toward the requirements, or one immediate grounded check when the request is cadence/check-only.
-- Run the requested named audits inside that pass and update their evidence in state.
-- Update `last_work_summary` and `last_verification_summary`.
-- End the turn naturally. The installed Stop hook now owns continuation.
+1. **Arm.** Ensure-install the Stop hook (`arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>`; fails loud on any drift) → resolve the session id (on Claude Code via `arch_controller_stop_hook.py --current-session`; abort with the tool's error if it fails) → capture `raw_requirements` literally → run the deterministic cap/cadence parser → detect named audits → seed `required_skill_audits` with `status: pending` → compute `raw_requirements_hash = sha256(raw_requirements)` and write the session-scoped state file at version 2 before any work pass starts → do one bounded work pass (or one immediate grounded check when cadence-only) → refresh named audits' `latest_summary` / `evidence_path` only (do not touch `status`) → update `last_work_summary` and `last_verification_summary` → end the turn.
+2. **Body** (hook-owned). The hook validates hash + fingerprint, enforces `deadline_at` and cadence fit, launches the fresh Codex evaluator, copies each audit's `status` + evidence pointer out of the evaluator JSON into state, recomputes the fingerprint, and dispatches the verdict.
+3. **Disarm** (hook-owned). On `clean` or `blocked`, the hook clears state. Deadline, iteration cap, and controller failures also clear state.
 
-### 2) Hook-owned continuation
-
-The installed Stop hook is the only actor that may launch the external evaluator and decide whether the loop continues. The shared runner:
-
-- validates the state and session,
-- enforces `deadline_at` and the installed hook timeout against the requested cadence,
-- launches the fresh Codex `gpt-5.4` `xhigh` evaluator with the prompt at `references/evaluator-prompt.md`,
-- parses the structured verdict, and
-- transitions state per the contract in `references/controller-contract.md`.
-
-`clean` and `blocked` clear state. `continue` with `parent_work` keeps state armed and blocks with a continuation prompt that names `$arch-loop` plus the next concrete task. `continue` with `wait_recheck` keeps state armed, sleeps until the next due time, and reruns the evaluator without waking the parent thread.
-
-### 3) Continuation invocation by the parent
+### 2) Continuation invocation by the parent
 
 - Read the armed state file. Do not ask the user to restate `raw_requirements`.
-- Treat `last_next_task` as guidance, not as a replacement for the original requirements.
-- Do one bounded work pass, refresh named-audit evidence, and end the turn.
-- If `last_continue_mode` is `wait_recheck`, do not act as the parent until the hook decides parent work is useful or the loop stops.
+- Treat `last_next_task` as guidance, not a replacement for `raw_requirements`.
+- Do one bounded work pass, refresh named-audit `latest_summary` / `evidence_path`, and end the turn. Never edit `raw_requirements`, `required_skill_audits[].status`, or the two hash fields — the runner clears state on any such mutation.
+- If `last_continue_mode` was `wait_recheck`, do not act as the parent until the hook switches back to `parent_work` or the loop stops.
 
 ## Output expectations
 
 - Initial invocation:
   - one-line North Star reminder of the captured requirement
   - punchline: armed or already clean
-  - parsed caps and cadence, with the source phrase
+  - parsed caps and cadence with their source phrase
   - named audits detected
-  - exact next move (typically: end the turn and let the installed Stop hook run)
+  - exact next move (typically: end the turn and let the Stop hook run)
 - Continuation invocation:
   - one-line reminder of `raw_requirements`
   - what the last evaluator said and what the next bounded pass will do
@@ -96,7 +80,7 @@ The installed Stop hook is the only actor that may launch the external evaluator
 
 ## Reference map
 
-- `references/controller-contract.md` - state schema, runtime state paths, lifecycle, continuation outcomes, timeout/max-iteration handling, and named-audit evidence
-- `references/cap-extraction.md` - duration/window, cadence, and iteration phrase families, ambiguity handling, strictest-cap selection, and hook-timeout fit
-- `references/evaluator-prompt.md` - the canonical prompt-authored contract for the fresh Codex `gpt-5.4` `xhigh` external evaluator
-- `references/examples.md` - canonical asks and an anti-case
+- `references/controller-contract.md` — state schema, writes matrix (including the hook-owned audit-status fingerprint), runtime state paths, lifecycle, continuation outcomes, timeout/max-iteration handling, and named-audit evidence.
+- `references/cap-extraction.md` — duration/window, cadence, and iteration phrase families, ambiguity handling, strictest-cap selection, hook-timeout fit.
+- `references/evaluator-prompt.md` — the canonical prompt contract for the fresh Codex `gpt-5.4` `xhigh` external evaluator, including the structured JSON output shape with `satisfied_requirements[].evidence` and `required_skill_audits[].status`.
+- `references/examples.md` — canonical asks, a drift-catching example where the evaluator reverses a parent-claimed `pass`, and anti-cases.

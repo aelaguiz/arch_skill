@@ -4,7 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
+import fcntl
+import hashlib
+import importlib.util
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,6 +18,8 @@ import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from types import ModuleType
+from typing import Callable
 
 
 RUNTIME_CODEX = "codex"
@@ -80,7 +87,7 @@ ARCH_LOOP_DISPLAY_NAME = "arch-loop"
 # arch-loop. The external Codex evaluator owns qualitative requirement-satisfaction
 # judgment. These two authorities are intentionally split; neither may claim the
 # other's decisions as its own.
-ARCH_LOOP_STATE_VERSION = 1
+ARCH_LOOP_STATE_VERSION = 2
 # Upper bound on a single hook-owned wait window. Matches the per-command `timeout`
 # installed by `upsert_codex_stop_hook.py` and `upsert_claude_stop_hook.py` (90000s).
 # Cadence or deadline requests that exceed this ceiling must fail loud at arm time
@@ -105,7 +112,6 @@ class ControllerStateSpec:
 class ResolvedControllerState:
     spec: ControllerStateSpec
     state_path: Path
-    is_legacy: bool
 
 
 HOOK_RUNTIME_SPECS = {
@@ -234,6 +240,50 @@ CONTROLLER_STATE_SPECS = (
     WAIT_STATE_SPEC,
     ARCH_LOOP_STATE_SPEC,
 )
+
+
+@dataclass(frozen=True)
+class Controller:
+    name: str
+    spec: ControllerStateSpec
+    display: str
+    dispatch_name: str
+
+
+def _make_controllers() -> dict[str, Controller]:
+    entries = (
+        ("implement-loop", IMPLEMENT_LOOP_STATE_SPEC, "handle_implement_loop"),
+        ("auto-plan", AUTO_PLAN_STATE_SPEC, "handle_auto_plan"),
+        ("miniarch-step-implement-loop", MINIARCH_STEP_IMPLEMENT_LOOP_STATE_SPEC, "handle_miniarch_step_implement_loop"),
+        ("miniarch-step-auto-plan", MINIARCH_STEP_AUTO_PLAN_STATE_SPEC, "handle_miniarch_step_auto_plan"),
+        ("arch-docs-auto", ARCH_DOCS_AUTO_STATE_SPEC, "handle_arch_docs_auto"),
+        ("audit-loop", AUDIT_LOOP_STATE_SPEC, "handle_audit_loop"),
+        ("comment-loop", COMMENT_LOOP_STATE_SPEC, "handle_comment_loop"),
+        ("audit-loop-sim", AUDIT_LOOP_SIM_STATE_SPEC, "handle_audit_loop_sim"),
+        ("delay-poll", DELAY_POLL_STATE_SPEC, "handle_delay_poll"),
+        ("code-review", CODE_REVIEW_STATE_SPEC, "handle_code_review"),
+        ("wait", WAIT_STATE_SPEC, "handle_wait"),
+        ("arch-loop", ARCH_LOOP_STATE_SPEC, "handle_arch_loop"),
+    )
+    return {
+        name: Controller(name=name, spec=spec, display=spec.display_name, dispatch_name=dispatch)
+        for name, spec, dispatch in entries
+    }
+
+
+CONTROLLERS = _make_controllers()
+
+
+def resolve_state_root(runtime_name: str) -> Path:
+    """Return the state root directory for a runtime name (codex or claude)."""
+    spec = HOOK_RUNTIME_SPECS.get(runtime_name)
+    if spec is None:
+        raise ValueError(f"unknown runtime: {runtime_name!r}")
+    return spec.state_root
+
+
+def all_state_roots() -> tuple[Path, ...]:
+    return tuple(spec.state_root for spec in HOOK_RUNTIME_SPECS.values())
 ARCH_DOCS_EVAL_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
@@ -298,7 +348,15 @@ ARCH_LOOP_EVAL_SCHEMA = {
         "summary": {"type": "string"},
         "satisfied_requirements": {
             "type": "array",
-            "items": {"type": "string"},
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["requirement", "evidence"],
+                "properties": {
+                    "requirement": {"type": "string"},
+                    "evidence": {"type": "string"},
+                },
+            },
         },
         "unsatisfied_requirements": {
             "type": "array",
@@ -349,15 +407,68 @@ class FreshStructuredResult:
     payload: dict | None
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--runtime",
         choices=SUPPORTED_RUNTIMES,
-        required=True,
-        help="Host runtime that invoked this Stop hook. Rerun make install to repair stale hook entries.",
+        default=None,
+        help="Host runtime that invoked this Stop hook. Required for Stop-hook dispatch; omit for --list-controllers/--disarm/--disarm-all/--doctor.",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--list-controllers",
+        action="store_true",
+        help="Print the registered controllers (name, state file, display name) and exit.",
+    )
+    parser.add_argument(
+        "--disarm",
+        metavar="NAME",
+        default=None,
+        help="Remove a single controller's state file. Use with --session to target a specific session; otherwise all matching state files are removed.",
+    )
+    parser.add_argument(
+        "--disarm-all",
+        action="store_true",
+        help="Remove every arch_skill controller state file under both state roots. Requires --yes.",
+    )
+    parser.add_argument(
+        "--session",
+        metavar="SESSION_ID",
+        default=None,
+        help="Restrict --disarm to a specific session id.",
+    )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="Confirm a destructive --disarm-all operation.",
+    )
+    parser.add_argument(
+        "--doctor",
+        action="store_true",
+        help="Verify the installed hook wiring and registry integrity; exit 0 OK / 2 on failure.",
+    )
+    parser.add_argument(
+        "--session-start-cache",
+        action="store_true",
+        help="Read a SessionStart hook JSON payload from stdin and cache the Claude session id on disk.",
+    )
+    parser.add_argument(
+        "--current-session",
+        action="store_true",
+        help="Print the Claude session id cached by the SessionStart hook for this CLI, or exit 2 with a loud-failure message.",
+    )
+    parser.add_argument(
+        "--ensure-installed",
+        action="store_true",
+        help="Upsert the canonical Stop hook (and, for claude, the SessionStart hook) for --runtime. Idempotent; flock-guarded; safe to call from every arm.",
+    )
+    parser.add_argument(
+        "--root",
+        metavar="DIR",
+        default=None,
+        help="Repo root override for --disarm/--disarm-all. Defaults to the current working directory.",
+    )
+    return parser.parse_args(argv)
 
 
 def require_runtime() -> HookRuntimeSpec:
@@ -390,22 +501,17 @@ def clear_state(state_path: Path) -> None:
 
 def write_state(state_path: Path, state: dict) -> None:
     state_path.parent.mkdir(parents=True, exist_ok=True)
-    state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
-
-
-def claim_legacy_state_for_session(
-    state_path: Path,
-    state: dict,
-    payload_session_id: str,
-) -> Path:
-    claimed_path = state_path.with_name(
-        f"{state_path.stem}.{payload_session_id}{state_path.suffix}"
-    )
-    state["session_id"] = payload_session_id
-    write_state(claimed_path, state)
-    if claimed_path != state_path:
-        clear_state(state_path)
-    return claimed_path
+    # Advisory lock guards against two concurrent writers racing on the same state
+    # file. Local filesystems only; networked filesystems cannot be relied on here.
+    payload = json.dumps(state, indent=2) + "\n"
+    fd = os.open(state_path, os.O_WRONLY | os.O_CREAT, 0o644)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        os.ftruncate(fd, 0)
+        os.write(fd, payload.encode("utf-8"))
+    finally:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        os.close(fd)
 
 
 def current_epoch_seconds() -> int:
@@ -532,52 +638,17 @@ def load_json_object_quiet(path: Path) -> dict | None:
     return payload
 
 
-def state_matches_session(
-    state: dict | None,
-    expected_command: str,
-    session_id: str | None,
-    *,
-    allow_missing_session_id: bool,
-) -> bool:
-    if state is None or state.get("command") != expected_command:
-        return False
-    state_session_id = state.get("session_id")
-    if state_session_id is None:
-        return allow_missing_session_id
-    return isinstance(state_session_id, str) and session_id is not None and state_session_id == session_id
-
-
-def legacy_state_is_active_for_session(
-    cwd: Path,
-    spec: ControllerStateSpec,
-    payload: dict,
-) -> bool:
-    legacy_path = cwd / controller_state_relative_path(spec)
-    legacy_state = load_json_object_quiet(legacy_path)
-    return state_matches_session(
-        legacy_state,
-        spec.expected_command,
-        current_session_id(payload),
-        allow_missing_session_id=True,
-    )
-
-
 def resolve_active_controller_state(
     payload: dict,
     spec: ControllerStateSpec,
 ) -> ResolvedControllerState | None:
     cwd = Path(payload["cwd"]).resolve()
     session_id = current_session_id(payload)
-    session_path = (
-        session_state_path(cwd, spec, session_id)
-        if session_id is not None
-        else None
-    )
-    legacy_path = cwd / controller_state_relative_path(spec)
-    if session_path is not None and session_path.exists():
-        return ResolvedControllerState(spec=spec, state_path=session_path, is_legacy=False)
-    if legacy_state_is_active_for_session(cwd, spec, payload):
-        return ResolvedControllerState(spec=spec, state_path=legacy_path, is_legacy=True)
+    if session_id is None:
+        return None
+    session_path = session_state_path(cwd, spec, session_id)
+    if session_path.exists():
+        return ResolvedControllerState(spec=spec, state_path=session_path)
     return None
 
 
@@ -587,16 +658,11 @@ def resolve_controller_state_for_handler(
 ) -> ResolvedControllerState | None:
     cwd = Path(payload["cwd"]).resolve()
     session_id = current_session_id(payload)
-    session_path = (
-        session_state_path(cwd, spec, session_id)
-        if session_id is not None
-        else None
-    )
-    legacy_path = cwd / controller_state_relative_path(spec)
-    if session_path is not None and session_path.exists():
-        return ResolvedControllerState(spec=spec, state_path=session_path, is_legacy=False)
-    if legacy_path.exists():
-        return ResolvedControllerState(spec=spec, state_path=legacy_path, is_legacy=True)
+    if session_id is None:
+        return None
+    session_path = session_state_path(cwd, spec, session_id)
+    if session_path.exists():
+        return ResolvedControllerState(spec=spec, state_path=session_path)
     return None
 
 
@@ -642,7 +708,7 @@ def load_controller_state(
     resolved_state: ResolvedControllerState | None,
     command_name: str,
     expected_command: str,
-) -> tuple[Path, dict, bool] | None:
+) -> tuple[Path, dict] | None:
     if resolved_state is None:
         return None
     state_path = resolved_state.state_path
@@ -650,14 +716,12 @@ def load_controller_state(
     if state is None:
         return None
     if state.get("command") != expected_command:
-        if resolved_state.is_legacy:
-            return None
         clear_state(state_path)
         block_with_message(
             f"{command_name} controller state at {display_path(state_path, cwd)} had an unexpected command; "
             "the controller was disarmed. Update the repo truthfully and stop."
         )
-    return state_path, state, resolved_state.is_legacy
+    return state_path, state
 
 
 def validate_session_id(
@@ -666,8 +730,6 @@ def validate_session_id(
     state_path: Path,
     state: dict,
     command_name: str,
-    *,
-    allow_claim: bool,
 ) -> Path | None:
     payload_session_id = current_session_id(payload)
     if payload_session_id is None:
@@ -680,12 +742,6 @@ def validate_session_id(
 
     session_id = state.get("session_id")
     if session_id is None:
-        if allow_claim:
-            return claim_legacy_state_for_session(
-                state_path,
-                state,
-                payload_session_id,
-            )
         clear_state(state_path)
         block_with_message(
             f"{command_name} controller state at {display_path(state_path, cwd)} was missing session_id; "
@@ -698,18 +754,10 @@ def validate_session_id(
             "the controller was disarmed. Update the repo truthfully and stop."
         )
     if session_id != payload_session_id:
-        if allow_claim:
-            return None
         clear_state(state_path)
         block_with_message(
             f"{command_name} controller state at {display_path(state_path, cwd)} had a mismatched session_id; "
             "the controller was disarmed. Update the repo truthfully and stop."
-        )
-    if allow_claim:
-        return claim_legacy_state_for_session(
-            state_path,
-            state,
-            payload_session_id,
         )
     return state_path
 
@@ -1346,14 +1394,13 @@ def validate_implement_loop_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         IMPLEMENT_LOOP_COMMAND,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1382,14 +1429,13 @@ def validate_auto_plan_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         AUTO_PLAN_COMMAND,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1420,14 +1466,13 @@ def validate_miniarch_step_implement_loop_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         MINIARCH_STEP_IMPLEMENT_LOOP_COMMAND,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1456,14 +1501,13 @@ def validate_miniarch_step_auto_plan_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         MINIARCH_STEP_AUTO_PLAN_COMMAND,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1494,14 +1538,13 @@ def validate_arch_docs_auto_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         ARCH_DOCS_AUTO_COMMAND,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1600,14 +1643,13 @@ def validate_audit_loop_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         AUDIT_LOOP_DISPLAY_NAME,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1638,14 +1680,13 @@ def validate_comment_loop_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         COMMENT_LOOP_DISPLAY_NAME,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1676,14 +1717,13 @@ def validate_audit_loop_sim_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         AUDIT_LOOP_SIM_DISPLAY_NAME,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1714,14 +1754,13 @@ def validate_delay_poll_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         DELAY_POLL_DISPLAY_NAME,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1831,14 +1870,13 @@ def validate_code_review_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         CODE_REVIEW_DISPLAY_NAME,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -1977,14 +2015,13 @@ def validate_wait_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         WAIT_DISPLAY_NAME,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -2362,6 +2399,42 @@ def extract_arch_loop_constraints(
 _ARCH_LOOP_AUDIT_STATUS_DISPLAY = ("pending", "pass", "fail", "missing", "inapplicable")
 _ARCH_LOOP_VALID_AUDIT_STATUSES = set(_ARCH_LOOP_AUDIT_STATUS_DISPLAY)
 _ARCH_LOOP_VALID_CONTINUE_MODES = {"", "parent_work", "wait_recheck", "none"}
+
+
+def _arch_loop_raw_requirements_hash(raw_requirements: str) -> str:
+    """Return the canonical SHA-256 of raw_requirements as stored in state.
+
+    The hash is taken over the literal UTF-8 bytes of the string the parent
+    captured from the user. Any edit (shortening, rewording, narrowing) will
+    produce a different digest and trip the mutation guard in
+    validate_arch_loop_state.
+    """
+    return hashlib.sha256(raw_requirements.encode("utf-8")).hexdigest()
+
+
+def _arch_loop_audits_fingerprint(audits: list | None) -> str:
+    """Return the canonical SHA-256 fingerprint of required_skill_audits.
+
+    Covers (skill, target, requirement, status) per entry. Sorted by
+    (skill, target) and serialized with stable JSON so parent-side writes to
+    any of those four fields are caught on the next hook read.
+    """
+    canonical: list[dict[str, str]] = []
+    for audit in audits or ():
+        if not isinstance(audit, dict):
+            continue
+        canonical.append(
+            {
+                "skill": str(audit.get("skill", "")),
+                "target": str(audit.get("target", "")),
+                "requirement": str(audit.get("requirement", "")),
+                "status": str(audit.get("status", "")),
+            }
+        )
+    canonical.sort(key=lambda entry: (entry["skill"], entry["target"]))
+    serialized = json.dumps(canonical, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
 _ARCH_LOOP_EVAL_AUDIT_STATUSES = {
     "pass",
     "fail",
@@ -2388,14 +2461,13 @@ def validate_arch_loop_state(
     )
     if loaded is None:
         return None
-    state_path, state, is_legacy = loaded
+    state_path, state = loaded
     claimed_path = validate_session_id(
         payload,
         cwd,
         state_path,
         state,
         ARCH_LOOP_DISPLAY_NAME,
-        allow_claim=is_legacy,
     )
     if claimed_path is None:
         return None
@@ -2407,9 +2479,10 @@ def validate_arch_loop_state(
     if version != ARCH_LOOP_STATE_VERSION:
         clear_state(state_path)
         block_with_message(
-            "arch-loop controller state had an unsupported version; "
-            "the controller was disarmed. Re-arm arch-loop with version "
-            f"{ARCH_LOOP_STATE_VERSION} state."
+            f"arch-loop controller state uses version {version!r}; this runner "
+            f"requires version {ARCH_LOOP_STATE_VERSION}. Re-arm required due to "
+            "arch-loop schema upgrade (the runner now enforces raw_requirements "
+            "and audit-status immutability via stored hashes)."
         )
 
     runtime = state.get("runtime")
@@ -2572,6 +2645,64 @@ def validate_arch_loop_state(
                 f"({last_continue_mode!r}); the controller was disarmed. "
                 "Re-arm arch-loop truthfully."
             )
+
+    # raw_requirements immutability guard. The stored hash is pinned at arm
+    # time; any parent-side edit to raw_requirements (narrowing, rewording,
+    # dropping a clause) will produce a different recomputed digest and clear
+    # state loudly.
+    stored_hash = state.get("raw_requirements_hash")
+    if not isinstance(stored_hash, str) or not stored_hash.strip():
+        clear_state(state_path)
+        block_with_message(
+            "arch-loop controller state is missing raw_requirements_hash. "
+            "Re-arm required due to arch-loop schema upgrade; the parent arm "
+            "pass must now store sha256(raw_requirements) to pin the goal."
+        )
+    recomputed_hash = _arch_loop_raw_requirements_hash(raw_requirements)
+    if stored_hash != recomputed_hash:
+        clear_state(state_path)
+        block_with_message(
+            "arch-loop raw_requirements mutation detected: the stored "
+            "raw_requirements_hash does not match sha256(raw_requirements). "
+            "The controller was disarmed. Re-arm with the user's original "
+            "request literally; do not narrow or rewrite it across turns."
+        )
+
+    # Audit-status immutability guard. After the first hook entry seeds the
+    # authoritative fingerprint, any parent-side edit to a
+    # required_skill_audits[].status (or to skill/target/requirement) will
+    # miss the stored fingerprint and clear state.
+    stored_fp = state.get("audits_authoritative_fingerprint")
+    current_audits = state.get("required_skill_audits") or []
+    recomputed_fp = _arch_loop_audits_fingerprint(current_audits)
+    is_first_entry = (
+        int(state.get("iteration_count") or 0) == 0
+        and int(state.get("check_count") or 0) == 0
+    )
+    if stored_fp is None or stored_fp == "":
+        if is_first_entry:
+            # Seed the fingerprint from the arm-time audits. Parent writes to
+            # (skill, target, requirement, status) after this point are caught
+            # on the next hook read.
+            state["audits_authoritative_fingerprint"] = recomputed_fp
+            write_required = True
+        else:
+            clear_state(state_path)
+            block_with_message(
+                "arch-loop controller state is missing "
+                "audits_authoritative_fingerprint on a continuation pass. "
+                "The controller was disarmed. Re-arm required due to "
+                "arch-loop schema upgrade."
+            )
+    elif not isinstance(stored_fp, str) or stored_fp != recomputed_fp:
+        clear_state(state_path)
+        block_with_message(
+            "arch-loop audit status mutation detected: the stored "
+            "audits_authoritative_fingerprint does not match the on-disk "
+            "required_skill_audits. The controller was disarmed. The "
+            "evaluator owns audit status; parent passes may only update "
+            "latest_summary and evidence_path."
+        )
 
     if write_required:
         write_state(state_path, state)
@@ -3937,6 +4068,92 @@ def handle_arch_loop(payload: dict) -> int:
                     "invalid status. The controller was disarmed.",
                     system_message="arch-loop fresh evaluator returned bad audit status.",
                 )
+            skill_name = audit.get("skill")
+            evidence = audit.get("evidence")
+            if not isinstance(skill_name, str) or not skill_name.strip():
+                _arch_loop_stop_invalid_output(
+                    state_path,
+                    "arch-loop fresh evaluator returned an audit entry without a "
+                    "skill name. The controller was disarmed.",
+                    system_message="arch-loop fresh evaluator returned audit without skill.",
+                )
+            if not isinstance(evidence, str) or not evidence.strip():
+                _arch_loop_stop_invalid_output(
+                    state_path,
+                    "arch-loop fresh evaluator returned an audit entry without "
+                    "evidence. Every audit must cite a repo-verified pointer. "
+                    "The controller was disarmed.",
+                    system_message="arch-loop fresh evaluator returned audit without evidence.",
+                )
+
+        for item in satisfied:
+            if not isinstance(item, dict):
+                _arch_loop_stop_invalid_output(
+                    state_path,
+                    "arch-loop fresh evaluator returned a satisfied_requirements "
+                    "entry that was not an object with requirement+evidence. "
+                    "The controller was disarmed.",
+                    system_message="arch-loop satisfied_requirements entry malformed.",
+                )
+            requirement_text = item.get("requirement")
+            evidence_text = item.get("evidence")
+            if not isinstance(requirement_text, str) or not requirement_text.strip():
+                _arch_loop_stop_invalid_output(
+                    state_path,
+                    "arch-loop satisfied_requirements entry missing requirement. "
+                    "The controller was disarmed.",
+                    system_message="arch-loop satisfied_requirements missing requirement.",
+                )
+            if not isinstance(evidence_text, str) or not evidence_text.strip():
+                _arch_loop_stop_invalid_output(
+                    state_path,
+                    "arch-loop satisfied_requirements entry missing evidence. "
+                    "Every satisfied requirement needs a concrete repo-backed "
+                    "pointer (file+lines or a read-only command). "
+                    "The controller was disarmed.",
+                    system_message="arch-loop satisfied_requirements missing evidence.",
+                )
+
+        # The evaluator owns required_skill_audits[].status from this point
+        # on. Copy per-skill status and evidence into the authoritative state
+        # list, recompute the fingerprint, and persist before we branch on
+        # the verdict so a parent-side mutation next turn is caught.
+        state_audits = state.get("required_skill_audits") or []
+        if state_audits and eval_audits:
+            eval_by_skill: dict[str, dict] = {}
+            for eval_entry in eval_audits:
+                skill_key = str(eval_entry.get("skill", "")).strip()
+                if skill_key:
+                    eval_by_skill.setdefault(skill_key, eval_entry)
+            updated = False
+            for audit in state_audits:
+                if not isinstance(audit, dict):
+                    continue
+                skill_key = str(audit.get("skill", "")).strip()
+                eval_entry = eval_by_skill.get(skill_key)
+                if eval_entry is None:
+                    continue
+                eval_status = eval_entry.get("status")
+                # Project the evaluator status vocabulary onto the state
+                # vocabulary (state uses `pending` for the pre-verdict seed;
+                # the evaluator never emits `pending`, and `not_requested`
+                # does not apply to a state-listed audit).
+                if eval_status in _ARCH_LOOP_VALID_AUDIT_STATUSES:
+                    new_status = eval_status
+                else:
+                    new_status = "pending"
+                evidence_text = eval_entry.get("evidence")
+                if audit.get("status") != new_status:
+                    updated = True
+                audit["status"] = new_status
+                if isinstance(evidence_text, str) and evidence_text.strip():
+                    audit["latest_summary"] = evidence_text.strip()
+            if updated:
+                state["required_skill_audits"] = state_audits
+        state["audits_authoritative_fingerprint"] = _arch_loop_audits_fingerprint(
+            state.get("required_skill_audits") or []
+        )
+        write_state(state_path, state)
 
         summary_clean = summary_text.strip()
         continue_mode = verdict_payload.get("continue_mode")
@@ -4051,21 +4268,14 @@ def handle_arch_loop(payload: dict) -> int:
 def collect_active_state_paths_for_session(payload: dict) -> list[Path]:
     cwd = Path(payload["cwd"]).resolve()
     session_id = current_session_id(payload)
+    if session_id is None:
+        return []
     paths: list[Path] = []
     for spec in CONTROLLER_STATE_SPECS:
         relative = controller_state_relative_path(spec)
-        if session_id is not None:
-            session_path = cwd / session_state_relative_path(relative, session_id)
-            if session_path.exists():
-                paths.append(session_path)
-        legacy_path = cwd / relative
-        if legacy_path.exists() and state_matches_session(
-            load_json_object_quiet(legacy_path),
-            spec.expected_command,
-            session_id,
-            allow_missing_session_id=True,
-        ):
-            paths.append(legacy_path)
+        session_path = cwd / session_state_relative_path(relative, session_id)
+        if session_path.exists():
+            paths.append(session_path)
     return paths
 
 
@@ -4083,11 +4293,472 @@ def block_when_multiple_controller_states_armed(payload: dict) -> None:
     )
 
 
-def main() -> int:
+# ---------------------------------------------------------------------------
+# CLI flags: --list-controllers, --disarm, --disarm-all, --doctor, staleness sweep.
+# These are registry-driven and do not run the Stop-hook dispatch.
+# ---------------------------------------------------------------------------
+
+
+def _controller_state_glob(root: Path, spec: ControllerStateSpec) -> list[Path]:
+    """Match session-scoped and unsuffixed state files for a given controller."""
+    if not root.exists():
+        return []
+    stem = spec.relative_path.stem
+    suffix = spec.relative_path.suffix
+    matches: list[Path] = []
+    unsuffixed = root / f"{stem}{suffix}"
+    if unsuffixed.is_file():
+        matches.append(unsuffixed)
+    matches.extend(
+        path
+        for path in root.glob(f"{stem}.*{suffix}")
+        if path.is_file()
+    )
+    return matches
+
+
+def cmd_list_controllers() -> int:
+    sys.stdout.write("name\tstate-file\tdisplay\n")
+    for controller in CONTROLLERS.values():
+        sys.stdout.write(
+            f"{controller.name}\t{controller.spec.relative_path}\t{controller.display}\n"
+        )
+    return 0
+
+
+def cmd_disarm(
+    name: str,
+    *,
+    root: Path,
+    session_id: str | None,
+) -> int:
+    controller = CONTROLLERS.get(name)
+    if controller is None:
+        sys.stderr.write(
+            f"unknown controller: {name!r}. Run --list-controllers to see the valid names.\n"
+        )
+        return 2
+    spec = controller.spec
+    removed: list[Path] = []
+    for runtime_root in all_state_roots():
+        state_root = root / runtime_root
+        if session_id is not None:
+            session_path = state_root / session_state_relative_path(spec.relative_path, session_id)
+            if session_path.is_file():
+                session_path.unlink()
+                removed.append(session_path)
+            continue
+        for path in _controller_state_glob(state_root, spec):
+            path.unlink()
+            removed.append(path)
+    if not removed:
+        sys.stdout.write(f"no state files found for {name}\n")
+        return 0
+    for path in removed:
+        sys.stdout.write(f"removed {path}\n")
+    return 0
+
+
+def cmd_disarm_all(root: Path, *, confirmed: bool) -> int:
+    if not confirmed:
+        sys.stderr.write(
+            "--disarm-all is destructive. Re-run with --yes to confirm.\n"
+        )
+        return 2
+    removed: list[Path] = []
+    for controller in CONTROLLERS.values():
+        for runtime_root in all_state_roots():
+            state_root = root / runtime_root
+            for path in _controller_state_glob(state_root, controller.spec):
+                path.unlink()
+                removed.append(path)
+    if not removed:
+        sys.stdout.write("no state files found\n")
+        return 0
+    for path in removed:
+        sys.stdout.write(f"removed {path}\n")
+    return 0
+
+
+_INSTALLED_RUNNER_PATH = Path.home() / ".agents/skills/arch-step/scripts/arch_controller_stop_hook.py"
+_INSTALLED_SKILLS_DIR = Path.home() / ".agents/skills"
+_CODEX_HOOKS_FILE = Path.home() / ".codex/hooks.json"
+_CLAUDE_SETTINGS_FILE = Path.home() / ".claude/settings.json"
+
+
+def _load_upsert_module(module_name: str) -> ModuleType:
+    """Import an upsert sibling script as a Python module."""
+    script_path = Path(__file__).resolve().parent / f"{module_name}.py"
+    if not script_path.is_file():
+        raise SystemExit(
+            f"arch_skill: installer script missing at {script_path}. Run `make install` to reinstall."
+        )
+    spec = importlib.util.spec_from_file_location(module_name, script_path)
+    if spec is None or spec.loader is None:
+        raise SystemExit(f"arch_skill: failed to load installer {script_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def ensure_installed(runtime: str) -> None:
+    """Idempotent arm-time install for a runtime. Writes the canonical Stop-hook
+    entry (and SessionStart cache entry on claude) into the user's settings file
+    under flock. Called by `--ensure-installed` and, implicitly, by dispatch-time
+    verification.
+
+    The upsert modules already take an exclusive flock on the target settings
+    file, so parallel sessions converge without races."""
+    skills_dir = _INSTALLED_SKILLS_DIR
+    if runtime == RUNTIME_CODEX:
+        codex = _load_upsert_module("upsert_codex_stop_hook")
+        codex.install_hook(_CODEX_HOOKS_FILE, skills_dir)
+        return
+    if runtime == RUNTIME_CLAUDE:
+        claude_stop = _load_upsert_module("upsert_claude_stop_hook")
+        claude_start = _load_upsert_module("upsert_claude_session_start_hook")
+        claude_stop.install_hook(_CLAUDE_SETTINGS_FILE, skills_dir)
+        claude_start.install_hook(_CLAUDE_SETTINGS_FILE, skills_dir)
+        return
+    raise SystemExit(f"arch_skill: unknown runtime {runtime!r} for ensure-install")
+
+
+def verify_installed_or_die(runtime: str) -> None:
+    """Dispatch-time loud verify. Called at the top of every Stop-hook turn
+    before any state is touched. If any canonical hook entry is missing or
+    stale, fail loud with the exact repair command. No silent migration."""
+    skills_dir = _INSTALLED_SKILLS_DIR
+    repair_cmd = f"python3 {_INSTALLED_RUNNER_PATH} --ensure-installed --runtime {runtime}"
+    try:
+        if runtime == RUNTIME_CODEX:
+            codex = _load_upsert_module("upsert_codex_stop_hook")
+            codex.verify_hook(_CODEX_HOOKS_FILE, skills_dir)
+            return
+        if runtime == RUNTIME_CLAUDE:
+            claude_stop = _load_upsert_module("upsert_claude_stop_hook")
+            claude_start = _load_upsert_module("upsert_claude_session_start_hook")
+            claude_stop.verify_hook(_CLAUDE_SETTINGS_FILE, skills_dir)
+            claude_start.verify_hook(_CLAUDE_SETTINGS_FILE, skills_dir)
+            return
+    except SystemExit as exc:
+        sys.stderr.write(
+            f"arch_skill: dispatch-time install verify failed: {exc}\n"
+            f"Repair: {repair_cmd}\n"
+        )
+        raise SystemExit(2) from exc
+
+
+def cmd_ensure_installed(runtime: str) -> int:
+    ensure_installed(runtime)
+    verify_installed_or_die(runtime)
+    sys.stdout.write(f"OK: arch_skill hooks verified for runtime {runtime}\n")
+    return 0
+
+
+def cmd_doctor() -> int:
+    runner_path = Path.home() / ".agents/skills/arch-step/scripts/arch_controller_stop_hook.py"
+    problems: list[str] = []
+    ok: list[str] = []
+    if runner_path.is_file():
+        ok.append(f"runner installed at {runner_path}")
+    else:
+        problems.append(f"runner missing at {runner_path}")
+    codex_hooks = Path.home() / ".codex/hooks.json"
+    if codex_hooks.is_file():
+        text = codex_hooks.read_text(encoding="utf-8")
+        if str(runner_path) in text and "--runtime codex" in text:
+            ok.append(f"codex Stop hook wired at {codex_hooks}")
+        else:
+            problems.append(
+                f"codex Stop hook at {codex_hooks} does not reference {runner_path} --runtime codex"
+            )
+    else:
+        ok.append("codex hooks.json not present (skipped)")
+    claude_settings = Path.home() / ".claude/settings.json"
+    if claude_settings.is_file():
+        text = claude_settings.read_text(encoding="utf-8")
+        if str(runner_path) in text and "--runtime claude" in text:
+            ok.append(f"claude Stop hook wired at {claude_settings}")
+        else:
+            problems.append(
+                f"claude Stop hook at {claude_settings} does not reference {runner_path} --runtime claude"
+            )
+        if str(runner_path) in text and "--session-start-cache" in text:
+            ok.append(f"claude SessionStart hook wired at {claude_settings}")
+        else:
+            problems.append(
+                f"claude SessionStart hook at {claude_settings} does not reference {runner_path} --session-start-cache"
+            )
+    else:
+        ok.append("claude settings.json not present (skipped)")
+    for line in ok:
+        sys.stdout.write(f"OK: {line}\n")
+    for line in problems:
+        sys.stdout.write(f"MISSING: {line}\n")
+    return 0 if not problems else 2
+
+
+_STALE_SLACK_SECONDS = 5
+_SESSION_CACHE_ROOT = Path.home() / ".claude/state/arch_skill/sessions"
+_SESSION_CACHE_MAX_AGE_SECONDS = 86_400
+_PID_WALK_MAX_DEPTH = 32
+
+
+def _ps_lookup(pid: int) -> tuple[int, str] | None:
+    """Return (ppid, comm) for pid via `ps`, or None if the process cannot be inspected.
+    Cross-platform between macOS and Linux."""
+    try:
+        result = subprocess.run(
+            ["ps", "-o", "ppid=,comm=", "-p", str(pid)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except (FileNotFoundError, OSError):
+        return None
+    if result.returncode != 0:
+        return None
+    line = result.stdout.strip()
+    if not line:
+        return None
+    parts = line.split(None, 1)
+    if len(parts) != 2:
+        return None
+    try:
+        ppid = int(parts[0])
+    except ValueError:
+        return None
+    comm = parts[1].strip()
+    return ppid, comm
+
+
+def _is_claude_cli_comm(comm: str) -> bool:
+    lowered = comm.lower()
+    name = Path(lowered).name
+    return name == "claude" or name.startswith("claude-") or lowered.endswith("/claude")
+
+
+def _walk_up_to_claude_cli(start_pid: int) -> tuple[int | None, list[int]]:
+    """Walk up the PPID chain looking for the Claude CLI process. Returns the CLI pid
+    plus the visited chain for diagnostics. Returns (None, chain) on overflow or lookup
+    failure."""
+    chain: list[int] = []
+    pid = start_pid
+    for _ in range(_PID_WALK_MAX_DEPTH):
+        if pid <= 1:
+            return None, chain
+        chain.append(pid)
+        info = _ps_lookup(pid)
+        if info is None:
+            return None, chain
+        ppid, comm = info
+        if _is_claude_cli_comm(comm):
+            return pid, chain
+        pid = ppid
+    return None, chain
+
+
+def _session_cache_path(cli_pid: int) -> Path:
+    return _SESSION_CACHE_ROOT / f"{cli_pid}.json"
+
+
+def cmd_session_start_cache() -> int:
+    try:
+        payload = json.load(sys.stdin)
+    except json.JSONDecodeError as exc:
+        sys.stderr.write(f"invalid SessionStart input JSON: {exc}\n")
+        return 2
+    if not isinstance(payload, dict):
+        sys.stderr.write("invalid SessionStart input: expected a JSON object\n")
+        return 2
+    session_id = payload.get("session_id")
+    if not isinstance(session_id, str) or not session_id:
+        sys.stderr.write("SessionStart payload missing session_id\n")
+        return 2
+    cli_pid = os.getppid()
+    cache_path = _session_cache_path(cli_pid)
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    record = {
+        "session_id": session_id,
+        "pid": cli_pid,
+        "cwd": str(payload.get("cwd") or ""),
+        "armed_at": current_epoch_seconds(),
+    }
+    write_state(cache_path, record)
+    return 0
+
+
+def _loud_missing_cache_message(chain: list[int]) -> str:
+    chain_text = ",".join(str(p) for p in chain) if chain else "<unknown>"
+    return (
+        "SessionStart hook cache missing for this Claude Code session "
+        f"(PID chain: {chain_text}). Restart the Claude Code session, or reinstall "
+        "skills with: make install\n"
+    )
+
+
+def cmd_current_session() -> int:
+    cli_pid, chain = _walk_up_to_claude_cli(os.getppid())
+    if cli_pid is None:
+        sys.stderr.write(_loud_missing_cache_message(chain))
+        return 2
+    cache_path = _session_cache_path(cli_pid)
+    record = load_json_object_quiet(cache_path)
+    if record is None:
+        sys.stderr.write(_loud_missing_cache_message(chain))
+        return 2
+    session_id = record.get("session_id")
+    if not isinstance(session_id, str) or not session_id:
+        sys.stderr.write(_loud_missing_cache_message(chain))
+        return 2
+    sys.stdout.write(session_id + "\n")
+    return 0
+
+
+def _pid_alive(pid: int) -> bool:
+    if not isinstance(pid, int) or pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    except OSError:
+        return False
+    return True
+
+
+def _sweep_session_cache(*, announce: bool = False) -> list[Path]:
+    if not _SESSION_CACHE_ROOT.exists():
+        return []
+    now = current_epoch_seconds()
+    moved: list[Path] = []
+    for path in _SESSION_CACHE_ROOT.glob("*.json"):
+        record = load_json_object_quiet(path)
+        if record is None:
+            continue
+        armed_at = record.get("armed_at")
+        pid = record.get("pid")
+        expired = isinstance(armed_at, int) and (armed_at + _SESSION_CACHE_MAX_AGE_SECONDS) < now
+        dead = not _pid_alive(pid) if isinstance(pid, int) else True
+        if not (expired or dead):
+            continue
+        dest = _move_to_stale(path)
+        moved.append(dest)
+        if announce:
+            sys.stderr.write(f"stale session cache moved: {path} -> {dest}\n")
+    return moved
+
+
+def _move_to_stale(state_path: Path) -> Path:
+    stale_root = state_path.parent / "_stale"
+    stale_root.mkdir(parents=True, exist_ok=True)
+    stamp = _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    dest = stale_root / f"{stamp}-{state_path.name}"
+    state_path.rename(dest)
+    return dest
+
+
+def staleness_sweep(
+    root: Path,
+    payload: dict | None = None,
+    *,
+    announce: bool = False,
+) -> list[Path]:
+    """Scan both state roots for obviously stale state files and move them into
+    <root>/_stale/. Three conditions trigger a move:
+
+    1. An unsuffixed state file (legacy single-slot naming) is present. These
+       are never honored by the runner any longer, so sweep on sight.
+    2. A session-scoped state file has `deadline_at` more than
+       `_STALE_SLACK_SECONDS` in the past AND its session id does not match the
+       payload's current session. Matching-session expired state is left alone
+       so dispatch handlers can fire their resume prompt authoritatively.
+
+    Malformed files (unparseable JSON) are left to the dispatch handlers.
+
+    If `announce` is true, each move is logged to stderr. The Stop hook calls
+    this with announce=True so unsuffixed-state sweeps are visible.
+    """
+    now = current_epoch_seconds()
+    payload_session = current_session_id(payload) if payload else None
+    moved: list[Path] = []
+    for runtime_root in all_state_roots():
+        state_root = root / runtime_root
+        if not state_root.exists():
+            continue
+        for controller in CONTROLLERS.values():
+            stem = controller.spec.relative_path.stem
+            suffix = controller.spec.relative_path.suffix
+            unsuffixed = state_root / f"{stem}{suffix}"
+            if unsuffixed.is_file():
+                dest = _move_to_stale(unsuffixed)
+                moved.append(dest)
+                sys.stderr.write(
+                    f"arch_skill: unsuffixed controller state is never honored; moved {unsuffixed} -> {dest}\n"
+                )
+            for path in _controller_state_glob(state_root, controller.spec):
+                if path == unsuffixed:
+                    continue
+                state = load_json_object_quiet(path)
+                if state is None:
+                    continue
+                deadline = state.get("deadline_at")
+                if not isinstance(deadline, int) or deadline + _STALE_SLACK_SECONDS >= now:
+                    continue
+                state_session = state.get("session_id")
+                if (
+                    payload_session is not None
+                    and isinstance(state_session, str)
+                    and state_session == payload_session
+                ):
+                    continue
+                dest = _move_to_stale(path)
+                moved.append(dest)
+                if announce:
+                    sys.stderr.write(f"stale controller state moved: {path} -> {dest}\n")
+    moved.extend(_sweep_session_cache(announce=announce))
+    return moved
+
+
+def main(argv: list[str] | None = None) -> int:
     global ACTIVE_RUNTIME
-    args = parse_args()
+    args = parse_args(argv)
+
+    if args.list_controllers:
+        return cmd_list_controllers()
+    if args.doctor:
+        return cmd_doctor()
+    if args.session_start_cache:
+        return cmd_session_start_cache()
+    if args.current_session:
+        return cmd_current_session()
+    if args.ensure_installed:
+        if args.runtime is None:
+            sys.stderr.write(
+                "--ensure-installed requires --runtime {codex|claude}.\n"
+            )
+            return 2
+        return cmd_ensure_installed(args.runtime)
+    root = Path(args.root).resolve() if args.root else Path.cwd().resolve()
+    if args.disarm_all:
+        return cmd_disarm_all(root, confirmed=args.yes)
+    if args.disarm is not None:
+        return cmd_disarm(args.disarm, root=root, session_id=args.session)
+
+    if args.runtime is None:
+        sys.stderr.write(
+            "--runtime is required for Stop-hook dispatch. Use --list-controllers, "
+            "--disarm, --disarm-all, --doctor, or --ensure-installed for management operations.\n"
+        )
+        return 2
+
     ACTIVE_RUNTIME = HOOK_RUNTIME_SPECS[args.runtime]
+    verify_installed_or_die(args.runtime)
     payload = load_stop_payload()
+    cwd = Path(payload.get("cwd") or Path.cwd()).resolve()
+    staleness_sweep(cwd, payload)
     block_when_multiple_controller_states_armed(payload)
     handle_miniarch_step_implement_loop(payload)
     handle_implement_loop(payload)

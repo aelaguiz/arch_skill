@@ -26,6 +26,21 @@
 - Local ownership is subordinate to artifact convergence.
 - If a command updates one part of the plan and can see that nearby sections are now stale, it should repair the necessary safe set of contradictions before exiting.
 
+## Intent-first gate
+
+Before forming any blocker question, consult the approved intent on the plan doc in this order:
+
+- Section 0 (North Star)
+- TL;DR
+- Section 7 phase frontier
+- any other approved section that constrains the decision
+
+If intent plus repo evidence settles the question, answer it yourself, proceed, and append an `Intent-derived` entry to the Decision Log using the shape in `artifact-contract.md`. Only ask the user when intent plus repo evidence genuinely leave two credible branches that materially change scope, migration burden, compatibility posture, or user-visible truth.
+
+If Section 0 is still draft, weak, or contradictory, that itself is the question. Route back to North Star confirmation; do not invent intent.
+
+The point of this gate is reinforcement. Writing the derivation down is what produces good answers under pressure. Do not skip the Decision Log entry when you answer from intent.
+
 ## Question policy
 
 Use repo evidence first.
@@ -204,6 +219,7 @@ Negative-value defaults to avoid:
 - If requiredness is not derivable from repo truth plus the approved plan, ask the user. Do not downgrade that uncertainty into follow-up, defer, optional, or a silent scope cut.
 - Do not remove or relabel approved behavior just because it looks larger than expected. Only the user or explicit plan text can narrow approved intent.
 - Stop and ask whenever the plan cannot truthfully become decision-complete without a user choice.
+- Feature cut is a hard stop. Any time you are about to remove, downgrade, defer, label-optional, or "simplify away" approved behavior, acceptance criteria, or a phase obligation, stop execution and surface to the user with: what you want to cut, why it looks necessary, what Section 0, TL;DR, and Section 7 say about it, and the exact approval you need. Do not resume until the user explicitly approves. Record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape in `artifact-contract.md`. Silent narrowing is forbidden.
 
 ## Warn-first sequencing
 
