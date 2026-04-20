@@ -173,7 +173,24 @@ ends the turn; the Stop hook verifies and disarms.
 The parent pass is the turn the model runs between hook firings. It must
 advance real state or yield honestly. Five rules govern it universally across
 every hook-backed skill in this suite. Individual controllers may extend these
-rules but never relax them.
+rules but never relax them. When a rule below says "yield," pick the kind
+using the rubric immediately following.
+
+### Choosing the yield kind
+
+`sleep_for` when the next step is an automated check the parent itself can
+run later — poll a marker file, re-check a CI status, re-test a background
+process, wait on a detached job. The parent wakes itself and re-evaluates
+with no human in the loop. If the work outlasts a single hook-timeout
+window, arm repeated `sleep_for` pauses: wake, poll, and if not ready arm
+another `sleep_for`. Detached jobs of any wall-clock length (hours, days)
+stay on the `sleep_for` track as long as the check is automatable. A long
+estimated duration is not by itself a reason to escalate to `await_user`.
+
+`await_user` when the next step genuinely requires human input — a
+clarification, a scope decision, missing context only the user has, or a
+desire to widen or rescope the run. If the only useful thing the user could
+do is say "wake me up later," that is `sleep_for`, not `await_user`.
 
 ### No-progress rule
 

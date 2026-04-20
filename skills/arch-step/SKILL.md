@@ -228,7 +228,7 @@ Prefer not to need user feedback — approved plan intent and repo evidence shou
 ```
 
 - `await_user`: the hook stops cleanly (`continue=False`) with the reason and leaves the controller armed. The next user turn resumes dispatch normally. This is the graceful exit when you asked the user a question; do not end the turn without writing the yield, or the Stop hook will tight-loop.
-- `sleep_for`: the hook sleeps the requested seconds (bounded by the installed hook timeout) and then continues to the next audit/planning pass. Rare — typically only useful when a long external job is in flight.
+- `sleep_for`: the hook sleeps the requested seconds (bounded by the installed hook timeout) and then continues to the next audit/planning pass. Use this whenever the next step is an automated check the parent itself can re-run — polling a marker file, re-checking CI, waiting on a detached job of any wall-clock length. If the work outlasts a single hook-timeout window, arm repeated `sleep_for` pauses rather than escalating. See `skills/_shared/controller-contract.md` §Choosing the yield kind.
 - The field is single-shot. Write it once per turn; the hook clears it before taking action. Do not re-read it.
 
 ### Output expectations
