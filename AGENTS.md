@@ -59,6 +59,11 @@ Claude Code, and Gemini.
 - Use `$stepwise` when the user wants to run an ordered multi-step process
   (named in another repo's doctrine) with a fresh sub-session per step and a
   per-step critic that resumes the same session on fail.
+- Use `$arch-epic` when the user has a goal too big for one `$arch-step` plan
+  and wants to decompose it into ordered sub-plans, approve the decomposition
+  up front, run each sub-plan through arch-step's `new` → `auto-plan` →
+  `implement-loop` → `audit-implementation` arc, and have a fresh critic check
+  for scope drift between sub-plans before advancing.
 
 ## Writing And Replies
 

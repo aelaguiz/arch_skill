@@ -41,6 +41,7 @@ Other shipped skills are:
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion claims
 - `code-review` — deterministic general code-review skill that always shells out to fresh unsandboxed Codex `gpt-5.4` `xhigh` (with parallel `gpt-5.4-mini` `xhigh` review lenses) for diffs, branches, paths, or completion-claim audits; supports direct and hook-backed invocation, and keeps Codex as the reviewer even when Claude hosts the Stop hook
 - `stepwise` — thoughtful orchestrator for ordered multi-step processes defined in another repo's doctrine; spawns a fresh Claude or Codex sub-session per step, runs an independent critic sub-session after each step, and resumes the same step's session with the critic's findings on fail (rather than redoing the work itself). Model and effort for step and critic are supplied by the user at invocation; both runtimes run dangerous / skip-permissions / no-sandbox. Distinct from `arch-loop` (requirement-satisfaction, not ordered steps), `arch-step` (plan-doc-backed full-arch), and `code-review` (one-shot review).
+- `arch-epic` — multi-plan orchestrator that wraps `arch-step` for goals too big for a single canonical plan. Captures the goal, drafts a plain-English one-sentence-per-sub-plan decomposition with inter-plan gates, gets user approval, then drives each sub-plan through arch-step's `new` → `auto-plan` → `implement-loop` → `audit-implementation` arc. After each sub-plan completes a fresh Claude or Codex critic subprocess inspects the shipped work for scope drift against the approved North Star and flags must-have discoveries or silent scope changes. Progressive lazy planning: sub-plan N+1 is not planned until sub-plan N is complete and passes the critic. Resume is the only mode — any invocation re-reads the epic doc and arch-step state from disk and continues. User involvement is bounded to the goal, decomposition approval, per-sub-plan North Star (arch-step's existing gate), and scope-change decisions.
 
 Examples in this repo use Codex `$skill` notation. In Claude Code, invoke the same skill as `/skill`.
 
@@ -106,6 +107,7 @@ Installed skills:
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/code-review/`
   - `~/.agents/skills/stepwise/`
+  - `~/.agents/skills/arch-epic/`
 - Claude Code:
   - `~/.claude/skills/arch-step/`
   - `~/.claude/skills/miniarch-step/`
@@ -131,6 +133,7 @@ Installed skills:
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/code-review/`
   - `~/.claude/skills/stepwise/`
+  - `~/.claude/skills/arch-epic/`
 - Gemini CLI:
   - `~/.gemini/skills/arch-step/`
   - `~/.gemini/skills/miniarch-step/`
@@ -152,6 +155,7 @@ Installed skills:
   - `~/.gemini/skills/amir-publish/`
   - `~/.gemini/skills/codex-review-yolo/`
   - `~/.gemini/skills/stepwise/`
+  - `~/.gemini/skills/arch-epic/`
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, and older `~/.codex/skills/<skill>` mirrors so runtime routing stays unambiguous.
 
