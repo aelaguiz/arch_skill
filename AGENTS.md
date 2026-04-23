@@ -56,6 +56,9 @@ Claude Code, and Gemini.
 - Use `$arch-flow` for read-only checklist and next-step inspection.
 - Use `$arch-skills-guide` when the user asks which arch skill to use or how
   the suite is divided.
+- Use `$stepwise` when the user wants to run an ordered multi-step process
+  (named in another repo's doctrine) with a fresh sub-session per step and a
+  per-step critic that resumes the same session on fail.
 
 ## Writing And Replies
 

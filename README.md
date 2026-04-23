@@ -40,6 +40,7 @@ Other shipped skills are:
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion claims
 - `code-review` — deterministic general code-review skill that always shells out to fresh unsandboxed Codex `gpt-5.4` `xhigh` (with parallel `gpt-5.4-mini` `xhigh` review lenses) for diffs, branches, paths, or completion-claim audits; supports direct and hook-backed invocation, and keeps Codex as the reviewer even when Claude hosts the Stop hook
+- `stepwise` — thoughtful orchestrator for ordered multi-step processes defined in another repo's doctrine; spawns a fresh Claude or Codex sub-session per step, runs an independent critic sub-session after each step, and resumes the same step's session with the critic's findings on fail (rather than redoing the work itself). Model and effort for step and critic are supplied by the user at invocation; both runtimes run dangerous / skip-permissions / no-sandbox. Distinct from `arch-loop` (requirement-satisfaction, not ordered steps), `arch-step` (plan-doc-backed full-arch), and `code-review` (one-shot review).
 
 Examples in this repo use Codex `$skill` notation. In Claude Code, invoke the same skill as `/skill`.
 
@@ -104,6 +105,7 @@ Installed skills:
   - `~/.agents/skills/amir-publish/`
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/code-review/`
+  - `~/.agents/skills/stepwise/`
 - Claude Code:
   - `~/.claude/skills/arch-step/`
   - `~/.claude/skills/miniarch-step/`
@@ -128,6 +130,7 @@ Installed skills:
   - `~/.claude/skills/amir-publish/`
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/code-review/`
+  - `~/.claude/skills/stepwise/`
 - Gemini CLI:
   - `~/.gemini/skills/arch-step/`
   - `~/.gemini/skills/miniarch-step/`
@@ -148,6 +151,7 @@ Installed skills:
   - `~/.gemini/skills/skill-authoring/`
   - `~/.gemini/skills/amir-publish/`
   - `~/.gemini/skills/codex-review-yolo/`
+  - `~/.gemini/skills/stepwise/`
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, and older `~/.codex/skills/<skill>` mirrors so runtime routing stays unambiguous.
 
