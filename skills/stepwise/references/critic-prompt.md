@@ -54,16 +54,31 @@ For each active check, gather evidence from the transcript, the final
 message, and the artifacts. Record the evidence succinctly. A check
 passes only when the evidence backs it. "It looks fine" is not evidence.
 
-If the evidence for any check is missing or inconclusive, set that
-check's status to `fail` or mark the whole verdict `abstain` with a
-concrete `abstain_reason`. Abstaining is better than guessing.
+If the evidence for any check is missing or inconclusive, first inspect the
+paths and read-only predicates already provided in this prompt. If the missing
+evidence is still unavailable after that inspection, set that check's status
+to `fail` or mark the whole verdict `abstain` with a concrete
+`abstain_reason`. Abstaining is better than guessing, but do not abstain
+before checking evidence that is already within reach.
 
 If `verdict=fail`, fill `resume_hint` carefully:
-- `headline`: one sentence the step will read first.
-- `required_fixes`: imperative items the step must do to recover. Be
-  specific. Reference file paths, command names, or doctrine sections.
+- `headline`: one blunt sentence naming the contract breach the step must
+  recover from.
+- `required_fixes`: actions the step must execute, in order. Be operational,
+  not diagnostic. Reference file paths, command names, doctrine sections,
+  selector commands, and exact stop conditions. If the failure is about
+  missing process evidence, skill loading, owner-path usage, false final
+  claims, or skipped transcript landmarks, turn the fix into a concrete
+  execution checklist that will leave the needed evidence in the next
+  transcript.
 - `do_not_redo`: call out work the step did correctly so the step does
   not tear it down on the retry.
+
+Weak `required_fixes` say "use the declared skill path" or "record the
+specialists." Strong `required_fixes` say "Read
+`skills/foo/build/SKILL.md`, then read `skills/bar/SKILL.md`, then use the
+owner write command; if that command is unavailable, stop after showing its
+help output." The worker should not have to infer the recovery sequence.
 
 If the root cause of the fail lives in an earlier step's artifact —
 something the current step cannot fix by retrying from its own scope —
@@ -71,11 +86,14 @@ set `route_to_step_n` to that earlier step (must be < step_n). Address
 `resume_hint` to that earlier step: its `headline` and `required_fixes`
 will be read by the target step's session when it reopens. Use this
 only when the fix is impossible from the current step's scope, not when
-it's merely preferable upstream. When in doubt, omit `route_to_step_n`
-and let the current step retry.
+it's merely preferable upstream. When in doubt, set `route_to_step_n` to
+`null` and let the current step retry.
 
-If `verdict=pass`, omit `resume_hint`. If `verdict=abstain`, set
-`abstain_reason` and omit `resume_hint`.
+If `verdict=pass`, set `resume_hint`, `route_to_step_n`, and
+`abstain_reason` to `null`. If `verdict=fail` without upstream routing, set
+`route_to_step_n` to `null` and `abstain_reason` to `null`. If
+`verdict=abstain`, set `abstain_reason`, and set `resume_hint` and
+`route_to_step_n` to `null`.
 
 Return JSON only. Do not narrate around it.
 ```
@@ -124,8 +142,8 @@ not the decider on retry policy, but knowing the profile helps calibrate
 how strict to be on edge cases.
 
 ### `route_to_step_n`
-Optional integer on a `fail` verdict naming an earlier step (`< step_n`)
-whose artifact holds the root cause. Omit for self-routed fails.
+Nullable integer on a `fail` verdict naming an earlier step (`< step_n`)
+whose artifact holds the root cause. Use `null` for self-routed fails.
 
 ## What is NOT in the prompt
 

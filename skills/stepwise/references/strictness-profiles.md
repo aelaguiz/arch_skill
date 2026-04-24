@@ -25,6 +25,11 @@ trying to communicate about tolerance, halt behavior, and what the user
 cares about most. Pick the profile that honors that. If two phrases point in
 opposite directions, ask — do not average them.
 
+Strictness is about how hard the critic checks the work and how much retry
+budget the run gets. It is not a permission slip to stop at the first
+repairable infrastructure problem. Known, safe, bounded unblocks from
+`unblocking.md` happen before stop discipline is applied in every profile.
+
 ## What each profile means
 
 ### `strict`
@@ -36,6 +41,10 @@ problem. The full check vocabulary runs on every step.
 - Checks run: all five (skill_order_adherence, no_substep_skipped,
   artifact_exists, no_fabrication, doctrine_quote_fidelity).
 - Critic posture: adversarial. Prefer fail-on-ambiguity over pass-on-hope.
+
+Strict does not mean "ask sooner when the orchestrator knows the fix." If a
+critic schema, prompt, command file, or session parser has a known bounded
+repair, repair it, record it, and keep the strict check posture.
 
 Signals that suggest strict: "strict", "no fabrication", "no skipping",
 "stop on any error", "exactly", "follow the process", "do it right",
@@ -71,12 +80,20 @@ effort", "lazy pass", "quick and dirty".
 
 Stop discipline is usually inferred from profile (strict →
 `halt_and_ask`, balanced → `halt_and_ask`, lenient →
-`skip_and_continue`). When the user signals they want to be left alone
-— "don't wake me", "I'm going to sleep", "fix it and keep going", "run
-through the night" — set `stop_discipline = autonomous_repair`. This
-is compatible with any profile: a strict + autonomous_repair run still
-has a tight `per_step_retry_cap`, it just reopens an earlier step when
-a downstream critic routes the fix there, instead of halting.
+`skip_and_continue`). It is applied only after known unblocks and the
+relevant retry budget are exhausted.
+
+When the user signals they want to be left alone — "don't wake me", "I'm
+going to sleep", "fix it and keep going", "run through the night" — set
+`stop_discipline = autonomous_repair`. This is compatible with any profile: a
+strict + autonomous_repair run still has a tight `per_step_retry_cap`, it just
+reopens an earlier step when a downstream critic routes the fix there, instead
+of halting.
+
+For ordinary execute/orchestrate requests, prefer bounded autonomous repair of
+known blockers over asking. Use `halt_and_ask` as the exhausted-step behavior
+when that is the selected discipline, not as a reflex for issues the skill can
+already repair inside its own authority.
 
 Containment is the same `per_step_retry_cap` strict or not. Every
 reopening of a target step counts as another try on that step. When
@@ -88,6 +105,10 @@ signals: read the intent, do not keyword-match. A user who says "just
 get it done, I'll check in the morning" has signaled leave-me-alone;
 a user who says "stop on any structural problem" has signaled
 halt-and-ask regardless of their other profile cues.
+
+"Stop on any structural problem" is about target work and manifest semantics.
+It does not forbid repairing a malformed schema file, bad prompt render, or
+known CLI wrapper drift that prevents the critic from producing the verdict.
 
 ## Forced checks
 
@@ -138,8 +159,8 @@ Do not ask when:
 Profile: `strict` (from "strict usage" and "strictly according to the skill
 order"). Forced checks: `skill_order_adherence` (from "strictly according
 to the skill order"), `no_fabrication` (from "no fabrication of any
-steps"). Retry cap: 1. Stop discipline: `halt_and_ask`. Announce and
-proceed.
+steps"). Retry cap: 1. Stop discipline: `halt_and_ask` after known unblocks
+and the step retry cap are exhausted. Announce and proceed.
 
 > "run the lesson thing, don't stop til it's done, I don't care just get
 > it done but don't make stuff up"

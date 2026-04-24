@@ -1,6 +1,6 @@
 # Worked examples
 
-Five worked examples. Each shows the intake, the manifest, and a notable
+Seven worked examples. Each shows the intake, the manifest, and a notable
 event during execution. These are teaching examples — they illustrate the
 thinking, not a script the agent should imitate verbatim.
 
@@ -159,6 +159,8 @@ Verdict:
       "You already chose a section structure; reuse it"
     ]
   },
+  "route_to_step_n": null,
+  "abstain_reason": null,
   "summary": "Step 2 was described but not executed. File outline.md is absent."
 }
 ```
@@ -166,9 +168,14 @@ Verdict:
 **Resume prompt** (sent via `claude -r <session_id>`)
 
 ```
-A critic reviewed your last turn and flagged issues.
+Your prior attempt failed this step. The critic's findings below are binding.
 
-## Headline
+Do not justify the prior attempt. Do not summarize these instructions back.
+Execute the required fixes in order. If a required path, tool, command, or
+write primitive is unavailable, stop and report the exact blocker with the
+command or path that proved it.
+
+## Failure
 
 outline.md was described but never written. Produce the file.
 
@@ -183,8 +190,7 @@ outline.md was described but never written. Produce the file.
 - The ramp-up notes in _rampup_notes.md are fine; do not touch them
 - You already chose a section structure; reuse it
 
-Apply the required fixes. Do not restart the whole step. When the
-fixes are in place, end your turn.
+When the fixes are in place, end your turn.
 ```
 
 **Step 2, try 2**
@@ -200,7 +206,53 @@ the five sections exist. All checks pass.
 **Report** — Step 2 shows `pass-after-retry (2)`. The run continues
 to Step 3.
 
-## Example 4 — Lenient profile, one step skipped
+## Example 4 — Process evidence fail gets operational retry
+
+Step 4 is a whole-lesson copy pass. The worker writes acceptable copy, but it
+uses raw edits instead of the declared copy-lane owner path and ends by
+claiming only file tools plus bash were available. The critic checks the
+transcript and finds no evidence that the owning skill or specialists were
+loaded.
+
+Verdict excerpt:
+
+```json
+{
+  "step_n": 4,
+  "verdict": "fail",
+  "checks": [
+    {"name": "skill_order_adherence", "status": "fail",
+     "evidence": "No transcript evidence that skills/lesson-copy-discipline/build/SKILL.md was read or invoked."},
+    {"name": "doctrine_quote_fidelity", "status": "fail",
+     "evidence": "The step used raw Edit instead of the declared copy-lane owner path."},
+    {"name": "no_fabrication", "status": "fail",
+     "evidence": "Final message claimed only file tools plus bash were available, but the transcript does not support that limitation."}
+  ],
+  "resume_hint": {
+    "headline": "The copy artifact exists, but the step failed the declared copy-lane process and made an unsupported tool-availability claim.",
+    "required_fixes": [
+      "Read skills/lesson-copy-discipline/build/SKILL.md before making any further changes.",
+      "Read each required baseline and specialist skill path named by that owner skill, visibly in the transcript.",
+      "Do not use raw Edit for new changes. Use the declared owner write path or stop and report the exact missing command/help output that proves the owner path is unavailable.",
+      "If no content change is needed after specialist review, state that the existing copy is retained and cite the specialist review evidence.",
+      "Remove or correct the unsupported final claim that only file tools plus bash were available.",
+      "Finish by running the exact selector command from the step descriptor."
+    ],
+    "do_not_redo": [
+      "Do not rebuild upstream manifest or outline artifacts.",
+      "Do not rewrite copy fields that already pass specialist review."
+    ]
+  },
+  "route_to_step_n": null,
+  "abstain_reason": null,
+  "summary": "Step 4 produced an artifact but did not leave transcript evidence for the required copy-lane path."
+}
+```
+
+The retry prompt is blunt. It does not ask the worker to "think about" the
+copy lane; it orders the observable recovery sequence.
+
+## Example 5 — Lenient profile, one step skipped
 
 **User prompt**
 
@@ -254,7 +306,7 @@ never matched '^# Lesson 2' after 6 tries." The user can decide to
 re-invoke the skill with strict profile targeting just Step 2, or to
 edit the outline by hand, or to accept the gap.
 
-## Example 5 — Autonomous upstream repair, leave-me-alone run
+## Example 6 — Autonomous upstream repair, leave-me-alone run
 
 **User prompt**
 
@@ -329,6 +381,7 @@ Interpreting:
       "Role partition and taxonomyRefs passed their checks; preserve them"
     ]
   },
+  "abstain_reason": null,
   "summary": "Step 4 could not produce valid copy against step 3's manifest because the manifest's stage and cloned contexts contradict the pinned Brief. Route to step 3."
 }
 ```
@@ -390,14 +443,47 @@ verdict — no extra budget beyond the target's own `max_retries`.
 Ping-pong is impossible in practice: either step 3 converges within
 its cap, or the run halts.
 
+## Example 7 — Known unblock repairs orchestration drift
+
+A strict run reaches Step 1's critic. The worker completed its artifact, but
+the critic subprocess fails before judging because the local Codex CLI rejects
+the StepVerdict schema shape. The error says every property in `properties`
+must appear in `required`.
+
+This is not a target-work failure and not a user decision. The orchestrator
+knows the bounded repair: preserve the StepVerdict semantics, normalize
+semantically optional fields to required-nullable fields, write
+`critic/schema.codex.json`, retry the critic once, and validate the returned
+verdict semantically.
+
+Run-directory evidence after repair:
+
+```
+steps/1/try-1/critic/
+├── prompt.md
+├── schema.codex.json
+├── invocation.sh
+├── stdout.final.json
+├── verdict.json
+├── stream.log
+└── exit_code
+```
+
+The run continues if the retried critic returns a valid verdict. It halts only
+if the same repaired schema path still fails, the verdict is invalid and no
+known prompt/schema fix remains, or the critic finds a real step failure whose
+retry budget is exhausted.
+
 ## Takeaways
 
 - The intake announces a concrete interpretation before anything runs.
   Flippant phrasing gets interpreted, not pattern-matched.
 - The critic catches fabrication not by reading prose but by checking
   the artifact on disk against the descriptor's `evidence_required`.
-- The resume prompt is the critic's findings rendered minimally. No
-  orchestrator padding.
+- The resume prompt is the critic's findings inside a fixed failure wrapper.
+  No orchestrator-authored repair advice.
+- Known orchestration blockers are repaired inside the run directory before
+  stop discipline is applied.
 - Lenient profile trades completion for process purity — but not for
   truth. Fabrication still fails.
 - `pass-after-retry (k)` is a normal outcome, not a warning. The

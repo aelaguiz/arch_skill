@@ -55,6 +55,192 @@ def _write_json(path: Path, payload: Any) -> None:
     _write_text(path, json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
 
+def _schema_allows_null(schema: Any) -> bool:
+    if not isinstance(schema, dict):
+        return False
+    schema_type = schema.get("type")
+    if schema_type == "null":
+        return True
+    if isinstance(schema_type, list) and "null" in schema_type:
+        return True
+    if isinstance(schema.get("enum"), list) and None in schema["enum"]:
+        return True
+    for key in ("anyOf", "oneOf"):
+        options = schema.get(key)
+        if isinstance(options, list) and any(_schema_allows_null(o) for o in options):
+            return True
+    return False
+
+
+def _schema_with_null(schema: dict[str, Any]) -> dict[str, Any]:
+    if _schema_allows_null(schema):
+        return schema
+    out = dict(schema)
+    schema_type = out.get("type")
+    if isinstance(schema_type, str):
+        out["type"] = [schema_type, "null"]
+        return out
+    if isinstance(schema_type, list):
+        out["type"] = [*schema_type, "null"]
+        return out
+    enum = out.get("enum")
+    if isinstance(enum, list):
+        out["enum"] = [*enum, None]
+        return out
+    any_of = out.get("anyOf")
+    if isinstance(any_of, list):
+        out["anyOf"] = [*any_of, {"type": "null"}]
+        return out
+    return {"anyOf": [out, {"type": "null"}]}
+
+
+def _codex_strict_schema(schema: Any) -> Any:
+    """Normalize JSON Schema for Codex structured output.
+
+    Recent Codex/OpenAI structured-output validation requires every object
+    property to be listed in `required`. Older stepwise schemas used ordinary
+    optional properties for fields like resume_hint. Preserve those semantics
+    by making formerly optional properties required-but-nullable.
+    """
+    if isinstance(schema, list):
+        return [_codex_strict_schema(item) for item in schema]
+    if not isinstance(schema, dict):
+        return schema
+
+    out: dict[str, Any] = {}
+    for key, value in schema.items():
+        if key in {"properties", "items", "anyOf", "oneOf", "allOf"}:
+            continue
+        out[key] = value
+
+    for key in ("anyOf", "oneOf", "allOf"):
+        options = schema.get(key)
+        if isinstance(options, list):
+            out[key] = [_codex_strict_schema(option) for option in options]
+
+    if "items" in schema:
+        out["items"] = _codex_strict_schema(schema["items"])
+
+    properties = schema.get("properties")
+    if isinstance(properties, dict):
+        original_required = set(schema.get("required", []))
+        normalized_props: dict[str, Any] = {}
+        for name, prop_schema in properties.items():
+            normalized_prop = _codex_strict_schema(prop_schema)
+            if name not in original_required and isinstance(normalized_prop, dict):
+                normalized_prop = _schema_with_null(normalized_prop)
+            normalized_props[name] = normalized_prop
+        out["properties"] = normalized_props
+        out["required"] = list(properties.keys())
+        out["additionalProperties"] = False
+    elif "required" in schema:
+        out["required"] = schema["required"]
+
+    return out
+
+
+def _nonempty_str(value: Any) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _validate_resume_hint(value: Any) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(value, dict):
+        return ["resume_hint must be an object on fail"]
+    headline = value.get("headline")
+    if not _nonempty_str(headline):
+        errors.append("resume_hint.headline must be a non-empty string")
+    required_fixes = value.get("required_fixes")
+    if not isinstance(required_fixes, list) or not required_fixes:
+        errors.append("resume_hint.required_fixes must be a non-empty array")
+    elif not all(_nonempty_str(item) for item in required_fixes):
+        errors.append("resume_hint.required_fixes entries must be non-empty strings")
+    do_not_redo = value.get("do_not_redo")
+    if not isinstance(do_not_redo, list):
+        errors.append("resume_hint.do_not_redo must be an array")
+    elif not all(isinstance(item, str) for item in do_not_redo):
+        errors.append("resume_hint.do_not_redo entries must be strings")
+    return errors
+
+
+def _validate_step_verdict(verdict: Any) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(verdict, dict):
+        return ["verdict must be a JSON object"]
+
+    required = [
+        "step_n",
+        "verdict",
+        "checks",
+        "resume_hint",
+        "route_to_step_n",
+        "abstain_reason",
+        "summary",
+    ]
+    for key in required:
+        if key not in verdict:
+            errors.append(f"missing required field: {key}")
+
+    step_n = verdict.get("step_n")
+    if not isinstance(step_n, int) or step_n < 1:
+        errors.append("step_n must be an integer >= 1")
+
+    outcome = verdict.get("verdict")
+    if outcome not in {"pass", "fail", "abstain"}:
+        errors.append("verdict must be pass, fail, or abstain")
+
+    checks = verdict.get("checks")
+    if not isinstance(checks, list):
+        errors.append("checks must be an array")
+    else:
+        allowed_names = {
+            "skill_order_adherence",
+            "no_substep_skipped",
+            "artifact_exists",
+            "no_fabrication",
+            "doctrine_quote_fidelity",
+        }
+        allowed_statuses = {"pass", "fail", "inapplicable"}
+        for i, check in enumerate(checks):
+            if not isinstance(check, dict):
+                errors.append(f"checks[{i}] must be an object")
+                continue
+            if check.get("name") not in allowed_names:
+                errors.append(f"checks[{i}].name is not a known check")
+            if check.get("status") not in allowed_statuses:
+                errors.append(
+                    f"checks[{i}].status must be pass, fail, or inapplicable"
+                )
+            if not _nonempty_str(check.get("evidence")):
+                errors.append(f"checks[{i}].evidence must be a non-empty string")
+
+    route = verdict.get("route_to_step_n")
+    if route is not None and (not isinstance(route, int) or route < 1):
+        errors.append("route_to_step_n must be null or an integer >= 1")
+
+    if not _nonempty_str(verdict.get("summary")):
+        errors.append("summary must be a non-empty string")
+
+    resume_hint = verdict.get("resume_hint")
+    abstain_reason = verdict.get("abstain_reason")
+    if outcome == "pass":
+        if resume_hint is not None:
+            errors.append("resume_hint must be null when verdict=pass")
+        if abstain_reason is not None:
+            errors.append("abstain_reason must be null when verdict=pass")
+    elif outcome == "fail":
+        errors.extend(_validate_resume_hint(resume_hint))
+        if abstain_reason is not None:
+            errors.append("abstain_reason must be null when verdict=fail")
+    elif outcome == "abstain":
+        if resume_hint is not None:
+            errors.append("resume_hint must be null when verdict=abstain")
+        if not _nonempty_str(abstain_reason):
+            errors.append("abstain_reason must be a non-empty string on abstain")
+
+    return errors
+
+
 # ---- init-run -------------------------------------------------------------
 
 
@@ -436,6 +622,10 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
     schema_path = Path(args.schema_file).resolve()
     if not schema_path.is_file():
         _die(f"critic schema file missing: {schema_path}")
+    try:
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        _die(f"critic schema file is not valid JSON: {e}")
     target_repo = str(Path(args.target_repo).resolve())
     crit_dir = _ensure_critic_dir(run_dir, args.step_n, args.try_k)
 
@@ -447,7 +637,7 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
     verdict_path = crit_dir / "verdict.json"
 
     if args.runtime == "claude":
-        schema_inline = schema_path.read_text(encoding="utf-8").strip()
+        schema_inline = json.dumps(schema, separators=(",", ":"))
         argv = [
             "claude",
             "-p",
@@ -466,6 +656,8 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
         ]
         critic_cwd = target_repo
     elif args.runtime == "codex":
+        codex_schema_path = crit_dir / "schema.codex.json"
+        _write_json(codex_schema_path, _codex_strict_schema(schema))
         argv = [
             "codex",
             "exec",
@@ -479,7 +671,7 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
             "-c",
             f'model_reasoning_effort="{args.effort}"',
             "--output-schema",
-            str(schema_path),
+            str(codex_schema_path),
             "--json",
             "-o",
             str(final_path),
@@ -519,6 +711,15 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
         except json.JSONDecodeError as e:
             _die(f"codex critic output is not valid JSON: {e}", code=5)
         _write_json(verdict_path, verdict)
+
+    validation_errors = _validate_step_verdict(verdict)
+    if validation_errors:
+        _write_json(crit_dir / "verdict.validation_errors.json", validation_errors)
+        _die(
+            "critic verdict failed semantic validation: "
+            + "; ".join(validation_errors),
+            code=6,
+        )
 
     print(str(verdict_path))
     return 0 if code == 0 else code

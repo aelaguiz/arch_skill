@@ -47,6 +47,10 @@ step is spawned, critiqued, resumed if needed, and advanced when passing.
 - Every step runs in a fresh subprocess — never in orchestrator context.
 - Every critic is a fresh subprocess independent of the step subprocess;
   returns structured JSON conforming to `StepVerdict`.
+- When a blocker has a known, safe, bounded repair inside the current
+  role's authority, perform that repair before escalating. Strictness
+  controls checks and retry budget; it is not permission to halt on
+  repairable orchestration drift.
 - On critic FAIL, resume the same step's session with ONLY the critic's
   `resume_hint` — no orchestrator-authored commentary.
 - Both step and critic subprocesses run dangerous / skip-permissions /
@@ -106,7 +110,8 @@ step is spawned, critiqued, resumed if needed, and advanced when passing.
    required defaults are missing.
 4. Resolve `target_repo_path` (absolute). Fail loud if unresolvable.
 5. Read `references/workflow-contract.md` for phase-by-phase detail.
-6. Announce the interpretation before Phase 2.
+6. Read `references/unblocking.md` before executing any subprocess loop.
+7. Announce the interpretation before Phase 2.
 
 ## Workflow
 
@@ -125,8 +130,9 @@ Five phases. Detail in `references/workflow-contract.md`.
 4. **Step execution loop.** For each step: spawn step sub-session
    (fresh, not ephemeral); spawn critic sub-session (ephemeral,
    structured verdict); on pass advance; on fail resume the same
-   session with the critic's `resume_hint`; on cap exhaustion apply
-   `stop_discipline`.
+   session with the critic's `resume_hint`; repair known orchestration
+   blockers inside the run directory before escalating; on cap exhaustion
+   apply `stop_discipline`.
 5. **Report.** Per-step status table, run directory path, most
    instructive critic finding, pending work if halted. No
    certification language.
@@ -152,10 +158,14 @@ Five phases. Detail in `references/workflow-contract.md`.
 - `references/execution-routing.md` — how to resolve optional
   user-specified routing preferences against drafted steps without
   hardcoded task taxonomies.
+- `references/unblocking.md` — how each role handles known blockers before
+  asking or halting.
 - `references/manifest-schema.md` — StepDescriptor shape with a
   worked example manifest.
 - `references/critic-contract.md` — StepVerdict JSON schema, the
   five checks, strictness scoping, forced-checks rule.
+- `references/step-verdict.schema.json` — canonical StepVerdict schema for
+  subprocess structured output.
 - `references/critic-prompt.md` — verbatim critic prompt body with
   placeholders the orchestrator fills.
 - `references/step-prompt-contract.md` — initial and resume prompt
@@ -165,7 +175,7 @@ Five phases. Detail in `references/workflow-contract.md`.
   installed CLI versions.
 - `references/run-directory-layout.md` — on-disk artifact layout
   per run.
-- `references/examples.md` — five worked examples including per-step
+- `references/examples.md` — seven worked examples including per-step
   execution routing, autonomous repair, and a
   fabrication catch + resume round-trip.
 

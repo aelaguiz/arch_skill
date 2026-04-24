@@ -44,9 +44,11 @@ if not already present.
 │           ├── exit_code         # numeric exit
 │           └── critic/
 │               ├── prompt.md
+│               ├── schema.codex.json  # normalized schema when runtime=codex
 │               ├── invocation.sh
 │               ├── stdout.final.json  # claude result OR codex schema output
 │               ├── verdict.json       # the StepVerdict document
+│               ├── verdict.validation_errors.json  # only when invalid
 │               ├── stream.log
 │               └── exit_code
 └── report.md                     # Phase 5 human-readable final report
@@ -120,6 +122,14 @@ suspicious run without re-launching the orchestrator.
 
 `session_id.txt` contains one line: the session id (Claude) or thread_id
 (Codex). Downstream tries read this file to construct their resume command.
+
+When the critic runtime is Codex, `schema.codex.json` is the exact normalized
+schema passed to `--output-schema`. It exists so CLI schema drift is auditable:
+older optional fields are converted to required-nullable fields without
+changing StepVerdict semantics. If a critic returns syntactically valid JSON
+that fails semantic validation, `verdict.validation_errors.json` records the
+local validator errors and the orchestrator applies the known-unblock rules
+before asking the user.
 
 ## report.md
 

@@ -43,7 +43,9 @@ before acting, then execute it.
 - Follow the runbook's ordering. If it says read doctrine first, do
   that before editing.
 - Do not claim work you did not do. If a sub-step is infeasible,
-  say so explicitly and stop.
+  first run the safe read/help/list command or inspect the owning
+  doctrine path that would prove the blocker, then say so explicitly
+  and stop with that evidence.
 - Do not invoke any step other than the one declared above.
 - Do not invoke other skills or slash commands. The doctrine path
   above carries everything you need; picking up a second skill
@@ -54,15 +56,20 @@ When done, end your turn. A critic will inspect your work.
 
 ## Resume prompt
 
-The resume prompt is the critic's `resume_hint` rendered minimally. The
-orchestrator does not add commentary. It does not add apology. It does
-not ask "does this make sense?". The step session already has the full
-context of the prior attempt in its session history.
+The resume prompt is the critic's `resume_hint` rendered with a fixed,
+direct failure wrapper. The orchestrator does not add its own repair ideas,
+commentary, apology, or "does this make sense?" question. The step session
+already has the full context of the prior attempt in its session history.
 
 ```
-A critic reviewed your last turn and flagged issues.
+Your prior attempt failed this step. The critic's findings below are binding.
 
-## Headline
+Do not justify the prior attempt. Do not summarize these instructions back.
+Execute the required fixes in order. If a required path, tool, command, or
+write primitive is unavailable, stop and report the exact blocker with the
+command or path that proved it.
+
+## Failure
 
 {{resume_hint.headline}}
 
@@ -74,12 +81,12 @@ A critic reviewed your last turn and flagged issues.
 
 {{bulleted_list_of_resume_hint.do_not_redo}}
 
-Apply the required fixes. Do not restart the whole step. When the fixes
-are in place, end your turn.
+When the fixes are in place, end your turn.
 ```
 
 That is the whole resume prompt. No "hope this helps" line. No "let me
-know if you need clarification." The step gets a tight, actionable list.
+know if you need clarification." The step gets a binding recovery order,
+not a suggestion to re-interpret the failure.
 
 ## Why the discipline
 
@@ -92,8 +99,8 @@ restate it badly.
 
 **Tempt 2:** on retry, re-explain the whole step. Don't. The session
 already has the initial prompt, the work it did, and any tool output.
-Re-explaining wastes tokens and muddies the critic's request. Send
-only the critic's delta.
+Re-explaining wastes tokens and muddies the critic's request. Send the
+fixed wrapper plus only the critic's delta.
 
 ## Session continuity
 
@@ -110,6 +117,10 @@ A step session is expected to:
 - Read the doctrine path it was pointed at.
 - Execute the declared skill or instruction.
 - Produce the declared artifact.
+- Resolve obvious safe blockers inside its own step before stopping:
+  missing-path claims need the exact path checked, command-availability
+  claims need the help/list output or owning doctrine read, and owner-path
+  claims need evidence from the owner path.
 - End its turn.
 
 A step session is not expected to:
@@ -120,6 +131,7 @@ A step session is not expected to:
   outside this skill.)
 
 If a step session finds that the declared step is genuinely impossible
-(missing prerequisite, contradicted doctrine, etc.), it should say so
-plainly and end its turn. The critic will record abstain, and the
-orchestrator will halt and ask the user.
+(missing prerequisite, contradicted doctrine, unavailable owner primitive,
+etc.), it should say so plainly with the exact path, command, or doctrine
+evidence and end its turn. The critic will decide whether this is a fail,
+an abstain with a known unblock, or a true user-facing blocker.

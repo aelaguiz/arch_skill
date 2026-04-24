@@ -8,6 +8,8 @@ tests pin that behavior.
 Run: `python3 skills/stepwise/scripts/test_run_stepwise.py`
 """
 
+import contextlib
+import io
 import json
 import sys
 import tempfile
@@ -205,7 +207,8 @@ class InitRunExecutionPolicy(unittest.TestCase):
                 ]
             )
 
-            self.assertEqual(args.func(args), 0)
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(args.func(args), 0)
             runs_dir = root / ".arch_skill" / "stepwise" / "runs"
             run_dirs = list(runs_dir.iterdir())
             self.assertEqual(len(run_dirs), 1)
@@ -218,6 +221,247 @@ class InitRunExecutionPolicy(unittest.TestCase):
         )
         self.assertNotIn("models", state)
         self.assertNotIn("models_sha256", state)
+
+
+class CodexSchemaNormalization(unittest.TestCase):
+    def test_optional_schema_fields_become_required_nullable(self):
+        schema = {
+            "type": "object",
+            "required": ["step_n", "verdict", "checks", "summary"],
+            "properties": {
+                "step_n": {"type": "integer"},
+                "verdict": {"enum": ["pass", "fail", "abstain"]},
+                "checks": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["name", "status"],
+                        "properties": {
+                            "name": {"type": "string"},
+                            "status": {"enum": ["pass", "fail", "inapplicable"]},
+                            "evidence": {"type": "string"},
+                        },
+                    },
+                },
+                "resume_hint": {
+                    "type": "object",
+                    "required": ["headline"],
+                    "properties": {
+                        "headline": {"type": "string"},
+                        "required_fixes": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        "do_not_redo": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                    },
+                },
+                "route_to_step_n": {"type": "integer", "minimum": 1},
+                "abstain_reason": {"type": "string"},
+                "summary": {"type": "string"},
+            },
+        }
+
+        normalized = rs._codex_strict_schema(schema)
+
+        self.assertEqual(
+            normalized["required"],
+            [
+                "step_n",
+                "verdict",
+                "checks",
+                "resume_hint",
+                "route_to_step_n",
+                "abstain_reason",
+                "summary",
+            ],
+        )
+        self.assertFalse(normalized["additionalProperties"])
+        self.assertEqual(
+            normalized["properties"]["resume_hint"]["type"],
+            ["object", "null"],
+        )
+        self.assertEqual(
+            normalized["properties"]["route_to_step_n"]["type"],
+            ["integer", "null"],
+        )
+        item_schema = normalized["properties"]["checks"]["items"]
+        self.assertEqual(item_schema["required"], ["name", "status", "evidence"])
+        self.assertEqual(
+            item_schema["properties"]["evidence"]["type"],
+            ["string", "null"],
+        )
+
+    def test_critic_spawn_writes_and_uses_codex_normalized_schema(self):
+        old_run_subprocess = rs._run_subprocess
+        captured = {}
+
+        def fake_run(argv, stdout_stream_path, out_dir, cwd=None):
+            captured["argv"] = argv
+            schema_path = Path(argv[argv.index("--output-schema") + 1])
+            final_path = Path(argv[argv.index("-o") + 1])
+            stdout_stream_path.write_text(
+                '{"type":"thread.started","thread_id":"t"}\n',
+                encoding="utf-8",
+            )
+            final_path.write_text(
+                json.dumps(
+                    {
+                        "step_n": 1,
+                        "verdict": "pass",
+                        "checks": [
+                            {
+                                "name": "artifact_exists",
+                                "status": "pass",
+                                "evidence": "artifact exists",
+                            }
+                        ],
+                        "resume_hint": None,
+                        "route_to_step_n": None,
+                        "abstain_reason": None,
+                        "summary": "The step passed.",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            captured["schema_path"] = schema_path
+            return 0, ""
+
+        schema = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["step_n", "verdict", "checks", "summary"],
+            "properties": {
+                "step_n": {"type": "integer"},
+                "verdict": {"enum": ["pass", "fail", "abstain"]},
+                "checks": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "required": ["name", "status", "evidence"],
+                        "properties": {
+                            "name": {"type": "string"},
+                            "status": {"enum": ["pass", "fail", "inapplicable"]},
+                            "evidence": {"type": "string"},
+                        },
+                    },
+                },
+                "resume_hint": {"type": "object", "properties": {}},
+                "route_to_step_n": {"type": "integer", "minimum": 1},
+                "abstain_reason": {"type": "string"},
+                "summary": {"type": "string"},
+            },
+        }
+
+        with tempfile.TemporaryDirectory() as td:
+            run_dir = Path(td) / "run"
+            target = Path(td) / "target"
+            run_dir.mkdir()
+            target.mkdir()
+            (run_dir / "state.json").write_text("{}\n", encoding="utf-8")
+            prompt = Path(td) / "prompt.md"
+            prompt.write_text("judge step\n", encoding="utf-8")
+            schema_file = Path(td) / "schema.json"
+            schema_file.write_text(json.dumps(schema), encoding="utf-8")
+
+            parser = rs._build_parser()
+            args = parser.parse_args(
+                [
+                    "critic-spawn",
+                    "--run-dir",
+                    str(run_dir),
+                    "--target-repo",
+                    str(target),
+                    "--prompt-file",
+                    str(prompt),
+                    "--model",
+                    "gpt-5.4",
+                    "--effort",
+                    "high",
+                    "--schema-file",
+                    str(schema_file),
+                    "--runtime",
+                    "codex",
+                    "--step-n",
+                    "1",
+                    "--try-k",
+                    "1",
+                ]
+            )
+
+            try:
+                rs._run_subprocess = fake_run
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(args.func(args), 0)
+            finally:
+                rs._run_subprocess = old_run_subprocess
+
+            self.assertEqual(captured["schema_path"].name, "schema.codex.json")
+            normalized = json.loads(captured["schema_path"].read_text(encoding="utf-8"))
+
+        self.assertEqual(set(normalized["required"]), set(normalized["properties"]))
+        self.assertEqual(
+            normalized["properties"]["route_to_step_n"]["type"],
+            ["integer", "null"],
+        )
+
+
+class StepVerdictValidation(unittest.TestCase):
+    def test_valid_pass_verdict(self):
+        verdict = {
+            "step_n": 1,
+            "verdict": "pass",
+            "checks": [
+                {
+                    "name": "artifact_exists",
+                    "status": "pass",
+                    "evidence": "file exists",
+                }
+            ],
+            "resume_hint": None,
+            "route_to_step_n": None,
+            "abstain_reason": None,
+            "summary": "Step passed.",
+        }
+        self.assertEqual(rs._validate_step_verdict(verdict), [])
+
+    def test_valid_fail_verdict_requires_operational_hint(self):
+        verdict = {
+            "step_n": 2,
+            "verdict": "fail",
+            "checks": [
+                {
+                    "name": "no_fabrication",
+                    "status": "fail",
+                    "evidence": "claim lacks backing evidence",
+                }
+            ],
+            "resume_hint": {
+                "headline": "The artifact was claimed but not written.",
+                "required_fixes": ["Write the declared artifact."],
+                "do_not_redo": [],
+            },
+            "route_to_step_n": None,
+            "abstain_reason": None,
+            "summary": "Step failed.",
+        }
+        self.assertEqual(rs._validate_step_verdict(verdict), [])
+
+    def test_fail_without_resume_hint_is_invalid(self):
+        verdict = {
+            "step_n": 2,
+            "verdict": "fail",
+            "checks": [],
+            "resume_hint": None,
+            "route_to_step_n": None,
+            "abstain_reason": None,
+            "summary": "Step failed.",
+        }
+        errors = rs._validate_step_verdict(verdict)
+        self.assertIn("resume_hint must be an object on fail", errors)
 
 
 if __name__ == "__main__":

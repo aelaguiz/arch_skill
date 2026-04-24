@@ -54,16 +54,26 @@ check. Evidence is the order of landmarks in the transcript.
 
 ## StepVerdict JSON schema
 
-The critic returns a single JSON document conforming to this schema. Both
-runtimes enforce it — Claude via `--json-schema`, Codex via `--output-schema`
-(schema file must include `"additionalProperties": false` at every object
-level).
+The critic returns a single JSON document conforming to
+`step-verdict.schema.json`. Both runtimes enforce it — Claude via
+`--json-schema`, Codex via `--output-schema`. Codex requires every property
+on every object to appear in `required`, so semantically optional fields are
+required-but-nullable. The orchestration script normalizes older schemas to
+that shape and then runs semantic validation on the verdict.
 
 ```json
 {
   "type": "object",
   "additionalProperties": false,
-  "required": ["step_n", "verdict", "checks", "summary"],
+  "required": [
+    "step_n",
+    "verdict",
+    "checks",
+    "resume_hint",
+    "route_to_step_n",
+    "abstain_reason",
+    "summary"
+  ],
   "properties": {
     "step_n": {
       "type": "integer",
@@ -94,7 +104,7 @@ level).
       }
     },
     "resume_hint": {
-      "type": "object",
+      "type": ["object", "null"],
       "additionalProperties": false,
       "required": ["headline", "required_fixes", "do_not_redo"],
       "properties": {
@@ -103,8 +113,8 @@ level).
         "do_not_redo": {"type": "array", "items": {"type": "string"}}
       }
     },
-    "route_to_step_n": {"type": "integer", "minimum": 1},
-    "abstain_reason": {"type": "string"},
+    "route_to_step_n": {"type": ["integer", "null"], "minimum": 1},
+    "abstain_reason": {"type": ["string", "null"]},
     "summary": {"type": "string"}
   }
 }
@@ -116,28 +126,38 @@ Field semantics:
   the descriptor — mismatches indicate the critic was briefed on the wrong
   step.
 - `verdict`:
-  - `pass`: all applicable checks passed. Advance.
+  - `pass`: all applicable checks passed. Advance. Set `resume_hint`,
+    `route_to_step_n`, and `abstain_reason` to `null`.
   - `fail`: at least one applicable check failed. Resume with `resume_hint`.
+    Set `abstain_reason` to `null`. Set `route_to_step_n` to an earlier
+    step number only for upstream-routed fails; otherwise set it to `null`.
   - `abstain`: the critic could not judge (inputs missing, artifact not
-    inspectable, transcript corrupted). Fail loud; ask the user.
+    inspectable, transcript corrupted). Set `resume_hint` and
+    `route_to_step_n` to `null`, fill `abstain_reason`, and let the
+    orchestrator repair any known missing input before asking the user.
 - `checks`: one entry per check in the descriptor. A check that was not in
   the descriptor but is load-bearing may also appear with `status:
   inapplicable` and an explanation — this is how the critic reports that it
   wanted to check something and could not.
-- `resume_hint`: required when `verdict=fail`. The orchestrator renders this
-  into the resume prompt verbatim. The critic's phrasing is what the step
-  will read.
-  - `headline`: one sentence naming what went wrong.
-  - `required_fixes`: imperative-form items. The step should execute these.
+- `resume_hint`: object when `verdict=fail`; `null` otherwise. The
+  orchestrator renders this into the resume prompt verbatim. The critic's
+  phrasing is what the step will read.
+  - `headline`: one blunt sentence naming the contract breach.
+  - `required_fixes`: ordered actions the step must execute. These are not
+    suggestions. For repeated failures or failures about process evidence,
+    skill loading, owner-path usage, skipped landmarks, or false final claims,
+    write a concrete execution checklist with paths, commands, selector
+    checks, and explicit stop conditions.
   - `do_not_redo`: things the step already did correctly. The step should
     not tear down good work to rebuild it.
-- `route_to_step_n`: optional. Set on `verdict=fail` when the fix lives in
+- `route_to_step_n`: nullable. Set on `verdict=fail` when the fix lives in
   an earlier step's artifact and the current step cannot repair it from
   its own scope. Must be `< step_n`. When set, `resume_hint` is addressed
   to that earlier step — its `headline` and `required_fixes` will be read
   by the target step's session when the orchestrator reopens it. Omit for
-  self-routed fails.
-- `abstain_reason`: required when `verdict=abstain`. Plain English.
+  self-routed fails by setting it to `null`.
+- `abstain_reason`: string when `verdict=abstain`; `null` otherwise. Plain
+  English.
 - `summary`: 1–3 sentences the orchestrator shows in the Phase 5 report.
 
 ## Strictness scoping (which checks run when)
@@ -161,7 +181,7 @@ form", not "don't care about truth".
 A fail must be actionable. The critic decides where the actual repair
 lives and expresses that via `route_to_step_n`.
 
-Self-routed (omit `route_to_step_n`): the current step can repair this
+Self-routed (`route_to_step_n: null`): the current step can repair this
 from within its declared scope. A resume with `required_fixes` would be
 enough.
 
@@ -178,8 +198,16 @@ doubt, route self.
 
 Example — route self: step 4 produced an artifact missing a field the
 step was supposed to produce. The field is derivable from what step 4
-was doing. Omit `route_to_step_n`; set `required_fixes` naming the
+was doing. Set `route_to_step_n` to `null`; set `required_fixes` naming the
 missing field.
+
+Example — process evidence fail: step 4 produced a copy artifact but used raw
+edits while claiming the owner path was unavailable. Omit `route_to_step_n`
+by setting it to `null` if step 4 can recover. Set `required_fixes` to the
+exact operational sequence: read the owning skill path, read each required
+specialist path, use the owner write command or stop with the exact missing
+command/help output, remove the false final claim, and finish with the selector
+command the critic will use.
 
 Example — route upstream: step 4 produced per-surface copy correctly,
 but that copy references step 3's walkthrough stage. Step 3 used the

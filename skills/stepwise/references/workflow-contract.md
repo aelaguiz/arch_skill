@@ -5,6 +5,11 @@ concrete outputs, and concrete failure modes. Judgment lives in model
 prose; determinism lives in `scripts/run_stepwise.py`. This file names
 which is which at every step.
 
+Across every phase, apply `unblocking.md`: if the current role knows a safe,
+bounded repair that preserves the confirmed manifest and role boundaries, do
+that repair before asking the user. Stop discipline applies after known
+unblocks and retry budgets are exhausted, not before.
+
 ## Phase 1 — Intake and interpretation
 
 **Inputs**
@@ -77,6 +82,9 @@ writing `manifest.json` to the run directory (script-backed I/O).
 - Doctrine contradicts itself across files → surface the contradiction.
 - A routing preference matches no steps, conflicts with hard doctrine, or is
   too ambiguous to apply responsibly → surface it before execution.
+- A prompt, descriptor, or schema artifact is malformed but the intended
+  meaning is clear from the confirmed inputs → repair the run-directory
+  artifact, record the repair, and continue.
 
 ## Phase 3 — Plan confirmation
 
@@ -125,10 +133,13 @@ For each step `n` from 1 to N:
 
 **Failure modes**
 - Subprocess crashes (non-zero exit) → retry policy treats this as
-  a FAIL with crash evidence, subject to the same cap logic.
+  a FAIL with crash evidence, subject to the same cap logic. If the
+  crash is a known prompt/rendering/flag problem in the run machinery,
+  repair that orchestration defect before charging the step attempt.
 - Session id not captured (unexpected output shape) → the step cannot
-  be resumed. Mark `steps/<n>/try-1/session_id.txt` with
-  `UNRECOVERABLE` and skip to the stop_discipline on next critic FAIL.
+  be resumed unless the id can be recovered from the raw stream. Inspect
+  the stream for known Claude/Codex id shapes before marking
+  `steps/<n>/try-1/session_id.txt` with `UNRECOVERABLE`.
 
 ### 4b. Spawn critic sub-session
 
@@ -149,12 +160,28 @@ For each step `n` from 1 to N:
 - Write prompt, invocation, raw output, and parsed verdict into
   `steps/<n>/try-<k>/critic/`.
 
+The critic recovery budget is one repaired retry for each distinct
+orchestration defect. Do not spin: if the same repaired defect fails again,
+record it as blocked and apply stop discipline.
+
 **Failure modes**
-- Critic subprocess crashes → retry the critic once. If it crashes
-  again, record BLOCKED for the step and apply stop_discipline.
-- Critic output does not parse against the schema → fail loud. Do
-  not guess at the verdict; record schema-parse-failure in the
-  critic directory and BLOCK.
+- Critic subprocess crashes because of a known orchestration defect
+  (schema shape drift, prompt rendering, command flag drift, missing
+  run-directory file) → repair that defect inside the run directory,
+  record the repair, and retry within the critic recovery budget.
+- Critic subprocess crashes for an unknown runtime reason → retry the
+  critic once. If it crashes again, record BLOCKED for the step and
+  apply stop_discipline.
+- Critic output does not parse against the schema → do not guess at
+  the verdict. If the parse failure has a known safe repair, such as
+  normalizing required-nullable schema fields for Codex or rerendering
+  a malformed prompt, perform that repair and retry. If no bounded
+  repair is known, record schema-parse-failure in the critic directory
+  and BLOCK.
+- Critic output is syntactically valid JSON but fails StepVerdict
+  semantic validation → record `verdict.validation_errors.json` and
+  retry the critic only if the error is an orchestration artifact. Do
+  not coerce an invalid verdict into pass/fail by hand.
 - Critic writes to disk (detected by diffing target repo before/after
   the critic call) → fail loud. Critics are read-only by contract.
 
@@ -180,13 +207,13 @@ For each step `n` from 1 to N:
     each critic as usual using the confirmed manifest's resolved execution
     blocks. A fresh pass on a re-run step is `pass-after-repair`; a fresh
     fail re-enters the normal fail handling for that step.
-- `verdict=fail` + `route_to_step_n` present but `stop_discipline` is
+- `verdict=fail` + non-null `route_to_step_n` but `stop_discipline` is
   anything other than `autonomous_repair` → treat like a retries-
   remaining fail (resume the current step with the same
   `resume_hint`) or, if retries are exhausted, apply `stop_discipline`
   as below. The routing field is a hint only; the orchestrator does
   not reopen upstream unless the discipline says so.
-- `verdict=fail` + no `route_to_step_n` + retries remaining → compose
+- `verdict=fail` + `route_to_step_n: null` + retries remaining → compose
   the resume prompt per `step-prompt-contract.md`. Build the resume
   invocation per `session-resume.md` (`claude -r <id>` or `codex exec
   resume <id>`). Run. Repeat 4b on the new attempt.
@@ -200,7 +227,12 @@ For each step `n` from 1 to N:
   - `autonomous_repair`: with no routing hint and retries exhausted,
     fall back to `halt_and_ask` semantics — autonomous repair has
     nothing to repair with.
-- `verdict=abstain` → fail loud. Ask the user what to do.
+- `verdict=abstain` → first inspect whether the abstain reason names
+  a known unblock. If the critic lacked a transcript path, artifact
+  path, schema file, or read-only predicate that the orchestrator can
+  reconstruct from the run directory, repair that and rerun the critic.
+  Ask the user only when the evidence is genuinely unavailable or the
+  required decision is outside the manifest.
 
 **Where judgment lives:** step 4c's decision is mechanical (cap
 arithmetic) once the verdict is in hand. The critic's verdict is the

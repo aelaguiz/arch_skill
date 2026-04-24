@@ -1,6 +1,6 @@
 # Session resume mechanics
 
-Verified against Claude Code CLI 2.1.118 and Codex CLI 0.123.0-alpha.8. When
+Verified against Claude Code CLI 2.1.119 and Codex CLI 0.124.0-alpha.3. When
 either CLI version drifts, re-run the verification block at the bottom of this
 file before trusting any invocation here.
 
@@ -173,8 +173,12 @@ codex exec \
 
 The structured verdict is written verbatim to the file named by `-o`. No
 wrapper. Codex's `--output-schema` requires `"additionalProperties": false` at
-every object level in the schema file — the CLI enforces this and fails loud
-otherwise. Build schemas accordingly.
+every object level and requires every object property to be listed in
+`required`. Semantically optional fields must therefore be
+required-but-nullable. `scripts/run_stepwise.py` writes a normalized
+`critic/schema.codex.json` before invoking Codex, then validates the returned
+StepVerdict semantically so `resume_hint`, `route_to_step_n`, and
+`abstain_reason` still behave as optional concepts.
 
 ## Notes on flag drift
 
@@ -183,6 +187,10 @@ otherwise. Build schemas accordingly.
   do not set both.
 - Codex uses `-c model_reasoning_effort='"<level>"'` — note the TOML-quoted
   string inside a shell-quoted argument. The inner double quotes are required.
+- Codex 0.124 rejects old schema files where properties such as `resume_hint`
+  exist in `properties` but not in `required`. This is recoverable
+  orchestration drift: normalize the schema and retry, do not halt the whole
+  run if the schema semantics are clear.
 - `--output-format json` on Claude and `--json` on Codex are unrelated flags
   with similar purpose: Claude returns one JSON object at end, Codex streams
   JSONL events. Treat them differently in the parser.
@@ -207,7 +215,7 @@ claude -p --output-format json --dangerously-skip-permissions \
 # 3 Claude critic
 claude -p --output-format json --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' --model haiku \
-  --json-schema '{"type":"object","required":["verdict"],"properties":{"verdict":{"enum":["pass","fail"]}}}' \
+  --json-schema '{"type":"object","additionalProperties":false,"required":["verdict"],"properties":{"verdict":{"enum":["pass","fail"]}}}' \
   "Return verdict pass." | jq '.structured_output'
 
 # 4 Codex step
@@ -219,7 +227,8 @@ codex exec --cd /tmp/smoke --dangerously-bypass-approvals-and-sandbox \
 codex exec resume <THREAD_ID> --dangerously-bypass-approvals-and-sandbox \
   --skip-git-repo-check --json -o /tmp/smoke/resume.txt "Say PONG." < /dev/null
 
-# 6 Codex critic (schema file needs additionalProperties:false)
+# 6 Codex critic (schema file needs additionalProperties:false and every
+# property in required)
 codex exec --cd /tmp/smoke --ephemeral \
   --dangerously-bypass-approvals-and-sandbox --skip-git-repo-check \
   --model gpt-5.4 -c model_reasoning_effort='"low"' \
