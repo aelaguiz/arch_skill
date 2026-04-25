@@ -4,9 +4,9 @@
 REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio
 # `SKILLS` is the active agents/Codex surface. Claude mirrors it; Gemini omits
 # Stop-hook and code-review-runner skills.
-SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring skill-flow amir-publish codex-review-yolo code-review stepwise arch-epic
-CLAUDE_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring skill-flow amir-publish codex-review-yolo code-review stepwise arch-epic
-GEMINI_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring skill-flow amir-publish codex-review-yolo stepwise arch-epic
+SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring pr-authoring skill-flow amir-publish codex-review-yolo code-review stepwise arch-epic
+CLAUDE_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring pr-authoring skill-flow amir-publish codex-review-yolo code-review stepwise arch-epic
+GEMINI_SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring pr-authoring skill-flow amir-publish codex-review-yolo stepwise arch-epic
 NON_CLAUDE_SKILLS := $(filter-out $(CLAUDE_SKILLS),$(SKILLS))
 NON_GEMINI_SKILLS := $(filter-out $(GEMINI_SKILLS),$(SKILLS))
 # Prompt-era command files are no longer runtime sources; these names drive

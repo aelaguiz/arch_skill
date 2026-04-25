@@ -37,6 +37,7 @@ Other shipped skills are:
 - `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
 - `prompt-authoring` — writes, edits, refactors, and audits reusable prompt contracts
 - `skill-authoring` — writes, edits, refactors, and audits reusable agent skill packages
+- `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes
 - `skill-flow` — designs, repairs, and audits ordered multi-skill flows with distinct skill jobs, concrete handoffs, clear peer boundaries, and no prompt-runner scaffolding
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion claims
@@ -104,6 +105,7 @@ Installed skills:
   - `~/.agents/skills/agents-md-authoring/`
   - `~/.agents/skills/prompt-authoring/`
   - `~/.agents/skills/skill-authoring/`
+  - `~/.agents/skills/pr-authoring/`
   - `~/.agents/skills/skill-flow/`
   - `~/.agents/skills/amir-publish/`
   - `~/.agents/skills/codex-review-yolo/`
@@ -131,6 +133,7 @@ Installed skills:
   - `~/.claude/skills/agents-md-authoring/`
   - `~/.claude/skills/prompt-authoring/`
   - `~/.claude/skills/skill-authoring/`
+  - `~/.claude/skills/pr-authoring/`
   - `~/.claude/skills/skill-flow/`
   - `~/.claude/skills/amir-publish/`
   - `~/.claude/skills/codex-review-yolo/`
@@ -155,6 +158,7 @@ Installed skills:
   - `~/.gemini/skills/agents-md-authoring/`
   - `~/.gemini/skills/prompt-authoring/`
   - `~/.gemini/skills/skill-authoring/`
+  - `~/.gemini/skills/pr-authoring/`
   - `~/.gemini/skills/skill-flow/`
   - `~/.gemini/skills/amir-publish/`
   - `~/.gemini/skills/codex-review-yolo/`
@@ -331,6 +335,10 @@ Use when the user wants to write, edit, refactor, or audit a reusable prompt con
 
 Use when the user wants to write, edit, refactor, or audit a reusable agent skill package with precise triggers, clear peer boundaries, lean packaging, and self-contained references.
 
+### `pr-authoring`
+
+Use when the user wants a high-quality GitHub pull request written and published from real repo changes. The skill inspects repo truth, uses its vendored PR scaffold as a quality reference, creates or updates the GitHub PR, and returns the PR link instead of only printing suggested text.
+
 ### `skill-flow`
 
 Use when the user wants to design, repair, or audit an ordered flow of multiple agent skills so each skill has a distinct job, concrete handoff artifact, clear peer boundary, and lean prompt contract. Use `skill-authoring` for one isolated package, `prompt-authoring` for one prompt contract, `arch-epic` for decomposing one execution goal into `arch-step` sub-plans, and `stepwise` for deterministic process execution.
@@ -349,7 +357,7 @@ Use `code-review` when the user wants an automated finding-set with explicit cov
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `skill-flow`, `amir-publish`, `code-review`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `pr-authoring`, `skill-flow`, `amir-publish`, `code-review`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -395,6 +403,7 @@ Examples:
 - `Use $agents-md-authoring to tighten this AGENTS.md`
 - `Use $prompt-authoring to refactor this prompt`
 - `Use $skill-authoring to audit this skill package`
+- `Use $pr-authoring to write and publish a PR for this branch`
 - `Use $skill-flow to design the authoring and audit flow for this skill suite`
 - `Use $amir-publish`
 - `Use $code-review on the uncommitted diff`

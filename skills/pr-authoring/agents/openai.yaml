@@ -1,0 +1,7 @@
+interface:
+  display_name: "PR Authoring"
+  short_description: "Write and publish high-quality GitHub pull requests"
+  default_prompt: "Use $pr-authoring to write and publish a high-quality GitHub PR for the current repo changes."
+
+policy:
+  allow_implicit_invocation: true
