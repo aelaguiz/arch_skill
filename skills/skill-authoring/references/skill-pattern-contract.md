@@ -82,6 +82,7 @@ skill, but the guide should choose and hand off rather than execute every lane.
   - Own detailed doctrine, examples, schemas, evaluation criteria, and deeper guidance that should load only when needed.
 - `scripts/`
   - Own deterministic transforms, validators, or repeated logic that natural language handles poorly.
+  - Also own their own stdout contract: scripts the skill ships are called by the agent, so their default output shape is part of the skill's prompt-budget surface. See `references/script-output-economy.md`.
 - `assets/`
   - Own files used in outputs, not background reading.
 - `agents/openai.yaml`
@@ -126,6 +127,7 @@ If the problem is:
   discriminator but move explanation into `SKILL.md` or `references/`
 - the wrong sibling skill loads: name the nearest lookalike and repair the ownership boundary, handoff rule, or guide skill
 - the skill loads correctly but executes poorly: fix `SKILL.md`, the workflow, or add a script if the failure is deterministic
+- the skill works in one turn but degrades the agent across follow-up turns: a shipped script is dumping unbounded output into the prompt; fix the script's output shape via `references/script-output-economy.md`
 - the skill feels huge or muddy: narrow the use cases, split reference material, or split the skill entirely
 - the skill depends on repo trivia: move that material to `AGENTS.md` or bundle only the reusable part
 - the package contains many files with little runtime value: delete them and keep the ownership model strict

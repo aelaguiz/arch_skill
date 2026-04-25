@@ -137,6 +137,8 @@ Add a `script` when:
 - precise validation is valuable
 - natural-language execution keeps failing in a repeatable way
 
+Once the decision to ship a script is made, the script's stdout shape is a separate design problem and is owned by `references/script-output-economy.md`. Treat it as part of the skill's prompt-budget surface, not as a developer console.
+
 ## `agents/openai.yaml` rules
 
 Include `agents/openai.yaml` only when it adds real value.

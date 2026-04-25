@@ -49,6 +49,7 @@ make install
 - Keep the shipped skill self-contained; do not depend on repo docs, hidden context, or local prompt packs at runtime.
 - Keep `SKILL.md` lean and move heavy detail into `references/`.
 - Add `scripts/` only when deterministic reliability or repeated complexity justifies them.
+- Treat any script the skill ships as part of the agent's prompt budget; default to a high-signal verdict and a handle for detail, not an inline blob.
 - Debug undertriggering, overtriggering, and poor execution separately.
 - Validate the skill on representative tasks without leaking the intended answer into the evaluation surface.
 - If the brief or existing package is missing, stop and say so instead of inventing a skill contract.
@@ -63,6 +64,7 @@ make install
    - `references/peer-groups-and-boundaries.md` when related sibling skills, suite routing, or overlap are in scope
    - `references/packaging-trigger-and-validation.md` for file layout, trigger quality, and shipping checks
    - `references/openclaw-skills.md` when the target runtime is OpenClaw or mirrors OpenClaw skill semantics
+   - `references/script-output-economy.md` when the skill ships a script, command wrapper, or tool whose stdout the agent will read
    - `references/examples-and-anti-examples.md` when you need grounded examples or want to sanity-check framing
 
 ## Workflow
@@ -92,4 +94,5 @@ make install
 - `references/peer-groups-and-boundaries.md` - place a skill inside its visible peer group without turning boundaries into routing tables
 - `references/packaging-trigger-and-validation.md` - file layout, trigger quality, progressive disclosure, and shipping checks
 - `references/openclaw-skills.md` - OpenClaw-only frontmatter, gating, slash-command, fleet-isolation, and security rules
+- `references/script-output-economy.md` - design the stdout of skill-shipped scripts as a prompt fragment, not a developer console
 - `references/examples-and-anti-examples.md` - grounded good and bad patterns; use them to teach, not to cargo-cult
