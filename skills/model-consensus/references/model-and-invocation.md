@@ -30,6 +30,10 @@ Follow the shared model-resolution doctrine:
 - Preserve family and numeric version exactly. `gpt 5.5` may normalize to
   `gpt-5.5`; it must not become `gpt-5.4`. `opus 4.7` may normalize to
   `claude-opus-4-7`; it must not become another Opus version.
+- If the user says `gpt 5.4` or a `gpt-5.4` variant while choosing a model,
+  pause before execution and ask whether they meant `gpt-5.5` or explicitly
+  want `gpt-5.4`. This is an intent check, not an alias rule: do not rewrite
+  the version yourself.
 - Infer runtime only from unambiguous family evidence: `gpt`/`codex` implies
   Codex; `claude`/`opus`/`sonnet`/`haiku` implies Claude.
 - For Codex, inspect `codex debug models` when model availability matters and

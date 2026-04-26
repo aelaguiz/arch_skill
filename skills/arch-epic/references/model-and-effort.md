@@ -37,9 +37,9 @@ Example table:
 
 ```text
 epic_planner: claude opus 4.7 xhigh
-implementation_worker: codex gpt 5.4 xhigh
+implementation_worker: codex gpt 5.5 xhigh
 repair_worker: same as implementation_worker
-critic: codex gpt 5.4 mini xhigh
+critic: codex gpt 5.5 xhigh
 poll_seconds: 180
 quiet_floor_seconds: 900
 stuck_floor_seconds: 1800
@@ -82,10 +82,10 @@ needs to change, update the shared helper and the shared doctrine references.
 All of these are valid when they include a role:
 
 - "planner on Claude Opus 4.7 xhigh"
-- "implementation worker on Codex gpt-5.4 xhigh"
+- "implementation worker on Codex gpt-5.5 xhigh"
 - "repair same as implementation"
-- "critics on gpt 5.4 mini xhigh"
-- "codex gpt-5.4 high everywhere"
+- "critics on gpt 5.5 xhigh"
+- "codex gpt-5.5 high everywhere"
 
 If the user gives one complete "everywhere" value, the orchestrator may fill
 all four roles with that value, but it must announce the interpretation before
@@ -96,9 +96,13 @@ running.
 Treat model text as intent, not a loose alias:
 
 - `gpt 5.5` may normalize to `gpt-5.5`; it must not become `gpt-5.4`.
-- `gpt 5.4 mini` may normalize to `gpt-5.4-mini`.
+- `gpt 5.3 codex` may normalize to `gpt-5.3-codex`.
 - `opus 4.7` under Claude may normalize to `claude-opus-4-7`; it must not
   become another Opus version.
+- If the user says `gpt 5.4` or a `gpt-5.4` variant while choosing a model,
+  pause before execution and ask whether they meant `gpt-5.5` or explicitly
+  want `gpt-5.4`. This is an intent check, not an alias rule: do not rewrite
+  the version yourself.
 - Family-only Claude aliases such as `opus`, `sonnet`, or `haiku` are allowed
   only when the user did not pin a version.
 - If the phrase names both Claude and Codex families, ask the user to split
@@ -107,7 +111,7 @@ Treat model text as intent, not a loose alias:
 Always print the raw-to-resolved mapping before execution:
 
 ```text
-critic: "codex gpt 5.4 mini xhigh" -> runtime=codex, model=gpt-5.4-mini, effort=xhigh
+critic: "codex gpt 5.5 xhigh" -> runtime=codex, model=gpt-5.5, effort=xhigh
 planner: "Claude Opus 4.7 high" -> runtime=claude, model=claude-opus-4-7, effort=high
 ```
 

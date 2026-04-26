@@ -25,7 +25,7 @@ arch-step commands in the visible session one transition at a time.
 The automatic lane is explicit and opt-in. After the user approves the
 decomposition, arch-epic asks for a role-based execution table:
 `epic_planner`, `implementation_worker`, `repair_worker`, and `critic`.
-It resolves shorthand such as `opus 4.7 xhigh` or `gpt 5.4 mini high` to
+It resolves shorthand such as `opus 4.7 xhigh` or `gpt 5.5 high` to
 runnable model IDs using the shared resolver doctrine, pins the resolved
 policy, then drives sub-plans depth-first with spawned hook-suppressed
 Claude/Codex harnesses. Automatic workers apply arch-step doctrine directly

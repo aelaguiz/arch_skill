@@ -24,7 +24,7 @@ Parent behavior:
 User:
 
 ```text
-Use $model-consensus. Put Codex gpt-5.4 xhigh in adversarial mode against
+Use $model-consensus. Put Codex gpt-5.5 xhigh in adversarial mode against
 Claude Sonnet 4.6 high. The goal is the most elegant plan for removing the
 duplicate install path without breaking existing users.
 ```

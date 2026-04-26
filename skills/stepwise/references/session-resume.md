@@ -222,7 +222,7 @@ claude -p --output-format json --dangerously-skip-permissions \
 
 # 4 Codex step
 codex exec --cd /tmp/smoke --dangerously-bypass-approvals-and-sandbox \
-  --skip-git-repo-check --model gpt-5.4 -c model_reasoning_effort='"low"' \
+  --skip-git-repo-check --model gpt-5.5 -c model_reasoning_effort='"low"' \
   --json -o /tmp/smoke/step.txt "Say PING." < /dev/null
 
 # 5 Codex resume (reuse thread_id from step 4)
@@ -233,7 +233,7 @@ codex exec resume <THREAD_ID> --dangerously-bypass-approvals-and-sandbox \
 # property in required)
 codex exec --cd /tmp/smoke --ephemeral \
   --dangerously-bypass-approvals-and-sandbox --skip-git-repo-check \
-  --model gpt-5.4 -c model_reasoning_effort='"low"' \
+  --model gpt-5.5 -c model_reasoning_effort='"low"' \
   --output-schema /tmp/smoke/schema.json --json -o /tmp/smoke/verdict.json \
   "Return verdict pass." < /dev/null
 ```

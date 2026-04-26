@@ -27,7 +27,7 @@ Add only the missing facts to the question when some values are already known.
 
 Infer runtime only when the user's wording makes it unambiguous:
 
-- `codex`, `gpt`, `gpt-5.5`, `gpt 5.4 mini`, or `gpt-5.3-codex` implies
+- `codex`, `gpt`, `gpt-5.5`, `gpt 5.5 high`, or `gpt-5.3-codex` implies
   `runtime=codex`.
 - `claude`, `opus`, `sonnet`, or `haiku` implies `runtime=claude`.
 - If the user names only an effort level, such as "xhigh", ask for runtime and
@@ -45,6 +45,10 @@ Treat model text as intent, not a loose alias:
 - Preserve model family and numeric version exactly. `gpt 5.5` may normalize to
   `gpt-5.5`; it must not become `gpt-5.4`. `opus 4.7` may normalize to
   `claude-opus-4-7`; it must not become another Opus version.
+- If the user says `gpt 5.4` or a `gpt-5.4` variant while choosing a model,
+  pause before execution and ask whether they meant `gpt-5.5` or explicitly
+  want `gpt-5.4`. This is an intent check, not an alias rule: do not rewrite
+  the version yourself.
 - For Codex, inspect `codex debug models` when needed and choose an available
   identifier with the same family and exact version. If no exact match exists
   or multiple matches are plausible, ask for the runnable model id.

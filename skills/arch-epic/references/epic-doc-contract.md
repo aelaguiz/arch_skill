@@ -92,9 +92,9 @@ auto_execution:
   auto_run_dir: .arch_skill/arch-epic/auto/<epic-slug>/run-<ts>
   source_quotes:
     epic_planner: claude opus 4.7 xhigh
-    implementation_worker: codex gpt 5.4 xhigh
+    implementation_worker: codex gpt 5.5 xhigh
     repair_worker: same as implementation_worker
-    critic: codex gpt 5.4 mini xhigh
+    critic: codex gpt 5.5 xhigh
   roles:
     epic_planner:
       runtime: claude
@@ -103,17 +103,17 @@ auto_execution:
       source: user_table
     implementation_worker:
       runtime: codex
-      model: gpt-5.4
+      model: gpt-5.5
       effort: xhigh
       source: user_table
     repair_worker:
       runtime: codex
-      model: gpt-5.4
+      model: gpt-5.5
       effort: xhigh
       source: same_as:implementation_worker
     critic:
       runtime: codex
-      model: gpt-5.4-mini
+      model: gpt-5.5
       effort: xhigh
       source: user_table
   execution_sha256: <hex digest of the normalized policy>
