@@ -1,0 +1,225 @@
+#!/usr/bin/env python3
+# Render the DAG substrate's edge table to deterministic d2 source + SVG.
+# Substrate format SSOT: ../references/dag-substrate-format.md
+# Called only on user request from the DAG-grounded audit sub-mode.
+
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+USAGE = "render_dag_d2.py <substrate.md> <out.d2> <out.svg>"
+
+NODE_KIND_PALETTE = {
+    "router": "fill:#FFE4B5;stroke:#B54708;stroke-width:2",
+    "orchestrator": "fill:#FFF4D6;stroke:#B54708",
+    "stage": "fill:#FFFFFF;stroke:#B54708",
+    "specialist": "fill:#E6F4FF;stroke:#1E5FA8",
+    "primitive": "fill:#E8F5E8;stroke:#067647",
+    "presentation": "fill:#F4E6FF;stroke:#6B2FB3",
+    "diagnostic": "fill:#F0F0F0;stroke:#666666;stroke-dash:4",
+    "external": "fill:#F8F8F8;stroke:#999999;stroke-dash:2",
+    "unresolved": "fill:#FFE4E1;stroke:#B54708;stroke-dash:2",
+}
+
+EDGE_KINDS = {
+    "delegates_to",
+    "validates_via",
+    "helper_call",
+    "routes_to",
+    "gates_on",
+    "references_for_truth",
+    "consumes_primitive",
+    "unclassified",
+}
+
+EXPECTED_HEADER = "| from | to | edge_kind | relationship_label | evidence"
+
+
+def die(msg, code=1):
+    print(f"render_dag_d2.py: error: {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+def parse_args(argv):
+    if len(argv) != 4:
+        die(f"usage: {USAGE}\nreceived {len(argv) - 1} arg(s)", code=2)
+    substrate_path = Path(argv[1])
+    out_d2 = Path(argv[2])
+    out_svg = Path(argv[3])
+    if not substrate_path.exists():
+        die(f"substrate file does not exist: {substrate_path}")
+    return substrate_path, out_d2, out_svg
+
+
+def find_d2_or_die():
+    d2 = shutil.which("d2")
+    if d2 is None:
+        die(
+            "d2 binary not found on PATH.\n"
+            "Install from https://d2lang.com/tour/install or via your package manager.\n"
+            "On macOS: brew install d2.\n"
+            "Re-run this script after install.",
+            code=3,
+        )
+    return d2
+
+
+def parse_edge_table(text):
+    # Find the markdown table whose header starts with EXPECTED_HEADER.
+    lines = text.splitlines()
+    header_idx = None
+    for i, line in enumerate(lines):
+        if line.strip().startswith(EXPECTED_HEADER):
+            header_idx = i
+            break
+    if header_idx is None:
+        die(
+            f"substrate document does not contain an edge table with the expected header:\n  {EXPECTED_HEADER}\n"
+            "See ../references/dag-substrate-format.md for the substrate format spec.",
+            code=4,
+        )
+
+    # Skip the header separator row (e.g. | --- | --- | ...).
+    # Then read pipe-delimited rows until a blank line or non-table line.
+    rows = []
+    i = header_idx + 2
+    while i < len(lines):
+        raw = lines[i].rstrip()
+        if not raw.startswith("|"):
+            break
+        cells = [c.strip() for c in raw.strip("|").split("|")]
+        if len(cells) != 5:
+            i += 1
+            continue
+        from_slug, to_slug, edge_kind, label, evidence = cells
+        if edge_kind not in EDGE_KINDS:
+            die(
+                f"edge table row has unknown edge_kind '{edge_kind}'.\n"
+                f"  row: {raw}\n"
+                f"  expected one of: {sorted(EDGE_KINDS)}",
+                code=5,
+            )
+        rows.append((from_slug, to_slug, edge_kind, label, evidence))
+        i += 1
+
+    if not rows:
+        die("substrate edge table is empty (no parseable rows after header).", code=4)
+    return rows
+
+
+def parse_node_kinds(text, slugs_in_edges):
+    # Pull node-kind from the mermaid block by parsing :::class-name annotations.
+    # Mermaid node line shape examples:
+    #   FC[studio-authoring-flow-controller]:::router
+    #   MAT[studio-playable-materializer]:::orchestrator
+    # Map slug -> node-kind. Fall back to "external" for any slug we never see annotated.
+    node_kind = {}
+    pattern = re.compile(r"^\s*[A-Z][A-Z0-9_]*\[([a-z][a-z0-9-]+)\]:::([a-z]+)\s*$")
+    for line in text.splitlines():
+        m = pattern.match(line)
+        if m:
+            slug, kind = m.group(1), m.group(2)
+            if kind in NODE_KIND_PALETTE:
+                node_kind[slug] = kind
+    for slug in slugs_in_edges:
+        node_kind.setdefault(slug, "external")
+    return node_kind
+
+
+def slug_to_d2_id(slug):
+    # d2 ids: keep slug literal; d2 quotes hyphens and dots fine, but use the
+    # slug directly so deterministic. Wrap in quotes when emitting to be safe.
+    return slug
+
+
+def emit_d2(rows, node_kind):
+    # Deterministic ordering: sort all node slugs alphabetically for declaration,
+    # then sort edges by (from, to, edge_kind, label) for emission.
+    all_slugs = set()
+    for f, t, _, _, _ in rows:
+        all_slugs.add(f)
+        all_slugs.add(t)
+    sorted_slugs = sorted(all_slugs)
+    sorted_rows = sorted(rows, key=lambda r: (r[0], r[1], r[2], r[3]))
+
+    out = []
+    out.append("# Generated by skills/skill-flow/scripts/render_dag_d2.py")
+    out.append("# Substrate format SSOT: skills/skill-flow/references/dag-substrate-format.md")
+    out.append("")
+    out.append("direction: down")
+    out.append("")
+
+    # Node-kind class declarations.
+    out.append("classes: {")
+    for kind in sorted(NODE_KIND_PALETTE):
+        styles = NODE_KIND_PALETTE[kind]
+        out.append(f"  {kind}: {{")
+        for stmt in styles.split(";"):
+            stmt = stmt.strip()
+            if not stmt:
+                continue
+            key, value = stmt.split(":", 1)
+            out.append(f"    style.{key.strip()}: \"{value.strip()}\"")
+        out.append("  }")
+    out.append("}")
+    out.append("")
+
+    # Node declarations.
+    for slug in sorted_slugs:
+        kind = node_kind.get(slug, "external")
+        d2_id = slug_to_d2_id(slug)
+        out.append(f'"{d2_id}": "{slug}" {{ class: {kind} }}')
+    out.append("")
+
+    # Edges.
+    for f, t, edge_kind, label, _evidence in sorted_rows:
+        f_id = slug_to_d2_id(f)
+        t_id = slug_to_d2_id(t)
+        # Use d2 edge label syntax: source -> target: "label (edge_kind)"
+        edge_label = f"{edge_kind}: {label}"
+        out.append(f'"{f_id}" -> "{t_id}": "{edge_label}"')
+    out.append("")
+
+    return "\n".join(out)
+
+
+def write_text(path, text):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def render_svg(d2_bin, in_d2, out_svg):
+    proc = subprocess.run(
+        [d2_bin, str(in_d2), str(out_svg)],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    if proc.returncode != 0:
+        die(
+            f"d2 render failed (exit {proc.returncode}).\n"
+            f"  stderr: {proc.stderr.strip()}\n"
+            f"  stdout: {proc.stdout.strip()}",
+            code=6,
+        )
+
+
+def main(argv):
+    substrate_path, out_d2, out_svg = parse_args(argv)
+    text = substrate_path.read_text(encoding="utf-8")
+    rows = parse_edge_table(text)
+    slugs_in_edges = {f for f, *_ in rows} | {t for _, t, *_ in rows}
+    node_kind = parse_node_kinds(text, slugs_in_edges)
+    d2_source = emit_d2(rows, node_kind)
+    write_text(out_d2, d2_source)
+    # Source written; now attempt SVG render. If d2 is missing, we fail loud
+    # AFTER the source file lands so the user can still render it later.
+    d2_bin = find_d2_or_die()
+    render_svg(d2_bin, out_d2, out_svg)
+    print(f"render_dag_d2.py: wrote {out_d2} and {out_svg}")
+
+
+if __name__ == "__main__":
+    main(sys.argv)

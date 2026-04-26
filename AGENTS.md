@@ -64,6 +64,15 @@ Claude Code, and Gemini.
   up front, run each sub-plan through arch-step's `new` → `auto-plan` →
   `implement-loop` → `audit-implementation` arc, and have a fresh critic check
   for scope drift between sub-plans before advancing.
+- Use `$skill-flow` when the user wants to design, repair, or audit an ordered
+  flow of multiple agent skills with distinct jobs, concrete handoffs, and
+  clear peer boundaries. For 30+ skill suites or any multi-skill audit driven
+  by a scope phrase (e.g. "audit every skill in this project", "audit the
+  skills for flow F1"), the DAG-grounded audit sub-mode walks the suite in
+  parallel sub-agents, builds a labeled-edge substrate at
+  `<doc-dir>/<doc-slug>_DAG.md`, and surfaces wasted-energy patterns
+  (over-promotion, redundancy, dead skills, broken refs) with `path:line`
+  evidence.
 
 ## Writing And Replies
 

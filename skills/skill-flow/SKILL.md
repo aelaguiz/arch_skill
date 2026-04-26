@@ -20,6 +20,8 @@ The test is whether a new reader can see the normal path without decoding a rout
 - The user wants a flow-level audit before or after individual skills are written.
 - The user wants to decide where `skill-authoring`, `prompt-authoring`, `doctrine-learn`, and `agent-linter` fit in a skill authoring flow.
 - The target skills may be pure Markdown packages, Doctrine-authored packages, or a mix of both.
+- The user wants to audit a 30+ skill suite (or any suite too large for one-pass reasoning) for wasted-energy patterns: redundancy, repeated work, over-promotion, dead skills, or broken peer references. Use the DAG-grounded audit sub-mode in `references/workflow-and-modes.md`.
+- The user says things like "audit every skill in this project", "audit the skills for flow X", or names a suite by slug list with audit intent.
 
 ## When not to use
 
@@ -55,7 +57,7 @@ The test is whether a new reader can see the normal path without decoding a rout
 1. Lock the flow's intent spine: the repeated user problem, the improved world state, and the canonical use cases.
 2. List the candidate stages in plain English. For each stage, write one job sentence, one required input, and one output or blocker.
 3. Test separability. Merge stages that only rename the same job. Split stages that own different artifacts, proof burdens, or reader moments.
-4. Shape each handoff so the next skill can start without hidden state.
+4. Shape each handoff so the next skill can start without hidden state. If the user asked to audit a multi-skill suite by scope phrase, switch to the DAG-grounded audit sub-mode procedure in `references/workflow-and-modes.md` instead of the in-memory flow-map approach — the substrate-grounded path is required for suites too large for one-pass reasoning.
 5. Define peer boundaries against the closest wrong choice.
    Pay special attention to `skill-authoring`, `prompt-authoring`, `agent-linter`, `doctrine-learn`, `arch-epic`, `arch-skills-guide`, and `stepwise`.
 6. Use specialist skills only when their active question is present.
@@ -74,5 +76,9 @@ The test is whether a new reader can see the normal path without decoding a rout
 ## Reference map
 
 - `references/flow-design-principles.md` - the core principles for separable jobs, handoffs, peer boundaries, and minimal complexity
-- `references/workflow-and-modes.md` - how to run design, audit, and repair modes without turning the skill into a prompt runner
+- `references/workflow-and-modes.md` - how to run design, audit, and repair modes (including the DAG-grounded audit sub-mode) without turning the skill into a prompt runner
 - `references/examples-and-anti-examples.md` - small examples and failure patterns that teach the judgment behind the principles
+- `references/dag-substrate-format.md` - SSOT for the DAG substrate document the agent writes during a DAG-grounded audit (mermaid graph + edge table + unresolved-reference list, plus the closed node-kind and edge-kind enums)
+- `references/parallel-walk-protocol.md` - per-sub-agent evidence schema, fanout sizing, scope resolution rules, and the code-block whitelist that prevents shell-variable false positives during reference extraction
+- `references/waste-pattern-catalog.md` - 7 seed recognition tests for the audit reasoning step (over-promotion, duplicate canonical-stage criteria, lone-wolf, primitive vs hand-coded loop, broken edge, registry-stage mismatch, duplicate fan-out); explicitly NOT a rule engine
+- `references/lessons-studio-worked-example.md` - evidence-anchored worked example calibrating over-promotion recognition; never named in the audit prompt itself

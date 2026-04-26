@@ -2,6 +2,10 @@
 
 # Purge removed packages from installed skill dirs before copying the active set.
 REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio
+# Shared doctrine directories that ship alongside the named skills. Multiple
+# SKILL.md files reference paths like `skills/_shared/controller-contract.md`,
+# so these dirs must land in every install root next to the per-skill dirs.
+SHARED_DIRS := _shared
 # `SKILLS` is the active agents/Codex surface. Claude mirrors it; Gemini omits
 # Stop-hook and code-review-runner skills.
 SKILLS := arch-step miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide arch-loop delay-poll wait agent-definition-auditor agents-md-authoring prompt-authoring skill-authoring pr-authoring skill-flow amir-publish codex-review-yolo code-review stepwise arch-epic
@@ -145,6 +149,10 @@ agents_install_skill:
 	@for skill in $(SKILLS); do \
 		cp -R skills/$$skill $(AGENTS_SKILLS_DIR)/$$skill; \
 	done
+	@for shared in $(SHARED_DIRS); do \
+		rm -rf $(AGENTS_SKILLS_DIR)/$$shared; \
+		cp -R skills/$$shared $(AGENTS_SKILLS_DIR)/$$shared; \
+	done
 
 clean_codex_skill_mirror:
 	@for skill in $(REMOVED_SKILLS) $(SKILLS); do \
@@ -161,6 +169,10 @@ claude_install_skill:
 	done
 	@for skill in $(CLAUDE_SKILLS); do \
 		cp -R skills/$$skill $(CLAUDE_SKILLS_DIR)/$$skill; \
+	done
+	@for shared in $(SHARED_DIRS); do \
+		rm -rf $(CLAUDE_SKILLS_DIR)/$$shared; \
+		cp -R skills/$$shared $(CLAUDE_SKILLS_DIR)/$$shared; \
 	done
 
 claude_install_hook:
@@ -179,6 +191,10 @@ gemini_install_skill:
 		f=$(GEMINI_SKILLS_DIR)/$$skill/SKILL.md; \
 		tmp=$$f.tmp; \
 		awk 'NR==1 && $$0=="---" {front=1; next} front && $$0=="---" {front=0; next} !front {print}' "$$f" > "$$tmp" && mv "$$tmp" "$$f"; \
+	done
+	@for shared in $(SHARED_DIRS); do \
+		rm -rf $(GEMINI_SKILLS_DIR)/$$shared; \
+		cp -R skills/$$shared $(GEMINI_SKILLS_DIR)/$$shared; \
 	done
 
 verify_install: verify_agents_install verify_codex_install verify_claude_install verify_hook_runner $(VERIFY_GEMINI)
@@ -199,6 +215,7 @@ verify_agents_install:
 	@for skill in $(REMOVED_SKILLS); do \
 		test ! -d $(AGENTS_SKILLS_DIR)/$$skill; \
 	done
+	@test -f $(AGENTS_SKILLS_DIR)/_shared/controller-contract.md
 	@echo "OK: agents skills installed"
 
 verify_codex_install:
@@ -224,6 +241,7 @@ verify_claude_install:
 	@for skill in $(REMOVED_SKILLS); do \
 		test ! -d $(CLAUDE_SKILLS_DIR)/$$skill; \
 	done
+	@test -f $(CLAUDE_SKILLS_DIR)/_shared/controller-contract.md
 	@python3 skills/arch-step/scripts/upsert_claude_stop_hook.py --verify --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
 	@python3 skills/arch-step/scripts/upsert_claude_session_start_hook.py --verify --settings-file "$(CLAUDE_SETTINGS_FILE)" --skills-dir "$(AGENTS_SKILLS_DIR)"
 	@echo "OK: Claude Code active skills installed; arch_skill Claude Stop + SessionStart hooks installed from ~/.agents/skills; stale command surfaces removed"
@@ -244,6 +262,7 @@ verify_gemini_install:
 	@for skill in $(REMOVED_SKILLS); do \
 		test ! -d $(GEMINI_SKILLS_DIR)/$$skill; \
 	done
+	@test -f $(GEMINI_SKILLS_DIR)/_shared/controller-contract.md
 	@echo "OK: Gemini active skills installed; stale command surfaces removed"
 
 remote_install:
@@ -264,6 +283,10 @@ remote_install:
 	@for skill in $(SKILLS); do \
 		scp -r skills/$$skill $(HOST):~/.agents/skills/; \
 	done
+	@for shared in $(SHARED_DIRS); do \
+		ssh $(HOST) "rm -rf ~/.agents/skills/$$shared"; \
+		scp -r skills/$$shared $(HOST):~/.agents/skills/; \
+	done
 	@for skill in $(REMOVED_SKILLS) $(SKILLS); do \
 		ssh $(HOST) "rm -rf ~/.codex/skills/$$skill"; \
 	done
@@ -273,6 +296,10 @@ remote_install:
 	done
 	@for skill in $(CLAUDE_SKILLS); do \
 		scp -r skills/$$skill $(HOST):~/.claude/skills/; \
+	done
+	@for shared in $(SHARED_DIRS); do \
+		ssh $(HOST) "rm -rf ~/.claude/skills/$$shared"; \
+		scp -r skills/$$shared $(HOST):~/.claude/skills/; \
 	done
 	@ssh $(HOST) "python3 ~/.agents/skills/arch-step/scripts/upsert_claude_stop_hook.py --settings-file ~/.claude/settings.json --skills-dir ~/.agents/skills"
 	@ssh $(HOST) "python3 ~/.agents/skills/arch-step/scripts/upsert_claude_session_start_hook.py --settings-file ~/.claude/settings.json --skills-dir ~/.agents/skills"
@@ -284,4 +311,8 @@ remote_install:
 			scp -r skills/$$skill $(HOST):~/.gemini/skills/; \
 		done; \
 		ssh $(HOST) "for skill in $(GEMINI_SKILLS); do f=~/.gemini/skills/\$$skill/SKILL.md; tmp=\$$f.tmp; awk 'NR==1 && $$0==\"---\" {front=1; next} front && $$0==\"---\" {front=0; next} !front {print}' \"\$$f\" > \"\$$tmp\" && mv \"\$$tmp\" \"\$$f\"; done"; \
+		for shared in $(SHARED_DIRS); do \
+			ssh $(HOST) "rm -rf ~/.gemini/skills/$$shared"; \
+			scp -r skills/$$shared $(HOST):~/.gemini/skills/; \
+		done; \
 	fi

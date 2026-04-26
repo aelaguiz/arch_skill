@@ -1,7 +1,7 @@
 interface:
   display_name: "Skill Flow"
-  short_description: "Design and audit ordered flows of distinct skills"
-  default_prompt: "Use $skill-flow to design, repair, or audit an ordered flow of multiple agent skills with distinct jobs, concrete handoffs, clear peer boundaries, and lean prompt contracts."
+  short_description: "Design and audit ordered flows of distinct skills, including DAG-grounded audits of large multi-skill suites"
+  default_prompt: "Use $skill-flow to design, repair, or audit an ordered flow of multiple agent skills with distinct jobs, concrete handoffs, clear peer boundaries, and lean prompt contracts. For 30+ skill suites or any multi-skill audit by scope phrase (e.g. 'audit every skill in this project'), the DAG-grounded audit sub-mode walks the suite in parallel, builds a labeled-edge substrate, and surfaces wasted-energy patterns."
 
 policy:
   allow_implicit_invocation: true

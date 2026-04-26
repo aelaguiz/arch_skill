@@ -436,11 +436,13 @@ Examples:
 
 ### `skill-flow`
 
-Use when the user wants to design, repair, or audit an ordered flow of multiple agent skills. It owns the flow-level question: which skills should exist, what each one owns, what artifact it hands to the next skill, and where specialist skills like `skill-authoring` or `prompt-authoring` should be used. Use `arch-epic` instead for decomposing one execution goal into `arch-step` sub-plans, and use `stepwise` instead for deterministic process execution.
+Use when the user wants to design, repair, or audit an ordered flow of multiple agent skills. It owns the flow-level question: which skills should exist, what each one owns, what artifact it hands to the next skill, and where specialist skills like `skill-authoring` or `prompt-authoring` should be used. For 30+ skill suites or any multi-skill audit by scope phrase ("audit every skill in this project", "audit the skills for flow F1"), the DAG-grounded audit sub-mode parallel-walks the suite, builds a labeled-edge DAG substrate at `<doc-dir>/<doc-slug>_DAG.md`, and surfaces wasted-energy patterns (over-promotion, redundancy, dead skills, broken peer references). The audit is read-only against the target — findings name affected files; the audit never invokes another skill at runtime. Use `arch-epic` instead for decomposing one execution goal into `arch-step` sub-plans, and use `stepwise` instead for deterministic process execution.
 
 Examples:
 
 - `Use $skill-flow to design the authoring and audit flow for this skill suite`
+- `Use $skill-flow to audit every skill in /Users/aelaguiz/workspace/lessons_studio/`
+- `Use $skill-flow to audit the skills for flow F1 in lessons_studio and render the DAG`
 
 ### `amir-publish`
 

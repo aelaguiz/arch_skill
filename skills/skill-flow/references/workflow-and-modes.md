@@ -40,6 +40,65 @@ Use audit mode when the skills or drafts already exist.
 
 Do not claim a full-flow audit if you only inspected one skill. Say what is missing.
 
+### Audit (DAG-grounded sub-mode)
+
+Use this sub-mode when the user wants to audit a skill suite that is too large
+for one-pass reasoning (typically 10+ skills, designed for 30+ skill suites).
+Trigger phrases include "audit every skill in this project", "audit the skills
+for flow F1 in lessons_studio", or an explicit slug list with audit intent.
+
+This sub-mode is **audit-only and read-only against the target**. It writes a
+DAG substrate document for the agent's reasoning surface, then emits findings
+using the existing audit-finding template. It does not edit any file in the
+target skill suite, and it does not invoke any other skill at runtime to act
+on findings.
+
+#### Reads (in this order)
+
+1. `references/dag-substrate-format.md` — substrate format spec and closed enums.
+2. `references/parallel-walk-protocol.md` — sub-agent evidence schema, fanout
+   sizing, scope resolution rules, code-block whitelist.
+3. `references/waste-pattern-catalog.md` — recognition tests for the audit
+   reasoning step.
+4. `references/lessons-studio-worked-example.md` — only when the boundary or
+   pattern is still fuzzy. The audit prompt itself does NOT name the worked
+   example case.
+
+#### Workflow
+
+1. **Resolve scope from the user's plain-language phrase.** Per
+   `parallel-walk-protocol.md` scope-resolution rules. Print the resolved
+   skill list (count + slugs) before fanout. Ask an exact blocker question if
+   the phrase is genuinely ambiguous.
+2. **Spawn parallel sub-agents to walk the resolved scope.** Fanout sizing per
+   `parallel-walk-protocol.md`. Each sub-agent returns the per-skill evidence
+   schema verbatim.
+3. **Aggregate sub-agent evidence into the DAG substrate.** Write the
+   substrate at `<doc-dir>/<doc-slug>_DAG.md` per `dag-substrate-format.md`
+   (mermaid graph + edge table + unresolved-reference list, in that order).
+4. **Read the substrate back. Apply the recognition tests** from
+   `waste-pattern-catalog.md`. The substrate is exhaustive grounding; the
+   verdict is prompt-driven judgment.
+5. **Emit findings using the existing 6-field audit-finding template** below.
+   `Owner` field names affected SKILL.md / reference paths only — never names
+   another skill to invoke.
+6. **(On request only)** Invoke `scripts/render_dag_d2.py <substrate.md>
+   <out.d2> <out.svg>` to produce a d2 render of the substrate. Fail loudly
+   if `d2` binary is not on PATH.
+
+#### Fail-loud boundaries
+
+Each of these stops the run with a named error:
+
+- Missing `d2` binary on PATH (only when render was requested).
+- Missing target `skills/` directory.
+- Unreadable SKILL.md (file missing, malformed, permission denied).
+- Unresolvable scope phrase that the in-prompt resolver cannot disambiguate
+  after one blocker question.
+
+No silent fallbacks. No cached SVG. No "lite" substrate when fanout fails.
+The substrate is regenerated from a fresh parallel walk every audit run.
+
 ## Repair mode
 
 Use repair mode when the flow has a known issue and the owning surfaces are available.
