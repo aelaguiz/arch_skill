@@ -1,0 +1,7 @@
+interface:
+  display_name: "Model Consensus"
+  short_description: "Orchestrate two selected models to converge on a lean plan"
+  default_prompt: "Use $model-consensus to have two selected Claude/Codex model sessions iterate on this plan, architecture, design, or concept until they converge or expose the smallest unresolved decision. Preserve the user's goal, ask once for missing model choices, require repo code reading when applicable, and do not introduce a deterministic runner, script, controller, or harness layer."
+
+policy:
+  allow_implicit_invocation: true

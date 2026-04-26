@@ -43,6 +43,7 @@ Other shipped skills are:
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion claims
 - `fresh-consult` — prompt-only fresh Claude/Codex second opinion for cold reads, flow consistency audits, completion-claim checks, and readability/confusion checks; asks once for runtime/model/effort when missing and reports the child result back to the parent skill
+- `model-consensus` — prompt-only parent-agent orchestration for two selected Claude/Codex model sessions to iterate on a plan, architecture, design, or concept until they converge or expose the smallest unresolved decision; supports adversarial simplification and requires repo-backed participants to read real code, canonical paths, conventions, and drift risks before agreeing
 - `code-review` — deterministic general code-review skill that always shells out to fresh unsandboxed Codex `gpt-5.4` `xhigh` (with parallel `gpt-5.4-mini` `xhigh` review lenses) for diffs, branches, paths, or completion-claim audits; supports direct and hook-backed invocation, and keeps Codex as the reviewer even when Claude hosts the Stop hook
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; spawns a fresh Claude or Codex worker session per step, runs an independent observational critic, and on failure diagnoses with the involved sessions before authoring a source-grounded repair at root cause. Model and effort for worker and critic are supplied by the user at invocation; both runtimes run dangerous / skip-permissions / no-sandbox. Distinct from `arch-loop` (requirement-satisfaction, not ordered steps), `arch-step` (plan-doc-backed full-arch), and `code-review` (one-shot review).
 
@@ -111,6 +112,7 @@ Installed skills:
   - `~/.agents/skills/amir-publish/`
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/fresh-consult/`
+  - `~/.agents/skills/model-consensus/`
   - `~/.agents/skills/code-review/`
   - `~/.agents/skills/stepwise/`
   - `~/.agents/skills/arch-epic/`
@@ -140,6 +142,7 @@ Installed skills:
   - `~/.claude/skills/amir-publish/`
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/fresh-consult/`
+  - `~/.claude/skills/model-consensus/`
   - `~/.claude/skills/code-review/`
   - `~/.claude/skills/stepwise/`
   - `~/.claude/skills/arch-epic/`
@@ -166,12 +169,13 @@ Installed skills:
   - `~/.gemini/skills/amir-publish/`
   - `~/.gemini/skills/codex-review-yolo/`
   - `~/.gemini/skills/fresh-consult/`
+  - `~/.gemini/skills/model-consensus/`
   - `~/.gemini/skills/stepwise/`
   - `~/.gemini/skills/arch-epic/`
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, and older `~/.codex/skills/<skill>` mirrors so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `fresh-consult` is prompt-only and is installed on all three skill surfaces, but the selected local `claude` or `codex` CLI must exist on the host at invocation time. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
+`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `fresh-consult` and `model-consensus` are prompt-only and are installed on all three skill surfaces, but the selected local `claude` or `codex` CLI must exist on the host at invocation time. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
 
 ### Remote install
 
@@ -367,6 +371,14 @@ The user supplies runtime, model, and effort, or the skill asks once before invo
 
 Use `fresh-consult` for cold reads, consistency audits, completion checks, and general second opinions. Use `code-review` when the user wants the deterministic full code-review product with Codex lens fan-out and coverage guarantees. Use `codex-review-yolo` when the user specifically wants the existing Codex `-p yolo` review pattern. Use `stepwise` or `arch-epic` when subprocesses are part of a larger ordered workflow with manifests, critics, repair loops, or persistent orchestration.
 
+### `model-consensus`
+
+Use when the user wants two selected Claude/Codex models to iterate on a plan, architecture, design, or concept until they converge, or until they expose the smallest unresolved decision. The skill is prompt-only: the parent agent orchestrates directly, prepares prompt-authoring-quality briefs, launches resumable hook-suppressed child sessions, relays critiques, and reports only child-agreed material. It does not add a deterministic runner, script, controller, or harness layer.
+
+The user supplies the two participant runtime/model/effort choices, or the skill asks once. It follows the shared model-resolution doctrine for shorthand such as `gpt 5.5 xhigh` and `Claude Opus 4.7 high`, preserves exact versions, and reports the raw-to-resolved mapping before execution.
+
+Use `model-consensus` for collaborative or adversarial plan refinement. Use `fresh-consult` for one cold second opinion, `code-review` for deterministic review findings, and `stepwise` or `arch-epic` for ordered implementation workflows.
+
 ### `code-review`
 
 Use when the user wants a real, deterministic code review against a diff, branch, path set, or "is this plan phase actually complete?" completion-claim. The skill does not review with the caller model. Every review subprocess is a fresh unsandboxed Codex process at `gpt-5.4` `xhigh` for the final synthesis, with parallel `gpt-5.4-mini` `xhigh` Codex subprocesses for per-lens review coverage (`correctness`, `architecture`, `proof`, `docs-drift`, `security`, and a conditional `agent-linter` lens when the change touches agent-building or instruction-bearing surfaces). The runner writes a namespaced artifact tree under `/tmp/code-review/...` (or a caller-supplied `--output-root`) that includes per-lens prompts, stream logs, final outputs, and a single synthesized `ReviewVerdict`.
@@ -377,7 +389,7 @@ Use `code-review` when the user wants an automated finding-set with explicit cov
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `pr-authoring`, `skill-flow`, `amir-publish`, `fresh-consult`, `code-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `pr-authoring`, `skill-flow`, `amir-publish`, `fresh-consult`, `model-consensus`, `code-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.

@@ -509,6 +509,27 @@ Practical rule:
 - Use `code-review` for the deterministic full code-review product with Codex lens fan-out and coverage guarantees.
 - Use `codex-review-yolo` when the user specifically asks for the existing Codex `-p yolo` pattern.
 
+### `model-consensus`
+
+Use when the user wants two selected Claude/Codex models to iterate on a plan, architecture, design, or concept until they converge, or until they expose the smallest unresolved decision. It is prompt-only: the parent agent is the runner, orchestrates directly, launches resumable hook-suppressed child sessions, and relays critiques. Do not add a deterministic runner, script, controller, or harness layer.
+
+The user supplies runtime/model/effort for both participants, or the skill asks once. Shorthand such as `gpt 5.5 xhigh` or `Claude Opus 4.7 high` follows the shared model-resolution doctrine: exact versions are preserved, `codex debug models` is used when Codex availability matters, and ambiguous IDs fail loud instead of silently downgrading.
+
+For repo-backed work, both participants must read real code before agreeing. Their prompts require canonical owner paths, repo conventions, adjacent patterns to adopt, duplicate or drifting pathways, and tests/proof surfaces. This keeps the dialogue focused on one existing way of doing the work whenever possible instead of creating a second bug path.
+
+Examples:
+
+- `Use $model-consensus with Claude Opus 4.7 xhigh and Codex gpt-5.5 xhigh to find the simplest architecture for this repo change`
+- `Use $model-consensus with Codex gpt-5.4 xhigh in adversarial mode against Claude Sonnet 4.6 high`
+- `Use $model-consensus to have two models iterate on this concept until they agree or name the unresolved tradeoff`
+
+Practical rule:
+
+- Use `model-consensus` for multi-model convergence, adversarial simplification, and repo-grounded architecture refinement.
+- Use `fresh-consult` for a single cold second opinion.
+- Use `code-review` for deterministic review findings.
+- Use `stepwise` or `arch-epic` when the desired output is ordered implementation, not a consensus plan.
+
 ### `code-review`
 
 Use when the user wants a real, deterministic code review — on an uncommitted diff, a branch comparison, a commit range, an explicit path set, or a "is this approved plan phase actually complete?" completion-claim. `code-review` never makes the caller model the reviewer. It always shells out to a fresh unsandboxed Codex `gpt-5.4` `xhigh` synthesis subprocess, with parallel fresh Codex `gpt-5.4-mini` `xhigh` subprocesses for the required per-lens review coverage (`correctness`, `architecture`, `proof`, `docs-drift`, `security`, and a conditional `agent-linter` lens when the change touches agent-building or instruction-bearing surfaces).

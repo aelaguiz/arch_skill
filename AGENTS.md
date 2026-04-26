@@ -76,6 +76,11 @@ Claude Code, and Gemini.
 - Use `$fresh-consult` when the user or another skill wants a clean-context
   Claude or Codex second opinion on a concrete artifact, completion claim,
   flow consistency question, or readability/confusion check.
+- Use `$model-consensus` when the user wants two selected Claude/Codex models
+  to iterate on a plan, architecture, design, or concept until they converge
+  or expose the smallest unresolved decision, including adversarial
+  simplification. The parent agent orchestrates directly; do not introduce a
+  deterministic runner, script, controller, or harness layer.
 
 ## Writing And Replies
 
