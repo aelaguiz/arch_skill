@@ -85,7 +85,10 @@ the automatic run directory:
 auto_execution:
   schema_version: 1
   approval_policy: auto_after_decomposition
-  poll_seconds: 60
+  poll_seconds: 180
+  quiet_floor_seconds: 900
+  stuck_floor_seconds: 1800
+  max_runtime_seconds: 7200
   auto_run_dir: .arch_skill/arch-epic/auto/<epic-slug>/run-<ts>
   source_quotes:
     epic_planner: claude opus 4.7 xhigh
@@ -119,8 +122,15 @@ auto_execution:
 Rules:
 
 - The user approves the decomposition before this block is written.
-- `poll_seconds` defaults to `60`; do not use short polling loops while
+- `poll_seconds` defaults to `180`; do not use short polling loops while
   waiting for spawned harnesses.
+- `quiet_floor_seconds` defaults to `900`. A live child with no stream
+  activity before this floor is still running, not failed.
+- `stuck_floor_seconds` defaults to `1800`. A live child with no stream
+  activity beyond this floor becomes `needs_attention`; this is a diagnostic
+  status, not an automatic termination command.
+- `max_runtime_seconds` defaults to `7200` for automatic children unless the
+  user pins a different policy.
 - `auto_run_dir` is an operational pointer. It is added after the run
   directory exists and is not part of the `execution_sha256` input.
 - Raw shorthand belongs in `source_quotes`; executable fields store
@@ -294,9 +304,11 @@ Every time the skill reads the epic doc, it validates:
    pending/null, `models_sha256` is also null and the skill must ask
    before running an interactive completion critic.
 4. If `auto_execution` is present, its role blocks contain
-   `runtime`, `model`, `effort`, `source_quote` or source metadata, a
-   positive `poll_seconds`, and a matching `execution_sha256` computed
-   over the normalized execution policy excluding `auto_run_dir`.
+   `runtime`, `model`, `effort`, `source_quote` or source metadata, positive
+   monitor fields (`poll_seconds`, `quiet_floor_seconds`,
+   `stuck_floor_seconds`, `max_runtime_seconds`), and a matching
+   `execution_sha256` computed over the normalized execution policy excluding
+   `auto_run_dir`.
 5. The Decomposition section is present and non-empty if
    `sub_plans_approved: true`.
 6. Every sub-plan entry has a Status; Status is one of the allowed

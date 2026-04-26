@@ -311,7 +311,7 @@ Practical rule:
 - Role choices are resolved with the shared exact-version model resolver. Shorthand such as `opus 4.7 xhigh` becomes `claude-opus-4-7`; `gpt 5.4 mini high` becomes `gpt-5.4-mini`. There is no silent downgrade, provider switch, or effort substitution.
 - Automatic mode drives sub-plans depth-first. It does not plan or implement sub-plan N+1 until sub-plan N has passed the relevant critic gates.
 - Spawned automatic workers apply arch-step doctrine directly from disk and do not arm nested `auto-plan`, `implement-loop`, `arch-loop`, `delay-poll`, or `wait` controllers.
-- The default child wait cadence is 60 seconds while waiting for spawned harnesses; avoid tight two-second polling loops.
+- The default child wait cadence is 180 seconds while waiting for spawned harnesses; avoid tight two-second polling loops. Long planner and implementation children can run detached with live `events.jsonl`, `stderr.log`, and `stream.log` artifacts, and the orchestrator should treat recent stream activity as progress rather than expecting an early final artifact.
 
 ### `arch-docs`
 

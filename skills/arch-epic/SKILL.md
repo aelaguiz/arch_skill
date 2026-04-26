@@ -1,6 +1,6 @@
 ---
 name: arch-epic
-description: "Orchestrate a goal too large for one `$arch-step` plan by decomposing it into approved ordered sub-plans, then running them depth-first through interactive arch-step handoffs or an explicit automatic harness mode. Use when the user asks to break up and run a multi-plan epic, continue an existing epic, resume from an epic doc, or automatically implement the approved epic end to end. Automatic mode asks for role-based agent/model choices for planner, implementation worker, repair worker, and critics, then uses spawned Claude/Codex harnesses with fresh context and 60s default child-wait cadence. Not for a single architecture plan (`$arch-step`), one-pass mini plan (`$arch-mini-plan`), small feature (`$lilarch`), generic completion loops (`$arch-loop`), read-only status (`$arch-flow`), or foreign-repo step orchestration (`$stepwise`)."
+description: "Orchestrate a goal too large for one `$arch-step` plan by decomposing it into approved ordered sub-plans, then running them depth-first through interactive arch-step handoffs or an explicit automatic harness mode. Use when the user asks to break up and run a multi-plan epic, continue an existing epic, resume from an epic doc, or automatically implement the approved epic end to end. Automatic mode asks for role-based agent/model choices for planner, implementation worker, repair worker, and critics, then uses fresh Claude/Codex harnesses with streamed progress, detached long-run monitoring, and a few-minute child-wait cadence. Not for a single architecture plan (`$arch-step`), one-pass mini plan (`$arch-mini-plan`), small feature (`$lilarch`), generic completion loops (`$arch-loop`), read-only status (`$arch-flow`), or foreign-repo step orchestration (`$stepwise`)."
 metadata:
   short-description: "Multi-plan orchestrator wrapping arch-step with decomposition approval, progressive North-Star gates, and a per-sub-plan scope-drift critic"
 ---
@@ -128,9 +128,19 @@ Must never happen:
 - Parallel or breadth-first sub-plan planning. Only one sub-plan is
   active at a time, and sub-plan N+1 starts only after sub-plan N is
   complete and has no blocking critic findings.
-- Two-second child polling. Automatic mode defaults to 60-second waits
+- Two-second child polling. Automatic mode defaults to 180-second waits
   while waiting for spawned harnesses unless the user explicitly pins a
   different cadence in the role policy.
+- Calling a slow planner or worker "hung" just because it has no final
+  artifact after a few minutes. Automatic children often run for
+  20-60 minutes. Use process state plus `events.jsonl`, `stderr.log`,
+  `stream.log`, `heartbeat.json`, and `monitor.json`; treat recent
+  thinking/tool/output stream activity as progress.
+- Terminating a child before the long-run floors expire unless there is
+  clear failure evidence. Default expectations are: poll every 180s,
+  call a run `quiet` only after 900s without stream activity, and call
+  it `needs_attention` only after 1800s without stream activity or after
+  the pinned max runtime.
 - Passing raw model shorthand to subprocesses. Resolve it first using
   shared model-resolution doctrine; preserve exact family/version or
   ask for the runnable ID.
@@ -192,7 +202,9 @@ Detail per mode lives in `references/workflow-contract.md`.
 - Automatic-mode artifacts under
   `<orchestrator repo root>/.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/`
   including `state.json`, `execution_policy.json`, worker prompts,
-  worker session IDs, critic verdicts, and `report.md`.
+  worker session IDs, critic verdicts, child `events.jsonl`,
+  `stderr.log`, `stream.log`, `heartbeat.json`, `monitor.json`, and
+  `report.md`.
 - Orchestration Log and Decision Log append-only in the epic doc.
 - Console summary with the epic doc path, the per-sub-plan status
   table, and the current active sub-plan's next action.
@@ -265,13 +277,32 @@ python3 scripts/run_arch_epic.py worker-spawn \
   --target-repo . \
   --role implementation_worker \
   --sub-plan-name "Build the core service" \
-  --prompt-file /tmp/worker.prompt.md
+  --prompt-file /tmp/worker.prompt.md \
+  --run-mode auto
+
+python3 scripts/run_arch_epic.py child-status \
+  --try-dir <printed-child-run-dir> \
+  --json
+
+python3 scripts/run_arch_epic.py child-tail \
+  --try-dir <printed-child-run-dir> \
+  --lines 80
+
+python3 scripts/run_arch_epic.py child-finalize \
+  --try-dir <printed-child-run-dir>
 ```
 
-Prints the verdict JSON path. Writes:
+Foreground child runs print the session ID or verdict path after completion.
+Detached child runs print the child run directory immediately; use
+`child-status`, `child-tail`, and `child-finalize` to monitor and finalize
+them. Writes:
 - `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/prompt.md`
 - `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/invocation.sh`
 - `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/stdout.final.json`
+- `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/events.jsonl`
+- `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/stderr.log`
 - `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/stream.log`
+- `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/heartbeat.json`
+- `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/monitor.json`
 - `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/verdict.json`
 - `<orch-root>/.arch_skill/arch-epic/critics/<slug>/run-<ts>/start_ts` / `end_ts` / `exit_code`

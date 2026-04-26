@@ -186,7 +186,7 @@ full turn to arm and disarm cleanly.
 - Automatic run directory under
   `.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/`.
 - One worker or critic harness action, one repair action, or one
-  explicit 60-second wait while a child run is still active.
+  explicit long-run monitor check while a child run is still active.
 - Compact Orchestration Log and Decision Log entries.
 
 ### Actions
@@ -206,9 +206,18 @@ full turn to arm and disarm cleanly.
      worklog evidence.
    - critic harness runs plan-readiness and completion/scope gates.
    - repair worker fixes critic failures that stay inside approved scope.
-5. Mark the sub-plan complete only after the critic has no blocking
+5. Choose foreground mode for short critics or small repairs where a blocking
+   call is cheaper than orchestration. Choose detached mode for planners,
+   implementation workers, and any child expected to take many minutes.
+   Detached children return a run directory immediately and keep writing
+   `events.jsonl`, `stderr.log`, and `stream.log` while they work.
+6. While a detached child is active, poll with `poll_seconds` (default 180),
+   inspect `child-status` and `child-tail`, and classify silence by the
+   long-run floors. Recent Claude/Codex thinking, tool, or output events are
+   progress. Lack of a final artifact before the floor expires is not failure.
+7. Mark the sub-plan complete only after the critic has no blocking
    findings. Then move to the next sub-plan.
-6. If all sub-plans are complete, set epic `status: complete`, write
+8. If all sub-plans are complete, set epic `status: complete`, write
    `report.md`, and render the final summary.
 
 ### Where judgment lives
@@ -223,14 +232,24 @@ full turn to arm and disarm cleanly.
 - Role-policy normalization and hashing.
 - Child invocation command rendering.
 - Run-directory artifact layout.
-- 60-second default child wait cadence.
+- 180-second default child wait cadence.
+- Streamed child artifacts: `events.jsonl`, `stderr.log`, `stream.log`,
+  `heartbeat.json`, and `monitor.json`.
 - Worker session-id capture.
 - Structured critic verdict parsing.
 
 ### Failure modes
 - Missing/ambiguous role execution policy: ask once before running.
 - Exact model cannot be resolved from shorthand: ask for runnable ID.
-- Child run still active: wait using `poll_seconds`, default 60.
+- Child run still active: wait using `poll_seconds`, default 180, and inspect
+  stream recency before deciding whether attention is needed.
+- Child has no final artifact but still has recent stream activity: keep
+  waiting; do not call it failed or stuck.
+- Child has no stream activity after `quiet_floor_seconds` (default 900):
+  mark `quiet` and continue monitoring.
+- Child has no stream activity after `stuck_floor_seconds` (default 1800), or
+  exceeds `max_runtime_seconds`: mark `needs_attention`; do not terminate
+  unless the user or orchestrator has an explicit reason.
 - Child exits without inspectable artifacts: halt with run directory.
 - Critic finds missing epic requirement coverage: repair through the
   planner or repair worker until repair budget is exhausted.

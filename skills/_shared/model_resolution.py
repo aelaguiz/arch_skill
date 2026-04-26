@@ -161,7 +161,10 @@ def resolve_role_execution_policy(
     role_sources: dict[str, str],
     *,
     codex_models: list[str] | None = None,
-    poll_seconds: int = 60,
+    poll_seconds: int = 180,
+    quiet_floor_seconds: int = 900,
+    stuck_floor_seconds: int = 1800,
+    max_runtime_seconds: int = 7200,
     approval_policy: str = "auto_after_decomposition",
 ) -> dict[str, Any]:
     """Resolve arch-epic automatic-mode role execution choices.
@@ -173,6 +176,16 @@ def resolve_role_execution_policy(
 
     if poll_seconds <= 0:
         raise ModelResolutionError("poll_seconds must be a positive integer")
+    if quiet_floor_seconds <= 0:
+        raise ModelResolutionError("quiet_floor_seconds must be a positive integer")
+    if stuck_floor_seconds < quiet_floor_seconds:
+        raise ModelResolutionError(
+            "stuck_floor_seconds must be greater than or equal to quiet_floor_seconds"
+        )
+    if max_runtime_seconds < stuck_floor_seconds:
+        raise ModelResolutionError(
+            "max_runtime_seconds must be greater than or equal to stuck_floor_seconds"
+        )
 
     pending = dict(role_sources)
     resolved: dict[str, dict[str, str]] = {}
@@ -219,6 +232,9 @@ def resolve_role_execution_policy(
         "schema_version": 1,
         "approval_policy": approval_policy,
         "poll_seconds": poll_seconds,
+        "quiet_floor_seconds": quiet_floor_seconds,
+        "stuck_floor_seconds": stuck_floor_seconds,
+        "max_runtime_seconds": max_runtime_seconds,
         "roles": resolved,
         "source_quotes": role_sources,
     }

@@ -40,11 +40,26 @@ epic_planner: claude opus 4.7 xhigh
 implementation_worker: codex gpt 5.4 xhigh
 repair_worker: same as implementation_worker
 critic: codex gpt 5.4 mini xhigh
-poll_seconds: 60
+poll_seconds: 180
+quiet_floor_seconds: 900
+stuck_floor_seconds: 1800
+max_runtime_seconds: 7200
 ```
 
 The resolved policy is stored under `auto_execution` in the epic doc and in
 the automatic run directory's `state.json`.
+
+The monitor policy is part of the same execution choice because it changes
+how much trust the parent gives long-running children. Planners and
+implementation workers routinely need tens of minutes. A missing final file
+after a short window is only "not done yet" when process state and stream
+activity show life.
+
+Use foreground mode when the expected child is short enough that blocking
+keeps the orchestration simpler. Use detached mode when the child is expected
+to plan, implement, audit, or run verification for many minutes. Detached
+mode must produce live `events.jsonl`, `stderr.log`, `stream.log`,
+`heartbeat.json`, and `monitor.json` artifacts, then be finalized after exit.
 
 ## Shared resolver owner
 
@@ -125,7 +140,13 @@ Automatic mode writes:
 
 - `source_quotes`: the raw user role text
 - `roles`: resolved runtime/model/effort blocks
-- `poll_seconds`: default `60` unless explicitly overridden
+- `poll_seconds`: default `180` unless explicitly overridden
+- `quiet_floor_seconds`: default `900`; before this floor, silence is normal
+  for long planner/worker runs
+- `stuck_floor_seconds`: default `1800`; after this floor without any stream
+  activity, the run needs attention but is not automatically terminated
+- `max_runtime_seconds`: default `7200`; exceeding it is an attention signal,
+  not a silent kill switch
 - `execution_sha256`: stable hash of the resolved policy
 
 Changing any role mid-run creates a new policy hash. The orchestrator must log

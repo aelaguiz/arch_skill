@@ -2,6 +2,7 @@ import importlib.util
 import contextlib
 import io
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -61,7 +62,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 codex_models=["gpt-5.4", "gpt-5.4-mini"],
             )
 
-    def test_role_policy_defaults_poll_to_sixty_and_allows_same_as(self):
+    def test_role_policy_defaults_to_long_run_monitoring_and_allows_same_as(self):
         policy = self.model_resolution.resolve_role_execution_policy(
             {
                 "epic_planner": "claude opus 4.7 xhigh",
@@ -72,7 +73,10 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             codex_models=["gpt-5.4", "gpt-5.4-mini"],
         )
 
-        self.assertEqual(policy["poll_seconds"], 60)
+        self.assertEqual(policy["poll_seconds"], 180)
+        self.assertEqual(policy["quiet_floor_seconds"], 900)
+        self.assertEqual(policy["stuck_floor_seconds"], 1800)
+        self.assertEqual(policy["max_runtime_seconds"], 7200)
         self.assertEqual(
             policy["roles"]["repair_worker"]["model"],
             policy["roles"]["implementation_worker"]["model"],
@@ -129,15 +133,91 @@ class ArchEpicAutoModeTests(unittest.TestCase):
 
         self.assertIn("--settings", worker_argv)
         self.assertIn('{"disableAllHooks":true}', worker_argv)
+        self.assertIn("stream-json", worker_argv)
+        self.assertIn("--include-partial-messages", worker_argv)
+        self.assertIn("--include-hook-events", worker_argv)
         self.assertIn("--model", worker_argv)
         self.assertIn("claude-opus-4-7", worker_argv)
         self.assertIn("--effort", worker_argv)
         self.assertIn("xhigh", worker_argv)
         self.assertIn("--json-schema", critic_argv)
+        self.assertIn("stream-json", critic_argv)
         self.assertIn("claude-sonnet-4-6", critic_argv)
 
-    def test_default_auto_poll_seconds_is_sixty(self):
-        self.assertEqual(self.run_arch_epic.DEFAULT_AUTO_POLL_SECONDS, 60)
+    def test_default_auto_monitoring_constants_are_long_running(self):
+        self.assertEqual(self.run_arch_epic.DEFAULT_AUTO_POLL_SECONDS, 180)
+        self.assertEqual(self.run_arch_epic.DEFAULT_QUIET_FLOOR_SECONDS, 900)
+        self.assertEqual(self.run_arch_epic.DEFAULT_STUCK_FLOOR_SECONDS, 1800)
+        self.assertEqual(self.run_arch_epic.DEFAULT_CHILD_MAX_RUNTIME_SECONDS, 7200)
+
+    def test_auto_run_mode_detaches_long_worker_roles(self):
+        selected = self.run_arch_epic._select_child_run_mode(
+            requested="auto",
+            expected_duration="auto",
+            kind="worker",
+            role="epic_planner",
+        )
+
+        self.assertEqual(selected, "detached")
+        self.assertEqual(
+            self.run_arch_epic._select_child_run_mode(
+                requested="auto",
+                expected_duration="short",
+                kind="worker",
+                role="epic_planner",
+            ),
+            "foreground",
+        )
+
+    def test_foreground_child_streams_events_and_stderr_while_capturing_stdout(self):
+        with tempfile.TemporaryDirectory() as td:
+            run_dir = Path(td)
+            code, stdout_text = self.run_arch_epic._run_subprocess(
+                [
+                    sys.executable,
+                    "-c",
+                    (
+                        "import sys; "
+                        "print('{\"type\":\"thread.started\",\"thread_id\":\"abc\"}', flush=True); "
+                        "print('ERRLINE', file=sys.stderr, flush=True)"
+                    ),
+                ],
+                run_dir / "stream.log",
+                run_dir,
+            )
+
+            self.assertEqual(code, 0)
+            self.assertIn("thread.started", stdout_text)
+            self.assertIn("thread.started", (run_dir / "events.jsonl").read_text())
+            self.assertIn("ERRLINE", (run_dir / "stderr.log").read_text())
+            self.assertIn("[stderr] ERRLINE", (run_dir / "stream.log").read_text())
+            self.assertEqual((run_dir / "exit_code").read_text().strip(), "0")
+
+    def test_child_status_uses_quiet_needs_attention_not_hung(self):
+        with tempfile.TemporaryDirectory() as td:
+            run_dir = Path(td)
+            now = 1_800_000_000.0
+            start = now - 2_000
+            activity = now - 1_000
+            (run_dir / "start_ts").write_text(
+                "2027-01-15T08:00:00Z",
+                encoding="utf-8",
+            )
+            (run_dir / "child.pid").write_text(f"{os.getpid()}\n", encoding="utf-8")
+            (run_dir / "stream.log").write_text("progress\n", encoding="utf-8")
+            os.utime(run_dir / "stream.log", (activity, activity))
+
+            status = self.run_arch_epic._child_status(
+                run_dir,
+                quiet_floor_seconds=900,
+                stuck_floor_seconds=1800,
+                max_runtime_seconds=7200,
+                now=now,
+            )
+
+        serialized = json.dumps(status)
+        self.assertEqual(status["state"], "quiet")
+        self.assertNotIn("hung", serialized.lower())
 
     def test_auto_init_narrows_gitignore_marker(self):
         with tempfile.TemporaryDirectory() as td:
@@ -200,12 +280,14 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             "Repair worker prompt",
             "Critic prompt",
             "Epic Requirement Coverage",
+            "Progress Visibility",
             "Do not arm nested controllers",
         ]:
             self.assertIn(phrase, text)
         for section in [
             "## Mission",
             "## System Context",
+            "## Progress Visibility",
             "## Authoritative Inputs",
             "## Boundaries",
             "## Process",

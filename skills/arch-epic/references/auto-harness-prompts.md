@@ -12,6 +12,7 @@ Every automatic-mode child prompt must include these sections:
 
 - `Mission`
 - `System Context`
+- `Progress Visibility`
 - `Authoritative Inputs`
 - `Boundaries`
 - `Process`
@@ -53,6 +54,13 @@ The parent orchestrator is intentionally keeping its context small. Your output
 becomes the durable DOC_PATH that later implementation and critic harnesses
 will trust. If you omit a requirement here, later workers may build the wrong
 thing cleanly.
+
+## Progress Visibility
+Sub-plan planning may take many minutes. That is acceptable when stream
+activity shows you are reading, reasoning, or writing. Use normal tool calls
+and concise interim messages as needed; do not hide long-running work behind a
+silent wait. The parent monitors streamed events and will not treat a missing
+final artifact in the first few minutes as failure.
 
 ## Authoritative Inputs
 - Epic doc: {{epic_doc_path}}
@@ -122,6 +130,13 @@ The parent orchestrator will not remember every repo detail. Critics will
 judge your work from the plan doc, worklog, Decision Log, tests, and changed
 files. Your job is to make the implementation truth inspectable from disk.
 
+## Progress Visibility
+Implementation and verification can legitimately run for tens of minutes. Make
+progress observable through ordinary tool calls, test output, and worklog
+updates. Prefer explicit evidence over silent waiting. The parent monitors
+streamed thinking/tool/output events and uses long-run floors before deciding
+that attention is needed.
+
 ## Authoritative Inputs
 - Epic doc: {{epic_doc_path}}
 - Sub-plan DOC_PATH: {{sub_plan_doc_path}}
@@ -185,6 +200,12 @@ The parent orchestrator has already decided this issue is repairable inside
 approved scope. If you discover that judgment is wrong, stop and say why. A
 repair that silently changes scope is worse than a blocked run because it
 teaches later critics the wrong product intent.
+
+## Progress Visibility
+Repair should usually be shorter than initial implementation, but it still
+needs visible evidence. Let focused tool calls, verification output, and the
+worklog show forward movement. If you need to stop, say why instead of going
+silent.
 
 ## Authoritative Inputs
 - Epic doc: {{epic_doc_path}}
@@ -253,6 +274,12 @@ You are read-only. Return structured JSON only.
 Automatic mode replaces per-sub-plan user approval with spawned critics. Your
 job is to protect the approved epic requirements from being lost, narrowed, or
 silently moved while allowing normal implementation latitude.
+
+## Progress Visibility
+Critic reads can be long when the artifacts are large. Stream the read-only
+inspection naturally through tool calls and concise reasoning. Do not invent a
+verdict just to finish quickly; the parent can wait when stream activity shows
+real inspection.
 
 ## Authoritative Inputs
 - Epic doc: {{epic_doc_path}}

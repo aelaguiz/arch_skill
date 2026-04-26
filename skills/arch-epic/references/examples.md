@@ -276,7 +276,10 @@ epic_planner -> runtime=claude, model=claude-opus-4-7, effort=xhigh
 implementation_worker -> runtime=codex, model=gpt-5.4, effort=xhigh
 repair_worker -> same_as:implementation_worker
 critic -> runtime=codex, model=gpt-5.4-mini, effort=xhigh
-poll_seconds -> 60
+poll_seconds -> 180
+quiet_floor_seconds -> 900
+stuck_floor_seconds -> 1800
+max_runtime_seconds -> 7200
 ```
 
 It writes `auto_execution` to the epic doc and initializes:
@@ -296,8 +299,11 @@ one child at a time:
 5. Repair worker runs only if critic findings are inside approved
    scope.
 
-The skill waits with the pinned `poll_seconds` cadence while children
-run. It does not poll every few seconds, and it does not plan sub-plan
+The skill starts long planner and implementation children in detached mode,
+then watches `child-status` and `child-tail` at the pinned `poll_seconds`
+cadence while their `events.jsonl`, `stderr.log`, and `stream.log` grow. It
+does not poll every few seconds, it does not call a child failed just because
+there is no final artifact after a short window, and it does not plan sub-plan
 2 until sub-plan 1 passes its critic gates.
 
 ## Takeaways
