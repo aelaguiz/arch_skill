@@ -1,6 +1,6 @@
 ---
 name: arch-epic
-description: "Orchestrate a goal too large for one `$arch-step` plan by decomposing it into approved ordered sub-plans, then running them depth-first through interactive arch-step handoffs or an explicit automatic harness mode. Use when the user asks to break up and run a multi-plan epic, continue an existing epic, resume from an epic doc, or automatically implement the approved epic end to end. Automatic mode asks for role-based agent/model choices for planner, implementation worker, repair worker, and critics, then uses fresh Claude/Codex harnesses with streamed progress, detached long-run monitoring, and a few-minute child-wait cadence. Not for a single architecture plan (`$arch-step`), one-pass mini plan (`$arch-mini-plan`), small feature (`$lilarch`), generic completion loops (`$arch-loop`), read-only status (`$arch-flow`), or foreign-repo step orchestration (`$stepwise`)."
+description: "Orchestrate a goal too large for one `$arch-step` plan by decomposing it into approved ordered sub-plans, then running them depth-first through interactive arch-step handoffs or an explicit automatic harness mode. Use when the user asks to break up and run a multi-plan epic, continue an existing epic, resume from an epic doc, or automatically implement the approved epic end to end. Automatic mode uses role-based planner, implementation worker, and critic choices; planner and implementation sessions are resumable, while critics are fresh and observation-only. Critic failures resume the same role session instead of spawning a separate repair worker. Not for a single architecture plan (`$arch-step`), one-pass mini plan (`$arch-mini-plan`), small feature (`$lilarch`), generic completion loops (`$arch-loop`), read-only status (`$arch-flow`), or foreign-repo step orchestration (`$stepwise`)."
 metadata:
   short-description: "Multi-plan orchestrator wrapping arch-step with decomposition approval, progressive North-Star gates, and a per-sub-plan scope-drift critic"
 ---
@@ -24,13 +24,19 @@ arch-step commands in the visible session one transition at a time.
 
 The automatic lane is explicit and opt-in. After the user approves the
 decomposition, arch-epic asks for a role-based execution table:
-`epic_planner`, `implementation_worker`, `repair_worker`, and `critic`.
+`epic_planner`, `implementation_worker`, and `critic`.
 It resolves shorthand such as `opus 4.7 xhigh` or `gpt 5.5 high` to
 runnable model IDs using the shared resolver doctrine, pins the resolved
 policy, then drives sub-plans depth-first with spawned hook-suppressed
 Claude/Codex harnesses. Automatic workers apply arch-step doctrine directly
 from disk; they do not arm nested `auto-plan`, `implement-loop`, or
 `arch-loop` controllers.
+
+Automatic planner and implementation worker sessions are resumable. If a
+fresh critic finds in-scope unfinished work, arch-epic resumes the same
+planner or implementation session with the critic's observation and artifact
+evidence. The critic never prescribes repair steps, and ordinary repair does
+not start a separate repair-worker session.
 
 Progressive lazy planning: sub-plan N+1 is not planned until sub-plan
 N is complete. The user approves the decomposition up front, then
@@ -62,7 +68,7 @@ change requires the user.
 - "Pick up where we left off on <project>."
 - "Automatically implement this approved epic end to end."
 - "Run the epic automatically and ask me which models to use for the
-  planner, workers, repair, and critics."
+  planner, implementation worker, and critics."
 
 ## When not to use
 
@@ -109,8 +115,10 @@ Must happen every run:
 - User supplies execution policy at invocation or at the role-table
   gate. Interactive mode needs critic runtime + model + effort.
   Automatic mode needs role execution for `epic_planner`,
-  `implementation_worker`, `repair_worker`, and `critic`. The skill
-  asks once for missing role values and never silently defaults.
+  `implementation_worker`, and `critic`. The skill asks once for
+  missing role values and never silently defaults. Existing policies
+  with legacy `repair_worker` values may load, but ordinary critic
+  failures resume the original planner or implementation worker session.
 - Resume is re-entrant: any invocation against an existing epic doc
   re-reads on-disk state and continues. No dedicated `resume`
   command.
@@ -130,6 +138,14 @@ Must never happen:
   through `extend_current` or `new_sub_plan`. There is no automatic
   defer/drop path and no supported scope-reduction lane inside
   arch-epic auto mode.
+- Letting critics author repair steps. Critics report verdict,
+  failed checks, evidence, and scope discoveries only. The parent
+  routes the result, and the resumed planner or implementation worker
+  owns the reasoning for the next attempt.
+- Spawning a separate repair worker for ordinary in-scope critic
+  failures. Same-role resume is the default repair path; a new role
+  session is only for unrecoverable session loss or explicit user
+  override.
 - Parallel or breadth-first sub-plan planning. Only one sub-plan is
   active at a time, and sub-plan N+1 starts only after sub-plan N is
   complete and has no blocking critic findings.
@@ -194,7 +210,8 @@ Detail per mode lives in `references/workflow-contract.md`.
 6. **`auto-run`** — explicit automatic lane after decomposition
    approval. Resolve/pin the role execution table, initialize the
    auto run directory, then drive one active sub-plan depth-first
-   through planner, implementation, repair, and critic harnesses.
+   through resumable planner and implementation worker sessions plus
+   fresh critic harnesses.
 
 ## Output expectations
 
@@ -209,7 +226,7 @@ Detail per mode lives in `references/workflow-contract.md`.
 - Automatic-mode artifacts under
   `<orchestrator repo root>/.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/`
   including `state.json`, `execution_policy.json`, worker prompts,
-  worker session IDs, critic verdicts, child `events.jsonl`,
+  worker session IDs, latest worker-attempt pointers, critic verdicts, child `events.jsonl`,
   `stderr.log`, `stream.log`, `heartbeat.json`, `monitor.json`, and
   `report.md`.
 - Orchestration Log and Decision Log append-only in the epic doc.
@@ -236,8 +253,8 @@ Detail per mode lives in `references/workflow-contract.md`.
 - `references/critic-prompt.md` — verbatim critic prompt body with
   placeholders.
 - `references/auto-harness-prompts.md` — role-specific prompt
-  contracts for automatic planner, implementation, repair, and critic
-  harnesses.
+  contracts for automatic planner, implementation, same-session
+  continuation, and critic harnesses.
 - `references/epic-verdict-schema.json` — JSON schema file used by
   Codex `--output-schema` (and inlined into Claude `--json-schema`).
 - `references/model-and-effort.md` — role-based execution policy,
@@ -286,6 +303,16 @@ python3 scripts/run_arch_epic.py worker-spawn \
   --role implementation_worker \
   --sub-plan-name "Build the core service" \
   --prompt-file /tmp/worker.prompt.md \
+  --run-mode auto
+
+python3 scripts/run_arch_epic.py worker-resume \
+  --run-dir .arch_skill/arch-epic/auto/big-goal/run-2026-04-26T00-00-00Z \
+  --target-repo . \
+  --role implementation_worker \
+  --sub-plan-name "Build the core service" \
+  --prompt-file /tmp/continue.prompt.md \
+  --session-id <session-id-from-session_id.txt> \
+  --try-k 2 \
   --run-mode auto
 
 python3 scripts/run_arch_epic.py child-status \

@@ -186,14 +186,14 @@ full turn to arm and disarm cleanly.
 - Resolved `auto_execution` policy if not already present.
 - Automatic run directory under
   `.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/`.
-- One worker or critic harness action, one repair action, or one
-  explicit long-run monitor check while a child run is still active.
+- One worker or critic harness action, one same-role resume action, or
+  one explicit long-run monitor check while a child run is still active.
 - Compact Orchestration Log and Decision Log entries.
 
 ### Actions
 1. If `auto_execution` is absent, present the role table:
-   `epic_planner`, `implementation_worker`, `repair_worker`, and
-   `critic`. Resolve shorthand via `skills/_shared/model_resolution.py`.
+   `epic_planner`, `implementation_worker`, and `critic`. Resolve
+   shorthand via `skills/_shared/model_resolution.py`.
    Ask once if any role is missing, ambiguous, or cannot resolve to a
    runnable exact-version model.
 2. Initialize the auto run directory with
@@ -207,10 +207,11 @@ full turn to arm and disarm cleanly.
    - implementation worker executes the approved sub-plan and updates
      worklog evidence.
    - critic harness runs plan-readiness and completion/scope gates.
-   - repair worker fixes critic failures that stay inside approved scope.
-5. Choose foreground mode for short critics or small repairs where a blocking
-   call is cheaper than orchestration. Choose detached mode for planners,
-   implementation workers, and any child expected to take many minutes.
+   - in-scope critic failures resume the same planner or implementation
+     worker session with observation-only feedback.
+5. Choose foreground mode for short critics or small same-role continuations
+   where a blocking call is cheaper than orchestration. Choose detached mode
+   for planners, implementation workers, and any child expected to take many minutes.
    Detached children return a run directory immediately and keep writing
    `events.jsonl`, `stderr.log`, and `stream.log` while they work.
 6. While a detached child is active, poll with `poll_seconds` (default 180),
@@ -226,6 +227,8 @@ full turn to arm and disarm cleanly.
 - The orchestrator decides which gate is next, whether a critic finding
   is in-scope repair versus material scope change, and when to halt for
   the user.
+- The resumed planner or implementation worker owns repair reasoning.
+  Critic output is evidence, not an instruction list.
 - Worker and critic prompts teach the child roles why the approved epic
   goal, decomposition, and coverage map matter. Children are not treated
   as prompt runners.
@@ -238,6 +241,9 @@ full turn to arm and disarm cleanly.
 - Streamed child artifacts: `events.jsonl`, `stderr.log`, `stream.log`,
   `heartbeat.json`, and `monitor.json`.
 - Worker session-id capture.
+- Same-role worker session resume after in-scope critic failures.
+- `state.json.latest_worker_attempts` pointers for the session that should be
+  resumed next.
 - Structured critic verdict parsing.
 
 ### Failure modes
@@ -253,10 +259,13 @@ full turn to arm and disarm cleanly.
   exceeds `max_runtime_seconds`: mark `needs_attention`; do not terminate
   unless the user or orchestrator has an explicit reason.
 - Child exits without inspectable artifacts: halt with run directory.
-- Critic finds missing epic requirement coverage: repair through the
-  planner or repair worker until repair budget is exhausted.
+- Critic finds missing epic requirement coverage or unfinished in-scope
+  implementation work: resume the planner or implementation worker
+  session that owns the failed gate until the retry budget is exhausted.
 - Critic finds material product-intent change or two valid scope paths:
   halt and ask the user.
+- Failing worker session cannot be resumed: halt with the run directory
+  and ask whether to start a fresh role session.
 - Repair budget exhausted: halt with the latest critic verdict and
   diagnostic record.
 

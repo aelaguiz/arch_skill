@@ -54,12 +54,15 @@ from model_resolution import (  # noqa: E402
 )
 
 
-AUTO_ROLE_GROUPS = [
+REQUIRED_AUTO_ROLE_GROUPS = [
     "epic_planner",
     "implementation_worker",
-    "repair_worker",
     "critic",
 ]
+LEGACY_AUTO_ROLE_GROUPS = [
+    "repair_worker",
+]
+AUTO_ROLE_GROUPS = REQUIRED_AUTO_ROLE_GROUPS + LEGACY_AUTO_ROLE_GROUPS
 DEFAULT_AUTO_POLL_SECONDS = 180
 DEFAULT_QUIET_FLOOR_SECONDS = 900
 DEFAULT_STUCK_FLOOR_SECONDS = 1800
@@ -643,11 +646,13 @@ def _policy_from_file(path: Path) -> dict[str, Any]:
     roles = payload.get("roles")
     if not isinstance(roles, dict):
         _die("execution policy input must contain object field: roles")
-    missing = [role for role in AUTO_ROLE_GROUPS if role not in roles]
+    missing = [role for role in REQUIRED_AUTO_ROLE_GROUPS if role not in roles]
     if missing:
         _die("execution policy missing required role(s): " + ", ".join(missing))
     role_sources: dict[str, str] = {}
     for role in AUTO_ROLE_GROUPS:
+        if role not in roles:
+            continue
         value = roles.get(role)
         if not isinstance(value, str) or not value.strip():
             _die(f"execution policy role {role!r} must be a non-empty string")
@@ -718,6 +723,12 @@ def _state_role_execution(state: dict[str, Any], role: str) -> dict[str, str]:
             _die(f"role {role!r} policy missing {key}")
         out[key] = value
     return out
+
+
+def _display_role_groups(roles: dict[str, Any]) -> list[str]:
+    return REQUIRED_AUTO_ROLE_GROUPS + [
+        role for role in LEGACY_AUTO_ROLE_GROUPS if role in roles
+    ]
 
 
 def _codex_worker_argv(
@@ -888,6 +899,7 @@ def cmd_auto_init(args: argparse.Namespace) -> int:
         "status": "active",
         "current_sub_plan": None,
         "auto_execution": policy_with_run_dir,
+        "latest_worker_attempts": {},
         "events": [],
     }
     _write_json(run_dir / "state.json", state)
@@ -939,6 +951,48 @@ def _update_metadata(child_dir: Path, updates: dict[str, Any]) -> dict[str, Any]
     return payload
 
 
+def _record_worker_attempt(try_dir: Path, updates: dict[str, Any]) -> None:
+    """Persist the latest resumable worker attempt for parent orchestration."""
+
+    try:
+        run_dir = try_dir.parents[3]
+    except IndexError:
+        return
+    state_path = run_dir / "state.json"
+    if not state_path.exists():
+        return
+    state = _load_json(state_path)
+    if not isinstance(state, dict):
+        return
+    latest = state.get("latest_worker_attempts")
+    if not isinstance(latest, dict):
+        latest = {}
+        state["latest_worker_attempts"] = latest
+    metadata_path = try_dir / "metadata.json"
+    metadata = _load_json(metadata_path) if metadata_path.exists() else {}
+    if not isinstance(metadata, dict):
+        metadata = {}
+    role = str(updates.get("role") or metadata.get("role") or "unknown")
+    sub_plan_name = str(
+        updates.get("sub_plan_name") or metadata.get("sub_plan_name") or "unknown"
+    )
+    key = f"{role}:{_slugify(sub_plan_name)}"
+    current = latest.get(key)
+    if not isinstance(current, dict):
+        current = {}
+    current.update(
+        {
+            "role": role,
+            "sub_plan_name": sub_plan_name,
+            "try_dir": str(try_dir),
+            "updated_at": _utc_now_iso(),
+        }
+    )
+    current.update(updates)
+    latest[key] = current
+    _write_json(state_path, state)
+
+
 def _finalize_worker_try_dir(try_dir: Path) -> str:
     metadata = _load_json(try_dir / "metadata.json")
     if not isinstance(metadata, dict):
@@ -972,6 +1026,14 @@ def _finalize_worker_try_dir(try_dir: Path) -> str:
             "session_id": out_sid,
             "finalized_at": _utc_now_iso(),
             "finalized": True,
+        },
+    )
+    _record_worker_attempt(
+        try_dir,
+        {
+            "status": "finalized",
+            "session_id": out_sid,
+            "finalized_at": _utc_now_iso(),
         },
     )
     return out_sid
@@ -1087,6 +1149,18 @@ def _run_worker(
             "events_path": str(try_dir / "events.jsonl"),
             "stderr_path": str(try_dir / "stderr.log"),
             "finalized": False,
+        },
+    )
+    _record_worker_attempt(
+        try_dir,
+        {
+            "status": "running",
+            "role": role,
+            "sub_plan_name": sub_plan_name,
+            "try_k": try_k,
+            "resumed": session_id is not None,
+            "input_session_id": session_id,
+            "started_at": _utc_now_iso(),
         },
     )
 
@@ -1337,7 +1411,7 @@ def cmd_auto_status(args: argparse.Namespace) -> int:
     )
     print("Roles:")
     if isinstance(roles, dict):
-        for role in AUTO_ROLE_GROUPS:
+        for role in _display_role_groups(roles):
             block = roles.get(role, {})
             if isinstance(block, dict):
                 print(
@@ -1370,7 +1444,7 @@ def _render_report(state: dict[str, Any]) -> str:
         "|---|---|---|---|---|",
     ]
     if isinstance(roles, dict):
-        for role in AUTO_ROLE_GROUPS:
+        for role in _display_role_groups(roles):
             block = roles.get(role, {})
             if isinstance(block, dict):
                 lines.append(

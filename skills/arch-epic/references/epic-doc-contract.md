@@ -93,7 +93,6 @@ auto_execution:
   source_quotes:
     epic_planner: claude opus 4.7 xhigh
     implementation_worker: codex gpt 5.5 xhigh
-    repair_worker: same as implementation_worker
     critic: codex gpt 5.5 xhigh
   roles:
     epic_planner:
@@ -106,11 +105,6 @@ auto_execution:
       model: gpt-5.5
       effort: xhigh
       source: user_table
-    repair_worker:
-      runtime: codex
-      model: gpt-5.5
-      effort: xhigh
-      source: same_as:implementation_worker
     critic:
       runtime: codex
       model: gpt-5.5
@@ -138,6 +132,10 @@ Rules:
 - Model resolution comes from `skills/_shared/model_resolution.py` and
   `references/model-and-effort.md`; exact versions are never silently
   substituted.
+- New automatic policies require `epic_planner`, `implementation_worker`, and
+  `critic`. Older docs may include a legacy `repair_worker`; keep it readable,
+  but ordinary critic failures resume the original planner or implementation
+  worker session instead of using a separate repair role.
 - Changing any role updates `execution_sha256`, appends a Decision Log
   entry, and affects only future child runs.
 
@@ -298,9 +296,10 @@ The skill mutates the epic doc under these conditions only:
   existing one's scope to preserve approved requirements; always
   appends a Decision Log entry.
 - `auto-run` mode: writes or updates `auto_execution`, writes compact
-  Auto-run status fields, records role-policy changes, critic-gated
-  repairs, and auto-inserted sub-plans. Full child artifacts stay in the
-  automatic run directory.
+  Auto-run status fields, records role-policy changes, same-role worker
+  resumes after critic failures, and auto-inserted sub-plans. Full child
+  artifacts stay in the automatic run directory; `state.json` keeps compact
+  `latest_worker_attempts` pointers to the sessions that may be resumed.
 
 The skill never edits `raw_goal` or `raw_goal_sha256` except at
 `start`. If the user wants to edit the goal, they start a new epic;
@@ -316,12 +315,13 @@ Every time the skill reads the epic doc, it validates:
    a fresh hash of the runtime/model/effort tuple. If the tuple is
    pending/null, `models_sha256` is also null and the skill must ask
    before running an interactive completion critic.
-4. If `auto_execution` is present, its role blocks contain
-   `runtime`, `model`, `effort`, `source_quote` or source metadata, positive
-   monitor fields (`poll_seconds`, `quiet_floor_seconds`,
-   `stuck_floor_seconds`, `max_runtime_seconds`), and a matching
-   `execution_sha256` computed over the normalized execution policy excluding
-   `auto_run_dir`.
+4. If `auto_execution` is present, required role blocks
+   (`epic_planner`, `implementation_worker`, `critic`) contain `runtime`,
+   `model`, `effort`, `source_quote` or source metadata, positive monitor
+   fields (`poll_seconds`, `quiet_floor_seconds`, `stuck_floor_seconds`,
+   `max_runtime_seconds`), and a matching `execution_sha256` computed over the
+   normalized execution policy excluding `auto_run_dir`. A legacy
+   `repair_worker` role is optional and must not be required in new docs.
 5. The Decomposition section is present and non-empty if
    `sub_plans_approved: true`.
 6. Every sub-plan entry has a Status; Status is one of the allowed

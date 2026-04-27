@@ -317,10 +317,11 @@ Examples:
 Practical rule:
 
 - Interactive mode runs one visible transition at a time: draft decomposition, get approval, invoke or observe the next arch-step step, then run a fresh Claude/Codex critic after each completed sub-plan.
-- Automatic mode is explicit and opt-in after decomposition approval. It asks once for a role execution table: `epic_planner`, `implementation_worker`, `repair_worker`, and `critic`.
+- Automatic mode is explicit and opt-in after decomposition approval. It asks once for a role execution table: `epic_planner`, `implementation_worker`, and `critic`.
 - Role choices are resolved with the shared exact-version model resolver. Shorthand such as `opus 4.7 xhigh` becomes `claude-opus-4-7`; `gpt 5.5 high` becomes `gpt-5.5`. There is no silent downgrade, provider switch, or effort substitution. If the user says `gpt 5.4` while choosing a model, clarify whether they meant `gpt-5.5` before launching children.
 - Automatic mode drives sub-plans depth-first. It does not plan or implement sub-plan N+1 until sub-plan N has passed the relevant critic gates.
 - Spawned automatic workers apply arch-step doctrine directly from disk and do not arm nested `auto-plan`, `implement-loop`, `arch-loop`, `delay-poll`, or `wait` controllers.
+- Planner and implementation worker sessions are resumable. When a fresh critic finds ordinary in-scope unfinished work, the orchestrator resumes the same planner or implementation session with observation-only evidence instead of starting a separate repair worker.
 - The default child wait cadence is 180 seconds while waiting for spawned harnesses; avoid tight two-second polling loops. Long planner and implementation children can run detached with live `events.jsonl`, `stderr.log`, and `stream.log` artifacts, and the orchestrator should treat recent stream activity as progress rather than expecting an early final artifact.
 
 ### `arch-docs`

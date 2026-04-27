@@ -187,6 +187,12 @@ Automatic mode still treats the sub-plan DOC_PATH and worklog as the
 truth. Child transcripts are evidence, not a second plan. The top-level
 orchestrator records only compact artifact pointers in the epic doc.
 
+If a critic finds in-scope unfinished work, the transition owner does not
+change to a separate repair worker. The orchestrator resumes the same planner
+session for planning-gate failures or the same implementation worker session
+for implementation/completion failures, passing the critic verdict as
+observation-only evidence. Critics do not prescribe repair steps.
+
 ## Cross-runtime parity
 
 Everything above works identically on Claude Code and Codex because

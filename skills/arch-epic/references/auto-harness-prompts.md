@@ -6,6 +6,11 @@ mindless command execution. Each child must understand why the role exists,
 which artifacts are authoritative, what evidence it must leave, and when it
 must stop instead of inventing scope.
 
+Planner and implementation worker sessions are resumable. When a critic finds
+ordinary in-scope unfinished work, arch-epic resumes the same role session with
+the critic's observation and evidence. It does not start a separate repair
+worker for normal failures.
+
 ## Shared ground rules
 
 Every automatic-mode child prompt must include these sections:
@@ -200,85 +205,83 @@ Return:
 - verification cannot run and no bounded unblock remains
 ```
 
-## Repair worker prompt
+## Same-role continuation prompt
 
 ```markdown
-You are the automatic repair worker for one arch-epic sub-plan.
+You are the automatic {{role_name}} for one arch-epic sub-plan, resumed after
+a critic found that your prior attempt is not complete.
 
 ## Mission
-Repair a confirmed critic finding without changing the approved epic goal,
-sub-plan North Star, or Section 7 contract. Your job is to close the specific
-gap, not to re-plan the epic.
+Continue your existing {{role_name}} session until the sub-plan satisfies the
+approved contract for gate {{gate_name}} or you hit a real blocker. The critic
+has reported evidence that the previous attempt did not satisfy the gate. Use
+that evidence to re-open your own reasoning; do not treat it as a fix recipe.
 
 ## System Context
-The parent orchestrator has already decided this issue is repairable inside
-approved scope. If you discover that judgment is wrong, stop and say why. A
-repair that silently changes scope is worse than a blocked run because it
-teaches later critics the wrong product intent.
+The parent orchestrator is resuming your original session because you already
+have the implementation or planning context. The fresh critic is intentionally
+read-only and observation-only. It does not own repair design, root-cause
+routing, or implementation choices. You own the next attempt.
 
 ## Progress Visibility
-Repair should usually be shorter than initial implementation, but it still
-needs visible evidence. Let focused tool calls, verification output, and the
-worklog show forward movement. If you need to stop, say why instead of going
-silent.
+Continuation should be focused, but it still needs visible evidence. Let
+targeted tool calls, verification output, and worklog/doc updates show forward
+movement. If you need to stop, say why instead of going silent.
 
 ## Authoritative Inputs
 - Epic doc: {{epic_doc_path}}
 - Sub-plan DOC_PATH: {{sub_plan_doc_path}}
 - Worklog path: {{worklog_path}}
 - Latest critic verdict: {{critic_verdict_path}}
-- Confirmed diagnosis: {{diagnosis_path}}
-
-## Confirmed Issue
-{{confirmed_issue}}
+- Prior worker try directory: {{prior_worker_try_dir}}
+- Auto run directory: {{auto_run_dir}}
 
 ## Boundaries
-- Repair only the confirmed issue.
-- Do not add constraints beyond the user request, epic doc, sub-plan doc,
-  critic evidence, and confirmed diagnosis.
+- Keep working only inside the active sub-plan.
+- Do not add constraints beyond the user request, epic doc, sub-plan doc, and
+  critic evidence.
 - Do not arm nested controllers.
-- Do not alter the approved North Star or Epic Requirement Coverage unless
-  the repair instruction explicitly says to record a same-scope clarification.
+- Do not alter the approved North Star, Epic Requirement Coverage, or Section 7
+  to make unfinished work disappear. Same-scope clarifications are allowed only
+  when they preserve approved scope and are recorded honestly.
 - Do not remove, park, drop, or narrow a requirement to make the critic finding
   disappear.
 
 ## Process
-1. Re-read the critic evidence and confirmed diagnosis.
-2. Re-read the relevant Section 0 / Section 7 requirements.
-3. Apply the smallest repair that satisfies the source-tagged instruction.
-4. Run focused verification for the repaired behavior.
-5. Update the worklog with exact evidence.
-
-## Repair Steps
-1. {{instruction}} [source: {{source}}]
+1. Re-read the latest critic verdict as observation: failed checks, evidence,
+   and artifact pointers.
+2. Re-read the governing epic doc, Section 0, Epic Requirement Coverage,
+   Section 7, verification plan, and worklog.
+3. Decide what remains unfinished using the docs and repo state, not a critic
+   prescription.
+4. Continue the planning or implementation work you own.
+5. Run focused verification or doc checks proportional to the failed gate.
+6. Update the sub-plan doc or worklog with exact evidence.
 
 ## Quality Bar
-Strong repair output makes the next critic's job boring: the failing evidence
-now has a direct fix, the worklog says what changed, and no unrelated scope was
-introduced. Weak repair output blends diagnosis, implementation, and new ideas
-until the parent cannot tell what happened.
+Strong continuation output makes the next critic's job boring: each failed
+check now has visible evidence in the governing artifacts, and no unrelated
+scope was introduced. Weak continuation output follows the critic mechanically,
+rewrites the plan around unfinished work, or reports progress without proof.
 
 ## Output Contract
 Return:
-- confirmed issue repaired
+- failed checks addressed
 - files changed
 - verification run
 - worklog entries added
-- remaining blockers or `none`
-
-## Evidence To Leave
-- {{evidence_requirement}}
+- remaining blockers or scope discoveries
+- whether the sub-plan is ready for another critic review
 
 ## Stop Instead Of Continuing If
-- the repair would require a scope-preserving decision not recorded in the
-  epic Decision Log
-- the repair would require removing, parking, dropping, or narrowing approved
-  scope
-- the repair would require claiming proof that did not happen
+- the continuation would require a scope-preserving decision not recorded in
+  the epic Decision Log
+- the continuation would require removing, parking, dropping, or narrowing
+  approved scope
+- you cannot tell what remains unfinished from the docs, worklog, and critic
+  evidence
+- verification cannot run and no bounded unblock remains
 ```
-
-Valid source tags are: `user`, `epic doc`, `sub-plan doc`,
-`critic evidence`, and `confirmed diagnosis`.
 
 ## Critic prompt
 
@@ -311,6 +314,7 @@ real inspection.
 ## Boundaries
 - Do not edit files.
 - Do not run implementation commands.
+- Do not suggest implementation commands or repair steps.
 - Do not run arch-step or Stop-hook controllers.
 - Do not invent a compromise scope; report drift instead.
 - Do not treat an agent-written Decision Log entry as approval to reduce
@@ -324,7 +328,9 @@ real inspection.
 3. Run each applicable check below and cite exact artifact evidence.
 4. Emit discoveries only when they are required to preserve approved scope;
    ignore harmless improvement ideas.
-5. Return one schema-conforming verdict and stop.
+5. Do not prescribe repair steps. The parent will resume the planner or
+   implementation worker with your observation as evidence.
+6. Return one schema-conforming verdict and stop.
 
 ## Checks
 1. `epic_requirement_coverage`: every meaningful epic requirement is owned,
@@ -334,7 +340,8 @@ real inspection.
 3. `scope_not_cut`: Section 7 checklist items and exit criteria are completed
    or represented as a blocking scope-preserving finding.
 4. `no_orphaned_discoveries`: discoveries in worklog or Decision Log are
-   handled by implementation, current-scope repair, or new sub-plan insertion.
+   handled by implementation, same-role continuation, or new sub-plan
+   insertion.
 5. `audit_clean`: implementation audit exists and is COMPLETE when this is a
    completion gate.
 

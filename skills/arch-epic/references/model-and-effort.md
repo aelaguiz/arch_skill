@@ -3,11 +3,13 @@
 `arch-epic` uses external Claude/Codex subprocesses in two places:
 
 - interactive mode: the epic critic at sub-plan completion
-- automatic mode: planner, implementation worker, repair worker, and critics
+- automatic mode: planner, implementation worker, and critics
 
 The user supplies runtime/model/effort for every required role, or the skill
 asks once before running. Different roles deserve different price points, so
 automatic mode must not collapse the whole epic into one hidden default.
+Automatic repair uses same-role session resume: planner failures resume the
+planner session, and implementation failures resume the implementation session.
 
 ## Interactive mode
 
@@ -30,7 +32,6 @@ Automatic mode asks for a role table after decomposition approval:
 | --- | --- |
 | `epic_planner` | sub-plan DOC_PATH creation, North Star drafting, Epic Requirement Coverage, planning repairs |
 | `implementation_worker` | implementation, verification, worklog updates, ordinary in-scope code/docs edits |
-| `repair_worker` | operational repair after critic findings; may be `same as implementation_worker` when the user chooses that |
 | `critic` | North Star critic, plan-readiness critic, implementation/scope critic, final epic critic |
 
 Example table:
@@ -38,7 +39,6 @@ Example table:
 ```text
 epic_planner: claude opus 4.7 xhigh
 implementation_worker: codex gpt 5.5 xhigh
-repair_worker: same as implementation_worker
 critic: codex gpt 5.5 xhigh
 poll_seconds: 180
 quiet_floor_seconds: 900
@@ -48,6 +48,11 @@ max_runtime_seconds: 7200
 
 The resolved policy is stored under `auto_execution` in the epic doc and in
 the automatic run directory's `state.json`.
+
+Existing policies may contain a legacy `repair_worker` role. Load it for
+compatibility, but do not ask for it in new runs and do not use it for ordinary
+critic failures. Resume the failing planner or implementation worker session
+instead.
 
 The monitor policy is part of the same execution choice because it changes
 how much trust the parent gives long-running children. Planners and
@@ -83,12 +88,11 @@ All of these are valid when they include a role:
 
 - "planner on Claude Opus 4.7 xhigh"
 - "implementation worker on Codex gpt-5.5 xhigh"
-- "repair same as implementation"
 - "critics on gpt 5.5 xhigh"
 - "codex gpt-5.5 high everywhere"
 
 If the user gives one complete "everywhere" value, the orchestrator may fill
-all four roles with that value, but it must announce the interpretation before
+all three required roles with that value, but it must announce the interpretation before
 running.
 
 ## Model phrase resolution
@@ -128,11 +132,12 @@ choices control real spawned subprocesses and model budget.
 
 - epic_planner: drafts/repairs sub-plan North Stars and requirement coverage
 - implementation_worker: edits code/docs and runs verification
-- repair_worker: fixes critic findings
 - critic: checks North Star, plan readiness, completion, and scope drift
 
 Please give runtime/model/effort for each role, or say which roles should be
-"same as" another role.
+"same as" another role. Ordinary critic failures resume the relevant planner
+or implementation worker session; there is no separate repair-worker choice in
+new automatic policies.
 ```
 
 If one role is complete and another is missing, preserve the complete role and

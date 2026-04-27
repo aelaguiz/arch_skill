@@ -244,15 +244,13 @@ Before I run the epic automatically, I need the role execution table.
 
 - epic_planner: drafts/repairs sub-plan North Stars and requirement coverage
 - implementation_worker: edits code/docs and runs verification
-- repair_worker: fixes critic findings
 - critic: checks North Star, plan readiness, completion, and scope drift
 ```
 
 ### User replies
 
 > "Planner Claude Opus 4.7 xhigh, implementation Codex gpt 5.5
-> xhigh, repair same as implementation, critic Codex gpt 5.5
-> xhigh."
+> xhigh, critic Codex gpt 5.5 xhigh."
 
 ### `auto-run` mode
 
@@ -261,7 +259,6 @@ The skill resolves and announces:
 ```text
 epic_planner -> runtime=claude, model=claude-opus-4-7, effort=xhigh
 implementation_worker -> runtime=codex, model=gpt-5.5, effort=xhigh
-repair_worker -> same_as:implementation_worker
 critic -> runtime=codex, model=gpt-5.5, effort=xhigh
 poll_seconds -> 180
 quiet_floor_seconds -> 900
@@ -283,8 +280,10 @@ one child at a time:
 2. Critic harness checks the North Star / coverage gate.
 3. Implementation worker edits the repo and updates the worklog.
 4. Critic harness checks completion and scope drift.
-5. Repair worker runs only if critic findings are inside approved
-   scope.
+5. If a critic finds ordinary in-scope unfinished work, the parent
+   resumes the same planner or implementation worker session with the
+   critic verdict as evidence. The critic does not prescribe repair
+   steps.
 
 The skill starts long planner and implementation children in detached mode,
 then watches `child-status` and `child-tail` at the pinned `poll_seconds`
@@ -298,9 +297,11 @@ there is no final artifact after a short window, and it does not plan sub-plan
 - The user makes a bounded set of decisions: goal, decomposition,
   role execution policy, and scope changes. Everything else runs
   without their attention in automatic mode.
-- `pass-after-retry` in stepwise has no analogue here — sub-plans
-  don't retry at the epic level. arch-step's implement-loop
-  retries internally until audit passes or blocks.
+- Automatic repair is same-role session resume. The implementer keeps its
+  context; the critic stays fresh and observation-only.
+- `pass-after-retry` in stepwise has no analogue here. Automatic mode may
+  resume the same role session after a critic failure, but the sub-plan only
+  advances after a fresh critic pass.
 - The epic critic catches cross-plan issues; arch-step catches
   within-plan issues.
 - Halting is normal when the critic flags approved-scope work. That is

@@ -14,7 +14,9 @@ epic goal and approved decomposition are still represented.
 The critic is a fresh subprocess (Claude or Codex, per the epic
 doc's `critic_runtime`). It has no memory of the orchestrator's
 prose. It reads the sub-plan's DOC_PATH, worklog, and the arch-step
-audit block directly, returns one JSON document, and exits.
+audit block directly, returns one JSON document, and exits. It reports
+observation and evidence only; it does not prescribe repair steps for
+the worker.
 
 ## The checks
 
@@ -207,10 +209,11 @@ automatic-mode critics must include it.
 ## Critic posture
 
 The critic reads. It does not write files. It does not run arch-step
-commands. It does not attempt to fix anything it finds. Read-only
-discipline is enforced in the critic prompt (see `critic-prompt.md`),
-not by sandbox — per repo convention, both runtimes run dangerous /
-skip-permissions / no-sandbox.
+commands. It does not attempt to fix anything it finds, and it does
+not tell the planner or implementation worker how to fix the finding.
+Read-only discipline is enforced in the critic prompt (see
+`critic-prompt.md`), not by sandbox — per repo convention, both
+runtimes run dangerous / skip-permissions / no-sandbox.
 
 If the critic discovers that the sub-plan doc is malformed (missing
 required sections, corrupt frontmatter), it fails `audit_clean` and
@@ -226,6 +229,8 @@ smoothly.
 - Not a code reviewer. Use `$code-review` for that.
 - Not a re-audit of arch-step's implementation. That is
   `$arch-step audit-implementation`'s job.
+- Not a repair author. In automatic mode, the parent resumes the
+  planner or implementation worker with the critic verdict as evidence.
 - Not a gate on the next sub-plan's North Star (that is the user's
   job at the next `$arch-step new` invocation in interactive mode).
 - Not a general quality checker for the epic. The epic doc
