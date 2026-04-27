@@ -392,7 +392,7 @@ Keep these markers stable when present:
 - `arch_skill:block:phase_plan`
 - `arch_skill:block:implementation_audit`
 
-If a matching semantic section exists without the marker, update it in place rather than duplicating it.
+If a matching semantic section exists without the marker, update it in place and add the owning marker around the authoritative content rather than duplicating it.
 
 ## Section roles and primary writers
 

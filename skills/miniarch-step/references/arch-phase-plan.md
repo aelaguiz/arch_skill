@@ -85,10 +85,11 @@ Before writing the phase plan:
 Update in this order:
 
 1. replace inside `arch_skill:block:phase_plan` when it exists
-2. otherwise update an existing phase-plan or phased-implementation section in place
+2. otherwise update an existing phase-plan or phased-implementation section in place, adding `arch_skill:block:phase_plan` around the authoritative phase-plan content
 3. otherwise insert a new top-level Section 7 after Call-Site Audit, after Target Architecture, or after Research/Problem sections
 
 If the doc is canonical, preserve exact Section 7 heading and numbering.
+Every successful `phase-plan` run must leave `<!-- arch_skill:block:phase_plan:start -->` and `<!-- arch_skill:block:phase_plan:end -->` around the authoritative phase plan. Updating a markerless section in place preserves its position and repaired content; it does not leave the marker absent.
 
 Use this block shape:
 

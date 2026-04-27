@@ -1261,6 +1261,42 @@ class CodexStopHookTests(unittest.TestCase):
             )
             self.assertFalse(state_path.exists())
 
+    def test_miniarch_auto_plan_phase_plan_requires_marker(self) -> None:
+        markerless_phase_plan = "\n".join(
+            [
+                "# Plan",
+                "## Section 7 - Depth-First Phased Implementation Plan",
+                "## Phase 1 - Build the thing",
+                "* Exit criteria (all required): done",
+            ]
+        )
+
+        self.assertFalse(
+            self.stop_module.miniarch_step_auto_plan_stage_complete(
+                markerless_phase_plan,
+                "phase-plan",
+            )
+        )
+
+    def test_miniarch_auto_plan_phase_plan_accepts_marked_section(self) -> None:
+        marked_phase_plan = "\n".join(
+            [
+                "# Plan",
+                "<!-- arch_skill:block:phase_plan:start -->",
+                "## Section 7 - Depth-First Phased Implementation Plan",
+                "## Phase 1 - Build the thing",
+                "* Exit criteria (all required): done",
+                "<!-- arch_skill:block:phase_plan:end -->",
+            ]
+        )
+
+        self.assertTrue(
+            self.stop_module.miniarch_step_auto_plan_stage_complete(
+                marked_phase_plan,
+                "phase-plan",
+            )
+        )
+
     def test_stop_hook_miniarch_auto_plan_continues_from_research_to_deep_dive(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
