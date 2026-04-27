@@ -15,7 +15,10 @@ Common failure modes when invoking codex exec for review, and what to do.
 ## The namespaced final-output file never appears
 
 - Most common cause: codex errored before producing a final message. Read the run's stream log, e.g. `$RUN_DIR/stream.log` — the error is usually near the end.
-- Second cause: codex still running. At xhigh with a realistic prompt, audits take 2–10 minutes. Use `TaskOutput` with `block: false` to check status without waiting.
+- Second cause: codex still running. At xhigh with a realistic prompt, audits
+  commonly take 5+ minutes, and broad audits can reasonably take 20-40 minutes.
+  Poll process status and `stream.log` every few minutes, not every few
+  seconds.
 - Third cause: you used `--ephemeral` and expected the file anyway — `-o` still writes, but the session isn't saved. That's fine.
 
 ## Two review runs clobbered each other's files
@@ -58,7 +61,7 @@ Common failure modes when invoking codex exec for review, and what to do.
 - Classic hallucination. Spot-check every cited path with `ls` before acting on the finding.
 - If the hallucinated path is used to justify a blocking finding, the finding is likely wrong — discount that line of the verdict and report that to the user.
 
-## Review takes way too long (>15 min)
+## Review takes way too long (>40 min)
 
 - Prompt is probably too wide. Codex is trying to audit more than one pass can cover.
 - Kill the run, split the prompt into two narrower audits, run them in parallel. Parallel invocations of `codex exec` are fine — they don't share session state.

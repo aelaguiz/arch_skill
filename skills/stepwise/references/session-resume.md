@@ -30,7 +30,9 @@ this reference is the single place the exact mechanics live.
 ```
 claude \
   -p \
-  --output-format json \
+  --output-format stream-json \
+  --include-partial-messages \
+  --include-hook-events \
   --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' \
   --model <resolved_step_model> \
@@ -38,8 +40,10 @@ claude \
   <step_prompt>
 ```
 
-Claude's stdout has two observed top-level shapes depending on whether the
-turn used tools:
+Claude's stdout is JSONL when `stream-json` is active. The final answer is the
+last parseable `type=result` event in the combined stream. Older
+`--output-format json` runs had two observed top-level shapes depending on
+whether the turn used tools, and the parser still accepts both:
 
 - **Single result object** (no tool use). Session id at `.session_id`:
 
@@ -69,7 +73,9 @@ never `payload.get(...)` directly on stdout JSON.
 ```
 claude \
   -p \
-  --output-format json \
+  --output-format stream-json \
+  --include-partial-messages \
+  --include-hook-events \
   --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' \
   --model <resolved_step_model> \
@@ -94,7 +100,9 @@ hand-crafted invocation must do the same.
 ```
 claude \
   -p \
-  --output-format json \
+  --output-format stream-json \
+  --include-partial-messages \
+  --include-hook-events \
   --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' \
   --model <resolved_critic_model> \
@@ -104,14 +112,13 @@ claude \
 ```
 
 The critic's structured output is returned at `.structured_output` on the
-result event. When the critic uses tools to verify artifacts (the common
-case), Claude's top-level shape is the event-stream array rather than a
-single dict — walk the array for `type=result` and read `.structured_output`
-from it. `scripts/run_stepwise.py` handles both shapes via
-`_extract_verdict_from_final(final)`; do not reimplement the walk at
-new callsites. The schema is passed as a JSON string argument (no file
-reference). `.result` carries a short text summary; `.structured_output`
-on the result event is the authoritative verdict.
+final `type=result` event. With `stream-json`, that result event is read as
+the last parseable result event in `stream.log`; older `--output-format json`
+runs may have emitted a dict or event-stream array. `scripts/run_stepwise.py`
+handles all accepted shapes via `_extract_verdict_from_final(final)`; do not
+reimplement the walk at new callsites. The schema is passed as a JSON string
+argument (no file reference). `.result` carries a short text summary;
+`.structured_output` on the result event is the authoritative verdict.
 
 ## Codex — step session (resumable)
 
@@ -193,9 +200,9 @@ observational StepVerdict semantically.
   not in `required`. This is recoverable orchestration drift: normalize the
   schema and retry, do not halt the whole run if the schema semantics are
   clear.
-- `--output-format json` on Claude and `--json` on Codex are unrelated flags
-  with similar purpose: Claude returns one JSON object at end, Codex streams
-  JSONL events. Treat them differently in the parser.
+- `--output-format stream-json` on Claude and `--json` on Codex are unrelated
+  flags with similar purpose: both preserve live JSONL events, but their event
+  shapes differ. Treat them differently in the parser.
 
 ## Verification block
 
@@ -205,20 +212,23 @@ behavior does not depend on model choice.
 
 ```
 # 1 Claude step
-claude -p --output-format json --dangerously-skip-permissions \
+claude -p --output-format stream-json --include-partial-messages \
+  --include-hook-events --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' --model haiku \
-  "Say PING." | jq '.session_id,.result'
+  "Say PING." | tee /tmp/smoke/claude-step.events.jsonl | tail -n 1 | jq '.session_id,.result'
 
 # 2 Claude resume (reuse id from step 1; must run from same cwd as step 1)
-claude -p --output-format json --dangerously-skip-permissions \
+claude -p --output-format stream-json --include-partial-messages \
+  --include-hook-events --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' --model haiku -r <ID> \
-  "Say PONG." | jq '.session_id,.result'
+  "Say PONG." | tee /tmp/smoke/claude-resume.events.jsonl | tail -n 1 | jq '.session_id,.result'
 
 # 3 Claude critic
-claude -p --output-format json --dangerously-skip-permissions \
+claude -p --output-format stream-json --include-partial-messages \
+  --include-hook-events --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' --model haiku \
   --json-schema '{"type":"object","additionalProperties":false,"required":["verdict"],"properties":{"verdict":{"enum":["pass","fail"]}}}' \
-  "Return verdict pass." | jq '.structured_output'
+  "Return verdict pass." | tee /tmp/smoke/claude-critic.events.jsonl | tail -n 1 | jq '.structured_output'
 
 # 4 Codex step
 codex exec --cd /tmp/smoke --dangerously-bypass-approvals-and-sandbox \

@@ -141,8 +141,9 @@ would unblock the work.
 
 ## Long-Running Work
 
-Architectural and repo-grounded rounds can take tens of minutes. Choose the
-execution posture deliberately:
+Architectural and repo-grounded rounds can take real time. A normal child round
+often takes 5+ minutes; broad repo reads, `xhigh`, or `max` can reasonably take
+20-40 minutes. Choose the execution posture deliberately:
 
 - Use foreground execution for short prompts where blocking keeps the flow
   simple.

@@ -137,8 +137,9 @@ Must never happen:
   while waiting for spawned harnesses unless the user explicitly pins a
   different cadence in the role policy.
 - Calling a slow planner or worker "hung" just because it has no final
-  artifact after a few minutes. Automatic children often run for
-  20-60 minutes. Use process state plus `events.jsonl`, `stderr.log`,
+  artifact after a few minutes. Automatic children often run for 5+ minutes;
+  broad `xhigh` or `max` planner/worker runs can reasonably take 20-40
+  minutes. Use process state plus `events.jsonl`, `stderr.log`,
   `stream.log`, `heartbeat.json`, and `monitor.json`; treat recent
   thinking/tool/output stream activity as progress.
 - Terminating a child before the long-run floors expire unless there is

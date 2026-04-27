@@ -497,6 +497,7 @@ def run_codex_subprocess(
         model,
         "-c",
         f'model_reasoning_effort="{REASONING_EFFORT}"',
+        "--json",
         "-o",
         str(final_path),
     ]

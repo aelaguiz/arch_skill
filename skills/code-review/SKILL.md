@@ -67,10 +67,16 @@ The runner is deterministic orchestration only — target resolution, artifact c
 ### Direct invocation
 
 1. **Prepare.** Resolve target, confirm Codex is reachable.
-2. **Run.** Invoke `scripts/run_code_review.py`. The runner writes prompts, stream logs, per-lens outputs, a final synthesis output, and a coverage summary into a namespaced run directory under the chosen output root.
-3. **Consume.** Read the final synthesis output. It begins with findings and ends with the `ReviewVerdict` block defined in `references/output-contract.md`.
-4. **Relay.** Report the verdict to the user. Name the run directory so they can read the full synthesis and per-lens outputs.
-5. **Do not fix code here.** If blocking findings need fixing, that is a separate turn. This skill is review-only.
+2. **Run.** Invoke `scripts/run_code_review.py`. The runner writes prompts,
+   live Codex event stream logs, per-lens outputs, a final synthesis output,
+   and a coverage summary into a namespaced run directory under the chosen
+   output root.
+3. **Monitor patiently.** Review children commonly take 5+ minutes; xhigh
+   synthesis or broad lens coverage can reasonably take 20-40 minutes. Poll
+   stream logs every few minutes, not every few seconds.
+4. **Consume.** Read the final synthesis output. It begins with findings and ends with the `ReviewVerdict` block defined in `references/output-contract.md`.
+5. **Relay.** Report the verdict to the user. Name the run directory so they can read the full synthesis and per-lens outputs.
+6. **Do not fix code here.** If blocking findings need fixing, that is a separate turn. This skill is review-only.
 
 ### Hook-backed invocation
 

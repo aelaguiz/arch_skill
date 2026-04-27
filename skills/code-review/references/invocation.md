@@ -45,8 +45,10 @@ codex exec \
   --dangerously-bypass-approvals-and-sandbox \
   --model gpt-5.4-mini \
   -c model_reasoning_effort="xhigh" \
+  --json \
   -o <run_dir>/lenses/<lens_name>.final.txt \
-  < <run_dir>/lenses/<lens_name>.prompt.md
+  < <run_dir>/lenses/<lens_name>.prompt.md \
+  > <run_dir>/lenses/<lens_name>.stream.log 2>&1
 ```
 
 Synthesis subprocess:
@@ -59,8 +61,10 @@ codex exec \
   --dangerously-bypass-approvals-and-sandbox \
   --model gpt-5.4 \
   -c model_reasoning_effort="xhigh" \
+  --json \
   -o <run_dir>/synthesis.final.txt \
-  < <run_dir>/synthesis.prompt.md
+  < <run_dir>/synthesis.prompt.md \
+  > <run_dir>/synthesis.stream.log 2>&1
 ```
 
 Rationale for each flag:
@@ -70,6 +74,8 @@ Rationale for each flag:
 - `--cd <repo_root>` — pin working directory to the reviewed repo.
 - `--dangerously-bypass-approvals-and-sandbox` — match the repo's existing pattern for fresh review/audit children. Intentionally unsafe outside hardened local environments; do not copy into untrusted contexts.
 - `--model` + `-c model_reasoning_effort` — pin exact model and reasoning effort regardless of profile state.
+- `--json` — stream Codex events into the per-child stream log while the
+  subprocess works.
 - `-o <final.txt>` — capture the final assistant message. The runner validates this against the output contract.
 
 ## Run artifact layout
@@ -85,10 +91,10 @@ Each invocation creates one namespaced run directory. Default shape:
     paths.txt              # path list (paths mode)
   lenses/
     <lens_name>.prompt.md  # prompt fed to the lens subprocess
-    <lens_name>.stream.log # stdout/stderr
+    <lens_name>.stream.log # live Codex event stream + stderr
     <lens_name>.final.txt  # captured final assistant message
   synthesis.prompt.md      # prompt fed to the synthesis subprocess
-  synthesis.stream.log
+  synthesis.stream.log      # live Codex event stream + stderr
   synthesis.final.txt      # canonical ReviewVerdict
   coverage.json            # lenses completed / failed, agent-linter state, external sources, conventions
   errors.log               # malformed-output or child-failure details (when present)
@@ -99,6 +105,9 @@ Rules:
 - The runner MUST NOT write anywhere outside the run directory.
 - The runner MUST NOT modify the reviewed repo.
 - `synthesis.final.txt` is the single authoritative review output for that invocation.
+- Review children commonly take 5+ minutes; the xhigh synthesis or broad
+  lens coverage can reasonably take 20-40 minutes. Poll stream logs every few
+  minutes, not every few seconds, and treat stream growth as progress.
 
 ## Hook-backed invocation
 

@@ -50,7 +50,7 @@ controllers, state machines, parsers, or install-time automation.
 - Run the child fresh, hook-suppressed, and unsandboxed per this repo's
   convention. The child prompt enforces read-only behavior, not a sandbox.
 - Create one namespaced run directory under `/tmp/fresh-consult/` and keep
-  `prompt.md`, `final.txt`, and `stream.log` there.
+  `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` there.
 - Brief the child like a colleague walking in cold: include objective, paths,
   claims, what to inspect, and the report contract.
 - Do not paste secrets into prompts. If a token is needed, source it into the
@@ -81,10 +81,14 @@ controllers, state machines, parsers, or install-time automation.
    `runtime=<claude|codex>`, `model=<runnable id>`, and `effort=<level>`.
    Announce the mapping before execution.
 3. **Run the child.** Use a fresh subprocess, no inherited session, disabled
-   hooks, no sandbox, and a namespaced run directory.
-4. **Consume the result.** Read `final.txt`, locate the verdict footer, and
-   inspect `stream.log` only when the final output is missing or malformed.
-5. **Report upstream.** Lead with the verdict, blocking findings, confidence,
+   hooks, no sandbox, a namespaced run directory, and live event capture.
+4. **Monitor patiently.** Normal consults often take 5+ minutes; broad repo
+   reads, `xhigh`, or `max` can reasonably take 20-40 minutes. Poll live
+   `events.jsonl` and `stderr.log` every few minutes, not every few seconds.
+5. **Consume the result.** Read `final.txt`, locate the verdict footer, and
+   inspect `events.jsonl`/`stderr.log` when the final output is missing or
+   malformed.
+6. **Report upstream.** Lead with the verdict, blocking findings, confidence,
    and any disagreement after spot-checking. Include the run directory path.
 
 ## Output Expectations

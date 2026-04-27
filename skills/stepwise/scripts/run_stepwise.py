@@ -493,18 +493,25 @@ def _run_subprocess(
     exit_name = f"{stamp_prefix}.exit_code" if stamp_prefix else "exit_code"
     _write_text(out_dir / start_name, _utc_now_iso())
     with open(os.devnull, "rb") as devnull, open(stdout_stream_path, "wb") as out:
-        proc = subprocess.run(
+        proc = subprocess.Popen(
             argv,
             stdin=devnull,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             cwd=cwd,
-            check=False,
         )
-        out.write(proc.stdout)
+        chunks: list[bytes] = []
+        assert proc.stdout is not None
+        for chunk in iter(lambda: proc.stdout.read(8192), b""):
+            chunks.append(chunk)
+            out.write(chunk)
+            out.flush()
+        proc.stdout.close()
+        returncode = proc.wait()
+        stdout_bytes = b"".join(chunks)
     _write_text(out_dir / end_name, _utc_now_iso())
-    _write_text(out_dir / exit_name, str(proc.returncode) + "\n")
-    return proc.returncode, proc.stdout.decode("utf-8", errors="replace")
+    _write_text(out_dir / exit_name, str(returncode) + "\n")
+    return returncode, stdout_bytes.decode("utf-8", errors="replace")
 
 
 def _load_json_file(path: Path) -> Any:
@@ -615,12 +622,15 @@ def _input_selector_candidate(value: Any) -> str | None:
 
 
 def _extract_claude_result_event(payload) -> dict | None:
-    """Return the result event. Claude -p --output-format json emits either a
-    single result dict OR a list of events (when --json-schema is set alongside
-    tool use); in the list case the result event is the last item with
-    type=result."""
+    """Return the result event from Claude JSON or stream-json output."""
     if isinstance(payload, dict):
-        return payload
+        if (
+            payload.get("type") == "result"
+            or "result" in payload
+            or "structured_output" in payload
+        ):
+            return payload
+        return None
     if isinstance(payload, list):
         for ev in reversed(payload):
             if isinstance(ev, dict) and ev.get("type") == "result":
@@ -639,26 +649,31 @@ def _extract_verdict_from_final(final) -> dict | None:
 
 
 def _parse_claude_session_id(stdout_text: str) -> str | None:
-    """Claude -p --output-format json prints one JSON document to stdout."""
-    try:
-        payload = json.loads(stdout_text.strip().splitlines()[-1])
-    except (json.JSONDecodeError, IndexError):
-        return None
-    ev = _extract_claude_result_event(payload)
-    if ev is None:
-        return None
-    sid = ev.get("session_id")
-    if isinstance(sid, str) and sid:
-        return sid
+    """Return the session id from the last parseable Claude result event."""
+    for line in reversed(stdout_text.strip().splitlines()):
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        ev = _extract_claude_result_event(payload)
+        if ev is None:
+            continue
+        sid = ev.get("session_id")
+        if isinstance(sid, str) and sid:
+            return sid
     return None
 
 
 def _parse_claude_final_json(stdout_text: str) -> dict | None:
-    try:
-        payload = json.loads(stdout_text.strip().splitlines()[-1])
-    except (json.JSONDecodeError, IndexError):
-        return None
-    return _extract_claude_result_event(payload)
+    for line in reversed(stdout_text.strip().splitlines()):
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        ev = _extract_claude_result_event(payload)
+        if ev is not None:
+            return ev
+    return None
 
 
 def _parse_codex_thread_id(stdout_text: str) -> str | None:
@@ -701,7 +716,9 @@ def cmd_step_spawn(args: argparse.Namespace) -> int:
             "claude",
             "-p",
             "--output-format",
-            "json",
+            "stream-json",
+            "--include-partial-messages",
+            "--include-hook-events",
             "--dangerously-skip-permissions",
             "--settings",
             '{"disableAllHooks":true}',
@@ -807,7 +824,9 @@ def cmd_step_resume(args: argparse.Namespace) -> int:
             "claude",
             "-p",
             "--output-format",
-            "json",
+            "stream-json",
+            "--include-partial-messages",
+            "--include-hook-events",
             "--dangerously-skip-permissions",
             "--settings",
             '{"disableAllHooks":true}',
@@ -895,7 +914,9 @@ def cmd_step_diagnose(args: argparse.Namespace) -> int:
             "claude",
             "-p",
             "--output-format",
-            "json",
+            "stream-json",
+            "--include-partial-messages",
+            "--include-hook-events",
             "--dangerously-skip-permissions",
             "--settings",
             '{"disableAllHooks":true}',
@@ -990,7 +1011,9 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
             "claude",
             "-p",
             "--output-format",
-            "json",
+            "stream-json",
+            "--include-partial-messages",
+            "--include-hook-events",
             "--dangerously-skip-permissions",
             "--settings",
             '{"disableAllHooks":true}',

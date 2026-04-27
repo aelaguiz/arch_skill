@@ -503,9 +503,11 @@ Examples:
 
 ### `fresh-consult`
 
-Use when the user or another skill wants a clean-context second opinion from a fresh Claude or Codex subprocess on a concrete artifact, completion claim, flow consistency question, or readability/confusion check. It is prompt-only: it writes a consult prompt, runs the selected local CLI hook-suppressed and unsandboxed, captures `prompt.md`, `final.txt`, and `stream.log` under `/tmp/fresh-consult/...`, and reports the child verdict back to the parent.
+Use when the user or another skill wants a clean-context second opinion from a fresh Claude or Codex subprocess on a concrete artifact, completion claim, flow consistency question, or readability/confusion check. It is prompt-only: it writes a consult prompt, runs the selected local CLI hook-suppressed and unsandboxed, captures `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` under `/tmp/fresh-consult/...`, and reports the child verdict back to the parent.
 
 The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex or `Claude Opus 4.7` for Claude. Exact model versions are preserved; there is no silent downgrade, provider switch, or effort substitution.
+
+Consult children commonly take 5+ minutes; broad `xhigh` or `max` reads can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
 Examples:
 
@@ -522,9 +524,11 @@ Practical rule:
 
 ### `agent-delegate`
 
-Use when the user wants a fresh Claude or Codex subprocess to do concrete work in the current workspace: implementation, editing, investigation-and-fix, command execution, verification, or installed-skill use. It is prompt-only: it writes a delegation prompt, runs the selected local CLI hook-suppressed and unsandboxed in the shared worktree, captures `prompt.md`, `final.txt`, and `stream.log` under `/tmp/agent-delegate/...`, then reports status, changed files, verification, blockers, follow-up, and the run directory.
+Use when the user wants a fresh Claude or Codex subprocess to do concrete work in the current workspace: implementation, editing, investigation-and-fix, command execution, verification, or installed-skill use. It is prompt-only: it writes a delegation prompt, runs the selected local CLI hook-suppressed and unsandboxed in the shared worktree, captures `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` under `/tmp/agent-delegate/...`, then reports status, changed files, verification, blockers, follow-up, and the run directory.
 
 The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex or `Claude Opus 4.7` for Claude. Exact model versions are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback.
+
+Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, or `max` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
 Examples:
 
@@ -547,6 +551,8 @@ The user supplies runtime/model/effort for both participants, or the skill asks 
 
 For repo-backed work, both participants must read real code before agreeing. Their prompts require canonical owner paths, repo conventions, adjacent patterns to adopt, duplicate or drifting pathways, and tests/proof surfaces. This keeps the dialogue focused on one existing way of doing the work whenever possible instead of creating a second bug path.
 
+Participant sessions preserve live event streams by default. Normal rounds often take 5+ minutes; broad repo-grounded `xhigh` or `max` rounds can reasonably take 20-40 minutes.
+
 Examples:
 
 - `Use $model-consensus with Claude Opus 4.7 xhigh and Codex gpt-5.5 xhigh to find the simplest architecture for this repo change`
@@ -565,7 +571,9 @@ Practical rule:
 
 Use when the user wants a real, deterministic code review — on an uncommitted diff, a branch comparison, a commit range, an explicit path set, or a "is this approved plan phase actually complete?" completion-claim. `code-review` never makes the caller model the reviewer. It always shells out to a fresh unsandboxed Codex `gpt-5.4` `xhigh` synthesis subprocess, with parallel fresh Codex `gpt-5.4-mini` `xhigh` subprocesses for the required per-lens review coverage (`correctness`, `architecture`, `proof`, `docs-drift`, `security`, and a conditional `agent-linter` lens when the change touches agent-building or instruction-bearing surfaces).
 
-The runner writes a namespaced per-run artifact tree (per-lens prompts, stream logs, final outputs, and a single synthesized `ReviewVerdict`). Direct invocation runs the runner as a one-shot. Hook-backed invocation arms state under `.codex/code-review-state.<SESSION_ID>.json` or `.claude/arch_skill/code-review-state.<SESSION_ID>.json`; the shared `arch-step` Stop-hook dispatcher then invokes the same runner. The Claude-host path is an intentional exception to the broader native-auto-loop direction: the Stop hook runs under Claude, but the review subprocess itself must always be Codex. Generic Claude auto-controllers stay Claude-native; `code-review` does not. `code-review` is review-only — it never edits the reviewed repo and never writes a "suggested patch" block.
+The runner writes a namespaced per-run artifact tree (per-lens prompts, live `--json` stream logs, final outputs, and a single synthesized `ReviewVerdict`). Direct invocation runs the runner as a one-shot. Hook-backed invocation arms state under `.codex/code-review-state.<SESSION_ID>.json` or `.claude/arch_skill/code-review-state.<SESSION_ID>.json`; the shared `arch-step` Stop-hook dispatcher then invokes the same runner. The Claude-host path is an intentional exception to the broader native-auto-loop direction: the Stop hook runs under Claude, but the review subprocess itself must always be Codex. Generic Claude auto-controllers stay Claude-native; `code-review` does not. `code-review` is review-only — it never edits the reviewed repo and never writes a "suggested patch" block.
+
+Review children commonly take 5+ minutes; xhigh synthesis or broad lens coverage can reasonably take 20-40 minutes. Poll stream logs every few minutes, not every few seconds.
 
 Examples:
 

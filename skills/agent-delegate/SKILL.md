@@ -57,7 +57,7 @@ automation.
   per this repo's convention. Prompt boundaries define the task; the sandbox
   does not.
 - Create one namespaced run directory under `/tmp/agent-delegate/` and keep
-  `prompt.md`, `final.txt`, and `stream.log` there.
+  `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` there.
 - Brief the child like a capable colleague walking in cold: include the task,
   paths, success criteria, constraints, allowed write scope, and report
   contract.
@@ -95,12 +95,18 @@ automation.
    `runtime=<claude|codex>`, `model=<runnable id>`, and `effort=<level>`.
    Announce the mapping before execution.
 3. **Run the child.** Use a fresh subprocess, no inherited session, disabled
-   hooks, no sandbox, a shared worktree, and a namespaced run directory.
-4. **Consume the result.** Read `final.txt`, locate the status footer, and
-   inspect `stream.log` only when the final output is missing or malformed.
-5. **Inspect local truth.** Check git status and any changed files named by the
+   hooks, no sandbox, a shared worktree, a namespaced run directory, and live
+   event capture.
+4. **Monitor patiently.** Normal delegated work often takes 5+ minutes; broad
+   repo edits, verification, `xhigh`, or `max` can reasonably take 20-40
+   minutes. Poll live `events.jsonl` and `stderr.log` every few minutes, not
+   every few seconds.
+5. **Consume the result.** Read `final.txt`, locate the status footer, and
+   inspect `events.jsonl`/`stderr.log` when the final output is missing or
+   malformed.
+6. **Inspect local truth.** Check git status and any changed files named by the
    child before reporting upstream.
-6. **Report upstream.** Lead with status, changed files, verification, blockers,
+7. **Report upstream.** Lead with status, changed files, verification, blockers,
    confidence limits, and the run directory.
 
 ## Output Expectations

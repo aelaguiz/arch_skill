@@ -76,6 +76,14 @@ class ClaudeShapeParsing(unittest.TestCase):
             "aa86534c-57f3-4b99-8f34-c48821a3f327",
         )
 
+    def test_parse_session_id_ignores_trailing_stderr_noise(self):
+        stdout = _stdout_from(_RESULT_EVENT) + "\nnon-json stderr warning\n"
+        self.assertEqual(
+            rs._parse_claude_session_id(stdout),
+            "aa86534c-57f3-4b99-8f34-c48821a3f327",
+        )
+        self.assertEqual(rs._parse_claude_final_json(stdout), _RESULT_EVENT)
+
     def test_extract_verdict_from_final(self):
         self.assertEqual(rs._extract_verdict_from_final(_RESULT_EVENT), _PASS_VERDICT)
         self.assertEqual(rs._extract_verdict_from_final(_STREAM_EVENTS), _PASS_VERDICT)
@@ -132,6 +140,28 @@ class StepVerdictValidation(unittest.TestCase):
         self.assertIn("observed_breach must be a non-empty string on fail", errors)
         self.assertIn("evidence_pointers must be non-empty on fail", errors)
         self.assertIn("contract_clauses_implicated must be non-empty on fail", errors)
+
+
+class SubprocessRunner(unittest.TestCase):
+    def test_run_subprocess_captures_combined_output(self):
+        with tempfile.TemporaryDirectory() as td:
+            out_dir = Path(td)
+            stream_path = out_dir / "stream.log"
+            code, stdout_text = rs._run_subprocess(
+                [
+                    sys.executable,
+                    "-c",
+                    "import sys; print('stdout-line'); print('stderr-line', file=sys.stderr)",
+                ],
+                stream_path,
+                out_dir,
+            )
+
+            self.assertEqual(code, 0)
+            self.assertIn("stdout-line", stdout_text)
+            self.assertIn("stderr-line", stdout_text)
+            self.assertEqual(stream_path.read_text(encoding="utf-8"), stdout_text)
+            self.assertEqual((out_dir / "exit_code").read_text(encoding="utf-8"), "0\n")
 
 
 class CodexSchemaNormalization(unittest.TestCase):

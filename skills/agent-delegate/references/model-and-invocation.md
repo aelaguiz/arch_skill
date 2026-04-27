@@ -90,11 +90,17 @@ RUN_TS="$(date -u +%Y%m%dT%H%M%SZ)"
 RUN_DIR="$(mktemp -d "/tmp/agent-delegate/${DELEGATE_SLUG}-${RUN_TS}-XXXXXX")"
 PROMPT_PATH="$RUN_DIR/prompt.md"
 FINAL_PATH="$RUN_DIR/final.txt"
-STREAM_PATH="$RUN_DIR/stream.log"
+EVENTS_PATH="$RUN_DIR/events.jsonl"
+STDERR_PATH="$RUN_DIR/stderr.log"
 ```
 
 Write the prompt to `prompt.md`. Do not pass a long multiline prompt directly
 on the command line.
+
+`events.jsonl` is the live child stream. `stderr.log` is the diagnostic error
+stream. `final.txt` is the final assistant text: Codex writes it directly with
+`-o`; for Claude, copy the `result` text from the final `type=result` event
+after the process exits.
 
 ## Codex Command
 
@@ -109,9 +115,11 @@ codex exec \
   --skip-git-repo-check \
   --model "<resolved_model>" \
   -c model_reasoning_effort='"<resolved_effort>"' \
+  --json \
   -o "$FINAL_PATH" \
   < "$PROMPT_PATH" \
-  > "$STREAM_PATH" 2>&1
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
 ```
 
 Flag meanings:
@@ -122,6 +130,7 @@ Flag meanings:
 - `--dangerously-bypass-approvals-and-sandbox` gives the child realistic local
   access. Use only in trusted local environments.
 - `--skip-git-repo-check` allows doc or artifact tasks outside a git root.
+- `--json` streams Codex event JSONL to `events.jsonl` while the child works.
 - `-o "$FINAL_PATH"` captures the final assistant message.
 
 ## Claude Command
@@ -130,21 +139,46 @@ Use this shape for a Claude delegation:
 
 ```bash
 claude -p \
+  --output-format stream-json \
+  --include-partial-messages \
+  --include-hook-events \
   --dangerously-skip-permissions \
   --settings '{"disableAllHooks":true}' \
   --model "<resolved_model>" \
   --effort "<resolved_effort>" \
   < "$PROMPT_PATH" \
-  > "$FINAL_PATH" 2> "$STREAM_PATH"
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
 ```
 
 Flag meanings:
 
 - `-p` runs non-interactively and exits.
+- `--output-format stream-json` emits live JSONL events to `events.jsonl`.
+- `--include-partial-messages` and `--include-hook-events` preserve progress
+  and tool/hook activity for long delegations.
 - `--dangerously-skip-permissions` gives the child realistic local access. Use
   only in trusted local environments.
 - `--settings '{"disableAllHooks":true}'` prevents hook recursion.
 - `--model` and `--effort` pin the execution choice.
+
+After Claude exits, read the final `type=result` event from `events.jsonl` and
+write its `result` text to `final.txt` before applying the status-footer
+checks. If no result event exists after a zero exit, treat the run as malformed
+and preserve the run directory.
+
+## Monitoring Posture
+
+Delegated work is not instant. A normal repo-backed task commonly takes 5+
+minutes. Broad edits, verification, `xhigh`, or `max` can reasonably take
+20-40 minutes.
+
+Poll on a minutes-scale cadence. Check `events.jsonl`, `stderr.log`, repo
+state if writes are expected, and process liveness every few minutes; do not
+poll every few seconds. A missing `final.txt` before the process exits is not a
+failure when the event stream is still alive. Investigate only after the
+process exits non-zero, the stream shows an error, or there is no stream
+activity for a long quiet window.
 
 Do not use `-r`, `--resume`, `--continue`, or Codex `exec resume`; this v1 is a
 fresh one-shot delegation, not a resumed conversation.
@@ -158,6 +192,7 @@ Fail loud and preserve the run directory when:
 - the allowed write scope is missing or unsafe
 - the child exits non-zero
 - `final.txt` is empty
+- Claude exits without a final `type=result` event
 - the child omits the required status footer
 
 Do not silently fall back from Claude to Codex, Codex to Claude, one model to

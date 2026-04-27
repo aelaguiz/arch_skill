@@ -33,7 +33,10 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
 - **Require a structured verdict block at the end.** Without it, codex drifts into narrative and you cannot act on the result.
 - **Treat the prompt examples as examples.** Adapt the sections to the actual review objective instead of cargo-culting one review mode.
 - **Never pass secrets in the prompt.** If codex needs `FIGMA_ACCESS_TOKEN` or similar, source `.env` into the codex env and instruct codex to read it from the environment.
-- **Run in the background for non-trivial audits.** Codex at xhigh takes minutes. Kick it off with `run_in_background: true` so you can keep working.
+- **Run in the background for non-trivial audits.** Codex at xhigh takes
+  minutes. Normal audits often take 5+ minutes, and broad `xhigh` audits can
+  reasonably take 20-40 minutes. Kick it off with background execution so you
+  can keep working.
 - **Namespace every run's files.** Derive one run-specific directory or prefix and keep the prompt, final output, and stream log inside it so concurrent runs on the same machine never clobber each other.
 - **Capture output to a file.** The final-message file is the consumable deliverable; the stream log is diagnostic.
 - **Trust but verify.** Codex can be wrong. Spot-check any blocking finding by reading the cited file before acting on it.
@@ -55,7 +58,7 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
 
 4. If the review needs API tokens, confirm `.env` has them and plan to `set -a; source .env; set +a` before invoking.
 5. Draft the prompt to `$PROMPT_PATH` (never inline — prompts get long and multi-line is inevitable).
-6. Invoke via `codex exec -p yolo -C <repo-root> -o "$FINAL_PATH" < "$PROMPT_PATH" > "$STREAM_PATH" 2>&1`, in background.
+6. Invoke via `codex exec -p yolo -C <repo-root> --json -o "$FINAL_PATH" < "$PROMPT_PATH" > "$STREAM_PATH" 2>&1`, in background.
 7. Continue other work while codex reasons; when it completes, read `$FINAL_PATH` and relay the verdict to the user.
 
 ## Workflow
@@ -91,6 +94,7 @@ if [ -f "$REPO_ROOT/.env" ]; then set -a; source "$REPO_ROOT/.env"; set +a; fi
 
 codex exec -p yolo \
   -C "$REPO_ROOT" \
+  --json \
   -o "$FINAL_PATH" \
   < "$PROMPT_PATH" \
   > "$STREAM_PATH" 2>&1
@@ -100,12 +104,16 @@ Key flags:
 
 - `-p yolo` — the profile. Non-negotiable.
 - `-C <dir>` — the working root. Use the repo root (or the submodule root if that's the reviewed unit).
+- `--json` — writes live Codex event JSONL to `stream.log` while the child
+  works.
 - `-o <file>` — writes the final assistant message to this file. This is what you Read at the end.
 - `< prompt.md` — feeds the prompt via stdin. Keeps command lines sane and lets you iterate on prompts in a file.
 - `> stream.log 2>&1` — captures the full event stream. Use for diagnosis if codex errored or went sideways.
 - `$RUN_DIR/...` — keeps one review invocation's artifacts isolated from every other invocation.
 
-Run via the Bash tool with `run_in_background: true` for any audit you expect to take more than ~30 seconds. The final-message file is created when codex exits.
+Run via the shell's background support for any audit you expect to take more
+than ~30 seconds. Poll `stream.log` and process status every few minutes, not
+every few seconds. The final-message file is created when codex exits.
 
 ### 3. Consume the verdict
 

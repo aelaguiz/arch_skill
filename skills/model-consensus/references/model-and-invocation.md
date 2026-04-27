@@ -164,12 +164,14 @@ Choose foreground or background intentionally:
   polling loop.
 - Background is better for long repo-reading rounds, but only with full event
   streams preserved.
+- Normal child rounds commonly take 5+ minutes. Broad repo-reading rounds,
+  `xhigh`, or `max` can reasonably take 20-40 minutes.
 - Default to a minutes-scale check cadence for long children. A 60 second floor
   is acceptable for active monitoring; several minutes is better when the
   stream is clearly alive.
 - Do not treat an empty final file after four or nine minutes as "hung" when
   the process still exists and event streams may not have reached a final
-  message. Large planning rounds can take 20 to 60 minutes.
+  message. Large planning rounds can exceed the 20-40 minute norm.
 - Investigate before terminating. Check process state, event stream growth,
   tool calls, partial messages, stderr, and whether the model is blocked on a
   permission or input prompt.

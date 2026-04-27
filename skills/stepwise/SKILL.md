@@ -103,6 +103,10 @@ break.
   foreground `Bash` calls to `run_stepwise.py`. If a subprocess genuinely
   outlasts the shell timeout, use the shell's background support and wait for
   the harness notification.
+- Child subprocesses commonly take 5+ minutes, and broad `xhigh` or `max`
+  worker/critic turns can reasonably take 20-40 minutes. `stream.log` is live;
+  inspect it and process liveness every few minutes rather than polling every
+  few seconds or treating a missing final file as a hang before exit.
 
 ## First move
 

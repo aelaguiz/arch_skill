@@ -41,7 +41,7 @@ Other shipped skills are:
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes
 - `skill-flow` — designs, repairs, and audits ordered multi-skill flows with distinct skill jobs, concrete handoffs, clear peer boundaries, and no prompt-runner scaffolding; for 30+ skill suites, the DAG-grounded audit sub-mode parallel-walks the suite, builds a labeled-edge substrate, and surfaces wasted-energy patterns (over-promotion, redundancy, dead skills, broken refs)
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
-- `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion claims
+- `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion claims, with live `--json` stream logs
 - `fresh-consult` — prompt-only fresh Claude/Codex second opinion for cold reads, flow consistency audits, completion-claim checks, and readability/confusion checks; asks once for runtime/model/effort when missing and reports the child result back to the parent skill
 - `agent-delegate` — prompt-only fresh Claude/Codex worker for delegated implementation, editing, investigation-and-fix, command execution, or installed-skill use in the shared worktree; asks once for runtime/model/effort or write scope when missing and reports changed files, verification, blockers, and the run directory
 - `model-consensus` — prompt-only parent-agent orchestration for two selected Claude/Codex model sessions to iterate on a plan, architecture, design, or concept until they converge or expose the smallest unresolved decision; supports adversarial simplification and requires repo-backed participants to read real code, canonical paths, conventions, and drift risks before agreeing
@@ -369,17 +369,21 @@ Use when Amir wants to publish this skills repo across his usual machines: commi
 
 ### `fresh-consult`
 
-Use when the user or another skill wants a clean-context second opinion from a fresh Claude or Codex subprocess on a concrete artifact, completion claim, flow consistency question, or readability/confusion check. The skill is prompt-only: it writes a consult prompt, runs the selected local CLI hook-suppressed and unsandboxed, captures `prompt.md`, `final.txt`, and `stream.log` under `/tmp/fresh-consult/...`, and reports the child verdict back to the parent.
+Use when the user or another skill wants a clean-context second opinion from a fresh Claude or Codex subprocess on a concrete artifact, completion claim, flow consistency question, or readability/confusion check. The skill is prompt-only: it writes a consult prompt, runs the selected local CLI hook-suppressed and unsandboxed, captures `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` under `/tmp/fresh-consult/...`, and reports the child verdict back to the parent.
 
 The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex or `Claude Opus 4.7` for Claude. Exact model versions are preserved; there is no silent downgrade, provider switch, or effort substitution.
+
+Consult children commonly take 5+ minutes; broad `xhigh` or `max` reads can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
 Use `fresh-consult` for cold reads, consistency audits, completion checks, and general second opinions. Use `agent-delegate` when the fresh child should implement, edit, investigate-and-fix, run commands, or use installed skills in the shared worktree. Use `code-review` when the user wants the deterministic full code-review product with Codex lens fan-out and coverage guarantees. Use `codex-review-yolo` when the user specifically wants the existing Codex `-p yolo` review pattern. Use `stepwise` or `arch-epic` when subprocesses are part of a larger ordered workflow with manifests, critics, repair loops, or persistent orchestration.
 
 ### `agent-delegate`
 
-Use when the user wants a fresh Claude or Codex subprocess to do concrete work in the current workspace: implementation, editing, investigation-and-fix, command execution, verification, or installed-skill use. The skill is prompt-only: it writes a delegation prompt, runs the selected local CLI hook-suppressed and unsandboxed in the shared worktree, captures `prompt.md`, `final.txt`, and `stream.log` under `/tmp/agent-delegate/...`, then reports status, changed files, verification, blockers, follow-up, and the run directory.
+Use when the user wants a fresh Claude or Codex subprocess to do concrete work in the current workspace: implementation, editing, investigation-and-fix, command execution, verification, or installed-skill use. The skill is prompt-only: it writes a delegation prompt, runs the selected local CLI hook-suppressed and unsandboxed in the shared worktree, captures `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` under `/tmp/agent-delegate/...`, then reports status, changed files, verification, blockers, follow-up, and the run directory.
 
 The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex or `Claude Opus 4.7` for Claude. Exact model versions are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback.
+
+Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, or `max` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
 Use `agent-delegate` for one-shot operational delegation where the child may write files. Use `fresh-consult` for read-only second opinions and completion checks. Use `model-consensus` for two-model plan convergence. Use `stepwise` or `arch-epic` when subprocesses are part of an ordered workflow with manifests, critics, repair loops, or persistent orchestration.
 
@@ -389,11 +393,15 @@ Use when the user wants two selected Claude/Codex models to iterate on a plan, a
 
 The user supplies the two participant runtime/model/effort choices, or the skill asks once. It follows the shared model-resolution doctrine for shorthand such as `gpt 5.5 xhigh` and `Claude Opus 4.7 high`, preserves exact versions, and reports the raw-to-resolved mapping before execution.
 
+Participant sessions preserve live event streams by default. Normal rounds often take 5+ minutes; broad repo-grounded `xhigh` or `max` rounds can reasonably take 20-40 minutes.
+
 Use `model-consensus` for collaborative or adversarial plan refinement. Use `fresh-consult` for one cold second opinion, `agent-delegate` for one foreground worker that may edit the shared worktree, `code-review` for deterministic review findings, and `stepwise` or `arch-epic` for ordered implementation workflows.
 
 ### `code-review`
 
-Use when the user wants a real, deterministic code review against a diff, branch, path set, or "is this plan phase actually complete?" completion-claim. The skill does not review with the caller model. Every review subprocess is a fresh unsandboxed Codex process at `gpt-5.4` `xhigh` for the final synthesis, with parallel `gpt-5.4-mini` `xhigh` Codex subprocesses for per-lens review coverage (`correctness`, `architecture`, `proof`, `docs-drift`, `security`, and a conditional `agent-linter` lens when the change touches agent-building or instruction-bearing surfaces). The runner writes a namespaced artifact tree under `/tmp/code-review/...` (or a caller-supplied `--output-root`) that includes per-lens prompts, stream logs, final outputs, and a single synthesized `ReviewVerdict`.
+Use when the user wants a real, deterministic code review against a diff, branch, path set, or "is this plan phase actually complete?" completion-claim. The skill does not review with the caller model. Every review subprocess is a fresh unsandboxed Codex process at `gpt-5.4` `xhigh` for the final synthesis, with parallel `gpt-5.4-mini` `xhigh` Codex subprocesses for per-lens review coverage (`correctness`, `architecture`, `proof`, `docs-drift`, `security`, and a conditional `agent-linter` lens when the change touches agent-building or instruction-bearing surfaces). The runner writes a namespaced artifact tree under `/tmp/code-review/...` (or a caller-supplied `--output-root`) that includes per-lens prompts, live `--json` stream logs, final outputs, and a single synthesized `ReviewVerdict`.
+
+Review children commonly take 5+ minutes; xhigh synthesis or broad lens coverage can reasonably take 20-40 minutes. Poll stream logs every few minutes, not every few seconds.
 
 Direct invocation runs the runner as a one-shot command. The skill also wires into the shared `arch-step` Stop-hook dispatcher so Codex and Claude Code can trigger the same runner via `.codex/code-review-state.<SESSION_ID>.json` or `.claude/arch_skill/code-review-state.<SESSION_ID>.json`. The Claude-host path is an intentional exception to the broader native-auto-loop direction: the Stop hook runs under Claude, but the review subprocess itself must always be Codex. Generic Claude auto-controllers stay Claude-native; `code-review` does not. `code-review` is review-only — it never edits the reviewed repo and never writes a "suggested patch" block.
 

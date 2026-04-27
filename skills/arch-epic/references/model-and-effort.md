@@ -51,9 +51,9 @@ the automatic run directory's `state.json`.
 
 The monitor policy is part of the same execution choice because it changes
 how much trust the parent gives long-running children. Planners and
-implementation workers routinely need tens of minutes. A missing final file
-after a short window is only "not done yet" when process state and stream
-activity show life.
+implementation workers routinely need 5+ minutes; broad `xhigh` or `max`
+children can reasonably take 20-40 minutes. A missing final file after a short
+window is only "not done yet" when process state and stream activity show life.
 
 Use foreground mode when the expected child is short enough that blocking
 keeps the orchestration simpler. Use detached mode when the child is expected

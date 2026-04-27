@@ -126,6 +126,10 @@ later tries may be operational repairs or fresh downstream respawns after an
 upstream repair. Diagnostic turns are stored under the try they diagnose and do
 not create new tries.
 
+`stream.log` is written incrementally while the child is running. Use it for
+minutes-scale progress checks during long worker, critic, and diagnostic turns;
+do not wait for `stdout.final.json` as the only sign of life.
+
 `origin.json` disambiguates attempt meaning:
 
 ```json
