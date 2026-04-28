@@ -40,6 +40,7 @@ Other shipped skills are:
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `eli10` — answers questions in plain-English ELI10 style while preserving exact technical facts, with a decision-brief sub-mode only when the user must choose
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes
+- `commit-history-authoring` — rewrites the current branch's local-only commit messages into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `skill-flow` — designs, repairs, and audits ordered multi-skill flows with distinct skill jobs, concrete handoffs, clear peer boundaries, and no prompt-runner scaffolding; for 30+ skill suites, the DAG-grounded audit sub-mode parallel-walks the suite, builds a labeled-edge substrate, and surfaces wasted-energy patterns (over-promotion, redundancy, dead skills, broken refs)
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion claims, with live `--json` stream logs
@@ -111,6 +112,7 @@ Installed skills:
   - `~/.agents/skills/skill-authoring/`
   - `~/.agents/skills/eli10/`
   - `~/.agents/skills/pr-authoring/`
+  - `~/.agents/skills/commit-history-authoring/`
   - `~/.agents/skills/skill-flow/`
   - `~/.agents/skills/amir-publish/`
   - `~/.agents/skills/codex-review-yolo/`
@@ -143,6 +145,7 @@ Installed skills:
   - `~/.claude/skills/skill-authoring/`
   - `~/.claude/skills/eli10/`
   - `~/.claude/skills/pr-authoring/`
+  - `~/.claude/skills/commit-history-authoring/`
   - `~/.claude/skills/skill-flow/`
   - `~/.claude/skills/amir-publish/`
   - `~/.claude/skills/codex-review-yolo/`
@@ -172,6 +175,7 @@ Installed skills:
   - `~/.gemini/skills/skill-authoring/`
   - `~/.gemini/skills/eli10/`
   - `~/.gemini/skills/pr-authoring/`
+  - `~/.gemini/skills/commit-history-authoring/`
   - `~/.gemini/skills/skill-flow/`
   - `~/.gemini/skills/amir-publish/`
   - `~/.gemini/skills/codex-review-yolo/`
@@ -367,6 +371,10 @@ Use when the user wants any answer, explanation, plan, review, recommendation, o
 
 Use when the user wants a high-quality GitHub pull request written and published from real repo changes. The skill inspects repo truth, uses its vendored PR scaffold as a quality reference, creates or updates the GitHub PR, and returns the PR link instead of only printing suggested text.
 
+### `commit-history-authoring`
+
+Use when the user wants the current branch's local-only commit messages rewritten into an informative history before sharing. The skill inspects the local commit range, diffs, old messages, trailers, and any evidenced active arch plan; it then applies a message-only rewrite with a backup branch while preserving commit boundaries, patch content, author metadata, and final tree state. It refuses dirty worktrees, remote-reachable commits, upstream-ahead branches, protected branches by default, and merge commits. It never pushes or force-pushes.
+
 ### `skill-flow`
 
 Use when the user wants to design, repair, or audit an ordered flow of multiple agent skills so each skill has a distinct job, concrete handoff artifact, clear peer boundary, and lean prompt contract. For 30+ skill suites or any multi-skill audit by scope phrase ("audit every skill in this project", "audit the skills for flow F1"), the DAG-grounded audit sub-mode parallel-walks the suite, builds a labeled-edge DAG substrate at `<doc-dir>/<doc-slug>_DAG.md` (mermaid graph + edge table + unresolved-reference list), then reasons over the substrate to surface wasted-energy patterns: over-promotion (helper installed as canonical stage), duplicate canonical-stage acceptance criteria, dead/lone-wolf skills, broken peer references, and high-fan-in primitives that look like hand-coded loops. Findings use the existing audit template; the `Owner` field names affected files only — the audit never invokes another skill at runtime. Optional d2 + SVG render via `skills/skill-flow/scripts/render_dag_d2.py` (requires `d2` binary on PATH; fails loudly when missing). Use `skill-authoring` for one isolated package, `prompt-authoring` for one prompt contract, `arch-epic` for decomposing one execution goal into `arch-step` sub-plans, and `stepwise` for deterministic process execution.
@@ -419,7 +427,7 @@ Use `code-review` when the user wants an automated finding-set with explicit cov
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `eli10`, `pr-authoring`, `skill-flow`, `amir-publish`, `fresh-consult`, `agent-delegate`, `model-consensus`, `code-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `eli10`, `pr-authoring`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `fresh-consult`, `agent-delegate`, `model-consensus`, `code-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -470,6 +478,7 @@ Examples:
 - `Use $eli10 to explain why this test failed`
 - `Use $eli10 to format this decision question`
 - `Use $pr-authoring to write and publish a PR for this branch`
+- `Use $commit-history-authoring to rewrite this branch's WIP commits into informative local history`
 - `Use $skill-flow to design the authoring and audit flow for this skill suite`
 - `Use $amir-publish`
 - `Use $code-review on the uncommitted diff`

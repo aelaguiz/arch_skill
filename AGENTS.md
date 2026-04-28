@@ -77,6 +77,9 @@ Claude Code, and Gemini.
 - Use `$fresh-consult` when the user or another skill wants a clean-context
   Claude or Codex second opinion on a concrete artifact, completion claim,
   flow consistency question, or readability/confusion check.
+- Use `$commit-history-authoring` when the user wants the current branch's
+  local-only commit messages rewritten into informative history while
+  preserving patches and commit boundaries by default.
 - Use `$agent-delegate` when the user wants a fresh Claude or Codex subprocess
   to do concrete work in the current workspace, including implementation,
   editing, investigation-and-fix, command execution, or installed-skill use.

@@ -32,6 +32,7 @@ Other shipped skills:
 - `skill-authoring`
 - `eli10`
 - `pr-authoring`
+- `commit-history-authoring`
 - `skill-flow`
 - `amir-publish`
 - `codex-review-yolo`
@@ -85,6 +86,7 @@ Default local path:
 - `~/.agents/skills/skill-authoring/`
 - `~/.agents/skills/eli10/`
 - `~/.agents/skills/pr-authoring/`
+- `~/.agents/skills/commit-history-authoring/`
 - `~/.agents/skills/skill-flow/`
 - `~/.agents/skills/amir-publish/`
 - `~/.agents/skills/codex-review-yolo/`
@@ -122,6 +124,7 @@ Installed skills:
   - `skill-authoring`
   - `eli10`
   - `pr-authoring`
+  - `commit-history-authoring`
   - `skill-flow`
   - `amir-publish`
   - `codex-review-yolo`
@@ -154,6 +157,7 @@ Installed skills:
   - `skill-authoring`
   - `eli10`
   - `pr-authoring`
+  - `commit-history-authoring`
   - `skill-flow`
   - `amir-publish`
   - `codex-review-yolo`
@@ -183,6 +187,7 @@ Installed skills:
   - `skill-authoring`
   - `eli10`
   - `pr-authoring`
+  - `commit-history-authoring`
   - `skill-flow`
   - `amir-publish`
   - `codex-review-yolo`
@@ -497,6 +502,14 @@ Examples:
 
 - `Use $eli10 to explain why this test failed`
 - `Use $eli10 to format this decision question`
+
+### `commit-history-authoring`
+
+Use when the user wants the current branch's local-only commit messages rewritten into an informative history before sharing. The skill inspects the local commit range, diffs, old messages, trailers, and any evidenced active arch plan; then it applies a message-only rewrite with a backup branch while preserving commit boundaries, patch content, author metadata, and final tree state. It refuses dirty worktrees, remote-reachable commits, upstream-ahead branches, protected branches by default, and merge commits. It never pushes or force-pushes.
+
+Examples:
+
+- `Use $commit-history-authoring to rewrite this branch's WIP commits into informative local history`
 
 ### `skill-flow`
 
