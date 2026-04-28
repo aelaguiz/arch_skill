@@ -2,12 +2,13 @@
 
 Use this reference to resolve what the user meant by "Claude", "Codex",
 "opus high", "gpt 5.5 xhigh", or similar phrasing, and to run the selected
-worker subprocess. Fresh one-shot is the default. Same-session resume is
-allowed only when the caller explicitly requires continuity.
+worker subprocess or explicit parallel group of worker subprocesses. Fresh
+one-shot is the default. Same-session resume is allowed only when the caller
+explicitly requires continuity for one worker.
 
 ## Required Values
 
-Every delegation needs:
+Every delegation child needs:
 
 - `mode` - `fresh-one-shot`, `fresh-resumable`, or `resume`
 - `runtime` - `claude` or `codex`
@@ -33,6 +34,11 @@ shared worktree, and can spend real model budget. What should I use?
 
 Add only the missing facts to the question when some values are already known.
 
+Parallel groups use the same required values for each child. Default to one
+shared runtime/model/effort for all children. If the user clearly assigns
+different execution choices to different children, apply those choices exactly
+and announce the mapping before launch.
+
 ## Delegation Mode
 
 - `fresh-one-shot` is the default. It creates a cold child and may use stateless
@@ -46,6 +52,11 @@ Add only the missing facts to the question when some values are already known.
 Same-runtime is mandatory. Claude sessions resume through Claude with
 `-r <session_id>`. Codex threads resume through `codex exec resume
 <thread_id>`.
+
+Parallel delegation supports `fresh-one-shot` and `fresh-resumable`. Keep
+`resume` on the single-worker path; launching several resumed sessions at once
+is a different orchestration problem and is not part of this prompt-first
+skill.
 
 ## Runtime Inference
 
@@ -109,7 +120,7 @@ exact-version preservation and fail-loud behavior.
 
 ## Run Directory
 
-Create one run directory per delegation:
+Create one run directory per delegation child:
 
 ```bash
 DELEGATE_SLUG="<short-slug>"
@@ -148,6 +159,61 @@ Write `execution.json` before invocation with at least:
 For fresh-resumable and resume runs, write the captured or reused session id to
 `session_id.txt`. For resume runs, write the source run directory or explicit
 session id to `resume_from.txt`.
+
+## Parallel Delegation Group
+
+Use the parallel group path only when the user asks for parallel agents or gives
+multiple delegated tasks for this skill. Parallel workers are still ordinary
+delegate children; the group only gives the parent a place to organize prompts,
+streams, finals, execution metadata, and the combined report.
+
+Create one group directory:
+
+```bash
+GROUP_SLUG="<short-slug>"
+RUN_TS="$(date -u +%Y%m%dT%H%M%SZ)"
+GROUP_DIR="$(mktemp -d "/tmp/agent-delegate/parallel-${GROUP_SLUG}-${RUN_TS}-XXXXXX")"
+```
+
+For each child, create an ordinary child run directory beneath the group:
+
+```bash
+CHILD_SLUG="<child-slug>"
+RUN_DIR="$GROUP_DIR/$CHILD_SLUG"
+mkdir -p "$RUN_DIR"
+PROMPT_PATH="$RUN_DIR/prompt.md"
+FINAL_PATH="$RUN_DIR/final.txt"
+EVENTS_PATH="$RUN_DIR/events.jsonl"
+STDERR_PATH="$RUN_DIR/stderr.log"
+EXECUTION_PATH="$RUN_DIR/execution.json"
+SESSION_PATH="$RUN_DIR/session_id.txt"
+```
+
+Write `execution.json` before each child invocation with the normal fields plus:
+
+```json
+{
+  "parallel_group_dir": "<absolute group dir>",
+  "child_id": "<stable child id>",
+  "child_task": "<one-line task>",
+  "allowed_write_scope": "<scope from the prompt>"
+}
+```
+
+Launch each child with the same Codex or Claude command shape below, using that
+child's paths. Record the shell PID and exit status in the child directory if
+the host shell makes that convenient, but do not introduce a script, controller,
+detached monitor, separate worktree, or merge layer.
+
+Do not block launch because siblings might touch nearby files. Brief every
+child that other workers may be editing the same repo, that unfamiliar changes
+must not be reverted, and that actual conflicts should be reported with file
+evidence. After all children finish, inspect repo state and child reports before
+presenting the combined result.
+
+Wait for all children before reporting. If one child fails or returns malformed
+output, preserve its run directory and include that failure in the group report;
+do not discard successful sibling work.
 
 ## Codex Fresh One-Shot
 

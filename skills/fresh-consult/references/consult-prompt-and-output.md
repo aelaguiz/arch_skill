@@ -21,6 +21,16 @@ to fix files.
 - Success bar: <what would make the answer pass/approve/ready>
 - Work root: <absolute path>
 
+# Parallel Group
+
+- Group: <group objective, or "none">
+- Child id: <stable child id, or "single">
+- Sibling consults: <short names of sibling questions, or "none">
+
+<For parallel groups only: Answer only this child's consult question. Sibling
+consults may inspect related artifacts, but you should not coordinate with them
+or wait for them.>
+
 # Authoritative Artifacts
 
 - <path, commit, branch, or doc section> - <why it matters>
@@ -44,7 +54,8 @@ Please do all of the following:
 3. Identify contradictions, missing steps, unclear ordering, stale claims, or
    completion gaps relevant to the consult.
 4. Separate blocking issues from non-blocking notes.
-5. Do not edit files, run formatters, arm hooks, or start another controller.
+5. Do not edit files, run formatters, arm hooks, coordinate with sibling
+   consults, or start another controller.
 
 # Report Contract
 
@@ -83,6 +94,9 @@ When reporting the result upstream:
 4. Name the runtime/model/effort and the run directory.
 5. Spot-check blocking findings before treating them as true.
 6. If you disagree with the child after spot-checking, say so explicitly.
+7. For parallel groups, report each child verdict separately before writing any
+   synthesis. Treat disagreement between children as useful signal, not a
+   majority vote.
 
 ## Good Consult Questions
 

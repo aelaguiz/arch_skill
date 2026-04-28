@@ -1,16 +1,17 @@
 ---
 name: fresh-consult
-description: "Invoke a fresh Claude or Codex subprocess for a prompt-engineered second opinion with clean context. Use when the user or another skill asks for a cold read, external consult, flow consistency audit, completion-claim check, readability/confusion check, or general second opinion from Claude/Codex. Ask once if runtime, model, or effort is missing; run hook-suppressed and unsandboxed; report the child result back. Do NOT use for deterministic full code-review coverage (`code-review`), Codex `-p yolo` reviews (`codex-review-yolo`), ordered subprocess orchestration (`stepwise`/`arch-epic`), or implementation/fixing by the child (`agent-delegate`)."
+description: "Invoke one or more fresh Claude/Codex subprocesses for prompt-engineered second opinions with clean context. Use when the user or another skill asks for a cold read, parallel consults, external consult, flow consistency audit, completion-claim check, readability/confusion check, or general second opinion from Claude/Codex. Ask once if runtime, model, effort, or consult target is missing; run hook-suppressed and unsandboxed; report each child result back. Do NOT use for deterministic code-review coverage (`code-review`), Codex `-p yolo` reviews (`codex-review-yolo`), ordered subprocess orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
 metadata:
   short-description: "Fresh Claude/Codex second opinion with clean context"
 ---
 
 # Fresh Consult
 
-Use this skill when the user or another skill needs a clean second opinion from
-a fresh Claude or Codex subprocess. The child model starts from disk and the
-consult prompt, not from the current chat history, so it can catch confusion,
-drift, missing completion, or weak reasoning the parent may have normalized.
+Use this skill when the user or another skill needs one or more clean second
+opinions from fresh Claude or Codex subprocesses. Each child model starts from
+disk and the consult prompt, not from the current chat history, so it can catch
+confusion, drift, missing completion, or weak reasoning the parent may have
+normalized.
 
 This is a prompt-engineering skill. It ships no scripts, shims, hook
 controllers, state machines, parsers, or install-time automation.
@@ -20,6 +21,7 @@ controllers, state machines, parsers, or install-time automation.
 - "Ask Claude for a cold read of this flow."
 - "Use Codex to audit whether this plan phase is actually complete."
 - "Run a fresh consult for consistency on these skills."
+- "Run three parallel fresh consults on this plan."
 - "Get a second opinion on whether this doc is linear and not confusing."
 - "Have a clean model check whether the implementation matches the checklist."
 - Another skill needs an independent read before it decides whether to proceed.
@@ -41,16 +43,20 @@ controllers, state machines, parsers, or install-time automation.
 
 ## Non-Negotiables
 
-- Resolve one consult objective, the authoritative artifacts, and the work root
-  before launching a child process.
+- Resolve each consult objective, the authoritative artifacts, and the work root
+  before launching child processes.
 - Runtime, model, and effort must be known. If any are missing or ambiguous,
   ask one consolidated question before invoking.
 - Treat model text as intent, not a fuzzy alias. Preserve exact family and
   numeric version; never silently substitute a nearby model.
 - Run the child fresh, hook-suppressed, and unsandboxed per this repo's
   convention. The child prompt enforces read-only behavior, not a sandbox.
-- Create one namespaced run directory under `/tmp/fresh-consult/` and keep
-  `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` there.
+- For a single consult, create one namespaced run directory under
+  `/tmp/fresh-consult/` and keep `prompt.md`, `final.txt`, `events.jsonl`, and
+  `stderr.log` there.
+- For explicit parallel consults, create one group directory under
+  `/tmp/fresh-consult/` and one ordinary child run directory per consult. Do not
+  add a controller, detached monitor, or new runner surface.
 - Brief the child like a colleague walking in cold: include objective, paths,
   claims, what to inspect, and the report contract.
 - Do not paste secrets into prompts. If a token is needed, source it into the
@@ -64,14 +70,16 @@ controllers, state machines, parsers, or install-time automation.
 
 1. Read `references/model-and-invocation.md`.
 2. Read `references/consult-prompt-and-output.md`.
-3. Identify the consult objective, work root, artifacts, explicit claims, and
-   requested runtime/model/effort from the user's words.
-4. If runtime/model/effort is incomplete, ask one question that names exactly
-   what is missing and what it controls.
+3. Identify the consult objective or parallel consult objectives, work root,
+   artifacts, explicit claims, and requested runtime/model/effort from the
+   user's words.
+4. If runtime/model/effort or consult target is incomplete, ask one question
+   that names exactly what is missing and what it controls.
 5. Confirm the selected CLI exists with `command -v codex` or
    `command -v claude`.
-6. Create the run directory and write the consult prompt to `prompt.md`.
-7. Invoke the child with the exact command shape from the invocation reference.
+6. Create the run directory or group directory and write each consult prompt to
+   its own `prompt.md`.
+7. Invoke each child with the exact command shape from the invocation reference.
 
 ## Workflow
 
@@ -80,27 +88,33 @@ controllers, state machines, parsers, or install-time automation.
 2. **Resolve execution.** Map the raw model phrase to
    `runtime=<claude|codex>`, `model=<runnable id>`, and `effort=<level>`.
    Announce the mapping before execution.
-3. **Run the child.** Use a fresh subprocess, no inherited session, disabled
-   hooks, no sandbox, a namespaced run directory, and live event capture.
-4. **Monitor patiently.** Normal consults often take 5+ minutes; broad repo
+3. **Select single or parallel.** Use the single-child path by default. Use a
+   parallel group only when the user asks for parallel consults or gives
+   multiple consult questions.
+4. **Run the child or children.** Use fresh subprocesses, no inherited sessions,
+   disabled hooks, no sandbox, namespaced run directories, and live event
+   capture.
+5. **Monitor patiently.** Normal consults often take 5+ minutes; broad repo
    reads, `xhigh`, or `max` can reasonably take 20-40 minutes. Poll live
    `events.jsonl` and `stderr.log` every few minutes, not every few seconds.
-5. **Consume the result.** Read `final.txt`, locate the verdict footer, and
+6. **Consume the result.** Read `final.txt`, locate the verdict footer, and
    inspect `events.jsonl`/`stderr.log` when the final output is missing or
    malformed.
-6. **Report upstream.** Lead with the verdict, blocking findings, confidence,
-   and any disagreement after spot-checking. Include the run directory path.
+7. **Report upstream.** For one child, lead with the verdict, blocking findings,
+   confidence, and any disagreement after spot-checking. For a parallel group,
+   report one compact child-by-child table plus a short synthesis of agreement
+   and disagreement. Include all run directory paths.
 
 ## Output Expectations
 
 - A concise parent-facing report:
   - runtime/model/effort used
-  - consult verdict
+  - consult verdict, or one verdict per child for parallel groups
   - blocking findings or `none`
   - non-blocking findings or `none`
   - evidence the child says it read
   - confidence and limits
-  - run directory path
+  - run directory path, or group directory plus child run directories
 - If the child output is missing or malformed, say that plainly and preserve the
   run directory for debugging. Do not invent a verdict.
 - If the child is wrong on a blocking point, say so explicitly and cite the

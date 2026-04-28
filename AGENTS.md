@@ -74,15 +74,16 @@ Claude Code, and Gemini.
   `<doc-dir>/<doc-slug>_DAG.md`, and surfaces wasted-energy patterns
   (over-promotion, redundancy, dead skills, broken refs) with `path:line`
   evidence.
-- Use `$fresh-consult` when the user or another skill wants a clean-context
-  Claude or Codex second opinion on a concrete artifact, completion claim,
-  flow consistency question, or readability/confusion check.
+- Use `$fresh-consult` when the user or another skill wants one or more
+  clean-context Claude or Codex second opinions on a concrete artifact,
+  completion claim, flow consistency question, or readability/confusion check.
 - Use `$commit-history-authoring` when the user wants the current branch's
   local-only commit messages rewritten into informative history while
   preserving patches and commit boundaries by default.
-- Use `$agent-delegate` when the user wants a fresh Claude or Codex subprocess
-  to do concrete work in the current workspace, including implementation,
-  editing, investigation-and-fix, command execution, or installed-skill use.
+- Use `$agent-delegate` when the user wants one or more fresh Claude or Codex
+  subprocesses to do concrete work in the current workspace, including
+  implementation, editing, investigation-and-fix, command execution, or
+  installed-skill use.
 - Use `$model-consensus` when the user wants two selected Claude/Codex models
   to iterate on a plan, architecture, design, or concept until they converge
   or expose the smallest unresolved decision, including adversarial

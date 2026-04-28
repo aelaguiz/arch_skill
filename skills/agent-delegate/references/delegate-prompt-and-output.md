@@ -22,10 +22,22 @@ and report exactly what changed.
 - Mode: fresh-one-shot | fresh-resumable | resume
 - Resume source: <previous run directory, session id, or "none">
 
+# Parallel Group
+
+- Group: <group objective, or "none">
+- Child id: <stable child id, or "single">
+- Sibling tasks: <short names of sibling tasks, or "none">
+
 <For resume mode only: Continue the same delegated task using your existing
 session history. Apply the new instruction or evidence below. The original
 success bar, work root, allowed write scope, constraints, and report contract
 still apply unless this prompt explicitly changes them.>
+
+<For parallel groups only: You are not alone in this codebase. Other delegated
+workers may be editing the same repo at the same time. Do not revert unfamiliar
+changes. Make the smallest task-relevant edits you can. If you hit an actual
+conflict with another worker's changes, stop and report the files and evidence
+instead of guessing.>
 
 # Delegated Task
 
@@ -123,6 +135,8 @@ When reporting the result upstream:
 5. Check repo status before reporting changed files as final truth.
 6. Spot-check blockers and changed-file claims before treating them as true.
 7. If you disagree with the child after spot-checking, say so explicitly.
+8. For parallel groups, report each child status separately before writing the
+   combined outcome, then include the parent-side repo-state check.
 
 ## Good Delegated Tasks
 
@@ -144,6 +158,8 @@ Do not:
 - Hide missing context behind parent summaries. Point at ground truth.
 - Ask the child to use hook-backed controllers or ordered subprocess workflows
   as part of this foreground delegation path.
+- Block parallel launch because sibling write scopes might overlap. Handle real
+  conflicts from evidence after they happen.
 - Resume an ambiguous "latest" session instead of an explicit session id or
   prior run directory.
 - Change runtime when resuming a session. Claude resumes through Claude; Codex

@@ -2,11 +2,11 @@
 
 Use this reference to resolve what the user meant by "Claude", "Codex",
 "opus high", "gpt 5.5 xhigh", or similar phrasing, and to run the selected
-fresh subprocess.
+fresh subprocess or explicit parallel group of fresh subprocesses.
 
 ## Required Values
 
-Every consult needs three execution values:
+Every consult child needs three execution values:
 
 - `runtime` - `claude` or `codex`
 - `model` - the runnable CLI model identifier
@@ -82,7 +82,7 @@ fail-loud behavior.
 
 ## Run Directory
 
-Create one run directory per consult:
+Create one run directory per consult child:
 
 ```bash
 CONSULT_SLUG="<short-slug>"
@@ -101,6 +101,48 @@ on the command line.
 stream. `final.txt` is the final assistant text: Codex writes it directly with
 `-o`; for Claude, copy the `result` text from the final `type=result` event
 after the process exits.
+
+## Parallel Consult Group
+
+Use the parallel group path only when the user asks for parallel consults or
+gives multiple consult questions for this skill. Parallel consults are still
+ordinary fresh consult children; the group only gives the parent a place to
+organize prompts, streams, finals, and the combined report.
+
+Create one group directory:
+
+```bash
+GROUP_SLUG="<short-slug>"
+RUN_TS="$(date -u +%Y%m%dT%H%M%SZ)"
+GROUP_DIR="$(mktemp -d "/tmp/fresh-consult/parallel-${GROUP_SLUG}-${RUN_TS}-XXXXXX")"
+```
+
+For each child, create an ordinary child run directory beneath the group:
+
+```bash
+CHILD_SLUG="<child-slug>"
+RUN_DIR="$GROUP_DIR/$CHILD_SLUG"
+mkdir -p "$RUN_DIR"
+PROMPT_PATH="$RUN_DIR/prompt.md"
+FINAL_PATH="$RUN_DIR/final.txt"
+EVENTS_PATH="$RUN_DIR/events.jsonl"
+STDERR_PATH="$RUN_DIR/stderr.log"
+```
+
+Launch each child with the same Codex or Claude command shape below, using that
+child's paths. Record the shell PID and exit status in the child directory if
+the host shell makes that convenient, but do not introduce a script, controller,
+detached monitor, or state machine.
+
+Default to one shared runtime/model/effort for all children. If the user clearly
+assigns different execution choices to different children, apply those choices
+exactly and announce the mapping before launch. If any child lacks a consult
+question, work root, runtime, model, or effort, ask one consolidated question
+before launching the group.
+
+Wait for all children before reporting. If one child fails or returns malformed
+output, preserve its run directory and include that failure in the group report;
+do not discard the successful sibling consults.
 
 ## Codex Command
 
