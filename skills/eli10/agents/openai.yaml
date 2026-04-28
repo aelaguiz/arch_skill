@@ -1,7 +1,7 @@
 interface:
-  display_name: "ELI10 Plain-English Answers"
-  short_description: "Answer questions in plain English while preserving technical truth"
-  default_prompt: "Use $eli10 to answer the current question in plain English a 16-year-old can follow, define jargon on first use, preserve exact technical facts, name the stakes, and use a decision brief only if you need me to choose."
+  display_name: "ELI10 Maximum-Readability Answers"
+  short_description: "Explain at the right layer with plain speech, scan markers, exact truth, and renderer-aware tables"
+  default_prompt: "Use $eli10 to answer the current question with maximum readability: lead with the point, use simple speech, preserve exact technical facts, use emoji scan markers where helpful, explain root cause before symptoms, use renderer-appropriate tables only when they make compact information clearer, and do not add next steps unless I ask for them."
 
 policy:
   allow_implicit_invocation: true

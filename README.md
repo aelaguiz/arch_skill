@@ -38,7 +38,7 @@ Other shipped skills are:
 - `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
 - `prompt-authoring` — writes, edits, refactors, and audits reusable prompt contracts
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
-- `eli10` — answers questions in plain-English ELI10 style while preserving exact technical facts, with a decision-brief sub-mode only when the user must choose
+- `eli10` — answers in maximum-readability ELI10 style: plain speech, right-layer explanation, emoji scan markers, exact technical facts, root cause before symptom, no fake memory, renderer-aware tables when they improve understanding, and decision briefs only when the user must choose
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes
 - `commit-history-authoring` — rewrites the current branch's local-only commit messages into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `skill-flow` — designs, repairs, and audits ordered multi-skill flows with distinct skill jobs, concrete handoffs, clear peer boundaries, and no prompt-runner scaffolding; for 30+ skill suites, the DAG-grounded audit sub-mode parallel-walks the suite, builds a labeled-edge substrate, and surfaces wasted-energy patterns (over-promotion, redundancy, dead skills, broken refs)
@@ -365,7 +365,7 @@ Use when the user wants to write, edit, refactor, or audit a reusable agent skil
 
 ### `eli10`
 
-Use when the user wants any answer, explanation, plan, review, recommendation, or status update in ELI10/ELI16 plain-English style. The skill defines jargon on first use, names stakes, preserves exact commands/metrics/file names, and uses the decision-brief contract only when the answer is asking the user to choose. Use `prompt-authoring` for reusable prompt contracts and `skill-authoring` for skill packages.
+Use when the user wants any answer, explanation, plan, review, recommendation, or status update in ELI10/ELI16 maximum-readability style. The skill leads with the point, explains at the right layer, uses emoji scan markers where helpful, defines jargon on first use, preserves exact commands/metrics/file names, avoids fake memory, and does not add next steps unless asked. It uses renderer-aware tables only when they improve understanding: native Markdown tables in Claude, and a bundled self-contained `uv`/`rich` Unicode table helper in Codex. It uses the decision-brief contract only when the answer is asking the user to choose. Use `prompt-authoring` for reusable prompt contracts and `skill-authoring` for skill packages.
 
 ### `pr-authoring`
 
