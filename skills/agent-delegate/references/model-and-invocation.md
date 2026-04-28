@@ -2,26 +2,50 @@
 
 Use this reference to resolve what the user meant by "Claude", "Codex",
 "opus high", "gpt 5.5 xhigh", or similar phrasing, and to run the selected
-fresh worker subprocess.
+worker subprocess. Fresh one-shot is the default. Same-session resume is
+allowed only when the caller explicitly requires continuity.
 
 ## Required Values
 
-Every delegation needs three execution values:
+Every delegation needs:
 
+- `mode` - `fresh-one-shot`, `fresh-resumable`, or `resume`
 - `runtime` - `claude` or `codex`
-- `model` - the runnable CLI model identifier
-- `effort` - the reasoning effort level
+- `model` - the runnable CLI model identifier, or the previous session model
+  when a resume intentionally reuses it
+- `effort` - the reasoning effort level, or the previous session effort when a
+  resume intentionally reuses it
+
+Resume mode also needs either:
+
+- `session_id` - Claude `session_id` or Codex `thread_id`
+- `run_dir` - a previous `agent-delegate` run directory containing
+  `session_id.txt` and `execution.json`
 
 If any value is missing or ambiguous, ask one consolidated question before
 invoking:
 
 ```text
-I need the delegate runtime, model, and effort before invoking an external
-agent. The delegate runs as a clean subprocess, can edit the shared worktree,
-and can spend real model budget. What should I use?
+I need the delegate runtime, model, effort, and resume handle before invoking
+an external agent. The delegate runs as a foreground subprocess, can edit the
+shared worktree, and can spend real model budget. What should I use?
 ```
 
 Add only the missing facts to the question when some values are already known.
+
+## Delegation Mode
+
+- `fresh-one-shot` is the default. It creates a cold child and may use stateless
+  CLI flags.
+- `fresh-resumable` creates a cold child that can be resumed later. Use it only
+  when the caller says this worker may need same-session continuation.
+- `resume` continues an explicit same-runtime session id or prior run
+  directory. Do not resume "latest" sessions, do not use Claude `--continue`,
+  and do not use Codex `--last`.
+
+Same-runtime is mandatory. Claude sessions resume through Claude with
+`-r <session_id>`. Codex threads resume through `codex exec resume
+<thread_id>`.
 
 ## Runtime Inference
 
@@ -79,6 +103,9 @@ exact-version preservation and fail-loud behavior.
 - For Codex, confirm the selected model supports the requested effort when
   `codex debug models` is needed for model resolution.
 - If the effort is missing or the selected model does not support it, ask.
+- A caller rule like "copywriting always xhigh" is execution intent from the
+  caller. Apply it only to the delegated turn it clearly controls; do not add a
+  built-in task taxonomy inside this skill.
 
 ## Run Directory
 
@@ -92,6 +119,9 @@ PROMPT_PATH="$RUN_DIR/prompt.md"
 FINAL_PATH="$RUN_DIR/final.txt"
 EVENTS_PATH="$RUN_DIR/events.jsonl"
 STDERR_PATH="$RUN_DIR/stderr.log"
+EXECUTION_PATH="$RUN_DIR/execution.json"
+SESSION_PATH="$RUN_DIR/session_id.txt"
+RESUME_FROM_PATH="$RUN_DIR/resume_from.txt"
 ```
 
 Write the prompt to `prompt.md`. Do not pass a long multiline prompt directly
@@ -102,9 +132,26 @@ stream. `final.txt` is the final assistant text: Codex writes it directly with
 `-o`; for Claude, copy the `result` text from the final `type=result` event
 after the process exits.
 
-## Codex Command
+Write `execution.json` before invocation with at least:
 
-Use this shape for a Codex delegation:
+```json
+{
+  "mode": "fresh-one-shot | fresh-resumable | resume",
+  "runtime": "claude | codex",
+  "model": "<resolved model or reused-from-session>",
+  "effort": "<resolved effort or reused-from-session>",
+  "work_root": "<absolute path>",
+  "forced_execution_on_resume": false
+}
+```
+
+For fresh-resumable and resume runs, write the captured or reused session id to
+`session_id.txt`. For resume runs, write the source run directory or explicit
+session id to `resume_from.txt`.
+
+## Codex Fresh One-Shot
+
+Use this shape for a default stateless Codex delegation:
 
 ```bash
 codex exec \
@@ -122,20 +169,67 @@ codex exec \
   2> "$STDERR_PATH"
 ```
 
-Flag meanings:
+`--ephemeral` keeps the child stateless and cold. Use this only for
+`fresh-one-shot`; ephemeral sessions are not resumable.
 
-- `--ephemeral` keeps the child stateless and cold.
-- `--disable codex_hooks` prevents hook recursion.
-- `-C <work_root>` pins the filesystem context.
-- `--dangerously-bypass-approvals-and-sandbox` gives the child realistic local
-  access. Use only in trusted local environments.
-- `--skip-git-repo-check` allows doc or artifact tasks outside a git root.
-- `--json` streams Codex event JSONL to `events.jsonl` while the child works.
-- `-o "$FINAL_PATH"` captures the final assistant message.
+## Codex Fresh Resumable
 
-## Claude Command
+Use this shape when a Codex worker may need later same-session resume:
 
-Use this shape for a Claude delegation:
+```bash
+codex exec \
+  --disable codex_hooks \
+  -C "<work_root>" \
+  --dangerously-bypass-approvals-and-sandbox \
+  --skip-git-repo-check \
+  --model "<resolved_model>" \
+  -c model_reasoning_effort='"<resolved_effort>"' \
+  --json \
+  -o "$FINAL_PATH" \
+  < "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+Capture the `thread_id` from the first `thread.started` event in
+`events.jsonl` and write it to `session_id.txt`. If no thread id is captured,
+write `UNRECOVERABLE` to `session_id.txt`, treat the run as malformed, and
+preserve the run directory.
+
+## Codex Resume
+
+Use this shape to resume an explicit Codex thread:
+
+```bash
+codex exec resume "<thread_id>" \
+  --disable codex_hooks \
+  --dangerously-bypass-approvals-and-sandbox \
+  --skip-git-repo-check \
+  --json \
+  -o "$FINAL_PATH" \
+  < "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+`codex exec resume` carries the working directory from the original session.
+Do not pass `-C` / `--cd` on resume.
+
+Omit `--model` and effort config to reuse the session's execution choice. If
+the caller explicitly requires a model or effort change on resume, announce
+that mapping and add both flags:
+
+```bash
+  --model "<resolved_model>" \
+  -c model_reasoning_effort='"<resolved_effort>"' \
+```
+
+Do not use `--last`; resume must name the exact `thread_id`.
+
+## Claude Fresh
+
+Use this shape for both `fresh-one-shot` and `fresh-resumable` Claude
+delegations:
 
 ```bash
 claude -p \
@@ -151,21 +245,43 @@ claude -p \
   2> "$STDERR_PATH"
 ```
 
-Flag meanings:
-
-- `-p` runs non-interactively and exits.
-- `--output-format stream-json` emits live JSONL events to `events.jsonl`.
-- `--include-partial-messages` and `--include-hook-events` preserve progress
-  and tool/hook activity for long delegations.
-- `--dangerously-skip-permissions` gives the child realistic local access. Use
-  only in trusted local environments.
-- `--settings '{"disableAllHooks":true}'` prevents hook recursion.
-- `--model` and `--effort` pin the execution choice.
+Run Claude from `work_root`. Do not pass `--no-session-persistence` for
+fresh-resumable runs.
 
 After Claude exits, read the final `type=result` event from `events.jsonl` and
 write its `result` text to `final.txt` before applying the status-footer
-checks. If no result event exists after a zero exit, treat the run as malformed
-and preserve the run directory.
+checks. For fresh-resumable runs, also write the final result event's
+`session_id` to `session_id.txt`. If no result event exists after a zero exit,
+or a fresh-resumable run has no session id, treat the run as malformed and
+preserve the run directory.
+
+## Claude Resume
+
+Use this shape to resume an explicit Claude session:
+
+```bash
+claude -p \
+  --output-format stream-json \
+  --include-partial-messages \
+  --include-hook-events \
+  --dangerously-skip-permissions \
+  --settings '{"disableAllHooks":true}' \
+  --model "<resolved_model>" \
+  --effort "<resolved_effort>" \
+  -r "<session_id>" \
+  < "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+Run the resume from the same `work_root` used by the original Claude session.
+Use `-r <session_id>`, never `--continue`, because `--continue` chooses the
+most recent conversation in the current directory and can collide with other
+work.
+
+After Claude exits, write the final `result` text to `final.txt`. Write the
+returned `session_id` to `session_id.txt` when present; otherwise preserve the
+input session id in `session_id.txt`.
 
 ## Monitoring Posture
 
@@ -180,9 +296,6 @@ failure when the event stream is still alive. Investigate only after the
 process exits non-zero, the stream shows an error, or there is no stream
 activity for a long quiet window.
 
-Do not use `-r`, `--resume`, `--continue`, or Codex `exec resume`; this v1 is a
-fresh one-shot delegation, not a resumed conversation.
-
 ## Failure Behavior
 
 Fail loud and preserve the run directory when:
@@ -190,9 +303,15 @@ Fail loud and preserve the run directory when:
 - the selected CLI is missing
 - runtime/model/effort cannot be resolved exactly
 - the allowed write scope is missing or unsafe
+- resume mode has no explicit session id or prior run directory
+- `session_id.txt` is missing, empty, or `UNRECOVERABLE` for a resume
+- the caller asks for cross-runtime resume
+- the caller asks for Claude `--continue`, Codex `--last`, or "latest" resume
+  selection
 - the child exits non-zero
 - `final.txt` is empty
 - Claude exits without a final `type=result` event
+- fresh-resumable Codex does not emit `thread.started`
 - the child omits the required status footer
 
 Do not silently fall back from Claude to Codex, Codex to Claude, one model to

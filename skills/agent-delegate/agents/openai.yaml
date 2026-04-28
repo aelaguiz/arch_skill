@@ -1,7 +1,7 @@
 interface:
   display_name: "Agent Delegate"
-  short_description: "Run a fresh Claude or Codex worker subprocess"
-  default_prompt: "Use $agent-delegate to delegate this concrete task to a fresh Claude or Codex worker with full local agent capabilities, then report the status, changed files, verification, blockers, and run directory."
+  short_description: "Run a Claude or Codex worker, fresh by default"
+  default_prompt: "Use $agent-delegate to delegate this concrete task to a Claude or Codex worker with full local agent capabilities. Run fresh by default; use explicit same-session resume only if I provide a prior run/session handle or require continuity. Report the mode, status, changed files, verification, blockers, session id when present, and run directory."
 
 policy:
   allow_implicit_invocation: true

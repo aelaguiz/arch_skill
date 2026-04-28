@@ -1,8 +1,9 @@
 # Delegate Prompt And Output
 
-The delegation prompt must make the child useful from a cold start. It has no
-session history and should not be trusted to infer the parent skill's unstated
-context.
+The delegation prompt must make the child useful without relying on the parent
+chat. Fresh prompts have no session history. Resume prompts do have child
+session history, but still need a bounded instruction, unchanged constraints,
+and explicit new evidence.
 
 ## Prompt Skeleton
 
@@ -10,10 +11,21 @@ Write a prompt like this to `prompt.md` and adapt the sections to the actual
 task:
 
 ```markdown
-You are a fresh delegated agent for <one-line subject>.
-You have no prior chat context. Read the repo and artifacts directly from disk.
+You are a delegated agent for <one-line subject>.
+You do not have the parent chat context. Read the repo and artifacts directly
+from disk.
 Your job is to complete the delegated task in the shared worktree, verify it,
 and report exactly what changed.
+
+# Delegation Mode
+
+- Mode: fresh-one-shot | fresh-resumable | resume
+- Resume source: <previous run directory, session id, or "none">
+
+<For resume mode only: Continue the same delegated task using your existing
+session history. Apply the new instruction or evidence below. The original
+success bar, work root, allowed write scope, constraints, and report contract
+still apply unless this prompt explicitly changes them.>
 
 # Delegated Task
 
@@ -107,9 +119,10 @@ When reporting the result upstream:
 1. Lead with `STATUS` verbatim.
 2. Include changed files, skills used, verification, blockers, and follow-up.
 3. Name the runtime/model/effort and the run directory.
-4. Check repo status before reporting changed files as final truth.
-5. Spot-check blockers and changed-file claims before treating them as true.
-6. If you disagree with the child after spot-checking, say so explicitly.
+4. Name the delegation mode and session id when the run is resumable.
+5. Check repo status before reporting changed files as final truth.
+6. Spot-check blockers and changed-file claims before treating them as true.
+7. If you disagree with the child after spot-checking, say so explicitly.
 
 ## Good Delegated Tasks
 
@@ -130,7 +143,12 @@ Do not:
 - Ask the child to keep working asynchronously after the parent returns.
 - Hide missing context behind parent summaries. Point at ground truth.
 - Ask the child to use hook-backed controllers or ordered subprocess workflows
-  as part of this v1 one-shot delegation.
+  as part of this foreground delegation path.
+- Resume an ambiguous "latest" session instead of an explicit session id or
+  prior run directory.
+- Change runtime when resuming a session. Claude resumes through Claude; Codex
+  resumes through Codex.
 - Treat the child as final authority. It is a capable worker whose output still
   needs parent-side sanity checks.
-- Reuse old run directories across delegations.
+- Reuse old run directories for new turns. A resume turn still gets a new run
+  directory that points back to the previous session source.
