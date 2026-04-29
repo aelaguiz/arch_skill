@@ -56,17 +56,22 @@ Figma API wrappers, browser automation, or MCP automation.
 - If inspecting a real artifact, ground every finding in visible structure:
   frame hierarchy, Auto Layout settings, variables, styles, components,
   properties, layer names, sections, annotations, branches, or publish state.
+- For tool-mediated Figma work, treat successful MCP/API responses as
+  provisional. Verify actual file state with returned node IDs, structure
+  reads, fill reads, bounds checks, and screenshots of the target artifact.
 
 ## First move
 
 1. Read `references/figma-file-craft.md`.
-2. Classify the job as `author`, `review`, or `repair`.
-3. Identify the artifact being shaped: product file, library file, component
+2. If the task involves Figma MCP/API inspection, writes, uploads, exports, or
+   screenshot repair, also read `references/figma-mcp-agent-gotchas.md`.
+3. Classify the job as `author`, `review`, or `repair`.
+4. Identify the artifact being shaped: product file, library file, component
    family, token system, prototype, Dev Mode handoff, Make kit, Sites page,
    Buzz template, Slides deck, or MCP/Code Connect surface.
-4. Identify the consumers that matter: designers, developers, Code Connect,
+5. Identify the consumers that matter: designers, developers, Code Connect,
    Make, Sites, Buzz, Slides, MCP/IDE agents, or non-designer template users.
-5. If a real file or screenshot is available, inspect it before prescribing
+6. If a real file or screenshot is available, inspect it before prescribing
    fixes. If no artifact is available, produce a concrete structure or audit
    rubric instead of inventing file facts.
 
@@ -113,3 +118,6 @@ Figma API wrappers, browser automation, or MCP automation.
   layout, components, variables, styles, libraries, file structure,
   prototyping, Dev Mode, Code Connect, AI surfaces, MCP readiness, and
   anti-patterns.
+- `references/figma-mcp-agent-gotchas.md` - operational gotchas for Figma
+  MCP/API work, including page context, fonts, component properties, uploads,
+  screenshots, and source-of-truth checks.

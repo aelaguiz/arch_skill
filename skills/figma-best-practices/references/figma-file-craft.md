@@ -758,6 +758,16 @@ The same disciplines that help designers and developers also help models:
 Sloppy files now damage multiple consumers at once: Dev Mode, Code Connect,
 Make, Sites, Buzz, Slides, and MCP.
 
+When an agent is using Figma through MCP, plugin API scripts, upload tools, or
+screenshot repair flows, also read `figma-mcp-agent-gotchas.md`. Tool success
+does not prove file success; the agent must verify actual node state, image
+fills, bounds, component properties, and target screenshots.
+
+Figma exports and MCP asset URLs are reference surfaces unless intentionally
+promoted into a product-owned asset pipeline. Map exported values to the
+receiving code tokens, assets, or component APIs instead of treating generated
+code or short-lived URLs as runtime truth.
+
 ## Review checklist
 
 Use this as a recognition test, not as a rote keyword list.
@@ -818,6 +828,11 @@ Downstream readiness:
 - Are annotations reserved for non-visual requirements?
 - Do component properties map to code props where Code Connect matters?
 - Will Make, Sites, Buzz, Slides, and MCP see structure rather than a painting?
+- If MCP/API tools touched the file, did the agent verify returned node IDs,
+  loaded page context, font-loaded text edits, image fills, component property
+  placement, bounds/overlap, and screenshots of the actual target artifact?
+- If Figma exports informed implementation, are exported code and MCP asset URLs
+  kept reference-only unless moved through the product's normal asset pipeline?
 
 ## Never do catalog
 
@@ -848,3 +863,6 @@ Downstream readiness:
 - pasted raw images for every slide
 - fixed-width top-level Sites sections
 - accepting AI-generated output without reviewing structure, names, and tokens
+- treating MCP/API success, metadata, or upload hashes as proof without reading
+  back node state and checking screenshots
+- importing Figma export code or short-lived MCP asset URLs into runtime code
