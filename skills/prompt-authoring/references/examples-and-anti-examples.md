@@ -17,7 +17,7 @@ These are adapted from real failures already seen in this repo, but rewritten as
 - Case 11: outcome-first prompt got buried under process
 - Case 12: creative drafting invented unsupported claims
 - Case 13: validation was requested but not made real
-- Case 14: goal prompt became a form instead of a mission brief
+- Case 14: goal prompt became a form or competing source of truth
 - How to use these examples safely
 
 ## Case 1: commander’s intent collapsed into procedure
@@ -258,15 +258,19 @@ Why the better shape works:
 Transferable principle:
 - validation prompts should name concrete checks or recognition tests, not just ask for confidence
 
-## Case 14: goal prompt became a form instead of a mission brief
+## Case 14: goal prompt became a form or competing source of truth
 
 Real failure pattern:
 - a Codex `/goal` prompt was rewritten into a fixed field list, so the future
   agent followed labels without understanding the desired world state
+- or a rich plan/source doc was copied into the goal, so the goal became a
+  second source of truth that could drift from the real plan
 
 Bad shape:
 - "Outcome: fix it. Source: repo. Workflow: use skills. Evidence: tests. Done:
   reviewer signs off."
+- a 4,000-character goal that pastes the whole plan doc, every thought
+  exercise, the reviewer prompt, and the detailed test list
 
 Better shape:
 - "Fix the current lesson issue through the owning workflow, not by patching
@@ -276,16 +280,26 @@ Better shape:
   context only. Do not use heuristic backfills or fake receipts. Done requires
   the original failure, owner-path fix, validation receipt, and any required
   blind review."
+- "Implement the work described in `docs/PLAN.md`. That doc is controlling
+  source truth for doctrine, examples, fixtures, and validation details; do not
+  restate it or create a second plan. Done requires the implementation,
+  validation against the named fixtures, non-leading signoff, and a final report
+  with changed files, commands, artifacts, blockers, and risks."
 
 Why the better shape works:
 - the mission is visible before mechanics
 - the quality bar teaches judgment
 - source truth, forbidden shortcuts, evidence, and signoff still exist, but
   they serve the outcome instead of becoming a checklist
+- rich docs stay authoritative instead of being copied into a brittle goal
+- the `/goal` stays inside the 4,000-character hard cap and usually closer to
+  the 2,000-3,000 character working range
 
 Transferable principle:
 - `/goal` prompts should be adaptive mission briefs; use structure only where
   it makes the goal easier to pursue
+- when a source doc exists, the goal should point to it and define acceptance,
+  not duplicate it
 
 ## How to use these examples safely
 

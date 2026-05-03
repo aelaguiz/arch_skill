@@ -124,7 +124,9 @@ sequence itself is fragile, safety-critical, or part of the product contract.
 Codex `/goal` prompts are a common outcome-first variant. They usually also
 need evidence, validation, tool-use, and stop-rule lenses because the goal may
 guide many future turns. When writing one, use `codex-goal-prompts.md`; keep it
-as a mission brief, not a fixed schema.
+as a compact mission brief, not a fixed schema or duplicated plan doc. The hard
+cap is 4,000 characters, complex goals should usually stay around 2,000-3,000,
+and rich source docs should be referenced by path instead of restated.
 
 ## 4) Retrieval, citation, and evidence prompts
 
@@ -284,8 +286,8 @@ When a prompt has multiple needs, compose the minimum useful pieces:
 - creative drafting + evidence: clear factual boundaries plus room for good
   prose
 - tool-use + validation: action rules plus concrete checks before finalizing
-- Codex `/goal`: desired world state plus source truth, quality bar, evidence,
-  signoff, and stop rule
+- Codex `/goal`: compact desired world state plus source truth pointers,
+  quality bar, evidence, signoff, and stop rule
 - formatting + audience: reader context plus structure and length limits
 - reusable contract + examples: durable sections plus examples that teach
   reasoning

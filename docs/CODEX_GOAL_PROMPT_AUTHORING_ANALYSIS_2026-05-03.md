@@ -6,12 +6,18 @@ This document analyzes how `/goal` has been used in recent Codex sessions and
 recommends a prompt-authoring variant for writing stronger, outcome-driven goal
 prompts.
 
-The short version: your best goals are not task descriptions. They are operating
-contracts. They name the world state you want, the source of truth, the work
-boundaries, the forbidden shortcuts, the proof required, and the independent
-review gate. The painful goals usually leave one of those pieces implicit, so
-the agent optimizes for local completion, a plausible workaround, or its own
-definition of "done."
+The short version: your best goals are not task descriptions and not duplicated
+plan docs. They are compact operating contracts. They name the world state you
+want, the source of truth, the work boundaries, the forbidden shortcuts, the
+proof required, and the independent review gate. The painful goals usually
+leave one of those pieces implicit, or copy so much source material into the
+goal that the goal becomes a competing source of truth.
+
+2026-05-03 form-factor update: the live runtime guidance now lives in
+`skills/prompt-authoring/references/codex-goal-prompts.md`. Treat its compact
+examples as authoritative. Codex `/goal` prompts have a 4,000-character hard
+cap, usually work best around 2,000-3,000 characters, and should be shorter
+when they can point at a rich source doc by path.
 
 ## Scope And Method
 
@@ -410,6 +416,15 @@ The variant should normally return one copyable `/goal` prompt first and a short
 note only when an assumption matters. It should not bury the usable prompt under
 analysis unless the user asked for analysis.
 
+The form-factor rule is load-bearing:
+
+- 4,000 characters is the hard cap, not the target.
+- Complex goals should usually land around 2,000-3,000 characters.
+- Goals that point at a rich source doc should often be 800-1,800 characters.
+- Source docs, plans, consensus outputs, thought exercises, and detailed test
+  fixtures should be referenced by path/name, not restated inside the `/goal`.
+- If the goal duplicates the plan, it creates a competing source of truth.
+
 The authoring plan should be:
 
 1. Convert the rough ask into the desired end state.
@@ -418,12 +433,15 @@ The authoring plan should be:
    technically green but user-wrong.
 4. Name the ground truth: files, docs, owner skills, live surfaces, logs, tests,
    or model outputs that outrank guesses.
-5. Add workflow or tool rules only when they change the result.
-6. Name the forbidden shortcuts that match the actual risk.
-7. Define evidence: what the agent must inspect, test, render, compare, or save.
-8. Make signoff first-class when requested or warranted.
-9. Add a stop rule so the agent does not loop forever or silently make a scope
-   decision.
+5. Compress source truth: point at controlling docs instead of copying their
+   doctrine, examples, thought exercises, reviewer prompts, or command lists.
+6. Add workflow or tool rules only when they change the result.
+7. Name the forbidden shortcuts that match the actual risk.
+8. Define evidence: what the agent must inspect, test, render, compare, or save.
+9. Make signoff first-class when requested or warranted.
+10. Add a stop rule so the agent does not loop forever or silently make a scope
+    decision.
+11. Delete any sentence that restates the source doc without changing execution.
 
 The prompt should usually be prose with compact paragraphs. Use labels only when
 they make the goal easier to scan. Do not force every goal into the same field
@@ -443,6 +461,18 @@ Use [ground truth sources] as source truth. Treat [weak/stale sources] as contex
 Do not [likely bad shortcuts].
 
 Done means [evidence, validation, report, and signoff gate]. Stop and ask only if [true blocker or scope decision].
+```
+
+Good source-doc-heavy shape:
+
+```text
+/goal Implement [outcome] using `[source doc]` as controlling source truth.
+
+The doc owns [doctrine/examples/fixtures/validation details]. This goal only names the mission, guardrails, and done gate; do not create a second plan.
+
+Use [owner skills/files/tools]. Do not [likely overfit/bypass/manual proof path].
+
+Done means [validation], [signoff], and [final report evidence]. Stop only for [missing source, unavailable exact model/tool, or real scope conflict].
 ```
 
 Very compact shape when the goal should stay short:
@@ -504,6 +534,11 @@ These examples are based on actual goals from the reviewed history, but rewritte
 using the revised prompt-authoring plan above. They are intentionally less
 schema-like than the earlier examples. The goal is a readable mission contract,
 not a form.
+
+These historical examples are not the runtime source for current `/goal`
+authoring. For current examples, especially source-doc-heavy goals that must
+avoid duplicating a plan, use
+`skills/prompt-authoring/references/codex-goal-prompts.md`.
 
 ### Vague Repair Goal
 
@@ -692,11 +727,13 @@ Suggested final self-check:
 - Does the first sentence name the desired end state?
 - Does the quality bar describe real good output instead of generic polish?
 - Does the goal name the source of truth?
+- If a rich source doc exists, does the goal point at it instead of copying it?
 - Does the goal ban the likely wrong shortcut without becoming a brittle list?
 - Does the goal say what evidence must exist?
 - If signoff is needed, is it blind/non-leading and part of done?
 - Does the goal say when to stop and ask?
-- Is the prompt still short enough to be usable in `/goal`?
+- Is the prompt under the 4,000-character hard cap, and preferably within the
+  2,000-3,000 character working range or shorter for source-doc-heavy goals?
 
 ## Bottom Line
 

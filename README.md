@@ -36,7 +36,7 @@ Other shipped skills are:
 - `wait` — one-shot delay-then-resume controller for Codex and Claude Code that sleeps inside the installed `Stop` hook for a parsed duration (`30m`, `1h30m`, `90s`, `2d`) and then injects a literal resume prompt back into the same thread exactly once. Use this for plain "wait N and continue" work. For condition re-checking use `delay-poll`; for recurring or scheduled work use `/loop` or `schedule`.
 - `agent-definition-auditor` — cold-reader scoring and findings for `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompts, and other agent-definition markdown
 - `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
-- `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, and Codex `/goal` mission briefs
+- `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, and compact Codex `/goal` mission briefs
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
 - `eli10` — answers in maximum-readability ELI10 style: plain speech, right-layer explanation, emoji scan markers, exact technical facts, root cause before symptom, no fake memory, renderer-aware tables when they improve understanding, and decision briefs only when the user must choose
@@ -364,7 +364,7 @@ Use when the user wants to write, edit, refactor, or audit a repo-root or path-l
 
 ### `prompt-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a prompt, reusable prompt contract, or Codex `/goal` mission brief so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt. The user does not need to name a prompt type or mode; the skill infers the shape from normal language. For `/goal` prompts, it writes outcome-driven mission briefs with source truth, quality bar, evidence, stop rules, and first-class signoff when needed, rather than rigid field forms.
+Use when the user wants to write, edit, refactor, or audit a prompt, reusable prompt contract, or Codex `/goal` mission brief so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt. The user does not need to name a prompt type or mode; the skill infers the shape from normal language. For `/goal` prompts, it writes compact outcome-driven mission briefs with source truth pointers, quality bar, evidence, stop rules, and first-class signoff when needed, rather than rigid field forms or duplicated plan docs.
 
 ### `skill-authoring`
 

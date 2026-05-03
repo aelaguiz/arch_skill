@@ -1,6 +1,6 @@
 ---
 name: prompt-authoring
-description: "Write, edit, refactor, or audit prompts and reusable prompt contracts, including Codex /goal prompts, so they match the user's intent, prompt shape, evidence needs, constraints, stop rules, and output expectations without becoming brittle or overbuilt. Use for casual prompt-writing asks, system/agent/reviewer prompts, prompt repair, anti-heuristic refactors, and findings-first prompt audits; use $skill-authoring for skill packages."
+description: "Write, edit, refactor, or audit prompts and reusable prompt contracts, including compact Codex /goal prompts, so they match the user's intent, prompt shape, evidence needs, constraints, stop rules, and output expectations without becoming brittle or overbuilt. Use for casual prompt-writing asks, system/agent/reviewer prompts, prompt repair, anti-heuristic refactors, and findings-first prompt audits; use $skill-authoring for skill packages."
 ---
 
 # Prompt Authoring
@@ -46,7 +46,8 @@ make install
 - Do not block casual prompt-writing asks because optional details are missing. Make the best reasonable prompt, then name assumptions briefly if they matter.
 - Do not inflate a small one-shot prompt into a full reusable contract unless the artifact needs durable sections, examples, validation, or runtime boundaries.
 - Keep commander’s intent mission-level; push concrete behaviors lower into success/failure, recognition tests, process, and examples.
-- For Codex `/goal` prompts, write a mission brief that teaches judgment; do not turn the goal into a rigid field form or prompt-runner checklist.
+- For Codex `/goal` prompts, write a compact mission brief that teaches judgment; do not turn the goal into a rigid field form, prompt-runner checklist, or duplicated plan doc.
+- For Codex `/goal` prompts, respect the form factor: 4,000 characters is a hard cap, 2,000-3,000 is the usual ceiling for complex goals, and source-doc-heavy goals should usually be shorter.
 - Teach principles and recognition tests, not keyword lists, lookup tables, or canned action menus.
 - Treat skill prose as prompt prose. Keep it intent-driven and anti-heuristic; leave packaging, trigger metadata, and runtime boundaries to `$skill-authoring`.
 - Fix the right section instead of smearing new guidance across the whole prompt.
@@ -74,7 +75,7 @@ make install
 3. Blend prompt-type guidance when the job needs it, such as personality plus evidence rules plus stop conditions.
 4. Keep commander’s intent and success/failure higher than process mechanics.
 5. Make the rich sections carry real weight: system context, quality bar, output contract, evidence policy, stop rules, and error handling should teach stakes and judgment, not just fill space.
-6. For `/goal` prompts, put the desired world state first, then only add context, workflow rules, signoff, and evidence requirements that change behavior.
+6. For `/goal` prompts, put the desired world state first, then only add context, workflow rules, signoff, and evidence requirements that change behavior. Reference authoritative docs by path instead of restating them.
 7. Place or repair sections in preferred-pattern order rather than patching opportunistically.
 8. Use examples and rationale to illustrate the principle, never to replace the principle.
 9. Run the anti-heuristic, overbuild, and hidden-context checks before returning.
@@ -89,7 +90,7 @@ make install
 ## Reference map
 
 - `references/workflow-and-modes.md` — choose the internal work lane and keep the output shape honest without making users name modes.
-- `references/codex-goal-prompts.md` — write Codex `/goal` prompts as adaptive outcome-driven mission briefs with source truth, quality bars, evidence, stop rules, and first-class signoff.
+- `references/codex-goal-prompts.md` — write Codex `/goal` prompts as compact outcome-driven mission briefs with source truth pointers, quality bars, evidence, stop rules, first-class signoff, and no competing source-of-truth duplication.
 - `references/prompt-types-and-selection.md` — use prompt types as internal lenses for general-purpose asks, blended prompt shapes, evidence rules, drafting guardrails, runtime communication, validation, and stop behavior.
 - `references/prompt-pattern-contract.md` — the contract for section order, ownership, and anti-pattern bans.
 - `references/high-leverage-sections.md` — how to make system context, quality bar, schema, and rationale sections actually teach.
