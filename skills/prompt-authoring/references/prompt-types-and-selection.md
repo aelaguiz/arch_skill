@@ -121,6 +121,11 @@ Common failures:
 Prefer the destination over the route. Use exact sequences only when the
 sequence itself is fragile, safety-critical, or part of the product contract.
 
+Codex `/goal` prompts are a common outcome-first variant. They usually also
+need evidence, validation, tool-use, and stop-rule lenses because the goal may
+guide many future turns. When writing one, use `codex-goal-prompts.md`; keep it
+as a mission brief, not a fixed schema.
+
 ## 4) Retrieval, citation, and evidence prompts
 
 Use when the answer must be grounded in sources, files, records, search
@@ -279,6 +284,8 @@ When a prompt has multiple needs, compose the minimum useful pieces:
 - creative drafting + evidence: clear factual boundaries plus room for good
   prose
 - tool-use + validation: action rules plus concrete checks before finalizing
+- Codex `/goal`: desired world state plus source truth, quality bar, evidence,
+  signoff, and stop rule
 - formatting + audience: reader context plus structure and length limits
 - reusable contract + examples: durable sections plus examples that teach
   reasoning

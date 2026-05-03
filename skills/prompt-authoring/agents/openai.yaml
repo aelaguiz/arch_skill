@@ -1,7 +1,7 @@
 interface:
   display_name: "Prompt Authoring"
   short_description: "Write, edit, refactor, and audit prompts"
-  default_prompt: "Use $prompt-authoring to write, edit, refactor, or audit a prompt so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt."
+  default_prompt: "Use $prompt-authoring to write, edit, refactor, or audit a prompt, including Codex /goal prompts, so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt."
 
 policy:
   allow_implicit_invocation: true

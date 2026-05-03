@@ -17,6 +17,7 @@ These are adapted from real failures already seen in this repo, but rewritten as
 - Case 11: outcome-first prompt got buried under process
 - Case 12: creative drafting invented unsupported claims
 - Case 13: validation was requested but not made real
+- Case 14: goal prompt became a form instead of a mission brief
 - How to use these examples safely
 
 ## Case 1: commander’s intent collapsed into procedure
@@ -256,6 +257,35 @@ Why the better shape works:
 
 Transferable principle:
 - validation prompts should name concrete checks or recognition tests, not just ask for confidence
+
+## Case 14: goal prompt became a form instead of a mission brief
+
+Real failure pattern:
+- a Codex `/goal` prompt was rewritten into a fixed field list, so the future
+  agent followed labels without understanding the desired world state
+
+Bad shape:
+- "Outcome: fix it. Source: repo. Workflow: use skills. Evidence: tests. Done:
+  reviewer signs off."
+
+Better shape:
+- "Fix the current lesson issue through the owning workflow, not by patching
+  around it. The learner-facing behavior should be actually correct, the skill
+  architecture should remain intact, and the fix should survive quality review.
+  Use owner skill readbacks and live surfaces as source truth; stale reports are
+  context only. Do not use heuristic backfills or fake receipts. Done requires
+  the original failure, owner-path fix, validation receipt, and any required
+  blind review."
+
+Why the better shape works:
+- the mission is visible before mechanics
+- the quality bar teaches judgment
+- source truth, forbidden shortcuts, evidence, and signoff still exist, but
+  they serve the outcome instead of becoming a checklist
+
+Transferable principle:
+- `/goal` prompts should be adaptive mission briefs; use structure only where
+  it makes the goal easier to pursue
 
 ## How to use these examples safely
 
