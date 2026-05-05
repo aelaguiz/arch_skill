@@ -4687,7 +4687,12 @@ def _load_upsert_module(module_name: str) -> ModuleType:
     if spec is None or spec.loader is None:
         raise SystemExit(f"arch_skill: failed to load installer {script_path}")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    old_dont_write_bytecode = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.dont_write_bytecode = old_dont_write_bytecode
     return module
 
 

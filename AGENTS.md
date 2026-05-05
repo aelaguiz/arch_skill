@@ -50,6 +50,9 @@ Claude Code, and Gemini.
 - Use `$figma-best-practices` when the user wants Figma file-craft,
   component-library, variables/token, Dev Mode, Code Connect, Make, Sites,
   Buzz, Slides, or MCP-readiness guidance.
+- Use `$fal-ai-tools` when the user wants to use fal.ai tools, models, MCP,
+  SDK/API calls, background removal, media generation or editing, model
+  discovery, schema lookup, pricing, upload, inference, or result polling.
 - If the user wants to execute one of the shipped workflows, use the matching
   split skill instead of reviving the archived pre-skill surface.
 - Use `$arch-step` when the user wants explicit full-arch commands such as

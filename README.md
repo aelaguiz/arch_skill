@@ -39,6 +39,7 @@ Other shipped skills are:
 - `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, and compact Codex `/goal` mission briefs
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
+- `fal-ai-tools` — prompt-first fal.ai tool workflow for model discovery, schema and pricing lookup, file upload, background removal, media generation or editing, inference, polling, and result receipts using MCP when available and SDK/HTTP fallback otherwise
 - `eli10` — answers in maximum-readability ELI10 style: plain speech, right-layer explanation, emoji scan markers, exact technical facts, root cause before symptom, no fake memory, renderer-aware tables when they improve understanding, and decision briefs only when the user must choose
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
@@ -113,6 +114,7 @@ Installed skills:
   - `~/.agents/skills/prompt-authoring/`
   - `~/.agents/skills/skill-authoring/`
   - `~/.agents/skills/figma-best-practices/`
+  - `~/.agents/skills/fal-ai-tools/`
   - `~/.agents/skills/eli10/`
   - `~/.agents/skills/pr-authoring/`
   - `~/.agents/skills/commit-history-authoring/`
@@ -148,6 +150,7 @@ Installed skills:
   - `~/.claude/skills/prompt-authoring/`
   - `~/.claude/skills/skill-authoring/`
   - `~/.claude/skills/figma-best-practices/`
+  - `~/.claude/skills/fal-ai-tools/`
   - `~/.claude/skills/eli10/`
   - `~/.claude/skills/pr-authoring/`
   - `~/.claude/skills/commit-history-authoring/`
@@ -180,6 +183,7 @@ Installed skills:
   - `~/.gemini/skills/prompt-authoring/`
   - `~/.gemini/skills/skill-authoring/`
   - `~/.gemini/skills/figma-best-practices/`
+  - `~/.gemini/skills/fal-ai-tools/`
   - `~/.gemini/skills/eli10/`
   - `~/.gemini/skills/pr-authoring/`
   - `~/.gemini/skills/commit-history-authoring/`
@@ -194,7 +198,7 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its v1 storage map covers Codex and Claude Code local history. `figma-best-practices`, `fresh-consult`, `agent-delegate`, and `model-consensus` are prompt-only and are installed on all three skill surfaces, but subprocess skills still require the selected local `claude` or `codex` CLI to exist on the host at invocation time. `fresh-consult` and `model-consensus` report read-only or planning results; `fresh-consult` can run multiple fresh read-only children when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, can run multiple fresh workers when explicitly requested, and may resume an explicit same-runtime delegated session when the caller requires continuity. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
+`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its v1 storage map covers Codex and Claude Code local history. `figma-best-practices`, `fal-ai-tools`, `fresh-consult`, `agent-delegate`, and `model-consensus` are prompt-only and are installed on all three skill surfaces, but subprocess skills still require the selected local `claude` or `codex` CLI to exist on the host at invocation time. `fresh-consult` and `model-consensus` report read-only or planning results; `fresh-consult` can run multiple fresh read-only children when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, can run multiple fresh workers when explicitly requested, and may resume an explicit same-runtime delegated session when the caller requires continuity. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
 
 ### Remote install
 
@@ -374,6 +378,10 @@ Use when the user wants to write, edit, refactor, or audit a reusable agent skil
 
 Use when the user wants to create, audit, or repair a Figma file, component library, variable/token system, prototype, Dev Mode surface, Code Connect mapping, Make kit, Sites page, Buzz template, Slides deck, or MCP-readable design artifact. The skill is prompt-only: it applies bundled Figma file-craft doctrine so the file is structurally honest, tokenized, componentized, semantically named, and ready for downstream human, developer, publishing, and AI consumers. Use implementation or Figma automation skills instead when the task is building code from a Figma design or operating the Figma UI itself.
 
+### `fal-ai-tools`
+
+Use when the user wants to use fal.ai tools, models, MCP, SDK/API calls, background removal, media generation or editing, model discovery, schema lookup, pricing checks, file upload, inference, polling, or result receipts. The skill is prompt-first: it prefers visible fal MCP tools, falls back to `fal_client` or raw HTTP when MCP is unavailable, checks live schemas and pricing before paid calls, and keeps fal keys redacted. Use provider-specific implementation or frontend skills instead when the task does not call fal.
+
 ### `eli10`
 
 Use when the user wants any answer, explanation, plan, review, recommendation, or status update in ELI10/ELI16 maximum-readability style. The skill leads with the point, explains at the right layer, uses emoji scan markers where helpful, defines jargon on first use, preserves exact commands/metrics/file names, avoids fake memory, and does not add next steps unless asked. It uses renderer-aware tables only when they improve understanding: native Markdown tables in Claude, and a bundled self-contained `uv`/`rich` Unicode table helper in Codex. It uses the decision-brief contract only when the answer is asking the user to choose. Use `prompt-authoring` for prompts and reusable prompt contracts and `skill-authoring` for skill packages.
@@ -438,7 +446,7 @@ Use `code-review` when the user wants an automated finding-set with explicit cov
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `figma-best-practices`, `eli10`, `pr-authoring`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `fresh-consult`, `agent-delegate`, `model-consensus`, `code-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `eli10`, `pr-authoring`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `fresh-consult`, `agent-delegate`, `model-consensus`, `code-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -487,6 +495,7 @@ Examples:
 - `Use $prompt-authoring to refactor this prompt`
 - `Use $skill-authoring to audit this skill package`
 - `Use $figma-best-practices to audit this Figma library for Dev Mode and MCP readiness`
+- `Use $fal-ai-tools to remove the background from this image with fal.ai`
 - `Use $eli10 to explain why this test failed`
 - `Use $eli10 to format this decision question`
 - `Use $pr-authoring to write and publish a PR for this branch`
