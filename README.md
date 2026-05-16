@@ -50,7 +50,8 @@ Other shipped skills are:
 - `fresh-consult` — prompt-only fresh Claude/Codex second opinions for cold reads, parallel consults, flow consistency audits, completion-claim checks, and readability/confusion checks; asks once for runtime/model/effort when missing and reports each child result back to the parent skill
 - `agent-delegate` — prompt-only Claude/Codex workers for delegated implementation, editing, investigation-and-fix, command execution, or installed-skill use in the shared worktree; fresh one-shot is the default, explicit parallel workers are supported when requested, explicit same-session resume is available for one worker when continuity is required, and the skill reports changed files, verification, blockers, session id when present, and run directories
 - `agent-history` — searches local Codex or Claude Code session history for prior prompts, goals, commands, corrections, tool use, and timelines from natural-language asks, using bundled read-only JSONL/SQLite helpers and concise evidence summaries
-- `model-consensus` — prompt-only parent-agent orchestration for two selected Claude/Codex model sessions to iterate on a plan, architecture, design, or concept until they converge or expose the smallest unresolved decision; supports adversarial simplification and requires repo-backed participants to read real code, canonical paths, conventions, and drift risks before agreeing
+- `model-consensus` — prompt-only parent-agent orchestration for two selected Claude/Codex model sessions to cross-check, critique, and converge on a plan, architecture, investigation, design, or concept until they agree or expose the smallest unresolved decision; preserves child discovery freedom for investigations and requires repo-backed participants to read real evidence before agreeing
+- `contact-sheet-builder` — builds quick local contact sheet PNGs from existing images, folders, globs, or attached local image paths using a lean prompt contract plus one Pillow renderer; defaults to dense labeled sheets, dynamic near-native edge-to-edge canvas sizing, safe temp output, Preview opening on macOS, and concise receipts
 - `code-review` — deterministic general code-review skill that always shells out to fresh unsandboxed Codex `gpt-5.4` `xhigh` (with parallel `gpt-5.4-mini` `xhigh` review lenses) for diffs, branches, paths, or completion-claim audits; supports direct and hook-backed invocation, and keeps Codex as the reviewer even when Claude hosts the Stop hook
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; spawns a fresh Claude or Codex worker session per step, runs an independent observational critic, and on failure diagnoses with the involved sessions before authoring a source-grounded repair at root cause. Model and effort for worker and critic are supplied by the user at invocation; both runtimes run dangerous / skip-permissions / no-sandbox. Distinct from `arch-loop` (requirement-satisfaction, not ordered steps), `arch-step` (plan-doc-backed full-arch), and `code-review` (one-shot review).
 
@@ -127,6 +128,7 @@ Installed skills:
   - `~/.agents/skills/agent-delegate/`
   - `~/.agents/skills/agent-history/`
   - `~/.agents/skills/model-consensus/`
+  - `~/.agents/skills/contact-sheet-builder/`
   - `~/.agents/skills/code-review/`
   - `~/.agents/skills/stepwise/`
   - `~/.agents/skills/arch-epic/`
@@ -164,6 +166,7 @@ Installed skills:
   - `~/.claude/skills/agent-delegate/`
   - `~/.claude/skills/agent-history/`
   - `~/.claude/skills/model-consensus/`
+  - `~/.claude/skills/contact-sheet-builder/`
   - `~/.claude/skills/code-review/`
   - `~/.claude/skills/stepwise/`
   - `~/.claude/skills/arch-epic/`
@@ -197,12 +200,13 @@ Installed skills:
   - `~/.gemini/skills/fresh-consult/`
   - `~/.gemini/skills/agent-delegate/`
   - `~/.gemini/skills/model-consensus/`
+  - `~/.gemini/skills/contact-sheet-builder/`
   - `~/.gemini/skills/stepwise/`
   - `~/.gemini/skills/arch-epic/`
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its v1 storage map covers Codex and Claude Code local history. `figma-best-practices`, `fal-ai-tools`, `fresh-consult`, `agent-delegate`, and `model-consensus` are prompt-only and are installed on all three skill surfaces, but subprocess skills still require the selected local `claude` or `codex` CLI to exist on the host at invocation time. `fresh-consult` and `model-consensus` report read-only or planning results; `fresh-consult` can run multiple fresh read-only children when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, can run multiple fresh workers when explicitly requested, and may resume an explicit same-runtime delegated session when the caller requires continuity. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
+`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its v1 storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `fresh-consult`, `agent-delegate`, and `model-consensus` are prompt-only and are installed on all three skill surfaces, but subprocess skills still require the selected local `claude` or `codex` CLI to exist on the host at invocation time. `fresh-consult` and `model-consensus` report read-only or planning results; `fresh-consult` can run multiple fresh read-only children when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, can run multiple fresh workers when explicitly requested, and may resume an explicit same-runtime delegated session when the caller requires continuity. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
 
 ### Remote install
 
@@ -434,13 +438,21 @@ Use `agent-delegate` for operational worker paths where children may write files
 
 ### `model-consensus`
 
-Use when the user wants two selected Claude/Codex models to iterate on a plan, architecture, design, or concept until they converge, or until they expose the smallest unresolved decision. The skill is prompt-only: the parent agent orchestrates directly, prepares prompt-authoring-quality briefs, launches resumable hook-suppressed child sessions, relays critiques, and reports only child-agreed material. It does not add a deterministic runner, script, controller, or harness layer.
+Use when the user wants two selected Claude/Codex models to cross-check, critique, and iterate on a plan, architecture, investigation, design, or concept until they converge, or until they expose the smallest unresolved decision. The skill is prompt-only: the parent agent orchestrates directly, prepares prompt-authoring-quality briefs, launches resumable hook-suppressed child sessions, relays critiques, and reports only child-agreed material. It does not add a deterministic runner, script, controller, or harness layer.
+
+For investigations, root-cause work, and "read everything" cross-checks, the parent preserves discovery freedom. It records the raw user goal, exact user-named artifacts, desired output, and hard constraints, but does not pre-fill the child prompt with parent-invented theories, failure-layer taxonomies, broad path inventories, or leading open questions. The child models choose and cite the code, docs, research, tests, commands, and local evidence they need.
+
+For architecture or implementation-plan work, the skill keeps the existing single-path pressure: both models inspect canonical owners, adjacent patterns, duplicate pathways, and proof surfaces before agreeing on where the work should live.
 
 The user supplies the two participant runtime/model/effort choices, or the skill asks once. It follows the shared model-resolution doctrine for shorthand such as `gpt 5.5 xhigh` and `Claude Opus 4.7 high`, preserves exact versions, and reports the raw-to-resolved mapping before execution.
 
 Participant sessions preserve live event streams by default. Normal rounds often take 5+ minutes; broad repo-grounded `xhigh` or `max` rounds can reasonably take 20-40 minutes.
 
-Use `model-consensus` for collaborative or adversarial plan refinement. Use `fresh-consult` for cold second opinions, `agent-delegate` for foreground workers that may edit the shared worktree, `code-review` for deterministic review findings, and `stepwise` or `arch-epic` for ordered implementation workflows.
+Use `model-consensus` for collaborative or adversarial plan refinement, two-model cross-checks, and repo-grounded investigation convergence. Use `fresh-consult` for one-shot cold opinions, `agent-delegate` for foreground workers that may edit the shared worktree, `code-review` for deterministic review findings, and `stepwise` or `arch-epic` for ordered implementation workflows.
+
+### `contact-sheet-builder`
+
+Use when the user wants a quick local contact sheet from existing image files, folders, globs, or attached local image paths. The skill uses one Pillow renderer script and defaults to dense labeled PNG sheets, dynamic near-native edge-to-edge canvas sizing, `0px` outside margin, `2px` gutters, Preview opening on macOS, overwrite protection, and concise receipts. Use `--margin` and `--gutter` only when spacing needs to change. Use `--no-open` for headless or batch runs. Use `--page-width` and `--page-height` only when a fixed page-style overview is wanted. Invoke the script directly with the `python3` that has Pillow installed. It is not for generating or editing images, video frame extraction, Figma boards, slide/doc layouts, provider APIs, or theme-specific generation flows.
 
 ### `code-review`
 
@@ -454,7 +466,7 @@ Use `code-review` when the user wants an automated finding-set with explicit cov
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `eli10`, `pr-authoring`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `model-consensus`, `code-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `eli10`, `pr-authoring`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `model-consensus`, `contact-sheet-builder`, `code-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.

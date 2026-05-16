@@ -9,6 +9,8 @@ The parent agent's job is orchestration only:
 - preserve the user's goal and constraints
 - ask for missing model choices once
 - prepare high-quality prompts
+- preserve child discovery freedom when the task is a cross-check or
+  investigation
 - invoke the two child model sessions directly
 - relay the relevant outputs between them
 - require evidence when a claim depends on a repo
@@ -20,6 +22,9 @@ The parent agent's job is orchestration only:
 - Keep agency at every layer. The parent, Model A, and Model B are all capable
   reasoning agents. Prompts should explain the goal, why the process exists,
   and what good judgment looks like.
+- Do not poison the children with the parent's diagnosis. For investigative
+  work, the parent names the user's artifact or symptom and the output target;
+  the children choose the evidence path.
 - The dialogue is not a vote. If one model is right and the other is wrong, the
   work is to make the evidence clear enough that they converge or expose the
   unresolved decision.
@@ -36,6 +41,15 @@ Keep both forms:
 - `raw_goal`: the user's words
 - `goal_brief`: a faithful, prompt-authoring-quality restatement
 
+Choose the prompt mode:
+
+- `open investigation`: the user wants a cross-check, second-opinion dialogue,
+  root-cause theory, broad review, or "read everything" style investigation.
+- `architecture plan`: the user wants a design, migration, implementation
+  plan, placement decision, or duplicate-path reduction.
+- `concept`: the user wants two models to reason about a non-repo product,
+  strategy, or idea.
+
 The goal brief may clarify:
 
 - desired output type
@@ -46,7 +60,10 @@ The goal brief may clarify:
 - whether one participant should be adversarial
 
 The goal brief must not introduce a solution, preferred architecture, or hidden
-implementation strategy that the user did not ask for.
+implementation strategy that the user did not ask for. In open investigation
+mode, it also must not introduce parent-invented hypotheses, failure layers,
+ranked theories, broad path inventories, or open questions that point the
+children toward the parent's guess.
 
 ## Phase 2: Resolve Participants
 
@@ -98,7 +115,8 @@ Start two fresh, resumable sessions. Give both models:
 
 - the raw goal and goal brief
 - the participant roles
-- repo root and required evidence obligations, if applicable
+- prompt mode
+- repo root and mode-specific evidence obligations, if applicable
 - the quality bar
 - the output contract
 
@@ -111,6 +129,7 @@ useful.
 Each round should have a concrete purpose:
 
 - critique the other model's plan
+- challenge parent or peer framing that evidence does not support
 - simplify the architecture
 - find a canonical repo path to adopt
 - resolve a contradiction

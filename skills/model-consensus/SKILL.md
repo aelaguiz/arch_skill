@@ -1,6 +1,6 @@
 ---
 name: model-consensus
-description: "Run a prompt-only, parent-agent orchestrated dialogue between two named Claude/Codex models to converge on a lean plan, architecture, design, or concept. Use when the user wants models to iterate, critique, optionally take an adversarial role, and agree on the simplest answer that satisfies the goal. Repo-backed runs make both models read real code, conventions, canonical paths, and drift risks before accepting a plan. Not for one-shot second opinions, deterministic code review, ordered implementation loops, or broad idea tournaments."
+description: "Run a prompt-only, parent-agent orchestrated dialogue between two named Claude/Codex models to cross-check, critique, and converge on a lean plan, architecture, debugging strategy, investigation, design, or concept. Use when the user wants iterative two-model agreement or adversarial simplification. Repo-backed runs make both models read real evidence, but open investigations preserve child discovery freedom. Not for one-shot cold opinions, deterministic code review, ordered implementation loops, or broad idea tournaments."
 metadata:
   short-description: "Agent-run two-model consensus for lean repo-grounded plans"
 ---
@@ -15,13 +15,16 @@ depend on a deterministic runner, script, controller, state machine, or harness
 layer for this skill.
 
 The work is not "ask two models and concatenate the answers." The goal is a
-disciplined conversation that removes weaker ideas, converges on existing repo
-patterns when a repo is involved, and avoids kitchen-sink plans.
+disciplined conversation that removes weaker ideas, preserves independent
+evidence discovery when the task is investigative, converges on existing repo
+patterns when the task is architectural, and avoids kitchen-sink plans.
 
 ## Use When
 
 - The user wants two Claude/Codex models to iterate on a plan, architecture,
-  design, migration, debugging strategy, or concept.
+  design, migration, debugging strategy, investigation, or concept.
+- The user wants a cross-check where the value comes from independent model
+  judgment, critique, and convergence rather than one model answering once.
 - The user wants one model in adversarial mode to challenge assumptions,
   propose simpler alternatives, or argue against overbuilt choices.
 - The question is repo-backed and the answer should minimize new pathways by
@@ -31,7 +34,8 @@ patterns when a repo is involved, and avoids kitchen-sink plans.
 
 ## Do Not Use When
 
-- The user wants one cold second opinion: use `fresh-consult`.
+- The user wants one cold second opinion without dialogue or convergence: use
+  `fresh-consult`.
 - The user wants deterministic code-review findings: use `code-review`.
 - The user wants ordered implementation or epic execution: use `stepwise` or
   `arch-epic`.
@@ -48,19 +52,31 @@ patterns when a repo is involved, and avoids kitchen-sink plans.
 - The parent agent must not solve the problem itself. It may restate the goal,
   enforce the process, ask for missing model choices, request repo evidence,
   and synthesize only what the child sessions actually agreed on.
+- Preserve child discovery freedom. The parent may record the raw goal, resolved
+  model mapping, explicit constraints, desired output, and user-named artifacts.
+  It must not add parent-invented hypotheses, failure-layer taxonomies, ranked
+  theories, broad path inventories, or "open questions" that imply where the
+  answer probably lives before the child sessions have investigated.
 - Preserve the user's raw goal. Use prompt-authoring discipline to create a
   faithful goal brief that clarifies success criteria without injecting a
   solution.
+- Choose the child-prompt mode before writing the brief. Use open cross-check /
+  investigation mode when the user asks for second opinions, root-cause
+  discovery, failure analysis, "read everything," or "figure out why." Use
+  architecture / implementation-plan mode when the user asks where work should
+  live, how to design a change, or how to avoid duplicate paths.
 - Ask once for missing model choices. Each participant needs runtime, runnable
   model id or exact model phrase, and effort. If the user names shorthand such
   as "gpt 5.5 xhigh" or "Claude Opus 4.7 high", resolve it with the shared
   model-resolution rules and announce the raw-to-resolved mapping.
-- For repo-backed work, both child models must read real code before they are
-  allowed to recommend an architecture. Docs alone are not enough.
-- Prefer one existing path over two new ones. A new abstraction, mode, file
-  family, or workflow is valid only after both models have inspected the
-  canonical owner path and explained why the existing path cannot absorb the
-  work.
+- For repo-backed work, both child models must read real evidence before they
+  are allowed to recommend or agree. In open investigation mode, require them to
+  choose and cite the code, docs, research, tests, and commands they need. In
+  architecture mode, require canonical owner paths and existing patterns.
+- In architecture mode, prefer one existing path over two new ones. A new
+  abstraction, mode, file family, or workflow is valid only after both models
+  have inspected the canonical owner path and explained why the existing path
+  cannot absorb the work.
 - Agreement is not accumulation. If one model proposes five ideas and the
   other proposes four, the final plan is not nine ideas. Push them to the
   smallest architecture that satisfies the goal.
@@ -82,23 +98,30 @@ Read these references before invoking children:
 Then:
 
 1. Capture the raw user goal and the desired mode: collaborative or
-   adversarial.
+   adversarial, plus open cross-check / investigation or architecture /
+   implementation-plan.
 2. Build a faithful goal brief using prompt-authoring discipline. Clarify the
    goal, constraints, success criteria, and explicit non-goals without adding
-   your own solution.
+   your own solution, theory, file map, or investigation frame.
 3. Resolve the two participant execution choices. Ask one concise question if
    any runtime/model/effort choice is missing or ambiguous.
 4. Create a per-run artifact directory by hand, for example
    `.arch_skill/model-consensus/<slug>-<timestamp>/`. Store prompts, final
    replies, event streams, and a short run index there. Do not create a script.
-5. If repo-backed, make the first child prompt require code reading and named
+5. If repo-backed, make the first child prompt require real evidence. For open
+   investigation mode, tell the models to start from user-named artifacts and
+   independently choose what else to read. For architecture mode, require named
    `path:line` evidence for canonical owners, patterns to adopt, duplicate
    pathways, and tests/proof surfaces.
+6. Before launching children, run the contamination check from
+   `references/prompt-contracts.md`. If the prompt contains parent-invented
+   theories, buckets, or path lists, simplify it before execution.
 
 ## Workflow
 
 1. Start two fresh, resumable child sessions with the same faithful goal brief.
-   Give each model the same repo-grounding obligations and role framing.
+   Give each model the same mode-specific evidence obligations and role
+   framing.
 2. Collect independent first passes. Do not let either model see the other's
    answer before it has formed its own view.
 3. Send Model A's pass to Model B for critique and simplification. In
@@ -135,8 +158,8 @@ Final responses should include:
   mode, revision, and signoff
 - `model-and-invocation.md` - model shorthand resolution, direct Claude/Codex
   invocation, resumable sessions, streaming, and long-run monitoring posture
-- `repo-grounding.md` - required repo reading and single-path architecture
-  pressure
+- `repo-grounding.md` - required repo reading, open-investigation evidence
+  discovery, and single-path architecture pressure
 - `convergence-and-synthesis.md` - how to tell agreement from accumulation and
   how to report no-consensus outcomes
 - `examples.md` - example invocations and operating patterns

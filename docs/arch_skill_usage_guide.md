@@ -40,6 +40,7 @@ Other shipped skills:
 - `fresh-consult`
 - `agent-delegate`
 - `model-consensus`
+- `contact-sheet-builder`
 - `code-review`
 - `stepwise`
 
@@ -97,6 +98,7 @@ Default local path:
 - `~/.agents/skills/fresh-consult/`
 - `~/.agents/skills/agent-delegate/`
 - `~/.agents/skills/model-consensus/`
+- `~/.agents/skills/contact-sheet-builder/`
 - `~/.agents/skills/code-review/`
 - `~/.agents/skills/stepwise/`
 - `~/.agents/skills/arch-epic/`
@@ -136,6 +138,7 @@ Installed skills:
   - `fresh-consult`
   - `agent-delegate`
   - `model-consensus`
+  - `contact-sheet-builder`
   - `code-review`
   - `stepwise`
   - `arch-epic`
@@ -170,6 +173,7 @@ Installed skills:
   - `fresh-consult`
   - `agent-delegate`
   - `model-consensus`
+  - `contact-sheet-builder`
   - `code-review`
   - `stepwise`
   - `arch-epic`
@@ -201,12 +205,13 @@ Installed skills:
   - `fresh-consult`
   - `agent-delegate`
   - `model-consensus`
+  - `contact-sheet-builder`
   - `stepwise`
   - `arch-epic`
 
 Install removes stale pre-skill command surfaces, removed skill packages, older Codex skill mirrors, and source/build internals from installed skill packages. It installs one repo-managed Codex `Stop` hook in `~/.codex/hooks.json` pointing at `~/.agents/skills/arch-step/scripts/arch_controller_stop_hook.py --runtime codex` and one repo-managed Claude Code `Stop` hook plus one `SessionStart` hook in `~/.claude/settings.json` pointing at the same installed runner with `--runtime claude`. Every loop-skill arm also reruns `arch_controller_stop_hook.py --ensure-installed --runtime <codex|claude>` so the canonical hook entries cannot drift between runs. Those entries back `arch-step` automatic controllers, `arch-docs auto`, `audit-loop auto`, `comment-loop auto`, `audit-loop-sim auto`, `arch-loop`, and `delay-poll`.
 
-`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface. Gemini still has no hook-backed auto-controller surface, so none of those three are installed there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict, mirroring the `code-review` exception: the Claude host can arm and drive the loop, but the evaluator subprocess itself must always be Codex. `figma-best-practices`, `fresh-consult`, `agent-delegate`, and `model-consensus` are prompt-only and installed on all three skill surfaces, but subprocess skills still require the selected local `claude` or `codex` CLI to exist on the host at invocation time. `fresh-consult` is read-only and can run multiple fresh children when explicitly requested; `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh workers when explicitly requested. `code-review` is installed on the agents/Codex and Claude Code surfaces only; Claude may host the Stop hook, but the review subprocess itself always shells out to fresh Codex.
+`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface. Gemini still has no hook-backed auto-controller surface, so none of those three are installed there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict, mirroring the `code-review` exception: the Claude host can arm and drive the loop, but the evaluator subprocess itself must always be Codex. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fresh-consult`, `agent-delegate`, and `model-consensus` are prompt-only and installed on all three skill surfaces, but subprocess skills still require the selected local `claude` or `codex` CLI to exist on the host at invocation time. `fresh-consult` is read-only and can run multiple fresh children when explicitly requested; `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh workers when explicitly requested. `code-review` is installed on the agents/Codex and Claude Code surfaces only; Claude may host the Stop hook, but the review subprocess itself always shells out to fresh Codex.
 
 ## Shared conventions
 
@@ -590,11 +595,13 @@ Practical rule:
 
 ### `model-consensus`
 
-Use when the user wants two selected Claude/Codex models to iterate on a plan, architecture, design, or concept until they converge, or until they expose the smallest unresolved decision. It is prompt-only: the parent agent is the runner, orchestrates directly, launches resumable hook-suppressed child sessions, and relays critiques. Do not add a deterministic runner, script, controller, or harness layer.
+Use when the user wants two selected Claude/Codex models to cross-check, critique, and iterate on a plan, architecture, investigation, design, or concept until they converge, or until they expose the smallest unresolved decision. It is prompt-only: the parent agent is the runner, orchestrates directly, launches resumable hook-suppressed child sessions, and relays critiques. Do not add a deterministic runner, script, controller, or harness layer.
 
 The user supplies runtime/model/effort for both participants, or the skill asks once. Shorthand such as `gpt 5.5 xhigh` or `Claude Opus 4.7 high` follows the shared model-resolution doctrine: exact versions are preserved, `codex debug models` is used when Codex availability matters, and ambiguous IDs fail loud instead of silently downgrading.
 
-For repo-backed work, both participants must read real code before agreeing. Their prompts require canonical owner paths, repo conventions, adjacent patterns to adopt, duplicate or drifting pathways, and tests/proof surfaces. This keeps the dialogue focused on one existing way of doing the work whenever possible instead of creating a second bug path.
+For repo-backed investigations, root-cause work, and "read everything" cross-checks, both participants must read real evidence before agreeing, but the parent does not pre-select the theory map. It records the raw goal, exact user-named artifacts, desired output, and hard constraints, then tells the child models to choose and cite the code, docs, research, tests, commands, and local evidence they need. Do not seed them with parent-invented hypotheses, failure-layer taxonomies, broad path inventories, or leading open questions.
+
+For architecture or implementation-plan work, both participants must inspect canonical owner paths, repo conventions, adjacent patterns to adopt, duplicate or drifting pathways, and tests/proof surfaces. This keeps the dialogue focused on one existing way of doing the work whenever possible instead of creating a second bug path.
 
 Participant sessions preserve live event streams by default. Normal rounds often take 5+ minutes; broad repo-grounded `xhigh` or `max` rounds can reasonably take 20-40 minutes.
 
@@ -602,15 +609,44 @@ Examples:
 
 - `Use $model-consensus with Claude Opus 4.7 xhigh and Codex gpt-5.5 xhigh to find the simplest architecture for this repo change`
 - `Use $model-consensus with Codex gpt-5.5 xhigh in adversarial mode against Claude Sonnet 4.6 high`
+- `Use $model-consensus with gpt 5.5 xhigh and Opus 4.7 max to read everything and figure out why this training path is failing`
 - `Use $model-consensus to have two models iterate on this concept until they agree or name the unresolved tradeoff`
 
 Practical rule:
 
-- Use `model-consensus` for multi-model convergence, adversarial simplification, and repo-grounded architecture refinement.
-- Use `fresh-consult` for cold second opinions.
+- Use `model-consensus` for multi-model convergence, adversarial simplification, repo-grounded investigation convergence, and architecture refinement.
+- Use `fresh-consult` for one-shot cold opinions.
 - Use `agent-delegate` for fresh workers that may edit the shared worktree.
 - Use `code-review` for deterministic review findings.
 - Use `stepwise` or `arch-epic` when the desired output is ordered implementation, not a consensus plan.
+
+### `contact-sheet-builder`
+
+Use when the user wants a quick local contact sheet from existing image files,
+folders, globs, or attached local image paths. It defaults to a dense labeled
+PNG sheet, dynamic near-native edge-to-edge canvas sizing, `0px` outside margin,
+`2px` gutters, safe temp output under `/tmp/contact-sheet-builder/`, automatic
+pagination, Preview opening on macOS, and a concise receipt. The skill uses one
+Pillow renderer script because
+image layout, alpha handling, overwrite checks, Preview opening, and manifests
+are deterministic work. Use `--margin` and `--gutter` only when spacing needs to
+change. Use `--no-open` for headless or batch runs. Use `--page-width` and
+`--page-height` only when a fixed page-style overview is wanted. Invoke the
+script directly with the `python3` that has Pillow installed.
+
+Examples:
+
+- `Use $contact-sheet-builder to make a labeled contact sheet from this folder`
+- `Use $contact-sheet-builder on these before and after shots`
+- `Use $contact-sheet-builder with no labels and 4 columns`
+
+Practical rule:
+
+- Use `contact-sheet-builder` for arranging existing images only.
+- Use theme/image-generation skills when the user wants new images or generated
+  variants.
+- Use Figma, slide, doc, PDF, or video tools when the requested artifact is not
+  a local image contact sheet.
 
 ### `code-review`
 

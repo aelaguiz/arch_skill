@@ -10,7 +10,7 @@ Every child prompt should make clear:
 - the goal is convergence on the simplest answer that satisfies the user's
   stated needs
 - agreement must be earned through evidence and simplification
-- repo-backed work requires reading actual code and naming paths
+- repo-backed work requires reading real evidence and naming the evidence used
 - the child should stop or ask for missing information instead of guessing
 
 ## Goal Brief Contract
@@ -21,22 +21,40 @@ Required sections:
 
 ```text
 Raw Goal
-Faithful Goal Brief
-Hard Requirements
-Quality Bar
-Known Constraints
+Resolved Participants
+User-Named Inputs
+Desired Output
+Hard Constraints
+Success Criteria
 Non-Goals
-Repo Context
-Open Questions
+Discovery Freedom
 ```
 
 Rules:
 
 - Preserve user language where it carries intent.
 - Clarify ambiguity without choosing an implementation.
-- Do not add a solution, library, pattern, or path that the user did not name
-  unless it is presented as an open question.
+- Do not add a solution, library, pattern, path, hypothesis, failure-layer
+  taxonomy, ranked theory, or diagnostic question that the user did not name.
+- `User-Named Inputs` means artifacts the user explicitly gave, plus exact
+  path resolution needed to open those artifacts. It is not a parent-selected
+  reading list.
+- `Discovery Freedom` must tell child models that they may choose the evidence
+  surface they need and reject the parent framing if evidence points elsewhere.
 - Keep the brief short enough to reuse in every child prompt.
+
+## Contamination Check
+
+Before launching child sessions, read the prompt and ask:
+
+- Did I add a hypothesis the user did not state?
+- Did I tell the models where the cause probably lives?
+- Did I turn user intent into a taxonomy?
+- Did I require files that the children should choose for themselves?
+- Could this prompt make both models agree with me instead of each other?
+
+If yes, remove that material or mark it only as a user-named input when the user
+actually named it.
 
 ## First-Pass Prompt
 
@@ -44,8 +62,8 @@ Rules:
 Mission
 You are one of two expert model collaborators helping converge on the leanest
 correct answer to the user's goal. You are not a prompt runner. Your job is to
-reason from the goal and evidence, respect the repo's existing conventions, and
-avoid adding pathways that increase bug surface.
+reason from the goal and evidence, preserve independent judgment, and critique
+the other model after you have formed your own view.
 
 System Context
 The parent agent is orchestrating a model-consensus run. Another model will
@@ -57,26 +75,29 @@ Authoritative Inputs
 - Raw goal: <raw_goal>
 - Faithful goal brief: <goal_brief>
 - Your role: <collaborator|adversary>
+- Prompt mode: <open investigation|architecture plan|concept>
 - Work root: <path or none>
 - Explicit user constraints: <constraints>
 
-Repo Grounding
-If a work root is provided, read the repo before proposing architecture. Identify
-canonical owner paths, patterns to adopt, parallel/drifting implementations,
-tests or proof surfaces, and the smallest place this work should live. Cite
-paths, and use line numbers when the exact evidence matters.
+Evidence Grounding
+If a work root is provided, read real evidence before proposing or agreeing.
+Start with user-named artifacts, then independently choose the code, docs,
+research, tests, commands, or other local evidence needed for the goal. Cite
+paths, and use line numbers when exact evidence matters. Do not limit yourself
+to the parent brief if a better evidence trail appears.
 
 Quality Bar
-Prefer the simplest architecture that satisfies every hard requirement. Reuse
-existing pathways when possible. Reject kitchen-sink compromise. A new path is
-acceptable only if you checked the existing owner and can explain why it cannot
-absorb the work.
+Prefer the smallest answer that satisfies every hard requirement and survives
+evidence. Reject kitchen-sink compromise. If this is an investigation, separate
+evidence-backed theories from guesses and name fast falsifiers. If this is an
+architecture plan, reuse existing pathways when possible and justify any new
+path from repo evidence.
 
 Output Contract
 Return:
 - concise proposed answer or plan
-- repo evidence read, if applicable
-- existing paths/patterns to adopt
+- evidence read, if applicable
+- existing paths/patterns to adopt, if applicable
 - alternatives rejected and why
 - risks or open questions
 - what you would need from the other model to converge
@@ -86,6 +107,34 @@ Stop Instead Of Continuing If
 - the requested model role is unclear
 - repo access is required but unavailable
 - you cannot substantiate repo claims from files
+```
+
+## Architecture Prompt Add-On
+
+Use this only when the prompt mode is architecture or implementation planning:
+
+```text
+Architecture Grounding
+Identify canonical owner paths, patterns to adopt, parallel or drifting
+implementations, tests or proof surfaces, and the smallest place this work
+should live. The goal is to minimize new pathways and converge on one way of
+doing the work where possible. If you propose a new path, explain why the
+existing path cannot absorb the requirement.
+```
+
+## Open Investigation Prompt Add-On
+
+Use this when the user wants a cross-check, root-cause investigation,
+failure-analysis plan, broad review, or second-opinion dialogue:
+
+```text
+Open Investigation Grounding
+Do not assume the parent has identified the right files, layers, theories, or
+failure categories. Start from the user-named artifact or symptom, then choose
+your own evidence path through code, docs, research, tests, command output, and
+local history as needed. Your first pass should report what you inspected, what
+you ruled out, what remains plausible, and the fastest evidence that would
+separate the plausible explanations.
 ```
 
 ## Critique Prompt

@@ -40,6 +40,38 @@ Parent behavior:
 - stop when both agree on one retirement path or report the unresolved
   compatibility decision
 
+## Open Root-Cause Cross-Check
+
+User:
+
+```text
+Have $model-consensus gpt 5.5 xhigh and Opus 4.7 max review everything we did
+for docs/FAILURE_PLAN.md and start a new doc with every theory for why this
+path is producing uniform results. I want them to read everything, including
+the research, and build fast traps to prove where the bug starts.
+```
+
+Bad parent behavior:
+
+- creates a long child prompt that lists every suspected source file
+- buckets the problem into parent-invented layers before the models read
+  anything
+- asks parent-authored "open questions" that already imply likely causes
+- makes both children react to the parent's frame instead of discovering their
+  own evidence path
+
+Good parent behavior:
+
+- resolves and announces the model mappings
+- records the raw goal, the named doc path, repo root, desired new docs output,
+  hard constraints, and any user-stated non-goals
+- tells both models to start from the named doc, then independently choose the
+  code, docs, papers, tests, commands, and history they need
+- asks for theories, evidence, falsifiers, and fast traps only after the models
+  have done their own reading
+- sends each first pass to the other model for critique, then converges only on
+  theories and proof plans both models can defend from evidence
+
 ## Conceptual Non-Repo Run
 
 User:
@@ -75,3 +107,8 @@ Both proposals currently add multiple new pathways. Re-read the existing owner
 paths and produce the smallest design that satisfies the hard requirements.
 Name which proposed pieces are unnecessary and why.
 ```
+
+Also do not produce a "consensus" run where the parent gave both models the
+same detailed theory map before either model investigated. That is anchoring,
+not cross-checking. Repair it by restarting with a shorter prompt that preserves
+the raw goal, user-named inputs, constraints, and discovery freedom.
