@@ -49,6 +49,7 @@ Other shipped skills are:
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs
 - `fresh-consult` — prompt-only fresh Claude Opus or Codex GPT/GBT second opinions for cold reads, parallel consults, flow consistency audits, completion checks, and readability/confusion checks; asks once for runtime/model/effort when missing and reports each child result back to the parent skill
 - `agent-delegate` — prompt-only Claude Opus, Codex GPT/GBT, or Cursor Composer workers for delegated implementation, editing, investigation-and-fix, command execution, or installed-skill use in the shared worktree; fresh one-shot is the default, explicit parallel workers are supported when requested, explicit same-session resume is available for one worker when continuity is required, and the skill reports changed files, verification, blockers, session id when present, and run directories
+- `plan-audit` — prompt-first generic audit for existing planning artifacts in any format; improves plan quality before work starts by checking North Star clarity, done-state requirements, real ambiguity, constraints, code truth, depth-first risk, elegant architecture, side doors, deletes, drift-proofing, and proof gaps without dictating the user's workflow
 - `plan-swarm` — prompt-first implementation swarm orchestrator that extracts one phase contract from an existing plan, decomposes it into independently delegable slices, launches or resumes parallel Codex GPT/GBT, Claude Opus, or Cursor Composer workers through `agent-delegate`, batches review/test findings into delegated repair and impact-aware verification waves, commits local progress checkpoints freely, writes worklogs next to the plan, and closes only after arbiter and thermonuclear findings are triaged
 - `agent-history` — searches local Codex or Claude Code session history for prior prompts, goals, commands, corrections, tool use, and timelines from natural-language asks, using bundled read-only JSONL/SQLite helpers and concise evidence summaries
 - `model-consensus` — prompt-only parent-agent orchestration for two selected Claude Opus, Codex GPT/GBT, or Cursor Composer model sessions to cross-check, critique, and converge on a plan, architecture, investigation, design, or concept until they agree or expose the smallest unresolved decision; preserves child discovery freedom for investigations and requires repo-backed participants to read real evidence before agreeing
@@ -128,8 +129,9 @@ Installed skills:
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/fresh-consult/`
   - `~/.agents/skills/agent-delegate/`
-  - `~/.agents/skills/agent-history/`
+  - `~/.agents/skills/plan-audit/`
   - `~/.agents/skills/plan-swarm/`
+  - `~/.agents/skills/agent-history/`
   - `~/.agents/skills/model-consensus/`
   - `~/.agents/skills/contact-sheet-builder/`
   - `~/.agents/skills/code-review/`
@@ -168,8 +170,9 @@ Installed skills:
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/fresh-consult/`
   - `~/.claude/skills/agent-delegate/`
-  - `~/.claude/skills/agent-history/`
+  - `~/.claude/skills/plan-audit/`
   - `~/.claude/skills/plan-swarm/`
+  - `~/.claude/skills/agent-history/`
   - `~/.claude/skills/model-consensus/`
   - `~/.claude/skills/contact-sheet-builder/`
   - `~/.claude/skills/code-review/`
@@ -205,6 +208,7 @@ Installed skills:
   - `~/.gemini/skills/codex-review-yolo/`
   - `~/.gemini/skills/fresh-consult/`
   - `~/.gemini/skills/agent-delegate/`
+  - `~/.gemini/skills/plan-audit/`
   - `~/.gemini/skills/plan-swarm/`
   - `~/.gemini/skills/model-consensus/`
   - `~/.gemini/skills/contact-sheet-builder/`
@@ -214,7 +218,7 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its v1 storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `fresh-consult`, `agent-delegate`, `model-consensus`, `plan-swarm`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, or `agent` CLI to exist on the host at invocation time. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs Opus, and Cursor Agent runs only `composer-2.5-fast`; do not use Cursor Agent as a host for GPT/GBT or Claude model ids. `fresh-consult` and `model-consensus` report read-only or planning results; `fresh-consult` can run multiple fresh read-only children when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, can run multiple fresh workers when explicitly requested, and may resume an explicit same-runtime delegated session when the caller requires continuity. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
+`arch-loop`, `delay-poll`, and `wait` are installed on Codex and Claude Code because both runtimes have a native `Stop` hook surface; all three are omitted from Gemini because Gemini still has no hook-backed auto-controller surface and there is no way for the parsed duration, condition re-check, or evaluator-backed verdict to resume the same thread there. `arch-loop` evaluator turns additionally always shell out to fresh unsandboxed Codex `gpt-5.4` `xhigh` for the external verdict; the Claude host can arm and drive the loop, but the evaluator subprocess itself is always Codex, mirroring the `code-review` exception below. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its v1 storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `fresh-consult`, `agent-delegate`, `plan-audit`, `model-consensus`, `plan-swarm`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, or `agent` CLI to exist on the host at invocation time. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs Opus, and Cursor Agent runs only `composer-2.5-fast`; do not use Cursor Agent as a host for GPT/GBT or Claude model ids. `fresh-consult` and `model-consensus` report read-only or planning results; `fresh-consult` can run multiple fresh read-only children when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, can run multiple fresh workers when explicitly requested, and may resume an explicit same-runtime delegated session when the caller requires continuity. `plan-audit` is doctrine-only and prompt-first: it audits planning artifacts in whatever format they use, may keep a Markdown audit log beside file-backed plans, and does not dictate workflow or add scripts/controllers. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `code-review` is installed on the agents/Codex and Claude Code surfaces only; the Claude host can trigger the skill, but the actual review subprocess always shells out to fresh Codex.
 
 ### Remote install
 
@@ -442,7 +446,13 @@ The user supplies runtime, model, and effort, or the skill asks once before invo
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, or `max` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
-Use `agent-delegate` for operational worker paths where children may write files, fresh by default and resumable only by explicit handle. Use `fresh-consult` for read-only second opinions and completion checks. Use `model-consensus` for two-model plan convergence. Use `stepwise` or `arch-epic` when subprocesses are part of an ordered workflow with manifests, critics, repair loops, or persistent orchestration.
+Use `agent-delegate` for operational worker paths where children may write files, fresh by default and resumable only by explicit handle. Use `fresh-consult` for read-only second opinions and completion checks. Use `plan-audit` for existing planning-document quality audits before implementation. Use `model-consensus` for two-model plan convergence. Use `stepwise` or `arch-epic` when subprocesses are part of an ordered workflow with manifests, critics, repair loops, or persistent orchestration.
+
+### `plan-audit`
+
+Use when the user wants an existing planning artifact audited before work starts, in whatever format it already uses: PRD, migration plan, architecture plan, checklist, issue body, inline plan, or design doc. It improves plan quality by checking the North Star, done-state requirements, real ambiguity, constraints and non-constraints, repo/code truth when relevant, depth-first implementation risk, tiny-team simplicity, existing-pattern fit, drift-proofing, side doors, required deletes, and proof gaps.
+
+The skill is prompt-first and doctrine-only. It may maintain `<PLAN_STEM>_PLAN_AUDIT.md` beside file-backed plans for repeat audits, but it does not write the plan, implement it, review code diffs, choose workflows, or add deterministic scripts, runners, controllers, scorers, or harnesses.
 
 ### `plan-swarm`
 
@@ -502,7 +512,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `eli10`, `pr-authoring`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `model-consensus`, `contact-sheet-builder`, `code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `arch-loop`, `delay-poll`, `wait`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `eli10`, `pr-authoring`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `model-consensus`, `contact-sheet-builder`, `code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.

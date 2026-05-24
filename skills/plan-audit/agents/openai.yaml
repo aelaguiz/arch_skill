@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plan Audit"
+  short_description: "Generic quality audit for planning docs"
+  default_prompt: "Use $plan-audit to audit this planning artifact in whatever format it uses. Improve plan quality against repo truth when repo-backed: North Star, done-state requirements, real ambiguity, constraints, tiny-team simplicity, depth-first risk, elegant architecture, existing-pattern fit, drift-proofing, side doors, deletes, and proof gaps. Read all relevant code before approving repo-backed plans. Use parallel read-only agents for broad code reading when allowed. Do not dictate the user's workflow and do not create scripts, runners, controllers, scorers, or deterministic harnesses."
+
+policy:
+  allow_implicit_invocation: true

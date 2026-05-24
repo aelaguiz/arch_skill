@@ -115,6 +115,12 @@ Claude Code, and Gemini.
   Cursor Agent subprocesses to do concrete work in the current workspace, including
   implementation, editing, investigation-and-fix, command execution, or
   installed-skill use.
+- Use `$plan-audit` when the user wants an existing planning artifact in any
+  format audited before work starts for plan quality, outcome clarity, real
+  ambiguity, constraints, repo/code truth, depth-first risk, side doors,
+  required deletes, drift-proofing, or proof gaps. It improves the plan; it
+  does not choose the user's workflow, write the plan, implement it, or review
+  code diffs.
 - Use `$plan-swarm` when the user wants to implement a named phase or phase
   range from an existing plan document by having the parent agent decompose
   the phase into independently delegable slices, launch or resume parallel
