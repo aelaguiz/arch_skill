@@ -12,61 +12,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 UPSERT_HOOK_PATH = REPO_ROOT / "skills/arch-step/scripts/upsert_codex_stop_hook.py"
 STOP_HOOK_PATH = REPO_ROOT / "skills/arch-step/scripts/arch_controller_stop_hook.py"
 CODE_REVIEW_RUNNER_PATH = REPO_ROOT / "skills/code-review/scripts/run_code_review.py"
-HOOK_CONTRACT_TEXT_PATHS = [
-    Path("README.md"),
-    Path("docs/arch_skill_usage_guide.md"),
-    Path("skills/_shared/controller-contract.md"),
-    Path("skills/arch-step/SKILL.md"),
-    Path("skills/arch-step/agents/openai.yaml"),
-    Path("skills/arch-step/references/arch-auto-plan.md"),
-    Path("skills/arch-step/references/arch-implement-loop.md"),
-    Path("skills/miniarch-step/SKILL.md"),
-    Path("skills/miniarch-step/agents/openai.yaml"),
-    Path("skills/miniarch-step/references/arch-auto-plan.md"),
-    Path("skills/miniarch-step/references/arch-implement-loop.md"),
-    Path("skills/arch-docs/SKILL.md"),
-    Path("skills/audit-loop/SKILL.md"),
-    Path("skills/audit-loop/agents/openai.yaml"),
-    Path("skills/comment-loop/SKILL.md"),
-    Path("skills/comment-loop/agents/openai.yaml"),
-    Path("skills/audit-loop-sim/SKILL.md"),
-    Path("skills/audit-loop-sim/agents/openai.yaml"),
-    Path("skills/arch-loop/SKILL.md"),
-    Path("skills/arch-loop/agents/openai.yaml"),
-    Path("skills/arch-loop/references/controller-contract.md"),
-    Path("skills/wait/SKILL.md"),
-    Path("skills/wait/agents/openai.yaml"),
-    Path("skills/delay-poll/SKILL.md"),
-    Path("skills/delay-poll/agents/openai.yaml"),
-    Path("skills/code-review/SKILL.md"),
-]
-REQUIRED_ENSURE_INSTALL_TEXT = "--ensure-installed"
-FORBIDDEN_HOOK_PATH_TEXTS = (
-    "~/.codex/hooks/arch_controller_stop_hook.py",
-    "/Users/example/.codex/hooks/arch_controller_stop_hook.py",
-)
-FORBIDDEN_LEGACY_HOOK_TEXTS = (
-    "verify the installed shared runner",
-    "legacy single-slot fallback",
-    "upgrade safety net",
-    "otherwise create `.claude/arch_skill/",
-)
-AUTO_PLAN_CLEANUP_CONTRACT_TEXT_PATHS = [
-    Path("README.md"),
-    Path("docs/arch_skill_usage_guide.md"),
-    Path("skills/arch-step/SKILL.md"),
-    Path("skills/arch-step/references/arch-auto-plan.md"),
-    Path("skills/miniarch-step/SKILL.md"),
-    Path("skills/miniarch-step/references/arch-auto-plan.md"),
-]
-FORBIDDEN_PARENT_CLEANUP_TEXTS = (
-    "delete it before stopping",
-    "clear the runtime-local controller state",
-    "clear the runtime-local auto-plan state",
-    "clear the armed auto-plan state",
-    "clear the armed miniarch-step auto-plan state",
-    "must stop, clear controller state",
-)
 
 
 def load_module(path: Path, module_name: str):
@@ -747,23 +692,6 @@ class CodexStopHookTests(unittest.TestCase):
             with self.assertRaises(SystemExit) as raised:
                 self.upsert_module.verify_hook(hooks_file, skills_dir)
             self.assertIn("stale Stop hook entry in", str(raised.exception))
-
-    def test_hook_contract_docs_anchor_ensure_install(self) -> None:
-        for relative_path in HOOK_CONTRACT_TEXT_PATHS:
-            with self.subTest(path=str(relative_path)):
-                text = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
-                self.assertIn(REQUIRED_ENSURE_INSTALL_TEXT, text)
-                for forbidden_text in FORBIDDEN_HOOK_PATH_TEXTS:
-                    self.assertNotIn(forbidden_text, text)
-                for forbidden_text in FORBIDDEN_LEGACY_HOOK_TEXTS:
-                    self.assertNotIn(forbidden_text, text)
-
-    def test_auto_plan_contracts_do_not_make_parent_delete_controller_state(self) -> None:
-        for relative_path in AUTO_PLAN_CLEANUP_CONTRACT_TEXT_PATHS:
-            with self.subTest(path=str(relative_path)):
-                text = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
-                for forbidden_text in FORBIDDEN_PARENT_CLEANUP_TEXTS:
-                    self.assertNotIn(forbidden_text, text)
 
     def test_code_review_run_dirs_do_not_collide_for_same_target(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

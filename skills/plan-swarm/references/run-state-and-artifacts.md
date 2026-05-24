@@ -27,6 +27,7 @@ coordination notes, not a second plan and not machine-owned state.
 - scarce verification assignments
 - arbiter and thermonuclear review status
 - accepted, rejected, and deferred review findings
+- retries, issues, attempted responses, results, and next actions
 - completion gates
 - latest `Progress Snapshot` tables
 
@@ -34,7 +35,7 @@ The ledger must not contain secrets.
 
 ## Progress Snapshot
 
-`swarm-ledger.md` must include a `Progress Snapshot` section with these three
+`swarm-ledger.md` must include a `Progress Snapshot` section with these four
 Markdown tables. Keep the tables short enough to scan.
 
 ### Phase Progress
@@ -60,6 +61,18 @@ Columns: `Worker`, `Runtime/Model`, `Slice`, `State`, `Current Task`,
 Use this table to show how many workers are executing and what each one is
 doing. Include idle, blocked, review, and verification workers when they matter
 to the next decision.
+
+### Phase Difficulties And Retries
+
+Columns: `Issue`, `Where`, `Impact`, `Retry/Response`, `Current State`,
+`Next Action`.
+
+Use this table for the current phase's blockers, failed or struggling workers,
+review findings, test failures, merge/collision trouble, resource contention,
+unclear ownership, and repeated retries. Each issue should name the affected
+worker or slice when known, what response was already tried, the result, and
+the next recovery action. If no difficulty is known yet, include one
+`none observed` row.
 
 ## Prompt-First Artifact Rule
 

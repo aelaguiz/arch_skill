@@ -302,36 +302,6 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             str(run_dir.resolve()),
         )
 
-    def test_auto_harness_prompt_contract_teaches_required_roles(self):
-        text = (
-            REPO_ROOT
-            / "skills/arch-epic/references/auto-harness-prompts.md"
-        ).read_text(encoding="utf-8")
-
-        for phrase in [
-            "Automatic mode uses spawned Claude/Codex harnesses",
-            "Sub-plan planner prompt",
-            "Implementation worker prompt",
-            "Repair worker prompt",
-            "Critic prompt",
-            "Epic Requirement Coverage",
-            "Progress Visibility",
-            "Do not arm nested controllers",
-        ]:
-            self.assertIn(phrase, text)
-        for section in [
-            "## Mission",
-            "## System Context",
-            "## Progress Visibility",
-            "## Authoritative Inputs",
-            "## Boundaries",
-            "## Process",
-            "## Quality Bar",
-            "## Output Contract",
-            "## Stop Instead Of Continuing If",
-        ]:
-            self.assertGreaterEqual(text.count(section), 4, section)
-
 
 if __name__ == "__main__":
     unittest.main()

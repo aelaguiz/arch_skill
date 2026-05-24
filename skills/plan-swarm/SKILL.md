@@ -55,8 +55,9 @@ and keeps the human worklogs current.
   executors.
 - Parent coordinates scarce verification resources; workers do not all run the
   full suite at once.
-- Parent gives periodic Markdown table updates from the swarm ledger so the
-  user can see phase progress, current chunks, and active workers at a glance.
+- Parent gives periodic and user-requested Markdown table updates from the
+  swarm ledger so the user can see phase progress, current chunks, active
+  workers, and current difficulties at a glance.
 - Related repairs resume the same healthy worker session by default.
 - Arbiter review is delegated and observation-only.
 - Thermonuclear maintainability review is required before phase closure unless
@@ -90,7 +91,7 @@ and keeps the human worklogs current.
 4. After each batch, inspect worker reports, changed files, resource use, and
    repo state before launching more work.
 5. Update the ledger and send a table update whenever workers launch, finish,
-   block, or move into review/repair.
+   block, retry, hit an issue, or move into review/repair.
 6. Route valid gaps back to workers, usually by resuming the related session.
 7. Launch an observation-only arbiter to compare implementation against the
    phase contract and architectural cleanliness.
@@ -103,7 +104,11 @@ and keeps the human worklogs current.
 
 Give concise Markdown table updates after phase-contract creation, after each
 worker batch launches or finishes, after review gates, and before final report.
-Do not fake precision: percent is a judgment estimate backed by evidence.
+When the user asks for an update, status, what is running, what is blocked, or
+where the phase stands while `plan-swarm` is active, answer with the same table
+format. Refresh from the swarm ledger, worker logs, current repo state, and
+known child-session results before answering. Do not fake precision: percent
+is a judgment estimate backed by evidence.
 
 Each update includes:
 
@@ -112,6 +117,13 @@ Each update includes:
   `Parallelization`, `Status`, `Proof`
 - `Workers Now`: `Worker`, `Runtime/Model`, `Slice`, `State`,
   `Current Task`, `Session`
+- `Phase Difficulties And Retries`: `Issue`, `Where`, `Impact`,
+  `Retry/Response`, `Current State`, `Next Action`
+
+Use the difficulties table for blockers, failed or struggling workers, review
+findings, test failures, merge/collision trouble, scarce-resource contention,
+unclear ownership, and repeated retries. If no difficulty is known yet, include
+one `none observed` row instead of omitting the table.
 
 Percent guidance:
 
@@ -128,8 +140,11 @@ Report compactly:
 
 - active phase and stop boundary
 - progress tables when a phase, batch, review, or final-report boundary changes
+- the same progress tables when the user manually asks for an update during a
+  `plan-swarm` run
 - implementation and review policies
 - slices launched, completed, blocked, or waiting
+- difficulties, retries, issues, and next recovery action
 - verification commands and proof gaps
 - arbiter and thermonuclear findings triage
 - files changed and worklog paths

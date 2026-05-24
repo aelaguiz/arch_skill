@@ -53,6 +53,12 @@ Claude Code, and Gemini.
   such as command syntax, parsing, templating, validation, or API calls. Do not
   make a skill a thin wrapper around a script, runner, controller, or harness
   that owns the workflow or removes the agent's reasoning.
+- Do not write unit tests that lock skill doctrine to exact wording. Avoid
+  tests that read `skills/<slug>/SKILL.md`, skill reference docs, prompt
+  doctrine, or usage docs only to assert phrase or regex presence/absence.
+  Test deterministic behavior, schemas, package shape, install inventory,
+  helper scripts, and runtime output instead; use `npx skills check` plus
+  review for doctrine quality.
 - Keep changes in the smallest owning surface: reusable workflow doctrine in
   `skills/`, install behavior and stale-surface cleanup in `Makefile`, and
   deeper reference material in `docs/`.
