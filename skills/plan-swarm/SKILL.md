@@ -12,6 +12,11 @@ by splitting one approved phase into independent work slices, running capable
 implementation workers in parallel, and holding phase closure behind real
 review and proof.
 
+`plan-swarm` exists to maximize implementation velocity without lowering code
+quality. Its default posture is to find safe parallelism, keep workers moving,
+remove avoidable serial bottlenecks, and reserve serial execution only for real
+dependency, collision, or scarce-resource constraints.
+
 This is a prompt-first orchestration skill. The parent agent is the
 orchestrator: it reasons about the phase, launches and resumes workers through
 existing capabilities such as `$agent-delegate`, inspects the real worktree,
