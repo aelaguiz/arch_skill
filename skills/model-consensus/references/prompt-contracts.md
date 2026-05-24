@@ -11,6 +11,8 @@ Every child prompt should make clear:
   stated needs
 - agreement must be earned through evidence and simplification
 - repo-backed work requires reading real evidence and naming the evidence used
+- the child should maximize parallelism by using parallel agents and must not
+  invoke skills that spawn subagents
 - the child should stop or ask for missing information instead of guessing
 
 ## Goal Brief Contract
@@ -70,6 +72,8 @@ Start with user-named artifacts or symptoms, then choose the code, docs,
 research, tests, commands, or other local evidence needed for the goal. Cite
 what you inspected and why it mattered.
 
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+
 Quality Bar
 Prefer the smallest answer that satisfies every hard requirement and survives
 evidence. Reject kitchen-sink compromise. For planning work, check where the
@@ -112,6 +116,8 @@ misses a hard requirement, lacks evidence, or combines ideas without a reason.
 If the other model is better, say so and adopt it. If a third option is simpler,
 propose it explicitly and justify it from evidence.
 
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+
 Output Contract
 Return:
 - agreements
@@ -148,6 +154,8 @@ Inputs
 - Other model's latest critique/proposal: <other_latest>
 - Your previous proposal: <your_previous>
 
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+
 Output Contract
 Return:
 - final revised proposal
@@ -173,6 +181,7 @@ Question
 Does this candidate preserve the user's goal, satisfy every hard requirement,
 avoid unnecessary new pathways, and reflect your actual agreement? If no, name
 the smallest correction needed. If yes, sign off and name any residual risk.
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
 ```
 
 Do not call the result consensus if either model refuses signoff on a material

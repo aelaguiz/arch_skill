@@ -18,7 +18,6 @@ The work is not "ask two models and concatenate the answers." The goal is a
 disciplined conversation that removes weaker ideas, preserves independent
 evidence discovery when the task is investigative, converges on existing repo
 patterns when the task is architectural, and avoids kitchen-sink plans.
-
 ## Use When
 
 - The user wants two Claude/Codex/Cursor Agent models to iterate on a plan,
@@ -82,7 +81,6 @@ patterns when the task is architectural, and avoids kitchen-sink plans.
 - Prompt the models as collaborators. Teach the mission, context, quality bar,
   and why simplicity and repo convergence matter. Do not treat them as stupid
   prompt runners.
-
 ## First Move
 
 Read these references before invoking children:
@@ -118,7 +116,8 @@ Then:
 
 1. Start two fresh, resumable child sessions with the same faithful goal brief.
    Give each model the same mode-specific evidence obligations and role
-   framing.
+   framing, including the instruction to maximize parallelism by using parallel
+   agents and not invoke skills that spawn subagents.
 2. Collect independent first passes. Do not let either model see the other's
    answer before it has formed its own view.
 3. Send Model A's pass to Model B for critique and simplification. In

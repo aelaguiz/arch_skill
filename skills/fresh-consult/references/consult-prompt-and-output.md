@@ -33,6 +33,8 @@ nearby repo, docs, research, tests, command output, or local evidence you judge
 necessary to answer the user's ask. Report what you read and what answer the
 evidence supports.
 
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+
 Do not edit files, run formatters, arm hooks, coordinate with sibling consults,
 or start another controller.
 

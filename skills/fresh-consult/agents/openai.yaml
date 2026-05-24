@@ -1,7 +1,7 @@
 interface:
   display_name: "Fresh Consult"
   short_description: "Run clean Claude/Codex/Cursor Agent second opinions"
-  default_prompt: "Use $fresh-consult to run one or more clean-context Claude, Codex, or Cursor Agent second opinions on this artifact, completion check, flow, or readability question, then report each verdict back with evidence and run directories."
+  default_prompt: "Use $fresh-consult to run one or more clean-context Claude, Codex, or Cursor Agent second opinions on this artifact, completion check, flow, or readability question. Tell each consult child: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents. Report each verdict back with evidence and run directories."
 
 policy:
   allow_implicit_invocation: true

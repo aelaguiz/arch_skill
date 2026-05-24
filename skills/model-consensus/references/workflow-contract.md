@@ -105,6 +105,7 @@ Start two fresh, resumable sessions. Give both models:
 - the raw goal and goal brief
 - the participant roles
 - repo root and evidence obligations when a repo or workspace is involved
+- the instruction: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
 - the quality bar
 - the output contract
 

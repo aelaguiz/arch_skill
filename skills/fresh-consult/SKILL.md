@@ -92,7 +92,8 @@ controllers, state machines, parsers, or install-time automation.
    answer, the work root, and the exact artifacts or target paths the user
    named.
 2. **Resolve execution.** Map the raw model phrase to
-   `runtime=<claude|codex>`, `model=<runnable id>`, and `effort=<level>`.
+   `runtime=<claude|codex|agent>`, `model=<runnable id>`, and
+   `effort=<level-or-encoded-in-model>`.
    Announce the mapping before execution.
 3. **Select single or parallel.** Use the single-child path by default. Use a
    parallel group only when the user asks for parallel consults or gives

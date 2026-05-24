@@ -88,9 +88,9 @@ automation.
   not add a controller, detached monitor, separate worktree, or merge layer.
 - Brief the child like a capable colleague walking in cold: include the task,
   success criteria, work root, allowed write scope, constraints, exact
-  user-named inputs, and report contract. For resume prompts, state the new
-  instruction or evidence and what remains unchanged from the original
-  delegation.
+  user-named inputs, the parallelism instruction, and report contract. For
+  resume prompts, state the new instruction or evidence and what remains
+  unchanged from the original delegation.
 - Tell the child to read local instructions such as `AGENTS.md` before editing
   covered files.
 - In parallel groups, tell each child it is not alone in the codebase, must not

@@ -1,7 +1,7 @@
 interface:
   display_name: "Model Consensus"
   short_description: "Orchestrate two selected models to converge on a lean plan"
-  default_prompt: "Use $model-consensus to have two selected Claude/Codex/Cursor Agent model sessions cross-check, critique, and converge on this plan, architecture, investigation, design, or concept. Preserve the user's raw goal, ask once for missing model choices, require repo evidence when applicable, preserve child discovery freedom for investigations, and do not introduce a deterministic runner, script, controller, or harness layer."
+  default_prompt: "Use $model-consensus to have two selected Claude/Codex/Cursor Agent model sessions cross-check, critique, and converge on this plan, architecture, investigation, design, or concept. Preserve the user's raw goal, ask once for missing model choices, require repo evidence when applicable, preserve child discovery freedom for investigations, and tell each participant: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents. Do not introduce a deterministic runner, script, controller, or harness layer."
 
 policy:
   allow_implicit_invocation: true

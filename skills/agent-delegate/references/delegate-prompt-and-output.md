@@ -65,6 +65,7 @@ You may:
 3. Run commands needed to inspect, implement, format, lint, test, or verify.
 4. Use installed skills when their trigger and contract fit the delegated task.
 5. Make pragmatic implementation decisions that are implied by repo evidence.
+6. Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
 
 You must not:
 
@@ -85,11 +86,13 @@ Please do all of the following:
 1. Read the local instructions and user-named inputs, then inspect whatever repo
    evidence is needed to complete the task.
 2. Inspect the current repo state before editing.
-3. Implement the smallest change that satisfies the success bar.
-4. Use installed skills only when they directly improve the delegated work.
-5. Run verification proportional to the changed surface.
-6. Re-read changed files or inspect the diff before finalizing.
-7. If blocked, stop with a precise blocker instead of inventing a workaround.
+3. Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+4. Implement the smallest change that satisfies the success bar.
+5. Use installed skills only when they directly improve the delegated work and
+   do not spawn subagents.
+6. Run verification proportional to the changed surface.
+7. Re-read changed files or inspect the diff before finalizing.
+8. If blocked, stop with a precise blocker instead of inventing a workaround.
 
 # Report Contract
 
