@@ -11,6 +11,9 @@ move fast without turning them into brittle checklist executors.
 - Sibling context: other workers may be editing nearby code; do not revert
   unfamiliar changes.
 - Success bar: behavior, tests, owner boundaries, cleanup, and proof needed.
+- Verification intent: plan-required proof, changed/impacted surfaces that need
+  confidence, tests already passing that should not be rerun unless affected,
+  and any scarce verification lease.
 - Freedom: workers may inspect adjacent owning code and make necessary
   task-relevant edits.
 - Native parallelism: `Maximize parallelism by using parallel agents. Do not
@@ -26,7 +29,9 @@ move fast without turning them into brittle checklist executors.
 - Micromanaged file-by-file scripts.
 - "Do not touch anything else" guardrails that prevent required adjacent fixes.
 - Large copied plan sections when a path and heading is enough.
-- Asking workers to run scarce full-suite checks without a lease.
+- Asking workers to run scarce full-suite checks without a lease and a concrete
+  reason tied to the plan, changed/impacted surfaces, stale proof, or review
+  findings.
 - Asking the parent to rerun implementation tests as the normal proof path.
 - Treating workers as checklist executors. They are engineers responsible for
   real implementation within the slice mission.
@@ -38,7 +43,7 @@ STATUS: done | blocked | needs-parent | failed
 SLICE: <slice id>
 CHANGED FILES: <paths or none>
 VERIFICATION: <commands/results or not run: reason>
-PROOF: <phase requirements covered>
+PROOF: <phase requirements and impacted behavior covered; already-passing proof reused if relevant>
 SESSION HEALTH: healthy | struggling | stuck | unknown
 BLOCKERS: <none or concrete blocker>
 FOLLOW-UP: <none or next recommended action>

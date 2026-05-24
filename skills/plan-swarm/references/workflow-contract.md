@@ -18,6 +18,9 @@ It does not write a new plan or broaden the requested boundary.
 - Batch review, test, integration, and worker findings before dispatching
   follow-up work.
 - Decompose accepted findings into delegated repair and verification waves.
+- Maintain an impact-aware verification map: plan-required checks, changed
+  surfaces, plausibly affected adjacent behavior, scarce resources, proof
+  already passing, and the reason each proof should run or stay trusted.
 - Commit local progress checkpoints freely, including dirty inherited work that
   looks like resumed plan work.
 - Coordinate expensive validation so workers do not stampede the same resource.
@@ -47,7 +50,7 @@ verification normally go to delegated workers.
    clearly unrelated to the repo.
 3. Phase contract: source-of-truth requirements and proof obligations.
 4. Swarm ledger: independent/dependent slices, likely collisions, scarce
-   resources, assigned workers, session ids, and proof needed.
+   resources, assigned workers, session ids, and impact-aware proof needed.
 5. Implementation batches: launch independent slices in parallel through
    `$agent-delegate`.
 6. Merge/evidence checkpoint: read worker reports, inspect repo state, and
@@ -56,8 +59,10 @@ verification normally go to delegated workers.
 8. Thermonuclear gate: strict maintainability review and triage.
 9. Repair wave: batch accepted findings by owner, dependency, collision risk,
    proof needed, and worker session; delegate the resulting repair slices.
-10. Verification wave: assign tests, builds, generators, simulators, browsers,
-    or device checks to workers with leases when needed.
+10. Verification wave: assign plan-required and impact-justified tests, builds,
+    generators, simulators, browsers, or device checks to workers with leases
+    when needed. Do not rerun broad default suites without a concrete plan,
+    impact, review, or stale-proof reason.
 11. Repair checkpoint: commit accepted repair-wave results after delegated
     verification.
 12. Final report: evidence, findings, remaining gaps, final local commit
@@ -82,6 +87,20 @@ implementation wave
 Do not dispatch one tiny repair at a time when a broader batch is available.
 Do not turn test failures into parent-owned test reruns. The parent's job is to
 keep the queue shaped, parallel, and evidenced.
+
+## Verification Posture
+
+Verification should buy confidence, not burn time. Start from the plan's
+validation obligations and Definition of Done, then ask what the changed and
+adjacent impacted surfaces need to prove. Prefer targeted proof, slice-local
+checks, and delegated verification workers over broad default runners.
+
+Keep already-passing proof in the ledger. Do not rerun it in later phases or
+waves unless new changes could affect it, the plan explicitly requires fresh
+proof, or a reviewer/test result makes it stale. A broad suite is still valid
+when the phase changes shared infrastructure, cross-cutting behavior, generated
+contracts, or a release gate that the plan names; record that reason instead of
+using "run everything" as the default.
 
 ## Git Posture
 

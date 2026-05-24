@@ -91,9 +91,18 @@ without treating Git history as PR-ready.
 - Parent assigns verification to workers. It may inspect state with cheap
   read-only commands, but it should not become the normal runner for tests,
   builds, generators, simulators, browsers, or devices.
+- Verification is impact-aware. Start from the plan's stated validation
+  obligations, then add proof for changed and plausibly impacted surfaces. Do
+  not run every default test just because it exists.
+- Track already-passing proof across phases and waves. Rerun it only when new
+  changes could affect that proof, when the plan explicitly requires fresh
+  proof, or when review/verification evidence calls it stale.
 - Parent gives periodic and user-requested Markdown table updates from the
   swarm ledger so the user can see phase progress, current chunks, active
   workers, and current difficulties at a glance.
+- Do not rush to abandon quiet workers. Large slices, high-thinking models,
+  long tests, sleeps, simulators, and scarce-resource waits can go quiet; short
+  silence is not a stall.
 - Related repairs resume the same healthy worker session by default.
 - Arbiter review is delegated and observation-only.
 - Thermonuclear maintainability review is required before phase closure unless
@@ -115,12 +124,14 @@ without treating Git history as PR-ready.
    implementation policy, review policy, and max parallelism.
 5. Read the active phase plus plan-level Definition of Done items relevant to
    owner boundaries, validation, persistence, cleanup, and review.
-6. Inspect `git status` and commit an initial/resume checkpoint for tracked
+6. Extract the plan-required validation obligations and draft an impact-aware
+   verification map before launching workers.
+7. Inspect `git status` and commit an initial/resume checkpoint for tracked
    changes and likely relevant untracked files before launching workers.
-7. Write a compact phase contract and swarm ledger next to the plan before
+8. Write a compact phase contract and swarm ledger next to the plan before
    launching workers.
-8. Send the first progress update with the required tables.
-9. Launch independent workers with `$agent-delegate`, then keep the ledger,
+9. Send the first progress update with the required tables.
+10. Launch independent workers with `$agent-delegate`, then keep the ledger,
    worklogs, session ids, proof, and review triage current by hand.
 
 ## Workflow
@@ -128,23 +139,26 @@ without treating Git history as PR-ready.
 1. Extract the phase contract from the plan and repo evidence.
 2. Decompose into slices by owner boundary, dependency, proof, cleanup, and
    scarce-resource boundaries.
-3. Launch as many independent slices in parallel as the worktree and resource
+3. For each slice, identify the proof target: plan-required tests, changed
+   surfaces, impacted adjacent behavior, scarce resources, and already-passing
+   proof that should not be rerun unless affected.
+4. Launch as many independent slices in parallel as the worktree and resource
    constraints can safely support.
-4. After each batch, inspect worker reports, changed files, resource use, and
+5. After each batch, inspect worker reports, changed files, resource use, and
    repo state with cheap parent-side inspection before launching more work.
-5. When worker results, reviews, tests, or integration expose gaps, gather a
+6. When worker results, reviews, tests, or integration expose gaps, gather a
    useful batch, triage it, decompose accepted gaps into repair or verification
    waves, and delegate those waves back to workers.
-6. Commit local progress after meaningful worker, repair, or verification
+7. Commit local progress after meaningful worker, repair, or verification
    batches, and record checkpoint hashes in the ledger.
-7. Update the ledger and send a table update whenever workers launch, finish,
+8. Update the ledger and send a table update whenever workers launch, finish,
    block, retry, hit an issue, or move into review/repair.
-8. Route valid gaps back to workers, usually by resuming the related session.
-9. Launch an observation-only arbiter to compare implementation against the
+9. Route valid gaps back to workers, usually by resuming the related session.
+10. Launch an observation-only arbiter to compare implementation against the
    phase contract and architectural cleanliness.
-10. Run thermonuclear maintainability review. Triage findings as accepted,
+11. Run thermonuclear maintainability review. Triage findings as accepted,
    rejected, or deferred.
-11. Delegate accepted findings and verification reruns until the phase contract
+12. Delegate accepted findings and verification reruns until the phase contract
     is covered, then write the final phase report, commit the final phase
     checkpoint, and stop at the requested boundary.
 
@@ -194,7 +208,8 @@ Report compactly:
 - implementation, repair, verification, and review slices launched, completed,
   blocked, or waiting
 - difficulties, retries, issues, and next recovery action
-- delegated verification commands and proof gaps
+- delegated verification commands, impact rationale, already-passing proof kept,
+  and proof gaps
 - arbiter and thermonuclear findings triage
 - files changed, worklog paths, and commit checkpoints
 - next action

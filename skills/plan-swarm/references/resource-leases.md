@@ -3,6 +3,11 @@
 Verification resources are shared. The parent agent coordinates them instead of
 letting every worker run expensive checks.
 
+Verification is also selective. The parent and workers choose proof from the
+plan's stated validation obligations plus the surfaces changed or plausibly
+impacted by the work. They do not run the full suite just because it is the
+default command.
+
 ## Lease Examples
 
 - full test suite
@@ -20,6 +25,11 @@ letting every worker run expensive checks.
 - Workers without a lease may run cheap slice-local checks.
 - A designated verification worker may hold the expensive test lease after
   implementation slices finish.
+- Full-suite leases need a reason: plan requirement, changed shared
+  infrastructure, cross-cutting impact, stale prior proof, or release gate. If
+  targeted proof gives high confidence, prefer that.
+- Reuse already-passing proof unless a later slice touched code, generated
+  artifacts, configuration, data, or behavior that could invalidate it.
 - The parent tracks leases and reads results; it should not become the normal
   runner for expensive tests, builds, generators, simulators, browsers, or
   devices.

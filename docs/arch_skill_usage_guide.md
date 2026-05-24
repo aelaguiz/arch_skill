@@ -607,7 +607,7 @@ Practical rule:
 
 ### `plan-swarm`
 
-Use when the user wants to implement one named phase or explicit phase range from an existing plan document as fast as possible without dropping the quality bar. It extracts a compact phase contract, decomposes the work into independently delegable slices, launches or resumes Codex, Claude, or Cursor Agent workers through `agent-delegate`, batches review/test findings into delegated repair and verification waves, writes human worklogs next to the plan, and closes only after arbiter and thermonuclear findings are triaged.
+Use when the user wants to implement one named phase or explicit phase range from an existing plan document as fast as possible without dropping the quality bar. It extracts a compact phase contract, decomposes the work into independently delegable slices, launches or resumes Codex, Claude, or Cursor Agent workers through `agent-delegate`, batches review/test findings into delegated repair and impact-aware verification waves, writes human worklogs next to the plan, and closes only after arbiter and thermonuclear findings are triaged.
 
 The parent agent owns orchestration: plan interpretation, decomposition, worker prompts, parallel delegation, session reuse, review triage, and completion judgment. Coordination stays readable in the phase contract, swarm ledger, worker logs, review notes, and final phase report next to the plan.
 

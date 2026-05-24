@@ -36,7 +36,7 @@ repair, and run assigned verification.
 | qa-adapters | Move QA registration to feature-owned adapters. | worker-a | Independent from overlay cleanup; shared QA boundary only. | running | owner-boundary tests |
 | command-service | Route execution through command service/session. | worker-b | Serial before legacy deletion. | running | command execution tests |
 | overlay-save | Remove raw writer/provider calls in overlays. | worker-c | Parallel with QA adapters; watches command-service API. | running | overlay save checks |
-| legacy-cleanup | Delete or wall off direct mutation paths. | waiting | Depends on command-service replacement. | pending | deletion checkpoint |
+| legacy-cleanup | Delete or wall off direct mutation paths. | waiting | Depends on command-service replacement. | pending | deletion checkpoint; no full suite unless shared mutation path changes |
 
 ### Workers Now
 
@@ -73,19 +73,21 @@ state, and known child-session results before replying.
 | --- | --- | --- | --- | --- | --- |
 | command-service | Route execution through command service/session. | worker-b | Serial before legacy deletion. | running | command execution tests |
 | legacy-cleanup | Delete or wall off direct mutation paths. | waiting | Depends on command-service replacement. | pending | deletion checkpoint |
-| verify-command-service | Rerun command execution tests after repair wave. | worker-v | Verification lease; waits for command-service repair. | waiting | exact test results |
+| verify-command-service | Rerun command execution tests after repair wave. | worker-v | Verification lease; waits for command-service repair. | waiting | plan-required command tests; prior QA smoke still trusted |
 
 ### Workers Now
 
 | Worker | Runtime/Model | Slice | State | Current Task | Session |
 | --- | --- | --- | --- | --- | --- |
 | worker-b | agent/composer-2.5-fast | command-service | executing | Session execution path | s-cmd |
+| worker-v | agent/composer-2.5-fast | verify-command-service | quiet/observing | Plan-required command tests; likely long runner | s-verify |
 
 ### Phase Difficulties And Retries
 
 | Issue | Where | Impact | Retry/Response | Current State | Next Action |
 | --- | --- | --- | --- | --- | --- |
 | command API uncertainty | command-service | Cleanup waits. | Resumed same healthy worker with narrower prompt. | in progress | Check worker-b report before launching cleanup. |
+| quiet verification worker | verify-command-service | No action unless it proves stuck. | Last signal was test launch; waiting is reasonable. | quiet/observing | Recheck logs before considering a replacement. |
 ```
 
 ## Worker Prompt Skeleton
@@ -103,9 +105,13 @@ complete this slice.
 Maximize parallelism by using parallel agents. Do not invoke skills that spawn
 subagents.
 
-Do not broaden product scope, push, stash, or run the full suite unless the
-parent assigns that verification resource. The parent owns commit checkpoints
-unless this prompt explicitly assigns you one.
+Verification intent: run the plan-required and slice-local checks that prove the
+QA adapter boundary. Do not run the full suite unless repo evidence shows this
+slice changed shared behavior that those broader tests cover.
+
+Do not broaden product scope, push, stash, or monopolize scarce verification
+resources. The parent owns commit checkpoints unless this prompt explicitly
+assigns you one.
 
 End with the required plan-swarm worker footer.
 ```
@@ -131,9 +137,12 @@ the cleanest implementation that satisfies the phase contract.
 Maximize parallelism by using parallel agents. Do not invoke skills that spawn
 subagents.
 
-Do not broaden product scope, push, stash, or run the full suite unless the
-parent assigns that verification resource. End with the required plan-swarm
-worker footer.
+Verification intent: cover the accepted findings and any adjacent behavior your
+repair plausibly affects. Reuse already-passing proof unless your repair touched
+what that proof depends on.
+
+Do not broaden product scope, push, stash, or monopolize scarce verification
+resources. End with the required plan-swarm worker footer.
 ```
 
 ## Verification Wave Prompt Skeleton
@@ -146,7 +155,9 @@ docs/PACKS/example-plan_plan_swarm/phase-14/swarm-ledger.md.
 
 You have the command-service verification lease. Run the listed command
 execution tests, inspect failures if any, and report exact commands/results.
-Do not edit source unless the verification slice explicitly asks for a repair.
+Do not run default-all tests unless the plan, changed surface, review evidence,
+or stale prior proof makes them necessary. Do not edit source unless the
+verification slice explicitly asks for a repair.
 
 Maximize parallelism by using parallel agents. Do not invoke skills that spawn
 subagents.
