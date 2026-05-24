@@ -13,6 +13,10 @@ move fast without turning them into brittle checklist executors.
 - Success bar: behavior, tests, owner boundaries, cleanup, and proof needed.
 - Freedom: workers may inspect adjacent owning code and make necessary
   task-relevant edits.
+- Native parallelism: `Maximize parallelism by using parallel agents. Do not
+  invoke skills that spawn subagents.`
+- Parent hints: likely fix paths, suspected files, and evidence to inspect are
+  advisory, not a script. The worker still owns the implementation judgment.
 - Constraint: do not broaden product scope, push, stash, or revert unrelated
   work. Parent owns commit checkpoints unless this worker prompt explicitly
   assigns you one.
@@ -23,6 +27,7 @@ move fast without turning them into brittle checklist executors.
 - "Do not touch anything else" guardrails that prevent required adjacent fixes.
 - Large copied plan sections when a path and heading is enough.
 - Asking workers to run scarce full-suite checks without a lease.
+- Asking the parent to rerun implementation tests as the normal proof path.
 - Treating workers as checklist executors. They are engineers responsible for
   real implementation within the slice mission.
 

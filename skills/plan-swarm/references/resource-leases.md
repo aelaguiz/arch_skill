@@ -20,4 +20,7 @@ letting every worker run expensive checks.
 - Workers without a lease may run cheap slice-local checks.
 - A designated verification worker may hold the expensive test lease after
   implementation slices finish.
+- The parent tracks leases and reads results; it should not become the normal
+  runner for expensive tests, builds, generators, simulators, browsers, or
+  devices.
 - Release leases when a worker completes, fails, or is explicitly abandoned.

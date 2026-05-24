@@ -11,7 +11,13 @@ It does not write a new plan or broaden the requested boundary.
 - Write the phase contract and swarm ledger next to the plan.
 - Use `$agent-delegate` to launch and resume implementation workers.
 - Write worker, arbiter, and repair prompts with prompt-authoring discipline.
+- Put this line in every implementation, repair, verification, arbiter, and
+  consult child prompt: `Maximize parallelism by using parallel agents. Do not
+  invoke skills that spawn subagents.`
 - Inspect worker reports, changed files, and proof after every batch.
+- Batch review, test, integration, and worker findings before dispatching
+  follow-up work.
+- Decompose accepted findings into delegated repair and verification waves.
 - Commit local progress checkpoints freely, including dirty inherited work that
   looks like resumed plan work.
 - Coordinate expensive validation so workers do not stampede the same resource.
@@ -25,6 +31,11 @@ independence, launch workers with the existing delegation skill, inspect the
 real worktree, and keep a human ledger. Any optional helper belongs below that
 judgment layer as a narrow utility, such as a blank ledger template or stale
 wording check.
+
+The parent should not collapse into a solo implementation or test-rerun loop.
+It may read files, inspect diffs, run cheap status/search commands, and give
+workers strong hints. Source edits, repair implementation, and implementation
+verification normally go to delegated workers.
 
 ## Lifecycle
 
@@ -43,9 +54,34 @@ wording check.
    commit meaningful landed progress.
 7. Arbiter loop: delegated observation-only review against the phase contract.
 8. Thermonuclear gate: strict maintainability review and triage.
-9. Repair checkpoint: commit accepted review repairs after verification.
-10. Final report: evidence, findings, remaining gaps, final local commit
+9. Repair wave: batch accepted findings by owner, dependency, collision risk,
+   proof needed, and worker session; delegate the resulting repair slices.
+10. Verification wave: assign tests, builds, generators, simulators, browsers,
+    or device checks to workers with leases when needed.
+11. Repair checkpoint: commit accepted repair-wave results after delegated
+    verification.
+12. Final report: evidence, findings, remaining gaps, final local commit
     checkpoint, and stop at boundary.
+
+## Recursive Swarm Loop
+
+Use the same swarm shape for follow-up work:
+
+```text
+implementation wave
+-> parent inspection and report intake
+-> delegated review or verification
+-> finding triage
+-> batched repair-wave decomposition
+-> delegated repair workers
+-> delegated verification workers
+-> checkpoint commit
+-> repeat until the phase contract is covered or findings are rejected/deferred
+```
+
+Do not dispatch one tiny repair at a time when a broader batch is available.
+Do not turn test failures into parent-owned test reruns. The parent's job is to
+keep the queue shaped, parallel, and evidenced.
 
 ## Git Posture
 

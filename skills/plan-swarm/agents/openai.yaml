@@ -1,7 +1,7 @@
 interface:
   display_name: "Plan Swarm"
   short_description: "Parallel plan-phase implementation orchestrator"
-  default_prompt: "Use $plan-swarm to implement one named phase from an existing plan document by extracting the phase contract, decomposing it into independently delegable slices, launching/resuming parallel workers with $agent-delegate, committing local progress checkpoints freely, coordinating verification manually, writing worklogs next to the plan, and closing only after arbiter and thermonuclear findings are triaged."
+  default_prompt: "Use $plan-swarm to implement one named phase from an existing plan document by extracting the phase contract, decomposing it into independently delegable slices, launching/resuming parallel workers with $agent-delegate, batching review/test findings into delegated repair and verification waves instead of fixing or rerunning tests locally, telling child prompts to maximize parallelism with native parallel agents, committing local checkpoints, writing worklogs, and closing only after arbiter and thermonuclear findings are triaged."
 
 policy:
   allow_implicit_invocation: true

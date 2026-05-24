@@ -1,6 +1,6 @@
 ---
 name: plan-swarm
-description: "Prompt-first implementation swarm orchestrator for finishing a named phase or phase range from an existing plan document. The parent agent extracts the phase contract, decomposes it into independently delegable work slices, runs/resumes parallel workers through agent-delegate, commits local checkpoints freely, coordinates scarce verification manually, writes worklogs next to the plan, and gates completion through delegated arbiter plus thermonuclear review. Do NOT use for creating plans, one-shot delegation, strict ordered processes, review-only work, pushes, PRs, or worktrees."
+description: "Prompt-first implementation swarm orchestrator for finishing a named phase or phase range from an existing plan document. The parent extracts the phase contract, decomposes independently delegable slices, runs/resumes parallel workers through agent-delegate, batches review/test findings into delegated repair and verification waves, commits checkpoints, writes worklogs, and gates closure through arbiter plus thermonuclear review. Do NOT use for creating plans, one-shot delegation, strict ordered processes, review-only work, pushes, PRs, or worktrees."
 metadata:
   short-description: "Parallel plan-phase implementation orchestrator"
 ---
@@ -22,6 +22,19 @@ orchestrator: it reasons about the phase, launches and resumes workers through
 existing capabilities such as `$agent-delegate`, inspects the real worktree,
 keeps the human worklogs current, and commits local progress checkpoints
 without treating Git history as PR-ready.
+
+## North Stars
+
+- The job is batching, delegation, and parallelization. `plan-swarm` should make
+  plan execution faster than a normal single-agent implementation loop.
+- The parent is the scheduler, triager, worklog owner, scarce-resource
+  coordinator, and commit checkpoint owner.
+- Workers are the implementers, repairers, and verification runners.
+- After reviews, test failures, integration failures, or worker blockers, the
+  parent batches the work, decomposes it again, and sends it back out to
+  workers instead of becoming the coder or test runner.
+- Parent diagnosis is useful context, not a script. Give workers likely fix
+  paths and evidence hints, then let them own implementation judgment.
 
 ## Use When
 
@@ -59,18 +72,24 @@ without treating Git history as PR-ready.
   same as implementation.
 - Workers are prompted like capable engineers, not micromanaged checklist
   executors.
+- Every child prompt, including implementation, repair, verification, arbiter,
+  and consult prompts, tells the child: `Maximize parallelism by using parallel
+  agents. Do not invoke skills that spawn subagents.`
 - The parent commits freely. If the run inherits a dirty worktree, assume it is
   likely resumed plan work and create an initial checkpoint unless there is a
   concrete safety issue such as secrets, obvious machine-local junk, or files
   clearly unrelated to the repo.
-- Commit after meaningful worker batches, accepted repairs, review cleanup, and
-  final phase reporting. Prefer a messy local checkpoint over blocking on Git
-  ceremony; the user can squash, reorder, or clean history before a PR.
+- Commit after meaningful worker batches, accepted repair waves, review cleanup,
+  and final phase reporting. Prefer a messy local checkpoint over blocking on
+  Git ceremony; the user can squash, reorder, or clean history before a PR.
 - Parent owns commits by default. Workers do not push, stash, revert unrelated
   work, or independently commit unless the parent explicitly assigns one worker
   a commit checkpoint.
 - Parent coordinates scarce verification resources; workers do not all run the
   full suite at once.
+- Parent assigns verification to workers. It may inspect state with cheap
+  read-only commands, but it should not become the normal runner for tests,
+  builds, generators, simulators, browsers, or devices.
 - Parent gives periodic and user-requested Markdown table updates from the
   swarm ledger so the user can see phase progress, current chunks, active
   workers, and current difficulties at a glance.
@@ -78,8 +97,12 @@ without treating Git history as PR-ready.
 - Arbiter review is delegated and observation-only.
 - Thermonuclear maintainability review is required before phase closure unless
   the user explicitly disables it.
-- Accepted findings become repair slices. Rejected or deferred findings need a
-  recorded scope or evidence rationale.
+- Reviews and verification should try to produce a useful batch of phase-scope
+  findings, not stop after the first issue.
+- Accepted findings become delegated repair or verification slices. Rejected or
+  deferred findings need a recorded scope or evidence rationale.
+- Parent edits coordination artifacts; workers edit source code and run assigned
+  verification unless the user explicitly overrides the swarm doctrine.
 - Never claim completion from worker self-certification alone.
 
 ## First Move
@@ -107,19 +130,22 @@ without treating Git history as PR-ready.
 3. Launch as many independent slices in parallel as the worktree and resource
    constraints can safely support.
 4. After each batch, inspect worker reports, changed files, resource use, and
-   repo state before launching more work.
-5. Commit local progress after meaningful worker batches or repairs, and record
-   checkpoint hashes in the ledger.
-6. Update the ledger and send a table update whenever workers launch, finish,
+   repo state with cheap parent-side inspection before launching more work.
+5. When worker results, reviews, tests, or integration expose gaps, gather a
+   useful batch, triage it, decompose accepted gaps into repair or verification
+   waves, and delegate those waves back to workers.
+6. Commit local progress after meaningful worker, repair, or verification
+   batches, and record checkpoint hashes in the ledger.
+7. Update the ledger and send a table update whenever workers launch, finish,
    block, retry, hit an issue, or move into review/repair.
-7. Route valid gaps back to workers, usually by resuming the related session.
-8. Launch an observation-only arbiter to compare implementation against the
+8. Route valid gaps back to workers, usually by resuming the related session.
+9. Launch an observation-only arbiter to compare implementation against the
    phase contract and architectural cleanliness.
-9. Run thermonuclear maintainability review. Triage findings as accepted,
+10. Run thermonuclear maintainability review. Triage findings as accepted,
    rejected, or deferred.
-10. Repair accepted findings, verify proportionally, write the final phase
-    report, commit the final phase checkpoint, and stop at the requested
-    boundary.
+11. Delegate accepted findings and verification reruns until the phase contract
+    is covered, then write the final phase report, commit the final phase
+    checkpoint, and stop at the requested boundary.
 
 ## Progress Updates
 
@@ -164,9 +190,10 @@ Report compactly:
 - the same progress tables when the user manually asks for an update during a
   `plan-swarm` run
 - implementation and review policies
-- slices launched, completed, blocked, or waiting
+- implementation, repair, verification, and review slices launched, completed,
+  blocked, or waiting
 - difficulties, retries, issues, and next recovery action
-- verification commands and proof gaps
+- delegated verification commands and proof gaps
 - arbiter and thermonuclear findings triage
 - files changed, worklog paths, and commit checkpoints
 - next action

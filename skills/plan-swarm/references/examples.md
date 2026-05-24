@@ -16,6 +16,8 @@ Review: Codex gpt-5.4 xhigh unless user asks for the same runtime.
 Artifacts: docs/PACKS/example-plan_plan_swarm/phase-14/.
 Git: commit dirty resume state first if present; commit meaningful worker
 batches and final report locally. No push or PR unless explicitly asked.
+North star: batch and parallelize. Parent coordinates; workers implement,
+repair, and run assigned verification.
 ```
 
 ## Progress Update
@@ -71,6 +73,7 @@ state, and known child-session results before replying.
 | --- | --- | --- | --- | --- | --- |
 | command-service | Route execution through command service/session. | worker-b | Serial before legacy deletion. | running | command execution tests |
 | legacy-cleanup | Delete or wall off direct mutation paths. | waiting | Depends on command-service replacement. | pending | deletion checkpoint |
+| verify-command-service | Rerun command execution tests after repair wave. | worker-v | Verification lease; waits for command-service repair. | waiting | exact test results |
 
 ### Workers Now
 
@@ -97,9 +100,56 @@ workers may be editing sibling slices, so do not revert unfamiliar changes.
 You may inspect adjacent owning code and make task-relevant edits needed to
 complete this slice.
 
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn
+subagents.
+
 Do not broaden product scope, push, stash, or run the full suite unless the
 parent assigns that verification resource. The parent owns commit checkpoints
 unless this prompt explicitly assigns you one.
+
+End with the required plan-swarm worker footer.
+```
+
+## Repair Wave Prompt Skeleton
+
+```text
+Use $agent-delegate with Cursor Agent composer-2.5-fast.
+
+Resume worker-b for the "command-service-repair" repair slice from
+docs/PACKS/example-plan_plan_swarm/phase-14/swarm-ledger.md.
+
+Accepted findings in this repair wave:
+- command execution bypass: overlay path still calls raw writer instead of
+  SurfaceSceneDevCommandService.
+- stale direct-save branch: old mutation path remains reachable after session
+  execution replacement.
+
+Likely fix path: start at the service/session call boundary and the overlay
+save tests. This is a hint, not a script; inspect the owning code and choose
+the cleanest implementation that satisfies the phase contract.
+
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn
+subagents.
+
+Do not broaden product scope, push, stash, or run the full suite unless the
+parent assigns that verification resource. End with the required plan-swarm
+worker footer.
+```
+
+## Verification Wave Prompt Skeleton
+
+```text
+Use $agent-delegate with Cursor Agent composer-2.5-fast.
+
+Run the "verify-command-service" verification slice from
+docs/PACKS/example-plan_plan_swarm/phase-14/swarm-ledger.md.
+
+You have the command-service verification lease. Run the listed command
+execution tests, inspect failures if any, and report exact commands/results.
+Do not edit source unless the verification slice explicitly asks for a repair.
+
+Maximize parallelism by using parallel agents. Do not invoke skills that spawn
+subagents.
 
 End with the required plan-swarm worker footer.
 ```
@@ -109,6 +159,8 @@ End with the required plan-swarm worker footer.
 ```text
 Accepted:
 - boundary-leak: route to qa-adapters worker; directly violates owner-boundary requirement.
+- command execution bypass: route to command-service repair wave with overlay
+  save tests as proof.
 
 Rejected:
 - none

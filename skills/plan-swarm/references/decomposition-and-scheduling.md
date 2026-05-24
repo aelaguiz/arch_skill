@@ -23,6 +23,18 @@ Each slice needs:
 Good slices are large enough for a capable worker to reason and small enough to
 finish without owning the whole phase.
 
+## Wave Types
+
+- `implementation`: initial phase slices from the plan contract.
+- `repair`: accepted review, test, integration, or worker findings batched into
+  follow-up slices.
+- `verification`: proof work assigned to a worker, especially for tests, builds,
+  generators, simulators, browsers, devices, or other shared resources.
+
+Repair and verification waves use the same decomposition judgment as initial
+implementation. The parent may give a likely fix path, but should delegate the
+actual fix or proof run.
+
 ## Split By
 
 - canonical owner boundary
@@ -39,13 +51,18 @@ share one design decision.
 
 - Launch slices whose dependencies are complete and whose edits are unlikely to
   collide.
+- Batch findings before dispatching follow-up work unless one blocker prevents
+  every other slice from moving.
 - Do not launch two workers into the same unsettled design decision.
 - Do not let multiple workers monopolize the same expensive test, simulator,
   browser, generator, or migration resource.
 - Give tightly coupled work to one worker or run it serially.
 - Run replacement paths before deletion or cleanup paths.
-- Keep full-suite verification for a designated verification worker or parent
-  checkpoint unless a worker has an explicit lease.
+- Prefer resuming the healthy worker who owns the related slice.
+- Spawn fresh when the previous worker is stuck, introduced bad fixes, or the
+  accepted finding moved to a different owner surface.
+- Keep full-suite verification for a designated verification worker unless a
+  different worker has an explicit lease.
 
 ## Chunk Table
 

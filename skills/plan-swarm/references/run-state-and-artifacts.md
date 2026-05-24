@@ -24,9 +24,12 @@ coordination notes, not a second plan and not machine-owned state.
 - active phase and stop boundary
 - implementation and review policy
 - slices, dependencies, likely collisions, and proof needed
+- implementation waves, repair waves, verification waves, and review/consult
+  waves
 - worker runtime/model, session id, status, and worklog path
+- child prompt parallelism posture
 - scarce verification assignments
-- batch, repair, review-cleanup, and final phase commit checkpoints
+- batch, repair-wave, review-cleanup, and final phase commit checkpoints
 - arbiter and thermonuclear review status
 - accepted, rejected, and deferred review findings
 - retries, issues, attempted responses, results, and next actions
@@ -59,6 +62,8 @@ Columns: `Slice`, `Goal`, `Worker`, `Parallelization`, `Status`, `Proof`.
 
 This is the visible chunking table. It shows what work exists, who owns it, why
 it can run now or must wait, and what proof will close it.
+Use the `Goal` or `Status` cell to make wave type visible when helpful:
+implementation, repair, verification, or review.
 
 ### Workers Now
 
@@ -78,8 +83,9 @@ Use this table for the current phase's blockers, failed or struggling workers,
 review findings, test failures, merge/collision trouble, resource contention,
 unclear ownership, and repeated retries. Each issue should name the affected
 worker or slice when known, what response was already tried, the result, and
-the next recovery action. If no difficulty is known yet, include one
-`none observed` row.
+the next recovery action. For accepted findings, name the repair or
+verification wave that owns the response. If no difficulty is known yet,
+include one `none observed` row.
 
 ## Prompt-First Artifact Rule
 
