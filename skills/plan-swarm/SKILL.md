@@ -41,8 +41,8 @@ without treating Git history as PR-ready.
 - The user names an existing plan doc and asks to finish one phase quickly.
 - A plan phase has independent owner surfaces that can be delegated in
   parallel.
-- The user asks for Codex, Claude, or Cursor Agent workers to implement plan
-  slices.
+- The user asks for Codex GPT/GBT, Claude Opus, or Cursor Composer workers to
+  implement plan slices.
 - A phase needs an external arbiter and strict maintainability pass before it
   can be called done.
 
@@ -69,8 +69,12 @@ without treating Git history as PR-ready.
 - When the user chooses Cursor Agent for implementation, Composer 2.5 means
   `composer-2.5-fast`; accept `composer`, `composer 2.5`, `composer-2.5`, or
   bare `2.5` in Cursor Agent context as that model.
-- Review runtime/model/effort must be explicit, or the user must say review is
-  same as implementation.
+- Implementation and review policy are independent. Cursor implementation does
+  not make review run through Cursor.
+- Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs
+  Opus, and Cursor Agent runs only `composer-2.5-fast`.
+- Arbiter, consult, and review work must use Codex GPT/GBT or Claude Opus.
+  Do not pass GPT/GBT or Claude model ids to Cursor Agent.
 - Workers are prompted like capable engineers, not micromanaged checklist
   executors.
 - Every child prompt, including implementation, repair, verification, arbiter,

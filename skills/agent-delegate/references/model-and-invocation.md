@@ -5,6 +5,8 @@ Use this reference to resolve what the user meant by "Claude", "Codex",
 phrasing, and to run the selected worker subprocess or explicit parallel group
 of worker subprocesses. Fresh one-shot is the default. Same-session resume is
 allowed only when the caller explicitly requires continuity for one worker.
+Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs
+Opus, and Cursor Agent runs Composer 2.5 Fast.
 
 ## Required Values
 
@@ -64,14 +66,17 @@ skill.
 
 Infer runtime only when the user's wording makes it unambiguous:
 
-- `codex`, `gpt`, `gpt-5.5`, `gpt 5.5 high`, or `gpt-5.3-codex` implies
+- `codex`, `openai`, `gpt`, `gbt`, `gpt-5.5`, `GBT55XI`,
+  `gpt 5.5 high`, or `gpt-5.3-codex` implies
   `runtime=codex`.
-- `claude`, `opus`, `sonnet`, or `haiku` implies `runtime=claude`.
+- `claude opus` or `opus` implies `runtime=claude`.
+- `sonnet` and `haiku` are not supported by this repo's subprocess doctrine;
+  ask for Opus instead of silently running them.
 - `agent`, `cursor`, `cursor agent`, or `cursor-agent` implies
-  `runtime=agent`. Cursor Agent may run model ids such as
-  `composer-2.5-fast`, `gpt-5.4-xhigh`, or
-  `claude-opus-4-7-thinking-xhigh`; the runtime name wins over the model
-  family token.
+  `runtime=agent` only for Composer. Cursor Agent always resolves to
+  `composer-2.5-fast`.
+- If a phrase mixes Cursor Agent with GPT/GBT or Claude, fail loud instead of
+  choosing a side. Never run GPT/GBT or Claude models through Cursor Agent.
 - If the user names only an effort level, such as "xhigh", ask for runtime and
   model.
 - If the user says only "delegate this" or "have another agent do this", ask
@@ -94,16 +99,15 @@ Treat model text as intent, not a loose alias:
 - For Codex, inspect `codex debug models` when needed and choose an available
   identifier with the same family and exact version. If no exact match exists
   or multiple matches are plausible, ask for the runnable model id.
-- For Claude, when the runtime is Claude and the user names family plus
-  version, prefer `claude-<family>-<version-with-hyphens>`, for example
-  `claude-opus-4-7` or `claude-sonnet-4-6`.
-- Family-only Claude aliases such as `opus`, `sonnet`, or `haiku` are allowed
-  only when the user did not pin a version.
-- For Cursor Agent, Composer 2.5 always resolves to `composer-2.5-fast`.
-  Accept `composer`, `composer 2.5`, `composer-2.5`, `composer-2.5-fast`, or
-  bare `2.5` in a Cursor Agent context as that runnable id. For other Cursor
-  Agent models, use an exact runnable id from `agent models` or
-  `agent --list-models`. Do not map effort words across model families.
+- For Claude, only Opus is supported. When the runtime is Claude and the user
+  names family plus version, prefer `claude-opus-<version-with-hyphens>`, for
+  example `claude-opus-4-7`. If the user names Sonnet or Haiku, fail loud and
+  ask for an Opus choice.
+- For Cursor Agent, always use `composer-2.5-fast`. Accept `agent`, `cursor`,
+  `cursor agent`, `cursor-agent`, `composer`, `composer 2.5`,
+  `composer-2.5`, `composer-2.5-fast`, or bare `2.5` in Cursor Agent context
+  as that runnable id. Do not use Cursor model discovery for non-Composer
+  routing, and do not pass GPT/GBT or Claude model ids to Cursor Agent.
 - Do not run paid trial prompts to discover whether a Claude model exists. Use
   the CLI help/config surface when available; otherwise ask.
 
@@ -124,8 +128,8 @@ exact-version preservation and fail-loud behavior.
 - Claude accepts `low`, `medium`, `high`, `xhigh`, and `max` via `--effort`.
 - Codex effort is passed as `-c model_reasoning_effort='"<level>"'`.
 - Cursor Agent does not expose a separate `--effort` flag in the local CLI.
-  Store effort as `encoded-in-model` or `encoded-in-model:<requested-effort>`
-  and pass only `--model "<resolved_agent_model>"`.
+  Store effort as `encoded-in-model` and pass only
+  `--model "composer-2.5-fast"`.
 - For Codex, confirm the selected model supports the requested effort when
   `codex debug models` is needed for model resolution.
 - If the effort is missing or the selected model does not support it, ask.
@@ -373,6 +377,7 @@ input session id in `session_id.txt`.
 
 Use this shape for both `fresh-one-shot` and `fresh-resumable` Cursor Agent
 delegations. Cursor Agent has no `--verbose` flag; that flag is Claude-only.
+`<resolved_agent_model>` must be `composer-2.5-fast`.
 
 ```bash
 agent -p \
@@ -403,6 +408,7 @@ the run directory.
 
 Use this shape to resume an explicit Cursor Agent session. Cursor Agent has no
 `--verbose` flag; that flag is Claude-only.
+`<resolved_agent_model>` must be `composer-2.5-fast`.
 
 ```bash
 agent -p \

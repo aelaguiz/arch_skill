@@ -9,6 +9,9 @@ The arbiter is a delegated observation-only worker. It compares the phase
 contract, execution ledger, current diff, worker logs, and proof evidence.
 The arbiter prompt must include: `Maximize parallelism by using parallel
 agents. Do not invoke skills that spawn subagents.`
+Run arbiter, consult, and review work through Codex GPT/GBT or Claude Opus.
+Do not route review through Cursor Agent just because implementation used
+Cursor Composer, and do not pass GPT/GBT or Claude model ids to Cursor Agent.
 
 Ask it:
 

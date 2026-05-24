@@ -1,9 +1,9 @@
 """Shared runtime/model/effort resolution for arch_skill subprocesses.
 
 This module is deterministic plumbing for skill scripts. It encodes the
-repo's existing Stepwise/fresh-consult doctrine: preserve the user's model
-family and exact version, use local model discovery when needed, and fail loud
-instead of substituting a nearby model.
+provider-owned routing rule: Codex runs GPT/GBT/OpenAI models, Claude Code runs
+Opus, and Cursor Agent runs Composer 2.5 Fast. Cross-provider phrases fail loud
+instead of routing an expensive model through the wrong harness.
 """
 
 from __future__ import annotations
@@ -20,12 +20,13 @@ from typing import Any
 VALID_RUNTIMES = {"agent", "claude", "codex"}
 VALID_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 
-_CLAUDE_FAMILIES = {"opus", "sonnet", "haiku"}
+_CLAUDE_FAMILIES = {"opus"}
 _CODEX_FAMILY_RE = re.compile(
-    r"\bgpt[\s_-]*(?P<version>\d+(?:\.\d+)?)"
+    r"\b(?:gpt|gbt)[\s_-]*(?P<version>\d+(?:\.\d+)?)"
     r"(?P<suffix>(?:[\s_-]*(?:mini|codex|spark))*)\b",
     re.IGNORECASE,
 )
+_GBT_COMPACT_RE = re.compile(r"\bgbt[\s_-]*55(?:[\s_-]*(?:xhigh|xi|x))?\b", re.IGNORECASE)
 _CLAUDE_FAMILY_RE = re.compile(
     r"\b(?P<family>opus|sonnet|haiku)"
     r"(?:[\s_-]*(?P<version>\d+(?:[\.-]\d+)*))?\b",
@@ -106,32 +107,6 @@ def discover_codex_models() -> list[str]:
     return sorted(candidates)
 
 
-def discover_agent_models() -> list[str]:
-    """Return model ids from the local Cursor Agent CLI when available."""
-
-    if shutil.which("agent") is None:
-        return []
-    candidates: set[str] = set()
-    for argv in (["agent", "models"], ["agent", "--list-models"]):
-        proc = subprocess.run(
-            argv,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            check=False,
-        )
-        if proc.returncode != 0:
-            continue
-        for token in re.findall(r"\b[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)+\b", proc.stdout.lower()):
-            cleaned = token.strip("`'\",:;()[]{}")
-            if _looks_like_agent_model_id(cleaned):
-                candidates.add(cleaned)
-        if candidates:
-            break
-    return sorted(candidates)
-
-
 def resolve_execution_phrase(
     source_quote: str,
     *,
@@ -143,11 +118,13 @@ def resolve_execution_phrase(
     Examples:
     - "Claude Opus 4.7 xhigh" -> claude / claude-opus-4-7 / xhigh
     - "codex gpt 5.4 mini high" -> codex / gpt-5.4-mini / high
+    - "GBT55XI" -> codex / gpt-5.5 / xhigh
     - "cursor agent composer-2.5-fast" -> agent / composer-2.5-fast / encoded-in-model
     - "cursor agent composer 2.5" -> agent / composer-2.5-fast / encoded-in-model
 
     The function raises ModelResolutionError when a required value is missing
-    or when exact-version-preserving model discovery is impossible.
+    or when exact-version-preserving model discovery is impossible. Cursor
+    Agent is Composer-only even if the local CLI lists other model ids.
     """
 
     raw = source_quote.strip()
@@ -277,6 +254,10 @@ def resolve_role_execution_policy(
 
 
 def _extract_effort(lowered: str) -> str | None:
+    if re.search(r"\b(?:extra[\s_-]*high|x[\s_-]*high)\b", lowered):
+        return "xhigh"
+    if re.search(r"\bgbt[\s_-]*55[\s_-]*(?:xi|x)\b", lowered):
+        return "xhigh"
     found = [effort for effort in VALID_EFFORTS if re.search(rf"\b{effort}\b", lowered)]
     if len(found) == 1:
         return found[0]
@@ -284,15 +265,22 @@ def _extract_effort(lowered: str) -> str | None:
 
 
 def _infer_runtime(lowered: str) -> tuple[str | None, str]:
-    has_codex = bool(re.search(r"\b(codex|openai|gpt)\b", lowered))
+    has_codex = bool(
+        re.search(r"\b(codex|openai|gpt|gbt)\b", lowered)
+        or _GBT_COMPACT_RE.search(lowered)
+    )
     has_claude = bool(re.search(r"\b(claude|anthropic|opus|sonnet|haiku)\b", lowered))
     has_agent = bool(
         re.search(r"\b(cursor(?:[-\s]+agent)?|cursor-agent|agent)\b", lowered)
     )
+    if has_agent and (has_codex or has_claude):
+        raise ModelResolutionError(
+            "execution phrase mixes Cursor Agent with a GPT/GBT/Claude model; "
+            "Codex runs GPT/GBT, Claude Code runs Opus, and Cursor Agent runs "
+            "composer-2.5-fast"
+        )
     if has_agent:
-        explicit_other_runtime = bool(re.search(r"\b(codex|openai|anthropic)\b", lowered))
-        if not explicit_other_runtime:
-            return "agent", "inferred_from_runtime_name"
+        return "agent", "inferred_from_runtime_name"
     if sum(bool(v) for v in [has_codex, has_claude, has_agent]) > 1:
         raise ModelResolutionError(
             "execution phrase names multiple runtime families; split the roles"
@@ -322,11 +310,14 @@ def _resolve_claude_model(raw: str) -> str:
 
 def _resolve_codex_model(raw: str, *, codex_models: list[str] | None) -> str:
     match = _CODEX_FAMILY_RE.search(raw)
-    if not match:
+    compact = _GBT_COMPACT_RE.search(raw)
+    if not match and not compact:
         raise ModelResolutionError(f"could not find a Codex/GPT model in {raw!r}")
 
-    version = match.group("version")
-    suffix_words = re.findall(r"(mini|codex|spark)", match.group("suffix"), re.IGNORECASE)
+    version = "5.5" if compact and not match else match.group("version")
+    suffix_words = [] if compact and not match else re.findall(
+        r"(mini|codex|spark)", match.group("suffix"), re.IGNORECASE
+    )
     candidate = f"gpt-{version}"
     if suffix_words:
         candidate += "-" + "-".join(word.lower() for word in suffix_words)
@@ -359,14 +350,13 @@ def _same_codex_family_and_version(candidate: str, model: str) -> bool:
 
 
 def _looks_like_agent_model_id(token: str) -> bool:
-    return token.startswith(("composer-", "gpt-", "claude-", "sonnet-", "opus-", "haiku-"))
+    return token.startswith("composer-")
 
 
 def _resolve_agent_model(raw: str, *, agent_models: list[str] | None) -> str:
-    models = agent_models
-    if models is None:
-        models = discover_agent_models()
-    normalized_models = [model.lower() for model in models]
+    normalized_models = [
+        model.lower() for model in (agent_models or []) if model.lower().startswith("composer-")
+    ]
     lowered = raw.lower()
 
     candidate = _extract_agent_model_candidate(lowered)
@@ -377,21 +367,13 @@ def _resolve_agent_model(raw: str, *, agent_models: list[str] | None) -> str:
             f"{raw!r} did not match an available Cursor Agent model id; candidate was {candidate!r}"
         )
 
-    for model in normalized_models:
-        if re.search(rf"(?<![a-z0-9_.-]){re.escape(model)}(?![a-z0-9_.-])", lowered):
-            return model
-
     if candidate is None:
         raise ModelResolutionError(
-            f"could not find a Cursor Agent model id in {raw!r}; use an exact id from `agent models`"
+            f"could not find Composer 2.5 in {raw!r}; Cursor Agent is limited to composer-2.5-fast"
         )
 
-    if not normalized_models:
-        return candidate
-    if candidate in normalized_models:
-        return candidate
     raise ModelResolutionError(
-        f"{raw!r} did not match an available Cursor Agent model id; candidate was {candidate!r}"
+        f"unsupported Cursor Agent model in {raw!r}; Cursor Agent is limited to composer-2.5-fast"
     )
 
 

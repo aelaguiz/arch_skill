@@ -1,15 +1,16 @@
 # Model And Invocation
 
 Use this reference to resolve what the user meant by "Claude", "Codex",
-"Cursor Agent", "opus high", "gpt 5.5 xhigh", "composer-2.5-fast", or similar
-phrasing, and to run the selected fresh subprocess or explicit parallel group
-of fresh subprocesses.
+"opus high", "gpt 5.5 xhigh", "GBT55XI", or similar phrasing, and to run the
+selected fresh subprocess or explicit parallel group of fresh subprocesses.
+Fresh consult is review/second-opinion work, so it uses Codex for GPT/GBT and
+Claude Code for Opus. It does not run Cursor Agent consults.
 
 ## Required Values
 
 Every consult child needs three execution values:
 
-- `runtime` - `claude`, `codex`, or `agent`
+- `runtime` - `claude` or `codex`
 - `model` - the runnable CLI model identifier
 - `effort` - the reasoning effort level
 
@@ -28,12 +29,16 @@ Add only the missing facts to the question when some values are already known.
 
 Infer runtime only when the user's wording makes it unambiguous:
 
-- `codex`, `gpt`, `gpt-5.5`, `gpt 5.5 high`, or `gpt-5.3-codex` implies
+- `codex`, `openai`, `gpt`, `gbt`, `gpt-5.5`, `GBT55XI`,
+  `gpt 5.5 high`, or `gpt-5.3-codex` implies
   `runtime=codex`.
-- `claude`, `opus`, `sonnet`, or `haiku` implies `runtime=claude`.
-- `agent`, `cursor`, `cursor agent`, or `cursor-agent` implies
-  `runtime=agent`. Cursor Agent may run `gpt-*` or `claude-*` model ids; the
-  runtime name wins over the model-family token.
+- `claude opus` or `opus` implies `runtime=claude`.
+- `sonnet` and `haiku` are not supported by this repo's subprocess doctrine;
+  ask for Opus instead of silently running them.
+- `agent`, `cursor`, `cursor agent`, or `cursor-agent` is not a fresh-consult
+  runtime. If a phrase mixes Cursor Agent with GPT/GBT or Claude, fail loud:
+  Codex runs GPT/GBT, Claude Code runs Opus, and Cursor Agent runs only
+  Composer implementation workers.
 - If the user names only an effort level, such as "xhigh", ask for runtime and
   model.
 - If the user says only "run a fresh consult" or "get a second opinion", ask
@@ -56,17 +61,13 @@ Treat model text as intent, not a loose alias:
 - For Codex, inspect `codex debug models` when needed and choose an available
   identifier with the same family and exact version. If no exact match exists
   or multiple matches are plausible, ask for the runnable model id.
-- For Claude, when the runtime is Claude and the user names family plus
-  version, prefer `claude-<family>-<version-with-hyphens>`, for example
-  `claude-opus-4-7` or `claude-sonnet-4-6`.
-- Family-only Claude aliases such as `opus`, `sonnet`, or `haiku` are allowed
-  only when the user did not pin a version.
-- For Cursor Agent, Composer 2.5 always resolves to `composer-2.5-fast`.
-  Accept `composer`, `composer 2.5`, `composer-2.5`, `composer-2.5-fast`, or
-  bare `2.5` in a Cursor Agent context as that runnable id. For other Cursor
-  Agent models, use an exact runnable id from `agent models` or
-  `agent --list-models`. Cursor effort is encoded in model ids, so do not
-  invent a separate effort flag.
+- For Claude, only Opus is supported. When the runtime is Claude and the user
+  names family plus version, prefer `claude-opus-<version-with-hyphens>`, for
+  example `claude-opus-4-7`. If the user names Sonnet or Haiku, fail loud and
+  ask for an Opus choice.
+- Cursor Agent is not a fresh-consult model host. Do not use Cursor model
+  discovery for consult routing, and do not pass GPT/GBT or Claude model ids
+  to Cursor Agent.
 - Do not run paid trial prompts to discover whether a Claude model exists. Use
   the CLI help/config surface when available; otherwise ask.
 
@@ -86,9 +87,6 @@ fail-loud behavior.
 
 - Claude accepts `low`, `medium`, `high`, `xhigh`, and `max` via `--effort`.
 - Codex effort is passed as `-c model_reasoning_effort='"<level>"'`.
-- Cursor Agent does not expose a separate `--effort` flag in the local CLI.
-  Store effort as `encoded-in-model` or `encoded-in-model:<requested-effort>`
-  and pass only `--model "<resolved_agent_model>"`.
 - For Codex, confirm the selected model supports the requested effort when
   `codex debug models` is needed for model resolution.
 - If the effort is missing or the selected model does not support it, ask.
@@ -112,8 +110,8 @@ on the command line.
 
 `events.jsonl` is the live child stream. `stderr.log` is the diagnostic error
 stream. `final.txt` is the final assistant text: Codex writes it directly with
-`-o`; for Claude and Cursor Agent, copy the `result` text from the final
-`type=result` event after the process exits.
+`-o`; for Claude, copy the `result` text from the final `type=result` event
+after the process exits.
 
 ## Parallel Consult Group
 
@@ -142,10 +140,10 @@ EVENTS_PATH="$RUN_DIR/events.jsonl"
 STDERR_PATH="$RUN_DIR/stderr.log"
 ```
 
-Launch each child with the same Codex, Claude, or Cursor Agent command shape
-below, using that child's paths. Record the shell PID and exit status in the
-child directory if the host shell makes that convenient, but do not introduce a
-script, controller, detached monitor, or state machine.
+Launch each child with the same Codex or Claude command shape below, using
+that child's paths. Record the shell PID and exit status in the child directory
+if the host shell makes that convenient, but do not introduce a script,
+controller, detached monitor, or state machine.
 
 Default to one shared runtime/model/effort for all children. If the user clearly
 assigns different execution choices to different children, apply those choices
@@ -224,37 +222,6 @@ write its `result` text to `final.txt` before applying the verdict-footer
 checks. If no result event exists after a zero exit, treat the run as malformed
 and preserve the run directory.
 
-## Cursor Agent Command
-
-Use this shape for a Cursor Agent consult. Cursor Agent has no `--verbose`
-flag; that flag is Claude-only.
-
-```bash
-agent -p \
-  --mode ask \
-  --output-format stream-json \
-  --trust \
-  --workspace "<work_root>" \
-  --model "<resolved_agent_model>" \
-  < "$PROMPT_PATH" \
-  > "$EVENTS_PATH" \
-  2> "$STDERR_PATH"
-```
-
-Flag meanings:
-
-- `--mode ask` keeps the consult in read-only/question-answering posture.
-- `--output-format stream-json` emits live JSONL and a terminal `result` event.
-  Do not add `--verbose`; that flag is Claude-only.
-- `--workspace <work_root>` pins the filesystem context.
-- `--trust` avoids an interactive trust prompt in known local workspaces.
-- Cursor Agent has no documented hook-suppression flag. Do not invent one.
-
-After Cursor Agent exits, read the final `type=result` event from
-`events.jsonl` and write its `result` text to `final.txt` before applying the
-verdict-footer checks. If no result event exists after a zero exit, treat the
-run as malformed and preserve the run directory.
-
 ## Monitoring Posture
 
 Consults are not instant. A normal repo-backed consult commonly takes 5+
@@ -267,9 +234,8 @@ process liveness every few minutes; do not poll every few seconds. A missing
 still alive. Investigate only after the process exits non-zero, the stream
 shows an error, or there is no stream activity for a long quiet window.
 
-Do not use Claude `-r`, Cursor Agent `--resume`, `--continue`, `agent resume`,
-`agent ls`, or Codex `exec resume`; a consult is a cold read, not a resumed
-conversation.
+Do not use Claude `-r` or Codex `exec resume`; a consult is a cold read, not a
+resumed conversation. Do not use Cursor Agent for fresh consults.
 
 ## Failure Behavior
 
@@ -280,8 +246,7 @@ Fail loud and preserve the run directory when:
 - the child exits non-zero
 - `final.txt` is empty
 - Claude exits without a final `type=result` event
-- Cursor Agent exits without a final `type=result` event
 - the child omits the required verdict footer
 
-Do not silently fall back between Claude, Codex, and Cursor Agent, one model
-to another model, or one effort level to another.
+Do not silently fall back between Claude and Codex, one model to another model,
+or one effort level to another.

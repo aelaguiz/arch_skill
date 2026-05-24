@@ -3,6 +3,8 @@
 `model-consensus` invokes Claude, Codex, or Cursor Agent child models directly
 from the parent agent. It does not create a new runner script, model alias
 table, harness, or deterministic controller.
+Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs
+Opus, and Cursor Agent runs Composer 2.5 Fast.
 
 ## Required Participant Values
 
@@ -20,7 +22,7 @@ If any execution choice is missing or ambiguous, ask one consolidated question:
 Before I run model-consensus, I need the two participant choices. These are
 real external model sessions and can spend model budget. Please give
 runtime/model/effort for Model A and Model B, and say whether either should be
-adversarial. For Cursor Agent, effort is encoded in the model id.
+adversarial. Cursor Agent is Composer-only.
 ```
 
 ## Model Phrase Resolution
@@ -34,23 +36,21 @@ Follow the shared model-resolution doctrine:
   pause before execution and ask whether they meant `gpt-5.5` or explicitly
   want `gpt-5.4`. This is an intent check, not an alias rule: do not rewrite
   the version yourself.
-- Infer runtime only from unambiguous family evidence: `gpt`/`codex` implies
-  Codex; `claude`/`opus`/`sonnet`/`haiku` implies Claude; `agent`, `cursor`,
-  `cursor agent`, or `cursor-agent` implies Cursor Agent. Cursor Agent may
-  run `gpt-*` or `claude-*` model ids; the runtime name wins over the model
-  family token.
+- Infer runtime only from unambiguous family evidence: `gpt`/`gbt`/`codex`
+  implies Codex; `claude opus` or `opus` implies Claude; `agent`, `cursor`,
+  `cursor agent`, or `cursor-agent` implies Cursor Agent only for Composer.
+  If a phrase mixes Cursor Agent with GPT/GBT or Claude, fail loud instead of
+  choosing a side.
 - For Codex, inspect `codex debug models` when model availability matters and
   choose an available id with the same family and exact version.
-- For Claude family plus version, prefer
-  `claude-<family>-<version-with-hyphens>`, such as `claude-opus-4-7`.
-- Family-only Claude aliases are allowed only when the user did not pin a
-  version.
-- For Cursor Agent, Composer 2.5 always resolves to `composer-2.5-fast`.
-  Accept `composer`, `composer 2.5`, `composer-2.5`, `composer-2.5-fast`, or
-  bare `2.5` in a Cursor Agent context as that runnable id. For other Cursor
-  Agent models, use an exact runnable id from `agent models` or
-  `agent --list-models`. Cursor effort is encoded in model ids, so do not
-  invent a separate `--effort` flag.
+- For Claude, only Opus is supported. For Opus family plus version, prefer
+  `claude-opus-<version-with-hyphens>`, such as `claude-opus-4-7`. If the
+  user names Sonnet or Haiku, fail loud and ask for an Opus choice.
+- For Cursor Agent, always use `composer-2.5-fast`. Accept `composer`,
+  `composer 2.5`, `composer-2.5`, `composer-2.5-fast`, or bare `2.5` in a
+  Cursor Agent context as that runnable id. Do not use Cursor model discovery
+  for non-Composer routing, and do not pass GPT/GBT or Claude model ids to
+  Cursor Agent.
 - Do not run paid trial prompts to discover Claude model availability.
 - If discovery is unavailable, ambiguous, or no exact match exists, ask for the
   runnable model id.
@@ -174,6 +174,7 @@ may exist in the same repo.
 Use `stream-json` for participant sessions so long repo-reading work has an
 active monitoring path. Cursor Agent has no `--verbose` flag; that flag is
 Claude-only.
+`<resolved_agent_model>` must be `composer-2.5-fast`.
 
 ```bash
 agent -p \
@@ -207,7 +208,8 @@ agent -p \
 
 Use `--resume <session_id>`, not `--continue`, `agent resume`, or `agent ls`,
 because multiple child sessions may exist in the same repo. Do not add
-`--verbose`; that flag is Claude-only.
+`--verbose`; that flag is Claude-only. `<resolved_agent_model>` must be
+`composer-2.5-fast`.
 
 ## Monitoring Posture
 

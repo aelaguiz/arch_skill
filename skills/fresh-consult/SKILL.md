@@ -1,17 +1,17 @@
 ---
 name: fresh-consult
-description: "Invoke one or more fresh Claude/Codex/Cursor Agent subprocesses for prompt-engineered second opinions with clean context. Use when the user or another skill asks for a cold read, parallel consults, external consult, flow consistency audit, completion check, readability/confusion check, or general second opinion from Claude/Codex/Cursor Agent. Ask once if runtime, model, effort, or consult target is missing; run hook-suppressed where supported and unsandboxed; report each child result back. Do NOT use for deterministic code-review coverage (`code-review`), Codex `-p yolo` reviews (`codex-review-yolo`), ordered subprocess orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
+description: "Invoke one or more fresh Claude Opus or Codex GPT/GBT subprocesses for prompt-engineered second opinions with clean context. Use when the user or another skill asks for a cold read, parallel consults, external consult, flow consistency audit, completion check, readability/confusion check, or general second opinion. Ask once if runtime, model, effort, or consult target is missing; run hook-suppressed where supported and unsandboxed; report each child result back. Do NOT use Cursor Agent, deterministic code-review coverage (`code-review`), Codex `-p yolo` reviews (`codex-review-yolo`), ordered subprocess orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
 metadata:
-  short-description: "Fresh Claude/Codex/Cursor Agent second opinion"
+  short-description: "Fresh Claude Opus or Codex GPT second opinion"
 ---
 
 # Fresh Consult
 
 Use this skill when the user or another skill needs one or more clean second
-opinions from fresh Claude, Codex, or Cursor Agent subprocesses. Each child
-model starts from disk and the consult prompt, not from the current chat
-history, so it can catch confusion, drift, missing completion, or weak
-reasoning the parent may have normalized.
+opinions from fresh Claude Opus or Codex GPT/GBT subprocesses. Each child model
+starts from disk and the consult prompt, not from the current chat history, so
+it can catch confusion, drift, missing completion, or weak reasoning the parent
+may have normalized.
 
 This is a prompt-engineering skill. It ships no scripts, shims, hook
 controllers, state machines, parsers, or install-time automation.
@@ -20,7 +20,6 @@ controllers, state machines, parsers, or install-time automation.
 
 - "Ask Claude for a cold read of this flow."
 - "Use Codex to audit whether this plan phase is actually complete."
-- "Use Cursor Agent for a clean read of this implementation plan."
 - "Run a fresh consult for consistency on these skills."
 - "Run three parallel fresh consults on this plan."
 - "Get a second opinion on whether this doc is linear and not confusing."
@@ -33,6 +32,9 @@ controllers, state machines, parsers, or install-time automation.
   and enforced Codex `gpt-5.4` `xhigh` synthesis. Use `$code-review`.
 - The user specifically asks for the existing Codex `-p yolo` review pattern.
   Use `$codex-review-yolo`.
+- The user asks to use Cursor Agent for a consult or review. Cursor Agent is
+  only a Composer implementation-worker lane; ask for Codex GPT/GBT or Claude
+  Opus instead.
 - The work is an ordered subprocess workflow with manifests, critics, repair
   loops, or persistent orchestration. Use `$stepwise` or `$arch-epic`.
 - The child is expected to edit files or fix issues. Use `$agent-delegate` for
@@ -46,9 +48,11 @@ controllers, state machines, parsers, or install-time automation.
 
 - Resolve each consult objective, exact user-named artifacts or target paths,
   hard constraints, and the work root before launching child processes.
-- Runtime, model, and effort must be known. For Cursor Agent, effort is
-  encoded in the model id. If any value is missing or ambiguous, ask one
+- Runtime, model, and effort must be known. Codex runs GPT/GBT/OpenAI models;
+  Claude Code runs Opus. If any value is missing or ambiguous, ask one
   consolidated question before invoking.
+- Never run a fresh consult through Cursor Agent. Do not pass GPT/GBT or
+  Claude model ids to Cursor Agent.
 - Treat model text as intent, not a fuzzy alias. Preserve exact family and
   numeric version; never silently substitute a nearby model.
 - Run the child fresh, hook-suppressed where the runtime supports it, and
@@ -80,8 +84,8 @@ controllers, state machines, parsers, or install-time automation.
    runtime/model/effort from the user's words.
 4. If runtime/model/effort or consult target is incomplete, ask one question
    that names exactly what is missing and what it controls.
-5. Confirm the selected CLI exists with `command -v codex`, `command -v
-   claude`, or `command -v agent`.
+5. Confirm the selected CLI exists with `command -v codex` or `command -v
+   claude`.
 6. Create the run directory or group directory and write each consult prompt to
    its own `prompt.md`.
 7. Invoke each child with the exact command shape from the invocation reference.

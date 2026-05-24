@@ -1,17 +1,17 @@
 ---
 name: agent-delegate
-description: "Delegate one or more concrete tasks to Claude/Codex/Cursor Agent subprocesses with full local agent capabilities. Use when the user wants another agent, multiple agents, or parallel agents to implement, edit, investigate-and-fix, run commands, use installed skills, or resume one previously delegated same-runtime worker session when continuity is explicitly required. Fresh one-shot is the default; ask once if runtime, model, effort, work root, write scope, task, or resume handle is missing. Run hook-suppressed where supported and unsandboxed in the shared worktree. Do NOT use for read-only second opinions (`fresh-consult`), deterministic reviews (`code-review`/`codex-review-yolo`), two-model plan convergence (`model-consensus`), ordered workflow orchestration (`stepwise`/`arch-epic`), or detached/background delegation."
+description: "Delegate one or more concrete tasks to Claude Opus, Codex GPT/GBT, or Cursor Composer subprocesses with full local agent capabilities. Use when the user wants another agent, multiple agents, or parallel agents to implement, edit, investigate-and-fix, run commands, use installed skills, or resume one previously delegated same-runtime worker session when continuity is explicitly required. Fresh one-shot is the default; ask once if runtime, model, effort, work root, write scope, task, or resume handle is missing. Run hook-suppressed where supported and unsandboxed in the shared worktree. Do NOT use for read-only second opinions (`fresh-consult`), deterministic reviews (`code-review`/`codex-review-yolo`), two-model plan convergence (`model-consensus`), ordered workflow orchestration (`stepwise`/`arch-epic`), or detached/background delegation."
 metadata:
-  short-description: "Claude/Codex/Cursor Agent worker with opt-in resume"
+  short-description: "Claude Opus, Codex GPT, or Cursor Composer worker"
 ---
 
 # Agent Delegate
 
-Use this skill when the user wants one or more Claude, Codex, or Cursor Agent
-subprocesses to do concrete tasks with normal local agent capabilities. Fresh
-one-shot delegation is the default: each child starts from disk and the
-delegation prompt, not from the current chat history. When the caller
-explicitly requires continuity for one worker, resume the same runtime's
+Use this skill when the user wants one or more Claude Opus, Codex GPT/GBT, or
+Cursor Composer subprocesses to do concrete tasks with normal local agent
+capabilities. Fresh one-shot delegation is the default: each child starts from
+disk and the delegation prompt, not from the current chat history. When the
+caller explicitly requires continuity for one worker, resume the same runtime's
 previously delegated worker session with a new, bounded prompt.
 
 The child may read files, edit files, run commands, verify its work, and use
@@ -27,7 +27,7 @@ automation.
 - "Run two parallel agents on these fixes."
 - "Delegate this refactor to Claude and report back."
 - "Use Codex to fix the docs drift and run the checks."
-- "Use Cursor Agent to implement this slice and report back."
+- "Use Cursor Agent Composer to implement this slice and report back."
 - "Spin up a fresh agent to investigate and repair this failing test."
 - "Have a child agent use `$skill-authoring` to patch this skill package."
 - "Resume the same delegated Claude session and continue with higher effort."
@@ -60,9 +60,11 @@ automation.
 - Resolve each delegated task, success bar, work root, allowed write scope,
   constraints, delegation mode, and exact user-named inputs before launching
   child processes.
-- Runtime, model, and effort must be known. For Cursor Agent, effort is
-  encoded in the model id. If any value is missing or ambiguous, ask one
-  consolidated question before invoking.
+- Runtime, model, and effort must be known. Codex runs GPT/GBT/OpenAI models,
+  Claude Code runs Opus, and Cursor Agent runs `composer-2.5-fast`. If any
+  value is missing or ambiguous, ask one consolidated question before invoking.
+- Never run GPT/GBT or Claude models through Cursor Agent. Do not pass
+  GPT/GBT or Claude model ids to Cursor Agent.
 - Delegation mode is one of `fresh-one-shot`, `fresh-resumable`, or `resume`.
   Default to `fresh-one-shot`. Use `fresh-resumable` or `resume` only when the
   caller explicitly requires same-session continuity.
