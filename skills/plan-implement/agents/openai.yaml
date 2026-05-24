@@ -1,0 +1,7 @@
+interface:
+  display_name: "Plan Implement"
+  short_description: "Plan-backed implementation with resumable review state"
+  default_prompt: "Use $plan-implement to implement code from an existing plan, phase, section, or checklist while keeping the plan, plan-audit log, implementation log, proof freshness, and warm plan-backed review aligned. Work depth-first from narrow proven slices, update artifacts only at meaningful boundaries, reuse proof until it is stale, run checks for impact rather than habit, use native subagents when they save time, and do not manually spawn separate coding-harness executables or create scripts, runners, controllers, or deterministic harnesses."
+
+policy:
+  allow_implicit_invocation: true

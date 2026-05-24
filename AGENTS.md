@@ -123,6 +123,12 @@ Claude Code, and Gemini.
   code-quality bar. Its `implementation-audit` mode is plan-backed code review
   only: it does not run tests, ask for logs, prove CI, investigate honesty, or
   replace `$code-review` for generic diffs and PRs.
+- Use `$plan-implement` when the user wants to implement an existing plan,
+  phase, section, checklist, issue-body plan, or design doc while keeping the
+  plan, plan-audit log, implementation log, proof freshness, and warm
+  plan-backed review aligned. It is the lightweight implementation lane: use
+  native subagents when helpful, but do not manually spawn `codex`, `claude`,
+  or `agent` executables or turn the work into an external worker swarm.
 - Use `$plan-swarm` when the user wants to implement a named phase or phase
   range from an existing plan document by having the parent agent decompose
   the phase into independently delegable slices, launch or resume parallel
