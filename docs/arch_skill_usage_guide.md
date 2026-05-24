@@ -565,7 +565,7 @@ Examples:
 
 Use when the user or another skill wants one or more clean-context second opinions from fresh Claude, Codex, or Cursor Agent subprocesses on concrete artifacts, completion checks, flow consistency questions, or readability/confusion checks. It is prompt-only: it writes consult prompts, runs the selected local CLI hook-suppressed where supported and unsandboxed, captures each child `prompt.md`, `final.txt`, `events.jsonl`, and `stderr.log` under `/tmp/fresh-consult/...`, and reports each child verdict back to the parent.
 
-The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex, `Claude Opus 4.7` for Claude, or `Cursor Agent composer-2.5-fast` for Cursor Agent. Exact model versions are preserved; there is no silent downgrade, provider switch, or effort substitution. Cursor Agent effort is encoded in the model id.
+The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex, `Claude Opus 4.7` for Claude, or `Cursor Agent composer 2.5` for Cursor Agent. Composer 2.5 always resolves to `composer-2.5-fast`. Exact model versions are preserved; there is no silent downgrade, provider switch, or effort substitution. Cursor Agent effort is encoded in the model id.
 
 Consult children commonly take 5+ minutes; broad `xhigh` or `max` reads can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -587,7 +587,7 @@ Practical rule:
 
 Use when the user wants one or more fresh Claude, Codex, or Cursor Agent subprocesses to do concrete work in the current workspace: implementation, editing, investigation-and-fix, command execution, verification, or installed-skill use. It is prompt-only: it writes delegation prompts, runs the selected local CLI hook-suppressed where supported and unsandboxed in the shared worktree, captures each child `prompt.md`, `final.txt`, `events.jsonl`, `stderr.log`, and `execution.json` under `/tmp/agent-delegate/...`, then reports status, changed files, verification, blockers, follow-up, and run directories.
 
-The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex, `Claude Opus 4.7` for Claude, or `Cursor Agent composer-2.5-fast` for Cursor Agent. Exact model versions are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
+The user supplies runtime, model, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.5` for Codex, `Claude Opus 4.7` for Claude, or `Cursor Agent composer 2.5` for Cursor Agent. Composer 2.5 always resolves to `composer-2.5-fast`. Exact model versions are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, or `max` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -607,11 +607,11 @@ Practical rule:
 
 ### `plan-swarm`
 
-Use when the user wants to implement one named phase or explicit phase range from an existing plan document as fast as possible without dropping the quality bar. It extracts a compact phase contract, decomposes the work into independently delegable slices, launches or resumes Codex, Claude, or Cursor Agent workers through `agent-delegate`, coordinates scarce verification manually, writes human worklogs next to the plan, and closes only after arbiter and thermonuclear findings are triaged.
+Use when the user wants to implement one named phase or explicit phase range from an existing plan document as fast as possible without dropping the quality bar. It extracts a compact phase contract, decomposes the work into independently delegable slices, launches or resumes Codex, Claude, or Cursor Agent workers through `agent-delegate`, batches review/test findings into delegated repair and verification waves, writes human worklogs next to the plan, and closes only after arbiter and thermonuclear findings are triaged.
 
 The parent agent owns orchestration: plan interpretation, decomposition, worker prompts, parallel delegation, session reuse, review triage, and completion judgment. Coordination stays readable in the phase contract, swarm ledger, worker logs, review notes, and final phase report next to the plan.
 
-Cursor Agent implementation defaults to `composer-2.5-fast` only when the user chooses Cursor Agent. Review runtime/model/effort must be explicit, or the user must say review should use the same execution policy. The skill does not create worktrees, commit, push, use latest-session resume, or continue beyond the requested phase boundary.
+When the user chooses Cursor Agent implementation, Composer 2.5 means `composer-2.5-fast`, including shorthand like `composer`, `composer 2.5`, `composer-2.5`, or bare `2.5` in Cursor Agent context. Review runtime/model/effort must be explicit, or the user must say review should use the same execution policy. The skill does not create worktrees, push, open PRs, use latest-session resume, or continue beyond the requested phase boundary. Local commits are ordinary checkpoints.
 
 Examples:
 
@@ -630,7 +630,7 @@ Practical rule:
 
 Use when the user wants two selected Claude, Codex, or Cursor Agent models to cross-check, critique, and iterate on a plan, architecture, investigation, design, or concept until they converge, or until they expose the smallest unresolved decision. It is prompt-only: the parent agent is the runner, orchestrates directly, launches resumable hook-suppressed child sessions where supported, and relays critiques. Do not add a deterministic runner, script, controller, or harness layer.
 
-The user supplies runtime/model/effort for both participants, or the skill asks once. Shorthand such as `gpt 5.5 xhigh`, `Claude Opus 4.7 high`, or `Cursor Agent composer-2.5-fast` follows the shared model-resolution doctrine: exact versions are preserved, `codex debug models` or `agent models` is used when availability matters, and ambiguous IDs fail loud instead of silently downgrading.
+The user supplies runtime/model/effort for both participants, or the skill asks once. Shorthand such as `gpt 5.5 xhigh`, `Claude Opus 4.7 high`, or `Cursor Agent composer 2.5` follows the shared model-resolution doctrine: Composer 2.5 resolves to `composer-2.5-fast`, exact versions are preserved, `codex debug models` or `agent models` is used when availability matters, and ambiguous IDs fail loud instead of silently downgrading.
 
 For repo-backed investigations, root-cause work, and "read everything" cross-checks, both participants must read real evidence before agreeing. The parent records the raw user goal, exact user-named artifacts, desired output, and hard constraints. The child models choose and cite the code, docs, research, tests, commands, and local evidence they need.
 

@@ -144,6 +144,7 @@ def resolve_execution_phrase(
     - "Claude Opus 4.7 xhigh" -> claude / claude-opus-4-7 / xhigh
     - "codex gpt 5.4 mini high" -> codex / gpt-5.4-mini / high
     - "cursor agent composer-2.5-fast" -> agent / composer-2.5-fast / encoded-in-model
+    - "cursor agent composer 2.5" -> agent / composer-2.5-fast / encoded-in-model
 
     The function raises ModelResolutionError when a required value is missing
     or when exact-version-preserving model discovery is impossible.
@@ -368,11 +369,18 @@ def _resolve_agent_model(raw: str, *, agent_models: list[str] | None) -> str:
     normalized_models = [model.lower() for model in models]
     lowered = raw.lower()
 
+    candidate = _extract_agent_model_candidate(lowered)
+    if candidate == "composer-2.5-fast":
+        if not normalized_models or candidate in normalized_models:
+            return candidate
+        raise ModelResolutionError(
+            f"{raw!r} did not match an available Cursor Agent model id; candidate was {candidate!r}"
+        )
+
     for model in normalized_models:
         if re.search(rf"(?<![a-z0-9_.-]){re.escape(model)}(?![a-z0-9_.-])", lowered):
             return model
 
-    candidate = _extract_agent_model_candidate(lowered)
     if candidate is None:
         raise ModelResolutionError(
             f"could not find a Cursor Agent model id in {raw!r}; use an exact id from `agent models`"
@@ -388,7 +396,17 @@ def _resolve_agent_model(raw: str, *, agent_models: list[str] | None) -> str:
 
 
 def _extract_agent_model_candidate(lowered: str) -> str | None:
-    if re.search(r"\bcomposer\b", lowered) and re.search(r"\b2(?:[.-]5)?\b", lowered) and re.search(r"\bfast\b", lowered):
+    composer_mention = re.search(r"(?<![a-z0-9])composer(?![a-z0-9])", lowered)
+    composer_version = re.search(r"composer[-_.\s]*(\d+(?:[-_.]\d+)?)", lowered)
+    composer_25 = re.search(r"composer[-_.\s]*2[-_.\s]*5", lowered)
+    bare_25 = re.search(r"(?<![\d])2[-_.]5(?![\d])", lowered)
+    other_family_25 = re.search(
+        r"\b(?:gpt|claude|sonnet|opus|haiku)[-_.\s]*2[-_.\s]*5",
+        lowered,
+    )
+    if composer_25 or (composer_mention and composer_version is None) or (composer_mention and bare_25):
+        return "composer-2.5-fast"
+    if not composer_mention and bare_25 and not other_family_25:
         return "composer-2.5-fast"
 
     for token in re.findall(r"\b[a-z][a-z0-9]*(?:[-_.][a-z0-9]+)+\b", lowered):

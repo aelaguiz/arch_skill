@@ -66,8 +66,9 @@ without treating Git history as PR-ready.
   evidence, not a second plan.
 - Stop at the requested boundary. Do not continue into final-pack signoff when
   the user asked for one phase.
-- Cursor Agent implementation defaults to `composer-2.5-fast` only when the
-  user explicitly chooses Cursor Agent.
+- When the user chooses Cursor Agent for implementation, Composer 2.5 means
+  `composer-2.5-fast`; accept `composer`, `composer 2.5`, `composer-2.5`, or
+  bare `2.5` in Cursor Agent context as that model.
 - Review runtime/model/effort must be explicit, or the user must say review is
   same as implementation.
 - Workers are prompted like capable engineers, not micromanaged checklist

@@ -61,7 +61,10 @@ Treat model text as intent, not a loose alias:
   `claude-opus-4-7` or `claude-sonnet-4-6`.
 - Family-only Claude aliases such as `opus`, `sonnet`, or `haiku` are allowed
   only when the user did not pin a version.
-- For Cursor Agent, use an exact runnable id from `agent models` or
+- For Cursor Agent, Composer 2.5 always resolves to `composer-2.5-fast`.
+  Accept `composer`, `composer 2.5`, `composer-2.5`, `composer-2.5-fast`, or
+  bare `2.5` in a Cursor Agent context as that runnable id. For other Cursor
+  Agent models, use an exact runnable id from `agent models` or
   `agent --list-models`. Cursor effort is encoded in model ids, so do not
   invent a separate effort flag.
 - Do not run paid trial prompts to discover whether a Claude model exists. Use
