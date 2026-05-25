@@ -11,6 +11,7 @@ Review while warm:
 - after the first narrow integrated slice
 - after changing a canonical owner or caller shape
 - after deleting, migrating, or closing side doors
+- after leaving adjacent same-contract or same-behavior paths untouched
 - after touching schemas, generated artifacts, prompts, docs, examples, config,
   routes, commands, or install surfaces
 - before widening to more callers, variants, modes, or polish
@@ -24,6 +25,7 @@ Use the plan's requirements and the `plan-audit` implementation-audit lenses:
 - requirement traceability
 - canonical owner and SSOT
 - existing pattern fit
+- convergence across adjacent same-contract or same-behavior surfaces
 - deletion and side-door closure
 - drift-proof coupling
 - caller invariant state

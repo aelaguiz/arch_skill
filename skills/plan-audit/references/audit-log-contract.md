@@ -64,6 +64,7 @@ Scope: <whole plan | section | pasted plan | issue body>
 | Canonical owner path |  |  |  | read/unknown |
 | Caller families |  |  |  | read/unknown |
 | Legacy and side-door paths |  |  |  | read/unknown |
+| Adjacent same-contract paths |  |  |  | read/unknown |
 | Comparable patterns |  |  |  | read/unknown |
 | Contract/proof surfaces |  |  |  | read/unknown |
 

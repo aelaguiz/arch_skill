@@ -47,6 +47,8 @@ For repo-backed plans:
 - The proposed target owner path was read.
 - Public caller families were read.
 - Representative internal call sites were read.
+- Adjacent same-contract or same-behavior paths were searched and read when
+  they could keep the system split between old and new behavior.
 - Legacy paths, old APIs, fallbacks, flags, scripts, commands, jobs, UI
   affordances, prompts, or generated artifacts that can preserve old behavior
   were searched and read when found.
@@ -79,8 +81,9 @@ For repo-backed plans:
 - The canonical owner path is named.
 - Duplicate truth and parallel implementation paths are identified.
 - Existing patterns are inventoried before a new one is approved.
-- Related code is classified as move now, delete now, leave different, named
-  follow-up, or user decision.
+- Related live code is classified as move now, delete now, leave different,
+  named follow-up, or user decision, including adjacent surfaces that expose
+  the same contract or behavior.
 - Caller API shape is checked for misuse resistance.
 - Invariants are named and located in code or target code shape.
 - State model and partial-state risks are checked.

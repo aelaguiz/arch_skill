@@ -46,19 +46,23 @@ scaffolding that defers integration proof to the end.
 
 For repo-backed plans, verify that current architecture, target architecture,
 and call-site inventory match repo reality. Find unnamed owner paths, callers,
-generated artifacts, tests, docs, prompts, or config the plan must account for.
+adjacent same-contract or same-behavior paths, generated artifacts, tests,
+docs, prompts, or config the plan must account for.
 
 ### `canonical-owner-and-ssot`
 
 Ask whether the plan extends the correct central path. Find duplicate truth,
 parallel implementations, shadow contracts, alternate writers/readers, and
-wrong-layer logic.
+wrong-layer logic. Check whether adjacent caller families or feature variants
+that should share the same owner would still route around it.
 
 ### `existing-pattern-and-convergence`
 
 Find comparable repo patterns. Decide which pattern is canonical, which are
 debt, and which related code should migrate, delete, stay different, or become
-a named follow-up. Block unjustified new patterns.
+a named follow-up. Include adjacent same-contract or same-behavior surfaces so
+the plan cannot look locally clean while leaving the system split between old
+and new patterns. Block unjustified new patterns.
 
 ### `caller-invariant-state`
 
@@ -70,7 +74,9 @@ and whether callers must know internals.
 
 Inspect shared dependencies, schemas, generated artifacts, adapters, fixtures,
 prompts, tests, docs, and contract families. Check whether dependent pieces
-share one source of truth or can silently diverge.
+share one source of truth or can silently diverge. Include sibling surfaces
+that expose the same contract through another route, command, feature, prompt,
+fixture, or generated artifact.
 
 ### `elegance-and-code-judo`
 
@@ -83,7 +89,9 @@ left exposed.
 
 Search for legacy paths, flags, direct mutation paths, old commands, bad
 defaults, docs, examples, comments, prompts, tests, fixtures, and other
-surfaces that keep old behavior discoverable or callable.
+surfaces that keep old behavior discoverable or callable. Also check adjacent
+live paths that are not obviously legacy but still implement or teach the same
+behavior through a different owner.
 
 ### `proof-and-phase-exit`
 

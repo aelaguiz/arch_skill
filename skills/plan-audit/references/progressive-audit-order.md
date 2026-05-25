@@ -58,6 +58,7 @@ For repo-backed plans, list the code and contract surfaces the plan depends on:
   artifacts, fixtures, schemas, config, tests, docs, and instructions
 - old and new concepts
 - comparable existing patterns
+- adjacent same-contract or same-behavior surfaces that may need to converge
 - side doors and alternate entrypoints
 
 Split broad read-only code mapping across native subagents or parallel-agent
@@ -73,6 +74,7 @@ Read the surfaces needed to validate the plan:
 - proposed target owner path
 - public and representative internal callers
 - legacy paths that should delete or converge
+- adjacent live paths that expose the same contract or behavior
 - comparable pattern families
 - contract surfaces that can drift
 - tests and proof surfaces
@@ -88,6 +90,8 @@ approve while relevant-code coverage is unknown.
 - Write down target architecture claims.
 - Identify where the plan matches code, where it is stale, and where it is
   guessing.
+- Identify whether the plan can complete while adjacent live surfaces remain
+  split between old and new behavior.
 - Separate repo facts from reviewer inference.
 
 ## 8. Run Required Lenses
@@ -117,6 +121,8 @@ Ask:
 - Can the same outcome be achieved with fewer live concepts?
 - Should an existing pattern be extended or made canonical?
 - What can be deleted, privatized, merged, or made unreachable?
+- Which adjacent same-contract surfaces should migrate now, delete now, stay
+  intentionally different, or become a named follow-up?
 - What complexity exists only because the plan assumes a false constraint?
 
 ## 10. Check Implementation Risk

@@ -45,6 +45,7 @@ Before editing, record the useful current facts in the implementation log:
 - relevant plan anchors
 - code areas read
 - owner path and caller families
+- adjacent same-contract or same-behavior surfaces
 - legacy paths and side doors found
 - comparable patterns
 - proof already fresh
@@ -96,6 +97,7 @@ Use the relevant lenses from `plan-audit` implementation-audit doctrine:
 - requirement traceability
 - canonical owner and SSOT
 - existing pattern fit
+- convergence across adjacent same-contract or same-behavior surfaces
 - deletion and side-door closure
 - drift-proof coupling
 - caller invariant state
@@ -137,6 +139,8 @@ Before widening:
 - update scope ledger status with code and proof anchors
 - update audit findings if any opened or closed
 - update the plan when source truth changed
+- record why adjacent same-contract work is complete, intentionally different,
+  or tracked elsewhere when it remains live
 - name which proof remains fresh and what would stale it
 - name the next useful move
 
@@ -160,6 +164,8 @@ At the stop boundary:
 - confirm in-scope plan items are closed or explicitly not closed
 - run a final lightweight plan-backed implementation check over the requested
   scope
+- confirm adjacent same-contract or same-behavior surfaces in scope have
+  converged, stayed intentionally different, or been named as follow-up
 - update plan, audit log, and implementation log so they tell the same story
 - report remaining gaps plainly
 

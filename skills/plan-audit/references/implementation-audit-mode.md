@@ -82,8 +82,9 @@ It helps aim the code review; it does not replace reading code.
    paths, jobs, scripts, or package surfaces.
 6. Build the relevant-code map beyond the diff: owner paths, public and
    representative callers, legacy paths, side doors, comparable patterns,
-   schemas, adapters, generated artifacts, fixtures, config, prompts, docs,
-   changed test files, and install or command surfaces.
+   adjacent same-contract or same-behavior paths, schemas, adapters, generated
+   artifacts, fixtures, config, prompts, docs, changed test files, and install
+   or command surfaces.
 7. Use native subagents or parallel-agent features for broad independent
    read-only code slices when available. The parent owns synthesis.
 8. Review plan obligations against code. Classify each due obligation as
@@ -135,6 +136,9 @@ scope for blocker decisions.
 
 Compare actual changed behavior to plan expectations. The review unit is the
 changed subsystem and affected call sites, not one isolated file.
+Include adjacent unchanged paths when they expose the same contract or behavior
+through another owner, route, command, schema, prompt, fixture, or generated
+artifact.
 
 ### `canonical-owner-and-ssot`
 
@@ -147,7 +151,9 @@ old and new APIs both live without an approved bridge.
 
 Check whether the implementation followed the best local pattern or justified
 divergence. Related code should be migrated now, deleted now, left different
-for a real reason, named as follow-up, or marked unresolved.
+for a real reason, named as follow-up, or marked unresolved. This includes
+adjacent same-contract or same-behavior surfaces, not only files touched by the
+diff.
 
 ### `deletion-and-side-door-closure`
 
@@ -278,6 +284,8 @@ Before returning an approval verdict, confirm:
 - Native subagents or parallel-agent features were used for broad read-only
   slices when available.
 - Every due code obligation was traced to code or a missing/unclear status.
+- Adjacent same-contract or same-behavior paths were reviewed for split old/new
+  behavior where they were in or affected by the requested scope.
 - Required deletes, caller migrations, side-door closures, and drift-prone
   contracts were reviewed.
 - No unit tests, integration tests, build commands, lint commands, or CI

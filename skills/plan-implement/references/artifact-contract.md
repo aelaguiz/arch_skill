@@ -11,6 +11,7 @@ The plan is source of truth for:
 - requirements, non-requirements, constraints, and non-constraints
 - active scope, stop boundary, phase order, and exclusions
 - owner-path, delete, side-door, compatibility, and proof promises
+- convergence decisions for adjacent same-contract or same-behavior surfaces
 - decisions that change the intended outcome
 - completion state when the plan format has checkboxes or phase status
 
@@ -103,6 +104,9 @@ Current checkpoint: <commit/hash/worktree/diff handle if useful>
 | --- | --- | --- | --- | --- |
 
 ## Side Doors And Deletes
+
+Include adjacent same-contract or same-behavior surfaces here when leaving
+them live could split the system between old and new behavior.
 
 | Surface | Expected state | Current state | Status | Anchor |
 | --- | --- | --- | --- | --- |
