@@ -33,6 +33,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 ## Non-negotiables
 
 - `DOC_PATH` is the primary state. Commands are subordinate to the artifact.
+- `auto-plan` stage order is enforced by generated command receipts in `DOC_PATH`. Do not hand-edit receipts or accept marker-only plan text as proof that a stage ran.
 - Every invocation must check both structure and quality before doing command-local work.
 - No command may leave the doc less canonical, less honest, or more contradictory than it found it.
 - Present-but-weak sections are not done.
@@ -186,15 +187,16 @@ These stay explicit unless the user directly asks for them:
 ### Re-entrant full-auto mode
 
 `full-auto` is an explicit mode for one canonical full-arch plan. It does not add
-a new controller, state file, runner, hook behavior, script, or heuristic layer.
+a new controller, state file, runner, hook behavior, or heuristic layer.
 It reads `DOC_PATH`, `WORKLOG_PATH`, and the implementation audit block, then
 invokes the next existing command only when the artifact is ready for that command.
 
 Read `references/full-auto.md` before using this mode. The main rule is simple:
 plan first with `auto-plan`, prove implementation readiness with the normal
-full-arch readiness inventory, then implement with `implement-loop`. If the
-North Star is still draft, a decision gap remains, or `consistency-pass` does
-not approve implementation, stop honestly instead of chaining.
+full-arch readiness inventory and the stage receipt gate, then implement with
+`implement-loop`. If the North Star is still draft, a decision gap remains, the
+receipt gate is not ready, or `consistency-pass` does not approve implementation,
+stop honestly instead of chaining.
 
 #### `auto-plan`
 
@@ -203,16 +205,19 @@ A bounded automatic planning command. `DOC_PATH` is always the planning ledger.
 Workflow:
 
 1. Read doc truth and North Star status.
-2. Run the first incomplete planning stage in order: `research`, `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, then `consistency-pass`.
-3. In native goal mode, continue taking the next incomplete stage until `consistency-pass` confirms the doc is decision-complete and ready for `implement-loop`, or until a true blocker stops the run.
-4. Outside native goal mode, run one bounded stage and end with the exact next command.
+2. Run `python3 skills/arch-step/scripts/arch_stage_gate.py status --doc <DOC_PATH>` and take only the gate-reported next stage.
+3. The stage command must run `begin` before its doc edits and `complete` after its doc edits so the generated receipt proves that command path ran.
+4. In native goal mode, continue taking the next gate-reported stage until `ready` returns `READY next=implement-loop`, or until a true blocker stops the run.
+5. Outside native goal mode, run one bounded stage and end with the exact next command.
 
 `arch-step`-specific rules:
 
 - User-facing invocation: `$arch-step auto-plan` or `$arch-step auto-plan <DOC_PATH>`.
 - Rerunning `auto-plan` on a partially complete doc is legal; resume from the first incomplete stage already visible in `DOC_PATH`.
 - Prefer the current session's canonical full-arch doc when `DOC_PATH` is omitted.
+- Do not treat plan markers alone as completion. Existing content without receipts is not auto-plan-ready; rerun the missing stage command.
 - Do not claim the planning arc is complete or emit the `implement-loop` handoff while any decision gaps remain.
+- Before saying the doc is ready for `implement-loop`, run `python3 skills/arch-step/scripts/arch_stage_gate.py ready --doc <DOC_PATH>` and require exit 0.
 - If the North Star approval is missing, name it and stop.
 
 #### `implement-loop` / `auto-implement`
@@ -230,6 +235,7 @@ Workflow:
 `arch-step`-specific rules:
 
 - User-facing invocation: `$arch-step implement-loop <DOC_PATH>` or `$arch-step auto-implement <DOC_PATH>`. Do not introduce a second command, mode, or control surface.
+- Before implementation starts, run `python3 skills/arch-step/scripts/arch_stage_gate.py ready --doc <DOC_PATH>`; if it fails, report the planning stage it names instead of implementing from a marker-only plan.
 - Implementation covers the current approved ordered implementation frontier in order: the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this implementation arc.
 - Execution does not rewrite requirements, scope, acceptance criteria, or phase obligations mid-coding. If the plan itself needs to change, stop and repair the plan instead of continuing on a rewritten story.
 - The implementation pass may ship code and sync plan/worklog truth, but the audit must be a real `audit-implementation` pass against current repo state before the loop can finish clean.
@@ -264,7 +270,7 @@ Workflow:
 - `references/arch-external-research.md` - external research contract and plan-integration rules
 - `references/arch-phase-plan.md` - authoritative phase-plan contract
 - `references/arch-auto-plan.md` - bounded automatic planning over research, deep-dive twice, phase-plan, and consistency-pass
-- `references/full-auto.md` - doctrine-only re-entrant mode over `auto-plan` and `implement-loop`
+- `references/full-auto.md` - re-entrant mode over `auto-plan`, the stage receipt gate, and `implement-loop`
 - `references/arch-plan-enhance.md` - best-possible hardening of the main plan
 - `references/arch-fold-in.md` - fold references into the main artifact and wire them into phases
 - `references/arch-overbuild-protector.md` - explicit scope triage and remediation using the same rubric core commands should already apply

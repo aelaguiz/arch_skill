@@ -24,6 +24,7 @@
 
 - `# 3) Research Grounding (external + internal “ground truth”)`
 - `arch_skill:block:research_grounding`
+- `arch_skill:block:auto_plan_receipts` only through the stage gate when running as the current `auto-plan` stage
 
 ## Hard rules
 
@@ -36,6 +37,8 @@
 - when the change is agent-backed, inspect current prompt surfaces, runtime or agent configuration, native model capabilities, and existing tool/file/context exposure before blessing new tooling
 - if research reveals likely code changes, write them into the plan with file anchors instead of implementing them
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is unclear or contradictory, stop, repair what repo evidence settles, and ask the user the exact remaining blocker question before deeper planning continues
+- when running as the current `auto-plan` stage, run `python3 skills/arch-step/scripts/arch_stage_gate.py begin --doc <DOC_PATH> --stage research` before writing Section 3 and `python3 skills/arch-step/scripts/arch_stage_gate.py complete --doc <DOC_PATH> --stage research` after writing it
+- if the stage gate says a different stage is next, stop and report that required command instead of hand-editing receipts or writing around the gate
 
 ## Quality bar
 

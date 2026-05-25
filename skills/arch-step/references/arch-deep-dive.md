@@ -31,6 +31,7 @@
 - `arch_skill:block:current_architecture`
 - `arch_skill:block:target_architecture`
 - `arch_skill:block:call_site_audit`
+- `arch_skill:block:auto_plan_receipts` only through the stage gate when running as the current `auto-plan` stage
 
 ## Hard rules
 
@@ -58,6 +59,11 @@
 - Section 6 must call out capability-replacing harnesses, wrappers, or side paths that should be deleted or explicitly justified when the system is agent-backed
 - if the design introduces or sharpens a central pattern, the consolidation sweep must capture only decisions that are already resolved from repo truth or explicit scope text; otherwise it must surface a blocker question
 - any required convergence or consolidation work must name the preservation signal that will prove behavior was not broken
+- when running as the current `auto-plan` stage, run the stage gate before and after the doc edits:
+  - pass 1: `python3 skills/arch-step/scripts/arch_stage_gate.py begin --doc <DOC_PATH> --stage deep-dive-pass-1`, then `complete --stage deep-dive-pass-1`
+  - pass 2: `python3 skills/arch-step/scripts/arch_stage_gate.py begin --doc <DOC_PATH> --stage deep-dive-pass-2`, then `complete --stage deep-dive-pass-2`
+- choose pass 1 versus pass 2 from `python3 skills/arch-step/scripts/arch_stage_gate.py status --doc <DOC_PATH>` when receipts are active; do not hand-edit receipts or treat existing architecture markers as proof that the deep-dive command ran
+- if the stage gate says a different command is next, stop and report that required command
 
 ## Planning-passes update rule
 

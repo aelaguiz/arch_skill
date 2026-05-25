@@ -39,6 +39,7 @@ mode or control surface.
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 - `arch-implement.md`
 - `arch-audit-implementation.md`
+- `scripts/arch_stage_gate.py` for `auto-plan` receipt readiness
 
 ## Inputs and `DOC_PATH` resolution
 
@@ -67,6 +68,7 @@ Audit pass:
 - the current approved ordered implementation frontier is the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this loop cycle
 - each cycle must run implementation first and `audit-implementation` second against the same `DOC_PATH`
 - `implement-loop` must not continue from a plan that is not decision-complete
+- before implementation starts, run `python3 skills/arch-step/scripts/arch_stage_gate.py ready --doc <DOC_PATH>`; if it fails, stop and run the gate-reported planning command instead of implementing from marker-only text
 - `implement-loop` runs against the same approved plan; the implementation side may not rewrite requirements, scope, acceptance criteria, or phase obligations while the loop is active
 - before auditing, the implementation pass must finish the current approved ordered implementation frontier or hit a real blocker, and the claimed phase work must have credible programmatic proof
 - for modern Section 7 docs, fresh audit must validate both `Checklist (must all be done)` and `Exit criteria (all required)` before any phase can stay complete or the loop can finish clean
@@ -83,14 +85,15 @@ Audit pass:
 ## Loop Procedure
 
 1. Read `DOC_PATH` fully and run the same alignment checks required by `implement`.
-2. Build or refresh the compact implementation ledger from Section 7, Section 6, migration notes, and touched live docs/comments/instructions.
-3. Run one truthful implementation pass using the `implement` contract, starting from the earliest incomplete or reopened phase and continuing through later phases whose prerequisites and proof gates are reachable in this cycle. Run the required credible proof along the way, but do not stop just because one local fix is green.
-4. Sync `DOC_PATH` and `WORKLOG_PATH` to the resulting execution truth and proof signals, but do not replace `arch_skill:block:implementation_audit`, write clean-handoff language from the implementation pass, or rewrite requirements, scope, acceptance criteria, or phase obligations to fit partial code.
-5. Run `audit-implementation` against the same `DOC_PATH` and current repo state.
-6. If audit is clean, report the clean handoff to `$arch-docs`.
-7. If audit is not clean and a credible next move exists, continue from the earliest reopened or incomplete phase.
-8. In native goal mode, keep repeating this loop until the Delivery North Star is met or a true blocker stops the run.
-9. Outside native goal mode, stop after one bounded implement/audit cycle and print the next exact command.
+2. Run `python3 skills/arch-step/scripts/arch_stage_gate.py ready --doc <DOC_PATH>` and stop if it reports a missing planning receipt or stage.
+3. Build or refresh the compact implementation ledger from Section 7, Section 6, migration notes, and touched live docs/comments/instructions.
+4. Run one truthful implementation pass using the `implement` contract, starting from the earliest incomplete or reopened phase and continuing through later phases whose prerequisites and proof gates are reachable in this cycle. Run the required credible proof along the way, but do not stop just because one local fix is green.
+5. Sync `DOC_PATH` and `WORKLOG_PATH` to the resulting execution truth and proof signals, but do not replace `arch_skill:block:implementation_audit`, write clean-handoff language from the implementation pass, or rewrite requirements, scope, acceptance criteria, or phase obligations to fit partial code.
+6. Run `audit-implementation` against the same `DOC_PATH` and current repo state.
+7. If audit is clean, report the clean handoff to `$arch-docs`.
+8. If audit is not clean and a credible next move exists, continue from the earliest reopened or incomplete phase.
+9. In native goal mode, keep repeating this loop until the Delivery North Star is met or a true blocker stops the run.
+10. Outside native goal mode, stop after one bounded implement/audit cycle and print the next exact command.
 
 ## Fresh-Audit Requirement
 

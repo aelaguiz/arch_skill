@@ -18,6 +18,7 @@
 
 - `arch_skill:block:consistency_pass`
 - any real plan sections that need repair after accepted findings
+- `arch_skill:block:auto_plan_receipts` only through the stage gate when running as the current `auto-plan` stage
 
 ## Hard rules
 
@@ -32,6 +33,8 @@
 - outside Codex, keep the same review question and block shape; do not invent a second workflow just because explorer agents are not a runtime primitive
 - if the North Star, deep-dive, or phase plan is too weak to audit honestly, stop and point to the earlier command that must repair it
 - `Decision: proceed to implement? yes` is forbidden while unresolved decisions, unauthorized scope cuts, orphan phase obligations, or non-auditable exit criteria remain
+- when running as the current `auto-plan` stage, run `python3 skills/arch-step/scripts/arch_stage_gate.py begin --doc <DOC_PATH> --stage consistency-pass` before the cold read and `python3 skills/arch-step/scripts/arch_stage_gate.py complete --doc <DOC_PATH> --stage consistency-pass` after the helper block is current
+- if the stage gate says a different stage is next, stop and report that required command instead of hand-editing receipts or treating an existing consistency marker as proof that this command ran
 
 ## Codex cold-read split
 

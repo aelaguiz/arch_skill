@@ -25,6 +25,7 @@
 
 - `# 7) Depth-First Phased Implementation Plan (authoritative)`
 - `arch_skill:block:phase_plan`
+- `arch_skill:block:auto_plan_receipts` only through the stage gate when running as the current `auto-plan` stage
 
 ## Hard rules
 
@@ -82,6 +83,8 @@ Before writing the phase plan:
 - phases must name the actual chosen work to do, not conditional or alternate branches the agent would have to choose between later
 - if a phase contains multiple coherent units that could be built and verified separately, split it
 - weak phase plans include final-form Phase 1, fake foundations, layer-cake sequencing, preset phase count, everything-everywhere checklists, expansion treated as cut, cut hidden as expansion, or toy MVP slices
+- when running as the current `auto-plan` stage, run `python3 skills/arch-step/scripts/arch_stage_gate.py begin --doc <DOC_PATH> --stage phase-plan` before writing Section 7 and `python3 skills/arch-step/scripts/arch_stage_gate.py complete --doc <DOC_PATH> --stage phase-plan` after writing it
+- if the stage gate says a different stage is next, stop and report that required command instead of hand-editing receipts or treating an existing phase-plan marker as proof that this command ran
 
 ## Placement and update rules
 

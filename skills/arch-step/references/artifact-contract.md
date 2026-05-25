@@ -15,7 +15,7 @@ Decision-complete means the main artifact has no unresolved plan-shaping decisio
   - `<DOC_DIR>/<DOC_BASENAME>_WORKLOG.md`
   - progress evidence only, never a second plan
 
-Planning commands update `DOC_PATH` only. `auto-plan` also uses `DOC_PATH` as the planning-progress ledger across native goal-mode turns; it does not write a separate controller state file. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
+Planning commands update `DOC_PATH` only. `auto-plan` also uses `DOC_PATH` as the planning-progress ledger across native goal-mode turns; it does not write a separate controller state file. Its generated `auto_plan_receipts` block is part of `DOC_PATH` and is written only by `skills/arch-step/scripts/arch_stage_gate.py`; it proves that each ordered planning command began and completed instead of accepting marker-only text. `implement` and `implement-loop` may update code, `DOC_PATH`, and `WORKLOG_PATH`. `audit-implementation` updates `DOC_PATH` only.
 
 ## Artifact convergence rule
 
@@ -401,6 +401,7 @@ Keep these markers stable when present:
 - `arch_skill:block:consistency_pass`
 - `arch_skill:block:review_gate`
 - `arch_skill:block:implementation_audit`
+- `arch_skill:block:auto_plan_receipts`
 
 If a matching semantic section exists without the marker, update it in place rather than duplicating it.
 
@@ -424,6 +425,9 @@ If a matching semantic section exists without the marker, update it in place rat
   - primary writer: `implement`
 - `implementation_audit`:
   - primary writer: `audit-implementation`
+- `auto_plan_receipts`:
+  - primary writer: `skills/arch-step/scripts/arch_stage_gate.py`
+  - do not hand-edit; rerun the gate-reported stage command when receipts are missing
 
 Primary ownership does not override global artifact preservation.
 
