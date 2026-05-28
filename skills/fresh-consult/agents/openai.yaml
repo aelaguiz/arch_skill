@@ -1,7 +1,7 @@
 interface:
   display_name: "Fresh Consult"
-  short_description: "Run clean Claude Opus or Codex GPT second opinions"
-  default_prompt: "Use $fresh-consult to run one or more clean-context Claude Opus or Codex GPT/GBT second opinions on this artifact, completion check, flow, or readability question. Never route consults through Cursor Agent; Cursor is Composer-only implementation. Tell each consult child: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents. Report each verdict back with evidence and run directories."
+  short_description: "Run clean Claude, Codex, or Composer second opinions"
+  default_prompt: "Use $fresh-consult to run one or more clean-context Claude Opus, Codex GPT/GBT, or Cursor Composer second opinions on this artifact, completion check, flow, or readability question. Codex runs GPT/GBT, Claude Code runs Opus, and Cursor Agent runs only composer-2.5-fast through the agent command. Tell each consult child: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents. Report each verdict back with evidence and run directories."
 
 policy:
   allow_implicit_invocation: true
