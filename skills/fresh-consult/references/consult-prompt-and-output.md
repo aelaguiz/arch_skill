@@ -1,8 +1,9 @@
 # Consult Prompt And Output
 
-The consult prompt must make the child useful from a cold start. It has no
-session history and should not be trusted to infer the parent skill's unstated
-context.
+The consult prompt must make the child useful whether the turn is a clean-start
+consult or a bounded same-session follow-up. A fresh-start turn has no parent
+chat context. A resume turn has its own child-session history, but still has no
+unstated parent context beyond the new prompt.
 
 ## Prompt Skeleton
 
@@ -10,9 +11,27 @@ Write a prompt like this to `prompt.md` and adapt the sections to the actual
 question:
 
 ```markdown
-You are performing an independent fresh consult on <one-line subject>.
-You have no prior chat context. Read the artifacts directly from disk. Your job
-is to answer the user's ask for the parent agent, not to fix files.
+You are performing a read-only fresh consult on <one-line subject>.
+
+<For fresh-resumable, fresh-forced, or fresh-rotated:>
+You are starting clean from disk and this prompt. You have no prior parent chat
+context. Read the artifacts directly from disk. Your job is to answer the
+user's ask for the parent agent, not to fix files.
+
+<For resume:>
+You are resuming the same fresh-consult child session for <one-line subject>.
+Use your existing child-session history plus the new ask below. You still do
+not have the parent chat context beyond what is in this prompt. Re-read files
+when the answer depends on current repo state. Do not assume old file contents
+are still current.
+
+# Consult Mode
+
+- Mode: fresh-resumable | resume | fresh-forced | fresh-rotated
+- Chain directory: <absolute chain path>
+- Turn: <n>
+- Resume source: <prior turn dir, explicit session id, or "none">
+- Reason for fresh start: <none | user_forced_cold | chain_turn_limit | changed_execution | missing_session | ambiguous_chain>
 
 # User Ask
 
@@ -72,7 +91,8 @@ When reporting the result upstream:
 2. Quote blocking findings exactly when there are only a few; summarize only
    when the list is long.
 3. Include non-blocking notes, confidence, and evidence read.
-4. Name the runtime/model/effort and the run directory.
+4. Name the runtime/model/effort, consult mode, chain directory, run directory,
+   and session id when captured or reused.
 5. Spot-check blocking findings before treating them as true.
 6. If you disagree with the child after spot-checking, say so explicitly.
 7. For parallel groups, report each child verdict separately before writing any
@@ -86,6 +106,7 @@ When reporting the result upstream:
 - "Is the skill boundary between these packages clear enough?"
 - "Are there contradictions between the README install surface and Makefile?"
 - "Does this prompt preserve the source intent without heuristic shortcuts?"
+- "Resume the same consult and ask whether the edited plan fixed its concern."
 
 ## Anti-Patterns
 
@@ -97,4 +118,7 @@ Do not:
 - Ask the child to fix, refactor, or implement as part of the consult.
 - Treat the child as final authority. It is an independent read, not a judge
   that overrides repo evidence.
-- Reuse old run directories across consults.
+- Overwrite old turn directories. A resume turn gets a new run directory that
+  points back to the previous turn.
+- Resume a latest session by convenience. Resume only the exact captured
+  same-runtime session for the same consult line.

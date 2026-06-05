@@ -3,10 +3,13 @@
 Use this reference to resolve what the user meant by "Claude", "Codex",
 "Cursor Agent", "Grok", "opus high", "gpt 5.5 xhigh", "GBT55XI",
 "composer-2.5-fast", "grok-build", or similar phrasing, and to run the
-selected fresh subprocess or explicit parallel group of fresh subprocesses.
+selected read-only consult subprocess.
+
 Fresh consult is review/second-opinion work. Provider routing is fixed: Codex
 runs GPT/GBT, Claude Code runs Opus, Cursor Agent runs Composer 2.5 Fast, and
-Grok CLI runs Grok models.
+Grok CLI runs Grok models. The first turn in a consult line starts clean from
+disk and the prompt; bounded same-line follow-ups resume the captured child
+session by exact session id.
 
 ## Required Values
 
@@ -33,8 +36,7 @@ Add only the missing facts to the question when some values are already known.
 Infer runtime only when the user's wording makes it unambiguous:
 
 - `codex`, `openai`, `gpt`, `gbt`, `gpt-5.5`, `GBT55XI`,
-  `gpt 5.5 high`, or `gpt-5.3-codex` implies
-  `runtime=codex`.
+  `gpt 5.5 high`, or `gpt-5.3-codex` implies `runtime=codex`.
 - `claude opus` or `opus` implies `runtime=claude`.
 - `sonnet` and `haiku` are not supported by this repo's subprocess doctrine;
   ask for Opus instead of silently running them.
@@ -117,18 +119,82 @@ harnesses aligned on exact-version preservation and fail-loud behavior.
 - If effort is missing for Claude, Codex, or Grok, or the selected model does
   not support the requested effort, ask.
 
-## Run Directory
+## Consult Continuity
 
-Create one run directory per consult child:
+Use these modes:
+
+- `fresh-resumable` - default first request in a consult line. It starts clean,
+  captures a session id, and writes chain metadata.
+- `resume` - default for the second and third same-line requests when a healthy
+  unambiguous prior chain exists.
+- `fresh-forced` - a clean-start chain because the user asked for cold,
+  independent, or fresh-eyes review, or because execution choices changed.
+- `fresh-rotated` - a clean-start chain because the prior same-line chain
+  reached the default turn cap.
+
+Treat a request as the same consult line when the parent can defend all of
+these:
+
+- same work root
+- same runtime, model, and effort
+- same main artifact, claim, flow, or target question family
+- the user asks a follow-up, clarification, rerun after local edits, or narrowed
+  check that depends on the previous consult
+- the prior chain has a valid session id and is below `max_chain_turns`
+
+Start fresh instead when:
+
+- the user asks for cold, independent, fresh-eyes, or clean-room review
+- runtime, model, effort, or work root changed
+- the new artifact or question is materially different
+- multiple possible prior chains match and the user did not provide a run path
+- the prior `session_id.txt` is missing, empty, or `UNRECOVERABLE`
+- the prior output was malformed or lacks the verdict footer
+- the same-line chain has already reached three turns
+
+If the only problem is ambiguity between candidate chains, ask one concise
+question naming the candidate chain directories. Do not silently choose the
+newest chain, do not use runtime "continue latest" features, and do not call
+`agent ls` or similar latest-session discovery. Resume only from a chain path,
+run path, or session id that is already tied to the same fresh-consult line.
+
+For explicit parallel consults, each child gets its own chain under the group
+directory. Resume a parallel child only when the follow-up names the child,
+chain directory, run directory, or exact child question. Otherwise start fresh
+or ask.
+
+## Chain And Turn Directories
+
+Use one chain directory per consult line:
 
 ```bash
 CONSULT_SLUG="<short-slug>"
 RUN_TS="$(date -u +%Y%m%dT%H%M%SZ)"
-RUN_DIR="$(mktemp -d "/tmp/fresh-consult/${CONSULT_SLUG}-${RUN_TS}-XXXXXX")"
-PROMPT_PATH="$RUN_DIR/prompt.md"
-FINAL_PATH="$RUN_DIR/final.txt"
-EVENTS_PATH="$RUN_DIR/events.jsonl"
-STDERR_PATH="$RUN_DIR/stderr.log"
+CHAIN_DIR="$(mktemp -d "/tmp/fresh-consult/${CONSULT_SLUG}-${RUN_TS}-XXXXXX")"
+CHAIN_PATH="$CHAIN_DIR/chain.json"
+TURN_DIR="$CHAIN_DIR/turn-01"
+mkdir -p "$TURN_DIR"
+PROMPT_PATH="$TURN_DIR/prompt.md"
+FINAL_PATH="$TURN_DIR/final.txt"
+EVENTS_PATH="$TURN_DIR/events.jsonl"
+STDERR_PATH="$TURN_DIR/stderr.log"
+EXECUTION_PATH="$TURN_DIR/execution.json"
+SESSION_PATH="$TURN_DIR/session_id.txt"
+RESUME_FROM_PATH="$TURN_DIR/resume_from.txt"
+```
+
+Resume turns still get a new turn directory:
+
+```bash
+TURN_DIR="$CHAIN_DIR/turn-02"
+mkdir -p "$TURN_DIR"
+PROMPT_PATH="$TURN_DIR/prompt.md"
+FINAL_PATH="$TURN_DIR/final.txt"
+EVENTS_PATH="$TURN_DIR/events.jsonl"
+STDERR_PATH="$TURN_DIR/stderr.log"
+EXECUTION_PATH="$TURN_DIR/execution.json"
+SESSION_PATH="$TURN_DIR/session_id.txt"
+RESUME_FROM_PATH="$TURN_DIR/resume_from.txt"
 ```
 
 Write the prompt to `prompt.md`. Do not pass a long multiline prompt directly
@@ -140,12 +206,70 @@ stream. `final.txt` is the final assistant text: Codex writes it directly with
 `type=result` event after the process exits. For Grok, concatenate streamed
 `type=text` `data` chunks after the process exits.
 
+Write `execution.json` before invocation with at least:
+
+```json
+{
+  "schema_version": 1,
+  "mode": "fresh-resumable | resume | fresh-forced | fresh-rotated",
+  "runtime": "claude | codex | agent | grok",
+  "model": "<resolved model or reused-from-session>",
+  "effort": "<resolved effort or reused-from-session>",
+  "work_root": "<absolute path>",
+  "chain_dir": "<absolute path>",
+  "turn": 2,
+  "resume_from": "<prior turn run dir, explicit session id, or none>",
+  "restart_reason": "none | user_forced_cold | chain_turn_limit | changed_execution | missing_session | ambiguous_chain"
+}
+```
+
+For fresh-resumable, fresh-forced, fresh-rotated, and resume turns, write the
+captured, reused, or replacement session id to `session_id.txt`. For resume
+turns, write the source run directory or explicit session id to
+`resume_from.txt`.
+
+Maintain `chain.json` with enough metadata to make the next same-line decision
+defensible:
+
+```json
+{
+  "schema_version": 1,
+  "skill": "fresh-consult",
+  "chain_id": "<stable id>",
+  "consult_slug": "<short slug>",
+  "created_at_utc": "2026-06-05T00:00:00Z",
+  "updated_at_utc": "2026-06-05T00:00:00Z",
+  "work_root": "<absolute path>",
+  "runtime": "claude | codex | agent | grok",
+  "model": "<resolved model>",
+  "effort": "<resolved effort or encoded-in-model>",
+  "max_chain_turns": 3,
+  "user_named_artifacts": ["<path or artifact>"],
+  "artifact_fingerprint": "<hash of normalized artifact list>",
+  "consult_objective": "<one-line objective>",
+  "turns": [
+    {
+      "turn": 1,
+      "mode": "fresh-resumable",
+      "run_dir": "<absolute path>",
+      "session_id_path": "<absolute path>",
+      "session_id": "<captured id or UNRECOVERABLE>",
+      "verdict": "pass | pass-with-notes | fail | inconclusive | malformed",
+      "created_at_utc": "2026-06-05T00:00:00Z"
+    }
+  ]
+}
+```
+
+Do not put secrets, pasted credentials, or raw full prompts in `chain.json`.
+The prompt body stays in `prompt.md`.
+
 ## Parallel Consult Group
 
 Use the parallel group path only when the user asks for parallel consults or
 gives multiple consult questions for this skill. Parallel consults are still
-ordinary fresh consult children; the group only gives the parent a place to
-organize prompts, streams, finals, and the combined report.
+ordinary consult children; the group only gives the parent a place to organize
+chains, prompts, streams, finals, and the combined report.
 
 Create one group directory:
 
@@ -155,16 +279,20 @@ RUN_TS="$(date -u +%Y%m%dT%H%M%SZ)"
 GROUP_DIR="$(mktemp -d "/tmp/fresh-consult/parallel-${GROUP_SLUG}-${RUN_TS}-XXXXXX")"
 ```
 
-For each child, create an ordinary child run directory beneath the group:
+For each child, create a child chain beneath the group:
 
 ```bash
 CHILD_SLUG="<child-slug>"
-RUN_DIR="$GROUP_DIR/$CHILD_SLUG"
-mkdir -p "$RUN_DIR"
-PROMPT_PATH="$RUN_DIR/prompt.md"
-FINAL_PATH="$RUN_DIR/final.txt"
-EVENTS_PATH="$RUN_DIR/events.jsonl"
-STDERR_PATH="$RUN_DIR/stderr.log"
+CHAIN_DIR="$GROUP_DIR/$CHILD_SLUG"
+TURN_DIR="$CHAIN_DIR/turn-01"
+mkdir -p "$TURN_DIR"
+CHAIN_PATH="$CHAIN_DIR/chain.json"
+PROMPT_PATH="$TURN_DIR/prompt.md"
+FINAL_PATH="$TURN_DIR/final.txt"
+EVENTS_PATH="$TURN_DIR/events.jsonl"
+STDERR_PATH="$TURN_DIR/stderr.log"
+EXECUTION_PATH="$TURN_DIR/execution.json"
+SESSION_PATH="$TURN_DIR/session_id.txt"
 ```
 
 Launch each child with the same Codex, Claude, Cursor Agent, or Grok command
@@ -179,16 +307,16 @@ question, work root, runtime, model, or effort, ask one consolidated question
 before launching the group.
 
 Wait for all children before reporting. If one child fails or returns malformed
-output, preserve its run directory and include that failure in the group report;
-do not discard the successful sibling consults.
+output, preserve its chain and run directory and include that failure in the
+group report; do not discard the successful sibling consults.
 
-## Codex Command
+## Codex Fresh Resumable
 
-Use this shape for a Codex consult:
+Use this shape for `fresh-resumable`, `fresh-forced`, and `fresh-rotated`
+Codex consult turns:
 
 ```bash
 codex exec \
-  --ephemeral \
   --disable codex_hooks \
   -C "<work_root>" \
   --dangerously-bypass-approvals-and-sandbox \
@@ -202,21 +330,49 @@ codex exec \
   2> "$STDERR_PATH"
 ```
 
+Read the first `thread.started` event from `events.jsonl` and write its
+`thread_id` to `session_id.txt`. If no thread id is captured, write
+`UNRECOVERABLE` to `session_id.txt`, mark the turn malformed, and preserve the
+turn directory.
+
 Flag meanings:
 
-- `--ephemeral` keeps the child stateless and cold.
-- `--disable codex_hooks` isolates the consult from any local Codex hooks outside
-  this package.
-- `-C <work_root>` pins the filesystem context.
+- `--disable codex_hooks` isolates the consult from any local Codex hooks
+  outside this package.
+- `-C <work_root>` pins the filesystem context for fresh-start turns.
 - `--dangerously-bypass-approvals-and-sandbox` gives the child realistic local
   access. Use only in trusted local environments.
 - `--skip-git-repo-check` allows doc or artifact consults outside a git root.
 - `--json` streams Codex event JSONL to `events.jsonl` while the child works.
 - `-o "$FINAL_PATH"` captures the final assistant message.
 
-## Claude Command
+## Codex Resume
 
-Use this shape for a Claude consult:
+Use this shape to resume an explicit Codex thread:
+
+```bash
+codex exec resume "<thread_id>" \
+  --disable codex_hooks \
+  --dangerously-bypass-approvals-and-sandbox \
+  --skip-git-repo-check \
+  --json \
+  -o "$FINAL_PATH" \
+  < "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+`codex exec resume` carries the working directory from the original session.
+Do not pass `-C` or `--cd` on resume. Do not use `--last`.
+
+Auto-resume requires the same runtime, model, and effort as the original chain,
+so omit model and effort flags on resume unless the user explicitly requests a
+different execution choice and accepts that the report will call it out.
+
+## Claude Fresh Resumable
+
+Use this shape for `fresh-resumable`, `fresh-forced`, and `fresh-rotated`
+Claude consult turns:
 
 ```bash
 claude -p \
@@ -233,28 +389,52 @@ claude -p \
   2> "$STDERR_PATH"
 ```
 
-Flag meanings:
-
-- `-p` runs non-interactively and exits.
-- `--output-format stream-json` emits live JSONL events to `events.jsonl`.
-- `--verbose` is required by the Claude CLI when `stream-json` output is used.
-- `--include-partial-messages` and `--include-hook-events` preserve progress
-  and tool/hook activity for long consults.
-- `--dangerously-skip-permissions` gives the child realistic local access. Use
-  only in trusted local environments.
-- `--settings '{"disableAllHooks":true}'` isolates the consult from local Claude
-  hooks outside this package.
-- `--model` and `--effort` pin the execution choice.
+Run Claude from `work_root`. Do not pass `--no-session-persistence`; the
+session id is needed for bounded follow-up reuse.
 
 After Claude exits, read the final `type=result` event from `events.jsonl` and
 write its `result` text to `final.txt` before applying the verdict-footer
-checks. If no result event exists after a zero exit, treat the run as malformed
-and preserve the run directory.
+checks. Write the final result event's `session_id` to `session_id.txt`. If no
+result event exists after a zero exit, or no session id is captured, treat the
+turn as malformed and preserve the turn directory.
 
-## Cursor Agent Command
+`--verbose` is required by the Claude CLI when `stream-json` output is used. Do
+not omit it from fresh or resumed Claude consult commands.
 
-Use this shape for a Cursor Agent consult. `<resolved_agent_model>` must be
-`composer-2.5-fast`.
+## Claude Resume
+
+Use this shape to resume an explicit Claude session:
+
+```bash
+claude -p \
+  --output-format stream-json \
+  --verbose \
+  --include-partial-messages \
+  --include-hook-events \
+  --dangerously-skip-permissions \
+  --settings '{"disableAllHooks":true}' \
+  --model "<resolved_model>" \
+  --effort "<resolved_effort>" \
+  -r "<session_id>" \
+  < "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+Run the resume from the same `work_root` used by the original Claude session.
+Use `-r <session_id>`, never `--continue`, because `--continue` chooses the
+most recent conversation in the current directory and can collide with other
+work.
+
+After Claude exits, write the final `result` text to `final.txt`. Write the
+returned `session_id` to `session_id.txt` when present; otherwise preserve the
+input session id in `session_id.txt`.
+
+## Cursor Agent Fresh Resumable
+
+Use this shape for `fresh-resumable`, `fresh-forced`, and `fresh-rotated`
+Cursor Agent consult turns. Cursor Agent has no `--verbose` flag; that flag is
+Claude-only. `<resolved_agent_model>` must be `composer-2.5-fast`.
 
 ```bash
 agent -p \
@@ -275,13 +455,44 @@ and official docs have disagreed on the print-mode default. Do not add
 `--verbose`; that flag is Claude-only.
 
 After Cursor Agent exits, read the final `type=result` event from
-`events.jsonl` and write its `result` text to `final.txt` before applying the
-verdict-footer checks. If no result event exists after a zero exit, treat the
-run as malformed and preserve the run directory.
+`events.jsonl` and write its `result` text to `final.txt`. Write the final
+result event's `session_id` to `session_id.txt`. If no result event exists
+after a zero exit, or no session id is captured, treat the turn as malformed
+and preserve the turn directory.
 
-## Grok Command
+## Cursor Agent Resume
 
-Use this shape for a Grok consult:
+Use this shape to resume an explicit Cursor Agent session. Cursor Agent has no
+`--verbose` flag; that flag is Claude-only. `<resolved_agent_model>` must be
+`composer-2.5-fast`.
+
+```bash
+agent -p \
+  --force \
+  --sandbox disabled \
+  --output-format stream-json \
+  --trust \
+  --workspace "<work_root>" \
+  --model "<resolved_agent_model>" \
+  --resume "<session_id>" \
+  < "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+Use `--resume <session_id>` only. Do not use `--continue`, `agent resume`,
+`agent ls`, or any latest-session selection. Do not use `--worktree` in this
+shared-worktree consult skill unless a future user explicitly asks for a
+worktree-based variant.
+
+After Cursor Agent exits, write the final `result` text to `final.txt`. Write
+the returned `session_id` to `session_id.txt` when present; otherwise preserve
+the input session id in `session_id.txt`.
+
+## Grok Fresh Resumable
+
+Use this shape for `fresh-resumable`, `fresh-forced`, and `fresh-rotated` Grok
+consult turns:
 
 ```bash
 RUST_LOG=off grok \
@@ -306,8 +517,35 @@ hook-suppression flag. Use `--no-auto-update`, `--no-memory`,
 `--no-subagents`, and `--disable-web-search` for isolation.
 
 After Grok exits, concatenate streamed `type=text` `data` chunks into
-`final.txt` before applying the verdict-footer checks. If no final text exists
-after a zero exit, treat the run as malformed and preserve the run directory.
+`final.txt`. Write the final `type=end` event's `sessionId` to
+`session_id.txt`. If no final text exists after a zero exit, or no `sessionId`
+is captured, treat the turn as malformed and preserve the turn directory.
+
+## Grok Resume
+
+Use this shape to resume an explicit Grok session:
+
+```bash
+RUST_LOG=off grok \
+  --cwd "<work_root>" \
+  --no-auto-update \
+  --no-memory \
+  --no-subagents \
+  --disable-web-search \
+  --permission-mode bypassPermissions \
+  --always-approve \
+  --model "<resolved_grok_model>" \
+  --effort "<resolved_effort>" \
+  --output-format streaming-json \
+  --resume "<session_id>" \
+  --prompt-file "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+Use `--resume <session_id>` only. Do not use any latest-session selection.
+After Grok exits, write the final text to `final.txt` and preserve the returned
+`sessionId` in `session_id.txt` when present.
 
 ## Monitoring Posture
 
@@ -321,16 +559,22 @@ process liveness every few minutes; do not poll every few seconds. A missing
 still alive. Investigate only after the process exits non-zero, the stream
 shows an error, or there is no stream activity for a long quiet window.
 
-Do not use Claude `-r`, Codex `exec resume`, Cursor Agent `--resume`, Grok
-`--resume`, `agent resume`, `agent ls`, or latest-session selection; a consult
-is a cold read, not a resumed conversation.
+Resume turns still need monitoring and evidence checks. A resumed consult can
+use child-session history, but it must re-read files when current repo state is
+load-bearing.
 
 ## Failure Behavior
 
-Fail loud and preserve the run directory when:
+Fail loud and preserve the chain and turn directory when:
 
 - the selected CLI is missing
 - runtime/model/effort cannot be resolved exactly
+- resume mode has no explicit session id, prior run directory, or prior chain
+- `session_id.txt` is missing, empty, or `UNRECOVERABLE` for a resume
+- the caller asks for cross-runtime resume
+- the caller asks for Claude `--continue`, Codex `--last`, Cursor Agent
+  `--continue`, `agent resume`, `agent ls`, Grok latest-session selection, or
+  any other latest-session resume selection
 - the child exits non-zero
 - `final.txt` is empty
 - Claude exits without a final `type=result` event
@@ -338,5 +582,8 @@ Fail loud and preserve the run directory when:
 - Grok exits without final text
 - the child omits the required verdict footer
 
+When the prior same-line chain is already at three turns, start a new
+`fresh-rotated` chain instead of failing.
+
 Do not silently fall back between Claude, Codex, Cursor Agent, and Grok, one
-model to another model, or one effort level to another.
+model to another model, one effort level to another, or one session to another.
