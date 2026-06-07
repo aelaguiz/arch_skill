@@ -123,7 +123,7 @@ Claude Code, and Gemini.
   already written for a plan reviewed against that plan's architecture and
   code-quality bar. Its `implementation-audit` mode is plan-backed code review
   only: it does not run tests, ask for logs, prove CI, investigate honesty, or
-  replace `$code-review` for generic diffs and PRs.
+  replace ordinary diff or PR review.
 - Use `$plan-implement` when the user wants to implement an existing plan,
   phase, section, checklist, issue-body plan, or design doc while keeping the
   plan, plan-audit log, implementation log, proof freshness, and warm
@@ -143,8 +143,9 @@ Claude Code, and Gemini.
   adversarial simplification. The parent agent orchestrates directly; do not
   introduce a deterministic runner, script, controller, or harness layer.
 - Use `$thermo-nuclear-code-quality-review` only when the user explicitly wants
-  a thermonuclear, code-judo, or especially harsh maintainability review. Use
-  `$code-review` for ordinary code review requests.
+  a thermonuclear, code-judo, or especially harsh maintainability review.
+  Handle ordinary code review requests with the normal review response unless
+  the user names a specific review skill.
 
 ## Writing And Replies
 

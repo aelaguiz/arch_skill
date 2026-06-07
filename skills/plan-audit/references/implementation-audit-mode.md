@@ -33,7 +33,7 @@ Do not:
 - verify whether tests really ran
 - investigate whether a completion claim is truthful
 - search history looking for hidden intent
-- turn the audit into a generic `code-review` run
+- turn the audit into a generic diff or PR review
 - manually spawn separate coding-harness executables such as `codex`,
   `claude`, or `agent` for ordinary acceleration
 - edit code
@@ -45,7 +45,7 @@ as context and keep reviewing code. If no test-pass context exists, still do
 not run tests or demand logs.
 
 Changed test files may be read as code when relevant. Review them only for
-code-review issues such as duplicate business rules, fake contracts,
+code review issues such as duplicate business rules, fake contracts,
 test-only production paths, misleading fixtures, or drift-prone helpers.
 
 ## Inputs
@@ -93,7 +93,7 @@ It helps aim the code review; it does not replace reading code.
    `unclear from code`.
 9. Run the implementation lenses below.
 10. Update the shared audit log when applicable.
-11. Return the code-review verdict using `output-contract.md`.
+11. Return the code review verdict using `output-contract.md`.
 
 ## Implementation Lenses
 
@@ -110,7 +110,7 @@ cleanup promises, delete promises, exit criteria that describe code states,
 and behavior-preservation expectations visible in code shape.
 
 Do not investigate intent. If current plan and current code do not line up,
-report the code-review issue plainly.
+report the code review issue plainly.
 
 ### `outcome-realization`
 
@@ -187,7 +187,7 @@ Check whether a tiny team can own the code: self-documenting names, direct
 control flow, one obvious debug path, existing patterns, proven libraries for
 solved problems, and no speculative framework or plugin layer.
 
-### `test-code-review`
+### `tests-as-code`
 
 Review changed tests only as code. Look for fake contracts, test-only
 production paths, hidden duplicate rules, misleading fixtures, or helpers that
@@ -251,17 +251,17 @@ plan, a proof ledger, or a workflow controller.
 
 Use these verdicts:
 
-- `approve`: no blocking code-review findings remain in the requested scope
+- `approve`: no blocking code review findings remain in the requested scope
 - `approve-with-notes`: no blockers remain, but non-blocking code-quality,
   architecture, drift, cleanup, or maintainability notes exist
-- `not-approved`: blocking code-review findings exist in the requested scope
+- `not-approved`: blocking code review findings exist in the requested scope
 - `scope-inconclusive`: the review target cannot be resolved or required code
   surfaces cannot be read
 
 Every blocking finding must include:
 
 - problem
-- why it blocks code-review approval
+- why it blocks code review approval
 - plan anchor
 - code anchor
 - required implementation repair

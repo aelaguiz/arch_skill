@@ -6,6 +6,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILL_NAME = "thermo-nuclear-code-quality-review"
+REMOVED_SKILL_NAME = "code-review"
 VENDOR_ROOT = REPO_ROOT / "vendor/cursor/plugins/cursor-team-kit"
 
 
@@ -67,9 +68,15 @@ class VendoredSkillInstallInventoryTests(unittest.TestCase):
             self.assertIn("vendor/cursor/plugins/cursor-team-kit/skills/", doc)
 
         self.assertIn(f"Use `${SKILL_NAME}`", agents)
-        self.assertIn(
-            "Use `$code-review` for ordinary code review requests", compact(agents)
-        )
+
+    def test_removed_code_review_skill_is_purged_from_install_inventory(self) -> None:
+        makefile = read(REPO_ROOT / "Makefile")
+
+        self.assertIn(REMOVED_SKILL_NAME, make_var_words(makefile, "REMOVED_SKILLS"))
+        for variable in ["SKILLS", "CLAUDE_SKILLS", "GEMINI_SKILLS"]:
+            self.assertNotIn(REMOVED_SKILL_NAME, make_var_words(makefile, variable))
+
+        self.assertFalse((REPO_ROOT / f"skills/{REMOVED_SKILL_NAME}").exists())
 
 
 if __name__ == "__main__":

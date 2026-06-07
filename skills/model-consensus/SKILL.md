@@ -37,7 +37,8 @@ patterns when the task is architectural, and avoids kitchen-sink plans.
 
 - The user wants one cold second opinion without dialogue or convergence: use
   `fresh-consult`.
-- The user wants deterministic code-review findings: use `code-review`.
+- The user wants ordinary code review findings: use the host agent's normal
+  review response.
 - The user wants ordered implementation or epic execution: use `stepwise` or
   `arch-epic`.
 - The user wants broad idea generation across many options: use an ideation

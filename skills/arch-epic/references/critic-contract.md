@@ -235,7 +235,7 @@ smoothly.
 
 ## What this critic is NOT
 
-- Not a code reviewer. Use `$code-review` for that.
+- Not a code reviewer. Use the host agent's normal review response for that.
 - Not a re-audit of arch-step's implementation. That is
   `$arch-step audit-implementation`'s job.
 - Not a repair author. In automatic mode, the parent resumes the

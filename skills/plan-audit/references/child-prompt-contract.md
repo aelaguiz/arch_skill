@@ -74,7 +74,7 @@ Expected output:
 
 ## Implementation-Audit Child
 
-Use this child for one read-only code-review lens from
+Use this child for one read-only code review lens from
 `implementation-audit-mode.md`.
 
 Prompt:

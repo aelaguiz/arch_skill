@@ -35,7 +35,8 @@ break.
 - Plan-doc-backed implementation of a fixed architecture plan -> `$arch-step`.
 - Bet-and-learn optimization, one bet per iteration with worklog ->
   `$goal-loop`.
-- One-shot review of a diff or branch -> `$code-review` or
+- One-shot review of a diff or branch -> the host agent's normal review
+  response or
   `$codex-review-yolo`.
 - Work that fits in a single orchestrator turn with no sub-sessions.
 

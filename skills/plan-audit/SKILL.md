@@ -54,7 +54,7 @@ ledger beside the plan, not a state machine and not a second plan.
 - The user wants the plan written from scratch.
 - The user wants implementation to start.
 - The user wants a generic code diff, branch, or PR reviewed without a plan
-  artifact. Use `code-review` for that.
+  artifact. Use the host agent's normal review response for that.
 - The user asks which workflow or skill to use.
 
 ## Non-Negotiables
@@ -151,7 +151,7 @@ constraint question remains unresolved or uncaptured in the plan.
 - `references/architecture-quality-canon.md` - strict plan-quality and code-quality doctrine
 - `references/review-lenses.md` - required and conditional audit lenses
 - `references/progressive-audit-order.md` - ordered pass for using the skill
-- `references/implementation-audit-mode.md` - plan-backed code-review mode after implementation
+- `references/implementation-audit-mode.md` - plan-backed code review mode after implementation
 - `references/audit-log-contract.md` - sidecar audit log shape and loop rules
 - `references/proper-audit-checklist.md` - final "was this audited properly" check
 - `references/child-prompt-contract.md` - native subagent prompts for broad audits

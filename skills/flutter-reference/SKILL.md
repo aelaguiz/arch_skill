@@ -128,6 +128,6 @@ controllers, command wrappers, generated build files, or tool automation.
   Flame lifecycle, input, audio, and physics.
 - `references/testing-ci-and-review-practice.md` - unit/widget/golden/
   integration testing, leak checks, profile scenarios, CI lanes, anti-patterns,
-  code-review checklist, review comments, and limitations.
+  code review checklist, review comments, and limitations.
 - `references/source-map.md` - official docs to verify version-sensitive
   Flutter, Dart, platform, state-package, testing, performance, and Flame facts.

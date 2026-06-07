@@ -48,7 +48,7 @@ Use it for:
 - `IMP-*` implementation-audit findings
 - ambiguity and decision carry-through
 - relevant-code coverage that affects plan or implementation approval
-- plan-backed code-review verdicts
+- plan-backed code review verdicts
 
 Do not use it as a task board, proof ledger, or implementation diary.
 

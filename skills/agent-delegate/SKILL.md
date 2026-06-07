@@ -1,6 +1,6 @@
 ---
 name: agent-delegate
-description: "Delegate one or more concrete tasks to Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses with full local agent capabilities. Use when the user wants another agent, multiple agents, or parallel agents to implement, edit, investigate-and-fix, run commands, use installed skills, or resume one previously delegated same-runtime worker session when continuity is explicitly required. Fresh one-shot is the default; ask once if runtime, model, effort, work root, write scope, task, or resume handle is missing. Run hook-suppressed where supported and unsandboxed in the shared worktree. Do NOT use for read-only second opinions (`fresh-consult`), deterministic reviews (`code-review`/`codex-review-yolo`), two-model plan convergence (`model-consensus`), ordered workflow orchestration (`stepwise`/`arch-epic`), or detached/background delegation."
+description: "Delegate one or more concrete tasks to Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses with full local agent capabilities. Use when the user wants another agent, multiple agents, or parallel agents to implement, edit, investigate-and-fix, run commands, use installed skills, or resume one previously delegated same-runtime worker session when continuity is explicitly required. Fresh one-shot is the default; ask once if runtime, model, effort, work root, write scope, task, or resume handle is missing. Run hook-suppressed where supported and unsandboxed in the shared worktree. Do NOT use for read-only second opinions (`fresh-consult`), Codex `-p yolo` reviews (`codex-review-yolo`), two-model plan convergence (`model-consensus`), ordered workflow orchestration (`stepwise`/`arch-epic`), or detached/background delegation."
 metadata:
   short-description: "Claude, Codex, Cursor, or Grok worker"
 ---
@@ -40,8 +40,6 @@ automation.
 - The user wants a clean read, second opinion, consistency check, completion
   audit, or readability/confusion check with no file edits. Use
   `$fresh-consult`.
-- The user wants deterministic code-review coverage with lens fan-out,
-  artifacts, and enforced Codex review policy. Use `$code-review`.
 - The user specifically asks for the existing Codex `-p yolo` review pattern.
   Use `$codex-review-yolo`.
 - The user wants two models to iterate on a plan, architecture, design, or

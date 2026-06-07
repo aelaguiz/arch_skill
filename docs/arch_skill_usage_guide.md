@@ -46,7 +46,6 @@ Other shipped skills:
 - `model-consensus`
 - `contact-sheet-builder`
 - `exhaustive-code-review`
-- `code-review`
 - `stepwise`
 - `thermo-nuclear-code-quality-review`
 
@@ -106,7 +105,6 @@ Default local path:
 - `~/.agents/skills/model-consensus/`
 - `~/.agents/skills/contact-sheet-builder/`
 - `~/.agents/skills/exhaustive-code-review/`
-- `~/.agents/skills/code-review/`
 - `~/.agents/skills/stepwise/`
 - `~/.agents/skills/arch-epic/`
 - `~/.agents/skills/thermo-nuclear-code-quality-review/`
@@ -154,7 +152,6 @@ Installed skills:
   - `model-consensus`
   - `contact-sheet-builder`
   - `exhaustive-code-review`
-  - `code-review`
   - `stepwise`
   - `arch-epic`
   - `thermo-nuclear-code-quality-review`
@@ -195,7 +192,6 @@ Installed skills:
   - `model-consensus`
   - `contact-sheet-builder`
   - `exhaustive-code-review`
-  - `code-review`
   - `stepwise`
   - `arch-epic`
   - `thermo-nuclear-code-quality-review`
@@ -241,7 +237,7 @@ Installed skills:
 
 Install removes stale pre-skill command surfaces, removed skill packages, older Codex skill mirrors, old arch_skill-owned hook entries, and source/build internals from installed skill packages. It does not install new hooks.
 
-`arch-loop`, `delay-poll`, and `wait` are removed from the live installed surface; use native `/goal` for free-form completion and the host's native scheduling/reminder surface for timed waiting or polling. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. `thermo-nuclear-code-quality-review` is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; only that skill package is installed, not Cursor Team Kit agents or rules. `fresh-consult` is read-only: first turns start clean, second/third same-line follow-ups resume a captured exact child session id by default, turn four rotates fresh, and explicitly requested parallel consults create multiple child chains. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh workers when explicitly requested. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs Opus, Cursor Agent runs `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`. `plan-implement` is prompt-first and local: it keeps plan-backed implementation state, proof freshness, and warm review aligned without external worker orchestration. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow. `code-review` is installed on the agents/Codex and Claude Code surfaces only; its review subprocess always shells out to fresh Codex.
+`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. `thermo-nuclear-code-quality-review` is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; only that skill package is installed, not Cursor Team Kit agents or rules. `fresh-consult` is read-only: first turns start clean, second/third same-line follow-ups resume a captured exact child session id by default, turn four rotates fresh, and explicitly requested parallel consults create multiple child chains. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh workers when explicitly requested. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs Opus, Cursor Agent runs `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`. `plan-implement` is prompt-first and local: it keeps plan-backed implementation state, proof freshness, and warm review aligned without external worker orchestration. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow.
 
 ## Shared conventions
 
@@ -576,7 +572,6 @@ Practical rule:
 
 - Use `fresh-consult` for general Claude, Codex, Cursor Agent, or Grok second opinions, bounded read-only follow-up consults, parallel consults, cold reads, consistency audits, and completion checks. Give the child the user's ask, consult mode, exact user-named artifacts, hard constraints, and report contract; let it choose what evidence to inspect.
 - Use `agent-delegate` when the fresh child should implement, edit, investigate-and-fix, run commands, or use installed skills in the shared worktree.
-- Use `code-review` for the deterministic full code-review product with Codex lens fan-out and coverage guarantees.
 - Use `codex-review-yolo` when the user specifically asks for the existing Codex `-p yolo` pattern.
 
 ### `agent-delegate`
@@ -606,13 +601,13 @@ Practical rule:
 
 Use when the user wants an existing planning artifact audited before work starts, or when code already written for a plan needs prompt-first review against that plan. It checks outcome clarity, real ambiguity, constraints, repo/code truth, depth-first risk, side doors, deletes, drift-proofing, owner path, SSOT, caller fit, and elegance.
 
-`plan-audit implementation-audit` is review-only. It does not implement, run tests, prove CI, ask for logs, investigate honesty, or replace `code-review` for generic diffs and PRs.
+`plan-audit implementation-audit` is review-only. It does not implement, run tests, prove CI, ask for logs, investigate honesty, or replace ordinary diff or PR review.
 
 Practical rule:
 
 - Use `plan-audit` before implementation or for plan-backed implementation review only.
 - Use `plan-implement` when the user wants implementation to proceed.
-- Use `code-review` when the user wants the deterministic generic code-review runner.
+- Handle ordinary diff or PR review with the host agent's normal review response.
 
 ### `plan-implement`
 
@@ -651,7 +646,7 @@ Practical rule:
 - Use `agent-delegate` for one-off delegation.
 - Use `stepwise` for strict ordered external processes.
 - Use `arch-epic` for multi-plan epic decomposition.
-- Use `fresh-consult` or `code-review` for review-only work.
+- Use `fresh-consult` for read-only second opinions and completion checks.
 
 ### `model-consensus`
 
@@ -678,7 +673,6 @@ Practical rule:
 - Use `fresh-consult` for read-only second opinions, including cold first-turn
   reads and bounded same-session follow-ups.
 - Use `agent-delegate` for fresh workers that may edit the shared worktree.
-- Use `code-review` for deterministic review findings.
 - Use `stepwise` or `arch-epic` when the desired output is ordered implementation, not a consensus plan.
 
 ### `contact-sheet-builder`
@@ -728,34 +722,8 @@ Examples:
 Practical rule:
 
 - Use `exhaustive-code-review` when coverage itself is the deliverable.
-- Use `code-review` for the deterministic Codex subprocess review product.
 - Use `plan-audit implementation-audit` for plan-backed code review.
 - Use `thermo-nuclear-code-quality-review` for maintainability-only review.
-
-### `code-review`
-
-Use when the user wants a real, deterministic code review — on an uncommitted diff, a branch comparison, a commit range, an explicit path set, or a "is this approved plan phase actually complete?" completion-claim. `code-review` never makes the caller model the reviewer. It always shells out to a fresh unsandboxed Codex `gpt-5.4` `xhigh` synthesis subprocess, with parallel fresh Codex `gpt-5.4-mini` `xhigh` subprocesses for the required per-lens review coverage (`correctness`, `architecture`, `proof`, `docs-drift`, `security`, and a conditional `agent-linter` lens when the change touches agent-building or instruction-bearing surfaces).
-
-The runner writes a namespaced per-run artifact tree (per-lens prompts, live `--json` stream logs, final outputs, and a single synthesized `ReviewVerdict`). Direct invocation runs the runner as a one-shot. `code-review` is review-only: it never edits the reviewed repo and never writes a "suggested patch" block.
-
-Review children commonly take 5+ minutes; xhigh synthesis or broad lens coverage can reasonably take 20-40 minutes. Poll stream logs every few minutes, not every few seconds.
-
-Examples:
-
-- `Use $code-review on the uncommitted diff`
-- `Use $code-review branch-diff --base main --head feature/ingest-fix`
-- `Use $code-review paths src/ingest/pipeline.py src/ingest/schema.py`
-- `Use $code-review completion-claim docs/MY_PLAN.md 3`
-
-Practical rule:
-
-- Use `code-review` when the user wants an automated finding-set with explicit coverage guarantees, including docs-drift and agent-surface checks.
-- Use `exhaustive-code-review` when the user wants prompt-only exhaustive coverage and a saved disk artifact without the Codex review runner.
-- Use `plan-audit implementation-audit` when the user wants prompt-first code review against a specific plan without running tests, proving CI, or launching the code-review runner.
-- Use `fresh-consult` when the user wants a general Claude, Codex, Cursor Agent, or Grok second opinion without the code-review runner.
-- Use `agent-delegate` when the user wants a fresh Claude, Codex, Cursor Agent, or Grok worker to make changes rather than review them.
-- Use `codex-review-yolo` when the user wants a narrower, more interactive `-p yolo` fresh-eyes consult on a specific artifact rather than a full lens-by-lens review.
-- Gemini is intentionally not supported; the skill package is never installed on Gemini because the runner always launches fresh Codex subprocesses.
 
 ### `thermo-nuclear-code-quality-review`
 
@@ -772,7 +740,7 @@ Examples:
 Practical rule:
 
 - Use `thermo-nuclear-code-quality-review` only when the user wants this unusually strict maintainability rubric.
-- Use `code-review` for ordinary code review requests and deterministic lens coverage.
+- Handle ordinary code review requests with the host agent's normal review response unless the user names a specific review skill.
 - Use `codex-review-yolo` or `fresh-consult` for broader fresh-eyes second opinions.
 
 ## Full-arch doc conventions

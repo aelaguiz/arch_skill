@@ -16,12 +16,12 @@ Plan-readiness verdicts:
   repaired.
 - `inconclusive`: The audit could not inspect required plan or repo evidence.
 
-Implementation-audit code-review verdicts:
+Implementation-audit code review verdicts:
 
-- `approve`: No blocking code-review findings remain in the requested scope.
+- `approve`: No blocking code review findings remain in the requested scope.
 - `approve-with-notes`: No blockers remain, but non-blocking code-quality,
   architecture, drift, cleanup, or maintainability notes exist.
-- `not-approved`: Blocking code-review findings exist in the requested scope.
+- `not-approved`: Blocking code review findings exist in the requested scope.
 - `scope-inconclusive`: The review target cannot be resolved or required code
   surfaces cannot be read.
 
@@ -152,7 +152,7 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
 
 1. <finding title>
    - Problem:
-   - Why it blocks code-review approval:
+   - Why it blocks code review approval:
    - Plan expects:
    - Code reality:
    - Anchors:
@@ -198,7 +198,7 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
 
 ## Recommended Next Move
 
-<one exact implementation repair, plan reconciliation, or code-review step>
+<one exact implementation repair, plan reconciliation, or code review step>
 ```
 
 Implementation-audit rules:

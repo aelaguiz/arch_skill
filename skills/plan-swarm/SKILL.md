@@ -54,8 +54,8 @@ without treating Git history as PR-ready.
 - The workflow is a strict ordered process from another repo's doctrine. Use
   `$stepwise`.
 - The user only wants one child worker. Use `$agent-delegate`.
-- The user only wants a review or second opinion. Use `$fresh-consult` or
-  `$code-review`.
+- The user only wants a review or second opinion. Use `$fresh-consult`, ordinary
+  host review, or a named review skill.
 - The user wants worktrees, pushes, PRs, or detached workers. Those are not v1
   defaults and require an explicit separate ask.
 

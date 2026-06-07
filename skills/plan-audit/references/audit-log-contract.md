@@ -28,7 +28,7 @@ audit log only when the user wants looped refinement.
 Plan: <path>
 Audit log: <path>
 Current plan verdict: ready | not-ready | blocked-on-decision | inconclusive
-Current implementation code-review verdict: approve | approve-with-notes | not-approved | scope-inconclusive | not-run
+Current implementation code review verdict: approve | approve-with-notes | not-approved | scope-inconclusive | not-run
 Last reviewed: <date/time>
 Scope: <whole plan | section | pasted plan | issue body>
 
@@ -123,7 +123,7 @@ Scope: <whole plan | section | pasted plan | issue body>
   artifacts.
 - If the plan changes scope, add a pass entry explaining whether old findings
   still apply.
-- In `implementation-audit` mode, use `IMP-*` IDs for code-review findings.
+- In `implementation-audit` mode, use `IMP-*` IDs for code review findings.
   Accept supplied test-pass status as context; do not record test execution as
   proof, ask for logs, or make the log a verification ledger.
 - The audit log tracks review evidence and readiness state. It must not become

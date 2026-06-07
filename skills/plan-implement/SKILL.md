@@ -17,7 +17,7 @@ after compaction.
 
 This is a doctrine-only, prompt-first implementation skill. It must not become
 a deterministic harness, runner, controller, workflow engine, checklist
-executor, test scheduler, CI verifier, code-review subprocess launcher, scorer,
+executor, test scheduler, CI verifier, code review subprocess launcher, scorer,
 state machine, or script-backed completion judge.
 
 ## Use When
@@ -25,7 +25,7 @@ state machine, or script-backed completion judge.
 - The user asks to implement an existing plan, plan phase, plan section,
   checklist, issue-body plan, or documented implementation scope.
 - The user wants implementation to stay aligned with plan quality doctrine,
-  plan-audit findings, code-review state, and proof freshness.
+  plan-audit findings, review state, and proof freshness.
 - The user wants progress to survive compaction without rereading the same
   plan and code surfaces repeatedly.
 - The user wants native subagents or parallel-agent features used for
@@ -39,7 +39,8 @@ state machine, or script-backed completion judge.
 - The user wants a plan audited before implementation. Use `plan-audit`.
 - The user wants code already written for a plan reviewed without new
   implementation. Use `plan-audit implementation-audit`.
-- The user wants a generic branch, diff, or PR reviewed. Use `code-review`.
+- The user wants a generic branch, diff, or PR reviewed. Use the host agent's
+  normal review response.
 - The user explicitly wants delegated external worker swarms, resumable child
   sessions, arbiter gates, or phase-swarm orchestration. Use `plan-swarm`.
 - The user wants one explicit external worker. Use `agent-delegate`.

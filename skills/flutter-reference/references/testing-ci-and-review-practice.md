@@ -1,6 +1,6 @@
 # Testing, CI, And Review Practice
 
-Use this reference when designing tests, CI lanes, performance scenarios, leak checks, code-review standards, anti-pattern fixes, sample review comments, or acceptance criteria for Flutter work.
+Use this reference when designing tests, CI lanes, performance scenarios, leak checks, code review standards, anti-pattern fixes, sample review comments, or acceptance criteria for Flutter work.
 
 ## Testing Strategy And CI/CD
 

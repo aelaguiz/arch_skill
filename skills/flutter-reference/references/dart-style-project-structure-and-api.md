@@ -162,7 +162,7 @@ Dependency policy should be conservative. Pub dependencies are declared in `pubs
 
 Flutter’s own design notes explicitly favor **named arguments** because constructor-heavy UI code becomes much easier to read when the semantic meaning of each argument is visible. Effective Dart recommends type-annotated public APIs, clear naming, and class modifiers that enforce extension/implementation intent.
 
-That yields a concrete code-review standard:
+That yields a concrete code review standard:
 
 * Public functions, classes, and exported fields should be fully typed.
 * If a method primarily **returns a value**, name it like the value returned, not like work performed.

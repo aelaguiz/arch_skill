@@ -38,7 +38,8 @@ only inspects and applies a safe message-only rewrite.
 - The user wants a PR title/body. Use `$pr-authoring`.
 - The user wants a changelog, release notes, or docs narrative instead of Git
   history.
-- The user wants a findings-first review. Use `$code-review`.
+- The user wants a findings-first review. Use the host agent's normal review
+  response.
 - The user wants to squash, split, reorder, drop, or combine commits. Treat
   that as a separate higher-risk history-editing task, not this default flow.
 - The repo has no concrete branch-span commit range to rewrite.

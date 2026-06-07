@@ -1,6 +1,6 @@
 ---
 name: exhaustive-code-review
-description: "Run a prompt-only exhaustive code review over a branch, diff, path set, plan scope, or completion claim by maximizing native parallel agents, reading touched files/hunks/abstractions/callers/side doors/proof/docs/generated/prompt surfaces, and saving a findings-first review artifact to disk. Use when the user asks for exhaustive, meticulous, line-by-line, file-by-file, abstraction-by-abstraction, feature-by-feature, or coverage-ledger review. Not for normal high-signal `code-review`, plan-backed `plan-audit implementation-audit`, maintainability-only thermonuclear review, implementation, repair, PR shipping, or external subprocess review."
+description: "Run a prompt-only exhaustive code review over a branch, diff, path set, plan scope, or completion claim by maximizing native parallel agents, reading touched files/hunks/abstractions/callers/side doors/proof/docs/generated/prompt surfaces, and saving a findings-first review artifact to disk. Use when the user asks for exhaustive, meticulous, line-by-line, file-by-file, abstraction-by-abstraction, feature-by-feature, or coverage-ledger review. Not for normal high-signal review, plan-backed `plan-audit implementation-audit`, maintainability-only thermonuclear review, implementation, repair, PR shipping, or external subprocess review."
 metadata:
   short-description: "Exhaustive prompt-only code review saved to disk"
 ---
@@ -29,7 +29,8 @@ or decide what workflow the user should use next.
 
 ## Do Not Use When
 
-- The user wants a normal high-signal general review. Use `code-review`.
+- The user wants a normal high-signal general review. Use the host agent's
+  normal review response.
 - The user wants implemented code reviewed mainly against a plan artifact. Use
   `plan-audit implementation-audit`.
 - The user wants only a harsh maintainability pass. Use

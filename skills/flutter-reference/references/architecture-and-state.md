@@ -151,7 +151,7 @@ GetX deserves a fair reading. Its own docs position it as an “extra-light” s
 
 For games, the best pattern is usually hybrid. Use Riverpod, Provider, or BLoC for shell state, account state, matchmaking, inventory metadata, economy configuration, and menus. Use a game-world controller, Flame component tree, or ECS for simulation. Flame explicitly supports bridge packages for Riverpod, Bloc, isolates, audio, and ECS via Oxygen, which is a strong signal about where those boundaries naturally belong.
 
-A useful code-review smell table is this one:
+A useful code review smell table is this one:
 
 | Smell | Why it is bad | Better shape |
 |---|---|---|

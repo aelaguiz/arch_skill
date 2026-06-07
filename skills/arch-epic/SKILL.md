@@ -81,7 +81,7 @@ change requires the user.
 - Stepped orchestration in a foreign repo with a per-step critic: use
   `$stepwise`.
 - One-shot review of a diff, branch, or completion claim: use
-  `$code-review` or `$codex-review-yolo`.
+  ordinary host review or `$codex-review-yolo`.
 - Work that fits in a single orchestrator turn.
 
 ## Non-negotiables

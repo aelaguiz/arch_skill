@@ -1,6 +1,6 @@
 ---
 name: fresh-consult
-description: "Invoke one or more Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses for prompt-engineered read-only second opinions. First turns start clean from disk and the consult prompt; second/third same-line follow-ups resume the captured child session by default; turn four starts fresh unless the user asks to continue. Use for cold reads, bounded follow-up consults, parallel consults, flow consistency audits, completion checks, readability/confusion checks, or general second opinions. Ask once if runtime, model, effort, or target is missing; run hook-suppressed where supported and unsandboxed; report mode, evidence, verdict, session id, and directories. Do NOT use for deterministic code-review coverage (`code-review`), Codex `-p yolo` reviews (`codex-review-yolo`), ordered orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
+description: "Invoke one or more Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses for prompt-engineered read-only second opinions. First turns start clean from disk and the consult prompt; second/third same-line follow-ups resume the captured child session by default; turn four starts fresh unless the user asks to continue. Use for cold reads, bounded follow-up consults, parallel consults, flow consistency audits, completion checks, readability/confusion checks, or general second opinions. Ask once if runtime, model, effort, or target is missing; run hook-suppressed where supported and unsandboxed; report mode, evidence, verdict, session id, and directories. Do NOT use for Codex `-p yolo` reviews (`codex-review-yolo`), ordered orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
 metadata:
   short-description: "Fresh Claude, Codex, Cursor, or Grok opinion"
 ---
@@ -33,8 +33,6 @@ controllers, state machines, parsers, or install-time automation.
 
 ## When not to use
 
-- The user wants deterministic code-review coverage with lens fan-out, artifacts,
-  and enforced Codex `gpt-5.4` `xhigh` synthesis. Use `$code-review`.
 - The user specifically asks for the existing Codex `-p yolo` review pattern.
   Use `$codex-review-yolo`.
 - The user asks Cursor Agent to run GPT/GBT or Claude models. Cursor Agent is

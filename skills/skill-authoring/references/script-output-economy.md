@@ -54,7 +54,7 @@ Each pattern is a recognition test, not a recipe. A script can satisfy more than
 ### Large data goes to disk; stdout returns the path
 
 - anything bigger than a small structured summary is written to a deterministic location (workspace tmp, a run directory, an artifact root) and stdout returns only the path and one-line summary
-- the layout of that location is documented in a reference (see `skills/stepwise/references/run-directory-layout.md` and `skills/code-review/references/invocation.md` for in-repo examples), so the agent can find sub-artifacts without prose guessing
+- the layout of that location is documented in a reference (see `skills/stepwise/references/run-directory-layout.md` and `skills/exhaustive-code-review/references/output-contract.md` for in-repo examples), so the agent can find sub-artifacts without prose guessing
 - this matches the "handle" pattern Anthropic Skills, Google ADK, and Claude Code's own grep/bash discipline already use
 
 ## Anti-patterns

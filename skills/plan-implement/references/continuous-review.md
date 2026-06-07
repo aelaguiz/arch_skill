@@ -1,7 +1,7 @@
 # Continuous Review
 
 Continuous review means reviewing useful slices while the code is still easy to
-repair. It is not a formal code-review runner and not a replacement for
+repair. It is not a formal code review runner and not a replacement for
 `plan-audit implementation-audit` at the final boundary.
 
 ## When To Review
@@ -71,8 +71,8 @@ findings, update artifacts, and own the final claim.
 
 ## What Not To Do
 
-- Do not launch the deterministic `code-review` runner unless the user or local
-  instructions explicitly require it.
+- Do not launch an external review runner unless the user or local instructions
+  explicitly require it.
 - Do not manually spawn `codex`, `claude`, `agent`, or `grok` binaries for
   ordinary continuous review.
 - Do not block implementation on missing CI logs when this is plan-backed code

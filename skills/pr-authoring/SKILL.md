@@ -20,7 +20,8 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
 
 ## When not to use
 
-- The user wants a findings-first code review before merge. Use `$code-review`.
+- The user wants a findings-first code review before merge. Use the host
+  agent's normal review response.
 - The user wants release notes, a changelog, commit messages, or a design doc rather than a GitHub PR.
 - The repo has no GitHub remote, no publishable branch, no meaningful change set, and no user-supplied PR target. Stop and state the blocker.
 - Publishing is impossible because the runtime lacks GitHub access or authentication. Stop and state the blocker instead of printing a pretend PR.
