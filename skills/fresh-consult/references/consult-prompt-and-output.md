@@ -5,6 +5,10 @@ consult or a bounded same-session follow-up. A fresh-start turn has no parent
 chat context. A resume turn has its own child-session history, but still has no
 unstated parent context beyond the new prompt.
 
+Fresh consult is a strict yes/no arbiter. The child decides whether the user's
+ask is fully satisfied. If the answer is not a clean yes, the verdict is
+`fail` with specific reasons.
+
 ## Prompt Skeleton
 
 Write a prompt like this to `prompt.md` and adapt the sections to the actual
@@ -61,9 +65,8 @@ another controller.
 
 End with this exact footer:
 
-VERDICT: pass | pass-with-notes | fail | inconclusive
-BLOCKING: <bullets or "none">
-NON-BLOCKING: <bullets or "none">
+VERDICT: pass | fail
+FAILURE REASONS: <specific bullets or "none">
 EVIDENCE READ: <paths, commands, or anchors actually inspected>
 CONFIDENCE: high | medium | low
 SUMMARY FOR PARENT: <one concise paragraph>
@@ -71,14 +74,18 @@ SUMMARY FOR PARENT: <one concise paragraph>
 
 ## Verdict Semantics
 
-- `pass` - the artifacts satisfy the consult question with no material caveats.
-- `pass-with-notes` - the core answer is acceptable, but the notes should be
-  triaged.
-- `fail` - at least one blocking issue prevents approval or confidence.
-- `inconclusive` - the child could not inspect enough evidence to answer.
+- `pass` - the artifacts fully satisfy the consult question and are good enough
+  with no material caveats.
+- `fail` - anything short of a clean yes. This includes incomplete work,
+  unresolved notes, missing proof, uncertainty, confusing quality, malformed
+  evidence, or not enough inspected evidence to answer.
 
-`BLOCKING` issues must name the file, heading, command, artifact, or decision
-that fails. For code or repo-backed consults, cite line numbers when practical.
+`FAILURE REASONS` must name the file, heading, command, artifact, claim, or
+decision that fails. For code or repo-backed consults, cite line numbers when
+practical. A `pass` must use `FAILURE REASONS: none`.
+
+`CONFIDENCE: low` must pair with `VERDICT: fail`. Low confidence means the
+child cannot cleanly say yes.
 
 `EVIDENCE READ` is required. A consult that does not say what it inspected is
 not actionable.
@@ -88,12 +95,12 @@ not actionable.
 When reporting the result upstream:
 
 1. Lead with `VERDICT` verbatim.
-2. Quote blocking findings exactly when there are only a few; summarize only
-   when the list is long.
-3. Include non-blocking notes, confidence, and evidence read.
+2. Quote failure reasons exactly when there are only a few; summarize only when
+   the list is long.
+3. Include confidence and evidence read.
 4. Name the runtime/model/effort, consult mode, chain directory, run directory,
    and session id when captured or reused.
-5. Spot-check blocking findings before treating them as true.
+5. Spot-check failure reasons before treating them as true.
 6. If you disagree with the child after spot-checking, say so explicitly.
 7. For parallel groups, report each child verdict separately before writing any
    synthesis. Treat disagreement between children as useful signal, not a
@@ -116,6 +123,8 @@ Do not:
 - Paste huge diffs inline when the child can run `git diff` or read files.
 - Hide missing context behind parent summaries. Point at ground truth.
 - Ask the child to fix, refactor, or implement as part of the consult.
+- Return `pass` with caveats, notes to triage, or unresolved uncertainty. If it
+  is not a clean yes, return `fail`.
 - Treat the child as final authority. It is an independent read, not a judge
   that overrides repo evidence.
 - Overwrite old turn directories. A resume turn gets a new run directory that

@@ -1,6 +1,6 @@
 ---
 name: fresh-consult
-description: "Invoke one or more Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses for prompt-engineered read-only second opinions. First turns start clean from disk and the consult prompt; second/third same-line follow-ups resume the captured child session by default; turn four starts fresh unless the user asks to continue. Use for cold reads, bounded follow-up consults, parallel consults, flow consistency audits, completion checks, readability/confusion checks, or general second opinions. Ask once if runtime, model, effort, or target is missing; run hook-suppressed where supported and unsandboxed; report mode, evidence, verdict, session id, and directories. Do NOT use for Codex `-p yolo` reviews (`codex-review-yolo`), ordered orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
+description: "Invoke one or more Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses for prompt-engineered read-only second opinions with strict pass/fail verdicts. First turns start clean from disk and the consult prompt; second/third same-line follow-ups resume the captured child session by default; turn four starts fresh unless the user asks to continue. Use for cold reads, bounded follow-up consults, parallel consults, flow consistency audits, completion checks, readability/confusion checks, or general second opinions. Ask once if runtime, model, effort, or target is missing; run hook-suppressed where supported and unsandboxed; report mode, evidence, verdict, session id, and directories. Do NOT use for Codex `-p yolo` reviews (`codex-review-yolo`), ordered orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
 metadata:
   short-description: "Fresh Claude, Codex, Cursor, or Grok opinion"
 ---
@@ -14,6 +14,9 @@ consult prompt, not from the current parent chat history. The second and third
 same-line follow-ups resume the captured child session by default so the parent
 does not pay full startup cost again. The fourth same-line request starts a new
 clean consult by default.
+
+The child is a strict yes/no arbiter. If the user's ask is not fully satisfied,
+the verdict is `fail` with specific reasons.
 
 This is a prompt-engineering skill. It ships no scripts, shims, hook
 controllers, state machines, parsers, or install-time automation.
@@ -67,6 +70,8 @@ controllers, state machines, parsers, or install-time automation.
 - Use bounded continuity by default: turn 1 is `fresh-resumable`, turns 2 and 3
   are `resume` when the same-line prior chain is healthy and unambiguous, and
   turn 4 is `fresh-rotated` unless the user explicitly asks to continue.
+- Strictness is an acceptance bar, not a fresh-start reason. Do not avoid
+  resume just because the child must be strict.
 - Never use latest-session selection. Resume only with the exact same-runtime
   session id captured from a prior fresh-consult chain.
 - For a single consult line, create one chain directory under
@@ -85,7 +90,9 @@ controllers, state machines, parsers, or install-time automation.
   child environment and tell the child which environment variable to read.
 - Do not ask the child to fix the issues it finds. Report back to the parent;
   fixes are a separate step.
-- If the child reports a blocking finding, spot-check the cited evidence before
+- The child verdict is `pass` or `fail` only. If the answer is not a clean yes,
+  including missing evidence or uncertainty, the child must fail and explain why.
+- If the child reports a failure reason, spot-check the cited evidence before
   acting on it or presenting it as verified truth.
 
 ## First Move
@@ -100,8 +107,8 @@ controllers, state machines, parsers, or install-time automation.
 5. Confirm the selected CLI exists with `command -v codex`, `command -v
    claude`, `command -v agent`, or `command -v grok`.
 6. Select continuity: reuse an unambiguous healthy same-line chain for turns 2
-   and 3, start fresh when forced or rotated, and ask only if multiple candidate
-   chains plausibly match.
+   and 3, even for strict checks. Start fresh only when forced or rotated, and
+   ask only if multiple candidate chains plausibly match.
 7. Create the chain, turn, or group directories and write each consult prompt
    to its own `prompt.md`.
 8. Invoke each child with the exact command shape from the invocation reference.
@@ -130,7 +137,7 @@ controllers, state machines, parsers, or install-time automation.
 7. **Consume the result.** Read `final.txt`, locate the verdict footer, update
    `chain.json` and `session_id.txt`, and inspect `events.jsonl`/`stderr.log`
    when the final output is missing or malformed.
-8. **Report upstream.** For one child, lead with the verdict, blocking findings,
+8. **Report upstream.** For one child, lead with the verdict, failure reasons,
    confidence, mode, chain directory, run directory, and session id after
    spot-checking. For a parallel group, report one compact child-by-child table
    plus a short synthesis of agreement and disagreement. Include all chain and
@@ -142,16 +149,16 @@ controllers, state machines, parsers, or install-time automation.
   - runtime/model/effort used
   - consult mode: `fresh-resumable`, `resume`, `fresh-forced`, or
     `fresh-rotated`
-  - consult verdict, or one verdict per child for parallel groups
-  - blocking findings or `none`
-  - non-blocking findings or `none`
+  - strict `pass` or `fail` verdict, or one verdict per child for parallel
+    groups
+  - failure reasons or `none`
   - evidence the child says it read
   - confidence and limits
   - chain directory, run directory, and session id when captured or reused
   - group directory plus child chain/run directories for parallel groups
 - If the child output is missing or malformed, say that plainly and preserve the
   run directory for debugging. Do not invent a verdict.
-- If the child is wrong on a blocking point, say so explicitly and cite the
+- If the child is wrong on a failure reason, say so explicitly and cite the
   evidence that contradicts it.
 
 ## Reference Map

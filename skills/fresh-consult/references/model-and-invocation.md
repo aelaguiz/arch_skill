@@ -126,7 +126,8 @@ Use these modes:
 - `fresh-resumable` - default first request in a consult line. It starts clean,
   captures a session id, and writes chain metadata.
 - `resume` - default for the second and third same-line requests when a healthy
-  unambiguous prior chain exists.
+  unambiguous prior chain exists. Strict pass/fail review does not change this
+  default.
 - `fresh-forced` - a clean-start chain because the user asked for cold,
   independent, or fresh-eyes review, or because execution choices changed.
 - `fresh-rotated` - a clean-start chain because the prior same-line chain
@@ -151,6 +152,10 @@ Start fresh instead when:
 - the prior `session_id.txt` is missing, empty, or `UNRECOVERABLE`
 - the prior output was malformed or lacks the verdict footer
 - the same-line chain has already reached three turns
+
+Do not start fresh solely because the consult is strict, adversarial, or acting
+as a completion arbiter. Strictness controls the acceptance bar; continuity
+controls whether the same child session should inspect the follow-up.
 
 If the only problem is ambiguity between candidate chains, ask one concise
 question naming the candidate chain directories. Do not silently choose the
@@ -254,7 +259,7 @@ defensible:
       "run_dir": "<absolute path>",
       "session_id_path": "<absolute path>",
       "session_id": "<captured id or UNRECOVERABLE>",
-      "verdict": "pass | pass-with-notes | fail | inconclusive | malformed",
+      "verdict": "pass | fail | malformed",
       "created_at_utc": "2026-06-05T00:00:00Z"
     }
   ]
@@ -561,7 +566,8 @@ shows an error, or there is no stream activity for a long quiet window.
 
 Resume turns still need monitoring and evidence checks. A resumed consult can
 use child-session history, but it must re-read files when current repo state is
-load-bearing.
+load-bearing. The resumed child applies the same strict pass/fail bar as a
+fresh child.
 
 ## Failure Behavior
 
