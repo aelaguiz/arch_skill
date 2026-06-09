@@ -37,7 +37,7 @@ Spawned-harness automatic mode asks for a role table after decomposition approva
 Example table:
 
 ```text
-epic_planner: claude opus 4.7 xhigh
+epic_planner: claude fable 5 high
 implementation_worker: codex gpt 5.5 xhigh
 critic: codex gpt 5.5 xhigh
 poll_seconds: 180
@@ -75,7 +75,8 @@ the same doctrine used by Stepwise and fresh-consult:
 - infer runtime only from unambiguous family evidence
 - inspect `codex debug models` when Codex model availability matters
 - inspect `grok models` when Grok model availability matters
-- prefer `claude-<family>-<version-with-hyphens>` for Claude family+version
+- prefer `claude-<family>-<version-with-hyphens>` for supported Claude
+  family+version
   phrases
 - ask for the runnable ID when discovery is unavailable, ambiguous, or missing
 - never run paid trial prompts to discover whether a Claude model exists
@@ -87,7 +88,7 @@ needs to change, update the shared helper and the shared doctrine references.
 
 All of these are valid when they include a role:
 
-- "planner on Claude Opus 4.7 xhigh"
+- "planner on Claude Fable 5 high"
 - "implementation worker on Codex gpt-5.5 xhigh"
 - "planner on Grok Build high"
 - "critics on gpt 5.5 xhigh"
@@ -103,8 +104,9 @@ Treat model text as intent, not a loose alias:
 
 - `gpt 5.5` may normalize to `gpt-5.5`; it must not become `gpt-5.4`.
 - `gpt 5.3 codex` may normalize to `gpt-5.3-codex`.
-- `opus 4.7` under Claude may normalize to `claude-opus-4-7`; it must not
-  become another Opus version.
+- `fable 5` under Claude may normalize to `claude-fable-5`; `opus 4.7` may
+  normalize to `claude-opus-4-7`. Neither may become another Claude family or
+  version.
 - `grok`, `grok cli`, `grok build`, or `grok-build` may normalize to
   `grok-build`.
 - `grok composer`, `grok composer 2.5`, or `grok-composer-2.5-fast` may
@@ -115,7 +117,7 @@ Treat model text as intent, not a loose alias:
   pause before execution and ask whether they meant `gpt-5.5` or explicitly
   want `gpt-5.4`. This is an intent check, not an alias rule: do not rewrite
   the version yourself.
-- Family-only Claude aliases such as `opus`, `sonnet`, or `haiku` are allowed
+- Family-only supported Claude aliases such as `fable` or `opus` are allowed
   only when the user did not pin a version.
 - If the phrase names multiple runtime families, ask the user to split the role
   choices.
@@ -124,7 +126,7 @@ Always print the raw-to-resolved mapping before execution:
 
 ```text
 critic: "codex gpt 5.5 xhigh" -> runtime=codex, model=gpt-5.5, effort=xhigh
-planner: "Claude Opus 4.7 high" -> runtime=claude, model=claude-opus-4-7, effort=high
+planner: "Claude Fable 5 high" -> runtime=claude, model=claude-fable-5, effort=high
 implementation_worker: "Grok Build high" -> runtime=grok, model=grok-build, effort=high
 ```
 

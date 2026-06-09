@@ -54,7 +54,7 @@ Resolved execution blocks appear on every step for both worker and critic:
 ```json
 {
   "runtime": "claude",
-  "model": "claude-opus-4-7",
+  "model": "claude-fable-5",
   "effort": "xhigh",
   "source": "execution_preferences[0]",
   "reason": "Matched learner-facing copy artifact."
@@ -173,7 +173,7 @@ The manifest is a read-then-think product, not a template.
 The user said: "Work in ../lessons_studio. Ramp up on track 3 section 3 and
 implement lesson 2 strictly according to the skill order, no fabrication.
 Default steps on Codex gpt-5.5 high, critic on Codex gpt-5.5 xhigh. Use
-Claude Opus 4.7 for copywriting steps."
+Claude Fable 5 for copywriting steps."
 
 After reading target doctrine, Stepwise drafts an abbreviated manifest:
 
@@ -202,11 +202,11 @@ After reading target doctrine, Stepwise drafts an abbreviated manifest:
   },
   "execution_preferences": [
     {
-      "source_quote": "Use Claude Opus 4.7 for copywriting steps",
+      "source_quote": "Use Claude Fable 5 for copywriting steps",
       "applies_to": "steps whose primary artifact is learner-facing copy",
       "step_execution": {
         "runtime": "claude",
-        "model": "claude-opus-4-7"
+        "model": "claude-fable-5"
       },
       "resolution_rationale": "Apply only after comparing drafted step label, instruction, and artifact."
     }

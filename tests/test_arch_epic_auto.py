@@ -45,6 +45,20 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         self.assertEqual(resolved.effort, "xhigh")
         self.assertIn("exact model family/version", resolved.resolution_reason)
 
+    def test_claude_fable_5_shorthand_resolves_to_full_model_id(self):
+        cases = [
+            ("Claude Fable 5 high", "high"),
+            ("fable 5 xhigh", "xhigh"),
+            ("claude-fable-5 max", "max"),
+        ]
+
+        for phrase, effort in cases:
+            with self.subTest(phrase=phrase):
+                resolved = self.model_resolution.resolve_execution_phrase(phrase)
+                self.assertEqual(resolved.runtime, "claude")
+                self.assertEqual(resolved.model, "claude-fable-5")
+                self.assertEqual(resolved.effort, effort)
+
     def test_codex_shorthand_resolves_against_available_model_names(self):
         resolved = self.model_resolution.resolve_execution_phrase(
             "codex gpt 5.4 mini high",
@@ -110,6 +124,20 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             "same_as:implementation_worker",
         )
         self.assertIn("execution_sha256", policy)
+
+    def test_role_policy_accepts_claude_fable_for_auto_mode_roles(self):
+        policy = self.model_resolution.resolve_role_execution_policy(
+            {
+                "epic_planner": "claude fable 5 high",
+                "implementation_worker": "codex gpt 5.4 xhigh",
+                "critic": "codex gpt 5.4 mini xhigh",
+            },
+            codex_models=["gpt-5.4", "gpt-5.4-mini"],
+        )
+
+        self.assertEqual(policy["roles"]["epic_planner"]["runtime"], "claude")
+        self.assertEqual(policy["roles"]["epic_planner"]["model"], "claude-fable-5")
+        self.assertEqual(policy["roles"]["epic_planner"]["effort"], "high")
 
     def test_codex_worker_command_is_resumable_and_hook_suppressed(self):
         argv = self.run_arch_epic._codex_worker_argv(

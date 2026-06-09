@@ -1,6 +1,6 @@
 ---
 name: fresh-consult
-description: "Invoke one or more Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses for prompt-engineered read-only second opinions with strict pass/fail verdicts. First turns start clean from disk and the consult prompt; second/third same-line follow-ups resume the captured child session by default; turn four starts fresh unless the user asks to continue. Use for cold reads, bounded follow-up consults, parallel consults, flow consistency audits, completion checks, readability/confusion checks, or general second opinions. Ask once if runtime, model, effort, or target is missing; run hook-suppressed where supported and unsandboxed; report mode, evidence, verdict, session id, and directories. Do NOT use for Codex `-p yolo` reviews (`codex-review-yolo`), ordered orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
+description: "Invoke one or more Claude Fable/Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses for prompt-engineered read-only second opinions with strict pass/fail verdicts. First turns start clean from disk and the consult prompt; second/third same-line follow-ups resume the captured child session by default; turn four starts fresh unless the user asks to continue. Use for cold reads, bounded follow-up consults, parallel consults, flow consistency audits, completion checks, readability/confusion checks, or general second opinions. Ask once if runtime, model, effort, or target is missing; run hook-suppressed where supported and unsandboxed; report mode, evidence, verdict, session id, and directories. Do NOT use for Codex `-p yolo` reviews (`codex-review-yolo`), ordered orchestration (`stepwise`/`arch-epic`), or implementation/fixing (`agent-delegate`)."
 metadata:
   short-description: "Fresh Claude, Codex, Cursor, or Grok opinion"
 ---
@@ -8,7 +8,7 @@ metadata:
 # Fresh Consult
 
 Use this skill when the user or another skill needs one or more read-only second
-opinions from Claude Opus, Codex GPT/GBT, Cursor Composer, or Grok
+opinions from Claude Fable/Opus, Codex GPT/GBT, Cursor Composer, or Grok
 subprocesses. The first turn in a consult line starts clean from disk and the
 consult prompt, not from the current parent chat history. The second and third
 same-line follow-ups resume the captured child session by default so the parent
@@ -39,7 +39,8 @@ controllers, state machines, parsers, or install-time automation.
 - The user specifically asks for the existing Codex `-p yolo` review pattern.
   Use `$codex-review-yolo`.
 - The user asks Cursor Agent to run GPT/GBT or Claude models. Cursor Agent is
-  Composer-only; GPT/GBT runs through Codex and Opus runs through Claude Code.
+  Composer-only; GPT/GBT runs through Codex and Claude models run through
+  Claude Code.
 - The user asks Grok to run GPT/GBT, Claude, or Cursor-only model ids. Grok
   uses `grok-build` or `grok-composer-2.5-fast`.
 - The work is an ordered subprocess workflow with manifests, critics, repair
@@ -57,9 +58,10 @@ controllers, state machines, parsers, or install-time automation.
 - Resolve each consult objective, exact user-named artifacts or target paths,
   hard constraints, and the work root before launching child processes.
 - Runtime, model, and effort must be known. Codex runs GPT/GBT/OpenAI models,
-  Claude Code runs Opus, Cursor Agent runs `composer-2.5-fast`, and Grok CLI
-  runs `grok-build` or `grok-composer-2.5-fast`. If any value is missing or
-  ambiguous, ask one consolidated question before invoking.
+  Claude Code runs supported Claude models, Cursor Agent runs
+  `composer-2.5-fast`, and Grok CLI runs `grok-build` or
+  `grok-composer-2.5-fast`. If any value is missing or ambiguous, ask one
+  consolidated question before invoking.
 - Never run GPT/GBT or Claude models through Cursor Agent or Grok. Do not pass
   Grok model ids to Codex, Claude, or Cursor Agent.
 - Treat model text as intent, not a fuzzy alias. Preserve exact family and

@@ -4,7 +4,8 @@
 directly from the parent agent. It does not create a new runner script, model
 alias table, harness, or deterministic controller.
 Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs
-Opus, Cursor Agent runs Composer 2.5 Fast, and Grok CLI runs Grok models.
+supported Claude models, Cursor Agent runs Composer 2.5 Fast, and Grok CLI runs
+Grok models.
 
 ## Required Participant Values
 
@@ -31,24 +32,26 @@ you name Grok Composer.
 Follow the shared model-resolution doctrine:
 
 - Preserve family and numeric version exactly. `gpt 5.5` may normalize to
-  `gpt-5.5`; it must not become `gpt-5.4`. `opus 4.7` may normalize to
-  `claude-opus-4-7`; it must not become another Opus version.
+  `gpt-5.5`; it must not become `gpt-5.4`. `fable 5` may normalize to
+  `claude-fable-5`, and `opus 4.7` may normalize to `claude-opus-4-7`;
+  neither may become another Claude family or version.
 - If the user says `gpt 5.4` or a `gpt-5.4` variant while choosing a model,
   pause before execution and ask whether they meant `gpt-5.5` or explicitly
   want `gpt-5.4`. This is an intent check, not an alias rule: do not rewrite
   the version yourself.
 - Infer runtime only from unambiguous family evidence: `gpt`/`gbt`/`codex`
-  implies Codex; `claude opus` or `opus` implies Claude; `agent`, `cursor`,
-  `cursor agent`, or `cursor-agent` implies Cursor Agent only for Composer.
+  implies Codex; `claude fable`, `fable`, `claude opus`, or `opus` implies
+  Claude; `agent`, `cursor`, `cursor agent`, or `cursor-agent` implies Cursor
+  Agent only for Composer.
   `grok`, `grok-build`, `grok build`, or `grok composer` implies Grok.
   If a phrase mixes Cursor Agent with GPT/GBT or Claude, fail loud instead of
   choosing a side. If a phrase mixes Grok with GPT/GBT, Claude, or Cursor
   Agent, fail loud instead of choosing a side.
 - For Codex, inspect `codex debug models` when model availability matters and
   choose an available id with the same family and exact version.
-- For Claude, only Opus is supported. For Opus family plus version, prefer
-  `claude-opus-<version-with-hyphens>`, such as `claude-opus-4-7`. If the
-  user names Sonnet or Haiku, fail loud and ask for an Opus choice.
+- For Claude, preserve the named supported Claude family and version. Fable 5
+  resolves to `claude-fable-5`; Opus 4.7 resolves to `claude-opus-4-7`. If the
+  user names Sonnet or Haiku, fail loud and ask for a supported Claude choice.
 - For Cursor Agent, always use `composer-2.5-fast`. Accept `composer`,
   `composer 2.5`, `composer-2.5`, `composer-2.5-fast`, or bare `2.5` in a
   Cursor Agent context as that runnable id. Do not use Cursor model discovery
@@ -72,10 +75,17 @@ to this skill.
 Always announce the mapping before execution:
 
 ```text
-Model A: "Claude Opus 4.7 xhigh" -> runtime=claude, model=claude-opus-4-7, effort=xhigh
-Model B: "gpt 5.5 xhigh" -> runtime=codex, model=gpt-5.5, effort=xhigh
-Model C: "Grok Build high" -> runtime=grok, model=grok-build, effort=high
+Model A: "Claude Fable 5 high" -> runtime=claude, model=claude-fable-5, effort=high
+Model B: "Claude Opus 4.7 xhigh" -> runtime=claude, model=claude-opus-4-7, effort=xhigh
+Model C: "gpt 5.5 xhigh" -> runtime=codex, model=gpt-5.5, effort=xhigh
+Model D: "Grok Build high" -> runtime=grok, model=grok-build, effort=high
 ```
+
+For Fable participant prompts, keep the brief direct: state the goal,
+constraints, evidence obligations, and done-ness clearly. Do not ask the child
+to show private reasoning or turn the dialogue into a rigid step script; keep
+the visible output contract to proposals, critiques, agreement status, evidence,
+session metadata, and run directories.
 
 ## Run Directory
 

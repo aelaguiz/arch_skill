@@ -28,11 +28,11 @@ under-powers hard work.
 
 The intake phase parses whatever the user wrote. Any of these is clear:
 
-- "use Claude Opus 4.7 xhigh for steps and Codex gpt-5.5 xhigh for critic"
+- "use Claude Fable 5 high for steps and Codex gpt-5.5 xhigh for critic"
 - "Codex gpt-5.5 high everywhere" (one value reused for all defaults)
 - "Grok Build high for steps and Codex gpt-5.5 xhigh for critic"
 - "steps on gpt-5.5 high, critic on gpt-5.5 xhigh"
-- "default to Codex gpt-5.5 high, but use Claude Opus 4.7 for copywriting"
+- "default to Codex gpt-5.5 high, but use Claude Fable 5 for copywriting"
 
 None of these is magic. The intake reads the phrase, maps the baseline into
 execution defaults, records routing preferences separately, and prints back
@@ -50,12 +50,13 @@ This is reasoning, not a lookup table:
   required provider prefix or change spaces/dots to the runtime's separator,
   but you may not change the family or version. `4.7` must stay `4.7`/`4-7`;
   `5.5` must stay `5.5`, never `5.4`.
-- For Claude, if the runtime is Claude and the user names a family plus a
-  version, prefer the full Claude CLI identifier:
-  `claude-<family>-<version-with-hyphens>`. For example, "Claude Opus 4.7",
-  "claude opus-4-7", and "opus 4.7" under a Claude runtime all resolve to
-  `claude-opus-4-7`. Family-only aliases such as `opus`, `sonnet`, or `haiku`
-  are acceptable only when the user did not pin a version.
+- For Claude, if the runtime is Claude and the user names a supported family
+  plus a version, prefer the full Claude CLI identifier:
+  `claude-<family>-<version-with-hyphens>`. For example, "Claude Fable 5",
+  "claude fable-5", and "fable 5" under a Claude runtime all resolve to
+  `claude-fable-5`; "opus 4.7" resolves to `claude-opus-4-7`. Family-only
+  aliases such as `fable` or `opus` are acceptable only when the user did not
+  pin a version.
 - For Codex, inspect the installed CLI's model list when needed
   (`codex debug models`) and choose the available identifier with the same
   family and exact version. For example, "gpt 5.5" resolves to `gpt-5.5` if
@@ -78,8 +79,8 @@ This is reasoning, not a lookup table:
   Use the CLI's help/list surface when available; otherwise ask.
 
 Always announce the raw-to-resolved mapping before execution, for example:
-`Claude Opus 4.7 xhigh -> runtime=claude, model=claude-opus-4-7,
-effort=xhigh` or `Grok Build high -> runtime=grok, model=grok-build,
+`Claude Fable 5 high -> runtime=claude, model=claude-fable-5,
+effort=high` or `Grok Build high -> runtime=grok, model=grok-build,
 effort=high`.
 
 For deterministic script plumbing that needs these same resolution rules, use
@@ -111,7 +112,7 @@ this once". Ask and wait.
 If the user answers with one complete value ("Codex gpt-5.5 medium
 everywhere"), apply it to both worker and critic defaults and announce that
 before executing. If they answer with a worker-only override ("copywriting on
-Claude Opus 4.7") but no baseline, still ask for the missing defaults.
+Claude Fable 5") but no baseline, still ask for the missing defaults.
 Do not ask merely because the user used spaces, dots, or omitted a runtime
 prefix when the runtime and exact version are otherwise clear; resolve the
 same-version spelling first.
@@ -123,7 +124,7 @@ Runtime is separate from model and effort.
 Infer runtime only when the evidence is unambiguous:
 
 - a target repo says "run with Codex"
-- the user says "Claude Opus 4.7", "Codex gpt-5.5", or "Grok Build"
+- the user says "Claude Fable 5", "Codex gpt-5.5", or "Grok Build"
 - an installed CLI supports only the named model family and the user clearly
   intended that family
 

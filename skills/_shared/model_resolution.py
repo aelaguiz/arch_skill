@@ -2,7 +2,7 @@
 
 This module is deterministic plumbing for skill scripts. It encodes the
 provider-owned routing rule: Codex runs GPT/GBT/OpenAI models, Claude Code runs
-Opus, Cursor Agent runs Composer 2.5 Fast, and Grok CLI runs Grok models.
+supported Claude models, Cursor Agent runs Composer 2.5 Fast, and Grok CLI runs Grok models.
 Cross-provider phrases fail loud instead of routing an expensive model through
 the wrong harness.
 """
@@ -21,7 +21,7 @@ from typing import Any
 VALID_RUNTIMES = {"agent", "claude", "codex", "grok"}
 VALID_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 
-_CLAUDE_FAMILIES = {"opus"}
+_CLAUDE_FAMILIES = {"fable", "opus"}
 _CODEX_FAMILY_RE = re.compile(
     r"\b(?:gpt|gbt)[\s_-]*(?P<version>\d+(?:\.\d+)?)"
     r"(?P<suffix>(?:[\s_-]*(?:mini|codex|spark))*)\b",
@@ -29,7 +29,7 @@ _CODEX_FAMILY_RE = re.compile(
 )
 _GBT_COMPACT_RE = re.compile(r"\bgbt[\s_-]*55(?:[\s_-]*(?:xhigh|xi|x))?\b", re.IGNORECASE)
 _CLAUDE_FAMILY_RE = re.compile(
-    r"\b(?P<family>opus|sonnet|haiku)"
+    r"\b(?P<family>fable|opus|sonnet|haiku)"
     r"(?:[\s_-]*(?P<version>\d+(?:[\.-]\d+)*))?\b",
     re.IGNORECASE,
 )
@@ -142,6 +142,7 @@ def resolve_execution_phrase(
     """Resolve a compact user phrase into runtime/model/effort.
 
     Examples:
+    - "Claude Fable 5 high" -> claude / claude-fable-5 / high
     - "Claude Opus 4.7 xhigh" -> claude / claude-opus-4-7 / xhigh
     - "codex gpt 5.4 mini high" -> codex / gpt-5.4-mini / high
     - "GBT55XI" -> codex / gpt-5.5 / xhigh
@@ -301,7 +302,9 @@ def _infer_runtime(lowered: str) -> tuple[str | None, str]:
         re.search(r"\b(codex|openai|gpt|gbt)\b", lowered)
         or _GBT_COMPACT_RE.search(lowered)
     )
-    has_claude = bool(re.search(r"\b(claude|anthropic|opus|sonnet|haiku)\b", lowered))
+    has_claude = bool(
+        re.search(r"\b(claude|anthropic|fable|opus|sonnet|haiku)\b", lowered)
+    )
     has_agent = bool(
         re.search(r"\b(cursor(?:[-\s]+agent)?|cursor-agent|agent)\b", lowered)
     )
@@ -321,8 +324,8 @@ def _infer_runtime(lowered: str) -> tuple[str | None, str]:
     if has_agent and (has_codex or has_claude):
         raise ModelResolutionError(
             "execution phrase mixes Cursor Agent with a GPT/GBT/Claude model; "
-            "Codex runs GPT/GBT, Claude Code runs Opus, and Cursor Agent runs "
-            "composer-2.5-fast"
+            "Codex runs GPT/GBT, Claude Code runs supported Claude models, "
+            "and Cursor Agent runs composer-2.5-fast"
         )
     if has_grok:
         return "grok", "inferred_from_model_family"
@@ -472,7 +475,7 @@ def _extract_agent_model_candidate(lowered: str) -> str | None:
     composer_25 = re.search(r"composer[-_.\s]*2[-_.\s]*5", lowered)
     bare_25 = re.search(r"(?<![\d])2[-_.]5(?![\d])", lowered)
     other_family_25 = re.search(
-        r"\b(?:gpt|claude|sonnet|opus|haiku)[-_.\s]*2[-_.\s]*5",
+        r"\b(?:gpt|claude|fable|sonnet|opus|haiku)[-_.\s]*2[-_.\s]*5",
         lowered,
     )
     if composer_25 or (composer_mention and composer_version is None) or (composer_mention and bare_25):

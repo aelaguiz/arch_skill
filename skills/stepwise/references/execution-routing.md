@@ -2,7 +2,7 @@
 
 Execution routing is how the orchestrator turns optional user preferences
 into per-step runtime/model/effort choices. It exists so a user can say
-"do all copywriting steps with Claude Opus 4.7" without forcing every step
+"do all copywriting steps with Claude Fable 5" without forcing every step
 onto that model or teaching the skill a hidden taxonomy.
 
 Routing is a manifest-resolution step, not a script concern. The script runs
@@ -23,11 +23,11 @@ reasoning:
 
 ```json
 {
-  "source_quote": "all copywriting steps using Claude Opus 4.7",
+  "source_quote": "all copywriting steps using Claude Fable 5",
   "applies_to": "steps whose primary artifact is learner-facing copy",
   "step_execution": {
     "runtime": "claude",
-    "model": "claude-opus-4-7"
+    "model": "claude-fable-5"
   },
   "resolution_rationale": "The user named a semantic class, so resolve it against step labels, declared instructions, and expected artifacts after manifest drafting."
 }
@@ -46,7 +46,7 @@ responsibly, ask.
 The user's raw wording stays in `source_quote`; `step_execution.model` and
 `critic_execution.model` store runnable model identifiers resolved by
 `model-and-effort.md`. Do not pass raw shorthand such as `opus-4-7` to a
-subprocess when the runtime requires `claude-opus-4-7`.
+subprocess when the runtime requires `claude-fable-5`.
 
 ## Resolution order
 
@@ -122,7 +122,7 @@ Every StepDescriptor gets both resolved execution blocks:
 {
   "step_execution": {
     "runtime": "claude",
-    "model": "claude-opus-4-7",
+    "model": "claude-fable-5",
     "effort": "xhigh",
     "source": "execution_preferences[0]",
     "reason": "Matched learner-facing copy artifact lesson-copy.json."

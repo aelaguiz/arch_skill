@@ -80,7 +80,7 @@ break.
   worker and critic independently. Ask once if required defaults are missing;
   never silently default.
 - Optional execution preferences are interpreted after the Step Manifest is
-  drafted. A phrase like "copywriting steps use Claude Opus 4.7" is a routing
+  drafted. A phrase like "copywriting steps use Claude Fable 5" is a routing
   preference to resolve against real steps, not a built-in category.
 - Orchestrator does not persistently load the target repo's contents into its
   own context. It points sub-sessions at paths; sub-sessions read fresh.

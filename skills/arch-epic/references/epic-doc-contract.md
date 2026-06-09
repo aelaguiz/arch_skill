@@ -35,7 +35,7 @@ raw_goal: |
 raw_goal_sha256: <hex digest of the raw_goal string>
 sub_plans_approved: false
 critic_runtime: null | claude | codex | grok
-critic_model: null | <resolved CLI model, e.g. claude-opus-4-7>
+critic_model: null | <resolved CLI model, e.g. claude-fable-5>
 critic_effort: null | <low | medium | high | xhigh | max>
 models_sha256: null | <hex digest of {runtime, model, effort} tuple>
 auto_execution: null | <spawned-harness policy block>
@@ -94,13 +94,13 @@ auto_execution:
   max_runtime_seconds: 7200
   auto_run_dir: .arch_skill/arch-epic/auto/<epic-slug>/run-<ts>
   source_quotes:
-    epic_planner: claude opus 4.7 xhigh
+    epic_planner: claude fable 5 high
     implementation_worker: codex gpt 5.5 xhigh
     critic: codex gpt 5.5 xhigh
   roles:
     epic_planner:
       runtime: claude
-      model: claude-opus-4-7
+      model: claude-fable-5
       effort: xhigh
       source: user_table
     implementation_worker:

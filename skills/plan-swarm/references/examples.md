@@ -12,7 +12,7 @@ Parent setup note:
 
 ```text
 Implementation: Cursor Agent, model composer-2.5-fast, max parallel 4.
-Review: Codex GPT/GBT or Claude Opus only. Cursor implementation does not make
+Review: Codex GPT/GBT or Claude Fable/Opus only. Cursor implementation does not make
 review run through Cursor.
 Artifacts: docs/PACKS/example-plan_plan_swarm/phase-14/.
 Git: commit dirty resume state first if present; commit meaningful worker

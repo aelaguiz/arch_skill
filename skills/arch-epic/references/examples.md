@@ -11,14 +11,14 @@ not a script to copy.
 > "Work on this repo. I want to ship a new admin dashboard with SSO
 > support. Three plans roughly: SSO in the auth service, the
 > dashboard itself, then migrate existing admins. Use claude
-> opus-4-7 xhigh for the critic."
+> fable-5 high for the critic."
 
 ### `start` mode
 
 Skill proposes `docs/EPIC_ADMIN_DASHBOARD_SSO_2026-04-22.md`. User
 is silent on path, so proceed. Skill writes frontmatter with
-`critic_runtime: claude`, `critic_model: claude-opus-4-7`,
-`critic_effort: xhigh`, hashes set.
+`critic_runtime: claude`, `critic_model: claude-fable-5`,
+`critic_effort: high`, hashes set.
 
 Drafts the Decomposition:
 
@@ -329,7 +329,7 @@ Before I run the epic automatically, I need the role execution table.
 
 ### User replies
 
-> "Planner Claude Opus 4.7 xhigh, implementation Codex gpt 5.5
+> "Planner Claude Fable 5 high, implementation Codex gpt 5.5
 > xhigh, critic Codex gpt 5.5 xhigh."
 
 ### `auto-run` mode
@@ -337,7 +337,7 @@ Before I run the epic automatically, I need the role execution table.
 The skill resolves and announces:
 
 ```text
-epic_planner -> runtime=claude, model=claude-opus-4-7, effort=xhigh
+epic_planner -> runtime=claude, model=claude-fable-5, effort=high
 implementation_worker -> runtime=codex, model=gpt-5.5, effort=xhigh
 critic -> runtime=codex, model=gpt-5.5, effort=xhigh
 poll_seconds -> 180

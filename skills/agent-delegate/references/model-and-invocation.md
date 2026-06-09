@@ -1,13 +1,13 @@
 # Model And Invocation
 
 Use this reference to resolve what the user meant by "Claude", "Codex",
-"Cursor Agent", "Grok", "opus high", "gpt 5.5 xhigh",
+"Cursor Agent", "Grok", "fable 5 high", "opus high", "gpt 5.5 xhigh",
 "composer-2.5-fast", "grok-build", or similar phrasing, and to run the
 selected worker subprocess or explicit parallel group of worker subprocesses.
 Fresh one-shot is the default. Same-session resume is allowed only when the
 caller explicitly requires continuity for one worker. Provider routing is
-fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs Opus, Cursor Agent
-runs Composer 2.5 Fast, and Grok CLI runs Grok models.
+fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs supported Claude
+models, Cursor Agent runs Composer 2.5 Fast, and Grok CLI runs Grok models.
 
 ## Required Values
 
@@ -70,9 +70,10 @@ Infer runtime only when the user's wording makes it unambiguous:
 - `codex`, `openai`, `gpt`, `gbt`, `gpt-5.5`, `GBT55XI`,
   `gpt 5.5 high`, or `gpt-5.3-codex` implies
   `runtime=codex`.
-- `claude opus` or `opus` implies `runtime=claude`.
+- `claude fable`, `fable`, `claude opus`, or `opus` implies
+  `runtime=claude`.
 - `sonnet` and `haiku` are not supported by this repo's subprocess doctrine;
-  ask for Opus instead of silently running them.
+  ask for a supported Claude choice instead of silently running them.
 - `agent`, `cursor`, `cursor agent`, or `cursor-agent` implies
   `runtime=agent` only for Composer. Cursor Agent always resolves to
   `composer-2.5-fast`.
@@ -97,8 +98,9 @@ quality, so the user supplies it.
 Treat model text as intent, not a loose alias:
 
 - Preserve model family and numeric version exactly. `gpt 5.5` may normalize to
-  `gpt-5.5`; it must not become `gpt-5.4`. `opus 4.7` may normalize to
-  `claude-opus-4-7`; it must not become another Opus version.
+  `gpt-5.5`; it must not become `gpt-5.4`. `fable 5` may normalize to
+  `claude-fable-5`, and `opus 4.7` may normalize to `claude-opus-4-7`;
+  neither may become another Claude family or version.
 - If the user says `gpt 5.4` or a `gpt-5.4` variant while choosing a model,
   pause before execution and ask whether they meant `gpt-5.5` or explicitly
   want `gpt-5.4`. This is an intent check, not an alias rule: do not rewrite
@@ -106,10 +108,9 @@ Treat model text as intent, not a loose alias:
 - For Codex, inspect `codex debug models` when needed and choose an available
   identifier with the same family and exact version. If no exact match exists
   or multiple matches are plausible, ask for the runnable model id.
-- For Claude, only Opus is supported. When the runtime is Claude and the user
-  names family plus version, prefer `claude-opus-<version-with-hyphens>`, for
-  example `claude-opus-4-7`. If the user names Sonnet or Haiku, fail loud and
-  ask for an Opus choice.
+- For Claude, preserve the named supported Claude family and version. Fable 5
+  resolves to `claude-fable-5`; Opus 4.7 resolves to `claude-opus-4-7`. If the
+  user names Sonnet or Haiku, fail loud and ask for a supported Claude choice.
 - For Cursor Agent, always use `composer-2.5-fast`. Accept `agent`, `cursor`,
   `cursor agent`, `cursor-agent`, `composer`, `composer 2.5`,
   `composer-2.5`, `composer-2.5-fast`, or bare `2.5` only in Cursor Agent
@@ -128,6 +129,7 @@ Treat model text as intent, not a loose alias:
 Always announce the raw-to-resolved mapping before execution:
 
 ```text
+Claude Fable 5 high -> runtime=claude, model=claude-fable-5, effort=high
 Claude Opus 4.7 xhigh -> runtime=claude, model=claude-opus-4-7, effort=xhigh
 Grok Build high -> runtime=grok, model=grok-build, effort=high
 ```
@@ -138,6 +140,12 @@ table. The helper exists to keep fresh-consult, agent-delegate,
 model-consensus, Stepwise-style orchestrators, and arch-epic automatic
 harnesses aligned on
 exact-version preservation and fail-loud behavior.
+
+For Fable delegate children, keep the prompt direct: state the task, write
+scope, constraints, evidence expectations, and done-ness clearly. Do not ask
+the child to show private reasoning or turn the delegation into a rigid step
+script; keep the visible output contract to status, changed files,
+verification, blockers, session metadata, and run directories.
 
 ## Effort Resolution
 

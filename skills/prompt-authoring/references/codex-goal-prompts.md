@@ -165,7 +165,7 @@ Use `$codex-review-yolo` as a blind review of the final diff and receipts. Do no
 Good delegated testing:
 
 ```text
-Use `$agent-delegate` with Claude Opus 4.7 xhigh for one fresh testing/signoff pass. Give it the source truth path, final diff, artifacts, and anti-poisoning constraints; do not tell it what verdict to reach.
+Use `$agent-delegate` with Claude Fable 5 high for one fresh testing/signoff pass. Give it the source truth path, final diff, artifacts, and anti-poisoning constraints; do not tell it what verdict to reach.
 ```
 
 ## Lightweight shapes
