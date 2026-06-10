@@ -1,7 +1,7 @@
 interface:
   display_name: "Agent Delegate"
   short_description: "Run Claude, Codex, Cursor, or Grok workers"
-  default_prompt: "Use $agent-delegate to delegate one or more concrete tasks to Claude Fable/Opus, Codex GPT/GBT, Cursor Composer, or Grok workers with full local agent capabilities. Codex runs GPT/GBT, Claude Code runs supported Claude models, Cursor Agent runs composer-2.5-fast, and Grok runs grok-build or grok-composer-2.5-fast. Tell each worker: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents. Run fresh by default; use explicit same-session resume only if I provide a prior run/session handle or require continuity. Report the mode, status, changed files, verification, blockers, session id when present, and run directories."
+  default_prompt: "Use $agent-delegate to delegate one or more concrete tasks to Claude Fable/Opus, Codex GPT/GBT, Cursor Composer, or Grok workers with full local agent capabilities. Codex runs GPT/GBT, Claude Code runs supported Claude models, Cursor Agent runs composer-2.5-fast, and Grok runs grok-build or grok-composer-2.5-fast. Tell each worker: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents. Start fresh-resumable by default; use explicit same-session resume only if I provide a prior run/session handle, and use stateless one-shot only for explicit no-resume or ephemeral requests. Report the mode, status, changed files, verification, blockers, session id when present, and run directories."
 
 policy:
   allow_implicit_invocation: true

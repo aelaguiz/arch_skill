@@ -4,10 +4,10 @@ Use this reference to resolve what the user meant by "Claude", "Codex",
 "Cursor Agent", "Grok", "fable 5 high", "opus high", "gpt 5.5 xhigh",
 "composer-2.5-fast", "grok-build", or similar phrasing, and to run the
 selected worker subprocess or explicit parallel group of worker subprocesses.
-Fresh one-shot is the default. Same-session resume is allowed only when the
-caller explicitly requires continuity for one worker. Provider routing is
-fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs supported Claude
-models, Cursor Agent runs Composer 2.5 Fast, and Grok CLI runs Grok models.
+Fresh-resumable is the default: new children start cold but capture a session
+handle for later exact resume. Provider routing is fixed: Codex runs
+GPT/GBT/OpenAI models, Claude Code runs supported Claude models, Cursor Agent
+runs Composer 2.5 Fast, and Grok CLI runs Grok models.
 
 ## Required Values
 
@@ -45,10 +45,11 @@ and announce the mapping before launch.
 
 ## Delegation Mode
 
-- `fresh-one-shot` is the default. It creates a cold child and may use stateless
-  CLI flags.
-- `fresh-resumable` creates a cold child that can be resumed later. Use it only
-  when the caller says this worker may need same-session continuation.
+- `fresh-resumable` is the default. It creates a cold child that captures a
+  session handle and can be resumed later by exact handle.
+- `fresh-one-shot` creates a cold child and may use stateless CLI flags. Use it
+  only when the caller explicitly asks for a stateless, ephemeral, no-resume, or
+  throwaway worker.
 - `resume` continues an explicit same-runtime session id or prior run
   directory. Do not resume "latest" sessions, do not use Claude `--continue`,
   and do not use Codex `--last`.
@@ -58,7 +59,8 @@ Same-runtime is mandatory. Claude sessions resume through Claude with
 <thread_id>`. Cursor Agent sessions resume through `agent -p --resume
 <session_id>`. Grok sessions resume through `grok --resume <session_id>`.
 
-Parallel delegation supports `fresh-one-shot` and `fresh-resumable`. Keep
+Parallel delegation defaults to `fresh-resumable` and also supports explicit
+`fresh-one-shot`. Keep
 `resume` on the single-worker path; launching several resumed sessions at once
 is a different orchestration problem and is not part of this prompt-first
 skill.
@@ -262,32 +264,9 @@ Wait for all children before reporting. If one child fails or returns malformed
 output, preserve its run directory and include that failure in the group report;
 do not discard successful sibling work.
 
-## Codex Fresh One-Shot
-
-Use this shape for a default stateless Codex delegation:
-
-```bash
-codex exec \
-  --ephemeral \
-  --disable codex_hooks \
-  -C "<work_root>" \
-  --dangerously-bypass-approvals-and-sandbox \
-  --skip-git-repo-check \
-  --model "<resolved_model>" \
-  -c model_reasoning_effort='"<resolved_effort>"' \
-  --json \
-  -o "$FINAL_PATH" \
-  < "$PROMPT_PATH" \
-  > "$EVENTS_PATH" \
-  2> "$STDERR_PATH"
-```
-
-`--ephemeral` keeps the child stateless and cold. Use this only for
-`fresh-one-shot`; ephemeral sessions are not resumable.
-
 ## Codex Fresh Resumable
 
-Use this shape when a Codex worker may need later same-session resume:
+Use this shape for the default fresh-resumable Codex delegation:
 
 ```bash
 codex exec \
@@ -308,6 +287,29 @@ Capture the `thread_id` from the first `thread.started` event in
 `events.jsonl` and write it to `session_id.txt`. If no thread id is captured,
 write `UNRECOVERABLE` to `session_id.txt`, treat the run as malformed, and
 preserve the run directory.
+
+## Codex Fresh One-Shot
+
+Use this shape only for explicit stateless Codex delegation:
+
+```bash
+codex exec \
+  --ephemeral \
+  --disable codex_hooks \
+  -C "<work_root>" \
+  --dangerously-bypass-approvals-and-sandbox \
+  --skip-git-repo-check \
+  --model "<resolved_model>" \
+  -c model_reasoning_effort='"<resolved_effort>"' \
+  --json \
+  -o "$FINAL_PATH" \
+  < "$PROMPT_PATH" \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+`--ephemeral` keeps the child stateless and cold. Use this only for
+`fresh-one-shot`; ephemeral sessions are not resumable.
 
 ## Codex Resume
 

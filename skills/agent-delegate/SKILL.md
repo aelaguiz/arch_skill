@@ -1,6 +1,6 @@
 ---
 name: agent-delegate
-description: "Delegate one or more concrete tasks to Claude Fable/Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses with full local agent capabilities. Use when the user wants another agent, multiple agents, or parallel agents to implement, edit, investigate-and-fix, run commands, use installed skills, or resume one previously delegated same-runtime worker session when continuity is explicitly required. Fresh one-shot is the default; ask once if runtime, model, effort, work root, write scope, task, or resume handle is missing. Run hook-suppressed where supported and unsandboxed in the shared worktree. Do NOT use for read-only second opinions (`fresh-consult`), Codex `-p yolo` reviews (`codex-review-yolo`), two-model plan convergence (`model-consensus`), ordered workflow orchestration (`stepwise`/`arch-epic`), or detached/background delegation."
+description: "Delegate one or more concrete tasks to Claude Fable/Opus, Codex GPT/GBT, Cursor Composer, or Grok subprocesses with full local agent capabilities. Use when the user wants another agent, multiple agents, or parallel agents to implement, edit, investigate-and-fix, run commands, use installed skills, or resume one previously delegated same-runtime worker session by exact handle. Fresh-resumable is the default; ask once if runtime, model, effort, work root, write scope, task, or required resume handle is missing. Run hook-suppressed where supported and unsandboxed in the shared worktree. Do NOT use for read-only second opinions (`fresh-consult`), Codex `-p yolo` reviews (`codex-review-yolo`), two-model plan convergence (`model-consensus`), ordered workflow orchestration (`stepwise`/`arch-epic`), or detached/background delegation."
 metadata:
   short-description: "Claude, Codex, Cursor, or Grok worker"
 ---
@@ -9,10 +9,11 @@ metadata:
 
 Use this skill when the user wants one or more Claude Fable/Opus, Codex
 GPT/GBT, Cursor Composer, or Grok subprocesses to do concrete tasks with normal
-local agent capabilities. Fresh one-shot delegation is the default: each child starts from
-disk and the delegation prompt, not from the current chat history. When the
-caller explicitly requires continuity for one worker, resume the same runtime's
-previously delegated worker session with a new, bounded prompt.
+local agent capabilities. Fresh-resumable delegation is the default: each child
+starts from disk and the delegation prompt, not from the current chat history,
+and the parent captures a session handle for later exact resume. When the
+caller supplies an exact handle, resume the same runtime's previously delegated
+worker session with a new, bounded prompt.
 
 The child may read files, edit files, run commands, verify its work, and use
 installed skills when they fit the task.
@@ -67,8 +68,8 @@ automation.
 - Never run GPT/GBT or Claude models through Cursor Agent or Grok. Do not pass
   Grok model ids to Codex, Claude, or Cursor Agent.
 - Delegation mode is one of `fresh-one-shot`, `fresh-resumable`, or `resume`.
-  Default to `fresh-one-shot`. Use `fresh-resumable` or `resume` only when the
-  caller explicitly requires same-session continuity.
+  Default to `fresh-resumable`. Use `fresh-one-shot` only when the caller
+  explicitly asks for a stateless, ephemeral, no-resume, or throwaway worker.
 - Resume mode requires an explicit session id or a previous run directory with
   `session_id.txt`. Refuse missing, empty, `UNRECOVERABLE`, cross-runtime, or
   "latest session" resume requests.
@@ -116,8 +117,9 @@ automation.
 3. Identify the delegated task or parallel delegated tasks, success bar, work
    root, exact user-named inputs, allowed write scope, constraints, and
    requested runtime/model/effort from the user's words.
-4. Identify the delegation mode. Use `fresh-one-shot` unless the caller
-   explicitly asks for a resumable worker or to resume a previous delegate.
+4. Identify the delegation mode. Use `fresh-resumable` unless the caller
+   explicitly asks for a stateless one-shot worker or to resume a previous
+   delegate.
 5. If runtime/model/effort, write scope, or a required resume handle is
    incomplete, ask one question that names exactly what is missing and what it
    controls.
@@ -139,10 +141,10 @@ automation.
 3. **Select single or parallel.** Use one child by default. Use a parallel group
    only when the user asks for parallel workers or gives multiple delegated
    tasks.
-4. **Select continuity.** Use `fresh-one-shot` by default. Use
-   `fresh-resumable` when the caller says this worker may need later resume.
-   Use `resume` only with an explicit same-runtime session id or prior run
-   directory. Keep resume on the single-worker path.
+4. **Select continuity.** Use `fresh-resumable` by default. Use
+   `fresh-one-shot` only for explicit stateless, ephemeral, no-resume, or
+   throwaway delegation. Use `resume` only with an explicit same-runtime
+   session id or prior run directory. Keep resume on the single-worker path.
 5. **Run the child or children.** Use disabled hooks, no sandbox, a shared
    worktree, namespaced run directories, and live event capture. Fresh one-shot
    runs start cold; fresh-resumable runs start persistent child sessions; resume
@@ -174,7 +176,7 @@ automation.
   - blockers or `none`
   - follow-up needed or `none`
   - run directory path, or group directory plus child run directories
-  - session id or `none` when not resumable
+  - session id, or `none` only for explicit `fresh-one-shot` or failed capture
 - If the child output is missing or malformed, say that plainly and preserve the
   run directory for debugging. Do not invent a status.
 - If the child is wrong about a changed file, blocker, or verification result,
