@@ -116,6 +116,10 @@ Claude Code, and Gemini.
   Cursor Agent, or Grok subprocesses to do concrete work in the current
   workspace, including implementation, editing, investigation-and-fix, command
   execution, or installed-skill use.
+- Use `$pr-review-followthrough` when the user explicitly wants an already-open
+  GitHub PR polled, review comments handled and replied to, same-branch fixes
+  pushed, and the loop continued until merge-ready; use `$pr-authoring` for
+  drafting, opening, or publishing a PR.
 - Use `$plan-audit` when the user wants an existing planning artifact in any
   format audited before work starts for plan quality, outcome clarity, real
   ambiguity, constraints, repo/code truth, depth-first risk, side doors,
