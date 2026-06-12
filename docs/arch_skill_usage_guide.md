@@ -61,9 +61,9 @@ make install
 
 Automatic skill modes now rely on the host's native goal-mode continuation. Use Codex `/goal` or Claude Code `/goal` when you want a skill to keep moving across turns until its proof bar is met.
 
-Install copies only the live runtime package surface. Source/build internals (`build/`, `prompts/`, `__pycache__/`, `*.pyc`, and hook cleanup helpers) are pruned from installed skills. This package no longer installs `Stop` or `SessionStart` hooks; install removes old arch_skill-owned hook entries from prior installs.
+Install copies only the live runtime package surface. Source/build internals (`build/`, `prompts/`, `__pycache__/`, `*.pyc`, and hook cleanup helpers) are pruned from installed skills. This package no longer installs `Stop` or `SessionStart` hooks; install removes old arch_skill-owned hook entries from prior installs. When a Hermes Agent home exists on the machine, install also mirrors the same surface into every existing Hermes skill root (`~/.hermes/skills/` and each `~/.hermes/profiles/<name>/skills/`) under the `arch_skill/` category directory; pass `NO_HERMES=1` to skip, and machines without Hermes are skipped automatically.
 
-Restart Codex, Claude Code, or Gemini after install so the running process
+Restart Codex, Claude Code, Gemini, or Hermes Agent after install so the running process
 reloads skills and drops any hook list cached before install removed old
 arch_skill hook entries.
 
