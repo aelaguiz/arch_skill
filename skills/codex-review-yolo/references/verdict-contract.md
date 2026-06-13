@@ -5,34 +5,45 @@ Codex output is long prose by default. The verdict block at the end of the revie
 ## Required footer
 
 ```
-VERDICT: approve | approve-with-notes | not-approved
-BLOCKING: <bullets or "none">
-NON-BLOCKING: <bullets or "none">
+VERDICT: approve | not-approved | inconclusive
+REQUIRED REPAIRS: <bullets or "none">
+OBSERVATIONS: <bullets or "none">
 ASSESSMENT: <one paragraph>
 ```
 
 ## Field semantics
 
 - **VERDICT** — one of three literal strings.
-  - `approve` — the artifact meets the requested review bar for the next step.
-  - `approve-with-notes` — the artifact is good enough for the requested next step, but the notes in `NON-BLOCKING` should be triaged.
-  - `not-approved` — there is at least one blocking issue in `BLOCKING`.
-- **BLOCKING** — issues that prevent approval for this review objective. For file-based reviews, each bullet names the file + line + the specific fix. For plan or completion audits, each bullet names the unmet outcome, section, or acceptance item.
-- **NON-BLOCKING** — observations that can wait (e.g., "Phase B will re-touch this file, defer the rename"). Still report them so they're captured.
+  - `approve` — the artifact meets the requested review bar with no required
+    repairs for the requested decision.
+  - `not-approved` — at least one required repair, missing required proof, or
+    unresolved decision affects approval for the requested decision.
+  - `inconclusive` — Codex could not inspect the necessary artifact or scope.
+- **REQUIRED REPAIRS** — issues that prevent approval for this review objective.
+  For file-based reviews, each bullet names the file + line + the specific fix.
+  For plan or completion audits, each bullet names the unmet outcome, section,
+  or acceptance item. If this field is not `none`, the verdict must be
+  `not-approved`.
+- **OBSERVATIONS** — informational facts, genuinely out-of-scope follow-ups, or
+  risks the controlling request explicitly excludes from the approval decision.
+  Observations must not hide duplicate truth, side doors, stale docs/prompts,
+  weak proof, or any repair required before approval.
 - **ASSESSMENT** — codex's direct assessment of whether the artifact meets the
   requested review goal, based on the evidence it inspected.
 
 ## Parsing
 
-Don't write a formal parser. Read the file, find the `VERDICT:` line, skim the three sections underneath. That's all. The footer is for human (or LLM-acting-as-human) consumption, not a machine interface.
+Don't write a formal parser. Read the file, find the `VERDICT:` line, skim the
+three sections underneath. That's all. The footer is for human (or
+LLM-acting-as-human) consumption, not a machine interface.
 
 ## Relaying to the user
 
 When reporting back:
 
 1. Lead with the VERDICT, verbatim.
-2. Quote the BLOCKING bullets — do not paraphrase. Paraphrasing loses nuance.
-3. Summarize NON-BLOCKING if there are many; list verbatim if there are few.
+2. Quote the REQUIRED REPAIRS bullets — do not paraphrase. Paraphrasing loses nuance.
+3. Summarize OBSERVATIONS if there are many; list verbatim if there are few.
 4. Always include the ASSESSMENT line.
 5. Note the full final-output file path so the user can read the long-form reasoning.
 
@@ -40,7 +51,9 @@ When reporting back:
 
 If the verdict block is missing or malformed:
 
-- **First try:** re-invoke with a prompt that calls out the failure — "Your last response did not include the required VERDICT footer. Produce ONLY the verdict block for the work described in <path to prior prompt>."
+- **First try:** re-invoke with a prompt that calls out the failure — "Your last
+  response did not include the required VERDICT footer. Produce ONLY the verdict
+  block for the work described in <path to prior prompt>."
 - **Don't** hand-write a verdict on codex's behalf. Report to the user that codex didn't follow the contract and ask whether to re-run.
 
 ## Overriding codex

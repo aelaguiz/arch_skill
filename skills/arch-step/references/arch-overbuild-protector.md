@@ -4,7 +4,7 @@
 
 - compare the authoritative phase plan against the explicit scope contract already recorded in the artifact
 - classify phase-plan work items into explicit scope buckets
-- separate clearly required work from explicitly non-blocking work, product scope creep, architecture theater, and unresolved requiredness that must go back to the user
+- separate clearly required work from work explicitly outside the current code-completion boundary, product scope creep, architecture theater, and unresolved requiredness that must go back to the user
 - in apply mode, rewrite the phase plan in place so the main checklist is mechanically scope-safe
 
 ## Shared references to carry in
@@ -71,7 +71,7 @@ If those sections are vague on a work item, do not reclassify it by taste. Recor
 - `D` Concrete regression or correctness risk necessary:
   - work needed to avoid a concrete regression, correctness failure, or refactor-induced behavior change
 - `E` Optional quality:
-  - explicitly non-blocking by user choice or existing plan text
+  - explicitly outside the current code-completion boundary by user choice or existing plan text
 - `F` Product scope creep:
   - expands requested UX or product capability beyond what the ask or Section 0 approved
 - `G` Architecture theater / speculative infra:
@@ -106,7 +106,7 @@ Tie-breakers:
 - `STRICT=0`:
   - ambiguity still becomes a blocker question
 - convergence or parity is never assumed without a real anchor
-- new tooling is never downgraded into follow-up by default; either it is explicitly non-blocking or it becomes a blocker question
+- new tooling is never downgraded into follow-up by default; either it is explicitly outside the current code-completion boundary or it becomes a blocker question
 - repo-policing heuristics are rejected unless the user explicitly asked for them
 - tooling that substitutes for native capability or prompt work is rejected unless necessity is explicit
 

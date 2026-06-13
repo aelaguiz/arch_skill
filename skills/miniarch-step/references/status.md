@@ -151,7 +151,7 @@ Inspect:
 
 Grade:
 
-- `strong` when the audit block is evidence-anchored, reopened phases are updated in place, missing code is clearly separated from non-blocking manual QA, the audit validates both checklist items and exit criteria for modern phases, touched live docs/comments that would otherwise go stale are treated as implementation gaps when warranted, and unjustified scaffolding around agent-backed behavior is treated as an implementation gap
+- `strong` when the audit block is evidence-anchored, reopened phases are updated in place, missing code is clearly separated from manual verification, the audit validates both checklist items and exit criteria for modern phases, touched live docs/comments that would otherwise go stale are treated as implementation gaps when warranted, and unjustified scaffolding around agent-backed behavior is treated as an implementation gap
 - `decent` when present but thin
 - `weak` when nominal but not convincingly reconciled, or when exit-criteria validation is missing, vague, or clearly incomplete
 - `missing` when absent

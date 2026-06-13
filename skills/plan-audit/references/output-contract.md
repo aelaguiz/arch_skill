@@ -8,7 +8,7 @@ coverage limits or unresolved decisions.
 Plan-readiness verdicts:
 
 - `ready`: The plan was audited properly, relevant code was read when needed,
-  audit log is current when applicable, and no blocking findings remain.
+  audit log is current when applicable, and no required repairs remain.
 - `not-ready`: The plan has blocking quality, architecture, code-truth,
   proof, side-door, or completion gaps.
 - `blocked-on-decision`: A user or authorized decision owner must resolve
@@ -18,10 +18,8 @@ Plan-readiness verdicts:
 
 Implementation-audit code review verdicts:
 
-- `approve`: No blocking code review findings remain in the requested scope.
-- `approve-with-notes`: No blockers remain, but non-blocking code-quality,
-  architecture, drift, cleanup, or maintainability notes exist.
-- `not-approved`: Blocking code review findings exist in the requested scope.
+- `approve`: No required code review repairs remain in the requested scope.
+- `not-approved`: Required code review repairs exist in the requested scope.
 - `scope-inconclusive`: The review target cannot be resolved or required code
   surfaces cannot be read.
 
@@ -36,7 +34,7 @@ Scope reviewed: <plan | section | pasted plan | issue body>
 Plan artifact: <path or description>
 Audit log: <path or not applicable>
 
-## Blocking Findings
+## Required Plan Repairs
 
 1. <finding title>
    - Problem:
@@ -47,7 +45,7 @@ Audit log: <path or not applicable>
    - Required plan repair:
    - Review lens:
 
-## Non-Blocking Findings
+## Observations / Out-Of-Scope Follow-Ups
 
 <same shape, shorter>
 
@@ -129,6 +127,8 @@ Audit log: <path or not applicable>
   carried through the plan.
 - Do not use `optional`, `nice-to-have`, or `deferred` to soften work that
   blocks plan readiness.
+- Do not use a middle approval state. If a required repair remains, the verdict
+  is not approved.
 - Do not turn the answer into workflow routing advice. The job is to improve
   the plan.
 
@@ -139,7 +139,7 @@ Use this shape when the mode is `implementation-audit`:
 ```markdown
 # Plan Implementation Audit Verdict
 
-VERDICT: approve | approve-with-notes | not-approved | scope-inconclusive
+VERDICT: approve | not-approved | scope-inconclusive
 Confidence: high | medium | low
 Mode: implementation-audit
 Scope reviewed: <full | through phase n | phase n | section>
@@ -148,7 +148,7 @@ Audit log: <path or not applicable>
 Baseline reviewed: <worktree | diff | commit range | branch diff | unknown>
 Test/CI context: <accepted if supplied | not supplied | not reviewed by this mode>
 
-## Blocking Findings
+## Required Implementation Repairs
 
 1. <finding title>
    - Problem:
@@ -161,7 +161,7 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
    - Required implementation repair:
    - Review lens:
 
-## Non-Blocking Findings
+## Observations / Out-Of-Scope Follow-Ups
 
 <same shape, shorter>
 
@@ -210,3 +210,6 @@ Implementation-audit rules:
 - Do not investigate whether a completion claim is truthful.
 - Accept supplied test-pass claims as context and keep reviewing code.
 - Read changed test files only as code when relevant.
+- Treat in-scope duplicate truth, side doors, stale docs/prompts, proof gaps,
+  caller-contract leaks, or planned elegance gaps as required repairs, not
+  observations.

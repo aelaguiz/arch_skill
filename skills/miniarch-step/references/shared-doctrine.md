@@ -173,7 +173,7 @@ If the North Star, requested behavior scope, allowed architectural convergence s
 - Prefer existing tests, typecheck, lint, build, instrumentation, or log signatures before new harnesses.
 - Prefer direct code-path convergence, real runtime guards, or existing behavior checks before inventing any repo-policing validation.
 - If no cheap programmatic signal exists, use a short manual checklist.
-- Manual QA is usually non-blocking until finalization and should not be mistaken for missing code.
+- Manual verification is usually separate from code completeness until finalization and should not be mistaken for missing code.
 - Avoid verification bureaucracy.
 
 Negative-value defaults to avoid:

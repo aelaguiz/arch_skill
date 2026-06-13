@@ -35,9 +35,9 @@ the review goal is met. Report evidence-backed findings only.
 
 End with a final verdict block:
 
-    VERDICT: approve / approve-with-notes / not-approved
-    BLOCKING: <list blocking issues, or "none">
-    NON-BLOCKING: <list notable issues that can wait>
+    VERDICT: approve / not-approved / inconclusive
+    REQUIRED REPAIRS: <list required repairs, or "none">
+    OBSERVATIONS: <list informational observations, or "none">
     ASSESSMENT: <one paragraph on whether the artifact meets the review goal>
 
 Be direct. I want the real assessment, not reassurance.

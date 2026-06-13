@@ -44,7 +44,7 @@
 - when agent-backed, identify prompt-first or native-capability-first options before blessing new tooling
 - reject repo-policing heuristics such as docs-audit scripts, stale-term greps, absence checks, or CI cleanliness gates unless the user explicitly asked for that tooling class
 - name the behavior-preservation checks that make refactors safe
-- keep the evidence plan common-sense and non-blocking
+- keep the evidence plan common-sense and separate from the execution checklist
 - explicitly note where a short boundary comment should live when future drift is likely
 
 ## Update rules
@@ -86,7 +86,7 @@ Use this block shape:
 - Other places that should adopt the new central pattern:
   - <area> — Proposed: <include|explicitly out of scope|blocker question> — <why>
 
-## Evidence (non-blocking)
+## Evidence Planning
 - Behavior-preservation checks after refactor:
   - <existing test/check OR new targeted behavior-level check> — <what it proves stayed the same>
 - Evidence we'll rely on:

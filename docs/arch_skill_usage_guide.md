@@ -603,9 +603,9 @@ Practical rule:
 
 ### `plan-audit`
 
-Use when the user wants an existing planning artifact audited before work starts, or when code already written for a plan needs prompt-first review against that plan. It checks outcome clarity, real ambiguity, constraints, repo/code truth, depth-first risk, side doors, deletes, drift-proofing, owner path, SSOT, caller fit, and elegance.
+Use when the user wants an existing planning artifact audited before work starts, or when code already written for a plan needs prompt-first review against that plan. It checks outcome clarity, real ambiguity, constraints, repo/code truth, depth-first risk, side doors, deletes, drift-proofing, owner path, SSOT, duplicate truth, stale docs/prompts, proof gaps, caller fit, and elegance.
 
-`plan-audit implementation-audit` is review-only. It does not implement, run tests, prove CI, ask for logs, investigate honesty, or replace ordinary diff or PR review.
+`plan-audit implementation-audit` is review-only. It uses strict `approve`, `not-approved`, or `scope-inconclusive` verdicts. It does not implement, run tests, prove CI, ask for logs, investigate honesty, or replace ordinary diff or PR review.
 
 Practical rule:
 
@@ -712,10 +712,12 @@ Practical rule:
 Use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim, and wants the review saved to
 disk. It maximizes native parallel agents, reviews touched files, changed
-hunks, abstractions, callers, side doors, tests/proof, docs, generated
-artifacts, prompts, config, and other live truth surfaces, then saves
+hunks, abstractions, callers, duplicate paths, side doors, stale truth,
+tests/proof, docs, generated artifacts, prompts, config, and other live truth
+surfaces, then saves
 `target.md`, `coverage.md`, `findings.md`, and `verdict.md` under
-`/tmp/exhaustive-code-review/...`.
+`/tmp/exhaustive-code-review/...`. Its verdicts are `approve`, `not-approved`,
+or `coverage-incomplete`.
 
 Examples:
 

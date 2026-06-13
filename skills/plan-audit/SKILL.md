@@ -132,11 +132,11 @@ Return a concise, findings-first audit:
 
 - plan-readiness verdict: `ready`, `not-ready`, `blocked-on-decision`, or
   `inconclusive`
-- implementation-audit verdict: `approve`, `approve-with-notes`,
-  `not-approved`, or `scope-inconclusive`
+- implementation-audit verdict: `approve`, `not-approved`, or
+  `scope-inconclusive`
 - plan artifact and audit log path when applicable
-- blocking findings first
-- non-blocking findings only when they matter
+- required repairs first
+- observations or out-of-scope follow-ups only when they matter
 - real ambiguity and required decisions
 - relevant code read and relevant code not yet read
 - proper-audit checklist status

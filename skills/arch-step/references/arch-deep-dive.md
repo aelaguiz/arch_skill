@@ -82,7 +82,7 @@ If the design introduces or updates a central pattern, contract family, format s
 - capture file paths or symbols
 - default dispositions:
   - required to converge onto the same canonical path, keep the same contract family honest, or avoid contradictory sibling surfaces -> include
-  - explicitly non-blocking by approved scope text -> defer
+  - explicitly outside the current approved code-completion boundary -> defer
   - explicitly out of scope or clearly new product behavior -> exclude
   - if requiredness is still unclear -> ask the user instead of guessing
 

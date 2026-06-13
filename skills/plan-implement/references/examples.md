@@ -75,7 +75,7 @@ only if stale or required.
 ## Anti-Example: Final Review Only
 
 Bad: implement every caller first, then discover at the end that the owner path
-or side-door model was wrong.
+or side-door assumption was wrong.
 
 Why it is bad: late architecture findings are expensive.
 

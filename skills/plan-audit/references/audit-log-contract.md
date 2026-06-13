@@ -28,11 +28,11 @@ audit log only when the user wants looped refinement.
 Plan: <path>
 Audit log: <path>
 Current plan verdict: ready | not-ready | blocked-on-decision | inconclusive
-Current implementation code review verdict: approve | approve-with-notes | not-approved | scope-inconclusive | not-run
+Current implementation code review verdict: approve | not-approved | scope-inconclusive | not-run
 Last reviewed: <date/time>
 Scope: <whole plan | section | pasted plan | issue body>
 
-## Current Blocking Findings
+## Current Required Plan Repairs
 
 - [ ] PLA-001 - <title>
   - Lens:
@@ -41,7 +41,7 @@ Scope: <whole plan | section | pasted plan | issue body>
   - Status: open | resolved | accepted-risk | out-of-scope | wrong
   - Resolution evidence:
 
-## Current Non-Blocking Findings
+## Current Observations / Out-Of-Scope Follow-Ups
 
 <same shape, shorter>
 

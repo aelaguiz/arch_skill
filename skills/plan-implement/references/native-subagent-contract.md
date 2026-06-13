@@ -94,7 +94,7 @@ Lens: <plan-audit implementation-audit lens>
 Read the current code directly. Do not edit files. Do not run tests. Do not ask
 for logs. Return only findings for this lens:
 - title
-- blocking or non-blocking
+- required repair, observation, wrong, or out of scope
 - problem
 - plan anchor
 - code anchor

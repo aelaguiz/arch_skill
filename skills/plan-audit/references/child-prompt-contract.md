@@ -32,7 +32,7 @@ the plan is clean for your lens, say that plainly.
 
 For every finding include:
 - title
-- blocking or non-blocking
+- required repair, observation, wrong, or out of scope
 - problem
 - why it matters
 - plan evidence
@@ -95,7 +95,7 @@ is clean for your lens, say that plainly.
 
 For every finding include:
 - title
-- blocking or non-blocking
+- required repair, observation, wrong, or out of scope
 - problem
 - why it matters
 - plan anchor
@@ -109,8 +109,9 @@ executables, or invoke skills whose main effect is to shell out to `codex`,
 `claude`, or `agent`, unless the parent explicitly assigns that action.
 ```
 
-The parent must spot-check code anchors, dedupe findings, classify blockers,
-reject findings outside the requested scope, and own the final verdict.
+The parent must spot-check code anchors, dedupe findings, classify required
+repairs and observations, reject findings outside the requested scope, and own
+the final verdict.
 
 ## Lens Reviewer
 
@@ -126,8 +127,8 @@ Prompt focus:
 
 Expected output:
 
-- blocking findings
-- non-blocking findings
+- required repairs
+- observations or out-of-scope follow-ups
 - clean result if no finding
 - coverage limits
 

@@ -106,14 +106,14 @@ For repo-backed plans:
 
 ## Finding Quality
 
-- Every blocking finding includes consequence, evidence, and required plan
+- Every required repair includes consequence, evidence, and required plan
   repair.
 - Evidence cites plan and code anchors where possible.
 - Findings are deduped across lenses.
-- Non-blocking findings are separated from blockers.
+- Observations and out-of-scope follow-ups are separated from required repairs.
 - Wrong, resolved, accepted-risk, or out-of-scope findings are labeled with a
   reason.
-- The final verdict is not softer than the worst unresolved blocker.
+- The final verdict is not softer than the worst unresolved required repair.
 
 ## Loop Readiness
 

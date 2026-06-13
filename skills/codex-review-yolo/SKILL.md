@@ -122,8 +122,9 @@ every few seconds. The final-message file is created when codex exits.
 When codex finishes:
 
 1. Read the run's final output file, e.g. `$FINAL_PATH`.
-2. Locate the `VERDICT:` / `BLOCKING:` / `NON-BLOCKING:` footer.
-3. Relay findings to the user. Do not blindly trust — spot-check any blocking claim against the actual file before acting.
+2. Locate the `VERDICT:` / `REQUIRED REPAIRS:` / `OBSERVATIONS:` footer.
+3. Relay findings to the user. Do not blindly trust — spot-check any required
+   repair claim against the actual file before acting.
 4. If codex found nothing actionable, say so directly. Don't manufacture issues to justify the invocation.
 
 ## Output expectations

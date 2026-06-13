@@ -73,7 +73,9 @@ Use `complete` only when:
 - the implementation log names code, proof, and review anchors
 
 Use `partially complete` when useful code landed but any in-scope plan outcome
-remains false or unreviewed.
+remains false or unreviewed. A `partially complete` result is progress, not
+closure: the parent must name the unresolved in-scope work, the owner file,
+phase, or review finding it belongs to, and the exact next move.
 
 Use `blocked` when a decision, unread required code surface, failing proof, or
-unresolved blocking review finding prevents completion.
+unresolved required repair prevents completion.

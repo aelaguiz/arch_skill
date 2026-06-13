@@ -143,6 +143,10 @@ For review:
   promotes them.
 - Use verdicts that match the evidence: `Pass`, `Partial`, `Fail`, `Evidence
   only`, `Blocked`, `Not inspected`, or `Out of scope`.
+- `Partial` is evidence grading, not approval. It must name the missing proof or
+  missing artifact work before the requested confidence can be reached. For
+  readiness questions, treat `Partial` as not ready unless the user asked only
+  for triage.
 - For fidelity claims, require source-pair identity and rendered or explicitly
   blocked visual evidence.
 

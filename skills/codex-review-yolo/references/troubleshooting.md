@@ -56,7 +56,7 @@ Common failure modes when invoking codex exec for review, and what to do.
 
 ## Codex used `ship` language when the review was not about shipping
 
-- Your prompt probably anchored too hard on one example. Use the generic verdict contract from `verdict-contract.md`: `approve`, `approve-with-notes`, `not-approved`.
+- Your prompt probably anchored too hard on one example. Use the generic verdict contract from `verdict-contract.md`: `approve`, `not-approved`, `inconclusive`.
 - State the review objective explicitly in the prompt, e.g. "decide whether Phase B is complete enough to mark approved", instead of letting codex guess the next step.
 
 ## Codex made up a file path that doesn't exist

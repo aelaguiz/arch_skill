@@ -188,7 +188,9 @@ Under the current phase heading, add or update only the minimal truthful executi
 - `Completed work:` for brief high-signal bullets
 - `Deferred:` only for explicit carry-forwards the user or approved plan already allowed; never use it to shrink required work discovered during execution
 - `Blocked on:` for the current blocking fact
-- `Manual QA (non-blocking):` for short end-of-run human checks
+- `Manual Verification Pending:` for short end-of-run human checks; do not use
+  this for missing tests, assertions, migrations, docs/prompt truth, side-door
+  closure, preservation proof, or required deletes
 
 Also update only the nearby execution-truth surfaces needed to keep the artifact honest:
 
@@ -263,7 +265,7 @@ Testing discipline:
 
 - when you introduce or upgrade a centralized pattern, contract, or SSOT, scan nearby call sites for other adopters that should migrate
 - if that work is required to converge onto the same canonical path and avoid drift, do it without asking
-- if the plan or user already makes the work explicitly non-blocking, record it as a follow-up with file or symbol anchors and continue
+- if the plan or user already makes the work explicitly outside the current code-completion boundary, record it as a follow-up with file or symbol anchors and continue
 - if requiredness is not derivable from repo truth plus the approved plan, stop and ask instead of making a pruning decision
 
 ## Worklog contract

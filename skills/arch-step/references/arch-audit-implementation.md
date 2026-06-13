@@ -4,7 +4,7 @@
 
 - verify whether the code really satisfies the plan
 - reopen false-complete phases when code work is missing
-- distinguish missing code from non-blocking manual QA
+- distinguish missing code from manual verification that is not code proof
 - update the main artifact with evidence-anchored audit findings
 - serve as the audit pass used directly or inside `implement-loop`
 
@@ -15,7 +15,7 @@ After this command runs:
 - the plan doc reflects reality
 - false-complete phases are reopened
 - missing code work is explicit and evidence-anchored
-- manual QA remains visible but non-blocking
+- manual verification remains visible without softening code-completeness
 - a reader can tell whether the implementation is actually code-complete without hand-waving
 
 ## Shared references to carry in
@@ -57,7 +57,7 @@ After this command runs:
 - `arch_skill:block:implementation_audit`
 - reopened phase status lines
 - `Missing (code):` notes
-- `Manual QA (non-blocking):` notes when needed
+- `Manual Verification Pending:` notes when needed
 
 When this command runs inside `implement-loop`, it alone owns the authoritative implementation-audit block, the `Verdict (code)` outcome, and the clean `Use $arch-docs` handoff.
 
@@ -73,7 +73,12 @@ When this command runs inside `implement-loop`, it alone owns the authoritative 
 - docs-only; do not modify code
 - code is ground truth
 - this is a code-completeness audit, not a bureaucracy audit
-- missing manual QA evidence is non-blocking and should not by itself reopen phases
+- missing manual verification evidence is not code proof and should not by
+  itself reopen phases
+- missing tests, assertions, migrations, generated artifacts, docs/prompt
+  truth, side-door closure, preservation proof, or required deletes are
+  code-verifiable gaps when the plan requires them; do not classify them as
+  manual verification
 - do not fix the code while auditing; record gaps instead
 - when running inside `implement-loop`, do not let the parent implementation pass stand in for this audit or author the authoritative clean outcome
 - if the implementation claims a fix but does not provide credible code-verifiable proof for it, treat that as missing code completeness
@@ -127,7 +132,7 @@ Split plan evidence expectations into two buckets before judging completeness:
   - human validation checklists
 
 Only missing code-verifiable evidence can make the audit verdict `NOT COMPLETE`.
-Missing manual evidence should become non-blocking follow-up.
+Missing manual evidence should become `Manual Verification Pending`.
 
 ## Audit procedure
 
@@ -142,7 +147,7 @@ Missing manual evidence should become non-blocking follow-up.
    - definition-of-done evidence expectations
 3. split evidence expectations into:
    - code-verifiable evidence
-   - manual non-blocking evidence
+   - manual verification evidence
 4. validate each planned code change against repo reality:
    - when a phase has `Checklist (must all be done)` and `Exit criteria (all required)`, treat both as authoritative for that phase; use `Work` bullets only for legacy docs that predate the checklist field
    - if a modern phase still carries required obligations only in `Work`, `Verification`, `Docs/comments`, migration notes, delete lists, or helper narration, record that as a planning-integrity gap and do not let the phase stand as complete
@@ -197,7 +202,7 @@ Use this block shape:
 # Implementation Audit (authoritative)
 Date: <YYYY-MM-DD>
 Verdict (code): <COMPLETE|NOT COMPLETE>
-Manual QA: <pending|complete|n/a> (non-blocking)
+Manual Verification: <pending|complete|n/a>
 
 ## Code blockers (why code is not done)
 - <bullets only about missing or incorrect code>
@@ -217,7 +222,7 @@ Manual QA: <pending|complete|n/a> (non-blocking)
   - Fix:
     - <fix>
 
-## Non-blocking follow-ups (manual QA / screenshots / human verification)
+## Manual verification pending (screenshots / human validation)
 - <follow-up item>
 <!-- arch_skill:block:implementation_audit:end -->
 ```
@@ -237,7 +242,7 @@ If code work is missing, update the affected phase in place with:
 If only manual QA is pending:
 
 - do not reopen the phase
-- add or update `Manual QA (non-blocking):`
+- add or update `Manual Verification Pending:`
 
 When reopening a phase:
 

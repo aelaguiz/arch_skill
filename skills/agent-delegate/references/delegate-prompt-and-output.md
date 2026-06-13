@@ -138,6 +138,12 @@ When reporting the result upstream:
 8. For parallel groups, report each child status separately before writing the
    combined outcome, then include the parent-side repo-state check.
 
+A `partial` child result is progress, not closure. It must never close the
+parent user goal by itself. Before reporting the combined outcome as complete,
+the parent must name the unresolved in-scope work, decide whether the next move
+is continue, repair, ask, or stop at an explicit boundary, and name the owner
+file, phase, worker scope, or review finding for that continuation.
+
 ## Good Delegated Tasks
 
 - "Implement the missing parser tests in `pkg/parser` and run the package

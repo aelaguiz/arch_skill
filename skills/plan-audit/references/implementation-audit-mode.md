@@ -143,9 +143,9 @@ artifact.
 ### `canonical-owner-and-ssot`
 
 Check whether the code converged onto the planned or best canonical owner.
-Block duplicate writers, duplicate readers where one owner should exist,
-shadow contracts, wrong-layer logic, direct mutation paths around the owner, or
-old and new APIs both live without an approved bridge.
+Treat duplicate writers, duplicate readers where one owner should exist, shadow
+contracts, wrong-layer logic, direct mutation paths around the owner, or old and
+new APIs both live without an approved bridge as required repairs.
 
 ### `existing-pattern-fit`
 
@@ -251,14 +251,12 @@ plan, a proof ledger, or a workflow controller.
 
 Use these verdicts:
 
-- `approve`: no blocking code review findings remain in the requested scope
-- `approve-with-notes`: no blockers remain, but non-blocking code-quality,
-  architecture, drift, cleanup, or maintainability notes exist
-- `not-approved`: blocking code review findings exist in the requested scope
+- `approve`: no required code review repairs remain in the requested scope
+- `not-approved`: required code review repairs exist in the requested scope
 - `scope-inconclusive`: the review target cannot be resolved or required code
   surfaces cannot be read
 
-Every blocking finding must include:
+Every required repair must include:
 
 - problem
 - why it blocks code review approval
@@ -268,7 +266,8 @@ Every blocking finding must include:
 - review lens
 
 Do not include placeholder sections. Do not invent findings because the mode
-was invoked. Do not make the verdict softer than the worst unresolved blocker.
+was invoked. Do not use a middle approval state: if a required repair remains,
+the verdict is `not-approved`.
 
 ## Proper Implementation-Audit Checklist
 
@@ -292,5 +291,5 @@ Before returning an approval verdict, confirm:
   commands were run.
 - No test logs were requested.
 - Changed tests were reviewed only as code, if relevant.
-- Blocking findings include plan anchors, code anchors, consequence, and
+- Required repairs include plan anchors, code anchors, consequence, and
   required repair.

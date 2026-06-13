@@ -80,7 +80,7 @@ These headings are mandatory in a canonical full doc:
 - `# 5) Target Architecture (to-be)`
 - `# 6) Call-Site Audit (exhaustive change inventory)`
 - `# 7) Depth-First Phased Implementation Plan (authoritative)`
-- `# 8) Verification Strategy (common-sense; non-blocking)`
+- `# 8) Verification Strategy (common-sense; evidence planning)`
 - `# 9) Rollout / Ops / Telemetry`
 - `# 10) Decision Log (append-only)`
 
@@ -315,11 +315,11 @@ Execution-time progress annotations may be added under a phase heading once impl
 - `Completed work:`
 - `Deferred:`
 - `Blocked on:`
-- `Manual QA (non-blocking):`
+- `Manual Verification Pending:`
 
 Keep these additions short and truthful. They are execution truth, not a second checklist. A phase is only complete when every checklist item and every exit criterion is satisfied.
 
-### `# 8) Verification Strategy (common-sense; non-blocking)`
+### `# 8) Verification Strategy (common-sense; evidence planning)`
 
 Principle lines to preserve:
 

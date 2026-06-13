@@ -292,7 +292,7 @@ Downstream can trust it when:
 
 - `implement` can execute from it directly and `audit-implementation` can reopen work against it concretely without inventing what "done" means for a phase
 
-## `# 8) Verification Strategy (common-sense; non-blocking)`
+## `# 8) Verification Strategy (common-sense; evidence planning)`
 
 Purpose:
 
@@ -568,7 +568,7 @@ Strong when:
 - it checks explicit details and sub-obligations, not just broad feature impressions
 - stale touched live docs/comments are treated as implementation gaps when the plan required cleanup
 - unjustified scaffolding around agent-backed behavior is treated as an implementation gap when the plan required prompt-first or capability-first handling
-- manual QA is tracked as non-blocking follow-up instead of missing code
+- manual verification is tracked separately instead of treated as missing code
 
 Weak when:
 

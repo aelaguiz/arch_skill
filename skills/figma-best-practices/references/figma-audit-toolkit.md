@@ -93,6 +93,11 @@ Use verdicts that match the evidence:
 Do not use `Pass` for metadata-only inspection, screenshot resemblance, local
 component existence, tool success, or name similarity.
 
+`Partial` is not approval. It must name the missing proof or missing artifact
+work before the requested confidence can be reached. If the user asks whether a
+file, component, parity claim, or handoff surface is ready, map `Partial` to not
+ready unless the user asked only for triage.
+
 ## Severity
 
 - `P0`: cannot be used as a reference or causes false implementation/parity

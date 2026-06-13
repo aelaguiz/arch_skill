@@ -38,7 +38,8 @@ Record what was reviewed:
 - changed hunks
 - touched symbols
 - touched abstractions and canonical owners
-- relevant callers, readers, writers, side doors, and old paths
+- relevant callers, readers, writers, side doors, old paths, duplicate helpers,
+  alternate command/API paths, and adjacent same-contract surfaces
 - behavior or feature surfaces
 - tests, fixtures, proof, docs, examples, comments, schemas, generated
   artifacts, prompts, config, telemetry, stable IDs, install surfaces, and
@@ -53,7 +54,7 @@ Keep this as prose and compact lists. It is not a formal checklist engine.
 Use this shape for each finding:
 
 ```markdown
-### [BLOCKING|NON-BLOCKING] <short title>
+### [REQUIRED REPAIR|OBSERVATION] <short title>
 
 - File: <repo-relative path>
 - Symbol / line: <symbol or line>
@@ -67,6 +68,11 @@ Rules:
 
 - Findings must be tied to changed code or the requested review scope.
 - Findings must cite evidence the reviewer actually read.
+- Any in-scope competing path, duplicate owner, side door, stale truth surface,
+  proof gap, or changed-code risk that must change before approval is a
+  `REQUIRED REPAIR`.
+- `OBSERVATION` is only for true informational facts, genuinely different
+  contracts, or work excluded by the controlling request or artifact.
 - Do not include suggested patch blocks.
 - Do not include generic style advice.
 - Empty findings are valid.
@@ -75,10 +81,9 @@ Rules:
 
 Use one verdict:
 
-- `approve`: exhaustive review completed and no blocking findings were found
-- `approve-with-notes`: exhaustive review completed with only non-blocking
-  findings
-- `not-approved`: blocking findings exist
+- `approve`: exhaustive review completed, coverage is honest, and no required
+  repairs remain in the requested scope
+- `not-approved`: one or more required repairs exist in the requested scope
 - `coverage-incomplete`: the review could not honestly cover the requested
   scope
 
@@ -87,22 +92,22 @@ Use this shape:
 ```markdown
 # Exhaustive Code Review Verdict
 
-VERDICT: approve | approve-with-notes | not-approved | coverage-incomplete
+VERDICT: approve | not-approved | coverage-incomplete
 
-## Blocking Findings
+## Required Repairs
 
-<findings or "No blocking findings.">
+<findings or "No required repairs.">
 
-## Non-Blocking Findings
+## Observations
 
-<findings or "No non-blocking findings.">
+<observations or "No observations.">
 
 ## Coverage Summary
 
 - Scope reviewed:
 - Native parallel agents:
 - Files/hunks/abstractions covered:
-- Side doors and adjacent surfaces:
+- Competing paths, side doors, and adjacent surfaces:
 - Proof/docs/generated/prompt surfaces:
 - Coverage gaps:
 
@@ -116,8 +121,8 @@ VERDICT: approve | approve-with-notes | not-approved | coverage-incomplete
 After saving the artifact, reply briefly:
 
 - verdict
-- blocking findings, if any
-- notable non-blocking findings, if material
+- required repairs, if any
+- notable observations, if material
 - artifact path
 - one next action from the review
 

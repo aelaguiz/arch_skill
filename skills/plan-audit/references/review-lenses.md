@@ -118,9 +118,9 @@ Do not concatenate lens reports. The parent must:
 
 - spot-check cited plan and code evidence
 - dedupe findings across lenses
-- classify each finding as blocking, non-blocking, wrong, or out of scope
+- classify each finding as a required repair, observation, wrong, or out of scope
 - preserve genuine unresolved decisions
 - add missed findings when evidence supports them
-- keep the final verdict no softer than the worst unresolved blocker
+- keep the final verdict no softer than the worst unresolved required repair
 
 Child reports are evidence. They are not the verdict.

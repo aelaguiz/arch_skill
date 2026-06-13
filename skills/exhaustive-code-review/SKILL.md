@@ -53,6 +53,10 @@ or decide what workflow the user should use next.
   configs.
 - Findings must be concrete. Drop style preferences, generic advice, and
   "maybe centralize this" comments unless they name real changed-code risk.
+- Competing-path, side-door, stale-truth, and competing-owner detection is
+  default review behavior, not a special mode. If a live duplicate path affects
+  the requested scope, treat it as a required repair unless the review can name
+  the genuinely different contract or controlling out-of-scope anchor.
 - A clean review is allowed. Do not invent findings to justify the run.
 
 ## First Move
@@ -74,24 +78,28 @@ or decide what workflow the user should use next.
    hunk depends on a function, class, module, caller, lifecycle, or contract.
 5. Review touched abstractions: canonical owner, old and new paths, callers,
    readers, writers, side doors, invariants, and drift surfaces.
-6. Review touched behavior: entrypoints, success paths, failure paths, state,
+6. Review competing ways to accomplish the same goal: old APIs, sibling callers,
+   direct writers, alternate readers, duplicate helpers, command aliases,
+   generated artifacts, docs, prompts, examples, tests, and side doors. Classify
+   each in-scope competing path as a required repair, observation, genuinely
+   different contract, or named out-of-scope follow-up.
+7. Review touched behavior: entrypoints, success paths, failure paths, state,
    persistence, user-visible or externally observable effects, and proof.
-7. Review live truth surfaces: tests, fixtures, docs, examples, comments,
+8. Review live truth surfaces: tests, fixtures, docs, examples, comments,
    schemas, generated artifacts, prompts, agent instructions, config, package
    metadata, stable IDs, telemetry names, and install commands when they
    describe or consume changed behavior.
-8. Use the review catalog to identify concrete risks.
-9. Save `coverage.md`, `findings.md`, and `verdict.md`.
-10. Return a short findings-first answer with the verdict and run directory.
+9. Use the review catalog to identify concrete risks.
+10. Save `coverage.md`, `findings.md`, and `verdict.md`.
+11. Return a short findings-first answer with the verdict and run directory.
 
 ## Output Expectations
 
 The final chat reply includes:
 
-- verdict: `approve`, `approve-with-notes`, `not-approved`, or
-  `coverage-incomplete`
-- blocking findings, if any
-- non-blocking findings, if material
+- verdict: `approve`, `not-approved`, or `coverage-incomplete`
+- required repairs, if any
+- observations, if material
 - run directory path
 - one next action from the review, not a workflow prescription
 
@@ -100,6 +108,6 @@ The full saved artifact follows `references/output-contract.md`.
 ## Reference Map
 
 - `references/review-catalog.md` - concrete review patterns, evidence to read,
-  blocking conditions, non-blocking guards, and example findings
+  required-repair conditions, safe-difference guards, and example findings
 - `references/output-contract.md` - required saved files, verdicts, finding
   shape, and final chat summary shape
