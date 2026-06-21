@@ -36,6 +36,7 @@ Other shipped skills:
 - `skill-flow`
 - `amir-publish`
 - `codex-cleanup`
+- `codex-babysit`
 - `codex-review-yolo`
 - `fresh-consult`
 - `agent-delegate`
@@ -95,6 +96,7 @@ Default local path:
 - `~/.agents/skills/skill-flow/`
 - `~/.agents/skills/amir-publish/`
 - `~/.agents/skills/codex-cleanup/`
+- `~/.agents/skills/codex-babysit/`
 - `~/.agents/skills/codex-review-yolo/`
 - `~/.agents/skills/fresh-consult/`
 - `~/.agents/skills/agent-delegate/`
@@ -142,6 +144,7 @@ Installed skills:
   - `skill-flow`
   - `amir-publish`
   - `codex-cleanup`
+  - `codex-babysit`
   - `codex-review-yolo`
   - `fresh-consult`
   - `agent-delegate`
@@ -182,6 +185,7 @@ Installed skills:
   - `skill-flow`
   - `amir-publish`
   - `codex-cleanup`
+  - `codex-babysit`
   - `codex-review-yolo`
   - `fresh-consult`
   - `agent-delegate`
@@ -222,6 +226,7 @@ Installed skills:
   - `skill-flow`
   - `amir-publish`
   - `codex-cleanup`
+  - `codex-babysit`
   - `codex-review-yolo`
   - `fresh-consult`
   - `agent-delegate`
@@ -237,7 +242,7 @@ Installed skills:
 
 Install removes stale pre-skill command surfaces, removed skill packages, older Codex skill mirrors, old arch_skill-owned hook entries, and source/build internals from installed skill packages. It does not install new hooks.
 
-`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. `thermo-nuclear-code-quality-review` is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; only that skill package is installed, not Cursor Team Kit agents or rules. `fresh-consult` is read-only: first turns start clean, second/third same-line follow-ups resume a captured exact child session id by default, turn four rotates fresh, and explicitly requested parallel consults create multiple child chains. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh-resumable workers when explicitly requested. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs supported Claude models, Cursor Agent runs `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`. `plan-implement` is prompt-first and local: it keeps plan-backed implementation state, proof freshness, and warm review aligned without external worker orchestration. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow.
+`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `codex-babysit`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. `thermo-nuclear-code-quality-review` is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; only that skill package is installed, not Cursor Team Kit agents or rules. `fresh-consult` is read-only: first turns start clean, second/third same-line follow-ups resume a captured exact child session id by default, turn four rotates fresh, and explicitly requested parallel consults create multiple child chains. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh-resumable workers when explicitly requested. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models, Claude Code runs supported Claude models, Cursor Agent runs `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`. `plan-implement` is prompt-first and local: it keeps plan-backed implementation state, proof freshness, and warm review aligned without external worker orchestration. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow.
 
 ## Shared conventions
 
@@ -553,6 +558,14 @@ Use when Amir wants to publish this skills repo across his usual machines: commi
 Examples:
 
 - `Use $amir-publish`
+
+### `codex-babysit`
+
+Use when the user wants to keep an already-running Codex goal-mode tmux pane alive across real usage limits, process death, restarts, and same-session resumes. It watches the pane and verifies that Codex resumed real work after every rotation.
+
+Examples:
+
+- `Use $codex-babysit to keep my running Codex goal alive`
 
 ### `fresh-consult`
 

@@ -116,6 +116,10 @@ Claude Code, and Gemini.
   Cursor Agent, or Grok subprocesses to do concrete work in the current
   workspace, including implementation, editing, investigation-and-fix, command
   execution, or installed-skill use.
+- Use `$codex-babysit` when the user wants to monitor, babysit, or keep alive
+  an already-running Codex goal-mode tmux session across real usage limits,
+  account rotations, restarts, and same-session resumes. It is not for
+  launching a new worker or doing delegated work.
 - Use `$pr-review-followthrough` when the user explicitly wants an already-open
   GitHub PR polled, review comments handled and replied to, same-branch fixes
   pushed, and the loop continued until merge-ready; use `$pr-authoring` for
