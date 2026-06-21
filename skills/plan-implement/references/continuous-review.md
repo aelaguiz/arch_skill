@@ -12,6 +12,8 @@ Review while warm:
 - after changing a canonical owner or caller shape
 - after deleting, migrating, or closing side doors
 - after leaving adjacent same-contract or same-behavior paths untouched
+- after a slice claims simplification, unification, deletion, migration, or SSOT
+  convergence
 - after touching schemas, generated artifacts, prompts, docs, examples, config,
   routes, commands, or install surfaces
 - before widening to more callers, variants, modes, or polish
@@ -22,6 +24,8 @@ Review while warm:
 Use the plan's requirements and the `plan-audit` implementation-audit lenses:
 
 - plan-code fit
+- intent vs reality: whether the intended outcome is true in code, not only in
+  names, wrappers, checkboxes, or phase labels
 - requirement traceability
 - canonical owner and SSOT
 - existing pattern fit

@@ -83,6 +83,9 @@ When this command runs inside `implement-loop`, it alone owns the authoritative 
 - when running inside `implement-loop`, do not let the parent implementation pass stand in for this audit or author the authoritative clean outcome
 - if the implementation claims a fix but does not provide credible code-verifiable proof for it, treat that as missing code completeness
 - audit against the approved plan's explicit promises, not against a narrower story execution wrote after the fact
+- audit apparent completion against real behavior: names, wrappers, labels,
+  checkboxes, and phase status are claims to verify, not proof that the intended
+  simplification or unification happened
 - audit against the current approved ordered implementation frontier, not just the first visible local gap
 - a named later expansion is not missing current code until its proof gate is due
 - silent removal from the destination map, approved scope, checklist, exit criteria, or named expansion map is still a scope cut
@@ -102,6 +105,8 @@ Check all of these:
 - architecture compliance:
   - SSOT is real
   - boundaries and contracts match the plan
+  - planned simplification, unification, migration, deletion, or behavior change
+    is true in code, not only in names, wrappers, or phase labels
   - required deletes and cleanup happened
   - touched live docs, comments, and instructions that the plan said to update or delete no longer contradict shipped reality
   - for agent-backed systems, implementation did not replace prompt/native-capability work with unjustified scaffolding
@@ -153,6 +158,9 @@ Missing manual evidence should become `Manual Verification Pending`.
    - if a modern phase still carries required obligations only in `Work`, `Verification`, `Docs/comments`, migration notes, delete lists, or helper narration, record that as a planning-integrity gap and do not let the phase stand as complete
    - verify the implementation did not weaken or rewrite the plan to hide unfinished work
    - verify every explicit requirement, checklist item, exit criterion, and sub-obligation in the plan, not just the main happy path
+   - verify claimed simplifications, unifications, migrations, deletions, and
+     SSOT convergence against actual control flow, data flow, caller paths, and
+     old entrypoints
    - verify each planned call-site change in code
    - search for missed call sites or lingering old APIs, patterns, or paths
    - verify SSOT ownership and boundary compliance in shipped code, runtime routing, or real contract surfaces
@@ -180,6 +188,10 @@ Always name phases as `Phase <n> (<what it does>)` using the phase heading text 
 - if the plan says an old path should be deleted, removed, or unreachable, treat that as code work and audit it accordingly
 - if the plan says a touched live doc, comment, or instruction should be deleted or rewritten, treat that as implementation work and audit it accordingly
 - if the implementation introduced a forbidden shim, fallback, or parallel source of truth, treat that as missing code correctness and reopen the responsible phase
+- if the implementation is complete only in name, wrapper, checklist, or phase
+  label while the old behavior, side door, duplicate truth, or added complexity
+  remains live underneath, treat that as missing code correctness and reopen the
+  responsible phase
 - if the implementation introduced capability-replacing scaffolding for agent-backed behavior without explicit plan justification, treat that as missing code correctness and reopen the responsible phase
 - if a refactor or convergence change lacks credible preservation evidence, treat that as missing code correctness and reopen the responsible phase
 - if a claimed fix lacks credible code-verifiable proof, treat that as missing code correctness and reopen the responsible phase

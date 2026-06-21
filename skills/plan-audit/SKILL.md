@@ -21,7 +21,10 @@ wrong thing.
 The implementation-audit job is plan-backed code review: check whether the
 implemented code fits the plan's architecture and quality bar without adding
 duplicate truth, side doors, drift, bad caller shape, or unnecessary
-complexity.
+complexity. It is specifically skeptical of name-only completion: code that
+uses the right labels, wrappers, phase checks, or conventions while the
+intended unification, simplification, deletion, or behavior change is still
+false underneath.
 
 The skill audits plans. It does not dictate the user's workflow.
 
@@ -82,6 +85,9 @@ ledger beside the plan, not a state machine and not a second plan.
 - In `implementation-audit` mode, accept supplied test-pass claims as context.
   You may read changed test files as code when they matter to code review, but
   test execution remains out of scope.
+- In `implementation-audit` mode, treat name-only completion, false
+  simplification, and partial unification as code review blockers when current
+  plan and code evidence show the intended outcome is still false.
 
 ## First Move
 

@@ -150,6 +150,49 @@ Example:
 - Review pattern: partial migration
 ```
 
+## Name-Only Completion Or False Simplification
+
+Flag when a change looks complete at the naming, convention, wrapper, checklist,
+or phase-label level, but the old behavior or complexity remains live
+underneath.
+
+Common signs:
+
+- a new "canonical" owner exists but callers still use the old owner
+- a wrapper or facade has the right name but forwards to old behavior unchanged
+- a "unified" path covers only one happy path while siblings stay split
+- a simplification adds a layer without deleting an older concept
+- a plan or completion note says migrated/deleted/centralized, but code still
+  exposes the old route, command, prompt, fixture, config, or generated artifact
+- tests assert the new label or wrapper instead of the intended outcome
+
+Read the actual control flow, data flow, callers, old entrypoints, side doors,
+tests, docs, prompts, examples, and generated artifacts. Treat names and phase
+status as claims to verify against runtime behavior, not proof.
+
+Block when apparent completion can coexist with the old behavior, two truths,
+side doors, or extra complexity the change was supposed to remove.
+
+Do not block when the old path is unreachable, the wrapper now owns a real
+invariant, or the plan explicitly scoped a temporary bridge with a deletion
+point.
+
+Example:
+
+```markdown
+### [BLOCKING] `UnifiedImportService` leaves the old import path live
+
+- File: src/import/UnifiedImportService.ts
+- Symbol / line: `runImport`
+- Risk: The new service gives the migration a unified name, but scheduled jobs
+  still call `legacyImport`. The same import behavior now has two live owners.
+- Evidence: `UnifiedImportService.runImport` handles the CLI path;
+  `src/jobs/nightlyImport.ts` still calls `legacyImport` directly.
+- Repair target: Route the job through the unified service or delete the old
+  path if it is no longer supported.
+- Review pattern: name-only completion
+```
+
 ## Wrong-Layer Logic
 
 Flag feature-specific logic in shared layers, transport details in domain

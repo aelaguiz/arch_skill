@@ -17,6 +17,13 @@ adding duplicate truth, side doors, drift, bad caller shape, or unnecessary
 complexity?
 ```
 
+A second core question is:
+
+```text
+Did the implementation make the intended outcome true, or did it only make the
+names, wrappers, checkboxes, and phase labels look right?
+```
+
 The mode may review:
 
 - the full plan
@@ -91,9 +98,11 @@ It helps aim the code review; it does not replace reading code.
    `satisfied by code`, `missing code`, `implemented differently but
    equivalent`, `implemented differently and not equivalent`, `scope cut`, or
    `unclear from code`.
-9. Run the implementation lenses below.
-10. Update the shared audit log when applicable.
-11. Return the code review verdict using `output-contract.md`.
+9. Compare apparent completion against real behavior for any planned
+   simplification, unification, migration, deletion, or SSOT convergence.
+10. Run the implementation lenses below.
+11. Update the shared audit log when applicable.
+12. Return the code review verdict using `output-contract.md`.
 
 ## Implementation Lenses
 
@@ -117,6 +126,21 @@ report the code review issue plainly.
 Check whether the code shape supports the plan's North Star outcome. Block
 when task checkboxes can be satisfied while the intended architecture or
 behavior remains false.
+
+### `intent-vs-reality`
+
+Check whether the implementation made the plan's intended simplification,
+unification, migration, deletion, or behavior change true in the running code
+shape. Review names, wrappers, new owner labels, phase status, tests, docs, and
+prompts as claims, not proof. Follow actual control flow, data flow, caller
+paths, and old entrypoints.
+
+Block when the work is implemented in name but not in fact: the old behavior is
+still reachable, the new canonical owner does not actually own the invariant,
+two truths remain live, a wrapper adds a concept without deleting complexity, a
+"unified" path only covers the happy path, or tests/docs prove the new label
+instead of the intended behavior. Do not investigate honesty, history, or
+private intent; judge the current plan and code evidence.
 
 ### `requirement-traceability`
 
@@ -283,6 +307,9 @@ Before returning an approval verdict, confirm:
 - Native subagents or parallel-agent features were used for broad read-only
   slices when available.
 - Every due code obligation was traced to code or a missing/unclear status.
+- Name-only completion and false simplification were checked wherever the plan
+  promised simplification, unification, migration, deletion, SSOT convergence,
+  or behavior change.
 - Adjacent same-contract or same-behavior paths were reviewed for split old/new
   behavior where they were in or affected by the requested scope.
 - Required deletes, caller migrations, side-door closures, and drift-prone

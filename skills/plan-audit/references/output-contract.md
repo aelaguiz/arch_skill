@@ -210,6 +210,8 @@ Implementation-audit rules:
 - Do not investigate whether a completion claim is truthful.
 - Accept supplied test-pass claims as context and keep reviewing code.
 - Read changed test files only as code when relevant.
-- Treat in-scope duplicate truth, side doors, stale docs/prompts, proof gaps,
-  caller-contract leaks, or planned elegance gaps as required repairs, not
-  observations.
+- Treat in-scope duplicate truth, side doors, name-only completion, false
+  simplification, stale docs/prompts, proof gaps, caller-contract leaks, or
+  planned elegance gaps as required repairs, not observations.
+- For name-only completion or false-simplification findings, explicitly state
+  why the apparent completion is false.
