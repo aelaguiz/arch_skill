@@ -1,0 +1,7 @@
+interface:
+  display_name: "Codex Babysit"
+  short_description: "Keep a running codex goal-mode tmux session alive across usage limits"
+  default_prompt: "Use $codex-babysit to monitor a codex goal-mode session running in tmux: rotate the aim account on real usage limits, restart and resume the same session, verify it actually resumed work, and keep it going until codex's goal genuinely completes."
+
+policy:
+  allow_implicit_invocation: true
