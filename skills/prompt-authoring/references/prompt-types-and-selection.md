@@ -121,15 +121,18 @@ Common failures:
 Prefer the destination over the route. Use exact sequences only when the
 sequence itself is fragile, safety-critical, or part of the product contract.
 
-Codex `/goal` prompts are a common outcome-first variant. They usually also
-need evidence, validation, tool-use, and persistence lenses because the goal may
+Codex goal prompts are a common outcome-first variant. They usually also need
+evidence, validation, tool-use, and persistence lenses because the goal may
 guide many future turns. When writing one, use `codex-goal-prompts.md`; keep it
-as a compact mission brief, not a fixed schema or duplicated plan doc. Execution
-and repair goals must make non-completion unattractive: unclear evidence should
-lead to deeper source reading, sharper tests, instrumentation, review, and
-repair, not a tidy explanation of why the outcome was not achieved. The hard
-cap is 4,000 characters, complex goals should usually stay around 2,000-3,000,
-and rich source docs should be referenced by path instead of restated.
+as a mission brief, not a fixed schema or duplicated plan doc. Prefer a
+Markdown prompt file for substantial source-doc-backed, reviewer-gated, or
+architecture-heavy goals. Use paste-sized `/goal` text only when needed; that
+form has a 4,000-character hard cap, complex paste-sized goals should usually
+stay around 2,000-3,000, and rich source docs should be referenced by path
+instead of restated. Execution and repair goals must make non-completion
+unattractive: unclear evidence should lead to deeper source reading, sharper
+tests, instrumentation, review, and repair, not a tidy explanation of why the
+outcome was not achieved.
 
 ## 4) Retrieval, citation, and evidence prompts
 

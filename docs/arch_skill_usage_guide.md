@@ -5,6 +5,7 @@ This guide describes the live workflow surface for the repo.
 The current skill suite is:
 
 - `arch-step`
+- `arch-step-goal-prompt`
 - `miniarch-step`
 - `arch-docs`
 - `arch-mini-plan`
@@ -71,6 +72,7 @@ arch_skill hook entries.
 Default local path:
 
 - `~/.agents/skills/arch-step/`
+- `~/.agents/skills/arch-step-goal-prompt/`
 - `~/.agents/skills/miniarch-step/`
 - `~/.agents/skills/arch-docs/`
 - `~/.agents/skills/arch-mini-plan/`
@@ -119,6 +121,7 @@ Installed skills:
 
 - Codex:
   - `arch-step`
+  - `arch-step-goal-prompt`
   - `miniarch-step`
   - `arch-docs`
   - `arch-mini-plan`
@@ -160,6 +163,7 @@ Installed skills:
   - `thermo-nuclear-code-quality-review`
 - Claude Code:
   - `arch-step`
+  - `arch-step-goal-prompt`
   - `miniarch-step`
   - `arch-docs`
   - `arch-mini-plan`
@@ -201,6 +205,7 @@ Installed skills:
   - `thermo-nuclear-code-quality-review`
 - Gemini:
   - `arch-step`
+  - `arch-step-goal-prompt`
   - `miniarch-step`
   - `arch-docs`
   - `arch-mini-plan`
@@ -242,7 +247,7 @@ Installed skills:
 
 Install removes stale pre-skill command surfaces, removed skill packages, older Codex skill mirrors, old arch_skill-owned hook entries, and source/build internals from installed skill packages. It does not install new hooks.
 
-`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `codex-babysit`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. `thermo-nuclear-code-quality-review` is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; only that skill package is installed, not Cursor Team Kit agents or rules. `fresh-consult` is read-only: first turns start clean, second/third same-line follow-ups resume a captured exact child session id by default, turn four rotates fresh, and explicitly requested parallel consults create multiple child chains. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh-resumable workers when explicitly requested. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models plus Fugu (`fugu`) and Fugu Ultra (`fugu-ultra`), Claude Code runs supported Claude models, Cursor Agent runs `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`. `plan-implement` is prompt-first and local: it keeps plan-backed implementation state, proof freshness, and warm review aligned without external worker orchestration. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow.
+`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `codex-babysit`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. `thermo-nuclear-code-quality-review` is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; only that skill package is installed, not Cursor Team Kit agents or rules. `fresh-consult` is read-only: first turns start clean, second/third same-line follow-ups resume a captured exact child session id by default, turn four rotates fresh, and explicitly requested parallel consults create multiple child chains. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh-resumable workers when explicitly requested. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models plus Fugu (`fugu`) and Fugu Ultra (`fugu-ultra`), Claude Code runs supported Claude models, Cursor Agent runs `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`. `plan-implement` is prompt-first and local: it keeps plan-backed implementation state, proof freshness, and warm review aligned without external worker orchestration. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow.
 
 ## Shared conventions
 
@@ -331,6 +336,21 @@ Practical rule:
 - In that controller, implementation scope is the current approved ordered implementation frontier: the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this arc. Named later expansion is not current missing work until its proof gate is due; silent removal from the destination map is still a scope cut.
 - After a clean full-arch code audit, `arch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
 - In Codex or Claude Code, use native `/goal` when you want `auto-plan`, `implement-loop`, `auto-implement`, or `full-auto` to keep moving across turns until the command's proof bar is met.
+
+### `arch-step-goal-prompt`
+
+Use when the user wants a durable Markdown goal prompt file for an ArcStep run instead of executing ArcStep immediately. It turns a rough ask plus an optional canonical `DOC_PATH` into a prompt for `$arch-step auto-plan`, `implement-loop`, `auto-implement`, or `full-auto`; it points to source truth by path, names false finish lines, and adds reviewer gates without copying the controlling plan into a second source of truth.
+
+Examples:
+
+- `Use $arch-step-goal-prompt to write a Markdown goal prompt for $arch-step auto-plan docs/MY_PLAN.md`
+- `Use $arch-step-goal-prompt to strengthen this auto-implement goal with strict external auditors`
+
+Practical rules:
+
+- The ArcStep plan stays the source of truth; the goal prompt is an execution brief.
+- Use `prompt-authoring` discipline for prompt quality and `arch-step` doctrine for command behavior.
+- Do not add scripts, runners, controllers, launchers, or harnesses.
 
 ### `miniarch-step`
 
@@ -486,7 +506,7 @@ Examples:
 
 ### `prompt-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a prompt or reusable prompt contract so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt. The user does not need to name a prompt type or mode; the skill infers the shape from normal language.
+Use when the user wants to write, edit, refactor, or audit a prompt, reusable prompt contract, Markdown-backed Codex goal prompt file, or paste-sized `/goal` mission brief so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt. The user does not need to name a prompt type or mode; the skill infers the shape from normal language. For goal prompts, it prefers Markdown files for substantial source-doc-backed work and paste-sized `/goal` text only when needed, without duplicating linked source truth.
 
 Examples:
 

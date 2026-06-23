@@ -270,8 +270,9 @@ Real failure pattern:
 Bad shape:
 - "Outcome: fix it. Source: repo. Workflow: use skills. Evidence: tests. Done:
   reviewer signs off."
-- a 4,000-character goal that pastes the whole plan doc, every thought
-  exercise, the reviewer prompt, and the detailed test list
+- a Markdown prompt file or 4,000-character paste-sized goal that pastes the
+  whole plan doc, every thought exercise, the reviewer prompt, and the detailed
+  test list
 
 Better shape:
 - "Fix the current lesson issue through the owning workflow, not by patching
@@ -293,12 +294,13 @@ Why the better shape works:
 - source truth, forbidden shortcuts, evidence, and signoff still exist, but
   they serve the outcome instead of becoming a checklist
 - rich docs stay authoritative instead of being copied into a brittle goal
-- the `/goal` stays inside the 4,000-character hard cap and usually closer to
-  the 2,000-3,000 character working range
+- rich goals can live in Markdown prompt files, while paste-sized `/goal` text
+  stays inside the 4,000-character hard cap and usually closer to the
+  2,000-3,000 character working range
 
 Transferable principle:
-- `/goal` prompts should be adaptive mission briefs; use structure only where
-  it makes the goal easier to pursue
+- goal prompts should be adaptive mission briefs; use structure only where it
+  makes the goal easier to pursue
 - when a source doc exists, the goal should point to it and define acceptance,
   not duplicate it
 

@@ -13,6 +13,7 @@ This repo ships installable agent skills centered on the arch suite for Codex CL
 The live arch suite is:
 
 - `arch-step` — the broad full-arch execution surface; owns the full staged workflow, extended helper passes, receipt-gated `auto-plan`, implementation-frontier `implement-loop`, re-entrant `full-auto`, compact `status`, and guided `advance`
+- `arch-step-goal-prompt` — writes Markdown-backed goal prompt files for ArcStep `auto-plan`, `implement-loop`, `auto-implement`, and `full-auto` runs without copying the controlling plan into a second source of truth
 - `miniarch-step` — the trimmed full-arch surface; keeps canonical arch docs, phasing, doctrine-only `full-auto`, and native goal-mode auto flow without the broader `arch-step` helper surface
 - `arch-docs` — standalone docs-audit and cleanup skill; owns topic-first stale-doc cleanup, consolidation onto canonical docs, working-doc retirement, and native goal-mode `auto` docs cleanup
 - `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `miniarch-step` or `arch-step`
@@ -32,7 +33,7 @@ Use `miniarch-step` when the work still needs a real full-arch artifact and auto
 Other shipped skills are:
 - `agent-definition-auditor` — cold-reader scoring and findings for `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompts, and other agent-definition markdown
 - `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
-- `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, and compact Codex `/goal` mission briefs
+- `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, Markdown-backed Codex goal prompt files, and paste-sized `/goal` mission briefs
 - `chatgpt-web` — prompt-only helper for shaping a prompt with prompt-authoring discipline, then querying logged-in ChatGPT through BrowserOS MCP with optional attachments; defaults to Pro with Extended thinking unless the user specifies another mode or effort
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
@@ -83,6 +84,7 @@ Installed skills:
 
 - Default local path:
   - `~/.agents/skills/arch-step/`
+  - `~/.agents/skills/arch-step-goal-prompt/`
   - `~/.agents/skills/miniarch-step/`
   - `~/.agents/skills/arch-docs/`
   - `~/.agents/skills/arch-mini-plan/`
@@ -126,6 +128,7 @@ Installed skills:
   - `~/.agents/skills/arch-epic/`
 - Claude Code:
   - `~/.claude/skills/arch-step/`
+  - `~/.claude/skills/arch-step-goal-prompt/`
   - `~/.claude/skills/miniarch-step/`
   - `~/.claude/skills/arch-docs/`
   - `~/.claude/skills/arch-mini-plan/`
@@ -169,6 +172,7 @@ Installed skills:
   - `~/.claude/skills/arch-epic/`
 - Gemini CLI:
   - `~/.gemini/skills/arch-step/`
+  - `~/.gemini/skills/arch-step-goal-prompt/`
   - `~/.gemini/skills/miniarch-step/`
   - `~/.gemini/skills/arch-docs/`
   - `~/.gemini/skills/arch-mini-plan/`
@@ -211,7 +215,7 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex and Claude Code local history; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `figma-best-practices`, `fal-ai-tools`, `flutter-reference`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `codex-babysit`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. Subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models plus Fugu (`fugu`) and Fugu Ultra (`fugu-ultra`), Claude Code runs supported Claude models, Cursor Agent runs only `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`; do not pass model ids across runtimes. `fresh-consult` reports strict pass/fail read-only verdicts and `model-consensus` reports planning results; both can use Cursor Agent only for `composer-2.5-fast` and Grok only for Grok models. `fresh-consult` starts clean on the first consult turn, resumes second/third same-line read-only follow-ups from a captured exact session id, rotates fresh on turn four, and can run multiple read-only child chains when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, starts fresh-resumable workers by default, can run multiple fresh-resumable workers when explicitly requested, and may resume an explicit same-runtime delegated session by exact handle. `plan-audit` is doctrine-only and prompt-first: it audits planning artifacts in whatever format they use, may keep a Markdown audit log beside file-backed plans, and includes a plan-backed implementation-audit code review mode that does not run tests, ask for logs, prove CI, require external coding-harness CLIs, or add scripts/controllers. `plan-implement` is doctrine-only and prompt-first: it implements from existing plans while keeping a lightweight implementation log, proof freshness, and warm plan-backed review aligned without external coding-harness spawning or deterministic control. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow.
+`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex and Claude Code local history; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `flutter-reference`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-swarm`, `codex-cleanup`, `codex-babysit`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. Subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. Provider routing is fixed: Codex runs GPT/GBT/OpenAI models plus Fugu (`fugu`) and Fugu Ultra (`fugu-ultra`), Claude Code runs supported Claude models, Cursor Agent runs only `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`; do not pass model ids across runtimes. `fresh-consult` reports strict pass/fail read-only verdicts and `model-consensus` reports planning results; both can use Cursor Agent only for `composer-2.5-fast` and Grok only for Grok models. `fresh-consult` starts clean on the first consult turn, resumes second/third same-line read-only follow-ups from a captured exact session id, rotates fresh on turn four, and can run multiple read-only child chains when explicitly requested. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope, starts fresh-resumable workers by default, can run multiple fresh-resumable workers when explicitly requested, and may resume an explicit same-runtime delegated session by exact handle. `plan-audit` is doctrine-only and prompt-first: it audits planning artifacts in whatever format they use, may keep a Markdown audit log beside file-backed plans, and includes a plan-backed implementation-audit code review mode that does not run tests, ask for logs, prove CI, require external coding-harness CLIs, or add scripts/controllers. `plan-implement` is doctrine-only and prompt-first: it implements from existing plans while keeping a lightweight implementation log, proof freshness, and warm plan-backed review aligned without external coding-harness spawning or deterministic control. `plan-swarm` is prompt-first: the parent agent coordinates parallel workers through `agent-delegate` and keeps human worklogs next to the plan. `exhaustive-code-review` is prompt-only and review-only: it maximizes native parallel agents, saves the review artifact under `/tmp/exhaustive-code-review/`, and does not dictate the user's workflow.
 
 ### Remote install
 
@@ -274,6 +278,10 @@ Section 7 phase plans should protect the full destination map while building dep
 `implement-loop` is the automatic implementation-frontier delivery command. `auto-implement` is an exact user-facing synonym. The user-facing command is `$arch-step implement-loop docs/MY_PLAN.md` or `$arch-step auto-implement docs/MY_PLAN.md` in Codex, and the same `/arch-step ...` command in Claude Code. It first requires `arch_stage_gate.py ready` to pass, then runs the current approved ordered implementation frontier: the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this arc, then runs `audit-implementation`. Named later expansion is not current missing work until its proof gate is due; silent removal from the destination map is still a scope cut. In native `/goal`, it keeps implementing and auditing until the audit is clean or a true blocker stops it. Outside goal mode, it runs one bounded implementation/audit cycle and names the next command.
 
 If the user says "do the full arch flow," "continue this architecture doc," or "audit implementation against the plan," the right live skill is `arch-step`.
+
+### `arch-step-goal-prompt`
+
+Use `arch-step-goal-prompt` when the user wants a durable Markdown goal prompt file for an ArcStep run rather than executing ArcStep immediately. It takes a rough ask plus an optional canonical `DOC_PATH`, writes a goal prompt for `$arch-step auto-plan`, `implement-loop`, `auto-implement`, or `full-auto`, points to source truth by path, and adds false-finish and reviewer gates without copying the plan into a second source of truth. It is prompt-only: no scripts, runners, controllers, or harnesses.
 
 ### `miniarch-step`
 
@@ -369,7 +377,7 @@ Use when the user wants to write, edit, refactor, or audit a repo-root or path-l
 
 ### `prompt-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a prompt, reusable prompt contract, or Codex `/goal` mission brief so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt. The user does not need to name a prompt type or mode; the skill infers the shape from normal language. For `/goal` prompts, it writes compact outcome-driven mission briefs with source truth pointers, quality bar, evidence, stop rules, and first-class signoff when needed, rather than rigid field forms or duplicated plan docs.
+Use when the user wants to write, edit, refactor, or audit a prompt, reusable prompt contract, Markdown-backed Codex goal prompt file, or paste-sized `/goal` mission brief so it fits the user's intent, evidence needs, constraints, stop rules, and output shape without becoming brittle or overbuilt. The user does not need to name a prompt type or mode; the skill infers the shape from normal language. For goal prompts, it prefers Markdown files for substantial source-doc-backed work and paste-sized `/goal` text only when needed, always using source truth pointers, quality bar, evidence, stop rules, and first-class signoff rather than rigid field forms or duplicated plan docs.
 
 ### `chatgpt-web`
 
@@ -519,7 +527,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `chatgpt-web`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `flutter-reference`, `eli10`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `codex-cleanup`, `codex-babysit`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `contact-sheet-builder`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `chatgpt-web`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `flutter-reference`, `eli10`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `skill-flow`, `amir-publish`, `codex-cleanup`, `codex-babysit`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `contact-sheet-builder`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -535,6 +543,8 @@ Examples:
 - `Use $arch-step implement-loop docs/MY_PLAN.md`
 - `Use $arch-step auto-implement docs/MY_PLAN.md`
 - `Use $arch-step full-auto docs/MY_PLAN.md`
+- `Use $arch-step-goal-prompt to write a Markdown goal prompt for $arch-step auto-plan docs/MY_PLAN.md`
+- `Use $arch-step-goal-prompt to strengthen this auto-implement goal with strict reviewers`
 - `Use $miniarch-step for this feature`
 - `Use $miniarch-step auto-plan`
 - `Use $miniarch-step implement-loop docs/MY_PLAN.md`
