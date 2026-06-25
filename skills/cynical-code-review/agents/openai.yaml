@@ -1,0 +1,7 @@
+interface:
+  display_name: "Cynical Code Review"
+  short_description: "Skeptical implementation-integrity code review"
+  default_prompt: "Use $cynical-code-review to audit the requested implemented code, diff, branch, path set, completion claim, or optional plan-backed implementation. Assume the completion story may be misleading, trace current code behavior instead of trusting names/docs/tests/status, hunt for name-only completion, split-brain owners, side doors, partial unification, old authority paths, stopped-short user workflows, overbuilt machinery, scope contamination, and fake proof receipts, then save the findings-first artifact under /tmp/cynical-code-review/. Do not edit code, run external review/delegation skills, manually spawn coding-harness executables, or build a runner/harness."
+
+policy:
+  allow_implicit_invocation: true

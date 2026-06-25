@@ -1,6 +1,6 @@
 ---
 name: arch-step-goal-prompt
-description: "Write Markdown-backed goal prompt files for ArcStep runs from a user ask plus an optional canonical DOC_PATH, especially `$arch-step auto-plan`, `implement-loop`, `auto-implement`, or `full-auto`. Use when the user wants a durable Codex/Claude goal prompt that references source truth without copying the plan, adds strict reviewer gates, and prevents surface-level completion. Not for executing ArcStep itself or creating harnesses, runners, or controllers."
+description: "Write Markdown-backed goal prompt files for ArcStep runs from a user ask plus an optional canonical DOC_PATH, especially `$arch-step auto-plan`, `implement-loop`, `auto-implement`, or `full-auto`. Use when the user wants a durable Codex/Claude goal prompt that references source truth without copying the plan, keeps implementation aligned with plan intent, and catches surface-level completion. Not for executing ArcStep itself or creating harnesses, runners, or controllers."
 metadata:
   short-description: "Write ArcStep goal prompt files"
 ---
@@ -12,9 +12,10 @@ ArcStep run.
 
 The job is to turn a rough ask and any canonical ArcStep plan path into a
 durable Markdown goal prompt. The prompt should make the future goal-mode agent
-better at staying honest: rereading the controlling plan, using the real
-ArcStep command, bringing in required reviewers, repairing rejected work, and
-only marking done when the source truth is actually satisfied.
+better at staying aligned while it works: rereading the controlling plan,
+using the real ArcStep command, noticing common false-finish patterns, going
+deeper when the work is only name-complete or status-complete, and using
+reviewers only when they are requested or already required.
 
 ## When to use
 
@@ -22,12 +23,13 @@ only marking done when the source truth is actually satisfied.
   `auto-implement`, or `full-auto`.
 - The user has a canonical ArcStep plan doc and wants a stronger goal-mode
   prompt to drive or resume the run.
-- The user wants strict reviewer, auditor, fresh-consult, or completion gates
-  encoded into the goal prompt.
+- The user wants alignment reminders, reviewer handling, or completion
+  language encoded into the goal prompt.
 - The user wants the goal prompt saved or returned as Markdown rather than
   compressed into a paste-sized `/goal` string.
 - The user is correcting a pattern where agents stop after surface-level
-  completion, stale plan reads, unfinished reviews, or copied plan content.
+  completion, stale plan reads, name-only work, status-only work, unfinished
+  requested reviews, or copied plan content.
 
 ## When not to use
 
@@ -49,11 +51,14 @@ only marking done when the source truth is actually satisfied.
   prompt reference.
 - Use `$arch-step` doctrine for ArcStep command behavior. Do not re-invent its
   workflow, receipt rules, implementation frontier, or audit standard.
-- Make false finish lines explicit: marker-only planning, stale plan reads,
-  docs-only completion, local proof without reviewer signoff, pending reviewers,
-  unpatched reviewer findings, and completion before required repairs rerun.
-- Treat reviewer rejection as repair input for execution goals. The goal prompt
-  should not let a future agent finish by reporting that review failed.
+- Make false finish lines explicit without turning them into a giant checklist:
+  marker-only planning, stale plan reads, docs-only completion, name-only
+  completion, status-only completion, copied source truth, pending requested
+  reviewers, and unhandled required repairs.
+- Treat reviewer rejection as repair input when reviewers are requested or
+  already required. The goal prompt should not add reviewers by default.
+- Do not add domain-specific proof requirements, heavyweight proof rituals, or
+  harness-style process unless the controlling plan already requires them.
 - Never add scripts, wrappers, formal parameter schemas, launchers, controllers,
   or harnesses. This skill writes prompt guidance only.
 
@@ -83,12 +88,14 @@ only marking done when the source truth is actually satisfied.
    labels only.
 3. State which ArcStep command the future agent should run, or how it should
    resolve the command from the canonical doc.
-4. Add the specific false finish lines most likely for this run.
-5. Add reviewer or auditor gates only when the user asked for them, the work is
-   high-risk, or recent context shows self-certification already failed.
-6. Define done as a real completion gate: fresh source reread, ArcStep receipt or
-   audit proof, required reviewer agreement, required repairs patched, rerun
-   proof, no pending reviewer or worker, and a final report with exact evidence.
+4. Add a light alignment loop: reread source truth, compare work to intent,
+   check the most likely false finish line, then go deeper before closing.
+5. Add reviewer or auditor handling only when the user asked for it, the plan
+   already requires it, or the goal is explicitly repairing failed
+   self-certification.
+6. Define done as a lean completion line: final source reread, current ArcStep
+   frontier satisfied, required repairs handled, no requested reviewer or worker
+   still pending, and a final report tied to source truth.
 7. Keep compressing until the prompt points to source truth instead of
    restating it.
 

@@ -132,6 +132,15 @@ Claude Code, and Gemini.
   code-quality bar. Its `implementation-audit` mode is plan-backed code review
   only: it does not run tests, ask for logs, prove CI, investigate honesty, or
   replace ordinary diff or PR review.
+- Use `$cynical-code-review` when the user wants a skeptical,
+  implementation-integrity audit of implemented code, a diff, branch, path set,
+  completion claim, or optional plan-backed implementation and explicitly
+  wants the review to assume the completion story may be misleading. It hunts
+  for name-only completion, split-brain owners, side doors, partial
+  unification, stale authority paths, stopped-short user workflows, overbuilt
+  machinery, scope contamination, fake proof receipts, and docs/status/tests
+  that mask broken code. Use `$exhaustive-code-review` instead when coverage
+  itself is the deliverable.
 - Use `$plan-implement` when the user wants to implement an existing plan,
   phase, section, checklist, issue-body plan, or design doc while keeping the
   plan, plan-audit log, implementation log, proof freshness, and warm
