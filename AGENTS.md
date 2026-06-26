@@ -150,6 +150,16 @@ Claude Code, and Gemini.
   adapters, state spread, wrong decomposition, and complexity not forced by the
   intended UX or hard experiment requirements. It is not for QA/test/doc review
   unless those surfaces expose architecture truth or the user asks.
+- Use `$cynical-cruft-removal` when the user wants a skeptical cleanup review
+  of a repo, branch, diff, subsystem, test suite, dependency set, generated
+  artifacts, or docs/examples/prompt surface and wants a deep report of
+  low-value items that should go away. It assumes references are not proof of
+  value and hunts dead code, self-referential islands, retired V1/V2 paths,
+  stale feature flags, worthless tests, fake coverage, unused dependencies,
+  obsolete configs/scripts, stale generated artifacts, and point-in-time docs
+  or examples that no longer serve a live purpose. It is not for ordinary code
+  review, architecture review, docs-only cleanup, QA/test coverage review,
+  implementation, automated deletion, or proof harnesses.
 - Use `$plan-implement` when the user wants to implement an existing plan,
   phase, section, checklist, issue-body plan, or design doc while keeping the
   plan, plan-audit log, implementation log, proof freshness, and warm

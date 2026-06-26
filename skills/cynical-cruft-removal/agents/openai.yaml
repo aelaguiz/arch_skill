@@ -1,0 +1,7 @@
+interface:
+  display_name: "Cynical Cruft Removal"
+  short_description: "Find low-value repo artifacts that should go away."
+  default_prompt: "Use $cynical-cruft-removal to review the requested repo, branch, diff, subsystem, test suite, or artifact set. Assume references are not proof of value, identify live roots and current purpose, hunt for dead code, self-referential islands, retired V1/V2 paths, stale flags, worthless tests, fake coverage, unused dependencies, obsolete configs/scripts, stale generated artifacts, and point-in-time docs/examples that keep dead behavior alive, then save the deep deletion report under /tmp/cynical-cruft-removal/. Do not edit files, run external review/delegation skills, manually spawn coding-harness executables, build a runner/harness, or drift into normal QA/test/doc review."
+
+policy:
+  allow_implicit_invocation: true
