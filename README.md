@@ -73,7 +73,7 @@ cd arch_skill
 make install
 ```
 
-This installs the live skill surface to `~/.agents/skills/`, removes old arch_skill-owned Codex and Claude hook entries from previous installs, removes older `~/.codex/skills/<skill>` mirrors, and also installs the Claude Code and Gemini CLI skill directories. Source/build internals (`build/`, `prompts/`, `__pycache__/`, `*.pyc`, and hook cleanup helpers) are pruned from installed skill packages. The `thermo-nuclear-code-quality-review` package is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; the installer copies only that skill package, not Cursor Team Kit agents or rules.
+This installs the live skill surface to `~/.agents/skills/`, removes old arch_skill-owned Codex and Claude hook entries from previous installs, removes older `~/.codex/skills/<skill>` mirrors, and also installs the Claude Code and Gemini CLI skill directories. When a Hermes Agent home exists on the machine, the same surface is mirrored into every existing Hermes skill root (`~/.hermes/skills/` and each `~/.hermes/profiles/<name>/skills/`) under the `arch_skill/` category directory; machines without Hermes are skipped automatically. Source/build internals (`build/`, `prompts/`, `__pycache__/`, `*.pyc`, and hook cleanup helpers) are pruned from installed skill packages. The `thermo-nuclear-code-quality-review` package is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; the installer copies only that skill package, not Cursor Team Kit agents or rules.
 
 Automatic skill modes now rely on the host's native goal-mode continuation. Use Codex `/goal` or Claude Code `/goal` when you want a skill to keep moving across turns until its proof bar is met. This package no longer installs `Stop` or `SessionStart` hooks.
 
@@ -81,6 +81,12 @@ To skip Gemini:
 
 ```bash
 make install NO_GEMINI=1
+```
+
+To skip Hermes Agent propagation:
+
+```bash
+make install NO_HERMES=1
 ```
 
 Installed skills:
@@ -241,9 +247,9 @@ make remote_install HOST=user@host
 make verify_install
 ```
 
-This validates the installed active skill surface in `~/.agents/skills/`, confirms old arch_skill-owned Codex and Claude hook entries are absent, confirms the old `~/.codex/skills/<skill>` mirrors are absent, and confirms removed skill packages are absent for the supported runtimes.
+This validates the installed active skill surface in `~/.agents/skills/`, confirms old arch_skill-owned Codex and Claude hook entries are absent, confirms the old `~/.codex/skills/<skill>` mirrors are absent, confirms removed skill packages are absent for the supported runtimes, and validates the mirrored surface in every existing Hermes Agent skill root.
 
-Restart your Codex, Claude Code, or Gemini CLI session after install so it
+Restart your Codex, Claude Code, Gemini CLI, or Hermes Agent session after install so it
 reloads skills and drops any hook list cached before install removed old
 arch_skill hook entries.
 
