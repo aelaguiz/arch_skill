@@ -24,7 +24,8 @@ boundary, or lower the plan's quality bar to finish faster.
 1. Intake: plan path, boundary (whole plan default), worker
    runtime/model/effort, max parallelism, wave cap, cold verifier toggle.
 2. Plan read and extraction into the conductor log; readiness gate.
-3. Initial or resume checkpoint commit.
+3. Initial or resume checkpoint commit when the worktree is already dirty
+   (see Git Posture); otherwise just record the start commit.
 4. Wave loop:
 
 ```text

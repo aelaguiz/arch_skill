@@ -145,9 +145,11 @@ log beside the plan is its durable memory.
 4. Read the plan once end to end. Create or update
    `<PLAN_STEM>_CONDUCTOR_LOG.md` with the extracted execution map, and apply
    the readiness gate.
-5. Inspect `git status` and commit an initial or resume checkpoint before
-   launching workers, unless a concrete safety issue such as secrets blocks
-   it.
+5. Inspect `git status` and record the start commit in the log. Take an
+   initial or resume checkpoint before launching workers only when the
+   worktree already holds plan work to preserve (per Git Posture) — never an
+   empty checkpoint just to mark intake. Skip it on a concrete safety issue
+   such as secrets or clearly unrelated files.
 6. Read `references/chunking-and-parallelism.md`, then design and dispatch
    the first wave.
 
