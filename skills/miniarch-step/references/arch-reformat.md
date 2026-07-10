@@ -43,6 +43,7 @@ This command must restore:
 - do not introduce new scope
 - when source content is instruction-bearing, preserve explicit operational structure instead of silently condensing it
 - preserve or reconstruct the source's strongest claims about requested behavior scope, allowed architectural convergence scope, canonical owner path, and preservation evidence when the source supports them
+- preserve or reconstruct any explicit simplicity, proof-sufficiency, proportionality, or do-not-build constraints; if absent, draft the smallest defensible Simplicity Contract from the source and leave real uncertainty visible
 - if the source does not support one of those fields, keep the gap visible with draft inference or TODO text instead of collapsing back to a blurrier model
 - preserve the single-document rule
 
@@ -55,6 +56,7 @@ This command must restore:
 - normalize heading drift back to the canonical shape
 - draft TL;DR and Section 0 concretely when the source supports it
 - keep requested behavior scope, allowed convergence scope, canonical-path ownership, and preservation expectations visible when the source supports them
+- make the Simplicity Contract concrete enough to confirm rather than silently carrying an open-ended old plan forward
 
 ## Why this command exists
 
@@ -73,7 +75,7 @@ The goal is not prettier markdown. The goal is to recover one plan artifact that
 4. Preserve code fences, tables, and links exactly.
 5. If the source contains instruction-bearing content, preserve explicit operational structure when re-homing it; if that cannot be done safely, keep the exact source text in Appendix A instead of smoothing it away.
 6. Prefer placing content once unless duplication is the only safe way to avoid losing meaning.
-7. Draft TL;DR and Section 0 from source evidence, explicitly separating requested behavior scope from allowed architectural convergence scope when the source supports it.
+7. Draft TL;DR and Section 0 from source evidence, explicitly separating requested behavior scope from allowed architectural convergence scope and adding a concrete Simplicity Contract.
 8. Preserve any explicit canonical owner-path or preservation-evidence claims; if they are only implied, label them as draft inference or TODO rather than inventing certainty.
 9. Preserve or insert the canonical `planning_passes` block.
 10. Add:

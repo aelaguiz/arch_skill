@@ -9,7 +9,7 @@ metadata:
 
 Use this skill when the user wants the full arch shape and full auto support, but does not need the broader helper surface of `arch-step`.
 
-The primary object is one canonical full-arch plan doc. `miniarch-step` keeps the same artifact discipline and full-work posture as `arch-step`, but with a trimmed public command surface. It is not a lower-effort workflow.
+The primary object is one canonical full-arch plan doc. `miniarch-step` keeps the same artifact discipline and full-work posture as `arch-step`, but with a trimmed public command surface. It is not a lower-effort workflow: finish the requested outcome completely, but do not confuse completeness with more machinery.
 
 ## When to use
 
@@ -36,10 +36,16 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - No command may leave the doc less canonical, less honest, or more contradictory than it found it.
 - Present-but-weak sections are not done.
 - A plan is not ready, complete, or implementation-ready while any unresolved decision remains about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, architecture, canonical owner path, required deletes, fallback policy, acceptance evidence, or implementation scope.
+- Section 0 must contain a binding Simplicity Contract with three things: the smallest sufficient fix, the proof that is enough, and the tempting machinery or expansion the plan must not build.
+- Treat overbuilding as a known default failure mode. Agents often confuse thoroughness with quality and keep adding abstractions, harnesses, edge cases, and proof after the real fix is already sufficient. Assume that bias is active; before adding machinery, try to reuse, delete, or simplify.
+- Match the size of the solution and its proof to the demonstrated failure and blast radius. A systemic fix belongs at the narrowest shared boundary that eliminates the failure class; "systemic" does not mean "build a framework around the incident."
+- Every Section 7 item must directly serve the smallest sufficient fix or the proof that is enough. Remove items that serve neither before calling the plan implementation-ready.
+- The confirmed Simplicity Contract outranks later plan expansion. An extra item does not become approved merely because a planner wrote it into Section 5, Section 7, or Section 8; only explicit user approval recorded as `Complexity expansion (user-approved)` can widen the contract.
+- During implementation, adding an unapproved framework, harness, verifier, abstraction, command, dependency, operational surface, or test category is a hard stop. Explain why the approved fix cannot work without it and obtain explicit user approval before changing the plan or code.
 - Correctness and approved intent outrank convenience or scope trimming.
 - The agent has no authority to cut requested behavior, acceptance criteria, or required implementation work unless the user or the governing plan already marked that item out of scope.
 - Cutting, downgrading, deferring, or "simplifying away" approved behavior, acceptance criteria, or phase obligations is a hard stop. Surface to the user with what you want to cut, why, what Section 0 / TL;DR / Section 7 say about it, and the exact approval you need. Do not proceed until the user explicitly approves; record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape.
-- `miniarch-step` is a trimmed command surface, not a lower-effort workflow.
+- `miniarch-step` is a trimmed command surface, not a lower-effort workflow. Full effort means a complete result at the simplest sufficient architecture, not maximum code, testing, or ceremony.
 - Section 7 uses the depth-first doctrine in `skills/_shared/depth-first-planning.md`: protect the full destination map, prove the first real working slice through the highest-risk seam, then expand along named axes.
 - Phase boundaries are proof boundaries. Phase count is an outcome of dependency edges, proof gates, reversibility or migration boundaries, and user-review boundaries; split only when a phase blends separately provable work.
 - A phase is not complete while any checklist item or exit criterion in that phase remains unmet.
@@ -72,8 +78,8 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - `status` is compact, read-only, and grounded in the actual artifact.
 - `advance` owns the longer checklist surface and optional one-step execution.
 - **No-progress rule.** After two consecutive passes with no real change (no repo file edit, no plan/doc edit, no new evidence a fresh audit has not seen), stop with the exact blocker instead of firing another identical pass.
-- **No invented budgets.** Do not call work blocked because it feels expensive. In goal mode, keep moving until the objective is complete or a real blocker meets the native goal-mode stop rule.
-- **Exhaust the frontier before auditing.** Do not hand to audit after one local fix when later approved phases are reachable. Finish the current approved ordered implementation frontier or record the real blocker plainly.
+- **No invented budgets.** Do not call required work blocked because it feels expensive. This does not authorize violating the Simplicity Contract or adding unapproved machinery. In goal mode, keep moving until the objective is complete or a real blocker meets the native goal-mode stop rule.
+- **Exhaust the frontier before auditing.** Do not hand to audit after one local fix when later approved, Simplicity-Contract-compliant phases are reachable. Finish that frontier or record the real blocker plainly.
 - **Respect the tree state the user gave you.** Do not stash changes, create new branches, split the work across multiple PRs, or rewrite history. Commit hygiene, branch strategy, and PR shape are the user's decisions.
 - **Parallel-agent edits are a pause signal, not a revert signal.** If the working tree contains edits this pass did not make (foreign file, unexpected compiler error, unfamiliar commit), pause briefly to let the other agent land its fix. Do not revert. Escalate to the user only after two pause-retry cycles fail.
 
@@ -93,6 +99,7 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
    - command-owned blocks
    - obvious contradictions across TL;DR, Section 0, target architecture, call-site audit, phase plan, verification, rollout, and decision log
    - canonical-path ownership and behavior-preservation claims
+   - a concrete Simplicity Contract and whether planned work stays inside it
 6. Read `references/section-quality.md` for the sections this command depends on.
 7. Read the matching command reference. If the command is `full-auto`, read `references/full-auto.md`.
 8. If the command is `advance`, read `references/advance.md`, choose the one move that most improves artifact integrity or flow progress, and stop unless `RUN=1` explicitly asks for that one step to execute.

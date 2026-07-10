@@ -93,6 +93,9 @@ By the end of the run:
 - delete dead competing truth surfaces instead of preserving them for posterity; if a touched live doc/comment/instruction still matters, rewrite it to current reality in the same run
 - broader docs consolidation, evergreen promotion, and final plan/worklog retirement belong to `arch-docs` after the code audit is clean; do not silently stretch `implement` into that separate docs-cleanup workflow
 - do not start coding from a plan that is not decision-complete
+- do not start coding until Section 0 has a confirmed Simplicity Contract and Section 7 stays inside it
+- treat overbuilding as a known execution failure mode: do not confuse more abstractions, edge cases, tests, or proof with better work after the approved fix is already sufficient
+- adding an unapproved framework, harness, verifier, abstraction, command, dependency, operational surface, or test category is a hard stop; explain why the smallest sufficient fix cannot work without it and obtain explicit user approval before changing the plan or code
 - do not silently cut approved behavior or required implementation work because it is larger than expected
 - do not rewrite plan requirements, scope, acceptance criteria, or phase obligations during execution to make partial work look intentional; if the approved plan itself needs to change, stop and route back to planning or the user
 - build a compact in-memory implementation ledger from:
@@ -114,6 +117,7 @@ Before meaningful code changes:
 - North Star is concrete and scoped
 - credible acceptance evidence proportional to the current phase risk is identifiable
 - requested behavior in-scope and out-of-scope are explicit
+- the smallest sufficient fix, enough proof, and do-not-build boundary are concrete
 - the canonical owner path is identifiable or explicitly justified
 - for agent-backed work, capability-first rationale is explicit before any new tooling
 - preservation evidence for refactor-heavy work is identifiable
@@ -165,10 +169,12 @@ For each phase:
 
 1. Read the phase goal, work description, checklist items, verification line, docs/comments notes, exit criteria, rollback, and any relevant call-site rows. If a modern phase still strands required obligations only in `Work`, `Verification`, `Docs/comments`, migration notes, or nearby prose, stop and repair the plan instead of guessing.
 2. Confirm which canonical path owns the behavior for this phase, which work belongs in prompt or native-capability usage versus deterministic code when agent-backed, and which preservation signal must run if the phase refactors or consolidates code.
+   Also confirm that the phase directly serves the smallest sufficient fix or enough proof and does not introduce machinery forbidden by the Simplicity Contract.
 3. Mark the phase `Status: IN PROGRESS` once real work starts.
 4. Implement the planned checklist items for that phase before moving to later phases.
 5. If a later-phase task must be pulled forward to preserve correctness, record the sequencing change in Section 10 and update the affected phase descriptions so Section 7 stays truthful.
 6. After each meaningful chunk, and whenever a phase-level claim needs proof, run the required programmatic evidence for that phase. Proof supports continued implementation; it does not authorize stopping early.
+   Once the `Enough proof` threshold is satisfied, do not add more test categories or hypothetical edge-case coverage unless a distinct, demonstrated risk requires it.
 7. Reconcile the ledger, every checklist item, every required docs/comments propagation item, the required proof, and every exit criterion against the changed code before leaving the phase.
 8. Update `DOC_PATH` and `WORKLOG_PATH` before moving on.
 
@@ -198,6 +204,7 @@ Also update only the nearby execution-truth surfaces needed to keep the artifact
 - if a touched live doc, comment, or instruction would otherwise become stale, update or delete it in the same run and keep the phase notes truthful about that work
 - do not rewrite TL;DR, Section 0, Section 5, Section 7, or Section 8 to weaken requirements, narrow scope, or lower the acceptance bar during implementation
 - if execution reveals that requirements, scope, architecture commitments, or acceptance criteria really need to change, stop and route back to planning or the user instead of editing the plan to fit the current code
+- if execution reveals that the Simplicity Contract must expand, stop before building the expansion, obtain explicit user approval, and record `Complexity expansion (user-approved)` in Section 10
 - do not decide mid-run that a planned item is out of scope unless the user or already-approved plan text had already excluded it before execution started
 - if a planned item's requiredness turns out to depend on an unresolved user decision, stop and ask instead of silently downgrading it
 - if the code becomes clean before the broader feature docs are fully consolidated, leave the handoff visible for `arch-docs` instead of burying that remaining docs-cleanup work inside finish notes
@@ -249,6 +256,7 @@ At each phase boundary:
 - for agent-backed systems, new harnesses or scripts do not count as progress unless the plan justified them against prompt-first and capability-first alternatives
 - any refactor, consolidation, or shared-path extraction must run a preservation signal before the phase can be called complete
 - write tests only when they buy real confidence
+- default new coverage to the demonstrated failure, successful path, and most important boundary regression; add more only for a distinct, demonstrated risk
 - do not add negative-value proof machinery
 - defer manual QA and UI automation to finalization by default
 - add short boundary comments for new SSOTs or tricky gotchas when they will actually prevent future drift
@@ -322,6 +330,7 @@ The worklog is execution evidence only:
 - every in-scope ledger item is `done`, `blocked`, or `deferred` with rationale
 - the North Star is satisfied by code and evidence
 - no new parallel path or duplicate writer was introduced
+- no unapproved machinery or disproportional proof surface was added beyond the Simplicity Contract
 - all required preservation checks for refactor-heavy work actually ran
 - no stale touched live docs, comments, or instructions were left behind
 - the plan reflects reality

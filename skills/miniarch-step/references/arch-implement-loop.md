@@ -67,11 +67,13 @@ Audit pass:
 - the current approved ordered implementation frontier is the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this loop cycle
 - each cycle must run implementation first and `audit-implementation` second against the same `DOC_PATH`
 - `implement-loop` must not continue from a plan that is not decision-complete
+- `implement-loop` must not continue when the Simplicity Contract is missing, vague, contradicted by Section 7, or exceeded by the current implementation
 - `implement-loop` runs against the same approved plan; the implementation side may not rewrite requirements, scope, acceptance criteria, or phase obligations while the loop is active
 - before auditing, the implementation pass must finish the current approved ordered implementation frontier or hit a real blocker, and the claimed phase work must have credible programmatic proof
 - for modern Section 7 docs, fresh audit must validate both `Checklist (must all be done)` and `Exit criteria (all required)` before any phase can stay complete or the loop can finish clean
 - `audit-implementation` owns the authoritative clean-versus-not-clean decision
 - if execution discovers that the approved plan itself needs requirement, scope, or acceptance-bar changes, stop honestly and repair the plan instead of continuing on a rewritten story
+- if execution proposes unapproved machinery or another test category beyond `Enough proof`, stop before building it and obtain explicit user approval rather than letting another loop cycle normalize the expansion
 - when audit runs, pass the explicit `DOC_PATH` and current repo working context; do not ask the audit pass to rediscover the artifact from stale conversation state
 - `audit-implementation` remains docs-only; never fix code while auditing
 - if audit reaches `Verdict (code): COMPLETE`, stop clean and hand off docs cleanup to `arch-docs`

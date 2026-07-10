@@ -53,6 +53,8 @@ Strong when:
 - when agent-backed, it is explicit that prompt/native-capability work gets first right of refusal before new tooling
 - definition of done is observable
 - evidence uses credible proof proportional to the work and risk
+- the Simplicity Contract names the smallest sufficient fix, enough proof, and what not to build
+- the solution and proof surface are proportional to the demonstrated failure and blast radius
 - invariants are actionable
 - fallback stance is explicit and respected
 - later commands can answer ordinary scope and tradeoff questions from it
@@ -67,6 +69,8 @@ Weak when:
 - compatibility posture is left to implication instead of being stated
 - it assumes the model or agent lacks capability without evidence
 - definition of done depends on bespoke ceremony
+- the Simplicity Contract is missing, vague, or permits open-ended machinery
+- "systemic" is used to justify a generalized framework instead of a narrow fix at the shared cause
 - invariants are generic platitudes
 - it reads like inspiration instead of an execution contract
 - it leaves real behavior, scope, owner-path, or evidence decisions unresolved
@@ -74,6 +78,7 @@ Weak when:
 Downstream can trust it when:
 
 - later commands can answer "is this in scope?", "is this convergence or creep?", and "what evidence is enough?" without guessing
+- later commands can tell when the real fix is sufficient and which tempting expansion must remain unbuilt
 - later commands can answer which sibling surfaces move together and whether the plan preserves the contract or cuts over cleanly without guessing
 - there is one clear fallback stance instead of hidden compatibility assumptions
 
@@ -265,6 +270,8 @@ Strong when:
 - required phase-complete truths do not live only in `Verification`, `Docs/comments`, migration prose, delete lists, or helper narration
 - refactor-heavy phases say how preserved behavior will be proven
 - agent-backed phases prefer prompt, grounding, and native-capability changes before new tooling, and any new tooling is explicitly justified
+- every phase item directly serves the smallest sufficient fix or enough proof
+- the amount of code, new concepts, operational surface, and testing machinery is proportional to the demonstrated problem
 - phases encode the chosen adjacent-surface follow-through and the chosen cutover, preservation, or approved-bridge work directly
 - verification is small and credible
 - manual QA is deferred to finalization when appropriate
@@ -281,6 +288,8 @@ Weak when:
 - `Exit criteria` are vague, summary-like, or not honestly auditable
 - a phase could be marked complete without satisfying all of its planned obligations
 - product scope creep or architecture theater appears in the authoritative checklist
+- checklist items do not serve the smallest sufficient fix or enough proof
+- a localized failure has expanded into a generalized subsystem, duplicate verifier, or exhaustive hypothetical test surface without demonstrated need
 - agent-backed work jumps to deterministic harnesses or wrappers without a capability-first rationale
 - adjacent-surface follow-through or compatibility posture is left implicit
 - touched live docs/comments that would go stale are left implicit
@@ -303,6 +312,7 @@ Strong when:
 - it prefers existing checks
 - for agent-backed systems, it does not turn capability gaps into bespoke machinery without justification
 - unit, integration, or end-to-end signals are used only where they buy confidence
+- the proof set covers the demonstrated failure, successful path, and important boundary regression without modeling every imaginable failure
 - refactor-heavy work has behavior-preservation checks that survive restructuring
 - manual verification is short and purposeful
 - it explicitly rejects negative-value tests
@@ -310,6 +320,7 @@ Strong when:
 Weak when:
 
 - it introduces large new harnesses by default
+- it keeps adding edge-case branches or test categories after the plan's `Enough proof` threshold is satisfied
 - it depends on visual constants, doc gates, or deletion proofs
 - it conflicts with Section 0 evidence expectations
 
@@ -425,6 +436,7 @@ Strong when:
 - it checks explicit details and sub-obligations, not just broad feature impressions
 - stale touched live docs/comments are treated as implementation gaps when the plan required cleanup
 - unjustified scaffolding around agent-backed behavior is treated as an implementation gap when the plan required prompt-first or capability-first handling
+- unapproved machinery or code/test growth that violates the Simplicity Contract is treated as subtraction work, not accepted because it passes
 - manual verification is tracked separately instead of treated as missing code
 
 Weak when:
@@ -435,6 +447,7 @@ Weak when:
 - phases stay marked complete despite real code gaps
 - it accepts broad "done" language while explicit plan details are still missing
 - it lets vague or unmet exit criteria stand as if they were satisfied
+- it checks only whether the plan was built and ignores whether the implementation exceeded the confirmed Simplicity Contract
 - execution-side plan rewrites are allowed to stand as truth
 
 Downstream can trust it when:

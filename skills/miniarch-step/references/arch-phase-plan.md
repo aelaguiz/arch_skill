@@ -32,12 +32,16 @@
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is contradictory, stop and ask the exact blocker question
 - if missing work is discovered while planning, add it to the phase plan only when repo truth plus approved scope make it clearly required; if requiredness depends on an unresolved user decision, stop and ask instead of downgrading it by taste
 - if adjacent-surface disposition or compatibility posture is still unresolved, stop and ask instead of hiding the fork in Section 7
+- read the confirmed Simplicity Contract before extracting work; if it is missing or vague, repair Section 0 and reconfirm it before writing an implementation-ready phase plan
 - before a phase is valid, run an obligation sweep across Section 5, Section 6, migration notes, delete lists, verification commitments, docs/comments propagation, approved bridge removal, and any helper-added ship-blocking work
 - every required obligation from that sweep must be represented in `Checklist (must all be done)` or `Exit criteria (all required)`; do not leave standalone required work only in `Work`, `Verification`, `Docs/comments`, migration prose, or surrounding narrative
 - for agent-backed systems, prompt, grounding, and native-capability changes get first right of refusal before new harnesses, wrappers, parsers, OCR layers, or scripts
 - if a phase includes new tooling for agent-backed behavior, say why prompt-first and capability-first options were insufficient
 - do not add scripts, tests, CI checks, or validation steps whose primary job is auditing docs/help, checking keyword absence, policing repo layout, or proving deletions by grep
 - only ship-blocking work belongs in the authoritative checklist
+- every checklist item and exit criterion must directly serve `Smallest sufficient fix` or `Enough proof`; remove anything that serves neither
+- match implementation and proof to the demonstrated failure and blast radius; a systemic fix should act at the narrowest shared boundary, not expand one incident into a general-purpose subsystem
+- test the demonstrated failure, successful path, and most important boundary regression; add more only for a distinct, demonstrated risk
 - if the change would leave touched live docs, comments, or instructions stale, update-or-delete work for those surfaces belongs in the phase plan
 - do not assume backward compatibility by default; the phase plan must encode the chosen preservation, clean-cutover, or approved-bridge story explicitly
 - do not turn helper blocks into competing execution checklists
@@ -77,6 +81,7 @@ Before writing the phase plan:
 - agent-backed phases must make capability-first choices explicit before adding custom tooling
 - adjacent-surface follow-through and migration or cutover work must be visible in the relevant phases instead of being left implicit
 - verification should be credible, proportionate, and non-bureaucratic
+- the plan must stop at the confirmed `Enough proof` threshold instead of growing new edge-case matrices, fake environments, or verifier layers because more testing is possible
 - verification must stay tied to shipped behavior, runtime ownership, or real contract boundaries rather than repo-policing heuristics
 - required cleanup, deletes, and touched doc/comment reality-sync work should not be buried
 - phases must name the actual chosen work to do, not conditional or alternate branches the agent would have to choose between later
@@ -126,11 +131,12 @@ Use this block shape:
 
 Use `Work` to describe the coherent unit and why it is isolated in that phase. For modern docs, do not hide standalone obligations there. Use `Checklist` for the exhaustive required actions inside that unit. Use `Exit criteria` for the exhaustive concrete done-state that auditing must validate. If a planned item could be left undone while the phase still sounds "basically complete," or if a phase-complete truth appears only in prose, the phase is underspecified and should be split or tightened.
 If the change spans a contract family or migration boundary, encode the chosen adjacent-surface follow-through and the chosen cutover, preservation, or approved-bridge work directly in the relevant phase instead of leaving that choice implicit.
+Before finalizing Section 7, reread every checklist item and exit criterion against the Simplicity Contract. Delete any item that serves neither the smallest sufficient fix nor enough proof. If an item requires an expansion the contract did not approve, stop and ask instead of writing it into the plan.
 Use `Docs/comments` to explain live docs/comments propagation. If deleting or rewriting those surfaces is required for the phase to be complete, also represent that required work in `Checklist` or `Exit criteria`. Do not keep legacy explanation in live surfaces just because Git already preserves the old version.
 
 ## Consistency duties beyond local ownership
 
-- if the phase plan changes sequencing, convergence scope, or verification expectations, repair the now-stale claims in TL;DR, Section 0, and Section 8
+- if the phase plan changes sequencing, convergence scope, or verification expectations, repair the now-stale claims in TL;DR, Section 0, and Section 8; any expansion beyond the confirmed Simplicity Contract requires explicit user approval first
 - if new sequencing or scope decisions replace an earlier assumption, append or update Section 10
 - Section 7 must remain the one execution checklist even after helper blocks exist
 

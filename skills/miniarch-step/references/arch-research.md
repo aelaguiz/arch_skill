@@ -31,6 +31,7 @@
 - use repo evidence first
 - read code and run read-only searches as needed
 - search for the canonical existing path before blessing a new abstraction or code path
+- ground the narrowest shared boundary that can eliminate the demonstrated failure class; do not equate systemic repair with a generalized framework
 - inspect adjacent surfaces tied to the same contract family, source of truth, migration boundary, or parity story before treating the obvious path as the whole change
 - resolve compatibility posture separately from `fallback_policy`; if preservation versus clean cutover is still unclear after grounded inspection, ask the exact blocker question before deeper planning
 - when the change is agent-backed, inspect current prompt surfaces, runtime or agent configuration, native model capabilities, and existing tool/file/context exposure before blessing new tooling
@@ -49,6 +50,7 @@ Good research looks like:
 - reusable patterns named explicitly so later stages do not reinvent them
 - duplicate or drifting paths relevant to the change are called out early
 - capability-first opportunities are visible before any new harness, wrapper, parser, or script is treated as necessary
+- existing proof signals and the demonstrated blast radius are concrete enough to keep the Simplicity Contract proportional
 - existing preservation signals are named when refactor or consolidation is likely
 - external anchors only when they add real value, each with adopt or reject reasoning
 - any unresolved plan-shaping decisions are written as explicit blocker questions, not as parking-lot notes
@@ -96,6 +98,10 @@ Use this block shape:
   - `<prompt|grounding|native capability>` — <why it may solve this without new machinery>
 - Behavior-preservation signals already available:
   - `<test/check>` — <what current behavior it protects>
+- Narrowest sufficient owner boundary:
+  - `<path|boundary>` — <how fixing here removes the demonstrated failure class without a broader subsystem>
+- Existing proof that can satisfy `Enough proof`:
+  - `<test|probe|build|runtime signal>` — <which required claim it proves>
 
 ## Decision gaps that must be resolved before implementation
 - <exact blocker question> — repo evidence checked: <what was checked first> — default recommendation: <what you would do if unblocked> — answer needed: <what answer is needed>

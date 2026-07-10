@@ -44,6 +44,7 @@
 - compatibility posture is separate from `fallback_policy`; do not leave preservation versus clean cutover implicit in the authoritative plan
 - when the change is agent-backed, decide what behavior belongs in prompt or native-capability usage versus deterministic code before designing new tooling
 - if the target design does not reuse the canonical path, justify why the existing path cannot own the change
+- keep the target design inside the confirmed Simplicity Contract; if it needs broader machinery, stop for approval instead of normalizing the expansion into architecture
 - if the change retires or reroutes a live truth surface, name the code paths, docs, comments, or instructions that must be deleted or rewritten
 - if multiple viable technical approaches exist, resolve them from repo truth plus approved intent or ask the user the exact choice; do not leave multiple viable architectures open in the authoritative plan
 
@@ -51,11 +52,13 @@
 
 - Section 4 must describe current structure, flows, ownership, and failure behavior concretely enough to plan against
 - Section 5 must fully specify the future architecture, canonical owner path, contracts, boundaries, SSOT, no-parallel-path stance, and capability-first versus deterministic responsibilities when the system is agent-backed
+- Section 5 must implement the systemic fix at the narrowest shared boundary and remain proportional to the demonstrated failure and blast radius
 - Section 6 must be exhaustive enough within approved scope to drive implementation and later audit
 - Section 6 must explicitly capture adjacent surfaces that move with the same contract family or are intentionally deferred or excluded
 - Section 6 must make compatibility posture explicit enough that later planning does not have to guess whether the plan preserves the contract, cuts over cleanly, or carries an approved bridge
 - Section 6 must explicitly capture touched live docs, comments, or instructions that need deletion or rewrite because the change would otherwise leave stale truth behind
 - Section 6 must call out capability-replacing harnesses, wrappers, or side paths that should be deleted or explicitly justified when the system is agent-backed
+- Section 6 must exclude change-map rows that serve neither the smallest sufficient fix nor enough proof
 - if the design introduces or sharpens a central pattern, the consolidation sweep must capture only decisions that are already resolved from repo truth or explicit scope text; otherwise it must surface a blocker question
 - any required convergence or consolidation work must name the preservation signal that will prove behavior was not broken
 

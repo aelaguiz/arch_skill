@@ -35,7 +35,7 @@ It is not enough to create a file with headings. This command bootstraps the who
 Treat TL;DR plus Section 0 as the planning lock:
 
 - TL;DR says outcome, problem, approach, and plan shape in the fewest lines possible
-- Section 0 says scope, exclusions, evidence, invariants, and fallback stance
+- Section 0 says scope, exclusions, the Simplicity Contract, invariants, and fallback stance
 - later commands should be able to resolve ordinary tradeoffs from these sections without guessing
 
 If they are weak, every later stage becomes soft.
@@ -55,6 +55,7 @@ If they are weak, every later stage becomes soft.
 
 - TL;DR must be concrete enough to falsify
 - Section 0 must be real enough to confirm or correct
+- Section 0 must state the smallest sufficient fix, enough proof, and what not to build before the user confirms it.
 - If the ask implies architectural convergence, Section 0 must make that internal scope explicit instead of leaving later stages to infer it.
 - If the ask implies refactor pressure, the initial evidence stance should name how preserved behavior will be trusted.
 - if the ask clearly implies priorities, problem framing, verification bias, rollout implications, or an immediate tradeoff, lightly seed the relevant later sections instead of leaving pure ceremony
@@ -84,6 +85,10 @@ If they are weak, every later stage becomes soft.
    - allowed architectural convergence scope
    - UX and technical out-of-scope
    - credible acceptance evidence proportional to the work and risk
+   - Simplicity Contract:
+     - smallest sufficient fix
+     - enough proof
+     - do not build
    - credible behavior-preservation evidence when refactor or consolidation is likely
    - key invariants
      - no new parallel paths
@@ -100,6 +105,7 @@ After writing the doc:
 
 - print the drafted TL;DR
 - print the drafted North Star
+- include the Simplicity Contract in the confirmation surface
 - ask for confirmation or edits
 - if edits arrive, update the doc and ask again
 - do not continue into research or deeper planning from the same `new` run

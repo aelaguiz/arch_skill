@@ -96,6 +96,39 @@ If a question is still necessary, say where you looked first and ask the exact b
 - Architectural convergence may broaden touched files, symbols, or nearby adopters, but it must not broaden product capability.
 - Bad scope adds new commands, modes, templating, plugin or config layers, dry-run surfaces, speculative tooling, or operational surfaces that were not required by the ask.
 
+## Simplicity and proportionality contract
+
+Treat overbuilding as a known default agent failure mode. Thoroughness feels safe, so an agent can keep adding abstractions, harnesses, edge cases, reviewers, and proof long after the real fix is sufficient. Assume that bias is active. Before adding machinery, ask whether the canonical path can own the behavior, whether existing proof is already enough, and what can be deleted or left unbuilt.
+
+Section 0 must make simplicity binding before deeper planning:
+
+- `Smallest sufficient fix`: the narrowest real end-to-end change that resolves the demonstrated failure class at its canonical owner boundary
+- `Enough proof`: the smallest credible evidence set that proves the observed failure is fixed, the successful path works, and the important boundary does not regress
+- `Do not build`: the tempting frameworks, harnesses, duplicate verifiers, commands, speculative edge-case machinery, or other expansion that must stay out
+
+Match the solution surface and proof surface to the demonstrated failure and blast radius. A systemic problem deserves a systemic fix, but systemic means fixing the shared cause at the narrowest authoritative boundary. It does not mean generalizing one incident into a new subsystem.
+
+Prefer a change that reduces or preserves net system complexity. Large code growth is an overbuild warning, not automatic proof: migration or deletion work can justify a large diff, but new concepts, code paths, operational steps, and test machinery need direct necessity. If the fix adds more machinery than the demonstrated problem requires, stop and simplify.
+
+Every phase-plan item must directly serve `Smallest sufficient fix` or `Enough proof`. If it serves neither, remove it. Do not preserve rejected overbuild as a follow-up merely because the planner already imagined it.
+
+The confirmed Simplicity Contract outranks later plan expansion. Machinery does not become approved merely because a planner wrote it into target architecture, a phase checklist, or verification. Remove that contradiction as consistency repair unless the user explicitly approved the expansion and the Decision Log records it.
+
+During implementation, an unapproved framework, harness, verifier, abstraction, command, dependency, operational surface, or test category is a hard stop. Before changing the plan or code, explain why the confirmed smallest sufficient fix cannot work without it and obtain explicit user approval. Record approval with the `Complexity expansion (user-approved)` Decision Log shape.
+
+Testing stays proportional too: cover the demonstrated failure, the successful path, and the most important boundary regression. Add more only for a distinct, demonstrated risk. Do not model every malformed response, lifecycle branch, or hypothetical failure merely because it is possible.
+
+Good example:
+
+- Failure: a deploy can publish artifacts that the real runtime cannot load.
+- Smallest sufficient fix: before publication, load the catalog-selected artifacts through the real runtime and prove one real create/close flow; publish completion markers last; run the same probe after startup.
+- Enough proof: one invalid release is rejected, one valid release passes, and the live service passes the same probe.
+- Do not build: a generalized verification framework, a second integrity subsystem, new diagnostic command families, or exhaustive malformed-response and lifecycle tests.
+
+Bad example:
+
+- Turn that deploy incident into thousands of lines of verifier production code, a broad fake-cloud harness, a second hydration-integrity layer, and dozens of hypothetical response tests. The root fix may be valid, but that solution creates more failure surface than the incident justifies.
+
 ## Adjacent-surface rule
 
 - Before locking target architecture or the authoritative phase plan, inspect adjacent surfaces tied to the same contract, source of truth, migration boundary, or parity story.

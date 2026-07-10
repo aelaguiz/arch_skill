@@ -2,7 +2,7 @@
 
 This artifact is not a loose outline. It is one coherent plan doc that later commands keep sharpening. A command is not successful if it writes its local block but leaves the artifact structurally drifted, internally contradictory, too vague for the next stage to trust, or not decision-complete enough for readiness claims.
 
-Decision-complete means the main artifact has no unresolved plan-shaping decisions left about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, canonical owner path, target architecture, required deletes or migrations, fallback policy, acceptance evidence, required implementation scope, or what must be true to end each planned phase.
+Decision-complete means the main artifact has no unresolved plan-shaping decisions left about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, canonical owner path, target architecture, required deletes or migrations, fallback policy, acceptance evidence, required implementation scope, the smallest sufficient fix, proof sufficiency, prohibited overbuild, or what must be true to end each planned phase.
 
 ## Canonical state objects
 
@@ -148,12 +148,27 @@ Required content:
   - approved timeboxed bridge with removal plan
 - when the change is agent-backed, explicit capability-first stance for prompt/native-capability work versus deterministic support tooling
 - credible acceptance evidence proportional to the work and risk
+- a visible binding Simplicity Contract block inside Section 0, preferably after `0.4`, containing:
+  - `Smallest sufficient fix`: the narrowest real end-to-end change that resolves the demonstrated failure class
+  - `Enough proof`: the smallest credible evidence set that proves the fix and its important boundary
+  - `Do not build`: the tempting frameworks, harnesses, parallel verifiers, commands, speculative edge-case machinery, or other expansion that must stay out
 - credible behavior-preservation evidence when refactor or consolidation is likely
 - invariant list
   - strong examples include `No fallbacks`, `Fail-loud boundaries`, `No dual sources of truth`, and `No undefined behavior`
 - strict fallback stance:
   - default no fallbacks or runtime shims
   - only approved exceptions with `fallback_policy: approved` plus Decision Log entry, timebox, and removal plan
+
+Canonical Simplicity Contract shape:
+
+```text
+### Simplicity Contract
+- Smallest sufficient fix: <narrowest real end-to-end fix>
+- Enough proof: <smallest credible proof set>
+- Do not build: <tempting but unnecessary expansion>
+```
+
+The confirmed Simplicity Contract is scope authority for later architecture, phase, implementation, and verification text. A conflicting later item is plan drift, not an approved obligation. Remove it as consistency repair unless the user explicitly approved the expansion and Section 10 records `Complexity expansion (user-approved)`.
 
 ### `# 1) Key Design Considerations (what matters most)`
 
@@ -300,6 +315,7 @@ Canonical per-phase fields:
 Each phase should own one coherent unit with a proof gate that later phases can rely on directly. Earlier phases should prove the risk-bearing seam, canonical owner path, contract, prompt surface, migration posture, or verification shape needed by later work; they should not build unused foundation layers. Phase count is not a target. Split when a phase blends separately provable units; merge units that prove nothing until combined.
 `Work` describes the unit. For modern docs it must not carry standalone required obligations. `Checklist` is the authoritative must-do list within that phase. `Exit criteria` are exhaustive concrete done conditions, and all of them are required. `Verification` names the proof that must run for the phase claims. If deleting or rewriting live docs/comments/instructions is required for phase completeness, that required work must appear in `Checklist` or `Exit criteria`, not only in `Docs/comments`.
 If a required obligation remains visible only in `Work`, `Verification`, `Docs/comments`, migration notes, delete lists, or helper narration, Section 7 is underspecified and not ready for execution.
+Every checklist item and exit criterion must directly serve `Smallest sufficient fix` or `Enough proof`. If it serves neither, remove it from the plan. Do not convert rejected overbuild into an implementation follow-up that keeps pulling the run wider.
 If the change spans a contract family or migration boundary, the phase plan should encode the chosen adjacent-surface follow-through and the chosen cutover, preservation, or approved-bridge work directly instead of leaving that choice implicit.
 For refactor-heavy work, the verification line should say how preserved behavior will be proven.
 Use `Docs/comments` for live docs, comments, and instructions that must be updated or deleted so touched truth surfaces match shipped reality. Do not use it to preserve legacy explanation.
@@ -326,6 +342,7 @@ Principle lines to preserve:
 - avoid verification bureaucracy
 - prefer existing credible signals that genuinely prove the claim
 - keep the proof set lean but sufficient
+- test the demonstrated failure, the successful path, and the most important boundary regression; add more only for a distinct, demonstrated risk
 - for agent-backed systems, prefer prompt, grounding, and native-capability improvements before new scripts or harnesses
 - do not invent new harnesses, frameworks, or scripts unless they already exist and are the cheapest guardrail
 - do not answer "drift resistance" or "enforcement" with docs-audit scripts, stale-term greps, absence checks, repo-structure tests, or CI gates whose main job is policing the tree rather than protecting shipped behavior
@@ -378,7 +395,16 @@ Additional canonical entry shape for user-approved scope cuts (required whenever
 - `User approval:` when asked, how the user responded
 - `Consequences:` plan updates, follow-ups, any phases reopened
 
-This section is append-only. Do not silently rewrite history when real plan drift occurs. Silent narrowing of approved scope is forbidden; every intent-derived resolution and every approved scope cut must appear here.
+Additional canonical entry shape for user-approved complexity expansion (required whenever implementation must exceed the confirmed Simplicity Contract):
+
+- `## <YYYY-MM-DD> - Complexity expansion (user-approved): <title>`
+- `Expansion:` the new framework, harness, verifier, abstraction, command, dependency, operational surface, or test category
+- `Why the smallest sufficient fix cannot work without it:` concrete repo evidence, not general caution
+- `Alternatives rejected:` the smaller existing-path options checked first
+- `User approval:` when asked and how the user responded
+- `Consequences:` plan changes, added proof burden, and any obsolete machinery removed
+
+This section is append-only. Do not silently rewrite history when real plan drift occurs. Silent narrowing of approved scope is forbidden; every intent-derived resolution, approved scope cut, and approved complexity expansion must appear here.
 
 ## Stable block inventory
 
@@ -425,7 +451,7 @@ Primary ownership does not override global artifact preservation.
 
 Treat these as hard checks:
 
-- TL;DR, Section 0, and Section 7 may not disagree on goal, requested behavior scope, allowed convergence scope, or plan shape.
+- TL;DR, Section 0, and Section 7 may not disagree on goal, requested behavior scope, allowed convergence scope, the Simplicity Contract, or plan shape.
 - Section 1 should justify Section 5, not contradict it.
 - Section 2 should explain the current reality that Sections 4 and 6 make concrete.
 - Section 3 and External Research should sharpen Section 5 and Section 8, not float independently.

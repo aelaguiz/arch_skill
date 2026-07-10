@@ -77,7 +77,7 @@ Inspect:
 
 Grade:
 
-- `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable, evidence-aware, clearly distinguish requested behavior scope from allowed convergence scope, make adjacent-surface scope and compatibility posture explicit, contain no unresolved plan-shaping decisions, and `status` is `active` or `complete`
+- `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable, evidence-aware, clearly distinguish requested behavior scope from allowed convergence scope, make adjacent-surface scope and compatibility posture explicit, contain a binding Simplicity Contract, contain no unresolved plan-shaping decisions, and `status` is `active` or `complete`
 - `decent` when the content is mostly real but thin in one important place
 - `weak` when the draft is vague, contradictory, placeholder-heavy, or still leaves plan-shaping decisions unresolved
 - `missing` when the doc is not credibly bootstrapped
@@ -122,9 +122,9 @@ Inspect:
 
 Grade:
 
-- `strong` when the authoritative phased plan exists, remains the single execution checklist, protects the destination map, starts with a real working slice through the canonical owner path and highest-risk seam, expands later work along named axes, chooses phase count from proof gates rather than a preset range, gives each phase concrete work, an explicit exhaustive checklist, verification, exhaustive exit criteria, and rollback, names preservation checks for refactor-heavy phases, makes adjacent-surface and cutover or preservation work explicit, deletes or rewrites touched live docs/comments that would otherwise go stale in the plan, and contains no unresolved branches or "decide later" language
+- `strong` when the authoritative phased plan exists, remains the single execution checklist, protects the destination map, starts with a real working slice through the canonical owner path and highest-risk seam, expands later work along named axes, chooses phase count from proof gates rather than a preset range, gives each phase concrete work, an explicit exhaustive checklist, verification, exhaustive exit criteria, and rollback, names preservation checks for refactor-heavy phases, makes adjacent-surface and cutover or preservation work explicit, deletes or rewrites touched live docs/comments that would otherwise go stale in the plan, keeps every item inside the confirmed Simplicity Contract, and contains no unresolved branches or "decide later" language
 - `decent` when present but one or more phases are thin
-- `weak` when generic, incomplete, blends coherent units into oversized phases, omits or underspecifies phase checklists, strands required obligations outside the authoritative phase-exit surface, uses vague or non-auditable exit criteria, mixes product creep into ship-blocking work, leaves touched live docs/comments cleanup implicit, or still contains unresolved execution choices
+- `weak` when generic, incomplete, blends coherent units into oversized phases, omits or underspecifies phase checklists, strands required obligations outside the authoritative phase-exit surface, uses vague or non-auditable exit criteria, mixes product creep into ship-blocking work, exceeds the Simplicity Contract, leaves touched live docs/comments cleanup implicit, or still contains unresolved execution choices
 - `missing` when absent
 
 ### Implementation
@@ -151,7 +151,7 @@ Inspect:
 
 Grade:
 
-- `strong` when the audit block is evidence-anchored, reopened phases are updated in place, missing code is clearly separated from manual verification, the audit validates both checklist items and exit criteria for modern phases, touched live docs/comments that would otherwise go stale are treated as implementation gaps when warranted, and unjustified scaffolding around agent-backed behavior is treated as an implementation gap
+- `strong` when the audit block is evidence-anchored, reopened phases are updated in place, missing code is clearly separated from manual verification, the audit validates both checklist items and exit criteria for modern phases, touched live docs/comments that would otherwise go stale are treated as implementation gaps when warranted, and unapproved machinery or disproportional proof that violates the Simplicity Contract is treated as subtraction work
 - `decent` when present but thin
 - `weak` when nominal but not convincingly reconciled, or when exit-criteria validation is missing, vague, or clearly incomplete
 - `missing` when absent
