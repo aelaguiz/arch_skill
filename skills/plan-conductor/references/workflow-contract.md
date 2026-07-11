@@ -13,17 +13,18 @@ boundary, or lower the plan's quality bar to finish faster.
   implementation proof itself.
 - **Workers (delegated children).** Own implementation, repair, and assigned
   verification inside their slice contract. They are engineers, not checklist
-  typists — but they run on cheaper models, so their output is treated as a
-  claim until audited.
-- **Cold verifier (optional, final gate only).** One fresh-one-shot delegate
-  with no conductor context, prompted to refute completion from command output
-  and code reality alone. Its value is exactly its ignorance of the run.
+  typists. Their output is treated as a claim until audited regardless of
+  transport or model.
+- **Cold verifier (optional, final gate only).** One new clean child with no
+  conductor narrative, prompted to refute completion from command output and
+  code reality alone. Its value is exactly its ignorance of the run.
 
 ## Lifecycle
 
-1. Intake: plan path, boundary (whole plan default), worker
-   runtime/model/effort, max parallelism, wave cap, cold verifier toggle. A
-   Codex worker with no named model uses `gpt-5.6-sol`.
+1. Intake: plan path, boundary (whole plan default), per-role transport and
+   starting context, any external runtime/model/effort, max parallelism, wave
+   cap, and cold-verifier toggle. An external Codex worker with no named model
+   uses `gpt-5.6-sol`.
 2. Plan read and extraction into the conductor log; proportionality,
    provenance, and scope-freeze readiness gate.
 3. Initial or resume checkpoint commit.
@@ -31,7 +32,7 @@ boundary, or lower the plan's quality bar to finish faster.
 
 ```text
 design wave (chunking doctrine)
--> dispatch fresh-resumable workers (parallel group when independent)
+-> dispatch new clean workers (parallel group when independent)
 -> wait patiently (no stream tailing)
 -> evidence intake (footer -> git claims-check -> targeted diff)
 -> cynical audit -> finding triage

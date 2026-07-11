@@ -17,7 +17,27 @@
 - Enumerate app surfaces, user journeys, and the current automation surface exhaustively from repo truth before editing.
 - For each journey or surface, record why it matters, its governing contract or expected outcome, the current real-app proof, the proof quality, cross-platform obligations, and the consequence if it is wrong.
 - Map both the app and the proof surface. A missing or misleading lane on a fundamental journey is itself a real risk.
-- Use parallel read-only agents when the runtime supports delegation. Split by disjoint surface families such as journeys, app surfaces, harness surfaces, and platform ingress. Treat those splits as examples, not a rigid taxonomy.
+- Use new clean same-host native mapping children when disjoint surface
+  families make parallel reading worth the integration cost. The parent names
+  non-overlapping slices; examples include journeys, app surfaces, harness
+  surfaces, and platform ingress, but they are not a rigid taxonomy.
+- In Codex mapping dispatch set `fork_turns: "none"`. In Claude use a clean
+  named or custom subagent, not a bare conversation fork or skill
+  `context: fork` shorthand. Use bounded or full inherited context only for a
+  named dependency that exists solely in chat.
+- Select the strongest read-only capability available and also tell each
+  mapper not to edit or write files, including the ledger. Mapping children
+  may not create children or invoke delegation, consult, or review skills
+  unless the parent explicitly assigned a bounded nested scope and budget.
+- Select a mapping child only after confirming that it inherits the sanctioned
+  simulator or device capabilities required by `audit-loop-sim`. If the host
+  cannot confirm that inheritance, keep the slice with the authorized parent
+  or complete it sequentially; do not launch an external process merely to
+  bypass that capability boundary.
+- Bound fanout by independent surface families, available host slots,
+  shared-file or shared-state collision risk, sanctioned device contention,
+  and the parent's capacity to account for, inspect, and synthesize every
+  return.
 - If the map is incomplete, stop after updating the ledger. Do not patch yet.
 
 ## Ranking order

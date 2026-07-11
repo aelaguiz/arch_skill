@@ -22,8 +22,10 @@ The substrate document contains three surfaces in this order:
 2. **Surface B: Markdown edge table.** Carries the full 5-12 word relationship
    labels and `path:line` evidence that mermaid syntax struggles with at scale.
    This is the surface the agent reads when reasoning about waste patterns.
-3. **Surface C: Unresolved-reference list.** Every `$skill-slug` peer reference
-   that did not resolve to a node in the walked set. Empty list is rendered
+3. **Surface C: Unresolved-reference list.** Every dollar-prefixed
+   `$skill-slug` peer reference that did not resolve to a node in the walked
+   set. An unprefixed inline span becomes an edge only when it resolves to an
+   exact peer, so it cannot create an unresolved node. Empty list is rendered
    as `_None._` (do not omit the section).
 
 ## Surface A: mermaid graph block
@@ -76,7 +78,7 @@ Every edge has exactly one edge-kind:
 | `gates_on` | A waits for B to reach a stable state before A proceeds. |
 | `references_for_truth` | A treats B as the authoritative source for a contract or definition. |
 | `consumes_primitive` | A reads or invokes B as a deterministic data primitive (CRUD, schema validation). |
-| `unclassified` | The walked sub-agent could not pick a clean edge-kind from the closed set. **MUST surface as a finding** via the unresolved-reference list or as a separate audit finding — never silently swallowed. |
+| `unclassified` | The walker could not pick a clean edge-kind from the closed set. **MUST surface as a finding** via the unresolved-reference list or as a separate audit finding — never silently swallowed. |
 
 ### Edge label vocabulary
 
@@ -160,7 +162,7 @@ The parent agent achieves determinism by:
 ## Audit-only contract
 
 The substrate document is a read-only artifact for the agent's reasoning. It
-is written once per audit run from sub-agent evidence and is NOT edited by
+is written once per audit run from walker evidence and is NOT edited by
 the audit reasoning step. Findings are emitted in the audit's text output
 using the existing 6-field template; the substrate is the grounding, not the
 finding store.

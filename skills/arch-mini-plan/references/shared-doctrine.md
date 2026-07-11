@@ -3,7 +3,7 @@
 ## Core rules
 
 - One doc is the source of truth.
-- Apply `skills/_shared/scope-and-convergence.md`. Human scope plus the initial
+- Apply `../../_shared/scope-and-convergence.md`. Human scope plus the initial
   pre-freeze minimal convergence closure is the only automatic implementation
   scope; later reviewers and implementers cannot add to it.
 - Code is ground truth. Anchor claims in files, symbols, tests, logs, or explicit docs.

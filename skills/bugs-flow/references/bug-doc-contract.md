@@ -105,7 +105,11 @@ If a tool can provide Seer-style analysis or representative events, capture that
 
 ## Review rule
 
-- Cross-model or external review is explicit-review-only.
+- Review side work is explicit-review-only.
 - If the user did not ask for review or code review, stop after local analysis/fix/verification.
+- Once review is authorized, prefer a new clean same-host native critic.
+  External review remains available when a concrete provider, model,
+  lifecycle, isolation, automation, receipt, or other benefit is worth its
+  added process and integration cost; it is not required for freshness.
 - Review findings cannot expand the frozen bug closure. Post-freeze scope needs
   explicit human approval and re-freeze.

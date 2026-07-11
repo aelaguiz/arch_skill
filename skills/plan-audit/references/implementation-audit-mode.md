@@ -100,8 +100,11 @@ return the existing non-approving coverage verdict instead of inventing it.
    adjacent same-contract or same-behavior paths, schemas, adapters, generated
    artifacts, fixtures, config, prompts, docs, changed test files, and install
    or command surfaces.
-7. Use native subagents or parallel-agent features for broad independent
-   read-only code slices when available. The parent owns synthesis.
+7. For broad independent code lenses, follow `child-prompt-contract.md` and the
+   shared agent policy. When the active host supports native children, start
+   each slice as a new clean read-only child over a non-overlapping lens or path
+   family; the parent owns accounting, repository-state checks, synthesis,
+   finding disposition, and verdict.
 8. Review plan obligations against code. Classify each due obligation as
    `satisfied by code`, `missing code`, `implemented differently but
    equivalent`, `implemented differently and not equivalent`, `scope cut`, or
@@ -282,7 +285,8 @@ For implementation-audit passes, record:
 - Scope
 - Baseline reviewed
 - Test/CI context accepted, if supplied
-- Native subagents/lenses run
+- Review-child accounting, including context choice and final state
+- Pre/post-dispatch repository-state check
 - Code areas read
 - Obligations checked
 - Findings added
@@ -326,8 +330,9 @@ Before returning an approval verdict, confirm:
 - North Star, done-state requirements, phase boundaries, checklists, exit
   criteria, delete list, and side-door expectations were extracted.
 - Changed code and relevant unchanged code were read.
-- Native subagents or parallel-agent features were used for broad read-only
-  slices when available.
+- Broad independent read-only slices, when useful, used new clean native
+  children under the shared policy; every launched child was accounted for and
+  the repository-state check was recorded.
 - Every due code obligation was traced to code or a missing/unclear status.
 - Name-only completion and false simplification were checked wherever the plan
   promised simplification, unification, migration, deletion, SSOT convergence,

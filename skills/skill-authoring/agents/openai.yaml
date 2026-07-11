@@ -1,7 +1,7 @@
 interface:
   display_name: "Skill Authoring"
   short_description: "Create prompt-first reusable skills"
-  default_prompt: "Use $skill-authoring to design or repair a prompt-first skill with simple default shape, precise triggers, clear peer boundaries, lean packaging, self-contained references, and explicit $prompt-authoring discipline."
+  default_prompt: "Use $skill-authoring to design or repair a prompt-first skill with simple default shape, precise triggers, clear peer boundaries, lean packaging, self-contained references, and explicit $prompt-authoring discipline. If the skill dispatches model agents, require the installed shared orchestration policy, keep only role-local workflow doctrine in the skill, align agents/openai.yaml with the changed contract, and do not move orchestration reasoning into scripts."
 
 policy:
   allow_implicit_invocation: true

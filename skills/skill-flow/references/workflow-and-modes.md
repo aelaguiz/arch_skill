@@ -56,8 +56,8 @@ on findings.
 #### Reads (in this order)
 
 1. `references/dag-substrate-format.md` — substrate format spec and closed enums.
-2. `references/parallel-walk-protocol.md` — sub-agent evidence schema, fanout
-   sizing, scope resolution rules, code-block whitelist.
+2. `references/parallel-walk-protocol.md` — clean native walker evidence,
+   fanout judgment, scope resolution, and semantic code-context filtering.
 3. `references/waste-pattern-catalog.md` — recognition tests for the audit
    reasoning step.
 4. `references/lessons-studio-worked-example.md` — only when the boundary or
@@ -68,12 +68,17 @@ on findings.
 
 1. **Resolve scope from the user's plain-language phrase.** Per
    `parallel-walk-protocol.md` scope-resolution rules. Print the resolved
-   skill list (count + slugs) before fanout. Ask an exact blocker question if
+   skill list (count + slugs) before dispatch. Ask an exact blocker question if
    the phrase is genuinely ambiguous.
-2. **Spawn parallel sub-agents to walk the resolved scope.** Fanout sizing per
-   `parallel-walk-protocol.md`. Each sub-agent returns the per-skill evidence
-   schema verbatim.
-3. **Aggregate sub-agent evidence into the DAG substrate.** Write the
+2. **Dispatch clean native walkers over independent slices.** Apply
+   `../../_shared/agent-orchestration-policy.md` and the fanout judgment in
+   `parallel-walk-protocol.md`. In Codex every new walker uses
+   `fork_turns: "none"`; in Claude use a clean named/custom subagent. Give each
+   child a read-only contract and prohibit nested fanout. Each walker returns
+   the per-skill evidence schema verbatim.
+3. **Validate and aggregate walker evidence into the DAG substrate.** Check
+   every assigned skill returned, every edge has exact evidence, and the target
+   worktree stayed unchanged. Write the
    substrate at `<doc-dir>/<doc-slug>_DAG.md` per `dag-substrate-format.md`
    (mermaid graph + edge table + unresolved-reference list, in that order).
 4. **Read the substrate back. Apply the recognition tests** from
@@ -96,8 +101,8 @@ Each of these stops the run with a named error:
 - Unresolvable scope phrase that the in-prompt resolver cannot disambiguate
   after one blocker question.
 
-No silent fallbacks. No cached SVG. No "lite" substrate when fanout fails.
-The substrate is regenerated from a fresh parallel walk every audit run.
+No silent fallbacks. No cached SVG. No "lite" substrate when a walker fails.
+The substrate is regenerated from a new clean walk every audit run.
 
 ## Repair mode
 

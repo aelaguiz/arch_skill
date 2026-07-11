@@ -12,12 +12,18 @@ find the simplest architecture for making this repo's planner resumable.
 Parent behavior:
 
 - resolve and announce both model mappings
+- inspect the active host and resolve transport independently: a same-host
+  participant uses a clean native child only if native model selection can
+  honor the requested model; the cross-provider or unavailable exact-model
+  participant uses an external session
+- use `fork_turns: "none"` for each new Codex-native participant, or a clean
+  named/custom subagent for each new Claude-native participant
 - create `.arch_skill/model-consensus/resumable-planner-<timestamp>/`
 - prompt both models to start from the user's target and identify the repo
   instructions, owner files, existing patterns, and proof surfaces they need
 - collect independent first passes
-- exchange critiques until both sign off or expose the smallest unresolved
-  decision
+- relay critiques through the parent, resuming each exact participant until
+  both sign off or expose the smallest unresolved decision
 
 ## Adversarial Simplification
 
@@ -25,7 +31,7 @@ User:
 
 ```text
 Use $model-consensus. Put Codex gpt-5.6-sol xhigh in adversarial mode against
-Claude Sonnet 4.6 high. The goal is the most elegant plan for removing the
+Claude Fable 5 high. The goal is the most elegant plan for removing the
 duplicate install path without breaking existing users.
 ```
 
@@ -33,6 +39,8 @@ Parent behavior:
 
 - assign Claude as collaborator and Codex as adversary unless the user says
   otherwise
+- resolve transport per participant rather than forcing both through external
+  CLIs; keep separate clean first passes and exact handles
 - tell the adversary to find simpler alternatives and resist kitchen-sink
   compromise
 - require both models to identify the install owners, docs, and verification
@@ -52,6 +60,7 @@ the research, and build fast traps to prove where the bug starts.
 ```
 
 - resolves and announces the model mappings
+- resolves native or external transport independently for both participants
 - records the raw goal, the named doc path, repo root, desired new docs output,
   hard constraints, and any user-stated non-goals
 - tells both models to start from the named doc, then independently choose the
@@ -59,7 +68,11 @@ the research, and build fast traps to prove where the bug starts.
 - asks for theories, evidence, falsifiers, and fast traps only after the models
   have done their own reading
 - sends each first pass to the other model for critique, then converges only on
-  theories and proof plans both models can defend from evidence
+  theories and proof plans both models can defend from evidence, always
+  resuming the exact participant through the parent relay
+- keeps participants read-only; after convergence, the parent writes only the
+  agreed material to the requested new document and asks both exact
+  participants to sign off if the written synthesis could change meaning
 
 ## Conceptual Non-Repo Run
 
@@ -73,6 +86,8 @@ want them to think through whether this product should be local-first.
 Parent behavior:
 
 - ask one model-choice question because the user requested it
+- choose transport after the participant choices are known; same-host native
+  children are the default when their model capability suffices
 - build a goal brief with product constraints and non-goals
 - omit repo-grounding obligations unless the user provides a repo or artifact
 - use the same dialogue pattern, but judge evidence by product goals and
@@ -101,3 +116,8 @@ Also do not produce a "consensus" run where the parent gave both models the
 same detailed theory map before either model investigated. That is anchoring,
 not cross-checking. Repair it by restarting with a shorter prompt that preserves
 the raw goal, user-named inputs, constraints, and discovery freedom.
+
+Do not put two same-host participants into a peer team merely because the host
+offers teams. Parent relay is the default. A team is appropriate only when the
+user genuinely wants direct participant messaging and that topology serves the
+method.

@@ -1,6 +1,6 @@
 ---
 name: exhaustive-code-review
-description: "Run a prompt-only exhaustive code review over a branch, diff, path set, plan scope, or completion claim by maximizing native parallel agents, reading touched files/hunks/abstractions/callers/side doors/proof/docs/generated/prompt surfaces, and saving a findings-first review artifact to disk. Use when the user asks for exhaustive, meticulous, line-by-line, file-by-file, abstraction-by-abstraction, feature-by-feature, or coverage-ledger review. Not for normal high-signal review, plan-backed `plan-audit implementation-audit`, maintainability-only thermonuclear review, implementation, repair, PR shipping, or external subprocess review."
+description: "Run a prompt-only exhaustive code review over a branch, diff, path set, plan scope, or completion claim with a coverage-led set of clean native review slices when useful, reading touched files/hunks/abstractions/callers/side doors/proof/docs/generated/prompt surfaces, and saving a findings-first review artifact to disk. Use when the user asks for exhaustive, meticulous, line-by-line, file-by-file, abstraction-by-abstraction, feature-by-feature, or coverage-ledger review. Not for normal high-signal review, plan-backed `plan-audit implementation-audit`, maintainability-only thermonuclear review, implementation, repair, PR shipping, or external subprocess review."
 metadata:
   short-description: "Exhaustive prompt-only code review saved to disk"
 ---
@@ -43,7 +43,20 @@ or decide what workflow the user should use next.
 
 - Review only. Do not edit reviewed files.
 - Save the review artifact under `/tmp/exhaustive-code-review/<slug>-<timestamp>/`.
-- Maximize usage of native parallel agents.
+- Apply `../_shared/agent-orchestration-policy.md` whenever the review uses
+  child agents.
+- Build a coverage-led slice plan only when distinct lenses or path families
+  improve the review. Start every independent slice as a new clean same-host
+  native child when supported, keep scopes non-overlapping, and bound fanout by
+  host slots, shared-file or shared-state collision risk, and parent
+  integration capacity.
+- Use the strongest read-only capability the host exposes, also tell every
+  review child not to edit or write, and have the parent compare repository
+  status and diffs with the pre-dispatch state before accepting child evidence.
+- Children do not create children or invoke delegation, consult, or review
+  skills unless the parent explicitly assigns a nested scope and budget.
+- The parent owns child accounting, evidence spot-checking, deduplication,
+  integration, finding scope disposition, the artifact, and the final verdict.
 - Do not manually spawn `codex`, `claude`, `agent`, or other coding-harness
   executables.
 - Do not invoke external agent/delegation/review skills as the review mechanism.
@@ -58,7 +71,7 @@ or decide what workflow the user should use next.
   the requested scope, treat it as a required repair unless the review can name
   the genuinely different contract or controlling out-of-scope anchor. For a
   fixed-scope plan or history-backed change, apply
-  `skills/_shared/scope-and-convergence.md`: a reviewer-discovered adjacent path
+  `../_shared/scope-and-convergence.md`: a reviewer-discovered adjacent path
   cannot enter repair scope. Require subtraction or redesign inside the frozen
   boundary, or stop for an explicit human scope decision.
 - A clean review is allowed. Do not invent findings to justify the run.
@@ -71,15 +84,23 @@ or decide what workflow the user should use next.
 3. Create the run directory under `/tmp/exhaustive-code-review/`.
 4. Read `references/review-catalog.md`.
 5. Read `references/output-contract.md`.
-6. For a fixed-scope plan or history-backed change, read
-   `skills/_shared/scope-and-convergence.md`.
+6. Read `../_shared/agent-orchestration-policy.md` before creating or
+   resuming any child.
+7. For a fixed-scope plan or history-backed change, read
+   `../_shared/scope-and-convergence.md`.
 
 ## Workflow
 
 1. Build the review target summary and save it as `target.md`.
 2. Map the changed files, changed hunks, touched symbols, touched abstractions,
    visible features or behavior obligations, and likely adjacent surfaces.
-3. Maximize usage of native parallel agents.
+3. Build a proportional coverage plan. When parallel slices materially improve
+   coverage, launch new clean native read-only children over non-overlapping
+   lenses or path families, account for every final state, and synthesize in
+   the parent. In Codex use `fork_turns: "none"`; in Claude use a clean named
+   or custom subagent rather than an ambiguous conversation fork or skill
+   `context: fork` shorthand. Use inherited context only for a named chat-only
+   dependency, not the parent's completion narrative.
 4. Review every touched file and changed hunk. Read surrounding code when the
    hunk depends on a function, class, module, caller, lifecycle, or contract.
 5. Review touched abstractions: canonical owner, old and new paths, callers,
@@ -120,3 +141,5 @@ The full saved artifact follows `references/output-contract.md`.
   required-repair conditions, safe-difference guards, and example findings
 - `references/output-contract.md` - required saved files, verdicts, finding
   shape, and final chat summary shape
+- `../_shared/agent-orchestration-policy.md` - transport, starting context,
+  continuation, isolation, topology, and parent-integration policy

@@ -20,6 +20,11 @@ that does not burn your own context. The hard parts are all judgment: telling a
 real limit from a transient blip, an idle-because-done from an idle-because-stuck,
 and "restarted" from "actually resumed work."
 
+Read `../_shared/agent-orchestration-policy.md` for the shared continuation and
+transport vocabulary. This skill is an intentional durable-session boundary,
+not an agent-transport selector: it only observes and resumes the exact Codex
+session the user already started.
+
 ## When to use
 
 - The user says "monitor / babysit / watch / keep running my codex", "keep it
@@ -32,7 +37,9 @@ and "restarted" from "actually resumed work."
 
 ## When not to use
 
-- You need to *launch* a subprocess/worker to do a task → `agent-delegate`.
+- You need to launch a new task worker. Prefer the active host's native child
+  when it can do the job; use `agent-delegate` only for a deliberate external
+  worker/session benefit.
 - You want to run *your own* goal-seeking loop where you make the bets →
   `goal-loop`.
 - You want a one-off external review from codex on an artifact → `codex-review-yolo`.
@@ -52,6 +59,9 @@ and "restarted" from "actually resumed work."
   nothing to the running process. Account change ⇒ restart.
 - **Resume the SAME session id** (`codex resume <SESSION_ID>`), which appends to
   the same rollout and preserves the goal and history. Do not start a fresh session.
+- **Do not repurpose the handle.** Exact-session resume is correct because the
+  same durable goal continues. Never use the watched session for unrelated
+  delegated work, a cold critic, or a new role.
 - **"Restarted" is not "resumed work."** After resume, the goal does not
   auto-resume: clear the "Resume paused goal?" menu (Enter on option 1) or send
   `/goal resume`, then verify the footer shows `Pursuing goal` AND a working line

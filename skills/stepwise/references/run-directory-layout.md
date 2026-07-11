@@ -41,17 +41,21 @@ intended to be visible and shareable.
 │       └── try-<k>/
 │           ├── prompt.md
 │           ├── origin.json
-│           ├── invocation.sh
-│           ├── stdout.final.json
-│           ├── stream.log
-│           ├── session_id.txt
+│           ├── dispatch.json
+│           ├── child_handle.txt
+│           ├── invocation.sh            # external lane only
+│           ├── stdout.final.json         # external lane or normalized native return
+│           ├── stream.log                # external lane only
+│           ├── session_id.txt            # external lane only
 │           ├── start_ts
 │           ├── end_ts
 │           ├── exit_code
 │           ├── critic/
 │           │   ├── prompt.md
-│           │   ├── schema.codex.json
-│           │   ├── invocation.sh
+│           │   ├── dispatch.json
+│           │   ├── child_handle.txt
+│           │   ├── schema.codex.json     # external Codex only
+│           │   ├── invocation.sh         # external lane only
 │           │   ├── stdout.final.json
 │           │   ├── verdict.json
 │           │   ├── verdict.validation_errors.json
@@ -68,12 +72,19 @@ intended to be visible and shareable.
 └── report.md
 ```
 
-Repairs executed against an upstream session as a result of another step's
+Repairs executed against an upstream worker as a result of another step's
 diagnostic live in the upstream step's own `try-<k>/` directory. The
 `origin.json` file records whether the attempt was a fresh spawn, repair
 resume, or downstream respawn after upstream repair. Stepwise uses that fact
 for repair-bounce accounting and audit truth; it does not infer intent from
 the `try-<k>` name alone.
+
+For native dispatch, the orchestrator writes the compact `dispatch.json` and
+`child_handle.txt` receipt from the host return surface. For the external lane,
+`run_stepwise.py` continues to own invocation, stream, session-id, and verdict
+artifacts; the orchestrator may derive the compact dispatch receipt from those
+files. Older external attempts may therefore lack the two compact receipt files.
+The script never chooses transport.
 
 ## state.json
 
@@ -96,16 +107,22 @@ the `try-<k>` name alone.
     "schema_version": 2,
     "execution_defaults": {
       "step": {
-        "runtime": "codex",
-        "model": "gpt-5.6-sol",
-        "effort": "high",
-        "source": "user prompt"
+        "transport": "native",
+        "starting_context": "clean",
+        "continuation": "new-then-exact-resume",
+        "runtime": "active-host",
+        "model": null,
+        "effort": null,
+        "source": "shared native preference"
       },
       "critic": {
-        "runtime": "codex",
-        "model": "gpt-5.6-sol",
-        "effort": "xhigh",
-        "source": "user prompt"
+        "transport": "native",
+        "starting_context": "clean",
+        "continuation": "new-each-verdict",
+        "runtime": "active-host",
+        "model": null,
+        "effort": null,
+        "source": "shared native preference"
       }
     },
     "execution_preferences": []
@@ -126,9 +143,10 @@ later tries may be operational repairs or fresh downstream respawns after an
 upstream repair. Diagnostic turns are stored under the try they diagnose and do
 not create new tries.
 
-`stream.log` is written incrementally while the child is running. Use it for
-minutes-scale progress checks during long worker, critic, and diagnostic turns;
-do not wait for `stdout.final.json` as the only sign of life.
+In the external lane, `stream.log` is written incrementally while the child is
+running. Use it for minutes-scale progress checks during long worker, critic,
+and diagnostic turns; do not wait for `stdout.final.json` as the only sign of
+life. Native children use the host's status/wait surface instead.
 
 `origin.json` disambiguates attempt meaning:
 
@@ -150,9 +168,9 @@ do not wait for `stdout.final.json` as the only sign of life.
 
 Valid `kind` values:
 
-- `fresh`: a normal fresh worker session.
-- `repair-resume`: an operational repair prompt resumed into the same session.
-- `respawn-after-upstream`: a fresh downstream worker session after an
+- `fresh`: a new clean worker child.
+- `repair-resume`: an operational repair prompt resumed into the exact worker.
+- `respawn-after-upstream`: a new clean downstream worker child after an
   upstream repair passed.
 
 Only `repair-resume` consumes the repaired step's repair-bounce budget.
@@ -160,13 +178,19 @@ Respawning a downstream step after upstream repair is not a repair of the
 downstream worker's own failed attempt; it is context hygiene.
 
 `prompt.md` is the exact worker-facing prompt. `invocation.sh` is a
-reproducible shell script. `session_id.txt` contains one session id or
-`UNRECOVERABLE`.
+reproducible shell script for an external lane. `dispatch.json` records
+transport, starting context, continuation, capabilities/worktree posture, and
+the reason an external lane was chosen when applicable. `child_handle.txt`
+contains the exact native child handle or external session id used for
+continuation. External `session_id.txt` contains one CLI session id or
+`UNRECOVERABLE`; native runs need not fabricate CLI artifacts.
 
 ## Helper subcommands
 
-`latest-session --run-dir <dir> --step-n <n>` prints the latest try, session id,
-session path, origin kind, and repair-bounce metadata for one step.
+For external attempts, `latest-session --run-dir <dir> --step-n <n>` prints the
+latest try, session id, session path, origin kind, and repair-bounce metadata.
+For a native attempt, read the host handle in `child_handle.txt`; do not ask the
+external helper to invent it.
 
 `upstream-for --run-dir <dir> --step-n <n>` reads the confirmed manifest and
 prints earlier steps whose `expected_artifact.selector` exactly matches the

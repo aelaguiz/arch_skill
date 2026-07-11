@@ -1,7 +1,7 @@
 interface:
   display_name: "Fresh Consult"
-  short_description: "Run resumable Claude, Codex, Cursor, or Grok opinions"
-  default_prompt: "Use $fresh-consult to run one or more read-only Claude Fable/Opus, Codex GPT/GBT/Fugu, Cursor Composer, or Grok second opinions on this artifact, completion check, flow, or readability question. First turns start clean; second and third same-line follow-ups resume the captured child session by default. Codex accepts gpt-5.6-sol, gpt-5.6-luna, and gpt-5.6-terra and defaults an omitted Codex model to gpt-5.6-sol. Claude Code runs supported Claude models, Cursor Agent runs composer-2.5-fast, and Grok runs grok-build or grok-composer-2.5-fast. Tell each consult child to return a strict pass/fail verdict: if it is not a clean yes, it fails with specific reasons. Report whether each verdict was fresh or resumed, with evidence, session id when present, and directories."
+  short_description: "Run a clean independent read-only reviewer"
+  default_prompt: "Use $fresh-consult for a strict read-only second opinion. Fresh means a new clean reviewer, not inherently a CLI: use a clean native child for ordinary same-host review (`fork_turns: \"none\"` in Codex; a clean named/custom subagent in Claude), and select an external Claude, Codex, Cursor Agent, or Grok session only when its provider, exact-model/profile, lifecycle, isolation, automation, or receipt benefit matters. Resume the exact participant for bounded same-line follow-ups; start a new clean child for a new independent gate. The parent owns fanout and synthesis, and reviewers must not create children unless explicitly budgeted. Return strict pass/fail, evidence, confidence, transport/context/continuation, exact handle, and external receipt paths when applicable."
 
 policy:
   allow_implicit_invocation: true

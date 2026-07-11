@@ -92,8 +92,10 @@ Use this compact shape unless the user asked for a different artifact:
 
 ```text
 Participants
-- Model A: <runtime/model/effort/role>
-- Model B: <runtime/model/effort/role>
+- Model A: <provider/model/effort/role; native or external; clean-start
+  mechanism; exact continuation handle>
+- Model B: <provider/model/effort/role; native or external; clean-start
+  mechanism; exact continuation handle>
 
 Status
 - converged | no consensus | blocked
@@ -112,6 +114,9 @@ Rejected Alternatives
 
 Remaining Risks
 <only material residual risks>
+
+Read-Only Check
+<parent-owned status/diff result>
 
 Artifacts
 <run directory>

@@ -34,11 +34,11 @@ raw_goal: |
   <verbatim user input that created this epic — every word, no edits>
 raw_goal_sha256: <hex digest of the raw_goal string>
 sub_plans_approved: false
-critic_runtime: null | claude | codex | grok
-critic_model: null | <resolved CLI model, e.g. claude-fable-5>
+critic_runtime: null | claude | codex | grok  # legacy/external critic only
+critic_model: null | <resolved external CLI model, e.g. claude-fable-5>
 critic_effort: null | <low | medium | high | xhigh | max>
-models_sha256: null | <hex digest of {runtime, model, effort} tuple>
-auto_execution: null | <spawned-harness policy block>
+models_sha256: null | <hex digest of external {runtime, model, effort} tuple>
+auto_execution: null | <explicit external-harness policy block>
 ---
 ```
 
@@ -64,28 +64,26 @@ Frontmatter rules:
   seen and blessed the shape." The approved decomposition is the epic scope
   baseline. Later agents may reorder execution inside that shape when allowed,
   but adding a sub-plan or outcome requires explicit human approval.
-- `critic_runtime` and `critic_effort` are user-supplied per
-  `model-and-effort.md` for interactive-mode completion critics. The model is
-  also user-supplied except that an omitted Codex critic model defaults to
-  `gpt-5.6-sol`. `critic_model` stores the resolved runnable identifier, not
-  raw shorthand. During same-session `auto-plan`, these fields
-  may stay `null` because no epic critic runs during planning; same-session
-  `auto-implement` must fill them before the first epic critic. When the user
-  explicitly asked for spawned-harness end-to-end execution, these fields may
-  stay `null` until an interactive critic is needed; spawned-harness critics
-  use the `auto_execution.roles.critic` block instead.
+- `critic_runtime`, `critic_model`, and `critic_effort` describe only a
+  deliberately selected external completion critic. A capable same-host native
+  critic leaves them null and records its clean child handle in the
+  Orchestration Log. For an external critic, values are user-supplied per
+  `model-and-effort.md`, except an omitted Codex model defaults to
+  `gpt-5.6-sol`; store the resolved runnable identifier, not raw shorthand.
+  During same-session `auto-plan` these fields may stay null because no critic
+  runs. External-harness critics use `auto_execution.roles.critic`.
 - `models_sha256` is computed over the runtime/model/effort tuple when
   that tuple is present. Changing any of them re-hashes. Past verdicts
   keep their old models recorded in their own artifacts.
-- `auto_execution` is `null` until the user explicitly asks for
-  role-based spawned-harness automatic execution. Spawned-harness mode fills it
-  after decomposition approval and role-table resolution. Interactive mode
-  ignores it.
+- `auto_execution` is `null` unless the explicit external harness is selected.
+  That lane fills it after decomposition approval and external role-table
+  resolution. Native role execution uses compact Orchestration Log handle
+  receipts rather than pretending this external policy block applies.
 
-### `auto_execution`
+### `auto_execution` (external harness only)
 
-Spawned-harness automatic mode stores the role-based policy in both the epic doc and
-the spawned-harness run directory:
+External-harness mode stores the role-based policy in both the epic doc and its
+run directory:
 
 ```yaml
 auto_execution:
@@ -123,25 +121,25 @@ Rules:
 
 - The user approves the decomposition before this block is written.
 - `poll_seconds` defaults to `180`; do not use short polling loops while
-  waiting for spawned harnesses.
+  waiting for external harness processes.
 - `quiet_floor_seconds` defaults to `900`. A live child with no stream
   activity before this floor is still running, not failed.
 - `stuck_floor_seconds` defaults to `1800`. A live child with no stream
   activity beyond this floor becomes `needs_attention`; this is a diagnostic
   status, not an automatic termination command.
-- `max_runtime_seconds` defaults to `7200` for spawned children unless the
+- `max_runtime_seconds` defaults to `7200` for external children unless the
   user pins a different policy.
 - `auto_run_dir` is an operational pointer. It is added after the run
   directory exists and is not part of the `execution_sha256` input.
 - Raw shorthand belongs in `source_quotes`; executable fields store
   runnable model IDs.
-- Model resolution comes from `skills/_shared/model_resolution.py` and
+- Model resolution comes from `../../_shared/model_resolution.py` and
   `references/model-and-effort.md`; exact versions are never silently
   substituted.
-- New spawned-harness policies require `epic_planner`, `implementation_worker`, and
+- New external-harness policies require `epic_planner`, `implementation_worker`, and
   `critic`. Older docs may include a legacy `repair_worker`; keep it readable,
-  but ordinary critic failures resume the original planner or implementation
-  worker session instead of using a separate repair role.
+  but ordinary critic failures resume the exact original planner or
+  implementation worker session instead of using a separate repair role.
 - Changing any role updates `execution_sha256`, appends a Decision Log
   entry, and affects only future child runs.
 
@@ -198,9 +196,10 @@ A numbered list of sub-plans. Each entry has:
 - `Scope contract:` the Section 0 anchor in the sub-plan DOC_PATH and its
   freeze state (`pending | frozen | human-decision-needed`). This is a pointer,
   not a copy of the sub-plan contract.
-- In spawned-harness automatic mode, add `Auto-run status:` when useful. Keep it
-  compact: current role, latest worker artifact, latest critic verdict,
-  or `not started`. Do not copy child transcripts into the epic doc.
+- In role-based automatic mode, add `Auto-run status:` when useful. Keep it
+  compact: transport, exact role handle or latest worker artifact, latest
+  critic verdict, or `not started`. Do not copy child transcripts into the
+  epic doc.
 
 The decomposition count follows proof boundaries, not a preferred range.
 Each sub-plan should prove a state later sub-plans can rely on. The first
@@ -258,6 +257,8 @@ by the skill, not the user. Examples of what goes here:
 - Sub-plan N implement-loop started.
 - Sub-plan N auto-implement continued; ArcStep audit is not COMPLETE yet.
 - Sub-plan N implement-loop completed (arch-step audit COMPLETE).
+- Role dispatch/resume: role, transport, clean/bounded/full starting context,
+  exact child/session handle, capabilities/worktree posture, and receipt path.
 - Epic critic run on sub-plan N: verdict=`<pass|scope_change|incomplete>`.
 - Epic critic incomplete on sub-plan N; status kept implementing and ArcStep
   auto-implement resumed.
@@ -292,7 +293,7 @@ conversation history a month from now, not a machine log.
 
 ### Epic Requirement Coverage
 
-Same-session `auto-plan` and spawned-harness sub-plan DOC_PATHs
+Same-session `auto-plan` and role-based automatic sub-plan DOC_PATHs
 must include an Epic Requirement Coverage section, usually in Section 0 or
 immediately after it. The coverage map classifies every meaningful
 raw-goal/decomposition requirement as one of:
@@ -308,7 +309,7 @@ Decision Log.
 Coverage is a scope-preservation map, not a scope-reduction tool. A
 requirement from the raw goal, approved Decomposition, North Star, Section 7,
 acceptance criteria, or verification obligations must never be classified as
-out of scope by the orchestrator or a spawned child. If it is not owned here,
+out of scope by the orchestrator or a role child. If it is not owned here,
 satisfied already, or assigned to a named later sub-plan, the sub-plan is not
 ready.
 
@@ -349,11 +350,12 @@ The skill mutates the epic doc under these conditions only:
   existing one's scope only after explicit human approval, or records the
   human choice to keep scope and subtract/redesign unauthorized work; always
   appends the human decision anchor to the Decision Log.
-- `auto-run` mode: writes or updates `auto_execution`, writes compact
-  Auto-run status fields, records role-policy changes, same-role worker
-  resumes after critic failures, and auto-inserted sub-plans. Full child
-  artifacts stay in the spawned-harness run directory; `state.json` keeps compact
-  `latest_worker_attempts` pointers to the sessions that may be resumed.
+- `auto-run` mode: records compact transport/context/handle receipts,
+  exact-role worker resumes after critic failures, and auto-inserted sub-plans.
+  When the external harness is selected it also writes or updates
+  `auto_execution`; full external child artifacts stay in its run directory,
+  and `state.json` keeps compact `latest_worker_attempts` pointers to the
+  sessions that may be resumed.
 
 The skill never edits `raw_goal` or `raw_goal_sha256` except at
 `start`. If the user wants to edit the goal, they start a new epic;
@@ -365,10 +367,10 @@ Every time the skill reads the epic doc, it validates:
 
 1. Frontmatter parses as YAML with all required fields.
 2. `raw_goal_sha256` matches a fresh hash of `raw_goal`.
-3. If the interactive critic tuple is present, `models_sha256` matches
-   a fresh hash of the runtime/model/effort tuple. If the tuple is
-   pending/null, `models_sha256` is also null and the skill must ask
-   before running an interactive completion critic.
+3. If the external interactive-critic tuple is present, `models_sha256`
+   matches a fresh hash of the runtime/model/effort tuple. If the tuple is
+   null, `models_sha256` is also null; use a clean native critic unless an
+   external critic was deliberately selected, in which case ask before it runs.
 4. If `auto_execution` is present, required role blocks
    (`epic_planner`, `implementation_worker`, `critic`) contain `runtime`,
    `model`, `effort`, `source_quote` or source metadata, positive monitor

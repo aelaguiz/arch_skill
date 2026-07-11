@@ -17,6 +17,10 @@ do not hand-roll fragile JSONL and SQLite parsing, but the scripts are not a
 query language for the user. Interpret the user's words, run the helper to get
 candidates, inspect the evidence, and answer like an investigator.
 
+If a neighboring request actually needs another model agent, apply
+`../_shared/agent-orchestration-policy.md` before routing it. This history
+skill remains read-only and does not dispatch that agent itself.
+
 ## When To Use
 
 - The user asks about prior Codex or Claude Code prompts, turns, commands,
@@ -30,7 +34,9 @@ candidates, inspect the evidence, and answer like an investigator.
 - The user wants Git commit history rewritten. Use `$commit-history-authoring`.
 - The user wants a fresh second opinion from another model. Use
   `$fresh-consult`.
-- The user wants another agent to do work. Use `$agent-delegate`.
+- The user wants another agent to do work. Use the active host's native child
+  for ordinary same-host work; use `$agent-delegate` only when a deliberate
+  external worker/session provides the needed benefit.
 - The user wants to search current repo files rather than past agent-session
   evidence. Use normal repo search.
 - The user asks for history from a runtime whose local store is absent and no

@@ -35,7 +35,26 @@ Use this skill for contained feature work that is too small for the full arch fl
 - Initial architecture may include only the smallest evidenced same-contract
   convergence closure before plan mode declares readiness. Finish mode and
   self-review cannot expand it; later scope requires explicit human approval.
-- Implementation stays local. Do not launch external review unless the user explicitly asks for review.
+- `Local` means the active host owns execution and integration; it does not
+  require one conversation thread. The parent may use new clean same-host
+  native children for genuinely independent repo mapping, plan or completion
+  review, and non-overlapping low-collision implementation slices.
+- In Codex, start those clean children with `fork_turns: "none"`; in Claude
+  Code, use clean named or custom subagents rather than a conversation fork.
+  Mapping and review children are read-only by capability when available and
+  always receive explicit no-edit/no-write guidance. The parent records and
+  rechecks repo state, owns doc/worklog updates, and integrates every return.
+- Give editful children explicit non-overlapping owner paths. Resume the exact
+  implementer handle for authorized repair of its own slice; start an
+  independent recheck as a new clean child. Children do not fan out unless the
+  parent explicitly assigns a bounded nested scope and budget, and total
+  fanout stays proportional to independent work, host slots, collision risk,
+  and parent integration capacity.
+- External review or work remains available when a concrete provider,
+  load-bearing exact model/profile, lifecycle, isolation, automation, or
+  receipt benefit is worth the extra process and integration cost. State that
+  benefit when choosing the lane instead of treating external execution as
+  the meaning of review freshness.
 - When the changed behavior is agent- or LLM-driven, inspect prompt surfaces, native model capabilities, and existing tool/file/context exposure before designing.
 - For agent-backed systems, prefer prompt engineering, grounding, and native-capability use before new harnesses, wrappers, parsers, OCR layers, or scripts.
 - If the real lever is prompt repair, say so plainly and recommend `prompt-authoring` instead of inventing deterministic scaffolding.
@@ -47,14 +66,16 @@ Use this skill for contained feature work that is too small for the full arch fl
 
 1. Read `references/doc-contract.md`.
 2. Read `references/shared-doctrine.md`.
-3. Read `skills/_shared/scope-and-convergence.md`.
-4. Resolve whether you are in:
+3. Read `../_shared/scope-and-convergence.md`.
+4. Before creating or resuming another agent, read
+   `../_shared/agent-orchestration-policy.md`.
+5. Resolve whether you are in:
    - start mode
    - plan mode
    - finish mode
-5. Resolve `DOC_PATH` and read it fully if it exists.
-6. Check that the work still fits `lilarch`.
-7. Read the mode reference and `references/quality-bar.md`.
+6. Resolve `DOC_PATH` and read it fully if it exists.
+7. Check that the work still fits `lilarch`.
+8. Read the mode reference and `references/quality-bar.md`.
 
 ## Workflow
 
@@ -68,12 +89,14 @@ Use this skill for contained feature work that is too small for the full arch fl
 
 - Update the minimal research grounding.
 - Write the current architecture, target architecture, call-site audit, and a 1-3 phase plan.
-- Run the internal lilarch plan audit and tighten the doc before implementation.
+- Run the internal lilarch plan audit, directly or through a clean native
+  read-only reviewer, and let the parent tighten the doc before implementation.
 - Freeze the compact scope contract before entering finish mode.
 
 ### 3) Finish mode
 
-- Implement locally against the doc.
+- Implement under active-host ownership against the doc, optionally assigning
+  clean native children only non-overlapping low-collision slices.
 - Keep a lightweight `WORKLOG_PATH`.
 - Self-audit for completeness and mark the doc complete only when the code is actually complete.
 - Subtract unauthorized built scope; do not rewrite the compact doc to bless it.
@@ -93,6 +116,9 @@ Use this skill for contained feature work that is too small for the full arch fl
 
 - `references/doc-contract.md` - lilarch artifact, required blocks, status rules, worklog, and escalation rules
 - `references/shared-doctrine.md` - small-feature doctrine, question policy, and anti-fallback rules
+- `../_shared/agent-orchestration-policy.md` - transport, context,
+  continuation, isolation, topology, and return evidence for optional native
+  or external child work
 - `references/start.md` - create or repair the compact doc and lock requirements/defaults
 - `references/plan.md` - write the compact architecture blocks and 1-3 phase plan
 - `references/finish.md` - implement, keep the worklog honest, and self-audit

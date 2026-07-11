@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
-"""Stepwise orchestration plumbing.
+"""Stepwise run-state and external-session adapter plumbing.
 
-This script is deterministic infrastructure for the stepwise skill. It does
-NOT make judgments about strictness, manifests, verdicts, advance/resume, or
-stop discipline. Those decisions live in the orchestrator's prose reasoning.
+This script is deterministic infrastructure for Stepwise run-state plus its
+deliberately selected external Claude, Codex, or Grok lane. It does NOT choose
+transport or make judgments about strictness, manifests, verdicts,
+advance/resume, or stop discipline. Those decisions live in the orchestrator's
+prose reasoning.
 
 Subcommands:
 
   init-run     Create the run directory and initial state.json.
-  step-spawn   Spawn a fresh step sub-session (claude, codex, or grok).
-  step-resume  Resume an existing step sub-session with a repair prompt.
+  step-spawn   Spawn a fresh external worker session (claude, codex, or grok).
+  step-resume  Resume an existing external worker session with a repair prompt.
   step-diagnose
-               Resume an existing step sub-session with a read-only
+               Resume an existing external worker session with a read-only
                diagnostic prompt and write diagnostic artifacts.
-  critic-spawn Spawn an ephemeral critic sub-session with a structured schema.
+  critic-spawn Spawn an ephemeral external critic with a structured schema.
   latest-session
                Print the latest session metadata for a step.
   upstream-for Print manifest-declared upstream artifacts for a step.
@@ -1511,7 +1513,10 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     init.set_defaults(func=cmd_init_run)
 
-    step = sub.add_parser("step-spawn", help="Spawn a fresh step sub-session")
+    step = sub.add_parser(
+        "step-spawn",
+        help="Spawn a new clean external worker session",
+    )
     for a in ["--run-dir", "--target-repo", "--prompt-file", "--model", "--effort"]:
         step.add_argument(a, required=True)
     step.add_argument("--runtime", required=True, choices=["claude", "codex", "grok"])
@@ -1530,7 +1535,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     step.set_defaults(func=cmd_step_spawn)
 
-    resume = sub.add_parser("step-resume", help="Resume an existing step session")
+    resume = sub.add_parser("step-resume", help="Resume an external worker session")
     for a in ["--run-dir", "--target-repo", "--prompt-file", "--model",
               "--effort", "--session-id"]:
         resume.add_argument(a, required=True)
@@ -1546,7 +1551,10 @@ def _build_parser() -> argparse.ArgumentParser:
 
     diagnose = sub.add_parser(
         "step-diagnose",
-        help="Resume a worker session read-only and record diagnostic artifacts",
+        help=(
+            "Resume an external worker session read-only and record "
+            "diagnostic artifacts"
+        ),
     )
     for a in ["--run-dir", "--target-repo", "--prompt-file", "--model",
               "--effort", "--session-id"]:
@@ -1558,7 +1566,10 @@ def _build_parser() -> argparse.ArgumentParser:
     diagnose.add_argument("--with-step-m", required=True, type=int)
     diagnose.set_defaults(func=cmd_step_diagnose)
 
-    critic = sub.add_parser("critic-spawn", help="Spawn an ephemeral critic")
+    critic = sub.add_parser(
+        "critic-spawn",
+        help="Spawn a new clean ephemeral external critic",
+    )
     for a in ["--run-dir", "--target-repo", "--prompt-file", "--model",
               "--effort", "--schema-file"]:
         critic.add_argument(a, required=True)

@@ -61,7 +61,7 @@ requirement, hard constraint, or drift-proofing need should be removed.
 
 ## Scope Provenance And Freeze
 
-Apply `skills/_shared/scope-and-convergence.md`. The implementation boundary is
+Apply `../../_shared/scope-and-convergence.md`. The implementation boundary is
 the human-authorized outcome plus the smallest directly competing
 same-contract closure found by initial architecture before implementation, plus
 later explicit human approvals. Similarity, architectural taste, generic risk,

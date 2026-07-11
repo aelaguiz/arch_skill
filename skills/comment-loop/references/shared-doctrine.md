@@ -17,7 +17,22 @@
 - Enumerate the current explanatory surface exhaustively before editing.
 - For each surface, record why it matters, its governing contract or invariant, its downstream dependents, the current proof, the proof quality, the current explanation, and the consequence if it is misunderstood.
 - Record shared contracts, conventions, gotchas, and preferred comment sites explicitly in the ledger.
-- Use parallel read-only agents when the runtime supports delegation. Split by disjoint surface families such as entrypoints, core logic, integrations, proof surfaces, and current explanatory coverage. Treat those splits as examples, not a rigid taxonomy.
+- Use new clean same-host native mapping children when disjoint surface
+  families make parallel reading worth the integration cost. The parent names
+  non-overlapping slices; examples include entrypoints, core logic,
+  integrations, proof surfaces, and explanatory coverage, but they are not a
+  rigid taxonomy.
+- In Codex mapping dispatch set `fork_turns: "none"`. In Claude use a clean
+  named or custom subagent, not a bare conversation fork or skill
+  `context: fork` shorthand. Use bounded or full inherited context only for a
+  named dependency that exists solely in chat.
+- Select the strongest read-only capability available and also tell each
+  mapper not to edit or write files, including the ledger. Mapping children
+  may not create children or invoke delegation, consult, or review skills
+  unless the parent explicitly assigned a bounded nested scope and budget.
+- Bound fanout by independent surface families, available host slots,
+  shared-file or shared-state collision risk, and the parent's capacity to
+  account for, inspect, and synthesize every return.
 - If the map is incomplete, stop after updating the ledger. Do not comment yet.
 
 ## Ranking order

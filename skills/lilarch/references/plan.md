@@ -25,6 +25,28 @@ Write the minimal architecture and delivery plan needed to ship the feature clea
      closure and exclude merely similar neighbors
 4. Run the internal plan audit and write the result into `lilarch:block:plan_audit`.
 
+## Optional clean child use
+
+The parent may use same-host native children when independent mapping lenses or
+a cold plan review will materially improve the compact plan. Start each role
+clean from `DOC_PATH`, its bounded lens, relevant paths, and the expected
+return. In Codex, set `fork_turns: "none"`; in Claude Code, use a clean named
+or custom subagent rather than a conversation fork.
+
+Mapping and review roles are analysis-only. Use a read-only capability when
+the host exposes one and also say: do not edit or write files, apply patches,
+commit, or create children. Divide mapping by non-overlapping surface or
+question, keep fanout within available host slots and the parent's integration
+capacity, and do not add nested fanout without an explicit bounded scope and
+budget. The parent records relevant repo state before dispatch, checks it after
+returns, reconciles the evidence, and alone writes the compact doc and
+`lilarch:block:plan_audit`.
+
+Each role returns whether its bounded job completed, path or symbol anchors,
+findings or plan recommendations, checks performed, unresolved assumptions,
+and confirmation that it made no writes. A later independent plan recheck is a
+new clean role rather than a resume of the first reviewer.
+
 The plan audit is not scope authority. It may reject a missing or overbroad
 contract, but it cannot add an adjacent surface. Before finish mode, record an
 explicit closure or `none`, verify every phase item maps to human scope or that

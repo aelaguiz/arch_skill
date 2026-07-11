@@ -7,15 +7,20 @@ implementation judgment inside the slice.
 
 ## Slice Prompt Skeleton
 
-Write to the delegate `prompt.md` and adapt to the actual slice:
+Write the exact child prompt to the native dispatch or external `prompt.md` and
+adapt it to the actual slice:
 
 ```markdown
 You are a delegated implementation worker for one slice of a larger plan.
 You do not have the parent chat context. Read the repo and the referenced
 plan sections directly from disk.
 
-# Delegation Mode
-- Mode: fresh-resumable
+# Dispatch
+- Transport: <active-host native child | external session + concrete benefit>
+- Starting context: clean
+- Continuation: new child; accepted repair findings resume this exact handle
+- Isolation and capabilities: <shared worktree or named worktree; permissions
+  and tools actually available>
 - Parallel group: <group objective + sibling slice names, or "single">
 
 <For parallel groups: You are not alone in this codebase. Other workers may
@@ -51,11 +56,10 @@ proceeding.
 # Capabilities And Boundaries
 You may: read and search files, edit within scope, run commands to
 implement and verify, and make implementation decisions the plan implies.
-Maximize parallelism with native subagents or parallel-agent features
-provided by your current coding harness. Do not manually spawn separate
-coding-harness executables, or invoke skills whose main effect is to shell
-out to `codex`, `claude`, `agent`, or `grok`, from inside this child prompt
-unless the parent explicitly assigns that action.
+The parent owns fanout and integration. Do not create or coordinate other model
+agents, manually spawn coding-harness executables, or invoke delegation or
+consult skills unless this prompt explicitly assigns a bounded nested scope and
+budget.
 You must not: commit, push, stash, revert unrelated work, expand scope
 (stop and report instead), weaken or skip tests, or leave the old code path
 alive when the contract says replace it.
@@ -92,13 +96,13 @@ SCOPE DISCOVERIES: <item + disposition, or none>
 SUMMARY FOR PARENT: <one concise paragraph>
 ```
 
-The `DELETES EXECUTED:` line is deliberate: un-executed deletes are the most
-common cheap-worker omission, so the footer forces a claim the conductor can
+The `DELETES EXECUTED:` line is deliberate: un-executed deletes are a common
+worker omission, so the footer forces a claim the conductor can
 cheaply falsify against the diff.
 
 ## Send-Back Prompt Skeleton
 
-For resume rounds against the same session:
+For resume rounds against the exact same child or external session:
 
 ```markdown
 Continue the same slice using your existing session history. The original

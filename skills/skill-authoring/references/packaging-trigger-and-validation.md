@@ -174,6 +174,7 @@ Keep it minimal and accurate. Quote string values. If `default_prompt` exists, m
 On updates:
 
 - confirm `display_name`, `short_description`, and `default_prompt` still match the current `SKILL.md`
+- co-edit the metadata in the same change when the skill's visible contract, required policy, or default behavior changes
 - remove metadata that no longer serves a UX or invocation purpose
 
 ## Validation loop

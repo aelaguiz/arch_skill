@@ -86,6 +86,8 @@ Audit log: <path or not applicable>
 
 - Code areas read:
 - Relevant code not yet read:
+- Review-child accounting and context choices:
+- Pre/post-dispatch repository-state check:
 - Coverage blockers:
 
 ## Depth-First Implementation Risk
@@ -208,7 +210,8 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
 
 - Code areas read:
 - Relevant code not yet read:
-- Native subagents/lenses run:
+- Review-child accounting and context choices:
+- Pre/post-dispatch repository-state check:
 - Coverage blockers:
 
 ## Recommended Next Move

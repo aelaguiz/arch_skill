@@ -158,7 +158,7 @@ The goal prompt should say:
 - freshly reread the plan before claiming any phase or frontier is complete
 - implement the approved ordered implementation frontier
 - run ArcStep `audit-implementation`
-- if audit or a required external review rejects the result, classify the
+- if audit or a required review rejects the result, classify the
   objection against the frozen scope contract: repair authorized work,
   subtract unauthorized work, or stop for a human scope decision
 - never mark complete while reviewers, delegated workers, or required repairs
@@ -179,16 +179,91 @@ gates and must not bypass planning into implementation. It should also say that
 if the canonical doc is not ready for implementation, the run stays in planning
 until the real blocker or readiness gate is resolved.
 
+## Agent and Reviewer Dispatch Briefs
+
+Do not make a future goal-mode agent infer orchestration semantics from words
+such as `fresh`, `parallel`, `fork`, or `resume`. Whenever the generated goal
+actually hands work to another agent, put the dispatch decision in that
+handoff paragraph. Keep it as compact prose, but make clear:
+
+- the role's bounded job and the decision, artifact, or files it owns
+- whether it runs as a same-host native child, a host-native background child,
+  or an external process/session, and what benefit motivates an external lane
+- whether it starts clean, receives only bounded recent chat context, or truly
+  needs full parent context
+- whether this is a new role, an exact-handle continuation, or a fresh
+  replacement whose independence is the point
+- its real isolation and capabilities, including read/write scope, workspace
+  or worktree behavior, permissions, and any required browser or device access
+- the topology: the parent owns fanout and integration; children do not create
+  children unless the parent explicitly assigns a bounded nested scope and
+  budget
+- the evidence it must return so the parent can accept, repair, or reject the
+  result, including file or section anchors, checks, findings, and a durable
+  handle or receipt when continuation matters
+
+Clean context is the normal choice for an independent reviewer, mapper, or
+planner reading durable source truth. Use bounded context when a few recent
+chat-only decisions are load-bearing, and full context only when the role
+genuinely depends on the whole conversation. Context choice does not promise
+filesystem or permission isolation.
+
+For independent review or mapping, request a read-only capability when the
+host exposes one, also say `do not edit or write`, and make the parent compare
+current repo status or diff before accepting the return. An editful worker
+needs a non-overlapping owner surface. If a reviewer sends authorized findings
+back to an implementer, resume that exact implementer handle with the delta;
+when the repair needs an independent signoff, create a new clean reviewer
+rather than resuming the earlier critic.
+
+Keep fanout proportional to genuinely independent work, available host slots,
+collision risk, and the parent's ability to inspect every return. Generic goal
+prompts should describe the transport and continuation semantics, not embed
+provider CLI commands or flags. When an external provider, exact model/profile,
+durable lifecycle, worktree isolation, automation surface, or receipt shape is
+the useful difference, name that concrete benefit in the handoff and account
+for the added process and integration cost.
+
+Compact native-review example:
+
+```text
+Start a new clean same-host native completion reviewer over the controlling
+plan, final diff, ArcStep audit block, and check receipts. Give it read-only
+capability if the host exposes one and explicit no-edit/no-write guidance. It
+may not create children. The parent records repo state before dispatch,
+verifies it afterward, and integrates the result. Return a non-leading verdict,
+evidence-anchored findings, checks performed, unresolved assumptions, and the
+child handle. Authorized repairs go to the exact implementer; the next
+independent signoff starts as a new clean reviewer.
+```
+
+Compact external-review example:
+
+```text
+Start a new clean external [provider/model/profile] review because [the
+cross-provider, exact-model/profile, durable-session, isolation, automation,
+or receipt benefit this run needs]. Give it the same bounded evidence and
+read-only/no-write contract, keep integration parent-owned, and return its
+verdict, anchored findings, checks, session handle, and receipt path. The goal
+does not prescribe provider CLI syntax; use the owning review or delegation
+skill to realize this transport.
+```
+
+These examples teach the decisions; do not force their wording or all fields
+into goals that do not dispatch another agent.
+
 ## Reviewer Gates
 
-Reviewer gates belong in the goal prompt when the user asks for external
-auditors, strict reviewers, fresh consults, completion audits, when the
-controlling plan already requires them, or when the goal is explicitly
-repairing failed self-certification.
+Reviewer gates belong in the goal prompt when the user asks for a reviewer,
+external auditor, strict review, fresh consult, or completion audit; when the
+controlling plan already requires one; or when the goal is explicitly repairing
+failed self-certification.
 
 A good reviewer gate states:
 
 - which reviewer or skill to use, if known
+- the role's transport, starting context, continuation, capabilities,
+  topology, and return evidence at the handoff point
 - what evidence the reviewer receives
 - that the reviewer must not be led toward the expected verdict
 - what verdict is required
@@ -199,12 +274,16 @@ A good reviewer gate states:
 Example:
 
 ```text
-Use `$fresh-consult` or another user-approved strict reviewer as a blind
-completion review of the controlling plan, final diff, ArcStep audit block,
-test receipts, and this goal prompt. Do not give the reviewer the desired
-verdict. Done requires reviewer agreement that the goal is satisfied; if review
-rejects the result, repair only findings authorized by the frozen contract,
+Start a new clean same-host native strict reviewer as a blind completion review
+of the controlling plan, final diff, ArcStep audit block, test receipts, and
+this goal prompt. Use read-only capability when available, also say no edits or
+writes, and keep fanout and integration with the parent. Return a verdict,
+evidence-anchored findings, checks performed, unresolved assumptions, and the
+child handle. Do not give the reviewer the desired verdict. Done requires
+reviewer agreement that the goal is satisfied; if review rejects the result,
+resume the exact implementer for repairs authorized by the frozen contract,
 subtract unauthorized work, or ask the human decision owner before expansion.
+Start the next independent signoff as a new clean reviewer.
 ```
 
 Do not embed long reviewer prompts inside the goal file when a linked skill or
@@ -248,6 +327,9 @@ Before shipping the prompt file, check:
 - Does it preserve ArcStep as the workflow owner?
 - Does it include only the likely alignment reminders and false finish lines?
 - Does it make reviewer signoff part of done when needed?
+- Does every actual agent/reviewer handoff make role, transport, starting
+  context, continuation, isolation/capabilities, topology, and return evidence
+  clear without provider CLI syntax?
 - Does it forbid completion while required reviewers or repairs are pending?
 - Could an agent honestly complete this prompt without satisfying the canonical
   plan? If yes, rewrite.

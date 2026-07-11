@@ -1,19 +1,18 @@
 # arch-step integration
 
-The skill invokes `$arch-step` commands as slash commands in the
-orchestrator's own session. It does NOT shell out to `claude -p` or
-`codex exec` for interactive arch-step work. arch-step runs in the
-same session as `arch-epic`, so native goal-mode continuation can see
-the same plan truth.
+Interactive mode and the explicit same-session `arch-epic auto-plan` /
+`arch-epic auto-implement` drivers invoke `$arch-step` commands in the
+orchestrator's visible session. They do not shell out to `claude -p` or
+`codex exec` merely to emulate the same-session lane.
 
-That rule applies to interactive mode and to the same-session
-`arch-epic auto-plan` / `arch-epic auto-implement` drivers. Spawned-harness
-automatic mode is a separate explicit lane: spawned workers do not invoke `$arch-step auto-plan`,
-`implement-loop`, or any other automatic continuation command. Instead,
-the worker prompt points at arch-step's reference files and tells the
-child to apply the doctrine directly against the sub-plan DOC_PATH. This
-avoids nested continuation while still preserving arch-step's artifact and
-quality contract.
+Role-based automatic execution is a separate transport-neutral lane. Planner
+and implementation roles apply arch-step doctrine directly against the durable
+sub-plan DOC_PATH; they do not invoke `$arch-step auto-plan`, `implement-loop`,
+or another nested continuation command. Prefer clean native same-host children.
+The explicit external harness uses the same role contract when its provider,
+exact model, lifecycle, isolation, automation, or receipt benefit is deliberate.
+This avoids nested continuation while preserving arch-step's artifact, receipt,
+and quality gates.
 
 This reference maps sub-plan Status to the exact arch-step command
 the skill issues next. It is the operational cheat sheet the
@@ -139,9 +138,10 @@ Next action:
 Read the sub-plan's DOC_PATH and look for
 `arch_skill:block:implementation_audit` with `Verdict (code): COMPLETE`.
 
-If COMPLETE: run the epic critic (see `critic-contract.md` and
-`critic-prompt.md`). The critic spawns as a subprocess via
-`scripts/run_arch_epic.py critic-spawn`. Wait for the verdict.
+If COMPLETE: start a new clean epic critic (see `critic-contract.md` and
+`critic-prompt.md`). Prefer a native child; use
+`scripts/run_arch_epic.py critic-spawn` only for a deliberately selected
+external critic. Wait for the verdict.
 Apply per the `Critic verdict` rules below.
 
 If the audit block is present but says something other than COMPLETE
@@ -213,10 +213,10 @@ to rerun implement-loop or investigate manually.
   explicitly asks "what does arch-step think of sub-plan N?", in
   which case the skill relays the answer without acting on it.
 
-## Spawned-harness automatic integration
+## Role-based automatic integration
 
-Spawned-harness automatic mode uses the same sub-plan Status vocabulary, but the
-transition owner changes:
+Role-based automatic mode uses the same sub-plan Status vocabulary, but the
+transition owner changes. Transport does not change these gates:
 
 - `pending`: planner harness creates or repairs the numbered per-epic
   DOC_PATH and Epic Requirement Coverage, then a critic checks the
@@ -225,7 +225,7 @@ transition owner changes:
   planning stages from arch-step doctrine directly. It does not arm
   `auto-plan`.
 - `planning`: critic checks plan readiness and decision completeness.
-- `planned`: normally produced by same-session `auto-plan`; spawned-harness
+- `planned`: normally produced by same-session `auto-plan`; role-based
   mode may skip it because that lane checks planning gates with critics before
   implementation.
 - `implementing`: implementation worker executes Section 7, updates the
@@ -234,15 +234,16 @@ transition owner changes:
 - completion: critic checks implementation audit, scope drift, and epic
   requirement coverage.
 
-Spawned-harness automatic mode still treats the sub-plan DOC_PATH and worklog as the
-truth. Child transcripts are evidence, not a second plan. The top-level
-orchestrator records only compact artifact pointers in the epic doc.
+Role-based automatic mode still treats the sub-plan DOC_PATH and worklog as the
+truth. Child returns are evidence, not a second plan. The top-level
+orchestrator records only compact handle and artifact pointers in the epic doc.
 
 If a critic finds in-scope unfinished work, the transition owner does not
-change to a separate repair worker. The orchestrator resumes the same planner
-session for planning-gate failures or the same implementation worker session
-for implementation/completion failures, passing the critic verdict as
-observation-only evidence. Critics do not prescribe repair steps.
+change to a separate repair worker. The orchestrator resumes the exact planner
+child for planning-gate failures or the exact implementation worker child for
+implementation/completion failures, passing the critic verdict as
+observation-only evidence through the original transport. Every independent
+critic starts clean and does not prescribe repair steps.
 
 ## Cross-runtime parity
 

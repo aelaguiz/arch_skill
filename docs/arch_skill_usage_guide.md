@@ -279,9 +279,36 @@ Installed skills:
 
 Install removes stale pre-skill command surfaces, removed skill packages, older Codex skill mirrors, old arch_skill-owned hook entries, and source/build internals from installed skill packages. It does not install new hooks.
 
-`arch-loop`, `delay-poll`, `wait`, and `code-review` are removed from the live installed surface; use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` is installed on the agents/Codex and Claude Code surfaces because its storage map covers Codex and Claude Code local history. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `model-consensus`, `plan-conductor`, `codex-cleanup`, `codex-babysit`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces, but subprocess skills still require the selected local `claude`, `codex`, `agent`, or `grok` CLI to exist on the host at invocation time. `chatgpt-web` is prompt-only and requires BrowserOS MCP plus an already logged-in ChatGPT browser session; it does not automate login. `thermo-nuclear-code-quality-review` is sourced unchanged from the vendored Cursor Team Kit plugin at `vendor/cursor/plugins/cursor-team-kit/skills/`; only that skill package is installed, not Cursor Team Kit agents or rules. `fresh-consult` is read-only: first turns start clean, second/third same-line follow-ups resume a captured exact child session id by default, turn four rotates fresh, and explicitly requested parallel consults create multiple child chains. `agent-delegate` may write to the shared worktree when invoked with an allowed write scope and can run multiple fresh-resumable workers when explicitly requested. Provider routing is fixed: Codex runs GPT/GBT/OpenAI model ids plus Fugu profiles (`-p fugu`, `-p fugu-ultra`), Claude Code runs supported Claude models, Cursor Agent runs `composer-2.5-fast`, and Grok CLI runs `grok-build` or `grok-composer-2.5-fast`. `plan-implement` is prompt-first and local: it keeps plan-backed implementation state, proof freshness, and warm review aligned without external worker orchestration. `plan-conductor` is prompt-first: the parent agent drives a whole plan (or explicit phase range) through delegated `agent-delegate` workers, keeps a conductor log beside the plan, audits every diff before acceptance, and never edits source code itself. `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, and `exhaustive-code-review` are prompt-only and review-only: cynical code review owns skeptical implementation-integrity audits under `/tmp/cynical-code-review/`, cynical architecture review owns subtraction-first accidental architecture audits under `/tmp/cynical-architecture-review/`, cynical cruft removal owns deep deletion reports under `/tmp/cynical-cruft-removal/`, and exhaustive review owns coverage-led audits under `/tmp/exhaustive-code-review/`.
+The shared agent policy is installed on all supported skill surfaces. Ordinary
+same-host work uses native children; deliberate external lanes still require
+the matching local `claude`, `codex`, `agent`, or `grok` CLI. Provider and
+model ids remain exact and never cross runtimes. `agent-delegate` owns external
+editful sessions, while `fresh-consult`, `model-consensus`, `plan-conductor`,
+`stepwise`, and `arch-epic` select transport for each role under the shared
+policy. `chatgpt-web` still requires BrowserOS plus a logged-in ChatGPT session,
+and the vendored thermonuclear rubric remains unchanged.
 
 ## Shared conventions
+
+### Choose agent transport and context explicitly
+
+Agent-using workflows read
+`skills/_shared/agent-orchestration-policy.md`. Prefer the active host's native
+child for ordinary same-host implementation or review, then choose clean,
+bounded, or full starting context deliberately. Resume the exact child when
+the same role continues its own work; start a new clean child when independence
+is the point.
+
+Use an external session when it supplies a concrete benefit the native child
+does not, such as another provider, a load-bearing exact model/profile,
+durability beyond the parent turn, process/worktree isolation, a required
+automation surface, or a structured receipt. Same-provider external Codex
+processes carry extra lifecycle and shared SQLite/WAL contention cost, so weigh
+that cost without turning it into a prohibition or fixed process limit.
+
+Context isolation does not imply filesystem or permission isolation. Give
+parallel editors non-overlapping ownership, keep fanout parent-owned, and make
+every child return integration-ready evidence.
 
 ### One planning artifact
 
@@ -357,7 +384,12 @@ Practical rule:
 - Compatibility posture is separate from `fallback_policy`: the plan should say whether it preserves the existing contract, performs a clean cutover, or uses an explicitly approved timeboxed bridge.
 - `arch-step status` is the concise readout.
 - `arch-step advance` owns the full checklist and exact next-command selection.
-- `arch-step consistency-pass` is the optional end-to-end cold-read helper before implementation. In Codex it uses two parallel explorer reads, and `auto-plan` includes it automatically after `phase-plan`. When it runs, `Decision: proceed to implement? yes` is only legal if the artifact is decision-complete and has no unresolved plan-shaping decisions left.
+- `arch-step consistency-pass` is the optional end-to-end cold-read helper
+  before implementation. It uses two new clean same-host native read-only
+  explorers with disjoint scope/authority and architecture/proof lenses. They
+  run concurrently only when host slots and parent integration capacity allow,
+  otherwise sequentially; the parent integrates both. `auto-plan` includes it
+  after `phase-plan`.
 - `arch-step auto-plan` is the explicit bounded planning command after North Star approval. `DOC_PATH` is the planning ledger. It resumes from the first incomplete stage through `research`, `deep-dive` pass 1, `deep-dive` pass 2, `phase-plan`, and `consistency-pass`. Each stage command must write a generated receipt through `skills/arch-step/scripts/arch_stage_gate.py`; marker-only plan text is not enough to unlock the next stage. `auto-plan` says the doc is decision-complete and ready for `implement-loop` only when the receipt gate and consistency pass both approve it. In native `/goal`, it keeps moving until that proof bar is met or a true blocker stops it. Outside goal mode, it runs one bounded stage and names the exact next command.
 - `arch-step` does not get to silently cut approved behavior, acceptance criteria, or required implementation work because the agent wants to narrow scope on its own. If repo evidence cannot settle a plan-shaping choice, it must ask the user instead of guessing.
 - Section 7 phase plans should protect the full destination map while building depth-first: first prove one real path through the canonical owner path and highest-risk seam, then expand along named axes.
@@ -403,7 +435,12 @@ Practical rule:
 - `miniarch-step auto-plan` is the planning command for the trimmed surface. `DOC_PATH` is the planning ledger. It resumes from the first incomplete stage through `research`, `deep-dive`, and `phase-plan`, then says the doc is decision-complete and ready for `implement-loop`.
 - `miniarch-step implement-loop` is the explicit implementation-frontier command when the user wants repeated implement then audit passes until the audit is clean or a real blocker stops the run.
 - `miniarch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
-- In that command, implementation scope is the current approved ordered implementation frontier: the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this arc. It hands control to fresh audit only after that frontier is done or genuinely blocked. In Codex, that fresh miniarch audit child runs with `gpt-5.4-mini` at `xhigh` reasoning effort.
+- In that command, implementation scope is the current approved ordered
+  implementation frontier. It hands control to a new clean independent audit
+  only after that frontier is done or genuinely blocked. `gpt-5.4-mini` with
+  `xhigh` is used only when the active native schema can select and confirm it;
+  otherwise the auditor uses inherited native capability. An external exact
+  model is a deliberate lane only when that identity is load-bearing.
 - After a clean code audit, `miniarch-step` hands off to `arch-docs` for docs cleanup using the finished artifact as context.
 - In Codex or Claude Code, use native `/goal` when you want the auto commands to keep moving across turns until their proof bar is met.
 
@@ -421,15 +458,23 @@ Examples:
 
 Practical rule:
 
-- Interactive mode runs one visible transition at a time: draft decomposition, get approval, invoke or observe the next arch-step step, then run a fresh Claude, Codex, or Grok critic after each completed sub-plan.
+- Interactive mode runs one visible transition at a time, then starts a new
+  clean same-host native critic after each completed sub-plan when the host can
+  satisfy the role. A deliberate external critic remains available for a
+  concrete provider/model/lifecycle/isolation/receipt benefit.
 - Same-session `auto-plan` is explicit and opt-in after decomposition approval. It is a strict sequential driver: it sets up the next sub-plan DOC_PATH, runs the real `$arch-step auto-plan <DOC_PATH>` sequence, requires `arch_stage_gate.py ready --doc <DOC_PATH>` to pass, marks that sub-plan `planned` only after generated receipts prove readiness, and does not start implementation. Marker-only or copied planning text is not enough.
 - Same-session `auto-implement` requires all non-complete sub-plans to be `planned`, then handles one planned sub-plan at a time. It re-checks ArcStep readiness, runs real `$arch-step auto-implement <DOC_PATH>` until `audit-implementation` is COMPLETE, runs the epic critic, and marks that sub-plan `complete` only after critic `pass`. One invocation, local proof, worklog text, or ArcStep audit alone is not enough.
-- The separate spawned-harness automatic mode is explicit and opt-in after decomposition approval. It asks once for a role execution table: `epic_planner`, `implementation_worker`, and `critic`.
+- Role-based `auto-run` is explicit and opt-in after decomposition approval.
+  Same-host planner, implementation-worker, and critic roles prefer clean
+  native children; the separate external harness is selected only for a
+  deliberate external benefit.
 - Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5 high` becomes `claude-fable-5`; `gpt-5.6-sol high` becomes `gpt-5.6-sol`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-5.6-sol` before launching children.
-- Spawned-harness automatic mode drives sub-plans depth-first. It does not plan or implement sub-plan N+1 until sub-plan N has passed the relevant critic gates.
-- Spawned automatic workers apply arch-step doctrine directly from disk and do not invoke nested `auto-plan`, `implement-loop`, or other automatic continuation commands.
-- Planner and implementation worker sessions are resumable. When a fresh critic finds ordinary in-scope unfinished work, the orchestrator resumes the same planner or implementation session with observation-only evidence instead of starting a separate repair worker.
-- The default child wait cadence is 180 seconds while waiting for spawned harnesses; avoid tight two-second polling loops. Long planner and implementation children can run detached with live `events.jsonl`, `stderr.log`, and `stream.log` artifacts, and the orchestrator should treat recent stream activity as progress rather than expecting an early final artifact.
+- Role-based automatic mode drives sub-plans depth-first. Planner and
+  implementation roles are resumable by exact handle; a new clean critic's
+  accepted findings return to the owning role instead of creating a repair
+  role. Children do not invoke nested auto workflows.
+- The external harness keeps its 180-second monitoring cadence and streamed
+  receipts; `run_arch_epic.py` does not choose transport or own agent judgment.
 
 ### `arch-docs`
 
@@ -446,7 +491,9 @@ Practical rule:
 - Repo posture is evidence-based: default to `private/internal` when unclear, but in `public OSS` repos treat `README`, `LICENSE*`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, and `SUPPORT.md` as expected standalone docs.
 - Do not trust folder names or freshness headers such as `docs/living`, `Status: LIVING`, or `Last verified`; those are claims to verify against code, not evidence that a doc should survive.
 - Beyond that public baseline, create a focused new doc only when the topic is durable, differentiated, and something readers would likely seek directly, and when forcing it into the current home would make the docs worse. Otherwise fold the durable truth into an existing evergreen home and delete the stale wrapper.
-- Use `arch-docs auto` when you want repeated cleanup passes with fresh review. In native `/goal`, it keeps going until review says clean or blocked.
+- Use `arch-docs auto` when you want repeated cleanup passes with a new clean
+  same-host native review after each pass. In native `/goal`, it keeps going
+  until review says clean or blocked.
 - If a clean arch plan/worklog exists, `arch-docs` should use it as narrowing context rather than as the whole scope.
 
 ### `arch-flow`
@@ -546,15 +593,15 @@ Examples:
 
 ### `chatgpt-web`
 
-Use when the user wants to ask ChatGPT, consult ChatGPT in the browser, get a
-ChatGPT web opinion, or run a prompt with optional local attachments through
-the logged-in ChatGPT UI using BrowserOS MCP. It shapes rough prompts with
-`prompt-authoring` discipline, verifies that BrowserOS is already logged in to
-ChatGPT, defaults to Pro with Extended thinking when no mode or effort is
-specified, respects explicit Instant/Thinking/Pro and
-Light/Standard/Extended/Heavy requests, and returns ChatGPT's answer with a
-short receipt. It is prose-only: no scripts, runners, harnesses, OpenAI API
-calls, or automated login.
+Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
+capabilities, or local attachments. It shapes rough prompts with
+`prompt-authoring` discipline, verifies that BrowserOS is already logged in,
+and uses one tab without silently inheriting whatever conversation is open.
+`new-clean` is the default; `continue-exact` is used only when the user asks to
+continue an identifiable conversation. Independent asks remain serial but
+start clean, while explicit follow-ups preserve the intended thread. It
+defaults to Pro with Extended thinking when mode or effort is omitted and is
+prose-only: no scripts, runners, harnesses, API calls, or automated login.
 
 Examples:
 
@@ -595,7 +642,14 @@ Examples:
 
 ### `skill-flow`
 
-Use when the user wants to design, repair, or audit an ordered flow of multiple agent skills. It owns the flow-level question: which skills should exist, what each one owns, what artifact it hands to the next skill, and where specialist skills like `skill-authoring` or `prompt-authoring` should be used. For 30+ skill suites or any multi-skill audit by scope phrase ("audit every skill in this project", "audit the skills for flow F1"), the DAG-grounded audit sub-mode parallel-walks the suite, builds a labeled-edge DAG substrate at `<doc-dir>/<doc-slug>_DAG.md`, and surfaces wasted-energy patterns (over-promotion, redundancy, dead skills, broken peer references). The audit is read-only against the target — findings name affected files; the audit never invokes another skill at runtime. Use `arch-epic` instead for decomposing one execution goal into `arch-step` sub-plans, and use `stepwise` instead for deterministic process execution.
+Use when the user wants to design, repair, or audit an ordered flow of multiple
+agent skills. For a large or scope-phrase audit, the DAG-grounded sub-mode
+resolves every skill, assigns non-overlapping slices to new clean native
+walkers, keeps them read-only and non-nesting, and bounds concurrency by host
+slots and parent integration capacity. Its semantic extractor counts live
+backticked `$skill-name` peer references while excluding shell/code variables,
+then writes the labeled Mermaid graph, edge table, and unresolved-reference
+list at `<doc-dir>/<doc-slug>_DAG.md` before producing findings.
 
 Examples:
 
@@ -621,13 +675,27 @@ Examples:
 
 ### `fresh-consult`
 
-Use when the user or another skill wants one or more read-only second opinions from Claude, Codex GPT/GBT models or Fugu profiles, Cursor Agent, or Grok subprocesses on concrete artifacts, completion checks, flow consistency questions, or readability/confusion checks. It is prompt-only: it writes consult prompts, runs the selected local CLI hook-suppressed where supported and unsandboxed, captures each child chain under `/tmp/fresh-consult/...`, and reports each child verdict back to the parent.
+Use when the user or another skill wants a clean, independent read-only opinion
+on a concrete artifact, completion claim, flow-consistency question, or
+readability check. Ordinary same-host reviews use a new clean native child
+(`fork_turns: "none"` in Codex or a clean named/custom subagent in Claude).
+Cross-provider, unavailable exact-model/profile, lifecycle, isolation,
+automation, or receipt needs use the external CLI lane. The parent owns fanout,
+workspace-state checks, and synthesis.
 
-The user supplies runtime, model or profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.6-sol`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, or `Grok Build` for Grok. Cursor Agent Composer resolves to `composer-2.5-fast`; Grok resolves to `grok-build` unless Grok Composer is named. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, or effort substitution. Cursor Agent effort is encoded in the model id.
+For an external consult, the user supplies runtime, model/profile, and effort,
+or the skill asks once. Exact versions and profiles are preserved without
+silent downgrade or provider switch.
 
-The first request in a consult line starts clean and captures a session handle. The second and third same-line requests resume that exact child session by default. The fourth same-line request starts a new clean chain unless the user explicitly asks to continue. Cold, independent, fresh-eyes, changed-runtime, changed-model, changed-effort, or changed-work-root requests start a new chain. The skill never resumes a "latest" session.
+The first request starts clean and preserves the exact native child handle or
+external session id. The second and third same-line requests resume that exact
+reviewer by default. The fourth starts clean unless explicitly continued. A new
+independent gate or changed runtime/model/effort/work root also starts clean;
+the skill never resumes a merely "latest" session.
 
-Each chain keeps `chain.json` plus per-turn `prompt.md`, `final.txt`, `events.jsonl`, `stderr.log`, `execution.json`, and `session_id.txt`; resume turns also keep `resume_from.txt`. Consult children commonly take 5+ minutes; broad `xhigh` or `max` reads can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
+External chains keep their prompt, final, event, stderr, execution, session,
+and resume receipts under `/tmp/fresh-consult/...`; native runs preserve the
+host child handle and return contract. Monitor long work patiently.
 
 Examples:
 
@@ -640,13 +708,20 @@ Examples:
 
 Practical rule:
 
-- Use `fresh-consult` for general Claude, Codex GPT/GBT models or Fugu profiles, Cursor Agent, or Grok second opinions, bounded read-only follow-up consults, parallel consults, cold reads, consistency audits, and completion checks. Give the child the user's ask, consult mode, exact user-named artifacts, hard constraints, and report contract; let it choose what evidence to inspect.
-- Use `agent-delegate` when the fresh-resumable child should implement, edit, investigate-and-fix, run commands, or use installed skills in the shared worktree.
+- Use `fresh-consult` for clean read-only opinions and exact-reviewer follow-ups.
+- Use `agent-delegate` only for a deliberate external editful worker/session;
+  dispatch ordinary same-host editful work natively.
 - Use `codex-review-yolo` when the user specifically asks for the existing Codex `-p yolo` pattern.
 
 ### `agent-delegate`
 
-Use when the user wants one or more fresh-resumable Claude, Codex GPT/GBT models or Fugu profiles, Cursor Agent, or Grok subprocesses to do concrete work in the current workspace: implementation, editing, investigation-and-fix, command execution, verification, or installed-skill use. It is prompt-only: it writes delegation prompts, runs the selected local CLI hook-suppressed where supported and unsandboxed in the shared worktree, captures each child `prompt.md`, `final.txt`, `events.jsonl`, `stderr.log`, `execution.json`, and normally `session_id.txt` under `/tmp/agent-delegate/...`, then reports status, changed files, verification, blockers, follow-up, run directories, and session id when present.
+Use when an editful external worker/session supplies a concrete benefit such as
+another provider, a load-bearing exact model/profile, durable exact-session
+continuation, process isolation, automation, or structured receipts. These are
+recognition examples rather than an allowlist or approval gate. Ordinary
+same-host work uses native children directly. The adapter preserves exact model
+resolution, CLI invocation, namespaced receipts, shared-worktree reporting, and
+exact-handle resume.
 
 The user supplies runtime, model or profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.6-sol`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, or `Grok Build` for Grok. Cursor Agent Composer resolves to `composer-2.5-fast`; Grok resolves to `grok-build` unless Grok Composer is named. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
 
@@ -662,11 +737,14 @@ Examples:
 
 Practical rule:
 
-- Use `agent-delegate` for fresh-resumable or explicit parallel operational delegation where children may write files; use stateless one-shot only when explicitly requested.
+- Use `agent-delegate` for deliberate external editful delegation; keep any
+  parallel external fanout proportionate to independent scope, current host
+  state, and parent integration capacity.
 - Use `fresh-consult` for read-only second opinions and completion checks.
 - Use `plan-implement` for ordinary plan-backed implementation that should stay local, resumable, and review-aware.
 - Use `model-consensus` for two-model plan convergence.
-- Use `stepwise` or `arch-epic` when subprocesses are part of an ordered workflow with manifests, critics, repair loops, or persistent orchestration.
+- Use `stepwise` or `arch-epic` when new clean workers, exact-role repair,
+  independent critics, and durable orchestration are part of an ordered flow.
 
 ### `plan-audit`
 
@@ -684,7 +762,11 @@ Practical rule:
 
 Use when the user wants to implement an existing plan, phase, section, checklist, issue-body plan, or design doc while keeping implementation state easy to resume. It keeps `<PLAN_STEM>_IMPLEMENTATION_LOG.md` beside non-trivial file-backed plans, reuses proof until stale, runs checks for impact rather than habit, and uses warm plan-backed review while code is still easy to repair.
 
-The plan remains source of truth. The plan-audit log owns `PLA-*` and `IMP-*` findings. The implementation log is only speed/resume state. Native subagents are encouraged when available for independent read, review, or safe low-collision work; manual `codex`, `claude`, `agent`, or `grok` spawning is not the default path.
+The plan remains source of truth. New independent native children start clean,
+accepted repairs return to the exact implementer, and independent rechecks use
+new clean critics. The parent owns scope, integration, and proof. An explicitly
+requested external worker or conductor remains available under the shared
+policy.
 
 Examples:
 
@@ -695,17 +777,31 @@ Practical rule:
 
 - Use `plan-implement` for normal plan-backed implementation with lightweight logs, proof freshness, and warm review.
 - Use `plan-audit` for review-only work.
-- Use `plan-conductor` when the user explicitly wants delegated external workers executing the plan with the parent as conductor and cynical reviewer.
+- Use `plan-conductor` when the parent should remain the non-implementing
+  architect/reviewer while transport-selected workers execute the plan.
 
 ### `plan-conductor`
 
-Use when the user wants an entire existing plan document, or an explicit phase range, implemented by cheaper and faster delegated workers while the expensive parent agent preserves its own context and acts as architect and deeply cynical reviewer. The parent reads the plan once, extracts requirements, phases, checklists, verification obligations, and delete obligations into `<PLAN_STEM>_CONDUCTOR_LOG.md` beside the plan, and refuses to launch workers if the plan has no observable done-ness anywhere.
+Use when the user wants an existing plan, or an explicit phase range,
+implemented by phase workers while the parent remains the non-implementing
+architect and cynical reviewer. The parent extracts a conductor log and stops
+before dispatch when done-state or frozen scope is not defensible.
 
-Each wave dispatches phase-sized slices (default one plan phase per worker, split only along plan-named owner boundaries, merged when trivial phases share one design intent) as `agent-delegate` fresh-resumable children. The parent waits patiently without tailing event streams, audits each returned diff assuming the worker cut corners — name-only completion, leftover cruft, un-executed deletes, weakened tests, scope drift, side doors, duplicate truth — and batches accepted findings into one resume prompt against the same worker session. Caps: 3 send-backs, then 1 fresh respawn, then escalate the slice and continue independent work. Verification runs are delegated with proof freshness tracking; the parent commits local checkpoints and never pushes. Closure requires plan-required proof recorded passing plus a final whole-plan audit and an optional fresh-one-shot cold verifier prompted to refute completion.
+Each phase-sized slice starts as a new clean same-host native child by default.
+The parent uses `$agent-delegate` only when a concrete external benefit is worth
+the added process cost. Accepted findings resume the exact worker through its
+original transport; independent review gates start clean. The parent audits
+every claim, delegates proof, records checkpoints, and closes only on the
+plan-required proof and final whole-plan gate.
 
-The parent never edits source code during the conductor stage, never accepts worker self-reports as truth, and never edits the plan's requirements or exit criteria to match what was built. The user supplies worker runtime and effort plus a model/profile for non-Codex lanes; an omitted Codex model defaults to `gpt-5.6-sol`, and provider routing is fixed as usual.
+The parent never edits source code or accepts worker self-reports as truth.
+Runtime/model/effort are requested only for a selected external lane; native
+roles use capabilities the host can confirm.
 
-The explicit `plan-conductor terra` shortcut is the standard end-to-end delivery path. It reuses or creates a safe dedicated worktree, locks implementation, repair, verification, cold-verifier, and review delegates to Codex `gpt-5.6-terra` at `xhigh`, runs all three cynical review skills in independent fresh sessions, repairs findings the conductor accepts, and reruns affected review lanes until clean. It then invokes `pr-authoring` and explicitly follows the resulting PR with `pr-review-followthrough` until merge-ready. A normal conductor request that merely names a Terra worker does not opt into this worktree-and-PR path.
+The explicit `plan-conductor terra` shortcut remains the external end-to-end
+lane: dedicated worktree, Terra xhigh roles, three new clean external cynical
+reviews, repair/re-review, PR publication, and review follow-through. Merely
+naming Terra does not activate that shortcut.
 
 Examples:
 
@@ -715,28 +811,36 @@ Examples:
 
 Practical rule:
 
-- Use `plan-conductor` for whole-plan cheap-worker execution with parent review.
+- Use `plan-conductor` for whole-plan worker execution with parent review.
 - Use `plan-implement` when the parent should implement the plan itself.
-- Use `agent-delegate` for one concrete delegated task.
+- Use `agent-delegate` for one concrete external delegated task.
 - Use `plan-audit` to audit a plan rather than implement it.
 
 ### `model-consensus`
 
-Use when the user wants two selected Claude, Codex GPT/GBT models or Fugu profiles, Cursor Agent, or Grok models to cross-check, critique, and iterate on a plan, architecture, investigation, design, or concept until they converge, or until they expose the smallest unresolved decision. It is prompt-only: the parent agent is the runner, orchestrates directly, launches resumable hook-suppressed child sessions where supported, and relays critiques. Do not add a deterministic runner, script, controller, or harness layer.
+Use when the user wants two selected model participants to cross-check,
+critique, and converge. The parent resolves transport per participant:
+same-host roles use separate new clean native children when capable;
+cross-provider or unavailable exact-model/profile roles use external resumable
+sessions. Every round resumes each exact participant, parent relay is the
+default topology, and no deterministic runner or controller is added.
 
-The user supplies runtime/model-or-profile/effort for both participants, or the skill asks once. Shorthand such as `gpt-5.6-sol xhigh`, `Fugu Ultra xhigh`, `Claude Fable 5 high`, `Cursor Agent composer 2.5`, or `Grok Build high` follows the shared model-resolution doctrine: Cursor Agent Composer resolves to `composer-2.5-fast`, Grok resolves to `grok-build` unless Grok Composer is named, exact versions and profile names are preserved, CLI model discovery is used for ordinary model ids when availability matters, and ambiguous IDs fail loud instead of silently downgrading.
+The user names the participant identities. Native roles use only model
+capabilities the host can confirm; an unavailable load-bearing identity selects
+the external lane. External shorthand follows the shared exact model resolver.
 
 For repo-backed investigations, root-cause work, and "read everything" cross-checks, both participants must read real evidence before agreeing. The parent records the raw user goal, exact user-named artifacts, desired output, and hard constraints. The child models choose and cite the code, docs, research, tests, commands, and local evidence they need.
 
 For architecture or implementation-plan work, both participants must inspect canonical owner paths, repo conventions, adjacent patterns to adopt, duplicate or drifting pathways, and tests/proof surfaces. This keeps the dialogue focused on one existing way of doing the work whenever possible instead of creating a second bug path.
 
-Participant sessions preserve live event streams by default. Normal rounds often take 5+ minutes; broad repo-grounded `xhigh` or `max` rounds can reasonably take 20-40 minutes.
+External participants preserve event/final receipts; native participants
+preserve exact host child handles. Both are read-only and parent-integrated.
 
 Examples:
 
 - `Use $model-consensus with Claude Fable 5 high and Codex gpt-5.6-sol xhigh to find the simplest architecture for this repo change`
 - `Use $model-consensus with Fugu Ultra xhigh and Claude Fable 5 high to test this plan`
-- `Use $model-consensus with Codex gpt-5.6-sol xhigh in adversarial mode against Claude Sonnet 4.6 high`
+- `Use $model-consensus with Codex gpt-5.6-sol xhigh in adversarial mode against Claude Sonnet 4.6 high; use an external Claude participant if the active host cannot confirm that exact native model`
 - `Use $model-consensus with gpt-5.6-sol xhigh and Opus 4.7 max to read everything and figure out why this training path is failing`
 - `Use $model-consensus to have two models iterate on this concept until they agree or name the unresolved tradeoff`
 
@@ -745,7 +849,8 @@ Practical rule:
 - Use `model-consensus` for multi-model convergence, adversarial simplification, repo-grounded investigation convergence, and architecture refinement.
 - Use `fresh-consult` for read-only second opinions, including cold first-turn
   reads and bounded same-session follow-ups.
-- Use `agent-delegate` for fresh-resumable workers that may edit the shared worktree.
+- Use `agent-delegate` for an explicitly external editful worker/session;
+  ordinary same-host work uses native children directly.
 - Use `stepwise` or `arch-epic` when the desired output is ordered implementation, not a consensus plan.
 
 ### `contact-sheet-builder`
@@ -870,7 +975,8 @@ Practical rule:
 
 Use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim, and wants the review saved to
-disk. It maximizes native parallel agents, reviews touched files, changed
+disk. It uses coverage-led clean native read-only slices, bounds fanout by host
+slots, collision risk, and parent integration capacity, reviews touched files, changed
 hunks, abstractions, callers, duplicate paths, side doors, stale truth,
 tests/proof, docs, generated artifacts, prompts, config, and other live truth
 surfaces, then saves
@@ -908,7 +1014,9 @@ Practical rule:
 
 - Use `thermo-nuclear-code-quality-review` only when the user wants this unusually strict maintainability rubric.
 - Handle ordinary code review requests with the host agent's normal review response unless the user names a specific review skill.
-- Use `codex-review-yolo` or `fresh-consult` for broader fresh-eyes second opinions.
+- Use `fresh-consult` for broader fresh-eyes second opinions. Use
+  `codex-review-yolo` only when the user wants the explicit Codex `-p yolo`
+  profile or its external receipt contract.
 
 ## Full-arch doc conventions
 

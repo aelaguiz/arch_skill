@@ -71,7 +71,9 @@ Record what was reviewed:
 - tests, fixtures, docs, examples, comments, schemas, generated artifacts,
   prompts, config, telemetry, stable IDs, install surfaces, package metadata,
   logs, and status surfaces only where they claim code truth
-- native parallel agent usage summary and final state for each launched slice
+- child accounting for every launched review slice: lens and path ownership,
+  clean or explicitly justified inherited context, final state, accepted or
+  rejected evidence, and the pre/post-dispatch repository-state check
 - known coverage gaps
 - scope-provenance coverage or `not applicable`
 
@@ -160,7 +162,7 @@ VERDICT: approve | not-approved | coverage-incomplete
 ## Coverage Summary
 
 - Scope reviewed:
-- Native parallel agents:
+- Native review slices and repository-state check:
 - Files/hunks/abstractions covered:
 - Code paths traced:
 - Competing paths, side doors, and adjacent surfaces:

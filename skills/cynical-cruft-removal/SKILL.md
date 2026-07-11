@@ -67,8 +67,20 @@ broader workflow.
   asks for a repo doc path.
 - This is prompt-only doctrine. Do not build a rule engine, runner, controller,
   scorer, harness, script, or formal parameter interface.
-- Maximize native parallel agents for broad review targets when available.
-  Account for every launched lane before finalizing.
+- Apply `../_shared/agent-orchestration-policy.md` whenever the review uses
+  child agents.
+- For broad targets, fan out only across genuinely independent review lenses
+  or path families. Start each independent slice as a new clean same-host
+  native child when the active host supports it, keep the slices
+  non-overlapping, and bound fanout by host slots, shared-file or shared-state
+  collision risk, and the parent's ability to integrate every result.
+- Use the strongest read-only capability the host exposes, also tell every
+  review child not to edit or write, and have the parent compare repository
+  status and diffs with the pre-dispatch state before accepting child evidence.
+- Children do not create children or invoke delegation, consult, or review
+  skills unless the parent explicitly assigns a nested scope and budget.
+- The parent owns child accounting, deduplication, integration, scope
+  disposition, the saved artifact, and the final verdict.
 - Do not manually spawn `codex`, `claude`, `agent`, `grok`, or any other
   coding-harness executable.
 - Do not invoke external agent, delegation, consult, or review skills as the
@@ -84,7 +96,7 @@ broader workflow.
 - Current live purpose is the keep standard.
 - For plan-, branch-, conductor-, PR-, or history-backed work, current
   reachability and product use do not prove the work was authorized. Apply
-  `skills/_shared/scope-and-convergence.md`: reconstruct the initial human
+  `../_shared/scope-and-convergence.md`: reconstruct the initial human
   scope, frozen initial convergence closure, later human approvals, review
   waves, and final code. A live cluster created through unauthorized
   post-freeze expansion or scope cycling is cruft and forces `cruft-found`.
@@ -116,8 +128,10 @@ broader workflow.
    keep evidence.
 6. Read `references/cruft-lenses.md`.
 7. Read `references/output-contract.md`.
-8. Read `references/agent-slices.md` before launching native parallel agents.
-9. Read `references/examples.md` when the target involves tests, docs,
+8. Read `../_shared/agent-orchestration-policy.md` before creating or
+   resuming any child.
+9. Read `references/agent-slices.md` before launching native review slices.
+10. Read `references/examples.md` when the target involves tests, docs,
    generated artifacts, self-referential islands, V1/V2 paths, stale flags,
    dependencies, or confusing peer review lanes.
 
@@ -135,10 +149,11 @@ broader workflow.
 4. Build `reference-graph-notes.md`: code, tests, docs, examples, generated
    files, package exports, configs, scripts, prompts, assets, styles, locale
    keys, data/schema/telemetry names, and self-referential islands.
-5. Use native parallel agents for independent read-only slices when the target
-   is broad enough: live roots, self-referential islands, test bloat,
-   dependencies/build/config, docs/examples/generated surfaces, V1/V2 and stale
-   flags, and low-value live abstractions.
+5. When broader coverage warrants children, dispatch a proportional set of new
+   clean native read-only slices with distinct lenses or path families: live
+   roots, self-referential islands, test bloat, dependencies/build/config,
+   docs/examples/generated surfaces, V1/V2 and stale flags, and low-value live
+   abstractions. Integrate and account for every slice in the parent.
 6. Challenge every reference: is the referring artifact itself live, does the
    reference come from a live root, and would deleting the candidate break real
    current behavior or only stale support surfaces?
@@ -188,6 +203,8 @@ The full saved artifact follows `references/output-contract.md`.
   lenses, and docs/examples/generated-artifact lenses
 - `references/agent-slices.md` - native parallel-agent slice guidance and
   accounting rules
+- `../_shared/agent-orchestration-policy.md` - transport, starting context,
+  continuation, isolation, topology, and parent-integration policy
 - `references/output-contract.md` - required saved files, verdicts, finding
   shape, maps, and final chat summary shape
 - `references/examples.md` - examples and anti-examples for self-referential

@@ -33,6 +33,7 @@ Running `auto-plan` should end in one of two honest states:
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `../../_shared/agent-orchestration-policy.md`
 - `section-quality.md` for Section 3, Section 4, Section 5, Section 6, Section 7, and `planning_passes`
 - `arch-research.md`
 - `arch-deep-dive.md`
@@ -55,7 +56,9 @@ Running `auto-plan` should end in one of two honest states:
 
 - docs-only; do not modify code
 - this command owns the bounded planning sequence: `research`, `deep-dive`, and `phase-plan`
-- if a planning stage explicitly uses parallel agents, spawn those agents with model `gpt-5.4-mini` and reasoning effort `xhigh`
+- if a planning stage benefits from child planners, use new clean same-host
+  native roles when the active host can satisfy the required capabilities;
+  child use is optional and must follow the native planning contract below
 - use the same `DOC_PATH` for every stage
 - rerunning `auto-plan` on a partially complete doc is legal; resume from the first incomplete stage visible in `DOC_PATH`
 - in native goal mode, keep advancing through the next incomplete stage until the planning North Star is met or a true blocker stops the run
@@ -66,6 +69,39 @@ Running `auto-plan` should end in one of two honest states:
 - do not emit the implementation handoff when the Scope and Simplicity Contract
   is missing, vague, unfrozen, contradicted by Section 7, or exceeded by planned
   machinery or adjacent work
+
+## Native planning child contract
+
+Use child planners only for genuinely independent planning lenses that can be
+synthesized into the same `DOC_PATH`. The parent chooses the bounded lenses,
+available concurrency, and integration order. Do not add children merely to
+make a small stage look more rigorous.
+
+Start every planner as a new clean same-host native child from `DOC_PATH`, its
+non-overlapping lens, the relevant references, and the return contract below.
+In Codex, set `fork_turns: "none"`. In Claude Code, use a clean named or custom
+subagent rather than a conversation fork. Request a read-only capability when
+the host exposes one and also say: inspect and propose only; do not edit or
+write files, apply patches, commit, or create children. The parent captures
+relevant repo state before dispatch, checks it after returns, resolves
+disagreements, and alone updates the canonical plan.
+
+Each planner returns whether its bounded lens completed, evidence with path or
+section anchors, the proposed planning conclusions or repairs, checks
+performed, unresolved assumptions, and confirmation that it made no writes or
+children. Keep fanout proportional to independent lenses, host slots,
+collision risk, and the parent's capacity to inspect every return. Nested
+fanout requires an explicit parent-assigned scope and budget; this planning
+contract assigns none.
+
+`gpt-5.4-mini` with `xhigh` reasoning is the preferred miniarch planning
+profile only when the active native schema can select and confirm both. If it
+cannot, use the inherited native capability and report only what the host can
+confirm. When exact model identity is load-bearing, an external exact-model
+session is still available, but the dispatch must explain the concrete benefit
+that makes its model/profile guarantee worth the added process, integration,
+and shared-state cost. Do not externalize a role merely to preserve an
+unexplained preference.
 
 ## Stage Completion Signals
 

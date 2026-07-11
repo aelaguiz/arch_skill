@@ -64,17 +64,29 @@ For repo-backed plans:
 
 ## Native Subagent Read Quality
 
-- Native subagents or parallel-agent features were used for broad independent
-  audit slices when available.
-- If native subagents were not used, the audit records the reason: unavailable,
-  prohibited by local instructions, or too small to split.
-- Native subagents, when used, had non-overlapping scopes.
+- Broad independent audit slices used same-host native children when the active
+  host supported them and splitting materially improved coverage.
+- Independent children started clean: Codex used `fork_turns: "none"` and
+  Claude used a clean named or custom subagent. Any bounded or full inherited
+  context named the actual chat-only dependency and why clean context was not
+  sufficient.
+- Child lenses and path families were non-overlapping, and fanout respected
+  host slots, shared-file or shared-state collision risk, and parent
+  integration capacity.
+- Review children used an enforced read-only capability when available and an
+  explicit no-edit/no-write prompt in all cases.
+- Children did not create children or invoke delegation, consult, or review
+  skills without an explicitly assigned nested scope and budget.
 - Child reports included exact files, symbols, and evidence.
-- Parent synthesis spot-checked child evidence.
+- Parent accounting covered every child final state; synthesis spot-checked
+  evidence, reconciled conflicts, deduplicated findings, and decided each
+  finding's scope disposition.
+- The parent compared repository status and diffs with the pre-dispatch state
+  before accepting read-only child evidence.
 - Child output did not become the verdict by itself.
 - External harness-spawning skills were not used for ordinary acceleration.
-- Any external child-agent or delegation skill use was explicitly assigned and
-  allowed by local instructions.
+- Any external reviewer had a concrete benefit selected under the shared
+  policy and was explicitly parent-assigned within local instructions.
 
 ## Architecture Quality
 

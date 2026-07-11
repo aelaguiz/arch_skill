@@ -48,7 +48,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 
 1. Read `references/artifact-contract.md`.
 2. Read `references/shared-doctrine.md`.
-3. Read `skills/_shared/scope-and-convergence.md`.
+3. Read `../_shared/scope-and-convergence.md`.
 4. Read `references/fit-and-escalation.md`.
 5. Resolve `DOC_PATH` and read it fully.
 6. Verify the North Star and scope are coherent enough to plan against.

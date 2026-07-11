@@ -1,41 +1,51 @@
-# Execution defaults: user-supplied, with a Codex model default
+# Dispatch and external execution defaults
 
-Six base values must be resolved before Phase 2 can draft a runnable manifest:
+Resolve transport before model settings. Ordinary same-host steps and critics
+prefer clean native children of the active host. A native dispatch records
+`transport: native`, `starting_context: clean`, the host, and its continuation
+contract; do not invent a model, effort, permission set, worktree, or durable
+lifecycle that the host does not expose.
 
-- `execution_defaults.step.runtime` - `claude`, `codex`, or `grok` for worker steps
-- `execution_defaults.step.model` - model for worker steps
-- `execution_defaults.step.effort` - reasoning effort for worker steps
-- `execution_defaults.critic.runtime` - `claude`, `codex`, or `grok` for critics
-- `execution_defaults.critic.model` - model for critics
-- `execution_defaults.critic.effort` - reasoning effort for critics
+An external lane remains valid when its provider, exact model/profile, durable
+session, worktree/process isolation, automation surface, structured receipt, or
+another concrete benefit is deliberate. These examples are not an allowlist.
+Resolve the following values for each role assigned to the external adapter; a
+fully external worker-and-critic policy has six values:
 
-Runtime and effort come from the user or target doctrine. Models do too,
-except that a Codex worker or critic with no named model uses
-`gpt-5.6-sol`.
+- `execution_defaults.step.runtime` - `claude`, `codex`, or `grok`
+- `execution_defaults.step.model` - external model or Codex profile
+- `execution_defaults.step.effort` - external reasoning effort
+- `execution_defaults.critic.runtime` - external critic runtime
+- `execution_defaults.critic.model` - external critic model or profile
+- `execution_defaults.critic.effort` - external critic reasoning effort
 
-When a Codex lane uses Fugu, the resolved execution block also stores
-`codex_profile` as `fugu` or `fugu-ultra`. Normal Codex model ids leave that
-field empty.
+External runtime and effort come from the user or target doctrine. Models do
+too, except that an external Codex worker or critic with no named model uses
+`gpt-5.6-sol`. When an external Codex lane uses Fugu, its execution block also
+stores `codex_profile` as `fugu` or `fugu-ultra`.
 
-These are defaults, not a promise that every step uses the same runtime. The
-manifest may contain per-step overrides resolved from explicit user
-preferences or hard target-repo doctrine. See `execution-routing.md`.
+The manifest may contain per-step transport and external-execution overrides
+resolved from explicit user preferences or hard target-repo doctrine. See
+`execution-routing.md`.
 
-## Why most defaults come from the user
+## Why external defaults come from the user
 
-Different work deserves different price points. A lesson-authoring run may
-want strong worker steps and a strong critic. A many-step drill may want cheap
-workers and a stronger critic. The right runtime and effort baseline is a user
-judgment. The single model exception is the established Codex fallback:
+Different external work deserves different price points. A lesson-authoring
+run may want strong worker steps and a strong critic. A many-step drill may want
+cheap workers and a stronger critic. The right runtime and effort baseline is a
+user judgment. The single model exception is the established Codex fallback:
 omitted means `gpt-5.6-sol`.
 
-Asking once at the start is cheap. Guessing wrong is expensive: wrong runtime
-or model wastes money or quality; wrong effort blows budget on trivial work or
-under-powers hard work.
+Ask only after the orchestrator has selected an external lane. Guessing wrong
+is expensive: wrong runtime or model wastes money or quality; wrong effort
+blows budget on trivial work or under-powers hard work.
 
 ## Acceptable shapes in the user's prompt
 
-The intake phase parses whatever the user wrote. Any of these is clear:
+The intake phase parses whatever the user wrote. Each example below makes a
+provider/model choice load-bearing. Honor it natively only when the active host
+exposes and confirms that choice; otherwise the external adapter supplies the
+requested capability. Any of these is clear:
 
 - "use Claude Fable 5 high for steps and Codex gpt-5.6-sol xhigh for critic"
 - "use Codex Fugu high for steps and Codex Fugu Ultra xhigh for critic"
@@ -111,19 +121,21 @@ default (`fugu` defaults to `high`; `fugu-ultra` defaults to `xhigh`). Add the
 Fugu Ultra effort.
 
 For deterministic script plumbing that needs these same resolution rules, use
-`skills/_shared/model_resolution.py` instead of adding another hidden model
+`../../_shared/model_resolution.py` instead of adding another hidden model
 alias table. The helper keeps Stepwise-style flows, fresh-consult,
 agent-delegate, model-consensus, and arch-epic automatic harnesses aligned on
 exact-version preservation and fail-loud behavior.
 
 ## Asking when missing
 
-After applying the omitted-Codex-model default, if one or more required values
-is still unspecified and cannot be inferred unambiguously, ask ONE
-consolidated question listing what is missing and what it controls:
+Do not ask for runtime/model/effort merely to run a capable same-host native
+child. After an external lane has been selected, apply the omitted-Codex-model
+default; if a load-bearing external value is still unspecified and cannot be
+inferred unambiguously, ask ONE consolidated question listing what is missing
+and what it controls:
 
 ```
-I need base execution choices before planning steps.
+I need the external execution choices before dispatching these roles.
 
 - step runtime/effort plus a model/profile for non-Codex lanes: runs each step
   unless a confirmed per-step preference overrides it.
@@ -135,19 +147,22 @@ What should I use?
 ```
 
 Do not ask six separate questions. Do not invent runtime or effort defaults,
-or model defaults for other runtimes. Ask and wait.
+or model defaults for other runtimes. Ask and wait. If native children can do
+the job and no external benefit was requested or discovered, proceed natively
+instead of manufacturing this question.
 
 If the user answers with one complete value ("Codex gpt-5.6-sol medium
 everywhere"), apply it to both worker and critic defaults and announce that
 before executing. If they answer with a worker-only override ("copywriting on
-Claude Fable 5") but no baseline, still ask for the missing defaults.
+Claude Fable 5"), resolve only the affected steps externally and leave other
+roles on their confirmed native/default policy unless the user says otherwise.
 Do not ask merely because the user used spaces, dots, or omitted a runtime
 prefix when the runtime and exact version are otherwise clear; resolve the
 same-version spelling first.
 
-## Runtime inference
+## External runtime inference
 
-Runtime is separate from model and effort.
+External runtime is separate from model and effort.
 
 Infer runtime only when the evidence is unambiguous:
 
@@ -163,19 +178,21 @@ table. The runtime choice must be explainable in the Phase 1 announcement.
 Once runtime is known, resolve the model phrase using the exact-version rules
 above instead of passing raw shorthand through to the CLI.
 
-Critic runtime defaults to the critic default from intake. If the user gives
-only one "everywhere" choice, critic and step defaults match. If the user gives
-worker-specific preferences, critics keep critic defaults unless explicitly
-overridden.
+An external critic runtime defaults to the external critic default from intake.
+If the user gives one complete "everywhere" choice, critic and step defaults
+match. If the user gives worker-specific preferences, critics stay on their
+native/default policy unless explicitly overridden.
 
 ## Pinning
 
-Once set, the full execution policy is written into `state.json` and pinned
-with `execution_sha256`. The policy includes resolved runnable defaults and
-the raw routing preference quotes plus their resolved execution blocks.
+Once set, the full dispatch policy is written into `state.json` and pinned
+with `execution_sha256`. It records transport and starting context for every
+role plus resolved external defaults and raw routing-preference quotes when
+the external adapter is used.
 Changing it mid-run clears run state.
 
-Per-step repair attempts reuse the same resolved execution block as the
-original try. A user who wants a different model for repair attempts should
+Per-step repair attempts resume the exact worker through the original
+transport and reuse the same resolved execution block. A user who wants a
+different external model for repair attempts should
 re-invoke the skill with new execution choices; this skill does not change
 horses mid-stream.

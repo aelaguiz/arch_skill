@@ -3,8 +3,9 @@
 # Purge removed packages from installed skill dirs before copying the active set.
 REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio arch-loop delay-poll wait code-review plan-swarm
 # Shared doctrine directories that ship alongside the named skills. Multiple
-# SKILL.md files reference shared planning/model-resolution files,
-# so these dirs must land in every install root next to the per-skill dirs.
+# SKILL.md files reference shared planning, agent-orchestration, and
+# model-resolution files, so these directories must land next to the
+# per-skill directories in every install root.
 SHARED_DIRS := _shared
 # `SKILLS` is the active agents/Codex surface. Claude mirrors it.
 SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring chatgpt-web skill-authoring figma-best-practices fal-ai-tools flutter-reference eli10 pr-authoring pr-review-followthrough commit-history-authoring skill-flow amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-conductor agent-history model-consensus contact-sheet-builder fc-branded-pdf cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup codex-babysit thermo-nuclear-code-quality-review
@@ -279,6 +280,7 @@ verify_agents_install:
 	done
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(AGENTS_SKILLS_DIR)/_shared/agent-orchestration-policy.md
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(AGENTS_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
 	@test ! -e $(AGENTS_SKILLS_DIR)/arch-step/scripts/upsert_codex_stop_hook.py
@@ -315,6 +317,7 @@ verify_claude_install:
 	done
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(CLAUDE_SKILLS_DIR)/_shared/agent-orchestration-policy.md
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(CLAUDE_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
 	@test ! -e $(CLAUDE_SKILLS_DIR)/arch-step/scripts/upsert_codex_stop_hook.py
@@ -346,6 +349,7 @@ verify_gemini_install:
 	done
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(GEMINI_SKILLS_DIR)/_shared/agent-orchestration-policy.md
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/upsert_codex_stop_hook.py

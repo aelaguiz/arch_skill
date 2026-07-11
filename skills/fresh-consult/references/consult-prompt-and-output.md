@@ -1,9 +1,10 @@
 # Consult Prompt And Output
 
-The consult prompt must make the child useful whether the turn is a clean-start
-consult or a bounded same-session follow-up. A fresh-start turn has no parent
-chat context. A resume turn has its own child-session history, but still has no
-unstated parent context beyond the new prompt.
+The consult brief must make the reviewer useful whether it is a clean native
+child, a clean external session, or a bounded exact-child follow-up. A new
+clean turn has no parent-chat context. A resumed turn has only that reviewer's
+own history plus the bounded delta. Transport, context, and continuation are
+separate choices.
 
 Fresh consult is a strict yes/no arbiter. The child decides whether the user's
 ask is fully satisfied. If the answer is not a clean yes, the verdict is
@@ -11,13 +12,13 @@ ask is fully satisfied. If the answer is not a clean yes, the verdict is
 
 ## Prompt Skeleton
 
-Write a prompt like this to `prompt.md` and adapt the sections to the actual
-question:
+Adapt this shape to the actual question. Send it as the native child task brief,
+or write it to `prompt.md` when using the external lane:
 
 ```markdown
 You are performing a read-only fresh consult on <one-line subject>.
 
-<For fresh-resumable, fresh-forced, or fresh-rotated:>
+<For a new clean reviewer:>
 You are starting clean from disk and this prompt. You have no prior parent chat
 context. Read the artifacts directly from disk. Your job is to answer the
 user's ask for the parent agent, not to fix files.
@@ -31,11 +32,22 @@ are still current.
 
 # Consult Mode
 
-- Mode: fresh-resumable | resume | fresh-forced | fresh-rotated
-- Chain directory: <absolute chain path>
+- Transport: <active-host native child | external runtime/session>
+- Starting context: <clean | exact-reviewer history>
+- Continuation: <new-clean | exact-resume | clean-rotation>
+- Native mechanism: <Codex fork_turns "none" | Claude clean named/custom
+  subagent | exact-child resume | other explicit host mechanism | "external">
+- Child/session handle: <exact handle or "pending">
+- External receipt mode: <fresh-resumable | resume | fresh-forced |
+  fresh-rotated | "not applicable">
+- Chain directory: <absolute external chain path or "not applicable">
 - Turn: <n>
-- Resume source: <prior turn dir, explicit session id, or "none">
-- Reason for fresh start: <none | user_forced_cold | chain_turn_limit | changed_execution | missing_session | ambiguous_chain>
+- Resume source: <exact native child handle, prior external turn dir, explicit
+  external session id, or "none">
+- Reason for fresh start: <none | new_independent_gate | user_forced_cold |
+  chain_turn_limit | changed_execution | missing_session | ambiguous_chain>
+- Nested fanout: <"prohibited" by default, or an explicit bounded scope and
+  concurrency budget assigned by the parent>
 
 # User Ask
 
@@ -56,10 +68,10 @@ nearby repo, docs, research, tests, command output, or local evidence you judge
 necessary to answer the user's ask. Report what you read and what answer the
 evidence supports.
 
-Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
-
-Do not edit files, run formatters, coordinate with sibling consults, or start
-another controller.
+Do not edit or write files, run formatters, coordinate directly with sibling
+consults, create child agents, invoke delegation/consult skills, or start
+another controller. Only a nested scope and budget explicitly assigned above
+can relax the no-child rule.
 
 # Report Contract
 
@@ -98,11 +110,13 @@ When reporting the result upstream:
 2. Quote failure reasons exactly when there are only a few; summarize only when
    the list is long.
 3. Include confidence and evidence read.
-4. Name the runtime/model/effort, consult mode, chain directory, run directory,
-   and session id when captured or reused.
-5. Spot-check failure reasons before treating them as true.
-6. If you disagree with the child after spot-checking, say so explicitly.
-7. For parallel groups, report each child verdict separately before writing any
+4. Name the transport, explicit starting context, continuation choice, and
+   exact child/session handle. For external review, also name the
+   runtime/model/effort, receipt mode, chain directory, and run directory.
+5. Run a parent-owned status or diff check before accepting the no-edit claim.
+6. Spot-check failure reasons before treating them as true.
+7. If you disagree with the child after spot-checking, say so explicitly.
+8. For parallel groups, report each child verdict separately before writing any
    synthesis. Treat disagreement between children as useful signal, not a
    majority vote.
 
@@ -130,4 +144,13 @@ Do not:
 - Overwrite old turn directories. A resume turn gets a new run directory that
   points back to the previous turn.
 - Resume a latest session by convenience. Resume only the exact captured
-  same-runtime session for the same consult line.
+  reviewer for the same consult line; external resumes must also stay in the
+  same runtime.
+- Reuse an old reviewer for a new independent gate. Independence requires a new
+  clean child even when an exact handle is available.
+- Launch an external same-provider process merely to obtain clean context or
+  exact continuation that the host already provides natively. External
+  transport remains valid when its concrete benefit is worth the process cost.
+- Tell reviewers to maximize their own fanout. The parent owns decomposition,
+  concurrency, evidence checking, and synthesis unless it explicitly budgets a
+  nested scope.

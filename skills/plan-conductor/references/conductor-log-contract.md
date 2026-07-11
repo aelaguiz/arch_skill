@@ -17,7 +17,8 @@ constraints).
 # Plan Conductor Log
 Plan: <path>
 Start commit: <hash>
-Workers: <runtime/model/effort>   Max parallel: <N>   Wave cap: <N>
+Workers: <transport/context; external runtime/model/effort when selected>
+Max parallel: <N>   Wave cap: <N>
 Boundary: <whole plan | phases X-Y>   Cold verifier: <on|off>
 Final gate: <not run | clean | findings open>
 Scope contract: <plan anchor>   Scope status: <frozen-clean | human decision needed | unresolved>
@@ -30,7 +31,7 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 - Known blockers: <bullets or none>
 
 ## Execution Map
-| Slice | Plan anchor | Depends on | Size rationale | Status | Worker/session | Attempts | Evidence |
+| Slice | Plan anchor | Depends on | Size rationale | Status | Worker/handle | Attempts | Evidence |
 |---|---|---|---|---|---|---|---|
 
 ## Findings Ledger
@@ -61,9 +62,11 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 - **Size rationale** is one line saying why this chunk (whole phase, named
   owner-boundary split, merged trivial phases) — it makes the chunking
   judgment visible and reviewable.
-- **Worker/session** names the runtime/model, the agent-delegate run
-  directory, and the captured session id. The run directory path makes the
-  session recoverable even if one record is lost.
+- **Worker/handle** names transport, starting context, and the exact native
+  child handle or external session id. For an external lane it also records
+  runtime/model/effort and the `$agent-delegate` run directory. These receipts
+  preserve exact-role continuation without treating transport as workflow
+  meaning.
 - **Attempts** counts dispatch + send-backs + respawns toward the per-slice
   caps.
 - **Evidence** for an `accepted` slice anchors the proof: diff anchors,

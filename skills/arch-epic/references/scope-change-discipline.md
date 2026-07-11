@@ -1,6 +1,6 @@
 # Scope-Change Discipline: Cuts And Additions Need Authority
 
-Apply `skills/_shared/scope-and-convergence.md`. The raw human goal and
+Apply `../../_shared/scope-and-convergence.md`. The raw human goal and
 human-approved decomposition are the epic baseline. Each sub-plan inherits that
 boundary, may record the smallest evidenced same-contract convergence closure
 during its initial architecture pass, and freezes that closure before

@@ -1,6 +1,6 @@
 # Critic prompt body
 
-This is the prompt template sent to each critic sub-session. The critic gets
+This is the prompt template sent to each new clean critic child. The critic gets
 exactly this prompt with placeholders filled in. No additional prose wraps it.
 
 ## Template
@@ -13,6 +13,9 @@ evidence-grounded observation only.
 You are read-only. Do not edit files. Do not re-run the worker's work. Do not
 execute the worker's skills, support primitives, or slash-command workflows
 yourself.
+Do not create or coordinate other model agents, manually start model-harness
+processes, or invoke delegation/consult skills. The parent owns fanout and
+integration.
 
 You are not the repair author. Do not suggest worker commands. Do not propose
 fixes. Do not say where repair should happen. Return one JSON document
@@ -142,10 +145,12 @@ Invalid critic output:
 The observation is valid, but `repair_steps` is invalid. The critic does not
 write future commands.
 
-## Runtime notes
+## External adapter notes
 
-Claude structured output via `--json-schema` may emit JSON inside a
+When the parent deliberately selected the external adapter, Claude structured
+output via `--json-schema` may emit JSON inside a
 `structured_output` key. Codex writes schema-conforming JSON to the `-o` file
 when `--output-schema` is active. Grok receives a schema-appended prompt and
-the script post-validates the JSON in the final text. The orchestrator handles
-those runtime shapes.
+the script post-validates the JSON in the final text. Native critics return the
+same StepVerdict contract through the host's child-return surface. The
+orchestrator handles those transport shapes.

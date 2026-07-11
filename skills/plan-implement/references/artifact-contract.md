@@ -86,7 +86,9 @@ Current checkpoint: <commit/hash/worktree/diff handle if useful>
 - Next useful move:
 - Do not redo unless stale:
 - Known blockers:
-- Native subagents used or useful next:
+- Native children used or useful next: <role, owned path/lens, starting
+  context, final state, and exact handle only when continuation is intended>
+- Pre/post-dispatch repository-state check:
 
 ## Scope Ledger
 
@@ -146,6 +148,8 @@ Update the worklog:
 - after discovering a side door, stale plan fact, or complexity source
 - after running, accepting, or invalidating proof
 - after native subagent review returns useful findings
+- after a child is resumed for repair or a new clean critic completes an
+  independent recheck
 - before compaction risk, long-running work, stopping, or completion claims
 
 Update the audit log:

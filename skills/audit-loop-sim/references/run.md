@@ -32,6 +32,30 @@ Do not force the pass to stop after one finding or one patch when the same mappi
 
 Do stop when the next move would require a genuinely different mapping tranche, journey story, audit cycle, or verification basis.
 
+## Mapping child contract
+
+The parent captures current git status and the relevant diff before mapping
+fanout. Each child receives one non-overlapping journey, app, harness, or
+platform family, exact repo and ledger paths, and a read-only brief. Start it
+as a new clean same-host native child: Codex uses `fork_turns: "none"`, and
+Claude uses a clean named or custom subagent rather than a bare conversation
+fork or skill `context: fork` shorthand. Use inherited chat context only for a
+named chat-only dependency.
+
+Use the strongest read-only capability the host exposes and still say: do not
+edit or write files, including `_audit_sim_ledger.md`; do not create children
+or invoke delegation, consult, or review skills unless the parent explicitly
+assigned a bounded nested scope and budget. Require the return to name files,
+journeys, and harness paths read, mapped contracts and platform obligations,
+current real-app proof and gaps, candidate risk fronts, coverage limits, and
+collision risks. Dispatch the child only after confirming it inherits the
+sanctioned simulator or device capabilities required by `audit-loop-sim`.
+Otherwise keep the slice with the authorized parent or complete it
+sequentially and return live state as `unknown`; external transport is not a
+capability bypass. The parent waits for and accounts for every slice, compares
+current status and diff with the pre-dispatch state, reconciles overlap, and
+alone writes accepted evidence into the ledger.
+
 ## Procedure
 
 1. Create or repair `_audit_sim_ledger.md` and the `.gitignore` entry.
@@ -43,7 +67,9 @@ Do stop when the next move would require a genuinely different mapping tranche, 
    - assess proof quality, flake risk, harness drift, and missing signal
    - use churn and fragility signals when they sharpen judgment
    - write map status, priorities, and explicit `SKIP` decisions
-4. When the runtime supports delegation, use parallel read-only agents to gather disjoint mapping slices. Otherwise complete the same map sequentially.
+4. When independent surface families make delegation worthwhile, gather them
+   with the bounded mapping-child contract above. Otherwise complete the same
+   map sequentially.
 5. If the map is incomplete, update `Next Area` with the next unfinished mapping tranche, update the ledger, and stop without edits.
 6. Rank automation risk fronts from the completed map by consequence first, then proof weakness, then fragility.
 7. Choose the highest-priority unresolved automation risk front from that ranking.

@@ -28,7 +28,9 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
 - `_comment_ledger.md` at repo root is the source of truth. Add it to the root `.gitignore` immediately.
 - Triage before comment edits. Do not jump to adding comments because one line looks confusing.
 - Exhaustively map shipped code surfaces, the current proof surface, and the current explanatory surface before any comment edits. If the map is incomplete, update the ledger and stop.
-- When the runtime supports delegation, use parallel read-only agents during mapping. Otherwise build the same exhaustive map sequentially.
+- When independent surface families make delegation worthwhile, use bounded
+  clean native read-only mapping slices. Otherwise build the same exhaustive
+  map sequentially.
 - Rank consequence of misunderstanding first, then sharedness and blast radius, then explanation weakness, then confusion and staleness signals.
 - Select a comment front from the completed map, not from a hunch.
 - Comments explain existing contracts, behavior, and conventions. They do not create or change them.
@@ -51,12 +53,39 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
 1. Read `references/ledger-contract.md`.
 2. Read `references/shared-doctrine.md`.
 3. Read `references/commenting-principles.md`.
-4. Resolve the mode:
+4. Read `../_shared/agent-orchestration-policy.md` before dispatching any
+   mapping or review child.
+5. Resolve the mode:
    - `run`
    - `review`
    - `auto`
-5. Resolve repo root, root `.gitignore`, and `_comment_ledger.md`.
-6. Read the matching mode reference and `references/quality-bar.md`.
+6. Resolve repo root, root `.gitignore`, and `_comment_ledger.md`.
+7. Read the matching mode reference and `references/quality-bar.md`.
+
+## Parent And Child Roles
+
+- The active parent owns comment scope, ledger writes, decomposition, every
+  child-result account, synthesis, accepted repair direction, and the final
+  controller verdict. Capture current git status and the relevant diff before
+  read-only children run, then compare current state before accepting their
+  evidence.
+- Mapping slices and each independent `review` critic default to new clean
+  same-host native children. In Codex set `fork_turns: "none"`; in Claude use
+  a clean named or custom subagent, not a bare conversation fork or skill
+  `context: fork` shorthand. Use bounded or full inherited context only for a
+  named dependency that exists solely in chat; ordinary context travels via
+  the ledger, exact paths, and the child brief.
+- Give mappers and critics the strongest read-only capability the host exposes
+  and explicitly tell them not to edit or write files, including the ledger.
+  They may not create children or invoke delegation, consult, or review skills
+  unless the parent explicitly assigns a bounded nested scope and budget.
+- Split only across independent code, proof, explanation, or review families.
+  Bound fanout by available host slots, shared-file or shared-state collision
+  risk, and the parent's capacity to inspect and integrate every return.
+- If a controller needs a background or external process after the parent turn
+  ends, that transport supplies lifecycle continuity, not critic freshness.
+  Choose it only when that concrete lifecycle or another benefit is worth its
+  process and integration cost under the shared policy.
 
 ## Workflow
 
@@ -75,7 +104,9 @@ Use this skill when the job is to exhaustively map a repo, its proof surface, an
 
 - Stay docs-only.
 - Repair the ledger if it is missing or malformed.
-- Re-read the ledger and current repo state from fresh context.
+- Have a new clean independent critic re-read the ledger and current repo
+  state without writing files; the parent spot-checks and integrates its
+  return.
 - Confirm whether the map is complete, whether the current or next front comes from the ranked map, whether recent comments are truthful and high leverage, and whether verification depth matched the consequence of the touched surfaces.
 - Set the controller verdict to `CONTINUE`, `CLEAN`, or `BLOCKED` and name the next mapping tranche, comment front, or blocker plainly.
 
@@ -87,7 +118,9 @@ repeated turns; this skill does not install or arm automation hooks.
 Workflow:
 
 1. Run one truthful `run` pass. Mapping-only is correct on the first turns.
-2. Run a fresh `review` pass against `_comment_ledger.md` and current repo state.
+2. Run a new clean independent `review` critic against `_comment_ledger.md`
+   and current repo state, using a same-host native child by default while the
+   parent session is active.
 3. If review says `CONTINUE`, run the next `$comment-loop run` pass.
 4. In native goal mode, keep repeating until review says `CLEAN` or `BLOCKED`.
 5. Outside native goal mode, stop after one run/review cycle and print the next exact command.
@@ -115,6 +148,6 @@ Workflow:
 - `references/shared-doctrine.md` - prioritization, explanation discipline, and anti-patterns
 - `references/commenting-principles.md` - distilled external best practices for useful comments
 - `references/run.md` - mapping-aware comment or cleanup pass
-- `references/review.md` - fresh docs-only verdict pass
+- `references/review.md` - new clean docs-only verdict pass
 - `references/comment-loop-controller.md` - comment-loop auto status and verdict source
 - `references/quality-bar.md` - strong vs weak triage, findings, comments, and stop decisions

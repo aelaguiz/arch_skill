@@ -168,7 +168,9 @@ Record what was reviewed:
   styles, locale keys, install surfaces, logs, and status surfaces inspected
   where they affect deletion judgment
 - git history used
-- native parallel agent usage summary and final state for each launched slice
+- child accounting for every launched review slice: lens and path ownership,
+  clean or explicitly justified inherited context, final state, accepted or
+  rejected evidence, and the pre/post-dispatch repository-state check
 - known coverage gaps
 
 Keep this as prose and compact lists. It is not a formal checklist engine.
@@ -268,7 +270,7 @@ VERDICT: cruft-found | no-material-cruft-found | scope-incomplete | unsafe-to-ju
 ## Coverage Summary
 
 - Scope reviewed:
-- Native parallel agents:
+- Native review slices and repository-state check:
 - Files/symbols/artifacts covered:
 - Roots and paths traced:
 - References rejected as weak proof:

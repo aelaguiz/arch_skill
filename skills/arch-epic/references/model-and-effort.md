@@ -1,34 +1,35 @@
-# Role execution policy: user-supplied, with a Codex model default
+# Role dispatch and external execution policy
 
-`arch-epic` uses external Claude, Codex, or Grok subprocesses in two places:
+Resolve transport before model settings. Ordinary same-host planner, worker,
+and critic roles prefer clean native children of the active host, briefed from
+the epic doc, sub-plan DOC_PATH, worklog, and relevant arch-step references.
+Do not invent a native model, effort, permission set, worktree, or lifecycle the
+host cannot confirm.
 
-- interactive mode: the epic critic at sub-plan completion
-- spawned-harness automatic mode: planner, implementation worker, and critics
-
-The user supplies runtime and effort for every required role plus a model or
-profile for non-Codex roles. When a role is Codex and its model is omitted,
-use `gpt-5.6-sol`. The skill asks once for other missing values before running.
-Different roles deserve different price points, so spawned-harness automatic
-mode must not collapse the whole epic into one hidden runtime or effort default.
-Spawned-harness repair uses same-role session resume: planner failures resume the
-planner session, and implementation failures resume the implementation session.
+An external Claude, Codex, or Grok process remains valid when a concrete
+provider, exact model/profile, durable or detached lifecycle, worktree/process
+isolation, automation surface, structured receipt, or another deliberate
+benefit warrants the additional process and integration cost. These examples
+are recognition aids, not an allowlist. External repair resumes the exact
+planner or implementation session; every external critic starts clean.
 
 ## Interactive mode
 
-Interactive mode needs one critic execution block:
+Interactive and same-session modes prefer one clean native critic. The legacy
+frontmatter still supports an external critic execution block:
 
 - `critic_runtime`: `claude`, `codex`, or `grok`
 - `critic_model`: runnable CLI model identifier
 - `critic_effort`: `low | medium | high | xhigh | max`
 
 These values live in the epic doc frontmatter for compatibility with existing
-epic docs. They may remain null when the user explicitly chose spawned-harness automatic mode
-and the role execution table has not been pinned yet; spawned-harness critics
-use the `auto_execution.roles.critic` block.
+epic docs. They may remain null for a native critic or while an explicit
+external-harness role table is pending. External-harness critics use the
+`auto_execution.roles.critic` block.
 
-## Spawned-harness automatic mode
+## Explicit external-harness mode
 
-Spawned-harness automatic mode asks for a role table after decomposition approval:
+The external-harness lane asks for a role table after decomposition approval:
 
 | Role | What it controls |
 | --- | --- |
@@ -48,21 +49,21 @@ stuck_floor_seconds: 1800
 max_runtime_seconds: 7200
 ```
 
-The resolved policy is stored under `auto_execution` in the epic doc and in
-the spawned-harness run directory's `state.json`.
+The resolved external policy is stored under `auto_execution` in the epic doc
+and in the external-harness run directory's `state.json`.
 
 Existing policies may contain a legacy `repair_worker` role. Load it for
 compatibility, but do not ask for it in new runs and do not use it for ordinary
-critic failures. Resume the failing planner or implementation worker session
+critic failures. Resume the exact failing planner or implementation worker session
 instead.
 
-The monitor policy is part of the same execution choice because it changes
+The external monitor policy is part of the same execution choice because it changes
 how much trust the parent gives long-running children. Planners and
 implementation workers routinely need 5+ minutes; broad `xhigh` or `max`
 children can reasonably take 20-40 minutes. A missing final file after a short
 window is only "not done yet" when process state and stream activity show life.
 
-Use foreground mode when the expected child is short enough that blocking
+In the external harness, use foreground mode when the expected child is short enough that blocking
 keeps the orchestration simpler. Use detached mode when the child is expected
 to plan, implement, audit, or run verification for many minutes. Detached
 mode must produce live `events.jsonl`, `stderr.log`, `stream.log`,
@@ -70,7 +71,7 @@ mode must produce live `events.jsonl`, `stderr.log`, `stream.log`,
 
 ## Shared resolver owner
 
-The deterministic helper is `skills/_shared/model_resolution.py`. It encodes
+The deterministic helper is `../../_shared/model_resolution.py`. It encodes
 the same doctrine used by Stepwise and fresh-consult:
 
 - preserve model family and numeric version exactly
@@ -91,7 +92,9 @@ needs to change, update the shared helper and the shared doctrine references.
 
 ## Acceptable user phrasing
 
-All of these are valid when they include a role:
+All of these explicitly request an external provider or exact model/profile;
+that deliberate value selects the external harness. They are valid when they
+include a role:
 
 - "planner on Claude Fable 5 high"
 - "implementation worker on Codex gpt-5.6-sol xhigh"
@@ -156,14 +159,16 @@ implementation_worker: "Grok Build high" -> runtime=grok, model=grok-build, effo
 
 ## Asking when missing
 
-Ask one consolidated question that names the missing roles and what they
-control. Do not ask one question per field.
+Do not ask for a model table merely to use capable native children. After the
+external harness has been deliberately selected, ask one consolidated question
+that names the missing roles and what they control. Do not ask one question per
+field.
 
 Use this shape:
 
 ```text
-Before I run the epic automatically, I need the role execution table. These
-choices control real spawned subprocesses and model budget.
+Before I run the external epic harness, I need its role execution table. These
+choices control real external processes and model budget.
 
 - epic_planner: drafts/repairs sub-plan North Stars and requirement coverage
 - implementation_worker: edits code/docs and runs verification
@@ -171,9 +176,9 @@ choices control real spawned subprocesses and model budget.
 
 Please give runtime/effort for each role plus a model/profile for non-Codex
 roles, or say which roles should be "same as" another role. A Codex role with
-no model uses gpt-5.6-sol. Ordinary critic failures resume the relevant planner
-or implementation worker session; there is no separate repair-worker choice
-in new spawned-harness policies.
+no model uses gpt-5.6-sol. Ordinary critic failures resume the exact relevant
+planner or implementation worker session; there is no separate repair-worker
+choice in new external-harness policies.
 ```
 
 If one role is complete and another is missing, preserve the complete role and
@@ -181,7 +186,7 @@ ask only for the missing ones.
 
 ## Pinning
 
-Spawned-harness automatic mode writes:
+External-harness mode writes:
 
 - `source_quotes`: the raw user role text
 - `roles`: resolved runtime/model/effort blocks

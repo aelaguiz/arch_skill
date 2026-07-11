@@ -1,19 +1,20 @@
 ---
 name: stepwise
-description: "Run an ordered multi-step process inside a target repo with one fresh Claude, Codex, or Grok worker session per step, an independent observational critic, and a Stepwise-owned diagnose-and-repair loop that talks to struggling sessions, walks upstream when inputs are suspect, and repairs at root cause. Use for named process execution with strict step ordering and evidence. Do NOT use for plan-doc implementation (arch-step), bet-and-learn optimization (goal-loop), one-shot reviews, or single-turn work."
+description: "Run an ordered multi-step process inside a target repo with one clean worker per independent step, a new clean observational critic, and a Stepwise-owned diagnose-and-repair loop that resumes the exact worker, walks upstream when inputs are suspect, and repairs at root cause. Same-host roles prefer native children; external Claude, Codex, or Grok sessions remain available when their provider, model, lifecycle, isolation, automation, or structured receipt provides a deliberate benefit. Use for named process execution with strict step ordering and evidence. Do NOT use for plan-doc implementation (arch-step), bet-and-learn optimization (goal-loop), one-shot reviews, or single-turn work."
 metadata:
   short-description: "Diagnostic multi-step orchestrator with critics"
 ---
 
 # stepwise
 
-Execute an ordered multi-step process in a target repo. Each step runs in a
-fresh Claude, Codex, or Grok sub-session using the execution settings resolved
-for that step. An independent critic sub-session judges whether the attempt
-honored its declared contract. When a critic fails or abstains with inspectable
-evidence, Stepwise diagnoses the failure before repair: it reads the evidence,
-talks directly to the relevant session, walks upstream when inputs are suspect,
-and authors the repair prompt itself.
+Execute an ordered multi-step process in a target repo. Each independent step
+runs in a new clean child using transport selected for that step. Same-host
+work normally uses an active-host native child; the existing Claude, Codex, and
+Grok subprocess harness is the explicit external adapter. A new clean critic
+judges whether each attempt honored its declared contract. When a critic fails
+or abstains with inspectable evidence, Stepwise diagnoses the failure before
+repair: it reads the evidence, talks directly to the exact relevant child,
+walks upstream when inputs are suspect, and authors the repair prompt itself.
 
 Stepwise maintains a truthful chain from user intent to manifest, from manifest
 to owner skill, from owner skill to worker action, from worker action to
@@ -27,7 +28,7 @@ break.
 - "run <named process> in ../<repo> and make sure no steps are skipped"
 - "orchestrate <multi-step flow> with a critic checking each step"
 - "just get it done but don't make stuff up" where the request still needs
-  ordered sub-sessions and auditable evidence
+  ordered child roles and auditable evidence
 
 ## When not to use
 
@@ -36,9 +37,9 @@ break.
 - Bet-and-learn optimization, one bet per iteration with worklog ->
   `$goal-loop`.
 - One-shot review of a diff or branch -> the host agent's normal review
-  response or
-  `$codex-review-yolo`.
-- Work that fits in a single orchestrator turn with no sub-sessions.
+  response. Use `$codex-review-yolo` only when the exact external `yolo`
+  profile and its receipts are the requested benefit.
+- Work that fits in a single orchestrator turn with no child roles.
 
 ## Non-negotiables
 
@@ -49,23 +50,39 @@ break.
 - Pin `raw_instructions` verbatim with `sha256`. Any rewrite clears run state.
 - Produce a Step Manifest and confirm it with the user before any step
   executes. Strictness tunes the gate's behavior; it never removes it.
-- Every worker step runs in a fresh subprocess. Retry and repair messages
-  resume that same session so the worker has its own history.
-- Every critic is a fresh, independent subprocess. The critic observes and
+- Apply `../_shared/agent-orchestration-policy.md` at every dispatch.
+  Prefer clean native children for ordinary same-host workers and critics. Use
+  an external session when a concrete provider, exact model/profile, durable
+  lifecycle, worktree/process isolation, automation surface, structured
+  receipt, or another real benefit is worth the extra process and integration
+  cost. These examples are recognition aids, not an allowlist.
+- Every worker step starts as a new clean child. Diagnostic and repair messages
+  resume that exact child so the worker keeps its own role history.
+- Every critic is a new clean, independent child. The critic observes and
   returns structured JSON conforming to `StepVerdict`; it never prescribes
-  future worker actions.
+  future worker actions and is never resumed.
 - The critic observes; the orchestrator reasons; the worker executes. The
   critic never writes agent commands. The orchestrator never edits target-repo
   files or invents constraints. The worker never sees orchestrator-internal
   vocabulary.
+- Native starting context is explicit. Codex dispatch always sets
+  `fork_turns` to `"none"` for normal workers and critics, to a positive count
+  only for deliberately bounded chat context, or to `"all"` only when the full
+  conversation is genuinely load-bearing. Claude uses a clean named subagent
+  by default; an explicit conversation fork means full inherited conversation,
+  while a skill with `context: fork` is an isolated clean subagent context.
+  Context is separate from permissions, capabilities, and worktree isolation.
+- The orchestrator owns fanout and integration. Worker and critic prompts
+  forbid creating other model agents or invoking delegation/consult skills
+  unless the orchestrator explicitly assigns a bounded nested scope and budget.
 - Every critic fail and every inspectable abstain enters the same diagnostic
   protocol. Stepwise holds read-only diagnostic conversation with the agents
   involved, walking upstream when evidence points there, until root cause is
   located or the diagnostic turn cap is exhausted.
 - If diagnosis shows a step received bad input from an earlier step, repair the
-  upstream session that owns the bad input. Downstream steps respawn fresh
-  after upstream repair; resuming downstream sessions would compound broken
-  context.
+  upstream worker that owns the bad input. Downstream steps start new clean
+  replacements after upstream repair; resuming downstream children would
+  compound broken context.
 - Every hard boundary and operational instruction in a repair prompt carries a
   source tag: user, manifest, owner runbook, critic evidence, or confirmed
   diagnosis. Unsourced boundaries or instructions are invented and must be
@@ -73,18 +90,22 @@ break.
 - Learnings are consulted with applicability tests and surfaced in Stepwise's
   reasoning. They never appear as worker-facing doctrine. Workers act on owner
   doctrine, not on Stepwise process memory.
-- Both worker and critic subprocesses run dangerous / skip-permissions /
-  no-sandbox. The critic's read-only discipline comes from its prompt and
-  schema, not a sandbox flag.
-- Base runtime and effort are supplied by the user or target doctrine for
-  worker and critic independently. Models are also supplied except that a
-  Codex lane with no named model defaults to `gpt-5.6-sol`. Ask once if other
-  required defaults are missing.
+- Permissions and worktree behavior are resolved independently from context.
+  Use enforced read-only capability for critics when the host exposes it,
+  retain the no-edit prompt contract, and compare target-repo state before and
+  after critic work. External worker and critic subprocesses keep the existing
+  dangerous / skip-permissions / no-sandbox convention; that convention does
+  not describe native children.
+- Native same-host roles need no invented runtime/model promise. For an
+  external lane, base runtime and effort are supplied by the user or target
+  doctrine for worker and critic independently. Models are also supplied
+  except that an external Codex lane with no named model defaults to
+  `gpt-5.6-sol`. Ask once only for missing load-bearing external values.
 - Optional execution preferences are interpreted after the Step Manifest is
   drafted. A phrase like "copywriting steps use Claude Fable 5" is a routing
   preference to resolve against real steps, not a built-in category.
 - Orchestrator does not persistently load the target repo's contents into its
-  own context. It points sub-sessions at paths; sub-sessions read fresh.
+  own context. It points clean children at paths; children read source truth.
 - Resolve profile, execution routing, and repair limits from the complete user
   prompt, then quote the source phrase in the announcement when a specific
   phrase drives the decision.
@@ -93,40 +114,40 @@ break.
   Strict/balanced/lenient never changes this number.
 - Diagnostic read-only turns do not consume repair bounces. Operational repair
   prompts do.
-- Do not use stateless-only worker subprocess flags because workers must be
-  resumable. Critics use the runtime's fresh/stateless command shape where
-  supported.
+- In the external lane, do not use stateless-only worker flags because workers
+  must be resumable. External critics use the runtime's fresh/stateless command
+  shape where supported.
 - Silent worker repair past the resolved repair limit, silent skipping, and
   silent advance on fail are forbidden. Apply `stop_discipline` when repair
   capacity is exhausted.
 - Fabricated step completion, claim without artifact or transcript evidence,
   fails the step regardless of profile.
-- Do not use `/loop`, `ScheduleWakeup`, or any wait-helper to
-  bridge step or critic subprocess runs. This skill's execution model is
-  foreground `Bash` calls to `run_stepwise.py`. If a subprocess genuinely
-  outlasts the shell timeout, use the shell's background support and wait for
-  the harness notification.
-- Child subprocesses commonly take 5+ minutes, and broad `xhigh` or `max`
-  worker/critic turns can reasonably take 20-40 minutes. `stream.log` is live;
-  inspect it and process liveness every few minutes rather than polling every
-  few seconds or treating a missing final file as a hang before exit.
+- Do not use `/loop` or `ScheduleWakeup` to bridge child work. Native roles use
+  host wait/status primitives. The external lane uses foreground
+  `run_stepwise.py` calls; if a subprocess genuinely outlasts the shell
+  timeout, use supported background execution and its harness receipt.
+- Long children commonly take 5+ minutes. For native roles, use host child
+  state; for external `xhigh` or `max` turns, inspect live `stream.log` and
+  process liveness every few minutes rather than polling every few seconds or
+  treating a missing final file as a hang before exit.
 
 ## First move
 
 1. Capture the user's prompt verbatim. Compute `sha256`.
-2. Read `references/strictness-profiles.md`. Interpret profile, forced
+2. Read `../_shared/agent-orchestration-policy.md`.
+3. Read `references/strictness-profiles.md`. Interpret profile, forced
    checks, stop discipline, and broken-step repair limit.
-3. Read `references/model-and-effort.md` and
-   `references/execution-routing.md`. Parse base execution defaults and any
-   routing preferences. Apply the omitted-Codex-model default, then ask one
-   consolidated question if other required defaults are missing.
-4. Resolve `target_repo_path` as an absolute path. Fail loud if unresolvable.
-5. Read `references/workflow-contract.md` for the five-phase workflow.
-6. Read `references/diagnose-and-repair.md` before executing any subprocess
+4. Read `references/model-and-effort.md` and
+   `references/execution-routing.md`. Resolve transport, clean starting
+   context, and any external execution preferences. Ask one consolidated
+   question only when a selected external lane lacks load-bearing values.
+5. Resolve `target_repo_path` as an absolute path. Fail loud if unresolvable.
+6. Read `references/workflow-contract.md` for the five-phase workflow.
+7. Read `references/diagnose-and-repair.md` before executing any child
    loop.
-7. Read `references/unblocking.md` before deciding a subprocess failure is a
+8. Read `references/unblocking.md` before deciding a child failure is a
    user-facing blocker.
-8. Announce the interpretation before Phase 2.
+9. Announce the interpretation before Phase 2.
 
 ## Workflow
 
@@ -141,12 +162,12 @@ Five phases. Detail lives in `references/workflow-contract.md`.
    `references/manifest-schema.md`.
 3. **Plan confirmation.** Print manifest + interpretation. Gate per profile:
    strict always pauses, balanced pauses once, lenient prints and proceeds.
-   Always include the resolved execution table.
-4. **Step execution loop.** For each step: spawn the worker, spawn the
+   Always include the resolved dispatch table.
+4. **Step execution loop.** For each step: start a clean worker, start a clean
    observational critic, advance on pass, and on fail or inspectable abstain
    run the single diagnose-and-repair protocol. Repair at the root-cause
-   session, respawn downstream fresh after upstream repair, and halt when
-   repair capacity or diagnostic clarity is exhausted.
+   worker, start downstream replacements clean after upstream repair, and halt
+   when repair capacity or diagnostic clarity is exhausted.
 5. **Report.** Per-step status table, run directory path, instructive critic
    observations, diagnostic records, learnings considered/written, and pending
    work if halted. No certification language.
@@ -184,8 +205,8 @@ Five phases. Detail lives in `references/workflow-contract.md`.
 - `references/critic-prompt.md` - verbatim observation-only critic prompt.
 - `references/session-prompt-contracts.md` - initial, diagnostic, and repair
   prompt contracts for worker sessions.
-- `references/session-resume.md` - Claude and Codex invocation flags, session-id
-  capture, and resume behavior.
+- `references/session-resume.md` - native context/continuation mapping plus the
+  external Claude, Codex, and Grok session adapter.
 - `references/run-directory-layout.md` - on-disk artifact layout.
 - `references/learnings.md` - persistent process-learning ledger.
 - `references/examples.md` - worked examples of local diagnosis and upstream
@@ -193,21 +214,22 @@ Five phases. Detail lives in `references/workflow-contract.md`.
 
 ## The orchestration script
 
-`scripts/run_stepwise.py` is deterministic plumbing. It spawns subprocesses,
-captures session ids, writes run-directory artifacts, and validates critic
-verdicts. It does not interpret the user's prompt, draft the manifest, decide
-root cause, or author repairs.
+`scripts/run_stepwise.py` is deterministic run-state plumbing plus the explicit
+external-session adapter. Its transport-neutral subcommands create and inspect
+run artifacts; its launch subcommands spawn external processes, capture session
+ids, and validate critic verdicts. It does not choose transport, interpret the
+user's prompt, draft the manifest, decide root cause, or author repairs.
 
 Subcommands:
 
 - `init-run` - create the run directory and initial `state.json`.
-- `step-spawn` - spawn a fresh worker sub-session; capture session id.
+- `step-spawn` - spawn a new clean external worker session; capture session id.
 - `step-resume` - resume an existing worker session with an operational repair
   prompt.
 - `step-diagnose` - resume an existing worker session read-only and write the
   diagnostic turn into `diagnostic/` without consuming a repair bounce.
-- `critic-spawn` - spawn a fresh critic with a structured schema; parse and
-  validate the observational verdict.
+- `critic-spawn` - spawn a new clean external critic with a structured schema;
+  parse and validate the observational verdict.
 - `latest-session` - print latest try/session metadata for a step.
 - `upstream-for` - print manifest-declared upstream artifacts and latest
   sessions for a step.

@@ -22,6 +22,7 @@ make install
 - The user wants an `AGENTS.override.md` for a subtree, release freeze, incident mode, or security-sensitive service.
 - The user wants a findings-first audit of instructions for missing commands, weak definition-of-done rules, stale scope boundaries, or noisy inferred content.
 - The user wants to add a compressed docs index or a compact map of deeper docs without copying a whole documentation tree into always-on context.
+- The repo's agent instructions create, resume, replace, or coordinate model agents and need a concise route to the shared orchestration policy.
 
 ## When not to use
 
@@ -41,6 +42,8 @@ make install
 - Do not leak authoring-process narration into the file: no planning talk, no retrospective notes, no "this file exists to...", and no self-referential instructions about this skill unless the repo itself has a real operational need for that rule.
 - Plain-speak rules should be concrete, not philosophical: write in plain natural English, lead with the concrete answer in 1-3 sentences, name the exact thing that changed, translate shorthand immediately, and avoid workflow jargon unless the user explicitly asked for it.
 - Separate always-on rules from on-demand depth. Point to docs, indexes, or skills instead of copying entire references inline.
+- When an `AGENTS.md` governs model-agent dispatch, read the installed sibling policy at `../_shared/agent-orchestration-policy.md`, then keep the authored file to one concise, resolvable routing rule plus any genuinely repo-local exceptions. Do not copy the policy's transport, context, continuation, isolation, topology, or integration doctrine into always-on context.
+- Make the route valid for the target repo and runtime: point to an exact repo path when the repo owns the policy, or clearly direct the agent to the installed sibling. Do not invent a path that the runtime cannot resolve.
 - Design root, path-local, and override files consciously. Scope is part of correctness.
 - Keep commands runnable and current. If the file names checks that should pass after edits, run them whenever feasible.
 - If the repo context is missing, stop and say so instead of inventing commands, paths, or conventions.
@@ -49,7 +52,8 @@ make install
 
 1. Classify the job as `author`, `edit`, `refactor`, or `audit`.
 2. Read `references/agents-md-pattern-contract.md`.
-3. Read the smallest additional reference that matches the job:
+3. If the target instructions discuss agent dispatch, read `../_shared/agent-orchestration-policy.md` before deciding what belongs in always-on context.
+4. Read the smallest additional reference that matches the job:
    - `references/structure-and-scope.md` for discovery, layering, overrides, and monorepo placement
    - `references/content-budget-and-docs-index.md` for command priority, non-inferable content, compressed docs indexes, and anti-bloat rules
    - `references/examples-and-anti-examples.md` when you need grounded file shapes, section patterns, or audit examples
@@ -60,12 +64,13 @@ make install
 1. Lock 2-3 canonical user asks and one nearby anti-case before drafting.
 2. Decide whether the right artifact is `AGENTS.md`, `AGENTS.override.md`, a path-local file, ordinary docs, or a skill.
 3. Inventory the repo truths the agent cannot reliably infer: exact commands, dangerous paths, required approvals, critical docs, and special-case workflows.
-4. Put commands first: setup, build, lint, test, typecheck, file-scoped variants when possible, then definition of done and blocked-state rules.
-5. Shape scope intentionally: root for cross-cutting rules, deeper files for local doctrine, overrides only when replacement is safer than inheritance.
-6. Add or preserve a short plain-speak section in the owning layer. Root files should usually own it; deeper files should only add to it when local jargon or special user-facing terms need stricter rules.
-7. Keep the file lean. Move depth into linked docs or a compressed index instead of copying whole references.
-8. Run a meta scrub before you finish: delete any sentence about the drafting process, future plans for the file, or which skill or workflow produced it.
-9. Validate the result for cold-start usefulness: can a new coding agent tell what to run, when to stop, where truth lives, and how to answer in plain English?
+4. If the repo governs agent dispatch, locate the shared policy surface the runtime can resolve and add a compact route to it. Keep only repo-local ownership or safety exceptions in `AGENTS.md`.
+5. Put commands first: setup, build, lint, test, typecheck, file-scoped variants when possible, then definition of done and blocked-state rules.
+6. Shape scope intentionally: root for cross-cutting rules, deeper files for local doctrine, overrides only when replacement is safer than inheritance.
+7. Add or preserve a short plain-speak section in the owning layer. Root files should usually own it; deeper files should only add to it when local jargon or special user-facing terms need stricter rules.
+8. Keep the file lean. Move depth into linked docs or a compressed index instead of copying whole references.
+9. Run a meta scrub before you finish: delete any sentence about the drafting process, future plans for the file, or which skill or workflow produced it.
+10. Validate the result for cold-start usefulness: can a new coding agent tell what to run, when to stop, where truth lives, and how to answer in plain English?
 
 ## Output expectations
 
@@ -81,3 +86,4 @@ make install
 - `references/content-budget-and-docs-index.md` - command-first content, non-inferable detail, passive context, and anti-patterns
 - `references/examples-and-anti-examples.md` - strong section shapes, templates, and common failure modes
 - `references/maintenance-and-portability.md` - cross-tool compatibility, self-improvement, and upkeep loops
+- `../_shared/agent-orchestration-policy.md` - on-demand shared semantics to route to when repo instructions govern model-agent dispatch

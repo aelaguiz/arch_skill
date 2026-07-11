@@ -1,6 +1,6 @@
 ---
 name: agent-definition-auditor
-description: "Audit and score an agent-definition markdown such as `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, `.cursorrules`, or a system prompt using a cold-reader rubric for clarity, consistency, context independence, and operating-model fit. Use when the user asks to review, score, critique, or audit an agent instruction file. Not for evaluating agent outputs, code quality, or rewriting the file itself."
+description: "Audit and score an agent-definition markdown such as `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, `.cursorrules`, or a system prompt using a cold-reader rubric for clarity, consistency, context independence, operating-model fit, and coherent agent-dispatch semantics when present. Use when the user asks to review, score, critique, or audit an agent instruction file. Not for evaluating agent outputs, code quality, or rewriting the file itself."
 metadata:
   short-description: "Cold-reader scoring and findings for agent-definition files"
 ---
@@ -28,6 +28,8 @@ Use this skill when the job is auditing one agent-definition file, not rewriting
 - Default to a single-artifact, read-only cold read.
 - Judge the document as an operational contract, not as domain strategy or business policy.
 - Distinguish precise layered contracts from phantom context.
+- If the artifact creates, resumes, replaces, or coordinates model agents, read the installed sibling `../_shared/agent-orchestration-policy.md` and apply the reference prompt's conditional dispatch lens. Use the policy as judging doctrine, not as a second target artifact or as proof that the artifact itself resolves an inaccessible reference.
+- Judge dispatch decisions for coherent meaning and interaction, not for exact vocabulary or headings. Flag transport, starting context, continuation, isolation and capabilities, topology, or result semantics when they are missing, conflated, or contradictory enough to change behavior.
 - Apply the scoring model, hard caps, and report shape from the reference prompt literally.
 - Cite line numbers when available; otherwise cite exact headings or short anchors.
 - Do not widen to repo-wide inspection unless the user explicitly asks for multi-file or repo-context evaluation.
@@ -37,8 +39,9 @@ Use this skill when the job is auditing one agent-definition file, not rewriting
 
 1. Resolve one target artifact path or pasted instruction text.
 2. Read `references/agent-definition-judge-prompt.md`.
-3. Read the full target artifact once before scoring.
-4. If the user also wants revisions, finish the audit first unless they explicitly want authoring instead of judging.
+3. If the target artifact governs model-agent dispatch, read `../_shared/agent-orchestration-policy.md` before scoring.
+4. Read the full target artifact once before scoring.
+5. If the user also wants revisions, finish the audit first unless they explicitly want authoring instead of judging.
 
 ## Workflow
 
@@ -51,9 +54,11 @@ Use this skill when the job is auditing one agent-definition file, not rewriting
    - approval and escalation rules
    - failure handling
    - external dependencies
-4. Apply the reference prompt's scoring model and hard caps.
-5. Return the exact report sections required by the reference prompt.
-6. If the user then wants fixes, use the audit as the basis for the follow-up instead of recomputing the diagnosis from scratch.
+   - child-agent dispatch semantics, when present
+4. For agent-dispatch artifacts, test whether transport, context, continuation, isolation, topology, and return evidence reinforce one operating model rather than standing in for or contradicting one another.
+5. Apply the reference prompt's scoring model and hard caps.
+6. Return the exact report sections required by the reference prompt.
+7. If the user then wants fixes, use the audit as the basis for the follow-up instead of recomputing the diagnosis from scratch.
 
 ## Output expectations
 
@@ -64,3 +69,4 @@ Use this skill when the job is auditing one agent-definition file, not rewriting
 ## Reference map
 
 - `references/agent-definition-judge-prompt.md` - full judging prompt, scoring model, hard caps, report contract, and examples
+- `../_shared/agent-orchestration-policy.md` - conditional judging baseline for artifacts that create, resume, replace, or coordinate model agents

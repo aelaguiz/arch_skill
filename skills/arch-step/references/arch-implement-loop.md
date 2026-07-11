@@ -40,8 +40,8 @@ built unauthorized work is subtracted before the loop advances.
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
-- `skills/_shared/depth-first-planning.md`
+- `../../_shared/scope-and-convergence.md`
+- `../../_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 - `arch-implement.md`
 - `arch-audit-implementation.md`

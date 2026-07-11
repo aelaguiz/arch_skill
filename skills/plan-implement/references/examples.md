@@ -14,8 +14,9 @@ Use these as illustrations, not rigid templates.
 - Do not redo unless stale: command-service caller map read at
   `src/commands/*` and `src/session/*`; stale if those files change.
 - Known blockers: none.
-- Native subagents used or useful next: useful next for docs/prompts drift
-  after side-door cleanup.
+- Native children used or useful next: one new clean read-only docs/prompts
+  critic after side-door cleanup; no child handle exists yet.
+- Pre/post-dispatch repository-state check: not yet applicable.
 ```
 
 ## Clean Proof Freshness Entry
@@ -95,5 +96,7 @@ parallelism sounds useful.
 Why it is bad: that turns a lightweight implementation habit into a delegation
 workflow.
 
-Better: use native subagents when available. Use `plan-conductor` or
-`agent-delegate` only when the user explicitly asks for external workers.
+Better: use same-host native children when they provide useful independent
+coverage. If the user explicitly requests an external worker or conductor,
+route to `agent-delegate` or `plan-conductor` under the shared policy and name
+the concrete benefit that makes the additional process worthwhile.

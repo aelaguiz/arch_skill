@@ -80,8 +80,9 @@ turn.
   <DOC_PATH>` exits 0, skill invokes `$arch-step implement-loop`. Status becomes
   `implementing`.
 - Native goal-mode continuation drives implement-loop and audit-implementation.
-- Once audit COMPLETE, skill spawns the epic
-  critic subprocess via `run_arch_epic.py critic-spawn`.
+- Once audit COMPLETE, the skill starts a new clean epic critic. It prefers a
+  native same-host child and uses `run_arch_epic.py critic-spawn` only when the
+  external critic lane was deliberately selected.
 - Critic returns `verdict: pass`. Skill marks sub-plan 1 Status
   `complete`. Writes verdict path. Loops.
 
@@ -298,7 +299,8 @@ true blocker stops progress. If the audit is missing, NOT COMPLETE, or reopens
 phases, the skill does not run the epic critic yet; it continues or reports the
 exact `$arch-step auto-implement <DOC_PATH>` command.
 
-When ArcStep audit is COMPLETE, the skill runs the normal epic critic. Only
+When ArcStep audit is COMPLETE, the skill starts a new clean epic critic,
+preferably as a native same-host child. Only
 after the critic passes does it mark sub-plan 1 `complete` and move to sub-plan
 2. If the critic returns `incomplete`, the sub-plan stays `implementing` and
 routes back through ArcStep instead of advancing.
@@ -307,85 +309,71 @@ routes back through ArcStep instead of advancing.
 
 Same-session `auto-plan` and `auto-implement` are drivers over existing
 `arch-step` proof. `auto-implement` needs ArcStep audit COMPLETE plus epic
-critic pass for each sub-plan. They do not use the role table, spawned workers,
-polling policy, or spawned-harness run directory.
+critic pass for each sub-plan. They do not use the external role table,
+external workers, polling policy, or external-harness run directory unless an
+external critic was deliberately selected.
 
-## Example 5 — Spawned-harness automatic mode with role-based workers
+## Example 5 — Role-based automatic mode, native by default
 
 ### User invokes
 
-> "Use `$arch-epic` to implement this approved payments migration
-> epic automatically. Ask me which agents to use."
+> "Use `$arch-epic` to implement this approved payments migration epic
+> automatically."
 
-### Role-table gate
+### Native dispatch
 
 The epic doc already has `sub_plans_approved: true` and no
-`auto_execution` block. The skill asks one consolidated question for
-the spawned-harness role table:
+`auto_execution` block. The active host exposes native children that can read
+and edit the shared workspace, so the skill does not manufacture a provider or
+model question. It announces:
 
 ```text
-Before I run the epic automatically, I need the role execution table.
-
-- epic_planner: drafts/repairs sub-plan North Stars and requirement coverage
-- implementation_worker: edits code/docs and runs verification
-- critic: checks North Star, plan readiness, completion, and scope drift
+epic_planner -> native, clean, new child; exact-child resume for repair
+implementation_worker -> native, clean, new child; exact-child resume for repair
+critic -> native, clean, new child for every independent gate; read-only
 ```
 
-### User replies
-
-> "Planner Claude Fable 5 high, implementation Codex gpt-5.6-sol
-> xhigh, critic Codex gpt-5.6-sol xhigh."
+For Codex native dispatch, each new role uses `fork_turns: "none"`. In Claude,
+each is a clean named subagent, not a full conversation fork. The parent records
+the exact planner/worker handles, keeps context separate from permissions and
+worktree sharing, and forbids nested fanout in every role prompt.
 
 ### `auto-run` mode
 
-The skill resolves and announces:
+For sub-plan 1, the parent orchestrator launches one role at a time:
 
-```text
-epic_planner -> runtime=claude, model=claude-fable-5, effort=high
-implementation_worker -> runtime=codex, model=gpt-5.6-sol, effort=xhigh
-critic -> runtime=codex, model=gpt-5.6-sol, effort=xhigh
-poll_seconds -> 180
-quiet_floor_seconds -> 900
-stuck_floor_seconds -> 1800
-max_runtime_seconds -> 7200
-```
-
-It writes `auto_execution` to the epic doc and initializes:
-
-```text
-.arch_skill/arch-epic/auto/payments-migration/run-<ts>/
-```
-
-For sub-plan 1, the parent orchestrator stays compact and launches
-one child at a time:
-
-1. Planner harness creates the numbered per-epic sub-plan DOC_PATH
+1. A clean planner creates the numbered per-epic sub-plan DOC_PATH
    and Epic Requirement Coverage.
-2. Critic harness checks the North Star / coverage gate.
+2. A new clean critic checks the North Star / coverage gate.
 3. Implementation worker edits the repo and updates the worklog.
-4. Critic harness checks completion and scope drift.
+4. Another new clean critic checks completion and scope drift.
 5. If a critic finds ordinary in-scope unfinished work, the parent
-   resumes the same planner or implementation worker session with the
+   resumes the exact planner or implementation worker child with the
    critic verdict as evidence. The critic does not prescribe repair
    steps.
 
-The skill starts long planner and implementation children in detached mode,
-then watches `child-status` and `child-tail` at the pinned `poll_seconds`
-cadence while their `events.jsonl`, `stderr.log`, and `stream.log` grow. It
-does not poll every few seconds, it does not call a child failed just because
-there is no final artifact after a short window, and it does not plan sub-plan
-2 until sub-plan 1 passes its critic gates.
+The skill uses host status/wait primitives and does not plan sub-plan 2 until
+sub-plan 1 passes its critic gates.
+
+### Explicit external-harness variant
+
+If the user instead says, "Use external harnesses: planner Claude Fable 5 high,
+implementation Codex gpt-5.6-sol xhigh, critic Codex gpt-5.6-sol xhigh," those
+provider/model choices are the concrete external benefit. The skill resolves
+and pins that role table, writes `auto_execution`, initializes
+`.arch_skill/arch-epic/auto/payments-migration/run-<ts>/`, and uses
+`run_arch_epic.py` only for external invocation, detached monitoring, exact
+session resume, and structured receipts. The same depth-first gates and
+exact-role repair semantics apply.
 
 ## Takeaways
 
-- In spawned-harness automatic mode, the user makes a bounded set of decisions:
-  goal, decomposition, role execution policy, and scope changes. Everything
-  else runs without their attention.
-- Automatic repair is same-role session resume. The implementer keeps its
-  context; the critic stays fresh and observation-only.
-- `pass-after-retry` in stepwise has no analogue here. Spawned-harness mode may
-  resume the same role session after a critic failure, but the sub-plan only
-  advances after a fresh critic pass.
+- Native same-host roles need no invented model table. External role policy is
+  requested only when its concrete benefit is deliberate.
+- Automatic repair resumes the exact planner or implementer. Every independent
+  critic starts clean and remains observation-only.
+- `pass-after-retry` in stepwise has no analogue here. A role may resume after
+  a critic failure, but the sub-plan only advances after a new clean critic pass.
 - The epic critic catches cross-plan issues; arch-step catches
   within-plan issues.
 - Halting is normal when the critic flags approved-scope work. That is

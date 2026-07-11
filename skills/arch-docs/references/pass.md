@@ -46,6 +46,19 @@ This file is scaffolding, not a shipped artifact.
 - When staleness, datedness, or one-off status matters, inspect `git log` and identify the last meaningful content change.
 - Record history evidence only where it changed the keep/delete judgment.
 
+When independent topic or doc-surface families make parallel mapping worth the
+integration cost, the parent may assign non-overlapping slices to new clean
+same-host native children. Codex uses `fork_turns: "none"`; Claude uses a clean
+named or custom subagent rather than a bare conversation fork or skill
+`context: fork` shorthand. Give each child the strongest available read-only
+capability and an explicit instruction not to edit or write files, including
+the ledger. Children may not fan out or invoke delegation, consult, or review
+skills unless the parent assigns a bounded nested scope and budget. Bound the
+wave by host slots, shared-file or shared-state collision risk, and the
+parent's integration capacity. The parent captures and later compares current
+git status and the relevant diff, accounts for every return, reconciles
+overlap, and writes accepted mapping evidence into the ledger.
+
 ## Ground-truth
 
 - For each topic, read the current code and current shipped behavior.

@@ -22,8 +22,9 @@ After this command runs:
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
-- `skills/_shared/depth-first-planning.md`
+- `../../_shared/agent-orchestration-policy.md` when the audit is dispatched to an independent child
+- `../../_shared/scope-and-convergence.md`
+- `../../_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 5, 6, 7, `WORKLOG_PATH`, and `implementation_audit`
 
 ## Inputs and `DOC_PATH` resolution
@@ -61,6 +62,32 @@ After this command runs:
 - `Manual Verification Pending:` notes when needed
 
 When this command runs inside `implement-loop`, it alone owns the authoritative implementation-audit block, the `Verdict (code)` outcome, and the clean `Use $arch-docs` handoff.
+
+## Independent child auditor
+
+Direct invocation follows the normal writes above. When `implement-loop`
+dispatches an independent auditor, the child performs the same audit reasoning
+but is analysis-only: request a read-only capability when the host exposes one
+and explicitly forbid edits, writes, patches, commits, or child creation. The
+parent captures and rechecks repo state and remains the command owner that
+integrates accepted findings into `DOC_PATH`, writes the authoritative audit
+block, and reopens phases.
+
+The child returns:
+
+- whether the bounded audit completed and its proposed `COMPLETE` or
+  `NOT COMPLETE` verdict
+- every material finding with file/symbol or plan-section anchors, scope
+  disposition, plan expectation, code reality, and required repair or
+  subtraction
+- checks and searches performed, their results, and any unresolved assumptions
+- manual-verification items kept separate from code blockers
+- confirmation that it made no writes and created no children, plus its exact
+  handle when the parent may need a bounded follow-up
+
+The parent verifies those claims against current workspace truth before
+acceptance. A later independent recheck uses a new clean auditor; a bounded
+clarification of the same audit may resume the exact auditor handle.
 
 ## Communication contract
 

@@ -41,7 +41,7 @@ Running `auto-plan` should end in one of two honest states:
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
+- `../../_shared/scope-and-convergence.md`
 - `section-quality.md` for Section 3, Section 4, Section 5, Section 6, Section 7, and `planning_passes`
 - `arch-research.md`
 - `arch-deep-dive.md`

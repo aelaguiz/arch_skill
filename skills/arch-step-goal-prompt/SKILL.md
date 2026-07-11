@@ -54,6 +54,22 @@ reviewers only when they are requested or already required.
   prompt reference.
 - Use `$arch-step` doctrine for ArcStep command behavior. Do not re-invent its
   workflow, receipt rules, implementation frontier, or audit standard.
+- When a generated prompt creates, resumes, replaces, or coordinates another
+  agent, apply `../_shared/agent-orchestration-policy.md`. At the smallest
+  handoff point, make the role, native or external transport, clean/bounded/full
+  starting context, exact resume or fresh replacement, isolation and
+  capabilities, parent/child topology, and return evidence clear. These are
+  reasoning decisions, not a mandatory form to paste into every goal.
+- Default independent reviewers and mappers to new clean same-host native
+  children when the host can do the job. Make them read-only by capability
+  when available, also say no edit/no write, prevent unassigned nested fanout,
+  and require the parent to check current repo state before accepting the
+  result. Resume the exact implementer for its authorized repairs; start the
+  next independent recheck as a fresh clean child.
+- Keep generic goal semantics free of provider CLI syntax. When an external
+  lane is selected, say what concrete provider, exact-model/profile,
+  lifecycle, isolation, automation, or receipt benefit it provides and weigh
+  that against its extra process and integration cost.
 - Make false finish lines explicit without turning them into a giant checklist:
   marker-only planning, stale plan reads, docs-only completion, name-only
   completion, status-only completion, copied source truth, pending requested
@@ -76,17 +92,19 @@ reviewers only when they are requested or already required.
 1. Read `references/arcstep-goal-prompt-contract.md`.
 2. Apply `$prompt-authoring` guidance for Codex goal prompts or persistent goal
    objectives.
-3. Identify the run type from the user's language:
+3. If the requested goal will dispatch another agent, read
+   `../_shared/agent-orchestration-policy.md` before drafting its handoff.
+4. Identify the run type from the user's language:
    - planning: `auto-plan`
    - implementation: `implement-loop` or `auto-implement`
    - mixed continuation: `full-auto`
    - unknown: write the prompt so the future agent resolves the next ArcStep
      command from the canonical doc instead of guessing
-4. Identify the controlling source truth:
+5. Identify the controlling source truth:
    - the user-supplied `DOC_PATH`, if present
    - the current canonical ArcStep doc, if the user clearly points at one
    - any user-named audit log, worklog, reviewer output, or history summary
-5. If a required source path is missing and cannot be inferred from context,
+6. If a required source path is missing and cannot be inferred from context,
    produce a prompt skeleton that names the missing slot plainly instead of
    inventing hidden source truth.
 
@@ -99,9 +117,10 @@ reviewers only when they are requested or already required.
    resolve the command from the canonical doc.
 4. Add a light alignment loop: reread source truth, compare work to intent,
    check the most likely false finish line, then go deeper before closing.
-5. Add reviewer or auditor handling only when the user asked for it, the plan
-   already requires it, or the goal is explicitly repairing failed
-   self-certification.
+5. Add reviewer, auditor, or worker handling only when the user asked for it,
+   the plan already requires it, or the goal is explicitly repairing failed
+   self-certification. Put the dispatch choices in that role's handoff rather
+   than spreading generic orchestration prose across the goal.
 6. Define done as a lean completion line: final source reread, current ArcStep
    frontier satisfied, required repairs handled, no requested reviewer or worker
    still pending, and a final report tied to source truth.
@@ -125,3 +144,6 @@ about any unresolved source path or assumption.
 
 - `references/arcstep-goal-prompt-contract.md` - prompt shape, source-truth
   compression, ArcStep run types, reviewer gates, and completion traps.
+- `../_shared/agent-orchestration-policy.md` - transport, context,
+  continuation, isolation, topology, and return-evidence semantics for any
+  generated agent or reviewer handoff.

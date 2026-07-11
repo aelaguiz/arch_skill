@@ -1,9 +1,10 @@
 # Delegate Prompt And Output
 
-The delegation prompt must make the child useful without relying on the parent
-chat. Fresh prompts have no session history. Resume prompts do have child
-session history, but still need a bounded instruction, unchanged constraints,
-and explicit new evidence.
+The external delegation prompt must make the worker useful without relying on
+the parent chat. Fresh prompts have no session history. Resume prompts do have
+that exact worker's session history, but still need a bounded instruction,
+unchanged constraints, and explicit new evidence. The parent owns fanout,
+scope assignment, and integration.
 
 ## Prompt Skeleton
 
@@ -11,7 +12,7 @@ Write a prompt like this to `prompt.md` and adapt the sections to the actual
 task:
 
 ```markdown
-You are a delegated agent for <one-line subject>.
+You are an externally delegated worker for <one-line subject>.
 You do not have the parent chat context. Read the repo and artifacts directly
 from disk.
 Your job is to complete the delegated task in the shared worktree, verify it,
@@ -19,6 +20,11 @@ and report exactly what changed.
 
 # Delegation Mode
 
+- Transport: external process/session
+- External benefit: <provider, exact model/profile, lifecycle, process
+  isolation, automation, structured receipt, or another concrete reason>
+- Starting context: <clean prompt-and-disk context | existing exact session context>
+- Continuation: <new one-shot | new resumable session | exact-session resume>
 - Mode: fresh-one-shot | fresh-resumable | resume
 - Resume source: <previous run directory, session id, or "none">
 
@@ -27,6 +33,8 @@ and report exactly what changed.
 - Group: <group objective, or "none">
 - Child id: <stable child id, or "single">
 - Sibling tasks: <short names of sibling tasks, or "none">
+- Nested fanout: <"prohibited" by default, or an explicit bounded scope and
+  concurrency budget assigned by the parent>
 
 <For resume mode only: Continue the same delegated task using your existing
 session history. Apply the new instruction or evidence below. The original
@@ -65,7 +73,7 @@ You may:
 3. Run commands needed to inspect, implement, format, lint, test, or verify.
 4. Use installed skills when their trigger and contract fit the delegated task.
 5. Make pragmatic implementation decisions that are implied by repo evidence.
-6. Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+6. Make local implementation choices inside the assigned scope.
 
 You must not:
 
@@ -74,9 +82,11 @@ You must not:
 2. Revert unrelated work or user changes.
 3. Start external continuation controllers, detached background workers, or nested
    orchestration workflows as a continuation strategy.
-4. Expand beyond the allowed write scope unless the task is impossible without
+4. Create child agents or invoke delegation/consult skills unless the parent
+   explicitly assigned a bounded nested scope and concurrency budget above.
+5. Expand beyond the allowed write scope unless the task is impossible without
    it; if that happens, stop and report the blocker.
-5. Paste or expose secrets. Use environment variables when the task requires a
+6. Paste or expose secrets. Use environment variables when the task requires a
    secret that is already available in the environment.
 
 # Process
@@ -86,13 +96,12 @@ Please do all of the following:
 1. Read the local instructions and user-named inputs, then inspect whatever repo
    evidence is needed to complete the task.
 2. Inspect the current repo state before editing.
-3. Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
-4. Implement the smallest change that satisfies the success bar.
-5. Use installed skills only when they directly improve the delegated work and
-   do not spawn subagents.
-6. Run verification proportional to the changed surface.
-7. Re-read changed files or inspect the diff before finalizing.
-8. If blocked, stop with a precise blocker instead of inventing a workaround.
+3. Implement the smallest change that satisfies the success bar.
+4. Use installed skills only when they directly improve the delegated work and
+   do not violate the parent-owned fanout boundary.
+5. Run verification proportional to the changed surface.
+6. Re-read changed files or inspect the diff before finalizing.
+7. If blocked, stop with a precise blocker instead of inventing a workaround.
 
 # Report Contract
 
@@ -131,7 +140,8 @@ When reporting the result upstream:
 1. Lead with `STATUS` verbatim.
 2. Include changed files, skills used, verification, blockers, and follow-up.
 3. Name the runtime/model/effort and the run directory.
-4. Name the delegation mode and session id when the run is resumable.
+4. Name the external transport, concrete benefit, starting context, delegation
+   mode, and session id when the run is resumable.
 5. Check repo status before reporting changed files as final truth.
 6. Spot-check blockers and changed-file claims before treating them as true.
 7. If you disagree with the child after spot-checking, say so explicitly.
@@ -160,17 +170,24 @@ Do not:
 
 - Delegate vague work without naming the success bar or write scope.
 - Use this skill for a read-only cold read. Use `$fresh-consult`.
+- Launch an external same-provider process merely to get clean context,
+  parallelism, or continuation that the active host's native children already
+  provide. Account for the external-process cost described in the owning skill
+  and shared policy without treating it as a ban.
 - Ask the child to keep working asynchronously after the parent returns.
 - Hide missing context behind parent summaries. Point at ground truth.
 - Ask the child to use external continuation controllers or ordered subprocess workflows
   as part of this foreground delegation path.
-- Block parallel launch because sibling write scopes might overlap. Handle real
-  conflicts from evidence after they happen.
+- Ignore known shared-owner collisions when planning fanout. Sequence colliding
+  work or assign non-overlapping write scopes; do not treat mere file proximity
+  as proof of a collision.
 - Resume an ambiguous "latest" session instead of an explicit session id or
   prior run directory.
 - Change runtime when resuming a session. Resume through the same runtime that
   created the session.
 - Treat the child as final authority. It is a capable worker whose output still
   needs parent-side sanity checks.
+- Tell workers to maximize their own fanout. The parent owns decomposition and
+  concurrency unless it explicitly assigns a bounded nested scope and budget.
 - Reuse old run directories for new turns. A resume turn still gets a new run
   directory that points back to the previous session source.

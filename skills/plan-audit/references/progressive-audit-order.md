@@ -65,10 +65,11 @@ For repo-backed plans, list the code and contract surfaces the plan depends on:
 - adjacent same-contract or same-behavior surfaces that may need to converge
 - side doors and alternate entrypoints
 
-Split broad read-only code mapping across native subagents or parallel-agent
-features provided by the current coding harness whenever available. Record the
-reason if native subagents are unavailable, prohibited by local instructions, or
-unnecessary because the audit is too small to split.
+When broad code mapping contains independent lenses or path families, use
+`child-prompt-contract.md` to dispatch a proportional set of new clean native
+read-only children. Keep scopes non-overlapping and account for every return in
+the parent. A direct parent pass is appropriate when splitting would not improve
+coverage enough to justify integration.
 
 ## 6. Read All Relevant Code
 

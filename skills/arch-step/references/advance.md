@@ -11,7 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
+- `../../_shared/scope-and-convergence.md`
 - `section-quality.md`
 - `status.md`
 

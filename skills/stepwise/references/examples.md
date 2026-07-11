@@ -147,7 +147,7 @@ honest post-gate audit if the owner primitive performs an idempotent write.
 
 ### Rejudge
 
-A fresh critic judges the repaired attempt. If the worker left honest evidence
+A new clean critic judges the repaired attempt. If the worker left honest evidence
 and did not fabricate the original timeline, the step can pass.
 
 ## Example 2 - Upstream input is the real root cause
@@ -163,13 +163,15 @@ resumes the step-3 session read-only with the same diagnostic prompt shape.
 
 If step 3 confirms it picked the wrong stage from its own owner runbook, root
 cause is step 3. Stepwise authors a source-tagged repair prompt for step 3,
-repairs step 3, runs the step-3 critic, then respawns steps 4 and 5 fresh.
-Those downstream tries are marked `origin.kind = "respawn-after-upstream"` so
-the run record shows they were fresh context after an upstream fix, not
-repairs of the downstream worker's own attempt.
+repairs step 3, runs the step-3 critic, then starts new clean replacements for
+steps 4 and 5. Those downstream tries are marked
+`origin.kind = "respawn-after-upstream"` so the run record shows they used
+clean context after an upstream fix, not repairs of the downstream worker's
+own attempt.
 
-Why fresh respawn matters: step 5's session history was built around the wrong
-stage. Resuming it after step 3 changes would carry poisoned context forward.
+Why clean replacement matters: step 5's session history was built around the
+wrong stage. Resuming it after step 3 changes would carry poisoned context
+forward.
 
 ## Example 3 - Mechanical missing artifact
 
@@ -183,7 +185,7 @@ Even this simple failure enters the same protocol:
 3. Worker confirms it wrote notes to the wrong path.
 4. Stepwise authors a source-tagged repair prompt: write the expected artifact
    at the manifest path or stop with evidence that the path is impossible.
-5. Fresh critic rejudges.
+5. A new clean critic rejudges.
 
 Simple failures converge quickly. They do not need a separate shortcut path.
 

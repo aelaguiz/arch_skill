@@ -2,7 +2,8 @@
 
 ## Goal
 
-Implement locally against the compact doc, keep the worklog current, and self-audit without inventing a new plan.
+Implement under active-host ownership against the compact doc, keep the worklog
+current, and audit without inventing a new plan.
 
 ## Required behavior
 
@@ -17,6 +18,31 @@ Implement locally against the compact doc, keep the worklog current, and self-au
 - Classify new findings with the shared scope dispositions. A newly discovered
   same-contract path is still `new-scope-needs-human` after freeze; do not add
   it automatically. Subtract `unauthorized-built-scope`.
+
+## Optional clean child use
+
+The parent may assign a clean same-host native implementation child a
+low-collision slice only when its owner paths do not overlap another writer.
+Give it `DOC_PATH`, the exact slice, allowed write paths, required checks, the
+frozen scope boundary, and a return contract covering files changed, checks
+and results, unresolved findings, collision risks, and its durable handle. The
+parent retains ownership of `DOC_PATH`, `WORKLOG_PATH`, scope decisions, and
+final integration. Children do not create children unless the parent
+explicitly assigned a bounded nested scope and budget.
+
+If that slice needs repair, resume the exact implementer handle with the
+accepted findings and current delta. If confidence needs an independent
+completion recheck, start a new clean same-host native reviewer. In Codex use
+`fork_turns: "none"`; in Claude Code use a clean named or custom subagent.
+Give the reviewer read-only capability when available plus explicit no-edit and
+no-write guidance. Record repo state before dispatch, verify it after the
+return, and let the parent integrate the evidence and write the authoritative
+audit block.
+
+An external implementation or review session is still valid when its concrete
+provider, exact-model/profile, lifecycle, isolation, automation, or receipt
+benefit is worth the added process and integration cost. Name that benefit in
+the dispatch rather than externalizing ordinary same-host work by habit.
 
 ## Completion rule
 

@@ -29,13 +29,15 @@ This file is the contract for what a strong skill must contain, what it must not
    - Write the `description` so it explains what the skill does, when it should fire, and what nearby work is out of scope while staying within the runtime length cap.
 7. **Runtime-specific machine behavior**
    - Encode host-specific invocation, gating, or command behavior in frontmatter or supported machine-readable fields rather than hiding it in prose.
-8. **Core runtime contract**
+8. **Agent-orchestration ownership when applicable**
+   - Require agent-using skills to load the installed shared orchestration policy, keep role-local workflow in the owning skill, and avoid duplicating shared transport, context, continuation, isolation, topology, or integration doctrine.
+9. **Core runtime contract**
    - Put the durable workflow, boundaries, and output expectations in `SKILL.md`.
-9. **Progressive disclosure**
+10. **Progressive disclosure**
    - Move detailed doctrine, schemas, examples, and audits into `references/`.
-10. **Determinism only when earned**
+11. **Determinism only when earned**
    - Add `scripts/` only when natural-language execution keeps failing, the same code is being re-authored repeatedly, or exact validation is the real job. Record why prompt-only guidance is not enough.
-11. **Validation**
+12. **Validation**
    - Test trigger quality, package integrity, and real execution separately.
 
 ## What makes a skill high impact
@@ -127,6 +129,7 @@ Never ship a skill that relies on:
 - formal parameter schemas, flags, menus, or launchers for normal language asks
 - fake blockers that stop the agent before it has used the obvious owning prompt or skill
 - runners, controllers, or harnesses added when a prompt-only runbook would do the job
+- agent-using packages that duplicate the shared orchestration policy or hide transport, context, continuation, isolation, topology, or integration choices in a skill-local dispatcher script
 - runtime dependence on external repo docs, hidden notes, or local prompt packs
 - bloated `SKILL.md` files that should have been split into references
 - decorative scripts added before proving the need for determinism
@@ -170,6 +173,8 @@ If the problem is:
 - Is the `description` precise enough to control triggering?
 - Is the `description` at or under 1024 characters unless the target runtime has a stricter cap?
 - Are runtime-specific invocation and gating rules encoded in machine-readable form where the host supports them?
+- If the skill dispatches agents, does it load the installed shared orchestration policy while keeping only role-local workflow doctrine in the package?
+- Is agent dispatch still a judgment-led prompt contract rather than a skill-local controller or orchestration-owned script?
 - Does `SKILL.md` contain only the durable contract and workflow?
 - Are detailed examples and doctrine in `references/` instead of bloating the entrypoint?
 - Are scripts present only because they add real deterministic value?

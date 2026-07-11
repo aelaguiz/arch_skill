@@ -11,7 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
+- `../../_shared/scope-and-convergence.md`
 - `section-quality.md` for TL;DR, Section 0, Sections 1, 2, 8, 9, 10, and `planning_passes`
 
 ## Inputs

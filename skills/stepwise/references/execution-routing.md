@@ -1,19 +1,23 @@
-# Execution routing: resolve user preferences against real steps
+# Dispatch routing: resolve transport and execution against real steps
 
-Execution routing is how the orchestrator turns optional user preferences
-into per-step runtime/model/effort choices. It exists so a user can say
+Dispatch routing is how the orchestrator turns the shared native preference,
+host capabilities, target doctrine, and optional user preferences into
+per-step transport/context choices and any external runtime/model/effort. It
+exists so a user can say
 "do all copywriting steps with Claude Fable 5" without forcing every step
 onto that model or teaching the skill a hidden taxonomy.
 
-Routing is a manifest-resolution step, not a script concern. The script runs
-the runtime/model/effort it is given. The orchestrator decides those values
-after it has drafted the real steps from target-repo doctrine.
+Routing is a manifest-resolution step, not a script concern. The orchestrator
+chooses transport after it has drafted the real steps from target-repo
+doctrine. `run_stepwise.py` runs only an already-selected external
+runtime/model/effort; it does not decide that an external process is needed.
 
 ## Inputs
 
 - The raw user prompt.
 - Target-repo doctrine and the drafted StepDescriptors.
-- Base execution defaults from `model-and-effort.md`.
+- Active-host native capabilities and any external execution defaults from
+  `model-and-effort.md`.
 - Optional routing preferences extracted from user language.
 
 ## Preference shape
@@ -26,6 +30,8 @@ reasoning:
   "source_quote": "all copywriting steps using Claude Fable 5",
   "applies_to": "steps whose primary artifact is learner-facing copy",
   "step_execution": {
+    "transport": "external",
+    "starting_context": "clean",
     "runtime": "claude",
     "model": "claude-fable-5"
   },
@@ -33,7 +39,7 @@ reasoning:
 }
 ```
 
-`step_execution` applies to worker step sessions. `critic_execution` is
+`step_execution` applies to worker roles. `critic_execution` is
 optional and applies only when the user clearly says the critic should use a
 different runtime/model/effort. Do not apply worker preferences to critics by
 analogy.
@@ -43,7 +49,9 @@ omits runtime but names a model that only belongs to one runtime family, infer
 that runtime and say so in the rationale. If the runtime cannot be inferred
 responsibly, ask.
 
-The user's raw wording stays in `source_quote`; `step_execution.model` and
+The user's raw wording stays in `source_quote`; an explicit provider or exact
+model preference selects `transport: external` when the native host cannot
+honor it. `step_execution.model` and
 `critic_execution.model` store runnable model identifiers resolved by
 `model-and-effort.md`. When Codex uses Fugu, `step_execution.codex_profile` or
 `critic_execution.codex_profile` stores the profile name; the subprocess
@@ -54,19 +62,26 @@ command uses `codex exec -p <profile>`. Do not pass raw shorthand such as
 
 For each drafted step, resolve execution in this order:
 
-1. **Runtime feasibility.** A runtime that cannot run the step is invalid.
-   If the chosen CLI cannot satisfy the target doctrine or session mechanics,
-   do not force it.
-2. **Hard target doctrine.** If the target repo or process explicitly requires
+1. **Transport benefit and feasibility.** Prefer a clean native child when it
+   can do the same-host job. Select the external adapter when an explicit
+   provider/model request, durability, isolation, automation/receipt, or
+   another concrete benefit warrants it. Do not claim a native child has a
+   model, permission, background, or worktree capability the host does not
+   expose.
+2. **External runtime feasibility.** When external transport is selected, a
+   runtime that cannot run the step is invalid. Do not force a CLI that cannot
+   satisfy target doctrine or continuation mechanics.
+3. **Hard target doctrine.** If the target repo or process explicitly requires
    Claude, Codex, or Grok for a step, honor that unless the user explicitly
    overrides it and accepts the conflict.
-3. **Explicit step or label preference.** A user phrase like "step 4 on
+4. **Explicit step or label preference.** A user phrase like "step 4 on
    Codex" or "the copy pass on Claude" beats a broader semantic preference.
-4. **Semantic category preference.** A phrase like "copywriting steps" applies
+5. **Semantic category preference.** A phrase like "copywriting steps" applies
    only after comparing it to the drafted step label, instruction, inputs,
    and expected artifact.
-5. **Defaults.** Use base step or critic execution defaults when no preference
-   applies.
+6. **Defaults.** Use clean native dispatch when no external benefit or hard
+   doctrine applies. Use external defaults only within a selected external
+   lane.
 
 Critic execution resolves independently. The default critic runtime is the
 critic default from intake; if missing, it may inherit the step runtime only
@@ -123,6 +138,9 @@ Every StepDescriptor gets both resolved execution blocks:
 ```json
 {
   "step_execution": {
+    "transport": "external",
+    "starting_context": "clean",
+    "continuation": "new-then-exact-resume",
     "runtime": "claude",
     "model": "claude-fable-5",
     "effort": "xhigh",
@@ -130,19 +148,22 @@ Every StepDescriptor gets both resolved execution blocks:
     "reason": "Matched learner-facing copy artifact lesson-copy.json."
   },
   "critic_execution": {
-    "runtime": "codex",
-    "model": "gpt-5.6-sol",
-    "effort": "xhigh",
-    "source": "execution_defaults.critic",
-    "reason": "No critic-specific override was provided."
+    "transport": "native",
+    "starting_context": "clean",
+    "continuation": "new-each-verdict",
+    "runtime": "active-host",
+    "model": null,
+    "effort": null,
+    "source": "shared native preference",
+    "reason": "The active host can run the independent critic without an external capability benefit."
   }
 }
 ```
 
-Repair attempts reuse the same execution block as the original step. Upstream
-repairs reuse the reopened step's block. Downstream fresh re-runs use the
-confirmed manifest's resolved blocks; the orchestrator does not reinterpret
-the user's prompt mid-run.
+Repair attempts resume the exact worker using the original dispatch block.
+Upstream repairs reuse the reopened step's block. Downstream replacement runs
+start new clean children from the confirmed manifest's resolved blocks; the
+orchestrator does not reinterpret the user's prompt mid-run.
 
 ## Anti-patterns
 
@@ -152,5 +173,7 @@ the user's prompt mid-run.
   the example, not a permanent category.
 - Do not apply worker preferences to critics unless the user clearly said so.
 - Do not hide conflicts by falling back to defaults.
+- Do not route to an external process merely because the examples name CLI
+  models; require the concrete benefit.
 - Do not change model or effort because a step failed. Step failure is handled
   by the diagnose-and-repair protocol, not by changing the runtime.

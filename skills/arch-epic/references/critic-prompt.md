@@ -1,7 +1,7 @@
 # Critic prompt body
 
 The orchestrator renders this template, fills the placeholders, and
-sends it as the sole prompt to the critic subprocess. No preamble,
+sends it as the sole prompt to a new clean critic child. No preamble,
 no wrapper, no orchestrator commentary. The critic returns one
 EpicVerdict JSON and ends its turn.
 
@@ -20,6 +20,9 @@ is not authority. You may reject scope drift; you may not expand scope.
 Do not edit files. Do not run arch-step commands. Do not suggest
 repair steps or implementation commands. Return one JSON document
 conforming to the EpicVerdict schema and end your turn.
+Do not create or coordinate other model agents, manually start model-harness
+processes, or invoke delegation/consult skills. The parent owns fanout and
+integration.
 
 ## Sub-plan identity
 
@@ -204,12 +207,13 @@ Absolute path to the epic doc. The critic needs it to see the
 approved Decomposition shape and any epic-level Decision Log
 entries that might explain a sub-plan's apparent divergence.
 
-## Runtime surfacing
+## External adapter surfacing
 
-Claude's structured output via `--json-schema` surfaces the JSON
+When the external critic adapter is deliberately selected, Claude's structured
+output via `--json-schema` surfaces the JSON
 in the top-level result's `structured_output` field. Codex's
 `--output-schema` writes the JSON verbatim to the `-o` file. Grok receives the
 schema appended to the prompt, and the script post-validates the final JSON
-text. The critic does not need to worry about which runtime it is on. It
-returns one JSON document per the schema; the runtime and the script get it to
-the right place.
+text. Native critics return the same JSON contract through the host's child
+return surface. The critic does not need to worry about transport; it returns
+one JSON document per the schema and the parent validates it.

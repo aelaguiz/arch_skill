@@ -43,14 +43,22 @@ The test is whether a new reader can see the normal path without decoding a rout
 - Keep the shipped flow self-contained. Named peer skills are preferred levers when installed, not hidden dependencies.
 - Do not encode Amir's private workflows, project-specific habits, or current repo accidents as universal flow law.
 - Add scripts only for narrow utility work that natural-language execution handles poorly.
+- For the DAG-grounded audit, read `../_shared/agent-orchestration-policy.md`.
+  Walkers are new clean native children by default, read-only in role and
+  capability where the host supports it, with no nested fanout. The parent
+  owns scope resolution, concurrency, evidence validation, state checks, and
+  final graph synthesis.
 
 ## First move
 
 1. Classify the job as `design`, `audit`, or `repair`.
 2. Read `references/flow-design-principles.md`.
 3. Read `references/workflow-and-modes.md` for the selected mode.
-4. Read `references/examples-and-anti-examples.md` only when the boundary or failure mode is still fuzzy.
-5. Map the visible flow frontier: candidate skills, their jobs, their inputs, their handoff artifacts, and the nearest peer each one could be confused with.
+4. For a DAG-grounded audit, read
+   `../_shared/agent-orchestration-policy.md` before choosing walker transport,
+   context, isolation, and fanout.
+5. Read `references/examples-and-anti-examples.md` only when the boundary or failure mode is still fuzzy.
+6. Map the visible flow frontier: candidate skills, their jobs, their inputs, their handoff artifacts, and the nearest peer each one could be confused with.
 
 ## Workflow
 
@@ -79,6 +87,7 @@ The test is whether a new reader can see the normal path without decoding a rout
 - `references/workflow-and-modes.md` - how to run design, audit, and repair modes (including the DAG-grounded audit sub-mode) without turning the skill into a prompt runner
 - `references/examples-and-anti-examples.md` - small examples and failure patterns that teach the judgment behind the principles
 - `references/dag-substrate-format.md` - SSOT for the DAG substrate document the agent writes during a DAG-grounded audit (mermaid graph + edge table + unresolved-reference list, plus the closed node-kind and edge-kind enums)
-- `references/parallel-walk-protocol.md` - per-sub-agent evidence schema, fanout sizing, scope resolution rules, and the code-block whitelist that prevents shell-variable false positives during reference extraction
+- `references/parallel-walk-protocol.md` - clean native walker contract, evidence schema, fanout judgment, scope resolution, and the semantic code-context filter for dollar-prefixed and exact backticked peer-skill references
 - `references/waste-pattern-catalog.md` - 7 seed recognition tests for the audit reasoning step (over-promotion, duplicate canonical-stage criteria, lone-wolf, primitive vs hand-coded loop, broken edge, registry-stage mismatch, duplicate fan-out); explicitly NOT a rule engine
 - `references/lessons-studio-worked-example.md` - evidence-anchored worked example calibrating over-promotion recognition; never named in the audit prompt itself
+- `../_shared/agent-orchestration-policy.md` - shared transport, explicit context, continuation, isolation, topology, and result semantics for DAG walkers

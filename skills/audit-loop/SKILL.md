@@ -27,7 +27,9 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 - `_audit_ledger.md` at repo root is the source of truth. Add it to the root `.gitignore` immediately.
 - Triage before code changes. Do not skip straight to editing because one suspicious line looks fixable.
 - Exhaustively map shipped code surfaces and the current proof surface before any product-code or test edits. If the map is incomplete, update the ledger and stop.
-- When the runtime supports delegation, use parallel read-only agents during mapping. Otherwise build the same exhaustive map sequentially.
+- When independent surface families make delegation worthwhile, use bounded
+  clean native read-only mapping slices. Otherwise build the same exhaustive
+  map sequentially.
 - Rank consequence and impact first, then proof weakness, then fragility. Do not let a tiny safe fix outrank a higher-consequence surface.
 - Select a risk front from the completed map, not from a hunch.
 - Fix bugs inside the existing product, API, and behavior contracts. If the only apparent fix would change a contract, log the conflict and stop.
@@ -51,12 +53,39 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 
 1. Read `references/ledger-contract.md`.
 2. Read `references/shared-doctrine.md`.
-3. Resolve the mode:
+3. Read `../_shared/agent-orchestration-policy.md` before dispatching any
+   mapping or review child.
+4. Resolve the mode:
    - `run`
    - `review`
    - `auto`
-4. Resolve repo root, root `.gitignore`, and `_audit_ledger.md`.
-5. Read the matching mode reference and `references/quality-bar.md`.
+5. Resolve repo root, root `.gitignore`, and `_audit_ledger.md`.
+6. Read the matching mode reference and `references/quality-bar.md`.
+
+## Parent And Child Roles
+
+- The active parent owns audit scope, ledger writes, decomposition, every
+  child-result account, synthesis, accepted repair direction, and the final
+  controller verdict. Capture current git status and the relevant diff before
+  read-only children run, then compare current state before accepting their
+  evidence.
+- Mapping slices and each independent `review` critic default to new clean
+  same-host native children. In Codex set `fork_turns: "none"`; in Claude use
+  a clean named or custom subagent, not a bare conversation fork or skill
+  `context: fork` shorthand. Use bounded or full inherited context only for a
+  named dependency that exists solely in chat; ordinary context travels via
+  the ledger, exact paths, and the child brief.
+- Give mappers and critics the strongest read-only capability the host exposes
+  and explicitly tell them not to edit or write files, including the ledger.
+  They may not create children or invoke delegation, consult, or review skills
+  unless the parent explicitly assigns a bounded nested scope and budget.
+- Split only across independent surface families or review lenses. Bound
+  fanout by available host slots, shared-file or shared-state collision risk,
+  and the parent's capacity to inspect and integrate every return.
+- If a controller needs a background or external process after the parent turn
+  ends, that transport supplies lifecycle continuity, not critic freshness.
+  Choose it only when that concrete lifecycle or another benefit is worth its
+  process and integration cost under the shared policy.
 
 ## Workflow
 
@@ -77,7 +106,9 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 
 - Stay docs-only.
 - Repair the ledger if it is missing or malformed.
-- Re-read the ledger and current repo state from fresh context.
+- Have a new clean independent critic re-read the ledger and current repo
+  state without writing files; the parent spot-checks and integrates its
+  return.
 - Confirm whether the map is complete, whether the current or next front comes from the ranked map, and whether verification depth matched the front's consequence.
 - Confirm whether the latest editful pass completed and passed the post-change audit for safety, downstream consequences, elegance, and duplication.
 - Check whether audit-loop-added or materially rewritten tests explain their purpose clearly enough for a later reviewer to spot a misunderstanding in the protected behavior or expected experience.
@@ -91,7 +122,9 @@ this skill does not install or arm automation hooks.
 Workflow:
 
 1. Run one truthful `run` pass. Mapping-only is correct on the first turns.
-2. Run a fresh `review` pass against `_audit_ledger.md` and current repo state.
+2. Run a new clean independent `review` critic against `_audit_ledger.md` and
+   current repo state, using a same-host native child by default while the
+   parent session is active.
 3. If review says `CONTINUE`, run the next `$audit-loop run` pass.
 4. In native goal mode, keep repeating until review says `CLEAN` or `BLOCKED`.
 5. Outside native goal mode, stop after one run/review cycle and print the next exact command.
@@ -118,6 +151,6 @@ Workflow:
 - `references/ledger-contract.md` - root ledger shape, status vocabulary, and cleanup lifecycle
 - `references/shared-doctrine.md` - prioritization, fix discipline, and anti-patterns
 - `references/run.md` - mapping-aware audit or fix pass
-- `references/review.md` - fresh docs-only verdict pass
+- `references/review.md` - new clean docs-only verdict pass
 - `references/audit-loop-controller.md` - audit-loop auto status and verdict source
 - `references/quality-bar.md` - strong vs weak triage, findings, tests, and stop decisions

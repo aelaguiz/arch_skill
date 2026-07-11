@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after shaping the prompt with prompt-authoring discipline. Use when the user asks to ask ChatGPT, consult ChatGPT in the browser, get a ChatGPT web opinion, or run a prompt through the logged-in ChatGPT UI with optional attachments. Defaults to Pro with Extended thinking when the user does not specify mode or effort; runs prompts serially and waits patiently for long Pro responses. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
+description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after shaping the prompt with prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, or an exact existing ChatGPT conversation continued. New clean conversation is the default; exact-conversation continuation must be explicit. Defaults to Pro with Extended thinking, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -12,6 +12,12 @@ already logged-in BrowserOS browser session.
 
 This is a prose-only helper skill. It uses BrowserOS MCP directly. It ships no
 scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
+
+Read `../_shared/agent-orchestration-policy.md` before the query. ChatGPT Web is
+an intentional provider/browser-capability lane rather than a generic local
+child-agent route. Starting a new conversation and continuing an exact existing
+conversation are different context choices; never inherit whatever conversation
+happens to be open without deciding which one the user wants.
 
 ## Use When
 
@@ -37,12 +43,15 @@ scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
   direct cookie/session handling.
 - Use one BrowserOS `https://chatgpt.com/` tab for the whole run. Reuse an
   existing ChatGPT page when one exists; otherwise open exactly one ChatGPT
-  page. Do login check, mode selection, attachment upload, submission, waiting,
-  and response reading in that same page.
+  page. Reusing the page does not mean reusing its conversation. Do login check,
+  conversation selection, mode selection, attachment upload, submission,
+  waiting, and response reading in that same page.
 - Do not open extra ChatGPT tabs for polling, attachment handling, retries,
   separate prompts, or readback.
 - Run ChatGPT Web prompts serially. If the user gives multiple ChatGPT asks,
-  process them one at a time in the same ChatGPT tab. If the user asks for
+  process them one at a time in the same ChatGPT tab. Keep them in one
+  conversation only when they are explicit follow-ups; otherwise start a new
+  clean conversation in that tab for each independent ask. If the user asks for
   parallel ChatGPT Web runs, explain that this skill runs serially to avoid web
   session rate limits, then proceed sequentially. If simultaneous ChatGPT Web
   runs are mandatory, fail loudly instead of opening parallel tabs.
@@ -63,6 +72,10 @@ scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
   raw session payloads, or other secrets.
 - Enforce a maximum of 10 attachments. Do not silently drop files.
 - Keep the result simple: ChatGPT's answer plus a short receipt.
+- Default to a new clean ChatGPT conversation. Continue an exact conversation
+  only when the user asks to continue it and the intended conversation can be
+  identified. If it cannot, stop and ask for the missing conversation choice
+  rather than sending into an unrelated history.
 
 ## First Move
 
@@ -70,9 +83,15 @@ scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
    or attachment requests.
 2. If the prompt needs shaping, apply `$prompt-authoring` before touching
    ChatGPT. Keep the prompt faithful to the user's intent.
-3. Select the single BrowserOS ChatGPT page for the run: reuse an existing
+3. Resolve `conversation = new-clean | continue-exact`. Default to `new-clean`;
+   use `continue-exact` only from an explicit user request and an identifiable
+   target conversation.
+4. Select the single BrowserOS ChatGPT page for the run: reuse an existing
    `https://chatgpt.com/` page if one exists, or open exactly one new page.
-4. Verify that page is logged in before doing anything else.
+5. Verify that page is logged in before doing anything else.
+6. In that page, open a new chat for `new-clean`, or navigate to and verify the
+   exact requested conversation for `continue-exact`. Do not submit while the
+   page is merely showing an arbitrary prior thread.
 
 ## Login Check
 
@@ -146,19 +165,22 @@ submitting.
 
 ## Submission
 
-1. Fill the ChatGPT composer with the final prompt.
-2. Confirm the selected mode and effort match the request or default.
-3. Confirm every attachment chip is present.
-4. Click `Send prompt`.
-5. Wait in the same tab until generation finishes. For `Pro`, `Extended`, or
+1. Verify the selected conversation mode one final time. For a new clean run,
+   the page must be a new chat; for continuation, the visible thread must be the
+   exact requested conversation.
+2. Fill the ChatGPT composer with the final prompt.
+3. Confirm the selected mode and effort match the request or default.
+4. Confirm every attachment chip is present.
+5. Click `Send prompt`.
+6. Wait in the same tab until generation finishes. For `Pro`, `Extended`, or
    `Heavy`, 10+ minutes can be normal; poll slowly and let ChatGPT finish.
-6. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
+7. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
    while a response is still generating.
-7. Treat failure as concrete, not time-based: visible ChatGPT error, lost
+8. Treat failure as concrete, not time-based: visible ChatGPT error, lost
    login/session, required manual user action, missing attachment before send,
    or a clearly inactive page with no generation indicator and no response
    progress after a patient wait.
-8. Read the latest assistant response from the page.
+9. Read the latest assistant response from the page.
 
 ## Output
 
@@ -166,6 +188,7 @@ Return:
 
 - ChatGPT's answer
 - mode and effort used
+- conversation mode used (`new-clean` or `continue-exact`)
 - attachment filenames, if any
 - a short note if the prompt was shaped before submission
 - a short note when the run waited for a long Pro response

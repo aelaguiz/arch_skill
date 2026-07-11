@@ -17,6 +17,10 @@ scope such as an explicit phase range remains binding.
 
 ## Locked Policy
 
+- This preset deliberately selects the external `$agent-delegate` lane. The
+  exact Terra xhigh profile, dedicated-worktree continuity, durable session
+  receipts, and downstream delivery handoffs are the benefit; do not silently
+  replace it with a generic native child.
 - Reuse a target-matching dedicated worktree when one exists; otherwise create
   one from the intended base branch using the repo's branch and worktree
   conventions. Reuse the current checkout when it is already the right
@@ -33,9 +37,9 @@ scope such as an explicit phase range remains binding.
   triage, proof freshness, and the final acceptance decision. Terra workers
   own source edits and proof runs during the conductor stage.
 - Keep the ordinary cold verifier enabled unless the user explicitly disables
-  it. The three fresh cynical reviews satisfy and strengthen the ordinary
-  cynical-instrument portion of the final gate; they do not duplicate direct
-  instrument runs, and they do not replace the cold verifier.
+  it. The three new clean external cynical reviews satisfy and strengthen the
+  ordinary cynical-instrument portion of the final gate; they do not duplicate
+  direct instrument runs, and they do not replace the cold verifier.
 - Keep the same worktree and branch through implementation, review repairs,
   PR publication, and PR follow-through.
 
@@ -45,14 +49,14 @@ scope such as an explicit phase range remains binding.
    worktree and branch. Record the worktree path and branch in the conductor
    log's Resume Snapshot.
 2. **Conductor implementation.** Run the normal plan-conductor lifecycle with
-   Codex `gpt-5.6-terra` at `xhigh`: intake, readiness, phase-sized
-   fresh-resumable workers, independent verification, cynical parent audit,
-   send-backs, checkpoints, plan completion annotations, whole-plan sweep,
-   and cold verifier.
+   external Codex `gpt-5.6-terra` at `xhigh`: intake, readiness, phase-sized
+   `$agent-delegate` fresh-resumable workers, independent verification,
+   cynical parent audit, send-backs, checkpoints, plan completion annotations,
+   whole-plan sweep, and cold verifier.
 3. **Three independent reviews.** Once the conductor believes the plan is
-   complete, use `$agent-delegate` to launch three fresh-one-shot Terra xhigh
-   sessions, parallel when safe. Give each the plan path, exact review target,
-   base/head boundary, and applicable repo instructions, but not the other
+   complete, use `$agent-delegate` to launch three `fresh-one-shot` Terra xhigh
+   external sessions, parallel when safe. Give each the plan path, exact review
+   target, base/head boundary, and applicable repo instructions, but not the other
    reviewers' conclusions or the implementation story. Assign exactly one
    installed review skill per session:
    - `$cynical-code-review`
@@ -62,14 +66,14 @@ scope such as an explicit phase range remains binding.
    checks each finding against the plan and current repo, judges factual
    validity separately from scope disposition, and sends only `authorized`,
    `frozen-convergence-required`, or required subtraction work to the
-   healthy owning implementation session, or a fresh Terra xhigh repair worker
-   when ownership or session health requires it. A broader reviewer
-   recommendation needs explicit human approval and re-freeze. Independently
-   reproduce the affected proof.
+   healthy owning implementation session, or a new clean external Terra xhigh
+   repair worker when ownership or session health requires it. A broader
+   reviewer recommendation needs explicit human approval and re-freeze.
+   Independently reproduce the affected proof.
 5. **Re-review.** A review is clean only at its own native clean verdict:
    `approve` for code and architecture, and `no-material-cruft-found` for
-   cruft. After material repairs, rerun every affected review in another fresh
-   Terra xhigh session. `coverage-incomplete`, `scope-incomplete`,
+   cruft. After material repairs, rerun every affected review in another new
+   clean external Terra xhigh session. `coverage-incomplete`, `scope-incomplete`,
    `unsafe-to-judge`, or open required repairs do not pass the gate.
 6. **Publish the PR.** After all plan proof and all three review lanes are
    clean and the scope-provenance gate is `frozen-clean`, invoke
@@ -86,11 +90,12 @@ scope such as an explicit phase range remains binding.
 ## Completion Line
 
 The shortcut is complete only when the plan and conductor log are complete,
-the cold verifier and all three fresh cynical review lanes are clean on the
-accepted code, the PR exists, and `$pr-review-followthrough` reports the
-current PR head merge-ready. A missing CLI, unsafe worktree state, unavailable
-review skill, GitHub authorization failure, irreducible CI failure, or real
-human product decision is a blocker to report, not a reason to skip a stage.
+the cold verifier and all three new clean external cynical review lanes are
+clean on the accepted code, the PR exists, and `$pr-review-followthrough`
+reports the current PR head merge-ready. A missing CLI, unsafe worktree state,
+unavailable review skill, GitHub authorization failure, irreducible CI failure,
+or real human product decision is a blocker to report, not a reason to skip a
+stage.
 
 The shortcut may repair authorized findings and subtract unauthorized work. It
 must not implement a broader reviewer recommendation automatically, and it may

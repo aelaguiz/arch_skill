@@ -1,9 +1,10 @@
 # Resume Semantics: Every Invocation Is A Resume
 
 The skill does not have a dedicated `resume` command. Every invocation of
-`$arch-epic` reads the epic doc, reads the relevant sub-plan docs and automatic
-run artifacts, figures out where the epic is, does the next action, and ends the
-turn. "Pick up where we left off" is the only mode of operation.
+`$arch-epic` reads the epic doc, relevant sub-plan docs, native child-handle
+receipts, and external automatic-run artifacts, figures out where the epic is,
+does the next action, and ends the turn. "Pick up where we left off" is the
+only mode of operation.
 
 ## The Re-entry Routine
 
@@ -24,7 +25,11 @@ Every turn the skill runs this sequence:
    - the `arch_skill:block:implementation_audit` block when present, especially
      whether it says `Verdict (code): COMPLETE`
    - the epic critic verdict field and verdict artifact path when present
-   - spawned-harness run state and child artifacts under `.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/` when `auto_execution` is present
+   - compact native child-handle receipts in the Orchestration Log when
+     role-based native execution is active
+   - external-harness run state and child artifacts under
+     `.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/` when `auto_execution`
+     is present
 4. If the stored Status disagrees with observed doc truth, update the stored Status before acting and append an Orchestration Log entry naming the discrepancy.
 5. Route per `arch-step-integration.md`, preserving the current same-session
    command context. A resumed `auto-implement` pass uses the same
@@ -46,15 +51,23 @@ the exact `python3 skills/arch-step/scripts/arch_stage_gate.py ready --doc
 implementation audit evidence has started. Marker blocks and stored epic Status
 are not enough.
 
-Spawned-harness mode intentionally owns spawned harnesses outside arch-step's
+Native role execution preserves exact planner/worker handles in compact
+Orchestration Log receipts while the host can resume them. Those handles are
+continuation evidence, not product truth. If a required handle is genuinely
+lost, do not silently resume another child; report the loss and decide whether
+a new clean replacement is safe for that role.
+
+External-harness mode intentionally owns external processes outside arch-step's
 visible session. It writes a compact `state.json` plus child artifacts under
 `.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/`. That run state is
 operational evidence, not a competing source of product truth: the epic doc
 remains the approved goal/decomposition/decision surface, and sub-plan DOC_PATHs
 remain the implementation contract.
 
-This also means resuming works across CLI restarts. There is no volatile cache
-in RAM that disappears between sessions; the disk is the state.
+Artifact-level resume works across CLI restarts because disk remains the state.
+Exact native-child continuation additionally depends on the active host still
+recognizing the recorded handle; do not pretend a durable artifact recreates a
+lost conversation.
 
 ## Disagreements Between Stored Status And Observed Reality
 

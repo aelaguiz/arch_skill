@@ -56,6 +56,10 @@ use them as part of this step. Required support is not scope drift.
   prove the blocker, then say so explicitly and stop with that evidence.
 - Do not jump to a different stage owner, restart the whole process, or invoke
   unrelated workflow/loop skills.
+- The parent owns fanout and integration. Do not create or coordinate other
+  model agents, manually start coding-harness processes, or invoke delegation
+  or consult skills unless this prompt explicitly assigns a bounded nested
+  scope and budget.
 - Do not replace declared authority with repo-wide guessing. When the owner
   runbook or declared support names the authoritative primitive, config,
   endpoint, or command, use that first.
@@ -73,6 +77,8 @@ intermediate session during upstream traversal. It is read-only by default.
 ```text
 Diagnostic conversation only. Do not modify files. Do not run commands beyond
 safe reads explicitly allowed below. Do not attempt repair.
+Do not create or coordinate other model agents or invoke delegation/consult
+skills.
 
 ## What the transcript already shows
 
@@ -124,6 +130,8 @@ the issue.
 
 Execute the repair below. Do not add constraints beyond the user prompt,
 manifest, owner runbook, and confirmed repair.
+Do not create or coordinate other model agents or invoke delegation/consult
+skills unless this prompt explicitly assigns a bounded nested scope and budget.
 
 ## Confirmed issue
 
@@ -185,9 +193,10 @@ run record only.
 
 ## Session continuity
 
-Initial prompt goes to a fresh session. Diagnostic and repair prompts resume
-the relevant existing session via `-r <session-id>` for Claude or `codex exec
-resume <session-id>` for Codex.
+Initial prompt goes to a new clean child. Diagnostic and repair prompts resume
+the exact relevant child through its original transport. Native follow-ups use
+the host's exact child handle. External Claude uses `-r <session-id>` and
+external Codex uses `codex exec resume <session-id>`.
 
-After an upstream repair, downstream steps respawn fresh. Do not resume a
-downstream session whose history was built on broken upstream input.
+After an upstream repair, downstream steps start new clean replacements. Do not
+resume a downstream child whose history was built on broken upstream input.

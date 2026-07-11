@@ -1,7 +1,7 @@
 interface:
   display_name: "Prompt Authoring"
   short_description: "Write, edit, refactor, and audit prompts"
-  default_prompt: "Use $prompt-authoring to write, edit, refactor, or audit a prompt, including Markdown-backed Codex goal prompt files and paste-sized /goal prompts, so it fits the user's intent, evidence needs, constraints, completion rules, and output shape without becoming brittle or overbuilt."
+  default_prompt: "Use $prompt-authoring to write, edit, refactor, or audit a prompt, including Markdown-backed Codex goal prompt files and paste-sized /goal prompts, so it fits the user's intent, evidence needs, constraints, completion rules, and output shape without becoming brittle or overbuilt. For prompts that dispatch model agents, apply the installed shared orchestration policy, make all seven dispatch decisions coherent, and reject bare ambiguous fresh, fork, resume, or parallel language."
 
 policy:
   allow_implicit_invocation: true

@@ -64,8 +64,20 @@ user's broader workflow.
   explicitly asks for a repo doc path.
 - This is prompt-only doctrine. Do not build a rule engine, runner,
   controller, scorer, harness, script, or formal parameter interface.
-- Maximize native parallel agents for broad review targets when available.
-  Account for every launched lane before finalizing.
+- Apply `../_shared/agent-orchestration-policy.md` whenever the review uses
+  child agents.
+- For broad targets, fan out only across genuinely independent review lenses
+  or path families. Start each independent slice as a new clean same-host
+  native child when the active host supports it, keep the slices
+  non-overlapping, and bound fanout by host slots, shared-file or shared-state
+  collision risk, and the parent's ability to integrate every result.
+- Use the strongest read-only capability the host exposes, also tell every
+  review child not to edit or write, and have the parent compare repository
+  status and diffs with the pre-dispatch state before accepting child evidence.
+- Children do not create children or invoke delegation, consult, or review
+  skills unless the parent explicitly assigns a nested scope and budget.
+- The parent owns child accounting, deduplication, integration, scope
+  disposition, the saved artifact, and the final verdict.
 - Do not manually spawn `codex`, `claude`, `agent`, `grok`, or any other
   coding-harness executable.
 - Do not invoke external agent, delegation, consult, or review skills as the
@@ -78,7 +90,7 @@ user's broader workflow.
   the authority for what must continue to exist.
 - Human-authorized UX and constraints, plus the initial pre-freeze minimal
   convergence closure and explicit later human approvals, are the authority for
-  what this change may add. Apply `skills/_shared/scope-and-convergence.md`.
+  what this change may add. Apply `../_shared/scope-and-convergence.md`.
 - For plan-, branch-, conductor-, PR-, or history-backed work, reconstruct
   scope provenance and review waves. Every durable concept in the complexity
   ledger must trace to human scope or the frozen closure. Architecture that
@@ -116,11 +128,13 @@ user's broader workflow.
    accepting the latest architecture story.
 6. Read `references/review-lenses.md`.
 7. Read `references/output-contract.md`.
-8. Read `references/agent-slices.md` before launching native parallel agents.
-9. Read `references/failure-patterns.md` when the target involves sprawl,
+8. Read `../_shared/agent-orchestration-policy.md` before creating or
+   resuming any child.
+9. Read `references/agent-slices.md` before launching native review slices.
+10. Read `references/failure-patterns.md` when the target involves sprawl,
    split ownership, duplicate truth, flags, adapters, generated artifacts,
    config, or a plan-backed implementation.
-10. Read `references/examples.md` when the architecture appears to have emerged
+11. Read `references/examples.md` when the architecture appears to have emerged
    historically, when tests/docs may be misdirection, or when peer review lanes
    are easy to confuse.
 
@@ -135,10 +149,11 @@ user's broader workflow.
    and caller obligations a maintainer must understand.
    For scope-backed work, attach a human or pre-freeze closure anchor to every
    durable concept; missing anchors are not cured by current reachability.
-4. Use native parallel agents for independent read-only slices when the target
-   is broad enough: UX/requirement mapping, owner/invariant mapping, old-path
-   and duplicate-truth search, abstraction/complexity review, state/config
-   review, and future-copy surface review.
+4. When broader coverage warrants children, dispatch a proportional set of new
+   clean native read-only slices with distinct lenses or path families:
+   UX/requirement mapping, owner/invariant mapping, old-path and duplicate-truth
+   search, abstraction/complexity review, state/config review, and future-copy
+   surface review. Integrate and account for every slice in the parent.
 5. Trace actual control flow, data flow, callers, readers, writers, lifecycle,
    persistence, public entrypoints, and authoritative internal boundaries
    until the real owner path is visible.
@@ -183,6 +198,8 @@ The full saved artifact follows `references/output-contract.md`.
   evidence to read, required-repair conditions, and safe-difference guards
 - `references/agent-slices.md` - native parallel-agent slice guidance and
   accounting rules
+- `../_shared/agent-orchestration-policy.md` - transport, starting context,
+  continuation, isolation, topology, and parent-integration policy
 - `references/output-contract.md` - required saved files, verdicts, finding
   shape, architecture maps, and final chat summary shape
 - `references/examples.md` - examples and anti-examples for accidental

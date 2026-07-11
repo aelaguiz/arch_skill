@@ -91,7 +91,7 @@ If a question is still necessary, say where you looked first and ask the exact b
 
 ## Scope model
 
-- Apply `skills/_shared/scope-and-convergence.md` as the semantic authority.
+- Apply `../../_shared/scope-and-convergence.md` as the semantic authority.
 - Requested behavior scope comes from the human-authorized outcome.
 - During initial plan architecture only, minimal convergence may add the
   evidenced same-contract caller migrations, owner moves, cutovers, or deletes

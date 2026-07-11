@@ -34,6 +34,26 @@ Do not force the pass to stop after one edited comment when the same mapping tra
 
 Do stop when the next move would require a genuinely different mapping tranche, explanation story, or verification basis.
 
+## Mapping child contract
+
+The parent captures current git status and the relevant diff before mapping
+fanout. Each child receives one non-overlapping code, proof, or explanation
+surface family, exact repo and ledger paths, and a read-only brief. Start it as
+a new clean same-host native child: Codex uses `fork_turns: "none"`, and
+Claude uses a clean named or custom subagent rather than a bare conversation
+fork or skill `context: fork` shorthand. Use inherited chat context only for a
+named chat-only dependency.
+
+Use the strongest read-only capability the host exposes and still say: do not
+edit or write files, including `_comment_ledger.md`; do not create children or
+invoke delegation, consult, or review skills unless the parent explicitly
+assigned a bounded nested scope and budget. Require the return to name files
+and symbols read, mapped contracts and dependents, proof and explanation
+quality, candidate comment fronts and canonical owner sites, coverage limits,
+and collision risks. The parent waits for and accounts for every slice,
+compares current status and diff with the pre-dispatch state, reconciles
+overlap, and alone writes accepted mapping evidence into the ledger.
+
 ## Procedure
 
 1. Create or repair `_comment_ledger.md` and the `.gitignore` entry.
@@ -47,7 +67,9 @@ Do stop when the next move would require a genuinely different mapping tranche, 
    - assess current explanation accuracy, staleness risk, and missing signal
    - use churn, fragility markers, and repeated confusion points when they sharpen judgment
    - write map status, priorities, and explicit `SKIP` decisions
-4. When the runtime supports delegation, use parallel read-only agents to gather disjoint mapping slices. Otherwise complete the same map sequentially.
+4. When independent surface families make delegation worthwhile, gather them
+   with the bounded mapping-child contract above. Otherwise complete the same
+   map sequentially.
 5. If the map is incomplete, update `Next Area` with the next unfinished mapping tranche, update the ledger, and stop without edits.
 6. Rank comment fronts from the completed map by consequence first, then sharedness, then explanation weakness or misleadingness, then confusion and staleness signals.
 7. Choose the highest-priority unresolved comment front from that ranking.

@@ -28,7 +28,7 @@ Depth-first planning has five planning objects:
   It requires explicit user approval and a `Scope cut (user-approved)` Decision
   Log entry.
 
-Apply `skills/_shared/scope-and-convergence.md` before freezing the destination
+Apply `scope-and-convergence.md` before freezing the destination
 map. Initial plan architecture may include the smallest same-contract cutover
 needed to avoid competing authority. Once implementation begins, only a human
 decision owner may expand the map; a newly discovered adjacent path is a

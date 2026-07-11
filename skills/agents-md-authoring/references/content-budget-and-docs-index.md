@@ -123,6 +123,13 @@ Good pattern:
 Do not move repo-global rules into skills. Do not move large reusable procedures into `AGENTS.md`.
 Avoid self-referential routing such as telling the file to call `$agents-md-authoring` just to edit itself. `AGENTS.md` should route real repo work, not narrate or bootstrap its own authorship.
 
+Agent dispatch is the same kind of boundary. If the repo tells agents to create,
+resume, replace, or coordinate other model agents, keep one concise route to the
+shared orchestration policy in `AGENTS.md` and leave the reusable transport,
+context, continuation, isolation, topology, and integration doctrine in that
+on-demand policy. Preserve only repo-specific ownership, safety, or path rules
+locally, and make sure the policy pointer resolves in the target runtime.
+
 ## Anti-bloat checklist
 
 Cut or move content when:

@@ -67,7 +67,12 @@ Common failure modes when invoking codex exec for review, and what to do.
 ## Review takes way too long (>40 min)
 
 - Prompt is probably too wide. Codex is trying to audit more than one pass can cover.
-- Kill the run, split the prompt into two narrower audits, run them in parallel. Parallel invocations of `codex exec` are fine — they don't share session state.
+- Stop the run and split the prompt into narrower audits. Separate invocations
+  do not share conversation state, but they do share Codex's machine-level
+  SQLite/WAL state and can contend with each other or other Codex processes.
+  Sequence them unless concurrent external processes have a concrete coverage
+  or latency benefit that is worth that current host cost. This is a judgment
+  about the work and machine state, not a prohibition or fixed process limit.
 
 ## Stream log grows huge / fills disk
 

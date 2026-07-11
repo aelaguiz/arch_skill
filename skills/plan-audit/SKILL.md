@@ -70,14 +70,27 @@ ledger beside the plan, not a state machine and not a second plan.
   `<PLAN_STEM>_PLAN_AUDIT.md` beside the plan.
 - For inline plans with no file path, return the audit in chat; suggest a
   persistent audit log only when the user wants repeat-audit tracking.
-- Use native subagents or parallel-agent features provided by the current
-  coding harness for broad repo-backed audits whenever available. Treat this as
-  required acceleration for independent read-only audit slices unless local
-  instructions prohibit it or the audit is too small to split. The parent still
-  owns synthesis.
+- Apply `../_shared/agent-orchestration-policy.md` whenever the audit uses
+  child agents.
+- For broad repo-backed audits, use a coverage-led set of independent review
+  slices when the active host supports them. Start every slice as a new clean
+  same-host native child, keep lenses and path families non-overlapping, and
+  bound fanout by host slots, shared-file or shared-state collision risk, and
+  the parent's ability to integrate every return.
+- Choose bounded or full inherited context only when a named decision exists
+  solely in chat. Prefer plan, audit-log, and code paths over inheriting the
+  parent's framing or completion story.
+- Use the strongest read-only capability the host exposes, also tell every
+  audit child not to edit or write, and have the parent compare repository
+  status and diffs with the pre-dispatch state before accepting child evidence.
+- Children do not create children or invoke delegation, consult, or review
+  skills unless the parent explicitly assigns a nested scope and budget.
+- The parent owns child accounting, evidence spot-checking, deduplication,
+  integration, finding scope disposition, audit-log updates, and the final
+  verdict.
 - Do not mark ambiguity or constraint questions resolved until a decision owner
   resolves them and the plan carries the decision through.
-- Apply `skills/_shared/scope-and-convergence.md`. Plan-readiness audit must
+- Apply `../_shared/scope-and-convergence.md`. Plan-readiness audit must
   recover the human baseline, initial pre-freeze convergence closure, and scope
   freeze. It may mark the plan not ready and route a gap back to the initial
   planning owner, but it must never add an adjacent area to required scope.
@@ -109,7 +122,9 @@ ledger beside the plan, not a state machine and not a second plan.
 5. For `implementation-audit`, read
    `references/implementation-audit-mode.md` and follow that mode contract.
 6. For `plan-readiness`, read `references/progressive-audit-order.md`.
-7. Read the smallest additional references needed for the scope:
+7. Read `../_shared/agent-orchestration-policy.md` before creating or
+   resuming any child.
+8. Read the smallest additional references needed for the scope:
    - `references/architecture-quality-canon.md` for the quality bar
    - `references/review-lenses.md` for lens definitions
    - `references/audit-log-contract.md` for sidecar ledger rules
@@ -131,8 +146,9 @@ workflow below.
    outcome.
 4. For repo-backed plans, map and read all relevant code: owner paths, callers,
    comparable patterns, legacy paths, side doors, contracts, tests, docs,
-   prompts, and generated artifacts. Use native subagents for broad independent
-   read-only slices when available.
+   prompts, and generated artifacts. When children improve coverage, use a
+   proportional set of new clean native read-only slices with distinct lenses
+   or path families and integrate every result in the parent.
 5. Run the required lenses from `references/review-lenses.md`.
 6. Challenge the plan for simpler architecture, fewer live concepts, better
    ownership, depth-first proof, delete work, and drift-proof coupling.
@@ -171,11 +187,13 @@ constraint question remains unresolved or uncaptured in the plan.
 - `references/architecture-quality-canon.md` - strict plan-quality and code-quality doctrine
 - `references/review-lenses.md` - required and conditional audit lenses
 - `references/progressive-audit-order.md` - ordered pass for using the skill
-- `skills/_shared/scope-and-convergence.md` - scope authority, pre-freeze
+- `../_shared/scope-and-convergence.md` - scope authority, pre-freeze
   convergence, finding dispositions, and scope-cycling rules
 - `references/implementation-audit-mode.md` - plan-backed code review mode after implementation
 - `references/audit-log-contract.md` - sidecar audit log shape and loop rules
 - `references/proper-audit-checklist.md` - final "was this audited properly" check
 - `references/child-prompt-contract.md` - native subagent prompts for broad audits
+- `../_shared/agent-orchestration-policy.md` - transport, starting context,
+  continuation, isolation, topology, and parent-integration policy
 - `references/output-contract.md` - final verdict and finding format
 - `references/examples.md` - examples and anti-examples that teach judgment

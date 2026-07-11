@@ -41,9 +41,12 @@ Claude Code, and Gemini.
 
 ## Red Lines
 
-- Do not use external model consultation or delegation workflows unless the
-  user explicitly asks for code review, fresh consult, second opinion,
-  completion audit, or delegated agent work.
+- Do not make external model consultation or delegation the automatic way to
+  get parallelism or fresh context. Apply
+  `skills/_shared/agent-orchestration-policy.md`: ordinarily use native
+  same-host agents, and use an external process when its concrete
+  model/profile/session/automation benefit is worth its lifecycle,
+  integration, and shared-state cost.
 - Do not delete user work, untracked files, or repo changes unless the user
   explicitly asks for that exact cleanup. If you are not sure whether a file
   came from your own run, leave it alone and ask.
@@ -62,6 +65,11 @@ Claude Code, and Gemini.
 - Skill authoring must preserve agent judgment. `skills/<slug>/SKILL.md` is
   the runtime contract and should tell the agent how to inspect context, choose
   actions, execute thoughtfully, and verify the result.
+- Skills that create, resume, replace, or coordinate model agents must apply
+  `skills/_shared/agent-orchestration-policy.md`. Keep the role-specific
+  workflow in the owning skill; do not duplicate or contradict the shared
+  native/external, context, continuation, isolation, topology, and return
+  contract.
 - Scripts in a skill may only be narrow helpers for deterministic mechanics
   such as command syntax, parsing, templating, validation, or API calls. Do not
   make a skill a thin wrapper around a script, runner, controller, or harness
@@ -82,6 +90,12 @@ Claude Code, and Gemini.
 
 ## Skill Routing
 
+- For any skill that creates or resumes model agents, apply
+  `skills/_shared/agent-orchestration-policy.md`: prefer the active host's
+  native child for ordinary same-host work, choose starting context and
+  continuation explicitly, and use an external process when its concrete
+  provider, model, lifecycle, isolation, automation, or receipt benefit is
+  worth the added cost. This is a reasoned preference, not a ban or threshold.
 - Use `$skill-authoring` for new, edited, refactored, or audited skill
   packages.
 - Use `$agents-md-authoring` for `AGENTS.md` authoring or refactors.
@@ -102,37 +116,44 @@ Claude Code, and Gemini.
 - Use `$arch-skills-guide` when the user asks which arch skill to use or how
   the suite is divided.
 - Use `$stepwise` when the user wants to run an ordered multi-step process
-  (named in another repo's doctrine) with a fresh sub-session per step and a
-  per-step critic that resumes the same session on fail.
+  (named in another repo's doctrine) with a new clean worker per step, a new
+  clean critic, and exact-worker resume on fail. Same-host roles normally use
+  native children; deliberate external roles use the external adapter lane.
 - Use `$arch-epic` when the user has a goal too big for one `$arch-step` plan
   and wants to decompose it into ordered sub-plans, approve the decomposition
   up front, run each sub-plan through arch-step's `new` → `auto-plan` →
-  `implement-loop` → `audit-implementation` arc, and have a fresh critic check
-  for scope drift between sub-plans before advancing.
+  `implement-loop` → `audit-implementation` arc, and have a new clean critic check
+  for scope drift between sub-plans before advancing. Resolve each role under
+  the shared agent policy rather than assuming every role is a subprocess.
 - Use `$skill-flow` when the user wants to design, repair, or audit an ordered
   flow of multiple agent skills with distinct jobs, concrete handoffs, and
   clear peer boundaries. For 30+ skill suites or any multi-skill audit driven
   by a scope phrase (e.g. "audit every skill in this project", "audit the
   skills for flow F1"), the DAG-grounded audit sub-mode walks the suite in
-  parallel sub-agents, builds a labeled-edge substrate at
+  clean native subagents with parent-owned fanout, builds a labeled-edge substrate at
   `<doc-dir>/<doc-slug>_DAG.md`, and surfaces wasted-energy patterns
   (over-promotion, redundancy, dead skills, broken refs) with `path:line`
   evidence.
 - Use `$fresh-consult` when the user or another skill wants one or more
-  clean-context Claude, Codex, Cursor Agent, or Grok second opinions on a
-  concrete artifact, completion claim, flow consistency question, or
-  readability/confusion check.
+  clean independent second opinions on a concrete artifact, completion claim,
+  flow consistency question, or readability/confusion check. Use a clean
+  same-host native child when capable; use its external lane for another
+  provider, an unavailable exact model/profile, or another concrete benefit.
 - Use `$commit-history-authoring` when the user wants the current branch's
   local-only commit messages rewritten into informative history while
   preserving patches and commit boundaries by default.
-- Use `$agent-delegate` when the user wants one or more fresh Claude, Codex,
-  Cursor Agent, or Grok subprocesses to do concrete work in the current
-  workspace, including implementation, editing, investigation-and-fix, command
-  execution, or installed-skill use.
+- Use `$agent-delegate` when the user explicitly wants an external Claude,
+  Codex, Cursor Agent, or Grok worker/session, or when an external provider,
+  exact model/profile, durable session, isolation, automation, or receipt is
+  the concrete benefit. Ordinary same-host delegated work should use native
+  children directly under the shared policy.
 - Use `$codex-babysit` when the user wants to monitor, babysit, or keep alive
   an already-running Codex goal-mode tmux session across real usage limits,
   account rotations, restarts, and same-session resumes. It is not for
   launching a new worker or doing delegated work.
+- Use `$codex-review-yolo` only for the exact external Codex `-p yolo` profile
+  and captured receipt contract. Use a clean native child for an ordinary
+  same-host Codex review.
 - Use `$pr-review-followthrough` when the user explicitly wants an already-open
   GitHub PR polled, review comments handled and replied to, same-branch fixes
   pushed, and the loop continued until merge-ready; use `$pr-authoring` for
@@ -177,23 +198,26 @@ Claude Code, and Gemini.
   phase, section, checklist, issue-body plan, or design doc while keeping the
   plan, plan-audit log, implementation log, proof freshness, and warm
   plan-backed review aligned. It is the lightweight implementation lane: use
-  native subagents when helpful, but do not manually spawn `codex`, `claude`,
-  `agent`, or `grok` executables or turn the work into an external worker
-  swarm.
+  native subagents when helpful, and do not manually spawn `codex`, `claude`,
+  `agent`, or `grok` executables for ordinary acceleration. Route a deliberate
+  external worker or conductor through `$agent-delegate` or
+  `$plan-conductor` under the shared policy.
 - Use `$plan-conductor` when the user wants an entire existing plan document
-  (or an explicit phase range) driven to verified completion by cheaper,
-  faster delegated workers while the expensive parent agent stays the
+  (or an explicit phase range) driven to verified completion by delegated
+  workers while the parent agent stays the
   architect and cynical reviewer: it extracts the plan into a conductor log,
-  delegates phase-sized slices through `$agent-delegate` fresh-resumable
-  sessions, parallelizes only naturally independent slices, waits without
-  tailing streams, audits every diff assuming workers cut corners, resumes
-  the same worker session with batched findings until exit criteria are true
-  in code, and closes with a whole-plan audit plus optional cold verifier. It
-  never writes plans and never implements code in the parent.
+  gives phase-sized slices to clean same-host native children when capable or
+  to deliberate external sessions through `$agent-delegate`, parallelizes only
+  naturally independent slices, audits every diff assuming workers cut
+  corners, resumes the exact worker with batched findings until exit criteria
+  are true in code, and closes with a new clean whole-plan audit plus optional
+  cold verifier. The explicit Terra preset remains an external exact-model
+  lane. The parent never writes plans or implements code.
 - Use `$model-consensus` when the user wants two selected Claude, Codex,
   Cursor Agent, or Grok models to iterate on a plan, architecture, design, or
   concept until they converge or expose the smallest unresolved decision, including
-  adversarial simplification. The parent agent orchestrates directly; do not
+  adversarial simplification. Resolve transport separately for each participant,
+  keep each participant's exact continuation, and let the parent relay; do not
   introduce a deterministic runner, script, controller, or harness layer.
 - Use `$thermo-nuclear-code-quality-review` only when the user explicitly wants
   a thermonuclear, code-judo, or especially harsh maintainability review.

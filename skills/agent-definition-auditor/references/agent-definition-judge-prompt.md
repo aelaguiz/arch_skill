@@ -101,12 +101,13 @@ What a cold reader is not pretending to judge:
 - If the document references external files, tools, prompts, or policies, judge whether those references resolve clearly from the information actually provided.
 - If the artifact intentionally relies on companion files, issue state, or named workflow surfaces, judge whether that layering is explicit, precise, and operationally usable. Do not treat precise layering as phantom context by default.
 - If the artifact uses progressive disclosure to named files, reward precise references and clean layering, but do not assume the unseen files are correct.
+- When the owning skill supplies the shared agent-orchestration policy for a dispatch audit, treat it as judging doctrine. Do not count it as target-artifact content, and do not assume the target resolves that policy unless its own runtime reference is precise.
 - If the input is only a partial excerpt, evaluate it as partial and lower confidence rather than pretending the whole control surface is visible.
 
 ## Tools & Calling Rules
 
-- Default to read-only reasoning over the provided artifact.
-- Do not browse, inspect the repo, or call tools unless the caller explicitly broadened the scope beyond a single-document cold read.
+- Default to read-only reasoning over the provided artifact and, when the conditional dispatch lens applies, the shared policy loaded by the owning skill.
+- Apart from the owning skill's judging references, do not browse, inspect the target repo, or call tools unless the caller explicitly broadened the scope beyond a single-document cold read.
 - If line numbers are available, cite them.
 - If line numbers are unavailable, cite exact headings or short quoted anchors from the artifact.
 - Keep evidence excerpts short. Use just enough text to anchor the finding.
@@ -141,6 +142,7 @@ What a cold reader is not pretending to judge:
   - required behavior
   - measurable success signal
 - Evaluate examples as teaching devices, not as a hidden action menu. Reward examples that illustrate principles; penalize examples that silently replace the rules.
+- When the artifact governs model-agent dispatch, judge the meaning and interaction of its dispatch decisions rather than checking for preferred words. A term's presence is not proof that the operating model is coherent.
 - Judge concision as an engineering property, not a style preference. Extra prose is costly when it dilutes the highest-signal constraints.
 - Separate ordinary uncertainty from true failure. Good documents tell the agent when to proceed carefully and when to stop.
 - Remember that humans compensate for bad writing; models do not. If a cold reader has to infer the missing rule, the model usually will too.
@@ -451,6 +453,35 @@ Low score:
 - approval rules are emotionally clear but operationally vague
 - the document claims rigor but does not provide the commands, checks, or evidence standards that would make rigor executable
 
+### Conditional agent-dispatch lens
+
+Apply this lens only when the artifact asks an agent to create, resume, replace,
+or coordinate another model agent. Use the shared orchestration policy loaded by
+the owning skill as the semantic baseline; keep this audit focused on whether
+the target artifact forms a coherent operational contract.
+
+Understand the dispatch through seven coupled decisions: role, transport,
+starting context, continuation, isolation and capabilities, topology, and
+return contract. These are reasoning dimensions, not required headings, fields,
+or exact words.
+
+Look for whether:
+
+- transport is chosen for an actual runtime benefit or capability rather than used as a proxy for clean context, continuation, or independence
+- clean, bounded, or full starting context is distinguishable from whether the child is new, resumed, or replaced
+- continuation preserves the same role when that role is repairing or extending its work, while independent review remains meaningfully independent
+- filesystem or worktree isolation, permissions, tools, and device or browser access are not inferred from the context label or transport alone
+- `parallel` work has an understandable topology: ownership, collision boundaries, child-creation authority, and final integration are not left implicit
+- the return contract asks for integration-ready evidence and does not mistake a child reply, process exit, session receipt, or completion claim for an accepted result
+
+Treat bare terms such as `fresh`, `fork`, `resume`, or `parallel` as warning
+signals, not automatic failures. Read nearby definitions and precise policy
+references before deciding whether the meaning is actually ambiguous. Penalize
+missing decisions under specificity, completeness, or operating-model fit;
+penalize transport/context/continuation/isolation/topology/result conflation or
+contradiction under internal consistency; and penalize an unresolvable policy
+dependency under context independence.
+
 ## Process
 
 1. Read the entire artifact once before scoring.
@@ -462,12 +493,17 @@ Low score:
    - escalation or approval rules
    - failure handling
    - references to external context
+   - child-agent transport, starting context, continuation, isolation, topology, and return semantics when the artifact dispatches agents
 4. Check the hard rules pairwise for contradictions, especially around:
    - always / never language
    - approval boundaries
    - required output formats
    - stop-versus-continue behavior
    - tool use versus tool avoidance
+   - transport versus context or capability claims
+   - new-child versus exact-child continuation claims
+   - parallel-topology versus ownership and integration rules
+   - child completion versus parent acceptance of evidence
 5. Check for unresolved weak language:
    - "appropriately"
    - "when relevant"

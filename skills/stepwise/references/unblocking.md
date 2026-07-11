@@ -13,9 +13,10 @@ Stepwise may repair:
 - malformed descriptors copied from the manifest,
 - missing run-directory directories,
 - schema normalization needed by the selected runtime,
-- command flag drift in the wrapper,
+- command flag drift in the external wrapper,
 - missing prompt captures or diagnostic directory setup,
-- session-id lookup from already captured stream logs.
+- external session-id lookup from already captured stream logs or native child
+  handle recovery from host receipts.
 
 Record the repair in the run directory before continuing.
 
@@ -61,7 +62,7 @@ Diagnostic turns cannot modify files and do not consume repair bounces.
 Fail loud when:
 
 - the same orchestration defect recurs after one bounded repair,
-- a session id cannot be recovered,
+- a required continuation handle cannot be recovered,
 - the critic writes to disk,
 - the StepVerdict contains stale prescriptive fields,
 - repair would require claiming an event happened before it actually happened,

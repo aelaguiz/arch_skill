@@ -10,14 +10,18 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
+- `../../_shared/scope-and-convergence.md`
 - `section-quality.md` for the plan sections most relevant to the current change
 
 ## Hard rules
 
 - docs-only; do not modify code
-- keep this review local
-- do not use external reviewer CLIs or other-model consultations from this command
+- keep this command as a parent-owned active-host self-review; it does not
+  create a child or external reviewer merely to perform its own gate
+- if the user separately requires another provider, exact model/profile,
+  durable session, isolation boundary, automation surface, or structured
+  receipt, treat that as a distinct review lane and state the concrete benefit
+  that makes its process and integration cost worthwhile
 - read `DOC_PATH` plus the key code anchors needed to answer the review question
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is contradictory, stop and ask the exact blocker question first
 - classify every material finding as `authorized`,

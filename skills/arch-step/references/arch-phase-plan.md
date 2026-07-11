@@ -10,8 +10,8 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
-- `skills/_shared/depth-first-planning.md`
+- `../../_shared/scope-and-convergence.md`
+- `../../_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 5, 6, 7, and 8
 
 ## Reads for alignment

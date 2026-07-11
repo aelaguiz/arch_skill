@@ -5,28 +5,29 @@ In interactive mode, the epic critic runs once per sub-plan after
 `Verdict (code): COMPLETE`. Its job is narrow: detect scope drift
 between what the user approved and what shipped.
 
-In spawned-harness automatic mode, the same critic role also runs earlier gates:
+In role-based automatic mode, the same critic role also runs earlier gates:
 North Star / Epic Requirement Coverage, plan readiness, and
-completion/scope. Spawned-harness automatic mode uses spawned critics instead of
+completion/scope. Role-based automatic mode uses clean critics instead of
 per-sub-plan user approval, so those critics must check that the raw
 epic goal and approved decomposition are still represented.
 
-The critic is a fresh subprocess (Claude, Codex, or Grok, per the epic
-doc's `critic_runtime`). It has no memory of the orchestrator's
-prose. It reads the sub-plan's DOC_PATH, worklog, and the arch-step
-audit block directly, returns one JSON document, and exits. It reports
-observation and evidence only; it does not prescribe repair steps for
-the worker.
+The critic is always a new clean child with no inherited completion narrative.
+Prefer the active host's native child; use an external Claude, Codex, or Grok
+critic only when its provider, exact model/profile, lifecycle, isolation,
+automation, structured receipt, or another concrete benefit is deliberate. It
+reads the sub-plan's DOC_PATH, worklog, and arch-step audit block directly,
+returns one JSON document, and exits. It reports observation and evidence only;
+it is never resumed and does not prescribe repair steps for the worker.
 
 ## The checks
 
-Completion critics run all checks. Earlier spawned-harness gates run the
+Completion critics run all checks. Earlier role-based gates run the
 checks that apply to that gate and mark completion-only checks
 `inapplicable`.
 
 ### 0. `epic_requirement_coverage`
 
-Spawned-harness sub-plan docs must include an Epic Requirement Coverage
+Role-based automatic sub-plan docs must include an Epic Requirement Coverage
 section. Verify that every meaningful raw-goal/decomposition requirement
 is classified as:
 
@@ -230,17 +231,19 @@ inline and the script post-validates the returned JSON.
   the halt or pass boundary. Plain English.
 
 Existing schema consumers may see older verdicts without
-`epic_requirement_coverage`; those historical verdicts stand. New
-spawned-harness critics must include it.
+`epic_requirement_coverage`; those historical verdicts stand. New role-based
+critics must include it.
 
 ## Critic posture
 
 The critic reads. It does not write files. It does not run arch-step
 commands. It does not attempt to fix anything it finds, and it does
 not tell the planner or implementation worker how to fix the finding.
-Read-only discipline is enforced in the critic prompt (see
-`critic-prompt.md`), not by sandbox — per repo convention, both
-runtimes run dangerous / skip-permissions / no-sandbox.
+Use enforced read-only capability when the host exposes it, keep the critic
+prompt's no-edit contract in every transport, and have the parent compare
+repository state before and after. Clean context is not filesystem isolation.
+External critic processes retain the repo's dangerous /
+skip-permissions / no-sandbox convention.
 
 If the critic discovers that the sub-plan doc is malformed (missing
 required sections, corrupt frontmatter), it fails `audit_clean` and
@@ -258,8 +261,8 @@ only a human approval can add a new path or sub-plan after freeze.
 - Not a code reviewer. Use the host agent's normal review response for that.
 - Not a re-audit of arch-step's implementation. That is
   `$arch-step audit-implementation`'s job.
-- Not a repair author. In spawned-harness automatic mode, the parent resumes the
-  planner or implementation worker with the critic verdict as evidence.
+- Not a repair author. In role-based automatic mode, the parent resumes the
+  exact planner or implementation worker with the critic verdict as evidence.
 - Not a gate on the next sub-plan's North Star (that is the user's
   job at the next `$arch-step new` invocation in interactive mode).
 - Not a general quality checker for the epic. The epic doc

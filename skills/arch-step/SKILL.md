@@ -42,11 +42,11 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
   `references/artifact-contract.md`. Initial architecture may add only its
   evidenced minimal same-contract convergence closure; freeze that closure
   before implementation. After freeze, only explicit human approval expands
-  scope. Apply `skills/_shared/scope-and-convergence.md`.
+  scope. Apply `../_shared/scope-and-convergence.md`.
 - Correctness and approved intent outrank speed, scope trimming, or "minimum implementation."
 - The agent has no authority to cut requested behavior, acceptance criteria, or required implementation work unless the user or the governing plan already marked that item out of scope.
 - Cutting, downgrading, deferring, or "simplifying away" approved behavior, acceptance criteria, or phase obligations is a hard stop. Surface to the user with what you want to cut, why, what Section 0 / TL;DR / Section 7 say about it, and the exact approval you need. Do not proceed until the user explicitly approves; record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape.
-- Section 7 uses the depth-first doctrine in `skills/_shared/depth-first-planning.md`: protect the full destination map, prove the first real working slice through the highest-risk seam, then expand along named axes.
+- Section 7 uses the depth-first doctrine in `../_shared/depth-first-planning.md`: protect the full destination map, prove the first real working slice through the highest-risk seam, then expand along named axes.
 - Phase boundaries are proof boundaries. Phase count is an outcome of dependency edges, proof gates, reversibility or migration boundaries, and user-review boundaries; split only when a phase blends separately provable work.
 - A phase is not complete while any checklist item or exit criterion in that phase remains unmet.
 - For modern Section 7 docs, `Work` is explanatory only. Every required phase obligation must live in `Checklist (must all be done)` or `Exit criteria (all required)`, and fresh audit must validate both before a phase can stay complete.
@@ -86,6 +86,14 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - Git is the history for retired live truth surfaces. Do not preserve dead competing code paths, stale live docs, or stale comments for posterity. Delete them. If a touched doc, comment, or instruction still matters after the change, update it to current reality in the same run.
 - Broader docs audit, consolidation, and final plan/worklog retirement after a clean full-arch code audit belong to `arch-docs`, not to extra hidden `arch-step` commands.
 - Core commands apply scope-triage and convergence rules even when helper commands are not run.
+- Any command that creates or resumes another agent must apply
+  `../_shared/agent-orchestration-policy.md`. `consistency-pass` uses two
+  new clean same-host native read-only explorers with disjoint lenses and
+  parent-owned synthesis. In Codex, set `fork_turns: "none"`; in Claude Code,
+  use clean named or custom subagents rather than a conversation fork. Give
+  every review child explicit no-edit/no-write guidance, use a read-only
+  capability when the host confirms one, forbid unassigned nested fanout, and
+  compare current repo state before accepting its return.
 - `advance` must choose from structure first, quality second, stage order third. Helper commands stay explicit.
 - `status` is compact, read-only, and grounded in the actual artifact.
 - `advance` owns the longer checklist surface and optional one-step execution.
@@ -275,8 +283,9 @@ Workflow:
 
 - `references/artifact-contract.md` - canonical full-arch plan artifact, exact section shape, frontmatter, block inventory, and worklog contract
 - `references/shared-doctrine.md` - cross-cutting doctrine: question policy, alignment checks, evidence, SSOT, scope defaults, and consistency repair
-- `skills/_shared/scope-and-convergence.md` - human scope authority, initial planning convergence, scope freeze, finding dispositions, and scope-cycling prohibition
-- `skills/_shared/depth-first-planning.md` - destination map, first working slice, expansion map, proof gates, scope-cut distinction, and failure-mode recognition tests
+- `../_shared/agent-orchestration-policy.md` - transport, context, continuation, isolation, topology, and return-evidence rules for the consistency explorers
+- `../_shared/scope-and-convergence.md` - human scope authority, initial planning convergence, scope freeze, finding dispositions, and scope-cycling prohibition
+- `../_shared/depth-first-planning.md` - destination map, first working slice, expansion map, proof gates, scope-cut distinction, and failure-mode recognition tests
 - `references/section-quality.md` - purpose, strong/weak bar, trust rules, and failure modes for each section and supporting block
 - `references/arch-new.md` - bootstrap the canonical artifact and stop for North Star confirmation
 - `references/arch-reformat.md` - convert an existing doc into the canonical artifact without losing meaning

@@ -1,8 +1,8 @@
-# Manifest schema: ordered steps plus resolved execution
+# Manifest schema: ordered steps plus resolved dispatch
 
 The manifest is the authoritative plan for a run. Stepwise drafts it in Phase 2
 by reading target-repo doctrine, translating the named process into real steps,
-and resolving execution preferences against those steps. The manifest is locked
+and resolving dispatch preferences against those steps. The manifest is locked
 at Phase 3 confirmation and does not change during execution.
 
 ## Top-level shape
@@ -22,18 +22,24 @@ at Phase 3 confirmation and does not change during execution.
   "per_step_retry_cap": 5,
   "execution_defaults": {
     "step": {
-      "runtime": "codex",
-      "model": "gpt-5.6-sol",
+      "transport": "native",
+      "starting_context": "clean",
+      "continuation": "new-then-exact-resume",
+      "runtime": "active-host",
+      "model": null,
       "codex_profile": "",
-      "effort": "high",
-      "source": "user prompt"
+      "effort": null,
+      "source": "shared native preference"
     },
     "critic": {
-      "runtime": "codex",
-      "model": "gpt-5.6-sol",
+      "transport": "native",
+      "starting_context": "clean",
+      "continuation": "new-each-verdict",
+      "runtime": "active-host",
+      "model": null,
       "codex_profile": "",
-      "effort": "xhigh",
-      "source": "user prompt"
+      "effort": null,
+      "source": "shared native preference"
     }
   },
   "execution_preferences": [],
@@ -47,14 +53,17 @@ failure, or exhausted repair bounces. Upstream traversal is not a stop
 discipline; it is part of the normal diagnose-and-repair protocol.
 
 `per_step_retry_cap` is the number of operational repair bounces a broken
-session gets. Diagnostic read-only turns do not count.
+worker gets. Diagnostic read-only turns do not count.
 
-## Execution object
+## Dispatch object
 
-Resolved execution blocks appear on every step for both worker and critic:
+Resolved dispatch blocks appear on every step for both worker and critic:
 
 ```json
 {
+  "transport": "external",
+  "starting_context": "clean",
+  "continuation": "new-then-exact-resume",
   "runtime": "claude",
   "model": "claude-fable-5",
   "codex_profile": "",
@@ -66,11 +75,17 @@ Resolved execution blocks appear on every step for both worker and critic:
 
 Fields:
 
-- `runtime`: `"claude"`, `"codex"`, or `"grok"`.
-- `model`: CLI model name to pass to the runtime.
+- `transport`: `"native"` or `"external"`.
+- `starting_context`: normally `"clean"` for independent workers and critics.
+- `continuation`: `"new-then-exact-resume"` for workers or
+  `"new-each-verdict"` for critics.
+- `runtime`: `"active-host"` for native dispatch or `"claude"`, `"codex"`,
+  or `"grok"` for the external adapter.
+- `model`: external CLI model name, or `null` when native model selection is
+  neither requested nor confirmed by the host.
 - `codex_profile`: Codex profile name for Fugu (`"fugu"` or
   `"fugu-ultra"`), otherwise `""`.
-- `effort`: reasoning effort to pass to the runtime.
+- `effort`: external reasoning effort, or `null` for an unpinned native child.
 - `source`: where the value came from.
 - `reason`: one sentence explaining why the execution block applies.
 
@@ -98,20 +113,26 @@ defaults.
       "file exists AND first line matches '^# Lesson 2' AND contains '^## '"
   },
   "step_execution": {
-    "runtime": "codex",
-    "model": "gpt-5.6-sol",
+    "transport": "native",
+    "starting_context": "clean",
+    "continuation": "new-then-exact-resume",
+    "runtime": "active-host",
+    "model": null,
     "codex_profile": "",
-    "effort": "high",
-    "source": "execution_defaults.step",
-    "reason": "No step-specific execution preference applied."
+    "effort": null,
+    "source": "shared native preference",
+    "reason": "The active host can do the same-host step without an external capability benefit."
   },
   "critic_execution": {
-    "runtime": "codex",
-    "model": "gpt-5.6-sol",
+    "transport": "native",
+    "starting_context": "clean",
+    "continuation": "new-each-verdict",
+    "runtime": "active-host",
+    "model": null,
     "codex_profile": "",
-    "effort": "xhigh",
-    "source": "execution_defaults.critic",
-    "reason": "No critic-specific execution preference was provided."
+    "effort": null,
+    "source": "shared native preference",
+    "reason": "Independent clean review is available natively."
   },
   "critic_contract_ref": {
     "profile": "strict",
@@ -142,8 +163,10 @@ Field notes:
   `source: <absolute selector>`, so `upstream-for` can report the relationship
   without fuzzy guessing.
 - `expected_artifact`: the artifact the critic verifies.
-- `step_execution`: resolved worker runtime/model/effort.
-- `critic_execution`: resolved critic runtime/model/effort.
+- `step_execution`: resolved worker transport/context/continuation and any
+  external runtime/model/effort.
+- `critic_execution`: resolved critic transport/context and new-clean
+  continuation plus any external runtime/model/effort.
 - `critic_contract_ref`: expanded check list.
 - `max_retries`: operational repair-bounce limit, usually equal to
   `per_step_retry_cap`.
@@ -161,9 +184,10 @@ The manifest is a read-then-think product, not a template.
    rather than invent.
 4. Record inputs precisely. Inputs are not decoration; they are the upstream
    chain Stepwise uses during diagnosis.
-5. Resolve execution for each step using `execution-routing.md`: feasibility,
-   hard doctrine, explicit step preference, semantic preference, then defaults.
-6. Write the manifest and include a Phase 3 execution table.
+5. Resolve dispatch for each step using `execution-routing.md`: transport
+   benefit and feasibility, hard doctrine, explicit step preference, semantic
+   preference, then defaults.
+6. Write the manifest and include a Phase 3 dispatch table.
 
 ## Fail-loud cases
 
@@ -182,7 +206,9 @@ implement lesson 2 strictly according to the skill order, no fabrication.
 Default steps on Codex gpt-5.6-sol high, critic on Codex gpt-5.6-sol xhigh. Use
 Claude Fable 5 for copywriting steps."
 
-After reading target doctrine, Stepwise drafts an abbreviated manifest:
+Assume the active host cannot confirm those exact model/effort choices; the
+external adapter is therefore the deliberate lane. After reading target
+doctrine, Stepwise drafts an abbreviated manifest:
 
 ```json
 {
@@ -195,12 +221,18 @@ After reading target doctrine, Stepwise drafts an abbreviated manifest:
   "per_step_retry_cap": 5,
   "execution_defaults": {
     "step": {
+      "transport": "external",
+      "starting_context": "clean",
+      "continuation": "new-then-exact-resume",
       "runtime": "codex",
       "model": "gpt-5.6-sol",
       "effort": "high",
       "source": "user prompt"
     },
     "critic": {
+      "transport": "external",
+      "starting_context": "clean",
+      "continuation": "new-each-verdict",
       "runtime": "codex",
       "model": "gpt-5.6-sol",
       "effort": "xhigh",
@@ -212,6 +244,8 @@ After reading target doctrine, Stepwise drafts an abbreviated manifest:
       "source_quote": "Use Claude Fable 5 for copywriting steps",
       "applies_to": "steps whose primary artifact is learner-facing copy",
       "step_execution": {
+        "transport": "external",
+        "starting_context": "clean",
         "runtime": "claude",
         "model": "claude-fable-5"
       },
@@ -233,6 +267,9 @@ After reading target doctrine, Stepwise drafts an abbreviated manifest:
         "evidence_required": "file exists AND contains '^## Key concepts'"
       },
       "step_execution": {
+        "transport": "external",
+        "starting_context": "clean",
+        "continuation": "new-then-exact-resume",
         "runtime": "codex",
         "model": "gpt-5.6-sol",
         "effort": "high",
@@ -240,6 +277,9 @@ After reading target doctrine, Stepwise drafts an abbreviated manifest:
         "reason": "Ramp-up is context gathering, not learner-facing copy."
       },
       "critic_execution": {
+        "transport": "external",
+        "starting_context": "clean",
+        "continuation": "new-each-verdict",
         "runtime": "codex",
         "model": "gpt-5.6-sol",
         "effort": "xhigh",

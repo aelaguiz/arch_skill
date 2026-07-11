@@ -4,7 +4,7 @@
 
 - run an end-to-end cold-read consistency audit over one canonical full-arch doc
 - repair obvious cross-section contradictions in place before implementation starts
-- use two parallel cold-reader passes in Codex so the parent integrator gets fresh eyes across the whole artifact
+- use two new clean same-host native cold-reader roles so the parent integrator gets independent eyes across the whole artifact
 - record the outcome in one helper block
 - decide whether the doc is decision-complete and ready to proceed to `implement`
 
@@ -12,7 +12,8 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
+- `../../_shared/agent-orchestration-policy.md`
+- `../../_shared/scope-and-convergence.md`
 - `section-quality.md` for `# TL;DR`, `# 0)` through `# 10)`, `planning_passes`, and helper blocks
 
 ## Writes
@@ -29,9 +30,16 @@
 - use the cross-section consistency rules in `artifact-contract.md` as the primary rubric
 - integrate accepted repairs into the main artifact first, then write or update the helper block
 - keep Section 7 as the one authoritative execution checklist; do not create a shadow checklist here
-- do not use external reviewer CLIs or other-model consultations
-- in Codex, use exactly two parallel `explorer` agents for the cold read
-- outside Codex, keep the same review question and block shape; do not invent a second workflow just because explorer agents are not a runtime primitive
+- the independence needed here comes from clean native child context. Do not
+  add an external same-provider process merely to simulate freshness. A
+  separately requested provider, exact-model/profile, durable session, or
+  structured-receipt review is a different review lane and must name the
+  concrete benefit that justifies its added process and integration cost
+- use the two explorer roles below and no additional fanout. Run them in
+  parallel only when the active host has the child slots and the parent can
+  integrate both returns; otherwise run the same two clean roles sequentially
+- children may not create children or invoke delegation or consultation
+  workflows. This command assigns no nested scope or budget
 - if the North Star, deep-dive, or phase plan is too weak to audit honestly, stop and point to the earlier command that must repair it
 - `Decision: proceed to implement? yes` is forbidden while unresolved decisions,
   unauthorized scope cuts or additions, scope provenance gaps, an unfrozen or
@@ -44,24 +52,64 @@
 - when running as the current `auto-plan` stage, run `python3 skills/arch-step/scripts/arch_stage_gate.py begin --doc <DOC_PATH> --stage consistency-pass` before the cold read and `python3 skills/arch-step/scripts/arch_stage_gate.py complete --doc <DOC_PATH> --stage consistency-pass` after the helper block is current
 - if the stage gate says a different stage is next, stop and report that required command instead of hand-editing receipts or treating an existing consistency marker as proof that this command ran
 
-## Codex cold-read split
+## Native clean cold-read split
 
-In Codex, use exactly two parallel `explorer` agents with this fixed ownership split:
+Create two new same-host native children. Give each child `DOC_PATH`, the
+shared references above, one lens below, and the return contract in this
+section. `New` means do not resume an earlier planner, implementer, or reviewer.
+The children share the workspace but not the parent's completion narrative.
 
-- Explorer 1:
-  - frontmatter
-  - `# TL;DR`
-  - `# 0)`, `# 1)`, `# 2)`, `# 7)`, `# 8)`, `# 9)`, `# 10)`
-  - helper-block drift
-- Explorer 2:
-  - `# 3)`, `# 4)`, `# 5)`, `# 6)`, and `# 7)`
-  - whether architecture, call-site audit, verification, rollout, and cleanup still agree
+Map clean context deliberately:
+
+- In Codex, create each explorer with `fork_turns: "none"`.
+- In Claude Code, use a clean named or custom subagent for each explorer; do
+  not use an explicit conversation fork for these independent cold reads.
+- On another host, use its clean native child mechanism when available. If it
+  has no such mechanism, the parent performs the same two lenses serially
+  rather than inventing an external process solely for freshness.
+
+Use the strongest read-only capability or sandbox the active host actually
+exposes, and say in both briefs: inspect only; do not edit, write, apply
+patches, commit, or change repo state. Do not claim the capability is enforced
+unless the active tool schema confirms it. The parent captures the relevant
+`git status` or diff immediately before dispatch and compares current repo
+state after both returns, before making any integration edits.
+
+The lenses are intentionally non-overlapping. Both explorers may read the full
+artifact to understand cross-references, but each reports only findings owned
+by its lens:
+
+- Scope and execution-authority explorer:
+  - owns human authorization, North Star, scope provenance, convergence
+    closure, scope freeze, compatibility decisions, phase-frontier
+    completeness, exhaustive checklist/exit obligations, Decision Log
+    authority, helper-block drift, unresolved decisions, and unauthorized
+    cuts or additions
+  - uses frontmatter, `# TL;DR`, `# 0)`, `# 1)`, `# 2)`, `# 7)`, `# 10)`, and
+    helper blocks as its primary evidence
+- Architecture and proof-chain explorer:
+  - owns research grounding, current-to-target architecture coherence,
+    canonical owner path, call-site/migration/delete coverage, preservation
+    evidence, verification sufficiency, rollout, and cleanup coherence
+  - uses `# 3)` through `# 6)`, `# 8)`, and `# 9)` as its primary evidence;
+    it may cite Section 7 as the downstream claim to compare against, but does
+    not duplicate the first explorer's scope-authority or obligation audit
+
+Each explorer returns:
+
+- whether its bounded review completed
+- findings with section or path anchors, the controlling rule or evidence, and
+  the smallest main-doc repair or blocker question
+- checks or searches it performed and any unresolved assumptions
+- an explicit confirmation that it made no writes and created no children
 
 The parent pass owns integration:
 
-- read the full artifact yourself before delegating
-- send the two explorers in parallel
-- reconcile overlaps or disagreements in the parent pass
+- read the full artifact before dispatch
+- verify the no-write claim against current repo state
+- reconcile the two lenses and resolve any cross-lens contradiction itself
+- re-read the current artifact before editing so concurrent changes are not
+  overwritten
 - repair the main artifact first
 - only then write `arch_skill:block:consistency_pass`
 
@@ -93,7 +141,7 @@ Use this block shape:
 ```text
 <!-- arch_skill:block:consistency_pass:start -->
 ## Consistency Pass
-- Reviewers: explorer 1, explorer 2, self-integrator
+- Reviewers: scope/execution-authority explorer, architecture/proof-chain explorer, parent integrator
 - Scope checked:
   - <item>
 - Findings summary:

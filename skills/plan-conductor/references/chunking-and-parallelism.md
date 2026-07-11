@@ -60,6 +60,8 @@ Parallelism is a bonus the plan either offers or does not:
 
 - Fan out only when slices are dependency-ready under the plan's own
   ordering, touch disjoint owner surfaces, and share no unsettled decision.
+- The conductor owns the fanout budget and integration. Workers do not create
+  more agents unless the conductor explicitly assigns a bounded nested scope.
 - Do not create a new slice from a post-freeze audit finding. Route it by scope
   disposition: repair authorized work, subtract unauthorized work, or ask the
   human decision owner.
@@ -74,10 +76,11 @@ Parallelism is a bonus the plan either offers or does not:
   correct behavior, not a failure. The speedup comes as much from cheap fast
   workers and batched send-backs as from fanout.
 
-## Defaults
+## Concurrency Judgment
 
-- Cursor Composer or Grok Composer workers: max parallelism `4`.
-- Codex or Claude workers: max parallelism `2`.
-- The user can pin a different value at kickoff. Reduce parallelism when the
-  worktree gets conflicted, proof is unclear, or workers touch unexpectedly
-  overlapping surfaces.
+Set max parallelism from real independent slices, available host slots,
+shared-worktree collision risk, external process cost, and the conductor's
+ability to audit every return. The user may pin a value at kickoff, but it is a
+ceiling, not a target. Reduce fanout when the worktree gets conflicted, proof is
+unclear, or workers touch unexpectedly overlapping surfaces. Serial execution
+remains correct when those constraints leave one safe slice.

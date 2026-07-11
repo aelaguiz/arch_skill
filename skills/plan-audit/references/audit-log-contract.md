@@ -110,7 +110,8 @@ This section stores anchors, not a second copy of the scope contract.
 - Scope:
 - Baseline reviewed:
 - Test/CI context accepted, if supplied:
-- Agents/lenses run:
+- Review-child accounting and context choices:
+- Pre/post-dispatch repository-state check:
 - Code areas read:
 - Findings added:
 - Findings resolved:

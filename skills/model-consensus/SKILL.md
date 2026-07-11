@@ -1,97 +1,127 @@
 ---
 name: model-consensus
-description: "Run a prompt-only, parent-agent orchestrated dialogue between two named Claude Fable/Opus, Codex GPT/GBT models or Fugu profiles, Cursor Composer, or Grok models to cross-check, critique, and converge on a lean plan, architecture, debugging strategy, investigation, design, or concept. Use when the user wants iterative two-model agreement or adversarial simplification. Repo-backed runs make both models read real evidence, but open investigations preserve child discovery freedom. Not for one-shot cold opinions, deterministic code review, ordered implementation loops, or broad idea tournaments."
+description: "Orchestrate a prompt-only dialogue between two selected Claude, Codex, Cursor Agent, or Grok participants until they converge on a lean plan, architecture, debugging strategy, investigation, design, or concept. Resolve transport independently per participant: use separate clean native children for same-host participants when native model capability suffices, and external sessions for cross-provider or unavailable exact-model/profile needs. Resume each exact participant between rounds; relay through the parent by default. Not for one-shot cold opinions, ordinary code review, ordered implementation loops, or broad idea tournaments."
 metadata:
-  short-description: "Agent-run two-model consensus for lean repo-grounded plans"
+  short-description: "Two-participant consensus with per-role transport"
 ---
 
 # Model Consensus
 
-Use this skill when the user wants two selected models to think together until
-they converge on the best answer. The parent agent is the runner: it
-orchestrates the dialogue, preserves the goal, routes evidence between the two
-child sessions, checks for agreement, and reports the result. Do not add or
-depend on a deterministic runner, script, controller, state machine, or harness
-layer for this skill.
+Use this skill when the user wants two selected model participants to think
+together until they converge on the best answer. The parent agent orchestrates
+the dialogue, preserves the goal, resolves transport independently for each
+participant, relays evidence, checks for agreement, and reports the result.
+Do not add or depend on a deterministic runner, script, controller, state
+machine, or harness.
 
-The work is not "ask two models and concatenate the answers." The goal is a
+Same-host participants use separate clean native children when the active host
+can actually supply the requested model capability. Cross-provider participants
+or load-bearing exact models/profiles unavailable through the native child
+surface use resumable external sessions. Every later round resumes the exact
+participant that produced the earlier position, regardless of transport.
+
+The work is not "ask two models and concatenate the answers." It is a
 disciplined conversation that removes weaker ideas, preserves independent
-evidence discovery when the task is investigative, converges on existing repo
-patterns when the task is architectural, and avoids kitchen-sink plans.
+evidence discovery for investigations, converges on existing repo patterns for
+architecture, and avoids kitchen-sink plans.
+
 ## Use When
 
-- The user wants two Claude Fable/Opus, Codex GPT/GBT models or Fugu profiles,
-  Cursor Composer, or Grok models to iterate on a plan, architecture, design,
-  migration, debugging strategy, investigation, or concept.
-- The user wants a cross-check where the value comes from independent model
-  judgment, critique, and convergence rather than one model answering once.
-- The user wants one model in adversarial mode to challenge assumptions,
-  propose simpler alternatives, or argue against overbuilt choices.
-- The question is repo-backed and the answer should minimize new pathways by
-  adopting canonical code patterns, owner modules, tests, and conventions.
+- The user wants two Claude, Codex, Cursor Agent, or Grok participants to
+  iterate on a plan, architecture, design, migration, debugging strategy,
+  investigation, or concept.
+- The value comes from independent first passes, critique, and convergence
+  rather than one reviewer answering once.
+- One participant should challenge assumptions, propose simpler alternatives,
+  or argue against overbuilt choices.
+- Repo-backed work should minimize new pathways by adopting canonical owner
+  modules, tests, and conventions.
 - The final answer needs explicit agreement, explicit non-agreement, or a small
-  set of remaining decision points.
+  set of remaining decisions.
 
 ## Do Not Use When
 
-- The user wants one cold second opinion without dialogue or convergence: use
-  `fresh-consult`.
+- The user wants one cold second opinion without dialogue: use
+  `$fresh-consult`.
 - The user wants ordinary code review findings: use the host agent's normal
   review response.
-- The user wants ordered implementation or epic execution: use `stepwise` or
-  `arch-epic`.
+- The user wants ordered implementation or epic execution: use `$stepwise` or
+  `$arch-epic`.
 - The user wants broad idea generation across many options: use an ideation
   skill instead.
 - The user only wants the current agent's own answer.
 
 ## Non-Negotiables
 
-- Keep the runner intelligent. The parent agent may judge whether a reply is
-  grounded, whether the next round needs a tighter prompt, and whether the
-  models have actually converged. It must not reduce the work to a brittle
-  script or fake state machine.
-- The parent agent must not solve the problem itself. It may restate the goal,
-  enforce the process, ask for missing execution choices, request repo evidence,
-  and synthesize only what the child sessions actually agreed on.
-- Preserve child discovery freedom. The parent records the raw goal, resolved
-  model mapping, explicit constraints, desired output, and exact user-named
-  artifacts. The child models choose the evidence path and frame the
-  investigation themselves.
-- Preserve the user's raw goal. Use prompt-authoring discipline to create a
-  faithful goal brief that clarifies success criteria without injecting a
-  solution.
-- For repo-backed work, start children from the raw goal and exact user-named
-  inputs. If the user wants a plan, the children should find the existing owner
-  path before proposing where work belongs. If the user wants an investigation,
-  the children should choose and cite the evidence trail themselves.
-- Ask once for missing execution choices. Each participant needs runtime and
-  effort; a non-Codex participant also needs a runnable model id or exact
-  model phrase. A Codex participant with no named model defaults to
-  `gpt-5.6-sol`. Resolve shorthand such as "luna xhigh", "terra high", or
-  "Claude Fable 5 high" with the shared model-resolution rules and announce
-  the raw-to-resolved mapping.
-- Provider routing is fixed: Codex runs GPT/GBT/OpenAI model ids and Fugu
-  profiles, Claude Code runs supported Claude models, Cursor Agent runs
-  `composer-2.5-fast`, and Grok CLI runs `grok-build` or
-  `grok-composer-2.5-fast`. Do not pass model ids or profiles across runtimes.
-- For repo-backed work, both child models must read real evidence before they
-  are allowed to recommend or agree. In open investigation mode, require them to
-  choose and cite the code, docs, research, tests, and commands they need. In
-  architecture mode, require canonical owner paths and existing patterns.
-- In architecture mode, prefer one existing path over two new ones. A new
-  abstraction, mode, file family, or workflow is valid only after both models
-  have inspected the canonical owner path and explained why the existing path
-  cannot absorb the work.
-- Agreement is not accumulation. If one model proposes five ideas and the
-  other proposes four, the final plan is not nine ideas. Push them to the
-  smallest architecture that satisfies the goal.
-- Prompt the models as collaborators. Teach the mission, context, quality bar,
-  and why simplicity and repo convergence matter. Do not treat them as stupid
-  prompt runners.
+- Apply `../_shared/agent-orchestration-policy.md`. Keep each participant's
+  role, transport, starting context, continuation, capabilities/isolation,
+  topology, and return contract explicit without reducing the choice to a
+  rigid dispatch form.
+- Resolve transport independently. Prefer a native child for a same-host
+  participant when it can honor the requested capability. Use an external
+  session when a different provider, load-bearing exact model/profile,
+  lifecycle, isolation, automation surface, or structured receipt provides a
+  concrete benefit. These are recognition examples, not a closed allowlist or
+  approval gate.
+- For each new Codex-native participant, set `fork_turns: "none"`. A positive
+  count carries bounded recent turns and `"all"` carries full parent context;
+  neither is the independent-first-pass default. Resume later rounds through
+  that participant's exact child handle. Do not omit `fork_turns` or claim an
+  exact native model override unless the active tool schema confirms it.
+- In Claude Code, start each same-host participant as its own clean named or
+  custom subagent. An explicit conversation fork carries the parent
+  conversation and is not an independent first pass. A skill with
+  `context: fork` runs in an isolated clean subagent context; it is not a full
+  conversation fork. Resume later rounds through the exact subagent. Use
+  background agents only for a real lifecycle need.
+- Parent relay is the default topology. Do not create a Claude agent team or
+  another peer-messaging topology merely because there are two participants.
+  Use direct participant messaging only when the user genuinely requested that
+  method and explain why it improves the dialogue.
+- The parent owns fanout, the concurrency budget, round sequencing, evidence
+  relay, and final integration. Participant prompts prohibit child-created
+  fanout and delegation/consult skills unless the parent explicitly assigns a
+  bounded nested scope and budget.
+- Context is separate from permissions, filesystem sharing, and worktree
+  isolation. Participants are read-only collaborators. Prefer enforced
+  read-only capability where available, include no-edit/no-write guidance, and
+  have the parent check workspace status or diff before accepting the run.
+- On a Codex host, an external Codex participant adds another operating-system
+  process and may contend on shared Codex SQLite/WAL state; on some hosts that
+  has caused system-wide stalls. Weigh that real cost without turning it into a
+  ban, approval gate, or fixed process-count limit.
+- Preserve exact participant model resolution. Codex runs GPT/GBT/OpenAI model
+  ids and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
+  runs `composer-2.5-fast`; Grok runs `grok-build` or
+  `grok-composer-2.5-fast`. An omitted Codex participant model defaults to
+  `gpt-5.6-sol`. Never silently substitute model family/version or cross
+  runtimes.
+- Keep the runner intelligent. The parent may tighten a round, require missing
+  evidence, or stop on genuine agreement. It must not reduce the work to
+  mechanical alternation or solve the problem itself.
+- Preserve the user's raw goal. Build a faithful goal brief that clarifies
+  success without injecting the parent's diagnosis, preferred solution, or
+  investigation map.
+- Preserve child discovery freedom. Start both participants from the same raw
+  goal, exact user-named inputs, constraints, and evidence obligations. Do not
+  reveal either first pass to the other before both have formed independent
+  views.
+- For repo-backed work, both participants must read real evidence before they
+  recommend or agree. Investigation participants choose and cite their own
+  evidence trails. Architecture participants identify canonical owner paths
+  and existing patterns before proposing new ones.
+- Agreement is not accumulation. Push toward the smallest answer that covers
+  every hard requirement; a new abstraction or pathway requires evidence that
+  the existing owner cannot absorb the work.
+- Every dialogue round resumes the exact participant. If independence is needed
+  again, such as a later cold gate, start a new clean child instead of reusing
+  participant history.
+
 ## First Move
 
-Read these references before invoking children:
+Read these references before dispatching participants:
 
+- `../_shared/agent-orchestration-policy.md`
 - `references/workflow-contract.md`
 - `references/prompt-contracts.md`
 - `references/model-and-invocation.md`
@@ -101,69 +131,80 @@ Read these references before invoking children:
 
 Then:
 
-1. Capture the raw user goal and whether the user asked for ordinary
-   collaboration or adversarial critique.
-2. Build a faithful goal brief using prompt-authoring discipline. Clarify the
-   goal, constraints, desired output, and exact user-named inputs without adding
-   the caller's diagnosis or investigation frame.
-3. Resolve the two participant execution choices. Default an omitted Codex
-   model to `gpt-5.6-sol`, then ask one concise question if another required
-   runtime/model/effort choice is missing or ambiguous. Cursor Agent always
-   means `composer-2.5-fast`; Grok without a Composer model means `grok-build`.
-4. Create a per-run artifact directory by hand, for example
-   `.arch_skill/model-consensus/<slug>-<timestamp>/`. Store prompts, final
-   replies, event streams, and a short run index there. Do not create a script.
-5. If repo-backed, make the first child prompt require real evidence. Tell the
-   models to start from user-named artifacts or symptoms, then choose and cite
-   whatever code, docs, research, tests, commands, or local evidence they need.
-6. Before launching children, reread the prompt. If it contains caller-written
-   diagnosis or a caller-selected investigation map that is not in the user's
-   ask, delete that material.
+1. Capture the raw user goal and whether one participant is adversarial.
+2. Build a faithful goal brief with the goal, hard constraints, desired output,
+   and exact user-named inputs, without adding the caller's theory or file map.
+3. Resolve both participant provider/model/profile/effort choices exactly. Use
+   the omitted-Codex-model default, then ask one concise question if another
+   load-bearing participant choice remains ambiguous.
+4. Inspect the active host's native child capabilities and choose transport for
+   each participant separately. Record the concrete reason for any external
+   participant and do not promise native model selection the host cannot
+   confirm.
+5. Set new native starting context explicitly: Codex
+   `fork_turns: "none"`; Claude clean named/custom subagent. New external
+   sessions start clean from the prompt. Preserve each exact child/session
+   handle for later rounds.
+6. Create a per-run artifact directory by hand, for example
+   `.arch_skill/model-consensus/<slug>-<timestamp>/`, and store participant
+   mapping, prompts, replies, receipts, and a short index. Do not create a
+   script.
+7. If repo-backed, require both participants to inspect real evidence. Before
+   dispatch, reread each prompt and remove parent-written diagnosis or a
+   parent-selected investigation map not present in the user's ask.
 
 ## Workflow
 
-1. Start two fresh, resumable child sessions with the same faithful goal brief.
-   Give each model the same mode-specific evidence obligations and role
-   framing, including the instruction to maximize parallelism by using parallel
-   agents and not invoke skills that spawn subagents.
-2. Collect independent first passes. Do not let either model see the other's
-   answer before it has formed its own view.
-3. Send Model A's pass to Model B for critique and simplification. In
-   adversarial mode, tell the adversary to look for a more elegant alternate
-   architecture and to reject kitchen-sink compromises.
-4. Send Model B's critique and proposal back to Model A. Ask Model A to revise,
-   concede, or defend with repo evidence.
-5. Continue focused rounds until both models either agree or expose a real
-   unresolved decision. Most runs should need one to four rounds. Continue when
-   a reply is ungrounded, overbuilt, contradictory, or ignores a user
-   requirement.
-6. Produce a final consensus only from agreed material. If they do not agree,
-   report the smallest unresolved choice with each side's evidence and the
-   decision the user needs to make.
-7. Leave artifact handles in the final response. Do not paste long transcripts.
+1. **Start two independent first passes.** Dispatch separate clean participants
+   with the same faithful goal brief and mode-specific evidence obligations.
+   For native Codex use `fork_turns: "none"`; for native Claude use separate
+   clean named/custom subagents; for external participants use fresh resumable
+   sessions. Prohibit nested fanout unless explicitly budgeted.
+2. **Collect both views before relay.** Do not let either participant see the
+   other's answer before it has formed its own position.
+3. **Relay through the parent.** Send Model A's pass to Model B for critique and
+   simplification, then send Model B's critique and proposal back to Model A.
+   In adversarial mode, require constructive opposition and evidence-backed
+   simpler alternatives.
+4. **Resume exact participants.** Every critique, revision, and signoff returns
+   to the same native child handle or external session id. Do not use a latest
+   session, replace one participant silently, or cross runtimes on resume.
+5. **Continue only purposeful rounds.** Stop when both participants explicitly
+   accept the same lean answer and evidence obligations are satisfied. Continue
+   when a reply is ungrounded, overbuilt, contradictory, or drops a hard user
+   requirement. Most runs need one to four rounds.
+6. **Synthesize only agreed material.** If they do not converge, report the
+   smallest unresolved decision, each side's evidence, and the user decision
+   that would unblock it. Do not invent a third unreviewed architecture.
+7. **Verify and leave handles.** Inspect workspace status/diff for unexpected
+   writes, preserve native/external participant handles and artifact receipts,
+   and return the artifact directory without pasting long transcripts.
 
 ## Output
 
 Final responses should include:
 
-- the resolved participant mapping
+- each participant's provider/model/effort/role, transport, clean-start
+  mechanism, exact continuation handle, and concrete external benefit when used
 - whether the run converged
-- the consensus plan or concept, kept lean
+- the lean consensus plan or concept
 - repo evidence that shaped the result when applicable
 - rejected alternatives and why they were rejected
 - unresolved decisions, if any
+- parent read-only/status check
 - artifact directory path
 
 ## Reference Map
 
-- `workflow-contract.md` - how the parent agent runs the dialogue without a
-  deterministic runner
-- `prompt-contracts.md` - prompt shapes for first pass, critique, adversarial
-  mode, revision, and signoff
-- `model-and-invocation.md` - model shorthand resolution, direct child
-  invocation, resumable sessions, streaming, and long-run monitoring posture
+- `workflow-contract.md` - parent-owned transport selection, independent first
+  passes, exact-participant rounds, relay topology, and long-run posture
+- `prompt-contracts.md` - first-pass, critique, adversarial, revision, and
+  signoff prompt shapes with parent-owned fanout
+- `model-and-invocation.md` - per-participant native/external resolution, exact
+  model mapping, native child semantics, external command shapes, session
+  resume, and receipts
 - `repo-grounding.md` - required repo reading, open-investigation evidence
   discovery, and single-path architecture pressure
-- `convergence-and-synthesis.md` - how to tell agreement from accumulation and
-  how to report no-consensus outcomes
-- `examples.md` - example invocations and operating patterns
+- `convergence-and-synthesis.md` - agreement versus accumulation and honest
+  no-consensus reporting
+- `examples.md` - representative transport and dialogue patterns

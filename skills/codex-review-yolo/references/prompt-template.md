@@ -23,7 +23,9 @@ directly. If the work is not approved, say so plainly.
 
 # Hard Constraints
 
-- <review-only, token/env handling, local boundary, or "none">
+- Review only. Do not edit files, create commits, or change external state.
+- Do not spawn child agents or invoke delegation/consult workflows.
+- <token/env handling, local boundary, or other review-specific constraint>
 
 # How To Work
 
@@ -93,4 +95,8 @@ Don't:
 
 ## Sizing
 
-Keep the prompt under ~400 lines. If it's growing beyond that, you're probably trying to audit too much in one pass — split into two audits (e.g. "code correctness" and "drift-proofing strength") and run them in parallel.
+Keep the prompt under ~400 lines. If it is growing beyond that, narrow the
+decision or split it into coherent audits such as code correctness and
+drift-proofing strength. Decide whether to sequence or parallelize those
+external processes from current host state and the concrete benefit; do not
+multiply independent Codex processes by reflex.

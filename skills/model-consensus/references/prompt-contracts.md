@@ -11,8 +11,10 @@ Every child prompt should make clear:
   stated needs
 - agreement must be earned through evidence and simplification
 - repo-backed work requires reading real evidence and naming the evidence used
-- the child should maximize parallelism by using parallel agents and must not
-  invoke skills that spawn subagents
+- the parent owns fanout and integration; the participant must not create child
+  agents or invoke delegation/consult skills unless the prompt explicitly
+  assigns a bounded nested scope and concurrency budget
+- the participant is read-only and must not edit or write workspace files
 - the child should stop or ask for missing information instead of guessing
 
 ## Goal Brief Contract
@@ -59,6 +61,10 @@ Authoritative Inputs
 - Raw goal: <raw_goal>
 - Faithful goal brief: <goal_brief>
 - Your role: <collaborator|adversary>
+- Transport: <native | external>
+- Starting context: <clean first-pass context | existing exact participant context>
+- Continuation: <new participant | exact-participant resume>
+- Exact participant handle: <host child handle | external session id | none>
 - Work root: <path or none>
 - Explicit user constraints: <constraints>
 
@@ -72,7 +78,9 @@ Start with user-named artifacts or symptoms, then choose the code, docs,
 research, tests, commands, or other local evidence needed for the goal. Cite
 what you inspected and why it mattered.
 
-Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+Do not edit or write workspace files. Do not create child agents or invoke
+delegation/consult skills. The parent owns fanout, evidence relay, and
+integration unless it explicitly assigns a bounded nested scope and budget.
 
 Quality Bar
 Prefer the smallest answer that satisfies every hard requirement and survives
@@ -116,7 +124,9 @@ misses a hard requirement, lacks evidence, or combines ideas without a reason.
 If the other model is better, say so and adopt it. If a third option is simpler,
 propose it explicitly and justify it from evidence.
 
-Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+Do not edit or write workspace files. Do not create child agents or invoke
+delegation/consult skills unless the parent explicitly assigned a bounded
+nested scope and budget.
 
 Output Contract
 Return:
@@ -154,7 +164,9 @@ Inputs
 - Other model's latest critique/proposal: <other_latest>
 - Your previous proposal: <your_previous>
 
-Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+Do not edit or write workspace files. Do not create child agents or invoke
+delegation/consult skills unless the parent explicitly assigned a bounded
+nested scope and budget.
 
 Output Contract
 Return:
@@ -181,7 +193,9 @@ Question
 Does this candidate preserve the user's goal, satisfy every hard requirement,
 avoid unnecessary new pathways, and reflect your actual agreement? If no, name
 the smallest correction needed. If yes, sign off and name any residual risk.
-Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+Do not edit or write workspace files. Do not create child agents or invoke
+delegation/consult skills unless the parent explicitly assigned a bounded
+nested scope and budget.
 ```
 
 Do not call the result consensus if either model refuses signoff on a material

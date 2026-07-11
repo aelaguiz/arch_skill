@@ -4,6 +4,22 @@ This is the suite-only evaluator used by `arch-docs auto`.
 
 Do not suggest this surface to users.
 
+## Dispatch contract
+
+- Start this evaluator as a new clean same-host native critic by default. In
+  Codex set `fork_turns: "none"`; in Claude use a clean named or custom
+  subagent, not a bare conversation fork or skill `context: fork` shorthand.
+- Pass the resolved scope, ledger path, and current repo paths in the brief.
+  Use bounded or full inherited context only when a named dependency exists
+  solely in chat.
+- Select the strongest read-only capability the host exposes and retain the
+  explicit no-edit/no-write rules below.
+- Do not create child agents or invoke delegation, consult, or review skills
+  unless the parent explicitly assigns a bounded nested scope and budget.
+- The parent owns result accounting, evidence spot-checking, synthesis, any
+  accepted repair, and the final verdict. Evaluator output is evidence, not an
+  automatic controller decision.
+
 ## Goal
 
 Read the current repo docs plus `.doc-audit-ledger.md` and decide one of exactly three honest outcomes:
@@ -23,6 +39,7 @@ Read the current repo docs plus `.doc-audit-ledger.md` and decide one of exactly
 
 - Do not modify repo files.
 - Do not rewrite docs, delete files, or "help" the cleanup from the evaluator.
+- Do not write `.doc-audit-ledger.md` or any other state file.
 - Judge the last pass only from current repo truth plus the ledger and explicit request scope.
 
 ## Evaluate these questions
@@ -82,4 +99,6 @@ Repo-posture ambiguity by itself is not a blocker. Default `private/internal` un
 
 Return structured JSON only, matching the schema supplied by the caller.
 
-Keep the reasoning fields concise and concrete.
+Keep the reasoning fields concise and concrete. Include the repo paths or
+anchors that support the recommendation and name any coverage gap or collision
+risk the parent must resolve.

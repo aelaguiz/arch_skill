@@ -12,11 +12,17 @@ The parent agent's job is orchestration only:
 - prepare high-quality prompts
 - preserve child discovery freedom when the task is a cross-check or
   investigation
-- invoke the two child model sessions directly
+- resolve native or external transport independently for each participant
+- invoke two separate clean participants and preserve their exact handles
 - relay the relevant outputs between them
 - require evidence when a claim depends on a repo
 - identify convergence, non-convergence, or malformed replies
 - report the agreed result without adding a third plan of its own
+
+Parent relay is the default topology. Participants do not message each other
+directly and do not create children unless the parent explicitly budgets a
+bounded nested scope. Use a host-native peer team only when direct participant
+communication is genuinely part of the user's requested method.
 
 ## Operating Principles
 
@@ -60,8 +66,10 @@ desired output, and participant choices.
 Resolve two participant blocks:
 
 ```text
-participant_a: runtime, model, effort, role
-participant_b: runtime, model, effort, role
+participant_a: provider/model/profile, effort, role, transport, starting context,
+               continuation handle, capabilities/isolation
+participant_b: provider/model/profile, effort, role, transport, starting context,
+               continuation handle, capabilities/isolation
 ```
 
 The default roles are `collaborator` and `collaborator`. If the user asks for
@@ -70,9 +78,22 @@ is responsible for simpler alternatives, counterarguments, failure modes, and
 resisting bloated compromise.
 
 If a participant is on Codex and its model is omitted, use `gpt-5.6-sol` and
-announce that default. If another required runtime, model, or effort is missing
-or ambiguous, ask one consolidated question before invoking external models.
-Do not invent defaults for other runtimes.
+announce that default. If another load-bearing provider, model/profile, or
+effort choice is missing or ambiguous, ask one consolidated question. Do not
+invent defaults for other runtimes.
+
+Choose transport independently after inspecting the active host. Same-host
+participants use separate native children when the host can satisfy their
+requested model capability. Cross-provider participants and exact
+models/profiles unavailable natively use external sessions. Do not claim a
+native model override the tool surface cannot confirm.
+
+Set starting context explicitly. In Codex, new independent participants use
+`fork_turns: "none"`; a positive count is bounded context and `"all"` is full
+parent context, neither of which is the first-pass default. In Claude Code,
+new participants are clean named/custom subagents, not explicit
+full-conversation forks. A skill with `context: fork` is isolated and clean,
+not a full conversation fork. Every later round resumes the exact participant.
 
 ## Phase 3: Create Artifacts
 
@@ -87,6 +108,7 @@ Useful files:
 ```text
 goal.md
 participants.md
+handles.md
 round-01/model-a-prompt.md
 round-01/model-a-events.jsonl
 round-01/model-a-final.md
@@ -102,12 +124,16 @@ or require a script to manage it.
 
 ## Phase 4: Independent First Passes
 
-Start two fresh, resumable sessions. Give both models:
+Start two separate clean, resumable participants. Use native children for
+same-host participants whose requested capability is available and external
+sessions for the remaining participants. Give both models:
 
 - the raw goal and goal brief
 - the participant roles
 - repo root and evidence obligations when a repo or workspace is involved
-- the instruction: Maximize parallelism by using parallel agents. Do not invoke skills that spawn subagents.
+- an explicit no-edit/no-write contract and a prohibition on child-created
+  fanout or delegation/consult skills unless the parent assigned a bounded
+  nested scope and budget
 - the quality bar
 - the output contract
 
@@ -127,8 +153,11 @@ Each round should have a concrete purpose:
 - challenge an unsupported claim
 - produce final signoff
 
-Use resumable child sessions so each model can carry its own reasoning history.
-The parent relays the relevant other-model material into each resume prompt.
+Resume the exact participant so each model carries only its own reasoning
+history. For native participants, use the exact child/subagent handle. For
+external participants, use the exact same-runtime session id. The parent relays
+the relevant other-model material into each follow-up prompt; do not select a
+"latest" session or silently replace a participant.
 
 Stop early when both models agree on the same lean answer and have satisfied
 the repo-grounding obligations. Continue when either model:
@@ -155,10 +184,12 @@ Architectural and repo-grounded rounds can take real time. A normal child round
 often takes 5+ minutes; broad repo reads, `xhigh`, or `max` can reasonably take
 20-40 minutes. Choose the execution posture deliberately:
 
-- Use foreground execution for short prompts where blocking keeps the flow
-  simple.
-- Use background shell processes for long repo-reading rounds, but preserve
-  live event streams and inspect them on a minutes-scale cadence.
+- Use foreground native or external execution for short prompts where blocking
+  keeps the flow simple.
+- For long same-host work, use the host's native background child only when the
+  lifecycle benefit is needed and supported. For long external rounds,
+  background shell execution may be appropriate, but preserve live event
+  streams and exact session receipts.
 - Do not call a child hung only because no final file exists after a few
   minutes. Look for process liveness, stream activity, tool calls, thinking
   traces where available, and stderr errors.
@@ -168,3 +199,8 @@ often takes 5+ minutes; broad repo reads, `xhigh`, or `max` can reasonably take
 - Treat "no stream events, no tool calls, no stderr movement, and no CPU/process
   activity for several minutes after an already generous floor" as a reason to
   investigate, not as automatic proof of a hung model.
+
+Native context remains separate from permissions and workspace sharing. Use an
+enforced read-only capability when available, keep the no-write contract in
+every participant prompt, and have the parent inspect status or diff before
+accepting the run.

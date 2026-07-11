@@ -1,29 +1,56 @@
-# Session resume mechanics
+# Native continuation and external session adapter
 
 Verified against Claude Code CLI 2.1.119, Codex CLI 0.124.0-alpha.3, and Grok
 CLI 0.2.22. When a CLI version drifts, re-run the relevant verification block
 at the bottom of this file before trusting that invocation.
 
-## Why sessions matter for this skill
+## Transport ownership
 
-A step runs in a fresh subprocess. The critic inspects the output and returns
-an observational verdict. On failure, Stepwise may resume worker sessions in
-two different ways: read-only diagnostic conversation, then operational repair
-after root cause is located. Claude, Codex, and Grok expose different session
-handles; this reference is the single place the exact mechanics live.
+The orchestrator chooses transport under
+`../../_shared/agent-orchestration-policy.md`; this file does not. Same-host
+workers and critics normally use native children. `run_stepwise.py` and the CLI
+forms below are the deterministic external adapter when a concrete provider,
+exact model/profile, lifecycle, isolation, automation, structured receipt, or
+another deliberate benefit warrants an external process.
 
-## Runtime behavior contract
+## Native context and continuation
 
-- Step sub-sessions are resumable. Do not pass `--ephemeral` (Codex) or
+- Initial workers and every independent critic start clean. In Codex native
+  dispatch always set `fork_turns: "none"`; use a positive count only for
+  bounded chat-only context and `"all"` only for a genuinely full-conversation
+  dependency. In Claude, use a clean named subagent. An explicit conversation
+  fork carries full conversation; a skill with `context: fork` instead runs in
+  an isolated clean subagent context.
+- Diagnostic and repair turns resume the exact worker child through its native
+  handle. Never resume a convenient old child for another role. Every critic
+  rejudgement is another new clean child.
+- Context inheritance is separate from permissions, capabilities, filesystem
+  sharing, background lifetime, and worktree isolation. Record those choices
+  independently in the dispatch receipt.
+- The parent owns fanout and integration. Children may not create more agents
+  or invoke delegation/consult skills unless the parent assigned a bounded
+  nested scope and budget.
+
+## Why external sessions matter
+
+On failure, Stepwise may resume an external worker in two ways: read-only
+diagnostic conversation, then operational repair after root cause is located.
+Claude, Codex, and Grok expose different external session handles; this
+reference is the single place those exact mechanics live.
+
+## External runtime behavior contract
+
+- External worker sessions are resumable. Do not pass `--ephemeral` (Codex) or
   `--no-session-persistence` (Claude) to them.
-- Critic sub-sessions are stateless. Pass `--ephemeral` for Codex, rely on a
-  fresh process for Claude and Grok, and never resume a critic.
-- Diagnostic and repair turns both resume worker sessions. Diagnostic turns
-  are read-only by prompt contract and do not consume repair bounces. Repair
-  turns are operational and do consume repair bounces.
-- All runtimes run with dangerous/skip-permissions/no-sandbox. This is a
-  user-set constraint on this skill. Read-only discipline for the critic is
-  enforced in the critic prompt, not with a sandbox flag.
+- External critic sessions are stateless. Pass `--ephemeral` for Codex, rely on
+  a new clean process for Claude and Grok, and never resume a critic.
+- Diagnostic and repair turns both resume exact external worker sessions.
+  Diagnostic turns are read-only by prompt contract and do not consume repair
+  bounces. Repair turns are operational and do consume repair bounces.
+- External runtimes use the existing dangerous/skip-permissions/no-sandbox
+  convention. This does not define native child permissions. Read-only
+  discipline for every critic remains in the prompt, is enforced by capability
+  when available, and is checked by the parent against repository state.
 
 ## Claude — step session (resumable)
 

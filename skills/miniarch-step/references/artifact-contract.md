@@ -177,7 +177,7 @@ Canonical Scope and Simplicity Contract shape:
 - Residual risk accepted by this plan: <bounded risk that does not justify expansion>
 ```
 
-Apply `skills/_shared/scope-and-convergence.md`. Initial planning may add only
+Apply `../../_shared/scope-and-convergence.md`. Initial planning may add only
 the smallest evidenced same-contract convergence closure. The confirmed Scope
 and Simplicity Contract is scope authority for later architecture, phase,
 implementation, and verification text. Freeze it before the first code edit.

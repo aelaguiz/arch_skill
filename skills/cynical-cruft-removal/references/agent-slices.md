@@ -1,9 +1,10 @@
 # Native Agent Slices
 
-Use native parallel agents only when the host already provides them and the
-target is broad enough that independent read-only slices will improve coverage.
-Do not use external subprocess review, delegation, consult, or coding-harness
-skills as the review mechanism.
+Use this reference with `../../_shared/agent-orchestration-policy.md`. When the
+active host provides native children and the target is broad enough that
+independent read-only slices will improve coverage, prefer new clean same-host
+native children. Do not use external subprocess review, delegation, consult,
+or coding-harness skills as the ordinary review mechanism.
 
 The parent reviewer owns the final verdict. Child agents provide evidence, not
 approval.
@@ -14,11 +15,16 @@ Use slices when the requested target crosses several independent surfaces, such
 as a whole repo, large branch, broad subsystem, large test suite, dependency
 cleanup, or generated artifact cleanup.
 
+Let distinct coverage needs determine the slice count. Keep lenses and path
+families non-overlapping, and bound fanout by the host's available slots,
+shared-file or shared-state collision risk, and the parent's capacity to
+inspect every return.
+
 Do not slice when:
 
 - the scope is small enough for one reviewer to trace directly
 - the user asked for a quick local answer
-- the host does not provide native parallel agents
+- the host does not provide native children
 - the parent cannot inspect and account for every child result before
   finalizing
 
@@ -78,6 +84,15 @@ machinery.
 
 ## Child Prompt Shape
 
+Before dispatch, the parent must capture repository status and the relevant
+diff, assign a distinct lens and path family, and choose the strongest
+read-only capability the host exposes. Start each independent slice clean: in
+Codex set `fork_turns: "none"`; in Claude use a clean named or custom subagent,
+not a bare conversation fork or skill `context: fork` shorthand. Use bounded or
+full inherited context only for a named dependency that exists solely in chat;
+prefer artifact paths and a compact brief over inheriting the parent's cleanup
+story.
+
 Use a compact prompt like:
 
 ```text
@@ -94,8 +109,10 @@ When scope history is supplied, treat human scope and the frozen closure as
 authority. Report scope-laundered live clusters; do not keep them because later
 agents made them reachable.
 
-Return concise evidence with repo paths. Do not edit files. Do not ask for more
-tests or docs. Do not use external review/delegation tools.
+Return concise evidence with repo paths. Do not edit or write files. Do not ask
+for more tests or docs. Do not create child agents or invoke delegation,
+consult, or review skills unless the parent brief explicitly assigns a nested
+scope and budget.
 ```
 
 ## Parent Accounting
@@ -109,6 +126,10 @@ Before finalizing, the parent must record in `coverage.md`:
 - keep decisions worth preserving
 - gaps or conflicts
 - how the parent used or rejected the child evidence
+- scope disposition for accepted findings
+- pre/post-dispatch repository state check
 
 If a child does not return, is interrupted, or gives unusable evidence, record
 that honestly. Do not count launched-but-unreturned work as review coverage.
+The parent spot-checks anchors, reconciles conflicts, deduplicates findings,
+and owns the final verdict.

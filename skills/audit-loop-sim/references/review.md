@@ -2,26 +2,53 @@
 
 ## Goal
 
-Run a fresh, docs-only automation verdict pass that decides whether the exhaustive map is complete, whether the current ranking is still truthful, whether a major unresolved real-app automation risk front still justifies more work, and whether the latest editful pass actually survived the required post-change audit.
+Run a new clean, docs-only automation verdict pass that decides whether the exhaustive map is complete, whether the current ranking is still truthful, whether a major unresolved real-app automation risk front still justifies more work, and whether the latest editful pass actually survived the required post-change audit.
 
 ## Writes
 
 - `_audit_sim_ledger.md`
 - root `.gitignore` when the ledger is missing and must be repaired
 
-No product code changes are allowed in `review`.
+These are parent-owned writes. The critic does not write them. No product code
+changes are allowed in `review`.
+
+## Parent And Critic Boundary
+
+- The parent creates or repairs the ledger, captures current git status and the
+  relevant diff, and then starts a new clean same-host native critic by
+  default. Codex uses `fork_turns: "none"`; Claude uses a clean named or custom
+  subagent rather than a bare conversation fork or skill `context: fork`
+  shorthand.
+- Give the critic the ledger and exact repo paths. Use bounded or full
+  inherited context only for a named dependency that exists solely in chat.
+- Select the strongest read-only capability available and explicitly tell the
+  critic not to edit or write any file, including the ledger. It may not create
+  children or invoke delegation, consult, or review skills unless the parent
+  assigned a bounded nested scope and budget.
+- Select the critic only after confirming that it inherits the sanctioned
+  simulator or device capabilities required by `audit-loop-sim`. If the host
+  cannot confirm that inheritance, keep the review with the authorized parent
+  and return live state as `unknown`; do not use an external transport as an
+  unauthorized capability bypass.
+- The critic returns a verdict recommendation, path-anchored evidence,
+  coverage limits, and the next mapping tranche or risk front when relevant.
+  The parent accounts for the return, compares current status and diff with the
+  pre-dispatch state, spot-checks evidence, resolves conflicts, writes the
+  ledger, chooses any accepted repair direction, and owns the final verdict.
 
 ## Procedure
 
-1. Create or repair `_audit_sim_ledger.md` and the `.gitignore` entry if they are missing.
-2. Re-read:
+1. The parent creates or repairs `_audit_sim_ledger.md` and the `.gitignore`
+   entry if they are missing, then captures current git status and the relevant
+   diff.
+2. Start the critic under the boundary above. The critic re-reads:
    - controller block
    - Phase 1 triage
    - open findings
    - automation additions
    - post-change audit
    - decisions log
-3. Inspect current repo state from fresh context:
+3. The critic inspects current repo state from its clean context:
    - changed files
    - relevant automation files, runner output, build checks, or logs when needed
    - whether the exhaustive map is complete
@@ -35,12 +62,15 @@ No product code changes are allowed in `review`.
    - whether the sanctioned simulator or device surface is unavailable only because the current review context cannot inspect it cleanly, for example sandbox `EPERM`, host permission issues, or wrapper failures that are not yet evidence of app or harness breakage
    - whether a cross-platform front still needs Android confirmation before it can honestly be called done
    - treat unrelated dirty or untracked files as ordinary context, not as an automatic blocker
-4. Set the controller block:
+4. The critic returns one recommendation plus evidence and coverage limits:
    - `CONTINUE` when a concrete worthwhile next mapping tranche or automation risk front remains
    - `CLEAN` when the map is complete, only fixed items or explicit `SKIP`s remain, and no credible major automation pass is justified
    - `BLOCKED` when the next move would be speculative, repeated, or stopped by a real blocker
-5. Update `Last Review`.
-6. Keep the ledger truthful about why the decision was made.
+5. The parent accounts for the critic, compares repository state with the
+   pre-dispatch snapshot, and spot-checks the returned evidence before setting
+   the controller block.
+6. The parent updates `Last Review` and keeps the ledger truthful about why the
+   decision was made.
 
 ## Verdict rules
 

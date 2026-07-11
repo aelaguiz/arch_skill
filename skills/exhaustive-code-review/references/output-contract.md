@@ -44,7 +44,9 @@ Record what was reviewed:
 - tests, fixtures, proof, docs, examples, comments, schemas, generated
   artifacts, prompts, config, telemetry, stable IDs, install surfaces, and
   package metadata when relevant
-- native parallel agent usage summary
+- child accounting for every launched review slice: lens and path ownership,
+  clean or explicitly justified inherited context, final state, evidence the
+  parent accepted or rejected, and the pre/post-dispatch repository-state check
 - known coverage gaps
 
 Keep this as prose and compact lists. It is not a formal checklist engine.
@@ -113,7 +115,7 @@ VERDICT: approve | not-approved | coverage-incomplete
 ## Coverage Summary
 
 - Scope reviewed:
-- Native parallel agents:
+- Native review slices and repository-state check:
 - Files/hunks/abstractions covered:
 - Competing paths, side doors, and adjacent surfaces:
 - Proof/docs/generated/prompt surfaces:

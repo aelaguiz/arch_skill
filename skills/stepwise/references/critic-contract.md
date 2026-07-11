@@ -1,7 +1,10 @@
 # Critic contract: observation only
 
-The critic is a separate sub-session that judges one worker attempt against the
-step's declared contract. The critic answers one question:
+The critic is a new clean child that judges one worker attempt against the
+step's declared contract. Prefer a same-host native child; use the external
+adapter only when its concrete provider, model, lifecycle, isolation,
+automation, or receipt benefit warrants the additional process. The critic
+answers one question:
 
 Did this attempt honor its contract, and what evidence proves that answer?
 
@@ -154,6 +157,7 @@ present regardless of profile.
 ## What the critic never does
 
 - Edit files.
+- Create or coordinate other model agents or invoke delegation/consult skills.
 - Re-run the worker's work.
 - Suggest repair steps.
 - Recommend paths or commands to the worker.
@@ -166,3 +170,6 @@ present regardless of profile.
 
 Any critic output that reads like a worker instruction is invalid for this
 skill. The critic produces observation, evidence, and contract citation only.
+Use enforced read-only capability when available, retain the no-edit prompt in
+all transports, and have the parent compare target-repo state before and after
+the critic. Clean context does not itself enforce filesystem isolation.

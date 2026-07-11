@@ -1,6 +1,12 @@
 # Model And Invocation
 
-Use this reference to resolve what the user meant by "Claude", "Codex",
+Use this reference after the caller has deliberately selected the external
+worker lane under `../../_shared/agent-orchestration-policy.md`. It owns model
+resolution, command syntax, exact external-session continuation, and receipt
+capture; it does not decide the worker's role, decompose the task, or integrate
+the result.
+
+Use it to resolve what the user meant by "Claude", "Codex",
 "Cursor Agent", "Grok", "fable 5 high", "opus high", "gpt-5.6-sol xhigh",
 "luna xhigh", "terra high", "fugu high", "fugu-ultra xhigh",
 "composer-2.5-fast", "grok-build", or
@@ -10,6 +16,14 @@ Fresh-resumable is the default: new children start cold but capture a session
 handle for later exact resume. Provider routing is fixed: Codex runs
 GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs supported Claude
 models, Cursor Agent runs Composer 2.5 Fast, and Grok CLI runs Grok models.
+
+## External Context
+
+External context is explicit: `fresh-one-shot` and `fresh-resumable` start
+clean from the prompt and disk; `resume` continues the exact captured worker.
+None inherits bounded or full parent chat automatically. Context remains
+separate from the shared worktree, unsandboxed permissions, and process
+isolation used below.
 
 ## Required Values
 
@@ -155,7 +169,7 @@ Grok Build high -> runtime=grok, model=grok-build, effort=high
 ```
 
 For deterministic script plumbing that needs the same rules, use
-`skills/_shared/model_resolution.py` instead of creating a local model alias
+`../../_shared/model_resolution.py` instead of creating a local model alias
 table. The helper exists to keep fresh-consult, agent-delegate,
 model-consensus, Stepwise-style orchestrators, and arch-epic automatic
 harnesses aligned on
@@ -219,6 +233,10 @@ Write `execution.json` before invocation with at least:
 
 ```json
 {
+  "transport": "external",
+  "external_benefit": "<concrete provider/model/lifecycle/isolation/automation/receipt benefit>",
+  "starting_context": "clean-prompt-and-disk | existing-exact-session-context",
+  "continuation": "new-one-shot | new-resumable-session | exact-session-resume",
   "mode": "fresh-one-shot | fresh-resumable | resume",
   "runtime": "claude | codex | agent | grok",
   "model": "<resolved model or reused-from-session>",
@@ -235,9 +253,13 @@ session id to `resume_from.txt`.
 ## Parallel Delegation Group
 
 Use the parallel group path only when the user asks for parallel agents or gives
-multiple delegated tasks for this skill. Parallel workers are still ordinary
-delegate children; the group only gives the parent a place to organize prompts,
-streams, finals, execution metadata, and the combined report.
+multiple delegated tasks for this skill and the parent can review every result.
+Parallel workers are still ordinary external delegates; the group only gives
+the parent a place to organize prompts, streams, finals, execution metadata,
+and the combined report. The parent owns the concurrency budget and assigns
+non-overlapping owner paths when edits would otherwise collide; children do
+not create their own children unless an explicit nested scope and budget says
+otherwise.
 
 Create one group directory:
 
@@ -278,9 +300,10 @@ the child directory if the host shell makes that convenient, but do not
 introduce a script, controller, detached monitor, separate worktree, or merge
 layer.
 
-Do not block launch because siblings might touch nearby files. Brief every
-child that other workers may be editing the same repo, that unfamiliar changes
-must not be reverted, and that actual conflicts should be reported with file
+Nearby files alone do not prove a collision, but sequence work that shares one
+owner or assign non-overlapping write scopes where practical. Brief every child
+that other workers may be editing the same repo, that unfamiliar changes must
+not be reverted, and that actual conflicts should be reported with file
 evidence. After all children finish, inspect repo state and child reports before
 presenting the combined result.
 

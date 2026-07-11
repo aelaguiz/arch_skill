@@ -1,39 +1,65 @@
 # Delegation And Monitoring
 
-Every dispatch maps onto `$agent-delegate` with no new machinery. That skill
-owns invocation mechanics — command shapes, run directories, session capture,
-hook suppression, model/effort resolution, and failure handling. This
-reference only maps conductor situations onto its modes and defines the
-conductor's monitoring and token-economy posture.
+The conductor chooses transport under
+`../../_shared/agent-orchestration-policy.md`; transport does not choose the
+workflow. Same-host phase work normally stays under the active host's native
+child lifecycle. `$agent-delegate` remains the external editful adapter when a
+different provider, load-bearing exact cheaper model/profile, durable session,
+worktree/process isolation, automation surface, structured receipt, or another
+concrete benefit is worth the additional process and integration cost. Those
+examples teach the decision; they are not a closed allowlist.
 
-## Mode Mapping
+## Dispatch And Continuation Mapping
 
-- **Initial slice dispatch → `fresh-resumable`** (agent-delegate's default).
-  The child starts cold from disk plus the slice contract. Record the run
-  directory and captured session id in the conductor log.
-- **Send-back / repair → `resume`** with the exact captured session id, same
-  runtime, and a new bounded findings prompt. The session already holds the
-  slice context — that continuity is exactly why the resumable path exists.
-  Never `--continue`, never "latest," never cross-runtime.
-- **Respawn → new `fresh-resumable`** child with a sharpened brief. Use when
-  the session is unhealthy (caps in the audit reference), the repair moved to
-  a different owner surface, or a cold implementation view is needed.
-- **Cold verifier → `fresh-one-shot`**, final gate only. Statelessness is the
-  feature: no conductor context, no resume, just refutation from code
-  reality. Give it the plan path, human baseline anchors, frozen initial
+- **Initial slice dispatch → new clean child.** Give it the plan path, log
+  path, slice anchors, constraints, and return contract. In Codex set
+  `fork_turns: "none"`; in Claude use a clean named subagent. If the external
+  lane was selected, use `$agent-delegate` `fresh-resumable`. Record the
+  transport, starting context, exact handle, and external run directory when
+  one exists.
+- **Send-back / repair → exact-child resume.** Send one bounded findings delta
+  to the same native child handle or the exact external session id through its
+  original transport. Never select "latest," cross runtimes, or replace the
+  implementer merely because another handle is convenient.
+- **Respawn → new clean replacement.** Use when the role truly needs a cold
+  restart, its prior handle is lost or unhealthy under the audit caps, or its
+  owner surface changed enough to invalidate the earlier view. Record why the
+  replacement was necessary.
+- **Cold verifier → new clean critic**, final gate only. Independence is the
+  feature: no conductor narrative, no resume, just refutation from plan and
+  code reality. In Codex set `fork_turns: "none"`; in Claude use another clean
+  named subagent. Give it the plan path, human baseline anchors, frozen initial
   closure, freeze anchor, and explicit human approvals; its findings cannot
-  expand scope.
-- **Parallel waves** use agent-delegate's parallel group path: one group
-  directory, one ordinary child run directory per worker, every child briefed
-  that siblings may be editing the repo, must not revert unfamiliar changes,
-  and must report actual conflicts with file evidence rather than resolving
-  them by guesswork.
+  expand scope. An external one-shot remains valid when its provider, exact
+  profile, isolation, or receipt is the deliberate value.
+- **Parallel waves** are parent-owned. Use only the active host slots or
+  external sessions that independent, non-overlapping slices justify. Every
+  child knows that siblings may be editing the repo, must not revert unfamiliar
+  changes, must not create more agents unless explicitly assigned a bounded
+  nested scope, and must report actual conflicts with file evidence.
 
-## Worker Identity
+## Native Starting Context
 
-The user supplies worker runtime and effort at kickoff plus a model/profile
-for non-Codex lanes. When the selected lane is Codex and the model is omitted,
-use `gpt-5.6-sol`; accept explicit `sol`, `luna`, and `terra` as
+Clean context is the default because the plan and conductor log already carry
+the durable inputs. In Codex, every native spawn states `fork_turns`:
+`"none"` for ordinary phase workers and critics, a positive count only for a
+small chat-only dependency, and `"all"` only when the whole conversation is
+load-bearing. In Claude, a clean named subagent is distinct from an explicit
+full conversation fork; a skill declared with `context: fork` is an isolated
+clean subagent context, not full inheritance.
+
+Context inheritance is separate from permissions, capabilities, filesystem
+sharing, and worktree isolation. State those independently. Native clean
+children commonly share the current worktree. For a read-only critic, use an
+enforced read-only capability when the host exposes one, keep the no-edit
+prompt rule, and have the conductor compare repository state before and after.
+
+## External Worker Identity
+
+Resolve these values only when an external lane was selected. The user supplies
+worker runtime and effort plus a model/profile for non-Codex lanes. When the
+selected external lane is Codex and the model is omitted, use `gpt-5.6-sol`;
+accept explicit `sol`, `luna`, and `terra` as
 `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated
 question for other missing execution values. The intended fleet is "smart but
 not the smartest" — fast, cheap implementation models — while the conductor
@@ -44,8 +70,10 @@ the work, that is a user decision, not a silent substitution.
 
 ## Patient Monitoring
 
-Every dispatched slice gets a background watchdog, armed as part of the
-dispatch itself and re-armed on every resume and respawn. Tear it down only
+Every dispatched slice gets a liveness monitor suited to its transport, armed
+as part of dispatch and re-armed on every resume and respawn. Native children
+use host status/wait signals; external sessions use process and run-directory
+receipts. Tear it down only
 when the slice is accepted, escalated, or abandoned. This is standing
 practice — the conductor does not wait for the user to ask for a monitor, and
 does not clear one after a slice and then forget to arm the next. Its job is
@@ -59,24 +87,26 @@ while you wait or work; where it does not, poll at the scoped interval.
   in minutes gets a ~5-minute beat; a broad, high-effort slice that reasonably
   runs 20-40 minutes beats toward the 30-minute ceiling. Match the beat to the
   work: frequent enough to catch a wedge, rare enough to stay cheap. Still
-  consume the real result when the delegate process exits — the heartbeat is a
+  consume the real result when the child finishes — the heartbeat is a
   liveness and wedge signal, not the account of what the worker did.
-- **Each beat emits one compact line from cheap signals only**: process
-  liveness, `git diff --stat` shape, changed-file mtimes, `stderr.log` growth.
+- **Each beat emits one compact line from cheap signals only**: native child
+  state or external process liveness, `git diff --stat` shape, changed-file
+  mtimes, and external `stderr.log` growth when available.
   Relay it to the user as a brief "still moving, N files touched" check-in.
-  **Never stream `events.jsonl` into conductor context during normal
-  operation** — it is a diagnostic artifact for post-mortems on non-zero exits
-  or malformed output.
+  **Never stream an external lane's `events.jsonl` into conductor context
+  during normal operation** — it is a diagnostic artifact for post-mortems on
+  non-zero exits or malformed output.
 - **The watchdog must speak up on failure, not just progress.** Emit a wedge
-  alert when the process dies unexpectedly, when it is alive but cheap signals
+  alert when the child dies unexpectedly, when it is alive but cheap signals
   show zero progress across consecutive beats, or when it overruns the slice's
   expected ceiling. A quiet healthy worker and a dead one must not produce the
   same silence.
 - **Quiet is not stuck.** Big slices, high-effort thinking, long tests,
   installs, and simulators go silent for minutes. A heartbeat showing the
   process alive with fresh mtimes is progress even with no new diff yet. A
-  wedge alert is the trigger to *inspect* — cheap signals first, then
-  `events.jsonl` if needed — not to reflexively replace. Replace or respawn
+  wedge alert is the trigger to *inspect* — cheap signals first, then an
+  external lane's `events.jsonl` if needed — not to reflexively replace.
+  Replace or respawn
   only on evidence the worker is stuck, harmful, or dead — never on silence
   alone.
 

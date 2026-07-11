@@ -35,8 +35,9 @@ mode or control surface.
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
-- `skills/_shared/depth-first-planning.md`
+- `../../_shared/agent-orchestration-policy.md`
+- `../../_shared/scope-and-convergence.md`
+- `../../_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 - `arch-implement.md`
 - `arch-audit-implementation.md`
@@ -82,6 +83,10 @@ Audit pass:
 - if execution proposes unapproved machinery or another test category beyond `Enough proof`, stop before building it and obtain explicit user approval rather than letting another loop cycle normalize the expansion
 - when audit runs, pass the explicit `DOC_PATH` and current repo working context; do not ask the audit pass to rediscover the artifact from stale conversation state
 - `audit-implementation` remains docs-only; never fix code while auditing
+- when the audit is delegated to an independent child, use the clean native
+  auditor contract below; the child returns evidence and a proposed verdict,
+  while the parent verifies current repo state and performs authoritative doc
+  updates under `arch-audit-implementation.md`
 - if audit reaches `Verdict (code): COMPLETE`, stop clean and hand off docs cleanup to `arch-docs`
 - if audit reaches `Verdict (code): NOT COMPLETE`, continue from the reopened phases and missing-code findings instead of hand-waving them away
 - unproven fixes are unfinished implementation work, not something to punt to the auditor
@@ -107,8 +112,32 @@ the authoritative exit criteria for the current approved ordered implementation
 frontier against current repo state. Broad implementation confidence, local
 green checks, or implementation summaries are not enough.
 
-When Codex launches a fresh auditor from miniarch workflow doctrine, use
-`gpt-5.4-mini` at `xhigh` effort.
+When the host can satisfy the audit role, launch each independent audit as a
+new clean same-host native auditor. In Codex, set `fork_turns: "none"`. In
+Claude Code, use a clean named or custom subagent rather than a conversation
+fork. Do not resume an implementer, planner, or earlier critic and call it a
+fresh audit.
+
+The auditor is analysis-only even though the parent command ultimately updates
+`DOC_PATH`. Use a read-only capability when the host exposes one and also say:
+do not edit or write files, apply patches, commit, or create children. Give it
+the exact `DOC_PATH`, current repo state, frozen scope anchors, current
+frontier, relevant proof receipts, and the return contract from
+`arch-audit-implementation.md`. The parent records repo status or diff before
+dispatch, verifies it after the return, checks findings against current
+workspace truth, and alone writes the audit block or reopens phases.
+
+If implementation was delegated and the audit finds authorized repair work,
+resume the exact implementer handle with the accepted delta. The next
+independent audit starts as another new clean child. No nested fanout is
+assigned; overall fanout must fit independent work, host slots, collision risk,
+and parent integration capacity.
+
+Prefer `gpt-5.4-mini` at `xhigh` only when the active native schema can select
+and confirm both model and effort. Otherwise use inherited native capability
+and do not claim the preferred profile ran. An external exact-model auditor
+remains available when exact identity has a concrete, load-bearing benefit;
+state why that benefit is worth the added process and integration cost.
 
 ## Console Contract
 

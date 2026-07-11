@@ -1,6 +1,6 @@
 # Audit And Send-Back
 
-The conductor's review is the mechanism that makes cheap workers safe, and it
+The conductor's review is the mechanism that makes delegated workers safe, and it
 is where the expensive model's tokens are supposed to go. The posture is
 imported from the cynical review canon (`cynical-code-review`,
 `cynical-architecture-review`, `cynical-cruft-removal`) and it inverts the
@@ -42,7 +42,7 @@ to break the story and accept only what survives.
    state that matters — not just the narrow internal case the worker
    exercised.
 4. **Apply the three lens groups.** These are distinct failure families;
-   cheap workers commit all three:
+   delegated workers can commit all three:
    - **Integrity lenses** (did the work lie by name, status, or structure?):
      name-only completion — right vocabulary while the intended unification,
      simplification, or behavior change is false underneath; partial
@@ -51,7 +51,7 @@ to break the story and accept only what survives.
      label — unified, canonical, migrated, deleted, complete, verified — as
      a specific claim to trace, not a description to accept.
    - **Architecture lenses** (did the work add structure nothing forces?):
-     cheap workers add rather than integrate. For every new abstraction,
+     weak worker runs add rather than integrate. For every new abstraction,
      wrapper, helper file, adapter, flag, registry, layer, or ownership
      split the diff introduces, ask what requirement forces it to exist and
      what breaks if it disappears. No forcing requirement means accidental
@@ -67,10 +67,10 @@ to break the story and accept only what survives.
      entries from the plan's delete list. The delete list is a checklist,
      not a hope.
 5. **Treat proof as a claim until reproduced.** Quoted verification output is
-   text a cheap model produced; it can be stale, partial, run against the
+   text a worker produced; it can be stale, partial, run against the
    wrong tree, or fabricated. Decisive proof — the checks the slice's
    acceptance actually rides on — must be independently reproduced by a
-   verification worker in a different session (or the delegated phase
+   verification worker in a different clean child (or the delegated phase
    verification pass) before the slice is accepted. The implementing
    worker's own run never closes its own slice for anything beyond trivial,
    directly-inspectable changes, and "trivial" is the conductor's judgment
@@ -101,8 +101,8 @@ lying have actually been checked, and the acceptance record says which ones
 
 Batch all factually accepted findings dispositioned `authorized` or
 `frozen-convergence-required`, plus required subtraction for
-`unauthorized-built-scope`, into **one** resume prompt to the
-same session (shape in `worker-prompt-contract.md`). Repair directions are
+`unauthorized-built-scope`, into **one** resume prompt to the exact same child
+or external session (shape in `worker-prompt-contract.md`). Repair directions are
 advisory hints — the worker owns implementation judgment; conductor diagnosis
 is context, not a script. The original slice contract stays binding and is
 restated by reference, not re-pasted.
@@ -123,22 +123,23 @@ first agent to find an adjacent same-contract path, it may prevent acceptance,
 but it cannot append a late initial-convergence entry. Ask the human or require
 redesign/subtraction inside the frozen boundary.
 
-## Caps And Session Health
+## Caps And Worker Health
 
-- **3 send-backs** per session, then **1 fresh respawn** with a sharpened
+- **3 send-backs** per worker handle, then **1 new clean respawn** with a sharpened
   brief (fold what the failures taught into the new slice contract), then
   mark the slice `escalated`. Total worker attempts per slice never exceed 5.
 - **Repeated-identical-finding rule:** the same finding surviving two
-  consecutive send-backs marks the session unhealthy immediately — skip the
+  consecutive send-backs marks the worker unhealthy immediately — skip the
   remaining send-back budget and respawn or escalate. Identical repeated
   failure without new evidence is the classic no-memory retry smell.
 - **Claim-mismatch rule:** a worker caught misreporting repo reality (changed
   files, deletes, verification) gets one strike recorded against session
-  health; a second misreport in the same session forces respawn or
+  health; a second misreport from the same worker forces respawn or
   escalation regardless of remaining send-back budget.
 - **Process-failure rule:** two consecutive malformed or failed child runs on
   one slice (non-zero exit, empty final, missing footer, unrecoverable
-  session id) escalate the slice. Preserve run directories; never silently
+  child/session handle) escalate the slice. Preserve available receipts and
+  external run directories; never silently
   switch runtime, model, or effort.
 - A worker reporting `SESSION HEALTH: struggling` or `stuck` weighs toward
   respawn even before caps fire.
@@ -193,13 +194,15 @@ After all phases:
    Give each instrument the plan path, human baseline anchors, explicit human
    approval entries, frozen initial closure, and freeze anchor. Its findings
    use the same scope dispositions and cannot expand repair scope.
-3. **Cold verifier** (default on): one fresh-one-shot delegate with no
-   conductor context, prompted to *refute* completion — trust only command
+3. **Cold verifier** (default on): one new clean child with no conductor
+   narrative, prompted to *refute* completion — trust only command
    output and code reality, list every plan promise not literally true in
    code. Its ignorance of the run is the feature; it catches what the
    conductor's accumulated context has normalized.
-   Give it the same scope anchors. It may reject completion, but it may not add
-   a newly discovered adjacent path to the frozen closure.
+   Give it the same scope anchors. Prefer a native clean child in the active
+   host; use an external one-shot when its provider, exact profile, isolation,
+   or receipt is the deliberate value. It may reject completion, but it may
+   not add a newly discovered adjacent path to the frozen closure.
 4. Triage all instrument findings like any others; repair through send-backs
    (resuming the owning sessions where healthy); re-run the affected
    instrument on material repairs.

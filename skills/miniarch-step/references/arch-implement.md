@@ -28,8 +28,8 @@ By the end of the run:
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
-- `skills/_shared/depth-first-planning.md`
+- `../../_shared/scope-and-convergence.md`
+- `../../_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 
 ## Inputs and `DOC_PATH` resolution
@@ -356,7 +356,10 @@ After implementation work is complete:
 
 1. close only the verification gaps that still matter
 2. run UI verification at the end when available; otherwise leave a short manual checklist
-3. do not launch another model from this command
+3. keep this command's final reconciliation parent-owned; do not add an
+   unrequested agent review as implementation ceremony. When the user or plan
+   already requires a separate reviewer, hand the final evidence to that
+   owning gate under `../../_shared/agent-orchestration-policy.md`
 4. do a final plan-to-work reconciliation before claiming completion:
    - re-read the implementation-relevant parts of `DOC_PATH`
    - compare them against the ledger and the files or symbols actually touched

@@ -3,7 +3,7 @@
 The skill runs one mode per turn. Most modes are chosen from the epic
 doc's state, not from a user command. The explicit automation modes
 also use the user's command-shaped ask: `auto-plan`, `auto-implement`,
-or role-based spawned-harness execution. The user types whatever; the
+or role-based automatic execution. The user types whatever; the
 skill reads the doc and picks the right mode.
 
 This file names each mode, its trigger, its inputs, its outputs,
@@ -35,14 +35,13 @@ determinism happens.
    `epic-doc-contract.md`. If the user's invocation named a path,
    use it. If the user is silent and the proposed path exists
    already, append `_v2` and re-propose.
-2. If the invocation is for the interactive lane, ask the user for
-   `critic_runtime`, `critic_model`, `critic_effort` if any is
-   missing. One consolidated question per `model-and-effort.md`. Wait
-   for the answer before writing the doc. If the user explicitly asked
-   for same-session `auto-plan`, defer critic choices because no critic
-   runs during planning. If the user explicitly asked for role-based
-   spawned-harness execution, defer execution choices to the role-table
-   gate in `auto-run`; write the interactive critic tuple as pending/null.
+2. Resolve critic transport per `model-and-effort.md`. Prefer a clean native
+   child in the active host and do not invent runtime/model/effort fields the
+   host cannot confirm. If an external critic was deliberately selected, ask
+   one consolidated question for missing external values. Same-session
+   `auto-plan` runs no critic during planning. An explicit external harness
+   defers its role values to the role-table gate in `auto-run`; the legacy
+   interactive critic tuple may remain pending/null.
 3. Write the epic doc: frontmatter (with hashes), TL;DR in plain
    English, draft Decomposition per `decomposition-principles.md`
    (one sentence each, ordering by dependency then risk, gates as
@@ -57,8 +56,8 @@ determinism happens.
 - Decomposition drafting. The skill reads the user's goal, its
   knowledge of the repos involved, and produces an ordered list.
   This is prose reasoning.
-- Critic runtime/model/effort interpretation when the user gave
-  partial answers.
+- Critic transport and any external runtime/model/effort interpretation when
+  the user gave partial answers.
 
 ### Where determinism lives
 - Path proposal (slugify the goal, append date).
@@ -159,7 +158,8 @@ the next routing decision.
 - Reading sub-plan docs.
 - Invoking arch-step commands.
 - Writing log entries.
-- Running the critic subprocess via `scripts/run_arch_epic.py`.
+- Dispatching the critic through the selected transport; external invocation
+  and parsing use `scripts/run_arch_epic.py`.
 
 ### Failure modes
 - auto-plan or implement-loop ended without expected completion
@@ -283,8 +283,9 @@ the next routing decision.
    true blocker stops progress. Outside native goal mode, stop after the
    bounded transition and name `$arch-step auto-implement <DOC_PATH>` as the
    next command when audit is still not clean.
-5. If the `arch-step` implementation audit is COMPLETE, run the existing epic
-   critic via `scripts/run_arch_epic.py critic-spawn`.
+5. If the `arch-step` implementation audit is COMPLETE, start a new clean epic
+   critic. Prefer a native child; use `scripts/run_arch_epic.py critic-spawn`
+   only when the external critic lane was deliberately selected.
 6. If the critic passes, mark the sub-plan `complete` and continue to the next
    planned sub-plan in native goal mode. Outside native goal mode, stop after
    the bounded transition and name the exact next command.
@@ -303,7 +304,8 @@ the next routing decision.
 ### Where determinism lives
 - Readiness gate command.
 - `$arch-step auto-implement <DOC_PATH>` invocation.
-- Epic critic subprocess invocation and verdict parsing.
+- Epic critic dispatch and verdict parsing; the script owns external
+  invocation only.
 - Status and log updates.
 
 ### Failure modes
@@ -316,67 +318,71 @@ the next routing decision.
 - Epic critic returns `incomplete`: keep Status `implementing` and route back
   through `$arch-step auto-implement <DOC_PATH>` unless evidence is unreadable
   or contradictory. Never advance to the next sub-plan.
-- If the critic runtime is Codex and its model is missing, use
-  `gpt-5.6-sol`. If another required critic runtime/model/effort value is
-  missing, ask the same consolidated critic policy question used by
-  interactive mode.
+- If an external Codex critic was selected and its model is missing, use
+  `gpt-5.6-sol`. If another required external critic value is missing, ask the
+  same consolidated policy question used by interactive mode. Do not ask for
+  model values for an ordinary capable native critic.
 
 ## Mode: `auto-run`
 
 ### Trigger
 - Epic doc has `sub_plans_approved: true`.
-- User explicitly asks for role-based spawned-harness automatic execution, asks
-  which agents/models to use, or an existing epic doc has `auto_execution` and
-  active auto-run artifacts.
+- User asks for role-based automatic execution, asks which agents/models to
+  use, explicitly requests the external harness, or resumes an existing native
+  role run or external `auto_execution` run.
 
 ### Inputs
 - Epic doc.
 - Approved Decomposition.
-- Role execution table from the user, or existing `auto_execution`.
-- Automatic run directory state.
+- Active-host child capabilities and any existing native child handles.
+- For the external lane only: a user role table or existing `auto_execution`,
+  plus automatic run-directory state.
 - All sub-plan DOC_PATHs and worklogs as they exist on disk.
 
 ### Outputs
-- Resolved `auto_execution` policy if not already present.
-- Automatic run directory under
-  `.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/`.
-- One worker or critic harness action, one same-role resume action, or
-  one explicit long-run monitor check while a child run is still active.
+- One new clean planner/worker/critic action, one exact-role resume action, or
+  one transport-appropriate monitor check while a child is active.
+- For the external lane only: resolved `auto_execution` and a run directory
+  under `.arch_skill/arch-epic/auto/<epic-slug>/run-<ts>/`.
 - Compact Orchestration Log and Decision Log entries.
 
 ### Actions
-1. If `auto_execution` is absent, present the role table:
-   `epic_planner`, `implementation_worker`, and `critic`. Resolve
-   shorthand via `skills/_shared/model_resolution.py`.
-   Default an omitted Codex role model to `gpt-5.6-sol`. Ask once if any other
-   role value is missing, ambiguous, or cannot resolve to a runnable
-   exact-version model.
-2. Initialize the auto run directory with
-   `scripts/run_arch_epic.py auto-init`.
-3. Select the first sub-plan whose Status is not `complete`.
-4. Drive that sub-plan depth-first:
-   - planner harness uses the numbered per-epic sub-plan DOC_PATH
-     from the Decomposition, creating or repairing that doc and Epic
-     Requirement Coverage.
-   - critic harness runs the North Star / coverage gate.
+1. Resolve each role under the shared orchestration policy. Prefer clean native
+   children of the active host because the epic doc and sub-plan DOC_PATHs are
+   durable inputs. Record transport, clean starting context, continuation,
+   capabilities/worktree posture, topology, and return evidence in the
+   smallest useful dispatch note.
+2. For native roles, start planners/workers clean and preserve their exact
+   handles; start every critic as another clean child. In Codex set
+   `fork_turns: "none"`. In Claude use a clean named subagent, not a full
+   conversation fork. Context remains separate from permissions and worktree.
+3. If the external harness was deliberately selected, present and resolve the
+   `epic_planner`, `implementation_worker`, and `critic` role table via
+   `../../_shared/model_resolution.py`; default an omitted external Codex role
+   model to `gpt-5.6-sol`, ask once for other missing values, then initialize
+   the run directory with `scripts/run_arch_epic.py auto-init`.
+4. Select the first sub-plan whose Status is not `complete`.
+5. Drive that sub-plan depth-first:
+   - planner uses the numbered per-epic sub-plan DOC_PATH from the
+     Decomposition, creating or repairing that doc and Epic Requirement
+     Coverage.
+   - a new clean critic runs the North Star / coverage gate.
    - implementation worker executes the approved sub-plan and updates
      worklog evidence.
-   - critic harness runs plan-readiness and completion/scope gates.
-   - in-scope critic failures resume the same planner or implementation
-     worker session with observation-only feedback.
-5. Choose foreground mode for short critics or small same-role continuations
-   where a blocking call is cheaper than orchestration. Choose detached mode
-   for planners, implementation workers, and any child expected to take many minutes.
-   Detached children return a run directory immediately and keep writing
-   `events.jsonl`, `stderr.log`, and `stream.log` while they work.
-6. While a detached child is active, poll with `poll_seconds` (default 180),
-   inspect `child-status` and `child-tail`, and classify silence by the
-   long-run floors. Recent child thinking, tool, or output events are
-   progress. Lack of a final artifact before the floor expires is not failure.
-7. Mark the sub-plan complete only after the critic has no blocking
+   - new clean critics run plan-readiness and completion/scope gates.
+   - in-scope critic failures resume the exact planner or implementation
+     worker with observation-only feedback through its original transport.
+6. The parent owns sequencing and integration; role prompts prohibit nested
+   fanout unless the parent assigned a bounded scope and budget. Role-based
+   planning and implementation remain sequential across sub-plans.
+7. Monitor native roles with host status/wait primitives. In the external lane,
+   choose foreground or detached invocation deliberately; detached children
+   write `events.jsonl`, `stderr.log`, and `stream.log`, and use the pinned
+   long-run floors rather than short polling.
+8. Mark the sub-plan complete only after the critic has no blocking
    findings. Then move to the next sub-plan.
-8. If all sub-plans are complete, set epic `status: complete`, write
-   `report.md`, and render the final summary.
+9. If all sub-plans are complete, set epic `status: complete`, write the
+   applicable report/receipts, and render the final summary.
 
 ### Where judgment lives
 - The orchestrator decides which gate is next, whether a critic finding
@@ -389,39 +395,31 @@ the next routing decision.
   as prompt runners.
 
 ### Where determinism lives
-- Role-policy normalization and hashing.
-- Child invocation command rendering.
-- Run-directory artifact layout.
-- 180-second default child wait cadence.
-- Streamed child artifacts: `events.jsonl`, `stderr.log`, `stream.log`,
-  `heartbeat.json`, and `monitor.json`.
-- Worker session-id capture.
-- Same-role worker session resume after in-scope critic failures.
-- `state.json.latest_worker_attempts` pointers for the session that should be
-  resumed next.
-- Structured critic verdict parsing.
+- Durable epic/sub-plan path and gate reads.
+- Exact child/session handle capture and structured critic verdict parsing.
+- In the external lane only: role-policy normalization/hashing, command
+  rendering, run-directory layout, 180-second default wait cadence, streamed
+  child artifacts, session-id capture, and `latest_worker_attempts` pointers.
+- The script never chooses transport, role ownership, repair routing, or scope.
 
 ### Failure modes
-- Missing/ambiguous role execution policy: ask once before running.
-- Exact model cannot be resolved from shorthand: ask for runnable ID.
-- Child run still active: wait using `poll_seconds`, default 180, and inspect
-  stream recency before deciding whether attention is needed.
-- Child has no final artifact but still has recent stream activity: keep
-  waiting; do not call it failed or stuck.
-- Child has no stream activity after `quiet_floor_seconds` (default 900):
-  mark `quiet` and continue monitoring.
-- Child has no stream activity after `stuck_floor_seconds` (default 1800), or
-  exceeds `max_runtime_seconds`: mark `needs_attention`; do not terminate
-  unless the user or orchestrator has an explicit reason.
-- Child exits without inspectable artifacts: halt with run directory.
+- Missing/ambiguous external role policy: ask once before using that lane.
+- Exact external model cannot resolve from shorthand: ask for the runnable ID.
+- Native child still active: wait through the host surface. External child
+  still active: use the pinned `poll_seconds` and stream recency.
+- An external child has no final artifact but recent stream activity: keep
+  waiting. Apply `quiet_floor_seconds`, `stuck_floor_seconds`, and
+  `max_runtime_seconds` as attention signals, not silent kill switches.
+- Child exits without inspectable return evidence: halt with the native handle
+  or external run directory.
 - Critic finds missing epic requirement coverage or unfinished in-scope
-  implementation work: resume the planner or implementation worker
-  session that owns the failed gate until the retry budget is exhausted.
+  implementation work: resume the exact planner or implementation worker that
+  owns the failed gate until the retry budget is exhausted.
 - Critic finds post-freeze expansion, unauthorized built scope, scope cycling,
   material product-intent change, or two valid scope paths: halt and ask the
   user; do not resume a worker with expansion as required work.
-- Failing worker session cannot be resumed: halt with the run directory
-  and ask whether to start a fresh role session.
+- Failing worker cannot be resumed: halt with its handle and available receipts,
+  then ask whether to start a new clean replacement for that role.
 - Repair budget exhausted: halt with the latest critic verdict and
   diagnostic record.
 

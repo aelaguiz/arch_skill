@@ -61,8 +61,9 @@ This is a human cache, not a state machine. Keep it short.
 
 ## 4. Use Native Parallelism Where It Saves Time
 
-When the current coding harness provides native subagents or parallel-agent
-features, use them for independent work that would otherwise be serial:
+When independent work would otherwise be serial, use
+`native-subagent-contract.md` and the shared agent policy to decide whether
+same-host native children save enough time to justify integration:
 
 - code mapping
 - side-door search
@@ -73,8 +74,14 @@ features, use them for independent work that would otherwise be serial:
 - independent low-collision implementation slices when the host supports safe
   native parallel editing
 
-The parent owns synthesis, source-truth updates, artifact updates, and final
-claims.
+Give each child a non-overlapping lens or owned path and keep fanout
+proportional to the coverage or implementation split. Each new independent
+child starts clean. Read-only children use the strongest capability available
+plus an explicit no-edit/no-write prompt, and the parent checks repository
+state before accepting their evidence.
+
+The parent owns child accounting, synthesis, finding scope disposition,
+source-truth updates, artifact updates, proof claims, and final claims.
 
 Do not manually spawn separate coding-harness executables such as `codex`,
 `claude`, or `agent` for ordinary acceleration.
@@ -111,8 +118,10 @@ Use the relevant lenses from `plan-audit` implementation-audit doctrine:
 - changed tests as code
 - docs, prompts, examples, config, or generated-artifact drift when triggered
 
-For broad changes, split independent read-only lenses across native subagents.
-For small changes, review directly.
+For broad changes, split independent read-only lenses across new clean native
+critics when that improves coverage. For small changes, review directly. Send
+accepted repairs to the exact implementer that owns the code, then use a
+different new clean critic for an independent recheck.
 
 ## 7. Verify Impact
 

@@ -30,8 +30,8 @@ added to repair scope without a human decision and re-freeze.
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
-- `skills/_shared/scope-and-convergence.md`
-- `skills/_shared/depth-first-planning.md`
+- `../../_shared/scope-and-convergence.md`
+- `../../_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 5, 6, 7, `WORKLOG_PATH`, and `implementation_audit`
 
 ## Inputs and `DOC_PATH` resolution

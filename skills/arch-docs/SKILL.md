@@ -15,7 +15,8 @@ Use this skill when the code is stable enough to ground documentation against cu
 - A repo needs topic-first cleanup where one topic may be spread across several files and several files may overlap on the same topic.
 - A full-arch plan and worklog should be treated as context, mined for durable truth, and then retired or transformed into evergreen docs.
 - The user wants to run the DGTFO loop directly in a repo with no requirement that an arch plan already exists.
-- The user explicitly wants `arch-docs auto` and expects native goal-mode continuation with a fresh review after each pass.
+- The user explicitly wants `arch-docs auto` and expects native goal-mode
+  continuation with a new clean review after each pass.
 
 ## When not to use
 
@@ -76,13 +77,42 @@ Use this skill when the code is stable enough to ground documentation against cu
    - `references/pass.md`
    - `references/arch-docs-controller.md`
    - `references/internal-evaluator.md` for the suite-only evaluator
+8. Before dispatching any mapping or evaluator child, read
+   `../_shared/agent-orchestration-policy.md`.
+
+## Parent And Child Roles
+
+- The active parent owns the resolved docs scope, ledger writes, child-result
+  accounting, synthesis, accepted cleanup or repair decisions, and the final
+  controller verdict. Capture current git status and the relevant diff before
+  read-only child work, then compare current state before accepting the return.
+- When a broad inventory benefits from mapping slices, and for the independent
+  `auto` evaluator, default to new clean same-host native children. In Codex set
+  `fork_turns: "none"`; in Claude use a clean named or custom subagent, not a
+  bare conversation fork or skill `context: fork` shorthand. Use bounded or
+  full inherited context only for a named dependency that exists solely in
+  chat; ordinary scope travels through paths, the ledger, and a bounded brief.
+- Give mapping and evaluator children the strongest read-only capability the
+  host exposes and also tell them not to edit or write files, including the
+  ledger. They may not create children or invoke delegation, consult, or review
+  skills unless the parent explicitly assigns a bounded nested scope and
+  budget.
+- Split mapping only across independent topic or doc-surface families. Bound
+  fanout by available host slots, shared-file or shared-state collision risk,
+  and the parent's capacity to inspect and integrate every return.
+- A background or external process used after the parent turn ends buys
+  lifecycle continuity. It is not what makes an evaluator clean or
+  independent; choose that transport only for its concrete lifecycle or other
+  benefit under the shared policy.
 
 ## Workflow
 
 ### 1) Default pass
 
 - Profile the repo's doc system and resolve the strongest grounded scope.
-- Inventory the relevant doc-shaped surfaces for that scope.
+- Inventory the relevant doc-shaped surfaces for that scope, using clean
+  read-only mapping slices only when independent surface families make them
+  worth the parent's synthesis cost.
 - Ground each topic against current code and current shipped behavior.
 - Treat every doc label, status line, and freshness header as untrusted until the code and current shipped behavior support it.
 - Resolve repo posture from evidence and decide whether the public-repo baseline applies.
@@ -103,7 +133,9 @@ this skill does not install or arm automation hooks.
 Workflow:
 
 1. Run one grounded default DGTFO pass.
-2. Run a fresh review/evaluator pass against the ledger and current code.
+2. Run a new clean independent review/evaluator against the ledger and current
+   code, using a same-host native critic by default while the parent session is
+   active.
 3. If review says more useful cleanup remains, run the next DGTFO pass.
 4. In native goal mode, keep repeating until review says `CLEAN` or a real blocker stops the run.
 5. Outside native goal mode, stop after one pass plus review and print the next exact command.

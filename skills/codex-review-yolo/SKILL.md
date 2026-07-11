@@ -1,27 +1,41 @@
 ---
 name: codex-review-yolo
-description: "Invoke the local codex CLI with profile `yolo` (gpt-5.6-sol xhigh, fast tier) to get an independent, context-free review of a substantial artifact or completion state: diffs, commit stacks, implementation-plan completion, docs, or cross-repo changes. Use when the user says \"have codex review\", \"get a second opinion from codex\", \"audit completion of this plan with codex -p yolo\", or asks for an external/fresh-eyes review. Do NOT use for: asking codex to write code (this is review-only), generic LLM-as-judge evaluations where codex adds nothing, or any case where there is no concrete artifact or completion target to inspect."
+description: "Invoke the local Codex CLI with the exact external `yolo` profile (gpt-5.6-sol xhigh, fast tier) and captured receipts for an independent review of a substantial artifact or completion state. Use when the user explicitly asks for `codex -p yolo`, an external Codex review, or the profile's exact model/effort/receipt contract. Ordinary same-host Codex reviews should use a clean native child instead. Review-only; requires a concrete artifact or completion target."
 metadata:
   short-description: "Request an independent review from codex -p yolo"
 ---
 
 # codex-review-yolo
 
-Use this skill when the user wants an independent review from the locally-installed `codex` CLI using profile `yolo`. The artifact can be code, a doc, a plan, a rollout, or a completion state. The value is that codex runs as a separate agent with zero session history — it must read the artifacts itself, so its verdict is genuinely independent.
+Use this skill when the user wants an independent review from the locally
+installed `codex` CLI using the exact `yolo` profile. The artifact can be code,
+a doc, a plan, a rollout, or a completion state. This is the deliberate
+external-profile lane: its value is the pinned profile, clean process context,
+and captured final/event artifacts. An ordinary same-host Codex review should
+use a clean native child instead.
+
+Read `../_shared/agent-orchestration-policy.md` before dispatch. This skill's
+transport is intentionally external and its starting context is intentionally
+clean; it does not redefine the suite-wide transport or context policy.
 
 This skill is intentionally narrow in mechanism, not in review subject. It teaches the invocation pattern, the prompt shape that makes codex read the named artifacts directly, and how to consume the verdict. It does not wrap every possible codex use case.
 
 ## When to use
 
-- User says any of: "review with codex", "audit this with codex", "get a second opinion from codex", "run codex -p yolo", "have codex audit my work".
-- User has just finished non-trivial work (diff, multi-commit change, implementation-plan phase, design doc, rollout) and wants fresh eyes before a next step such as merge, ship, execute, share, or mark-complete.
-- User wants an adversarial / skeptical review from a model that doesn't share your blind spots.
-- User wants an external audit of whether a concrete artifact is ready or a
-  user-named completion target was actually met.
+- The user says `run codex -p yolo`, names the `yolo` profile, or explicitly
+  asks for an external Codex review with its captured receipt shape.
+- The user has a substantial artifact or completion target and specifically
+  wants the pinned `yolo` model/effort/tier or its external receipt contract
+  before the next step.
+- The user wants an adversarial external Codex audit and chooses the `yolo`
+  profile as the independent reviewer.
 
 ## When not to use
 
 - The user wants codex to *write* code, not review it. This skill is review-only.
+- The user wants an ordinary same-host Codex review and does not need the exact
+  `yolo` profile or external receipts. Use a clean native reviewer under the
+  shared policy.
 - The user wants a quick yes/no on a one-line change — the setup cost exceeds the value.
 - The user has not yet produced a concrete artifact or completion target to
   review. Don't spin up codex on vapor.
@@ -42,6 +56,19 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
 - **Namespace every run's files.** Derive one run-specific directory or prefix and keep the prompt, final output, and stream log inside it so concurrent runs on the same machine never clobber each other.
 - **Capture output to a file.** The final-message file is the consumable deliverable; the stream log is diagnostic.
 - **Trust but verify.** Codex can be wrong. Spot-check any blocking finding by reading the cited file before acting on it.
+- **Keep the external cost deliberate.** A separate Codex process adds lifecycle,
+  integration, and shared SQLite/WAL contention cost. Do not create parallel
+  `yolo` reviewers merely as a speed reflex; choose the fanout that the concrete
+  review benefit and current host state justify. This is a cost judgment, not a
+  ban or fixed process limit.
+- **Keep topology parent-owned.** The review prompt tells Codex not to spawn
+  nested agents or invoke delegation/consult skills. The parent verifies and
+  integrates the verdict.
+- **Verify the review-only boundary from repository state.** The `yolo`
+  profile grants `danger-full-access`; a no-edit prompt is guidance, not an
+  enforced capability boundary. Record the reviewed repository's status and
+  diff before launch, compare them after the process exits, and account for any
+  change before trusting or integrating the verdict.
 
 ## First move
 
@@ -62,8 +89,15 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
 
 4. If the review needs API tokens, confirm `.env` has them and plan to `set -a; source .env; set +a` before invoking.
 5. Draft the prompt to `$PROMPT_PATH` (never inline — prompts get long and multi-line is inevitable).
-6. Invoke via `codex exec -p yolo -C <repo-root> --json -o "$FINAL_PATH" < "$PROMPT_PATH" > "$STREAM_PATH" 2>&1`, in background.
-7. Continue other work while codex reasons; when it completes, read `$FINAL_PATH` and relay the verdict to the user.
+6. Note that this dispatch is a new clean external review with no continuation
+   handle. Tell the reviewer not to edit or spawn children. Record the current
+   repository status and diff before launch; this is required because the
+   profile has `danger-full-access` even though the role is review-only.
+7. Invoke via `codex exec -p yolo -C <repo-root> --json -o "$FINAL_PATH" < "$PROMPT_PATH" > "$STREAM_PATH" 2>&1`, in background.
+8. Continue other work while Codex reasons; when it completes, compare the
+   repository status and diff with the pre-launch snapshot, account for any
+   change, then read `$FINAL_PATH`, verify important claims, and relay the
+   verdict to the user.
 
 ## Workflow
 
@@ -121,11 +155,14 @@ every few seconds. The final-message file is created when codex exits.
 
 When codex finishes:
 
-1. Read the run's final output file, e.g. `$FINAL_PATH`.
-2. Locate the `VERDICT:` / `REQUIRED REPAIRS:` / `OBSERVATIONS:` footer.
-3. Relay findings to the user. Do not blindly trust — spot-check any required
+1. Compare the reviewed repository's status and diff with the pre-launch
+   snapshot. Treat unexplained changes as a failed review-only boundary and do
+   not hide, revert, or absorb them silently.
+2. Read the run's final output file, e.g. `$FINAL_PATH`.
+3. Locate the `VERDICT:` / `REQUIRED REPAIRS:` / `OBSERVATIONS:` footer.
+4. Relay findings to the user. Do not blindly trust — spot-check any required
    repair claim against the actual file before acting.
-4. If codex found nothing actionable, say so directly. Don't manufacture issues to justify the invocation.
+5. If codex found nothing actionable, say so directly. Don't manufacture issues to justify the invocation.
 
 ## Output expectations
 

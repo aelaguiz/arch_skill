@@ -7,9 +7,9 @@ evidence. There are no alternate failure modes selected by shortcuts.
 ## Invariant
 
 Between the critic saying "fail" and any worker receiving an operational repair
-prompt, Stepwise holds diagnostic conversation with the agents involved in the
-chain break, reasons about where the break actually lives, and authors a repair
-prompt that cites its sources.
+prompt, Stepwise holds diagnostic conversation with the exact children involved
+in the chain break, reasons about where the break actually lives, and authors a
+repair prompt that cites its sources.
 
 The critic's verdict is evidence. The worker's answer is evidence. The
 manifest is evidence. Owner doctrine is evidence. None of them is the repair
@@ -27,10 +27,10 @@ prompt. The repair prompt is Stepwise's synthesis, grounded in those sources.
      truthful chain.
 
 2. **Diagnostic conversation**
-   - Pick the session most likely to hold the break. First pass usually starts
-     with the failing worker.
-   - Resume that session read-only with the diagnostic prompt from
-     `session-prompt-contracts.md`.
+   - Pick the worker child most likely to hold the break. First pass usually
+     starts with the failing worker.
+   - Resume that exact child read-only through its original transport with the
+     diagnostic prompt from `session-prompt-contracts.md`.
    - Write the prompt and response into `diagnostic/turn-*.prompt.md` and
      `diagnostic/turn-*.response.md`.
    - Compare the answer to evidence in hand.
@@ -46,17 +46,17 @@ prompt. The repair prompt is Stepwise's synthesis, grounded in those sources.
    - Use `upstream-for --run-dir <dir> --step-n <n>` when the relationship is
      represented in manifest inputs. The helper reports exact matches and
      unmatched inputs; Stepwise still decides what the result means.
-   - Resume that upstream session with the same diagnostic prompt shape.
+   - Resume that exact upstream child with the same diagnostic prompt shape.
    - If the upstream worker confirms its output was wrong, repair upstream.
    - If the upstream output was correct but the downstream received something
      else, inspect intermediate handoff steps.
    - Continue walking the chain until the earliest broken link is located.
 
 4. **Repair authorship**
-   - Write `diagnostic/root-cause.md` with the session that owns the repair, the
-     evidence, the owner-doctrine clause, and any downstream sessions that must
-     respawn fresh.
-   - Author one repair prompt for the root-cause session.
+   - Write `diagnostic/root-cause.md` with the child that owns the repair, the
+     evidence, the owner-doctrine clause, and any downstream children that must
+     be replaced cleanly.
+   - Author one repair prompt for the root-cause child.
    - Every hard-boundary bullet and numbered operational step carries a source
      tag:
      `[source: user]`, `[source: manifest]`, `[source: owner runbook]`,
@@ -65,13 +65,15 @@ prompt. The repair prompt is Stepwise's synthesis, grounded in those sources.
    - Keep internal Stepwise vocabulary out of the worker-facing prompt.
 
 5. **Repair execution**
-   - Resume the root-cause session with the repair prompt.
-   - This consumes one repair bounce on that session.
-   - Run a fresh critic against the repaired attempt.
+   - Resume the exact root-cause child through its original transport with the
+     repair prompt.
+   - This consumes one repair bounce on that worker.
+   - Run a new clean critic against the repaired attempt.
 
 6. **After rejudgement**
    - If the repaired step passes and it was upstream of the original failure,
-     respawn downstream steps fresh from the confirmed manifest.
+     replace downstream steps with new clean children from the confirmed
+     manifest.
    - Mark the fresh downstream attempt with
      `origin.kind = "respawn-after-upstream"` so repair accounting stays
      honest.
@@ -81,7 +83,7 @@ prompt. The repair prompt is Stepwise's synthesis, grounded in those sources.
 ## Budgets
 
 - `max_retries` / `per_step_retry_cap` is the operational repair-bounce budget
-  for each session. Default is 5.
+  for each worker role handle. Default is 5.
 - Diagnostic read-only turns do not consume repair bounces.
 - A single critic failure may use at most the value stored in
   `state.json.diagnostic_turn_cap` across all sessions. `init-run` writes 10 by
@@ -95,7 +97,7 @@ cannot be located within the recorded cap is not safe to repair by invention.
 Halt instead of repairing when:
 
 - Owner doctrine is genuinely ambiguous and a user decision is required.
-- The root-cause session has exhausted repair bounces.
+- The root-cause worker has exhausted repair bounces.
 - The diagnostic turn cap is exhausted.
 - Required evidence is unavailable and no bounded unblock remains.
 - Repair would require the worker to claim a timeline or proof event that did
@@ -103,9 +105,10 @@ Halt instead of repairing when:
 
 ## Downstream context hygiene
 
-If an upstream session is repaired, every downstream step whose context depended
-on the old upstream artifact must respawn fresh. Do not resume downstream
-sessions after upstream repair; their history was built on broken input.
+If an upstream worker is repaired, every downstream step whose context depended
+on the old upstream artifact must start a new clean replacement. Do not resume
+downstream children after upstream repair; their history was built on broken
+input.
 
 ## Learnings
 

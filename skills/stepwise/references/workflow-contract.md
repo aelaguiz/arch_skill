@@ -28,14 +28,16 @@ unblocks and the resolved repair limit are exhausted.
 - `stop_discipline`: `halt_and_ask`, `skip_and_continue`, or
   `escalate_to_user`.
 - `per_step_retry_cap`, default 5 unless the user names a concrete bound.
-- `execution`, including base worker/critic runtime/model/effort and any
-  unresolved execution preferences.
+- `execution`, including per-role transport, clean starting-context choice,
+  continuation semantics, any external runtime/model/effort, and unresolved
+  execution preferences.
 
 **Where judgment lives**
 
 The agent reads the prompt, resolves profile/checks/stop posture, resolves the
-target repo, parses execution defaults and preferences, and asks one
-consolidated question if required defaults are missing.
+target repo, chooses transport under the shared policy, parses external
+execution preferences when relevant, and asks one consolidated question only
+if a selected external lane is missing load-bearing values.
 
 **Where determinism lives**
 
@@ -45,7 +47,7 @@ Run-directory creation, hash computation, and initial state file writing.
 
 - Target repo cannot be resolved -> ask.
 - Genuinely contradictory signals with no tie-breaker -> ask.
-- Missing required execution defaults -> ask once.
+- Missing required external execution values -> ask once.
 - No process or inferable target intent -> ask.
 
 Do not proceed to Phase 2 with unresolved gaps.
@@ -61,7 +63,7 @@ Do not proceed to Phase 2 with unresolved gaps.
 - `doctrine_paths`, the concrete target-repo files workers and critics should
   read.
 - `manifest.json`, the full Step Manifest per `manifest-schema.md`, including
-  resolved execution blocks.
+  resolved dispatch blocks.
 
 **Where judgment lives**
 
@@ -73,7 +75,8 @@ semantic preference, then defaults.
 
 **Where determinism lives**
 
-Reading files, writing `manifest.json`, and persisting the execution hash.
+Reading files, writing `manifest.json`, and persisting the dispatch-policy
+hash.
 
 **Failure modes**
 
@@ -96,7 +99,7 @@ Reading files, writing `manifest.json`, and persisting the execution hash.
 
 - User confirmation or user adjustments.
 
-The printed plan always includes the resolved execution table. Lenient profile
+The printed plan always includes the resolved dispatch table. Lenient profile
 prints and proceeds; strict and balanced pause according to
 `strictness-profiles.md`.
 
@@ -107,43 +110,47 @@ part. Do not patch the manifest in place without re-grounding.
 
 For each step `n` from 1 to N:
 
-1. Spawn a worker sub-session.
-2. Spawn an observational critic.
+1. Start a new clean worker.
+2. Start a new clean observational critic.
 3. If the critic passes, advance.
 4. If the critic fails or abstains with inspectable evidence, run
    `diagnose-and-repair.md`.
 
-A repair bounce is one operational repair prompt sent to a worker session plus
+A repair bounce is one operational repair prompt sent to the exact worker plus
 the critic rejudgement of that attempt. The first worker attempt does not count
 against the repair limit. Diagnostic read-only turns do not consume repair
 bounces.
 
-### 4a. Spawn worker sub-session
+### 4a. Start worker
 
 **Inputs**
 
 - StepDescriptor for step `n`.
-- Resolved worker runtime/model/effort.
+- Resolved worker transport, starting context, continuation contract, and any
+  external runtime/model/effort.
 - `target_repo_path`.
 
 **Actions**
 
 - Compose the initial prompt per `session-prompt-contracts.md`.
-- Build the invocation per `session-resume.md`.
-- Run the subprocess with stdin closed.
-- Capture exit code, stdout, final output file, stream log, and session id.
-- Write all artifacts to `steps/<n>/try-1/`, including `prompt.md` and
-  `origin.json`.
+- Dispatch a new clean child per `session-resume.md`. Prefer the active host's
+  native child for same-host work. In Codex set `fork_turns: "none"`; in Claude
+  use a clean named subagent. Use `run_stepwise.py step-spawn` only when the
+  external lane was selected.
+- Capture the exact native child handle or external session id and the
+  transport-specific return evidence.
+- Write or record all available artifacts under `steps/<n>/try-1/`, including
+  the exact prompt, dispatch receipt, and `origin.json`.
 
 **Failure modes**
 
-- Subprocess crashes -> treat as a failed attempt with crash evidence, subject
+- Child crashes -> treat as a failed attempt with crash evidence, subject
   to the same diagnose-and-repair protocol unless the crash is a known
   orchestration defect.
-- Session id not captured -> inspect the raw stream for the runtime's session
-  id shape before marking `session_id.txt` as `UNRECOVERABLE`.
+- Continuation handle not captured -> inspect the host receipt or, for an
+  external lane, the raw stream before marking the handle unrecoverable.
 
-### 4b. Spawn critic sub-session
+### 4b. Start critic
 
 **Inputs**
 
@@ -153,19 +160,22 @@ bounces.
 **Actions**
 
 - Render the observation-only critic prompt per `critic-prompt.md`.
-- Build the invocation per `session-resume.md`.
-- Run the critic as a fresh ephemeral subprocess.
+- Start the critic as a new clean child per `session-resume.md`. Prefer a
+  native child; use `run_stepwise.py critic-spawn` only for the selected
+  external lane.
 - Parse and semantically validate the observational StepVerdict.
-- Write prompt, invocation, raw output, parsed verdict, and validation errors
-  under `steps/<n>/try-<k>/critic/`.
+- Write or record the prompt, dispatch receipt, raw output, parsed verdict, and
+  validation errors under `steps/<n>/try-<k>/critic/`.
+- Use enforced read-only capability when the host provides it, keep the prompt
+  no-edit rule, and compare target-repo state before and after the critic.
 
 **Failure modes**
 
 - Known orchestration defect such as prompt rendering, schema shape, command
   flag drift, or missing run-directory file -> repair that run-directory
   defect, record it, and retry the critic once.
-- Unknown runtime crash -> retry the critic once; on repeat, record blocked and
-  apply stop discipline.
+- Unknown child crash -> retry the critic once with another new clean critic;
+  on repeat, record blocked and apply stop discipline.
 - Structured output parse failure -> do not guess. Repair only known bounded
   schema/rendering issues.
 - Critic output fails semantic validation -> record
@@ -184,24 +194,25 @@ On `verdict=fail` or inspectable `verdict=abstain`:
 
 1. Write diagnostic intake from critic evidence, transcript, artifacts, owner
    doctrine, manifest, and applicable accepted learnings.
-2. Resume the relevant worker session read-only with the diagnostic prompt.
+2. Resume the exact relevant worker read-only with the diagnostic prompt.
 3. Compare the answer to evidence in hand.
 4. Continue diagnostic conversation, walking upstream when inputs are
    implicated, until root cause is located, owner doctrine is genuinely
    ambiguous, or the diagnostic turn cap is exhausted.
 5. If root cause is local or upstream and repair bounces remain for that
-   session, author a source-tagged repair prompt and resume the root-cause
-   session operationally.
-6. Run a fresh critic against the repaired attempt.
-7. If an upstream repair passes, respawn downstream steps fresh. Do not resume
-   downstream sessions that were built on the broken upstream artifact.
+   worker, author a source-tagged repair prompt and resume the exact root-cause
+   child operationally through its original transport.
+6. Run a new clean critic against the repaired attempt.
+7. If an upstream repair passes, replace downstream steps with new clean
+   workers. Do not resume downstream children whose history was built on the
+   broken upstream artifact.
    Record those respawns with `origin.kind = "respawn-after-upstream"` so they
    are not counted as downstream repair bounces.
 8. If the repair fails, re-enter this same protocol.
 
 Halt when:
 
-- The relevant session's repair bounces are exhausted.
+- The relevant worker's repair bounces are exhausted.
 - The diagnostic turn cap is exhausted without convergence.
 - The owner doctrine is genuinely ambiguous and a user decision is required.
 - The expected evidence is unavailable and no bounded unblock remains.

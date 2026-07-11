@@ -1,7 +1,7 @@
 interface:
   display_name: "ChatGPT Web"
   short_description: "Query logged-in ChatGPT through BrowserOS"
-  default_prompt: "Use $chatgpt-web to shape the user's ask with $prompt-authoring discipline when useful, then query the logged-in ChatGPT web UI through BrowserOS MCP in one ChatGPT tab. Default to ChatGPT Pro with Extended thinking when the user does not specify mode or effort, but respect explicit Instant, Thinking, Pro, Light, Standard, Extended, or Heavy requests. Run ChatGPT Web prompts serially, not in parallel, and wait patiently for Pro/Extended responses that can take 10+ minutes. Support up to 10 attachments through BrowserOS file upload. Fail loudly if BrowserOS MCP is unavailable or ChatGPT is not already logged in. Do not use OpenAI API calls, scripts, runners, hidden harnesses, or automated login."
+  default_prompt: "Use $chatgpt-web for the explicit ChatGPT web provider/browser-capability lane. Apply the shared agent-orchestration policy and $prompt-authoring discipline. Use one BrowserOS ChatGPT tab, but default to a new clean conversation; continue an exact existing conversation only when the user asks and it can be identified. Never silently inherit the arbitrary thread already open. Default to Pro with Extended thinking when mode or effort is omitted, respect explicit choices, run independent asks serially in clean conversations, preserve explicit follow-up chains, wait patiently for long responses, support up to 10 attachments, and fail loudly when BrowserOS or login is unavailable. Do not use API calls, scripts, runners, hidden harnesses, or automated login."
 
 policy:
   allow_implicit_invocation: true

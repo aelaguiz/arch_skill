@@ -53,12 +53,12 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - During implementation, adding an unapproved adjacent path, framework,
   harness, verifier, abstraction, command, dependency, operational surface, or
   test category is a hard stop. Ask for human approval before changing plan or
-  code. Apply `skills/_shared/scope-and-convergence.md`.
+  code. Apply `../_shared/scope-and-convergence.md`.
 - Correctness and approved intent outrank convenience or scope trimming.
 - The agent has no authority to cut requested behavior, acceptance criteria, or required implementation work unless the user or the governing plan already marked that item out of scope.
 - Cutting, downgrading, deferring, or "simplifying away" approved behavior, acceptance criteria, or phase obligations is a hard stop. Surface to the user with what you want to cut, why, what Section 0 / TL;DR / Section 7 say about it, and the exact approval you need. Do not proceed until the user explicitly approves; record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape.
 - `miniarch-step` is a trimmed command surface, not a lower-effort workflow. Full effort means a complete result at the simplest sufficient architecture, not maximum code, testing, or ceremony.
-- Section 7 uses the depth-first doctrine in `skills/_shared/depth-first-planning.md`: protect the full destination map, prove the first real working slice through the highest-risk seam, then expand along named axes.
+- Section 7 uses the depth-first doctrine in `../_shared/depth-first-planning.md`: protect the full destination map, prove the first real working slice through the highest-risk seam, then expand along named axes.
 - Phase boundaries are proof boundaries. Phase count is an outcome of dependency edges, proof gates, reversibility or migration boundaries, and user-review boundaries; split only when a phase blends separately provable work.
 - A phase is not complete while any checklist item or exit criterion in that phase remains unmet.
 - For modern Section 7 docs, `Work` is explanatory only. Every required phase obligation must live in `Checklist (must all be done)` or `Exit criteria (all required)`, and fresh audit must validate both before a phase can stay complete.
@@ -68,7 +68,25 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - If the doc is materially non-canonical, repair only the safe owned portion or route to `reformat`.
 - Keep one planning source of truth. Do not create sidecar plan docs or competing checklists.
 - All planning commands are docs-only. Only `implement` and `implement-loop` may change code; `full-auto` may reach code changes only by routing to `implement-loop`.
-- In Codex, if a miniarch planning step explicitly uses parallel agents, spawn those planning agents with model `gpt-5.4-mini` and reasoning effort `xhigh`.
+- When planning benefits from child planners or `implement-loop` benefits from
+  an independent auditor, prefer new clean same-host native children when the
+  active host can satisfy the role's capabilities. In Codex, set
+  `fork_turns: "none"`; in Claude Code, use clean named or custom subagents
+  rather than a conversation fork.
+- Planner and auditor children are analysis-only: use a read-only capability
+  when the host confirms one, also give explicit no-edit/no-write guidance,
+  and let the parent verify repo state, synthesize returns, and own all
+  `DOC_PATH` or audit-block writes. Children do not fan out without a bounded
+  nested scope and budget assigned by the parent; fanout stays proportional to
+  independent work, host slots, collision risk, and parent integration capacity.
+- For miniarch planner and auditor roles, prefer `gpt-5.4-mini` with `xhigh`
+  reasoning only when the active native tool schema can select and confirm
+  both. Otherwise use the inherited native capability and do not claim the
+  child used an unconfirmed model or effort. If exact identity is genuinely
+  load-bearing, an external exact-model lane remains available; the dispatch
+  must explain the concrete quality, provider, profile, lifecycle, isolation,
+  automation, or receipt benefit that makes its added process and integration
+  cost worthwhile.
 - Distinguish the human-authorized outcome from the initial minimal convergence
   closure, and freeze both before implementation.
 - Search for the canonical existing path before designing a new one. Reuse it, refactor it as much as required to fully own the change, or justify why it cannot own the change.
@@ -106,11 +124,13 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 
 1. Read `references/artifact-contract.md`.
 2. Read `references/shared-doctrine.md`.
-3. Resolve the requested command and `DOC_PATH` when the command needs an existing doc.
-4. If the ask is generic mini full-arch execution rather than a named command:
+3. Before creating or resuming another agent, read
+   `../_shared/agent-orchestration-policy.md`.
+4. Resolve the requested command and `DOC_PATH` when the command needs an existing doc.
+5. If the ask is generic mini full-arch execution rather than a named command:
    - no doc yet: treat the first move as `new`
    - doc exists or the user gave a doc path: treat the first move as `advance`
-5. Inspect the current doc against:
+6. Inspect the current doc against:
    - required frontmatter
    - `# TL;DR`
    - `planning_passes`
@@ -119,9 +139,9 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
    - obvious contradictions across TL;DR, Section 0, target architecture, call-site audit, phase plan, verification, rollout, and decision log
    - canonical-path ownership and behavior-preservation claims
    - a concrete Scope and Simplicity Contract and whether planned work stays inside it
-6. Read `references/section-quality.md` for the sections this command depends on.
-7. Read the matching command reference. If the command is `full-auto`, read `references/full-auto.md`.
-8. If the command is `advance`, read `references/advance.md`, choose the one move that most improves artifact integrity or flow progress, and stop unless `RUN=1` explicitly asks for that one step to execute.
+7. Read `references/section-quality.md` for the sections this command depends on.
+8. Read the matching command reference. If the command is `full-auto`, read `references/full-auto.md`.
+9. If the command is `advance`, read `references/advance.md`, choose the one move that most improves artifact integrity or flow progress, and stop unless `RUN=1` explicitly asks for that one step to execute.
 
 ## Workflow
 
@@ -256,8 +276,11 @@ Workflow:
 
 - `references/artifact-contract.md` - canonical mini full-arch artifact, exact section shape, frontmatter, block inventory, and worklog contract
 - `references/shared-doctrine.md` - cross-cutting doctrine: question policy, alignment checks, evidence, SSOT, scope defaults, and consistency repair
-- `skills/_shared/scope-and-convergence.md` - human scope authority, initial planning convergence, scope freeze, finding dispositions, and scope-cycling prohibition
-- `skills/_shared/depth-first-planning.md` - destination map, first working slice, expansion map, proof gates, scope-cut distinction, and failure-mode recognition tests
+- `../_shared/agent-orchestration-policy.md` - transport, clean context,
+  continuation, isolation, topology, and return evidence for optional planners
+  and independent auditors
+- `../_shared/scope-and-convergence.md` - human scope authority, initial planning convergence, scope freeze, finding dispositions, and scope-cycling prohibition
+- `../_shared/depth-first-planning.md` - destination map, first working slice, expansion map, proof gates, scope-cut distinction, and failure-mode recognition tests
 - `references/section-quality.md` - purpose, strong/weak bar, trust rules, and failure modes for each section and supporting block
 - `references/arch-new.md` - bootstrap the canonical artifact and stop for North Star confirmation
 - `references/arch-reformat.md` - convert an existing doc into the canonical artifact without losing meaning

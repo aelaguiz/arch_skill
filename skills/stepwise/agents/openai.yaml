@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stepwise"
+  short_description: "Run ordered skill steps with exact-worker repair"
+  default_prompt: "Use $stepwise to turn the named process into a user-confirmed manifest, then run every independent step with a new clean worker and a new clean observational critic. Prefer native same-host children, resume the exact worker for diagnosis and repair, and start downstream replacements clean after repaired upstream truth invalidates their context. Use the external adapter only for a deliberate provider, exact-model, lifecycle, isolation, automation, receipt, or comparable benefit. Keep context separate from permissions and worktree posture. The parent owns fanout, root-cause diagnosis, repair authorship, and integration; child prompts forbid nested delegation unless explicitly assigned. Preserve the manifest, repair-bounce, diagnostic-turn, evidence, source-tag, and stop-discipline gates without inventing constraints or completion proof."
+
+policy:
+  allow_implicit_invocation: true

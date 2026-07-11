@@ -12,7 +12,9 @@ Use this skill when the work is creating or repairing an agent skill, not generi
 Skills are reusable prompt contracts first. Default to the smallest prompt-only
 package that preserves the user's intent and leaves room for agent judgment.
 
-This skill is intentionally self-contained. Use the references in this folder, not external repo docs, while doing the runtime work.
+This skill is intentionally self-contained. Use the references in this folder
+and, for agent-using packages, the installed sibling shared policy named below;
+do not rely on external repo docs while doing the runtime work.
 
 ## Install
 
@@ -54,11 +56,14 @@ make install
 - Shape trigger boundaries against the visible peer group when related skills exist; do not judge a skill only in isolation.
 - Encode runtime-specific behavior in machine-readable fields when the host supports them; do not hide load, gating, or invocation rules only in prose.
 - Keep the shipped skill self-contained; do not depend on repo docs, hidden context, or local prompt packs at runtime.
+- If a skill creates, resumes, replaces, or coordinates model agents, make the running agent read the installed sibling `../_shared/agent-orchestration-policy.md` before dispatch. That policy owns shared transport, starting-context, continuation, isolation, topology, and integration semantics; the skill should retain only its role, domain judgment, task slicing, handoffs, and result contract.
+- Do not copy a local orchestration mini-policy into an agent-using skill or add a dispatcher, controller, or skill-local script that owns those cross-skill decisions. Runtime adapters may still own narrow deterministic invocation and receipt mechanics when that is their actual job.
 - Keep `SKILL.md` lean and move heavy detail into `references/`.
 - Add `scripts/` only when deterministic reliability or repeated complexity justifies them, and record why a simple prompt-only package is not enough.
 - Do not create a runner, launcher, controller, or formal parameter schema unless the user explicitly asked for orchestration or the workflow genuinely cannot be expressed as prompt guidance.
 - Treat any script the skill ships as part of the agent's prompt budget; default to a high-signal verdict and a handle for detail, not an inline blob.
 - Debug undertriggering, overtriggering, and poor execution separately.
+- When an edit changes a skill's visible contract, inspect and co-edit the relevant `agents/openai.yaml` metadata, especially its default prompt, instead of letting runtime metadata drift from `SKILL.md`.
 - Validate the skill on representative tasks without leaking the intended answer into the evaluation surface.
 - If the brief or existing package is missing, stop and say so instead of inventing a skill contract.
 
@@ -67,7 +72,8 @@ make install
 1. Classify the job as `author`, `edit`, `refactor`, or `audit`.
 2. Read `references/skill-pattern-contract.md`.
 3. Apply `$prompt-authoring` best practices: single job, mission-level intent, success/failure, section-correct guidance, and anti-heuristic checks.
-4. Read the smallest additional reference that matches the job:
+4. If the target skill dispatches model agents, read `../_shared/agent-orchestration-policy.md` and separate shared orchestration semantics from the skill's role-local workflow before editing.
+5. Read the smallest additional reference that matches the job:
    - `references/workflow-and-modes.md` for mode routing and output expectations
    - `references/leverage-and-scope.md` for deciding what the skill should own and whether it should exist at all
    - `references/peer-groups-and-boundaries.md` when related sibling skills, suite routing, or overlap are in scope
@@ -83,12 +89,14 @@ make install
 3. Start with the lean prompt-only shape. Add references only when they reduce repeated prompting or keep `SKILL.md` small.
 4. If the skill has visible peers, name the target lane and the nearest lookalike before rewriting trigger prose.
 5. Define scope, one strong out-of-scope lookalike, and the runtime boundaries.
-6. Write the trigger description so it says what the skill does, when to use it, and when not to.
-7. Encode any runtime-specific load, gating, slash-command, or invocation behavior in the runtime's machine-readable schema before treating the prose as done.
-8. Build the minimum viable package: `SKILL.md` first, then only the `references/`, `scripts/`, `assets/`, and `agents/` metadata the workflow truly needs.
-9. Use progressive disclosure aggressively: core contract in `SKILL.md`, deeper guidance in `references/`, determinism in `scripts/`.
-10. Before adding a script, runner, launcher, or formal input interface, write the proof that prompt guidance is insufficient. If the proof is weak, keep it prompt-only.
-11. Validate trigger quality, package integrity, runtime-specific behavior, execution quality, and anti-heuristic quality before shipping.
+6. For an agent-using skill, point to the shared policy once, keep role-local doctrine in the owning skill, and leave launch-time choices to the agent applying both contracts.
+7. Write the trigger description so it says what the skill does, when to use it, and when not to.
+8. Encode any runtime-specific load, gating, slash-command, or invocation behavior in the runtime's machine-readable schema before treating the prose as done.
+9. Build the minimum viable package: `SKILL.md` first, then only the `references/`, `scripts/`, `assets/`, and `agents/` metadata the workflow truly needs.
+10. Co-edit `agents/openai.yaml` whenever the package's visible contract changes enough to make its current metadata inaccurate or incomplete.
+11. Use progressive disclosure aggressively: core contract in `SKILL.md`, deeper guidance in `references/`, determinism in `scripts/`.
+12. Before adding a script, runner, launcher, or formal input interface, write the proof that prompt guidance is insufficient. If the proof is weak, keep it prompt-only.
+13. Validate trigger quality, package integrity, runtime-specific behavior, execution quality, and anti-heuristic quality before shipping.
 
 ## Output expectations
 
@@ -107,3 +115,4 @@ make install
 - `references/openclaw-skills.md` - OpenClaw-only frontmatter, gating, slash-command, fleet-isolation, and security rules
 - `references/script-output-economy.md` - design the stdout of skill-shipped scripts as a prompt fragment, not a developer console
 - `references/examples-and-anti-examples.md` - grounded good and bad patterns; use them to teach, not to cargo-cult
+- `../_shared/agent-orchestration-policy.md` - required shared semantics for skills that create, resume, replace, or coordinate model agents

@@ -3,12 +3,17 @@
 ## Core rules
 
 - One compact doc is the planning source of truth.
-- Apply `skills/_shared/scope-and-convergence.md`. Start and plan may define the
+- Apply `../../_shared/scope-and-convergence.md`. Start and plan may define the
   smallest evidenced initial convergence closure; finish and review may not
   expand it after the plan-ready freeze.
 - Code is ground truth. Anchor claims in files, symbols, tests, logs, or explicit UX docs.
 - Start and plan modes are docs-only.
-- Finish mode implements locally and keeps the worklog honest.
+- Finish mode implements under active-host ownership and keeps the worklog
+  honest. `Local` does not require one thread: clean native children may take
+  independent read-only mapping/review or explicitly non-overlapping
+  low-collision implementation slices under the parent contract in `SKILL.md`.
+- Apply `../../_shared/agent-orchestration-policy.md` before creating,
+  resuming, replacing, or coordinating a child.
 - Ask only the clarifying questions that block safe planning.
 - Default to hard cutover and explicit deletes. Do not hide risk behind runtime shims.
 - When the changed behavior is agent- or LLM-driven, understand prompt surfaces, native model capabilities, and existing tool/file/context exposure before designing.

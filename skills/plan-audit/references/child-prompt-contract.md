@@ -1,19 +1,44 @@
 # Child Prompt Contract
 
-Use this for broad repo-backed audits that have multiple independent read-only
-lenses or code areas. Native subagents or parallel-agent features provided by
-the current coding harness are the preferred acceleration path and should be
-treated as required whenever available.
+Use this with `../../_shared/agent-orchestration-policy.md` for broad
+repo-backed audits that have independent read-only lenses or code areas. When
+the active host supports native children, each independent slice should be a
+new clean same-host child.
 
-Do not replace native subagents by manually spawning separate coding-harness
-executables, or by invoking skills whose main effect is to shell out to
-`codex`, `claude`, `agent`, or `grok`, unless the parent explicitly assigns
-that action. Do not turn this into an external delegation workflow.
+Do not replace ordinary same-host native slices by manually spawning separate
+coding-harness executables or by invoking skills whose main effect is to shell
+out to `codex`, `claude`, `agent`, or `grok`. If an external provider, model,
+lifecycle, isolation, or receipt is actually load-bearing, the parent chooses
+that transport deliberately under the shared policy; the child never chooses
+it for itself.
 
-The parent owns synthesis and verdict. Children provide bounded evidence.
+The parent owns decomposition, accounting, synthesis, finding scope
+disposition, audit-log integration, and verdict. Children provide bounded
+evidence.
 
 For `implementation-audit` children, use the implementation child contract
 below instead of the plan-readiness contract.
+
+## Dispatch Contract
+
+Before launching review slices, the parent must:
+
+- capture repository status and the relevant diff so child writes can be
+  detected without assuming a clean worktree
+- choose only the independent lenses and path families that improve coverage,
+  keep them non-overlapping, and bound fanout by host slots, shared-file or
+  shared-state collision risk, and parent integration capacity
+- start each slice clean; in Codex set `fork_turns: "none"`, and in Claude use
+  a clean named or custom subagent, not a bare conversation fork or skill
+  `context: fork` shorthand
+- use bounded or full inherited context only for a named dependency that
+  exists solely in chat; pass plan, audit-log, and code paths whenever durable
+  source truth exists, and do not inherit a persuasive completion story by
+  default
+- select a read-only capability or sandbox when the host exposes one and keep
+  the explicit no-edit/no-write instruction in the child prompt
+- give every child a return contract with files and symbols read, findings,
+  coverage limits, blockers, and collision risks
 
 ## Common Child Contract
 
@@ -25,10 +50,14 @@ You are doing one read-only plan-audit lens.
 Work root: <repo/path or none>
 Plan artifact: <path or pasted excerpt handle>
 Audit lens: <lens name>
+Owned paths or surfaces: <non-overlapping path family>
 
-Read repo truth directly where relevant. Do not edit files. Do not invent
-scope. Do not produce a second plan. Return only findings your lens owns. If
-the plan is clean for your lens, say that plainly.
+Read repo truth directly where relevant. Do not edit or write files. Do not
+invent scope. Do not produce a second plan. Return only findings your lens
+owns. If the plan is clean for your lens, say that plainly.
+
+Do not create child agents or invoke delegation, consult, or review skills
+unless the parent brief explicitly assigns a nested scope and budget.
 
 Treat the initial human ask and explicit human approvals as scope authority.
 The initial architecture may have a pre-freeze minimal convergence closure;
@@ -45,16 +74,7 @@ For every finding include:
 - required plan repair
 - scope disposition
 - coverage limits
-```
-
-When the runtime supports native subagents or parallel-agent features, add:
-
-```text
-Maximize parallelism with native subagents or parallel-agent features provided
-by your current coding harness. Do not manually spawn separate coding-harness
-executables, or invoke skills whose main effect is to shell out to `codex`,
-`claude`, or `agent`, from inside this child prompt unless the parent explicitly
-assigns that action.
+- blockers or collision risks
 ```
 
 ## Code-Coverage Mapper
@@ -93,11 +113,15 @@ Plan artifact: <path>
 Audit log: <path or none>
 Requested scope: <full | through phase n | phase n | section>
 Audit lens: <lens name>
+Owned paths or surfaces: <non-overlapping path family>
 
-Read repo code directly. Do not edit files. Do not fix code. Do not run tests.
-Do not ask for test logs or command output. Do not produce a second plan. Do
-not invent scope. Return only findings your lens owns. If the implementation
-is clean for your lens, say that plainly.
+Read repo code directly. Do not edit or write files. Do not fix code. Do not
+run tests. Do not ask for test logs or command output. Do not produce a second
+plan. Do not invent scope. Return only findings your lens owns. If the
+implementation is clean for your lens, say that plainly.
+
+Do not create child agents or invoke delegation, consult, or review skills
+unless the parent brief explicitly assigns a nested scope and budget.
 
 Compare code to the human-authorized outcome, frozen initial convergence
 closure, and explicit later human approvals. Unauthorized built scope is a
@@ -113,16 +137,13 @@ For every finding include:
 - required implementation repair
 - scope disposition
 - coverage limits
-
-Use native subagents or parallel-agent features provided by your current
-coding harness when helpful. Do not manually spawn separate coding-harness
-executables, or invoke skills whose main effect is to shell out to `codex`,
-`claude`, or `agent`, unless the parent explicitly assigns that action.
+- blockers or collision risks
 ```
 
 The parent must spot-check code anchors, dedupe findings, classify required
 repairs and observations, reject findings outside the requested scope, and own
-the final verdict.
+the final verdict. Before accepting evidence, it must compare repository status
+and diffs with the pre-dispatch state and record every child final state.
 
 ## Lens Reviewer
 
@@ -176,13 +197,14 @@ sink of possible improvements.
 
 ## Parent Use Rules
 
-- Use native subagents first for broad independent read-only audit slices.
-- Do not use external harness-spawning skills for ordinary audit acceleration.
-- Use `fresh-consult` or `agent-delegate` only when the user explicitly asks for
-  external model or CLI execution, the parent assigns that action, and local
-  instructions allow it.
-- Use `agent-delegate` only for concrete read-only local command tasks with
-  write scope `none`.
-- Spot-check child evidence before presenting it as verified truth.
+- Prefer new clean same-host native children for broad independent read-only
+  audit slices when the active host supports them.
+- Do not use external harness-spawning skills for ordinary same-host audit
+  acceleration. Select an external lane only under the shared policy when its
+  concrete provider, model, lifecycle, isolation, automation, or receipt
+  benefit warrants the added process and integration cost.
+- Account for every launched child, spot-check its evidence, reconcile
+  conflicts, deduplicate findings, decide scope dispositions, and compare
+  repository state before presenting child evidence as verified truth.
 - Keep child transcripts out of the final answer unless they are short. Link
   or summarize artifacts instead.
