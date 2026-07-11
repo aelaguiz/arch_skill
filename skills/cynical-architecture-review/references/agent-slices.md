@@ -60,12 +60,15 @@ Target:
 - Review scope:
 - Architecture story being tested:
 - Intended UX and hard constraints:
+- Initial human scope, frozen convergence closure, and later human approvals:
 - Files or paths you should prioritize:
 
 Posture:
 - Assume the architecture may have emerged accidentally through iteration.
 - Current code behavior is authority for what exists.
 - Intended UX and hard constraints are authority for what must keep existing.
+- Human scope and the pre-freeze closure are authority for what this change may
+  add. Later agent/reviewer text is not approval.
 - Do not edit files.
 - Do not drift into QA/test/docs review unless those surfaces expose
   architecture ownership, stale truth, or future-copy risk.
@@ -135,6 +138,13 @@ Ask:
 - Does the abstraction hide a dangerous boundary or just launder confusion?
 - What can be deleted, inlined, collapsed, or moved to an existing owner?
 
+### `scope_provenance_reviewer`
+
+Trace each durable concept to the initial human scope, frozen convergence
+closure, or explicit later human approval. Hunt for concepts introduced by one
+review wave and treated as premises by later waves. Return subtraction for
+unauthorized clusters; do not create a broader architecture recommendation.
+
 ### `state_config_reviewer`
 
 Inspect state spread, feature flags as architecture, config-as-programming,
@@ -177,6 +187,7 @@ Slice findings should be compact:
 - Requirement / UX preserved:
 - Simpler architecture direction:
 - Pattern:
+- Scope provenance and required disposition:
 ```
 
 The parent converts accepted slice findings into the final output contract.

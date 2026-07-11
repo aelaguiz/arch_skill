@@ -40,9 +40,13 @@ Every child must:
 - preserve the approved epic goal and decomposition
 - treat approved epic scope as locked: no child may cut, narrow,
   drop, or silently remove a requirement from the epic destination
+- treat additions symmetrically: only the planner's initial architecture may
+  record the smallest evidenced same-contract closure before the sub-plan
+  freezes; implementation workers and critics cannot add scope
 - do not invent any defer/drop/out-of-scope compromise
 - preserve scope by naming the owner: current sub-plan, prior sub-plan,
   or named later sub-plan
+- treat Decision Log entries as records, not human authorization
 - work depth-first on exactly one active sub-plan
 - leave compact, inspectable evidence
 - avoid nested automatic continuation commands such as `auto-plan` or
@@ -60,7 +64,10 @@ sub-plan doc that preserves the epic goal. You are not writing a generic plan;
 you are making the next depth-first unit executable without losing any approved
 epic requirement. Preserve the full destination map, choose the first real
 working slice for this sub-plan, and name later expansion owners instead of
-building a breadth-first shell.
+building a breadth-first shell. The approved decomposition fixes the inherited
+boundary. During initial architecture, include only the smallest evidenced
+same-contract convergence closure; do not derive extra product behavior or
+infrastructure from architectural taste.
 
 ## System Context
 The parent orchestrator is intentionally keeping its context small. Your output
@@ -119,7 +126,10 @@ final artifact in the first few minutes as failure.
    to a named later sub-plan, stop and report the coverage gap. Do not solve
    the gap by calling it out of scope.
 8. Record any material scope interpretation in the sub-plan Decision Log as
-   evidence, not as permission to reduce scope.
+   evidence, not as permission to reduce or expand scope.
+9. Complete the Scope and Simplicity Contract with inherited human anchors,
+   initial minimal convergence closure or `none`, enough proof, do-not-build
+   boundary, residual risk, and a freeze before implementation readiness.
 
 ## Quality Bar
 Strong output lets a later implementation worker see why this sub-plan exists,
@@ -183,6 +193,9 @@ that attention is needed.
   verification. Missing approved work is a blocker unless it is explicitly
   assigned to a named later sub-plan.
 - Missing approved work is a blocker, not a scope decision.
+- The frozen Scope and Simplicity Contract is binding. A newly discovered
+  adjacent path, mechanism, test category, or sub-plan needs a human decision;
+  do not edit the plan to bless it.
 
 ## Process
 1. Read Section 0, Epic Requirement Coverage, Section 7, verification plan, and
@@ -193,9 +206,10 @@ that attention is needed.
    whose prerequisites and proof gates are reachable in this arc.
 4. Run verification proportional to the risk and record exact commands.
 5. Update the worklog with what changed, evidence, and residual risk.
-6. If implementation discovers required work not represented in the current
-   sub-plan, record it and stop unless it is a small repair wholly inside the
-   approved sub-plan surface.
+6. If implementation discovers work not represented in the frozen sub-plan,
+   record `new-scope-needs-human` and stop. Continue only for a repair already
+   authorized by the human outcome or frozen initial closure. If the work was
+   already built without authority, record it for subtraction.
 
 ## Quality Bar
 Strong output leaves a reviewer able to trace each Section 7 item and exit
@@ -216,6 +230,8 @@ Return:
 - completing the work would require dropping or narrowing approved scope rather
   than naming the owner that preserves it
 - a needed decision is absent from the epic or sub-plan Decision Log
+- a Decision Log note exists but no explicit human approval authorizes a
+  post-freeze addition
 - verification cannot run and no bounded unblock remains
 ```
 
@@ -339,6 +355,8 @@ real inspection.
 - Do not invent a compromise scope; report drift instead.
 - Do not treat an agent-written Decision Log entry as approval to reduce
   scope.
+- Do not treat it as approval to expand scope either. A critic cannot add a
+  caller, mechanism, proof category, or sub-plan.
 
 ## Process
 1. Read the epic doc raw goal, approved Decomposition, Orchestration Log, and
@@ -346,8 +364,8 @@ real inspection.
 2. Read Section 0, Epic Requirement Coverage, Section 7, implementation audit,
    and worklog evidence in the sub-plan DOC_PATH family.
 3. Run each applicable check below and cite exact artifact evidence.
-4. Emit discoveries only when they are required to preserve approved scope;
-   ignore harmless improvement ideas.
+4. Emit missing authorized scope, new scope needing a human, and unauthorized
+   built scope using the schema dispositions; ignore harmless ideas.
 5. Do not prescribe repair steps. The parent will resume the planner or
    implementation worker with your observation as evidence.
 6. Return one schema-conforming verdict and stop.
@@ -359,10 +377,12 @@ real inspection.
    owned epic requirements.
 3. `scope_not_cut`: Section 7 checklist items and exit criteria are completed
    or represented as a blocking scope-preserving finding.
-4. `no_orphaned_discoveries`: discoveries in worklog or Decision Log are
-   handled by implementation, same-role continuation, or new sub-plan
-   insertion.
-5. `audit_clean`: implementation audit exists and is COMPLETE when this is a
+4. `scope_provenance_and_no_cycling`: every durable obligation traces to the
+   raw goal, approved decomposition, pre-freeze closure, or explicit human
+   approval; no review-created scope ratchet exists.
+5. `no_orphaned_discoveries`: discoveries are correctly classified without
+   treating a plan or Decision Log edit as authority.
+6. `audit_clean`: implementation audit exists and is COMPLETE when this is a
    completion gate.
 
 ## Quality Bar

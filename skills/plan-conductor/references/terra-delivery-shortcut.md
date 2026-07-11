@@ -59,19 +59,21 @@ scope such as an explicit phase range remains binding.
    - `$cynical-architecture-review`
    - `$cynical-cruft-removal`
 4. **Triage and repair.** Treat every reviewer result as a claim. The conductor
-   checks each finding against the plan and current repo, then records it as
-   accepted, partially accepted, rejected with evidence, or deferred only
-   when the plan and user allow deferral. Send accepted code changes to the
+   checks each finding against the plan and current repo, judges factual
+   validity separately from scope disposition, and sends only `authorized`,
+   `frozen-convergence-required`, or required subtraction work to the
    healthy owning implementation session, or a fresh Terra xhigh repair worker
-   when ownership or session health requires it. Independently reproduce the
-   affected proof.
+   when ownership or session health requires it. A broader reviewer
+   recommendation needs explicit human approval and re-freeze. Independently
+   reproduce the affected proof.
 5. **Re-review.** A review is clean only at its own native clean verdict:
    `approve` for code and architecture, and `no-material-cruft-found` for
    cruft. After material repairs, rerun every affected review in another fresh
    Terra xhigh session. `coverage-incomplete`, `scope-incomplete`,
    `unsafe-to-judge`, or open required repairs do not pass the gate.
 6. **Publish the PR.** After all plan proof and all three review lanes are
-   clean, invoke `$pr-authoring` against the same branch and worktree. Let that
+   clean and the scope-provenance gate is `frozen-clean`, invoke
+   `$pr-authoring` against the same branch and worktree. Let that
    skill inspect repo truth, publish or update the GitHub PR, and return the PR
    URL.
 7. **Follow through.** Treat this preset as the user's explicit authorization
@@ -89,3 +91,8 @@ accepted code, the PR exists, and `$pr-review-followthrough` reports the
 current PR head merge-ready. A missing CLI, unsafe worktree state, unavailable
 review skill, GitHub authorization failure, irreducible CI failure, or real
 human product decision is a blocker to report, not a reason to skip a stage.
+
+The shortcut may repair authorized findings and subtract unauthorized work. It
+must not implement a broader reviewer recommendation automatically, and it may
+not publish or enter PR follow-through while a scope-cycle or human scope
+decision remains open.

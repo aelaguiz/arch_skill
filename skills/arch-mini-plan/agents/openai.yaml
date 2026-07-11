@@ -1,7 +1,7 @@
 interface:
   display_name: "Arch Mini Plan"
   short_description: "Write a standalone one-pass mini architecture plan and hand off follow-through to miniarch-step or arch-step"
-  default_prompt: "Use $arch-mini-plan to create or repair a one-pass mini architecture plan with canonical arch blocks, then end with the exact miniarch-step or arch-step handoff and the later `arch-docs` docs-cleanup handoff after the clean code audit."
+  default_prompt: "Use $arch-mini-plan to create or repair a one-pass mini architecture plan. Capture the human-authorized outcome, smallest sufficient solution, initial same-contract convergence closure or `none`, enough proof, do-not-build boundary, residual risk, and scope freeze in one compact Scope and Simplicity Contract. Initial planning may include only the smallest closure needed to prevent competing authority; later agents cannot expand it. End with the exact miniarch-step or arch-step handoff and the later `arch-docs` handoff after clean code audit."
 
 policy:
   allow_implicit_invocation: true

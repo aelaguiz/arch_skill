@@ -20,7 +20,15 @@ Write the minimal architecture and delivery plan needed to ship the feature clea
    - `call_site_audit`
    - `phase_plan`
    - make the capability-first choice explicit before adding custom tooling for agent-backed behavior
+   - inspect the exact changed contract for directly competing owner paths;
+     include only their smallest cutover/delete in the initial convergence
+     closure and exclude merely similar neighbors
 4. Run the internal plan audit and write the result into `lilarch:block:plan_audit`.
+
+The plan audit is not scope authority. It may reject a missing or overbroad
+contract, but it cannot add an adjacent surface. Before finish mode, record an
+explicit closure or `none`, verify every phase item maps to human scope or that
+closure, and freeze the contract.
 
 If preserving instruction-bearing source fidelity cleanly would no longer fit the compact doc, escalate to `miniarch-step reformat` or `arch-step reformat` instead of silently compressing it.
 
@@ -35,5 +43,7 @@ If preserving instruction-bearing source fidelity cleanly would no longer fit th
 
 ## Escalation rule
 
-- If the plan wants a fourth phase, stop and escalate to `miniarch-step reformat`.
+- If the authorized outcome plus minimal pre-freeze closure needs a fourth
+  phase, stop and escalate to `miniarch-step reformat`. Do not escalate because
+  the audit imagined more work.
 - If the work also brings broad rollout logic or heavy plan shaping, stop and escalate to `arch-step reformat`.

@@ -34,9 +34,14 @@ Start with the strongest discriminator first:
 
 ## Skill map
 
+All fixed-scope planning and implementation lanes share one law: initial
+architecture may include only the smallest evidenced same-contract convergence
+closure; scope freezes before implementation; afterward only explicit human
+approval expands it. Reviewer findings never create scope.
+
 | Skill | Use when | Do not default to it when | Example asks |
 | --- | --- | --- | --- |
-| `arch-step` | the user wants the broad full arch workflow, a specific helper-heavy full-arch command, or a generic full-arch continuation where scope or architecture may still widen materially | they only need a read-only checklist, a one-pass mini plan, or a smaller well-defined feature that fits the faster full-arch tier | "Do the full arch flow", "Run research on this plan", "do the review gate", "advance the flow one step", "audit implementation vs plan" |
+| `arch-step` | the user wants the broad full arch workflow, a specific helper-heavy full-arch command, or a generic full-arch continuation with deeper initial architecture work | they only need a read-only checklist, a one-pass mini plan, or a smaller well-defined feature that fits the faster full-arch tier | "Do the full arch flow", "Run research on this plan", "do the review gate", "advance the flow one step", "audit implementation vs plan" |
 | `miniarch-step` | the user wants the faster full-arch workflow for a smaller well-defined feature that still needs canonical arch blocks, phased execution, and native goal-mode auto flow | the work is tiny enough for `lilarch`, planning-only, or broad enough to need the full `arch-step` helper surface | "Use the faster full arch flow for this feature", "run miniarch-step on this plan", "do the quick full-arch pass with auto-plan and implement-loop" |
 | `arch-docs` | the code is already clean enough to trust and the main job is cleaning stale, overlapping, or misleading docs, including post-arch plan/worklog retirement | the feature still needs code work, or the ask is generic copy editing or net-new documentation authoring | "Clean up the docs in this repo", "retire this plan/worklog and fold the truth into evergreen docs", "run the docs cleanup loop" |
 | `arch-mini-plan` | the user wants a compact one-pass plan but still wants canonical arch blocks | the work is tiny enough for `lilarch` or needs actual full-arch execution now | "Give me the mini plan version", "one-pass arch plan for this task" |

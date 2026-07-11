@@ -15,6 +15,7 @@
   - likely root cause is actionable
   - blast radius is bounded
   - verification plan is specific
+  - initial minimal convergence closure or `none` is evidenced and frozen
 - Weak:
   - three equally likely hypotheses and no decision
   - "we'll know after we patch it"
@@ -23,10 +24,13 @@
 
 - Strong:
   - smallest credible localized change
+  - a systemic fix lives at the narrowest shared cause and touches only the
+    frozen same-contract closure
   - no silent fallback
   - obvious call sites updated
 - Weak:
   - bug fix that quietly changes product behavior
+  - review- or implementation-created adjacent cleanup
   - compatibility shim with no removal plan
 
 ## Verification

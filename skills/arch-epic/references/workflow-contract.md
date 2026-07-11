@@ -417,8 +417,9 @@ the next routing decision.
 - Critic finds missing epic requirement coverage or unfinished in-scope
   implementation work: resume the planner or implementation worker
   session that owns the failed gate until the retry budget is exhausted.
-- Critic finds material product-intent change or two valid scope paths:
-  halt and ask the user.
+- Critic finds post-freeze expansion, unauthorized built scope, scope cycling,
+  material product-intent change, or two valid scope paths: halt and ask the
+  user; do not resume a worker with expansion as required work.
 - Failing worker session cannot be resumed: halt with the run directory
   and ask whether to start a fresh role session.
 - Repair budget exhausted: halt with the latest critic verdict and
@@ -434,12 +435,12 @@ the next routing decision.
 - Epic doc with a pending scope-change entry in the most recent
   Decision Log section (or the critic verdict that halted the
   run).
-- The user's decision: extend_current or new_sub_plan (or a custom
-  scope-preserving mix when multiple discovered items exist).
+- The user's decision: approve expansion through `extend_current` or
+  `new_sub_plan`, or keep frozen scope and require subtraction/redesign.
 
 ### Outputs
-- Decomposition updated per user's decision: new sub-plan inserted or
-  existing sub-plan scope extended.
+- Decomposition and sub-plan contract updated only when the user approved
+  expansion; otherwise the frozen boundary remains unchanged.
 - Epic doc `status: active`.
 - Decision Log entry recording the resolution.
 
@@ -448,7 +449,8 @@ the next routing decision.
   sub-plan's Section 7 checklist and Exit Criteria in its arch-step
   DOC_PATH. Reset the sub-plan's Status in the epic doc to
   `implementing`. Next turn's `run` mode will invoke
-  `$arch-step implement-loop` again.
+  `$arch-step implement-loop` again. Record the human approval and new
+  re-freeze boundary before implementation.
 - **new_sub_plan**: Insert a new sub-plan entry in the epic's
   Decomposition. Its name is the "what" field from the discovered
   item or a user-supplied name. Its one-sentence description is
@@ -456,6 +458,10 @@ the next routing decision.
   Insert it after the current sub-plan. Current sub-plan Status
   becomes `complete` (its own scope is met; the discovered items
   are carried in the new sub-plan).
+- **keep_scope**: Leave the decomposition and frozen contract unchanged.
+  Reopen the current implementation for subtraction/redesign when unauthorized
+  built scope exists; otherwise record the observation and continue only when
+  all authorized work is complete.
 
 Set `status: active`. Append Orchestration Log entry and Decision
 Log entry. End turn. Next turn re-enters `run`.
@@ -468,8 +474,8 @@ Log entry. End turn. Next turn re-enters `run`.
 
 ### Where determinism lives
 - Writing the new sub-plan entry.
-- Editing the existing sub-plan's arch-step Section 7 (when
-  user chose extend_current).
+- Editing the existing sub-plan's Scope and Simplicity Contract and Section 7
+  only when the user chose and approved expansion.
 - Log appends.
 
 ### Failure modes
@@ -481,6 +487,8 @@ Log entry. End turn. Next turn re-enters `run`.
   gate. Explain that arch-epic does not have a scope-reduction path; the
   scope-preserving choices are extend_current, new_sub_plan, named later
   ownership, or blocked.
+- A critic calls new scope "required" but the user has not approved it: keep
+  the epic halted and present the approval-or-subtraction choice.
 
 ## Mode: `summary`
 

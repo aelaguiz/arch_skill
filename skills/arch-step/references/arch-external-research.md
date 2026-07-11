@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for external research, Section 5, and Section 8
 
 ## Reads for alignment
@@ -36,6 +37,11 @@
 - if sources disagree on a plan-shaping decision, summarize the disagreement, apply any repo-grounded constraint that resolves it, and otherwise ask the user the exact blocker question instead of inventing a default
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is contradictory, stop and ask the exact blocker question before continuing
 - do the research directly inside this command; do not rely on external model orchestration
+- external advice may shape an already-authorized design but cannot authorize a
+  new platform, mode, guarantee, caller, dependency, proof system, or adjacent
+  cleanup. Keep such recommendations out of required scope unless a human
+  approves them or initial architecture independently proves the minimal
+  same-contract closure before freeze
 
 ## Relevance filter
 

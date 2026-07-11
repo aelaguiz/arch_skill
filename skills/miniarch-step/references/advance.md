@@ -70,7 +70,10 @@ Emit every line in this order:
 - for deep dive, call out whether the single pass is done using `planning_passes`
 - for implementation, require both doc truth and worklog truth before calling it `[DONE]`
 - treat missing canonical-path analysis or missing preservation verification as real weakness, not optional polish
-- treat a missing or violated Simplicity Contract as `[PENDING]`, even when the rest of the plan is structurally complete
+- treat a missing, unfrozen, contradicted, or exceeded Scope and Simplicity
+  Contract as `[PENDING]`, even when the rest of the plan is structurally
+  complete. Post-freeze expansion routes to a human decision, not another agent
+  planning or review pass
 - treat unresolved plan-shaping decisions as `[PENDING]`, even when the surrounding section is otherwise strong
 
 ## Next-command selection rule

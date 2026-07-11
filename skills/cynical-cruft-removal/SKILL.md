@@ -82,6 +82,17 @@ broader workflow.
 - A doc proves someone wrote a doc. It does not prove the doc is current or the
   referenced artifact should stay.
 - Current live purpose is the keep standard.
+- For plan-, branch-, conductor-, PR-, or history-backed work, current
+  reachability and product use do not prove the work was authorized. Apply
+  `skills/_shared/scope-and-convergence.md`: reconstruct the initial human
+  scope, frozen initial convergence closure, later human approvals, review
+  waves, and final code. A live cluster created through unauthorized
+  post-freeze expansion or scope cycling is cruft and forces `cruft-found`.
+- Group scope-laundered code with the tests, schemas, configs, dependencies,
+  docs, prompts, and operational surfaces that keep it alive. The normal action
+  is subtraction of the cluster. If provenance should exist but cannot be
+  recovered, return `scope-incomplete`; mark the lane not applicable only for a
+  standalone target with no scope story.
 - Findings must be deletion-relevant. Drop generic style nits, missing-test
   requests, docs polish, formatting complaints, and normal QA concerns unless
   they expose low-value artifacts that should go away.
@@ -100,10 +111,13 @@ broader workflow.
 4. Save `target.md`: target, scope, user concern, current branch/diff context,
    supplied plan or cleanup claim if any, explicit exclusions, and local
    instructions read.
-5. Read `references/cruft-lenses.md`.
-6. Read `references/output-contract.md`.
-7. Read `references/agent-slices.md` before launching native parallel agents.
-8. Read `references/examples.md` when the target involves tests, docs,
+5. When scope history exists, reconstruct the human baseline, frozen closure,
+   later human approvals, and review waves before accepting current liveness as
+   keep evidence.
+6. Read `references/cruft-lenses.md`.
+7. Read `references/output-contract.md`.
+8. Read `references/agent-slices.md` before launching native parallel agents.
+9. Read `references/examples.md` when the target involves tests, docs,
    generated artifacts, self-referential islands, V1/V2 paths, stale flags,
    dependencies, or confusing peer review lanes.
 
@@ -133,23 +147,25 @@ broader workflow.
    compatibility ghosts, V1/V2 shadow systems, phantom public APIs,
    configuration cemeteries, oversized or unused dependencies, stale assets,
    stale locale keys, old telemetry names, and retired examples.
-8. Review tests as artifacts. Report tests that should be deleted or rewritten
+8. For scope-backed work, hunt scope-laundered live clusters. Do not keep them
+   merely because current code, tests, docs, or users now reach them.
+9. Review tests as artifacts. Report tests that should be deleted or rewritten
    with their cruft cluster. Do not ask for more tests unless the user
    explicitly requested test strategy.
-9. Review docs, examples, and prompts as artifact supports. Treat them as
+10. Review docs, examples, and prompts as artifact supports. Treat them as
    secondary unless they are themselves stale or they keep code, tests, or
    workflows alive.
-10. Review dependencies, build files, package metadata, config, and scripts as
+11. Review dependencies, build files, package metadata, config, and scripts as
     code surfaces that can preserve dead behavior.
-11. Use git history when retirement timing, migration completion, or old
+12. Use git history when retirement timing, migration completion, old
     ownership matters.
-12. Use `references/cruft-lenses.md` and `references/examples.md` to classify
+13. Use `references/cruft-lenses.md` and `references/examples.md` to classify
     concrete candidates. Use examples as illustrations of reasoning, not a
     lookup table.
-13. Save `low-value-catalog.md`, `test-bloat-report.md`,
+14. Save `low-value-catalog.md`, `test-bloat-report.md`,
     `deletion-candidates.md`, `keep-decisions.md`, `coverage.md`,
     `findings.md`, and `verdict.md`.
-14. Return a short findings-first answer with the verdict and run directory.
+15. Return a short findings-first answer with the verdict and run directory.
 
 ## Output Expectations
 

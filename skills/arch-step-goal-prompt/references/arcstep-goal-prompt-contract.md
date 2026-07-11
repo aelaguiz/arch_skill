@@ -44,6 +44,10 @@ acceptance evidence, and implementation order. Do not copy it into this prompt
 or create a second plan.
 ```
 
+Point to that plan's Scope and Simplicity Contract and freeze anchor. Do not
+copy them into the goal. All reviewer findings must be classified against that
+contract before they become repair work.
+
 Bad source truth line:
 
 ```text
@@ -111,6 +115,10 @@ points and ask:
 - Am I rationalizing old code shape as intentional architecture instead of
   checking first principles against the plan?
 - Did I stop after a convenient local fix while reachable approved work remains?
+- Did I treat an agent-authored plan edit, goal edit, or reviewer finding as
+  human approval for scope?
+- Am I cycling through review repairs that grow implementation beyond the
+  frozen contract?
 - Am I building process, policy, harness, or ceremony when the next useful move
   is direct implementation, focused inspection, or a small diagnostic check?
 
@@ -150,8 +158,9 @@ The goal prompt should say:
 - freshly reread the plan before claiming any phase or frontier is complete
 - implement the approved ordered implementation frontier
 - run ArcStep `audit-implementation`
-- if audit or a required external review rejects the result, repair the
-  objection and rerun the relevant check
+- if audit or a required external review rejects the result, classify the
+  objection against the frozen scope contract: repair authorized work,
+  subtract unauthorized work, or stop for a human scope decision
 - never mark complete while reviewers, delegated workers, or required repairs
   are pending
 
@@ -183,7 +192,8 @@ A good reviewer gate states:
 - what evidence the reviewer receives
 - that the reviewer must not be led toward the expected verdict
 - what verdict is required
-- that rejection becomes repair input for execution goals
+- that authorized rejection becomes repair input, while new scope needs a
+  human decision and unauthorized built scope needs subtraction
 - that completion is forbidden while the reviewer is still running
 
 Example:
@@ -193,7 +203,8 @@ Use `$fresh-consult` or another user-approved strict reviewer as a blind
 completion review of the controlling plan, final diff, ArcStep audit block,
 test receipts, and this goal prompt. Do not give the reviewer the desired
 verdict. Done requires reviewer agreement that the goal is satisfied; if review
-rejects the result, repair the objection and rerun the relevant check.
+rejects the result, repair only findings authorized by the frozen contract,
+subtract unauthorized work, or ask the human decision owner before expansion.
 ```
 
 Do not embed long reviewer prompts inside the goal file when a linked skill or
@@ -221,6 +232,10 @@ Use only the ones that fit the run:
 - A strict reviewer was launched but not finished.
 - A reviewer rejected completion and the agent treated the rejection as a final
   report.
+- An agent-authored plan revision or reviewer finding was treated as human
+  scope authority.
+- The goal kept repairing reviewer findings until implementation exceeded the
+  frozen initial scope.
 - Fixes landed after review but the relevant check did not rerun.
 - The final report lists activity instead of evidence tied to source truth.
 

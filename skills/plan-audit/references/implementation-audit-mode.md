@@ -72,6 +72,12 @@ Read:
 Do not treat scope context as a lie to investigate or a claim to re-validate.
 It helps aim the code review; it does not replace reading code.
 
+When the plan, worklog, Decision Log, branch context, or user ask exposes scope
+history, reconstruct the human baseline, initial pre-freeze convergence
+closure, freeze anchor, and explicit human approvals. This is provenance review,
+not an honesty investigation. If required provenance cannot be recovered,
+return the existing non-approving coverage verdict instead of inventing it.
+
 ## Progressive Review Order
 
 1. Resolve the plan artifact, code root, audit log path, and requested scope.
@@ -80,6 +86,8 @@ It helps aim the code review; it does not replace reading code.
    requirements, requirements, non-requirements, constraints, non-constraints,
    phase boundaries, checklists, exit criteria, delete list, compatibility
    posture, and side-door expectations.
+   Also extract human authorization anchors, initial convergence closure,
+   scope-freeze anchor, and explicit later human approvals.
 4. Reconstruct what code should be reviewed from user text, phase labels,
    worklog notes, checked boxes, commit messages, branch names, or explicit
    paths.
@@ -111,6 +119,16 @@ It helps aim the code review; it does not replace reading code.
 Check that the review target is clear: plan path, audit log path, scope,
 baseline, and local instructions. Block only when the code target cannot be
 resolved or required code cannot be read.
+
+### `scope-provenance-and-no-cycling`
+
+For plan-backed work with recoverable scope history, compare the initial human
+scope and pre-freeze convergence closure with plan revisions, findings,
+worklogs, and final code. A later plan edit cannot retroactively authorize code.
+Treat unauthorized built scope as a required `IMP-*` subtraction repair and
+force `not-approved`, even if it works or tests pass. A new adjacent path found
+by this audit may block approval but cannot be added to repair scope without a
+human decision and re-freeze.
 
 ### `plan-code-fit`
 
@@ -242,6 +260,10 @@ privacy, or dependency trust. Find only reachable changed-code risks.
 Check whether implementation added variants, modes, frameworks, compatibility
 behavior, or product scope that the plan did not require and that now creates
 bug vectors, live concepts, drift surfaces, or maintenance burden.
+
+Give every material finding a shared scope disposition. Only `authorized` and
+`frozen-convergence-required` are automatic repair work; `new-scope-needs-human`
+is a decision request, and `unauthorized-built-scope` is subtraction work.
 
 ## Audit Log Updates
 

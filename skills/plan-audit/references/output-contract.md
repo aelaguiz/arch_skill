@@ -10,7 +10,7 @@ Plan-readiness verdicts:
 - `ready`: The plan was audited properly, relevant code was read when needed,
   audit log is current when applicable, and no required repairs remain.
 - `not-ready`: The plan has blocking quality, architecture, code-truth,
-  proof, side-door, or completion gaps.
+  proof, side-door, scope-provenance, scope-cycling, or completion gaps.
 - `blocked-on-decision`: A user or authorized decision owner must resolve
   ambiguity, constraints, compatibility, scope, or proof before the plan can be
   repaired.
@@ -44,6 +44,7 @@ Audit log: <path or not applicable>
      - <code path:line or symbol when repo-backed>
    - Required plan repair:
    - Review lens:
+   - Scope disposition: authorized | frozen-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
 
 ## Observations / Out-Of-Scope Follow-Ups
 
@@ -61,6 +62,14 @@ Audit log: <path or not applicable>
 - Code-quality requirements:
 - Task-shaped requirements to rewrite:
 - Outcome that remains unproven:
+
+## Scope Provenance
+
+- Human-authorized outcome and anchors:
+- Initial minimal convergence closure and freeze anchor:
+- Later human-approved expansions:
+- Obligations without authority:
+- Scope-cycle evidence:
 
 ## Real Ambiguity And Required Decisions
 
@@ -131,6 +140,8 @@ Audit log: <path or not applicable>
   is not approved.
 - Do not turn the answer into workflow routing advice. The job is to improve
   the plan.
+- Do not repair scope by writing a new adjacent obligation. Before freeze,
+  return the gap to the planning owner; after freeze, require a human decision.
 
 ## Implementation-Audit Shape
 
@@ -160,6 +171,7 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
      - <code path:line or symbol>
    - Required implementation repair:
    - Review lens:
+   - Scope disposition: authorized | frozen-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
 
 ## Observations / Out-Of-Scope Follow-Ups
 
@@ -172,6 +184,9 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
 - Code blockers:
 - Test/CI assumptions accepted:
 - Phase status recommendations:
+- Initial human scope and approval anchors:
+- Frozen initial convergence closure:
+- Scope-cycle or unauthorized-built-scope findings:
 
 ## Architecture And Elegance
 
@@ -215,3 +230,5 @@ Implementation-audit rules:
   planned elegance gaps as required repairs, not observations.
 - For name-only completion or false-simplification findings, explicitly state
   why the apparent completion is false.
+- Unauthorized built scope is a required subtraction repair and forces
+  `not-approved`; a later agent-authored plan edit does not ratify it.

@@ -59,6 +59,20 @@ Challenge every complexity source with: can this be simpler without breaking
 the stated requirements? Complexity that cannot point back to a real
 requirement, hard constraint, or drift-proofing need should be removed.
 
+## Scope Provenance And Freeze
+
+Apply `skills/_shared/scope-and-convergence.md`. The implementation boundary is
+the human-authorized outcome plus the smallest directly competing
+same-contract closure found by initial architecture before implementation, plus
+later explicit human approvals. Similarity, architectural taste, generic risk,
+review findings, agent-authored plan edits, and already-built code are not
+authority.
+
+Audit may reject missing provenance, an unbounded closure, or scope cycling. It
+must not repair those defects by adding adjacent work itself. Before freeze,
+return the gap to the planning owner. After freeze, require a human decision or
+subtraction/redesign inside the frozen boundary.
+
 ## Real Ambiguity
 
 Real ambiguity exists when two reasonable implementers could read the plan and
@@ -69,9 +83,11 @@ phase order. Ignore fake ambiguity and questions the repo can answer.
 For each real ambiguity, name the plausible interpretations, the architecture
 impact, the required decision, and whether repo truth resolves it.
 
-Resolution is not a chat answer. A user or explicitly authorized agent must
-own the decision, and the plan must carry the decision through all affected
-sections before the item is resolved.
+Resolution is not a chat answer. A human decision owner must resolve outcome,
+scope, compatibility, or constraint changes. An explicitly authorized agent
+may resolve only implementation choices already inside the frozen contract.
+The plan must carry the decision through all affected sections before the item
+is resolved.
 
 ## Tiny-Team Maintainability
 
@@ -112,11 +128,10 @@ shadow contracts, and wrappers that hide unresolved contracts.
 Before accepting a new pattern, audit comparable patterns. Classify related
 code as:
 
-- `move now`
-- `delete now`
+- `already authorized`
+- `frozen convergence closure`
 - `leave different`
-- `named follow-up`
-- `user decision`
+- `new scope needs human`
 
 A locally good new pattern can still make the repo worse if related old
 patterns remain live and unclassified.

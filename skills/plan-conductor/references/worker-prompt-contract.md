@@ -27,6 +27,9 @@ report the files and evidence instead of guessing.>
 - Slice: <id — one-line outcome>
 - Plan: <path> — read sections: <anchors>. The plan is authoritative; this
   prompt summarizes, the plan decides.
+- Frozen scope contract: <plan anchor and freeze anchor>
+- Directly human-authorized checklist items: <exact items owned by this slice>
+- Frozen initial-convergence items: <exact items owned by this slice, or none>
 - Goal: <the phase/slice goal, one paragraph>
 - Checklist (all must become literally true in code):
   <the phase checklist items owned by this slice>
@@ -57,6 +60,14 @@ You must not: commit, push, stash, revert unrelated work, expand scope
 (stop and report instead), weaken or skip tests, or leave the old code path
 alive when the contract says replace it.
 
+A repo pattern, review concern, test idea, or newly discovered adjacent path is
+not authority. Do not add a durable table, queue, state machine, service,
+dependency, compatibility path, mode, operational surface, harness, test
+category, caller migration, or cleanup absent from the frozen items above.
+Report it as `new-scope-needs-human` or `out-of-scope`. If you find existing
+work beyond the contract, report `unauthorized-built-scope`; do not extend it
+or edit the plan to bless it.
+
 # Process
 Read the plan anchors and local instructions; inspect current state;
 implement the smallest change satisfying the full checklist; execute the
@@ -77,6 +88,7 @@ VERIFICATION: <commands run + real results, or "not run: reason">
 DELETES EXECUTED: <what was removed, or "none required" / "NOT done: reason">
 SESSION HEALTH: healthy | struggling | stuck
 BLOCKERS: <bullets or none>
+SCOPE DISCOVERIES: <item + disposition, or none>
 SUMMARY FOR PARENT: <one concise paragraph>
 ```
 
@@ -99,6 +111,7 @@ footer — is unchanged. Your previous result was audited and is NOT accepted.
   Evidence: <path:line or command output>
   Why it fails the contract: <checklist item / exit criterion / guardrail>
   Repair direction (advisory): <parent's hint — you own the implementation>
+  Scope disposition: <authorized | frozen-convergence-required | unauthorized-built-scope>
 
 # Rules for this repair pass
 - Fix root causes, not symptoms; do not weaken tests or the contract to
@@ -107,6 +120,8 @@ footer — is unchanged. Your previous result was audited and is NOT accepted.
   repairs and quote real output.
 - If you believe a finding is wrong, say so with code evidence in your
   report instead of silently ignoring it.
+- Do not implement observations or `new-scope-needs-human` findings. The
+  conductor sends back only authorized repair or subtraction work.
 
 End with the same report footer as the original contract.
 ```
@@ -115,8 +130,9 @@ End with the same report footer as the original contract.
 
 - Micromanaged file-by-file scripts, or five-line micro-tasks that belong in
   a bigger slice.
-- "Do not touch anything else" phrasing that blocks required adjacent fixes —
-  scope boundaries name surfaces, not line counts.
+- vague scope phrasing that lets a worker infer adjacent fixes. Name the exact
+  human-authorized and frozen-convergence items, while allowing implementation
+  judgment inside those surfaces.
 - Pasting long plan sections when a path plus heading anchor is enough.
 - Prompting the worker to self-certify: the footer reports claims; the
   conductor's audit decides truth.

@@ -10,6 +10,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for the plan sections most relevant to the current change
 
 ## Hard rules
@@ -19,6 +20,12 @@
 - do not use external reviewer CLIs or other-model consultations from this command
 - read `DOC_PATH` plus the key code anchors needed to answer the review question
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is contradictory, stop and ask the exact blocker question first
+- classify every material finding as `authorized`,
+  `frozen-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
+  `unauthorized-built-scope`. Only the first two may become gate repair work
+- a newly discovered adjacent same-contract path may make the review reject the
+  plan, but the reviewer cannot add it to the closure. Ask the human or redesign
+  inside the frozen boundary
 
 ## Core review question
 

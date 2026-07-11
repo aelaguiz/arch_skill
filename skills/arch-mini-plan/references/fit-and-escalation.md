@@ -15,11 +15,17 @@
 
 ## Escalate out of mini mode when
 
-- the plan needs 4 or more real phases
+- the human-authorized outcome plus pre-freeze minimal convergence closure needs
+  4 or more real phases
 - the task spans several subsystems and wants staged checkpoints
 - external research becomes a first-class deliverable instead of a narrow helper
 - implementation or audit work is now part of the ask
 - the existing doc is too non-canonical to trust
+- scope decisions or authorization provenance remain unresolved
+
+Do not escalate because a reviewer, pattern search, or planning pass imagined
+more adjacent work. Exclude it unless it is a directly competing same-contract
+path in the initial architecture window.
 
 ## Escalation targets
 

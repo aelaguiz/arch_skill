@@ -49,6 +49,16 @@ make install
   - mergeability, conflict state, and branch-behind state
 - Reply to every actionable item on the exact GitHub surface that raised it, even when declining the change or pointing out that it is already fixed.
 - Treat reviewer comments as claims and requests, not commands. Inspect the code, repo policy, product intent, and tests before changing code. Accept feedback that improves correctness, maintainability, consistency, or required policy. Decline or partially accept feedback that is already handled, overbroad, pedantic, out of scope, unsupported by repo truth, or likely to make the code worse. A no-code reply with evidence is a valid resolution.
+- For plan-backed PRs, classify every actionable comment against the PR scope
+  receipt and canonical plan. A technically valid comment outside the frozen
+  contract, including a newly discovered adjacent same-contract path, is
+  replied to and escalated to the named human scope decision owner; it is not
+  implemented merely because a reviewer asked. Human reviewers authorize scope
+  only when they are the relevant decision owner and their approval is explicit.
+- A reviewer request, plan edit, reply thread, or repeated comment cannot
+  retroactively authorize built scope. Scope cycling or unauthorized
+  implementation prevents merge-ready until it is subtracted or explicitly
+  human-approved and re-frozen.
 - Prefer one branch, one PR, one coherent follow-through loop. Do not fork the work into side branches or parallel PRs unless the user explicitly wants that.
 - After each accepted change, run the smallest relevant verification, push to the same PR branch, and continue polling.
 - Stop at merge-ready. Do not click merge, enable auto-merge, or queue the PR unless the user separately asks for that.
@@ -64,6 +74,7 @@ make install
 1. Resolve the PR URL/number, repo, local branch, and current head SHA.
 2. Read the repo's actual review-policy and CI surfaces if they exist.
    - Prefer repo-root `AGENTS.md`, `CLAUDE.md`, PR templates, review-policy files, and workflow files over memory.
+   - For plan-backed PRs, read the scope receipt and its canonical plan anchors.
 3. Capture a baseline PR snapshot:
    - draft/open state
    - head SHA
@@ -90,6 +101,7 @@ make install
    - decline with evidence when the feedback is wrong, already handled, pedantic, scope-expanding, or harmful
    - already handled, with a commit or reply pointer
    - blocked on an irreducible human decision
+   - scope-expanding and awaiting the named human decision owner
 4. Reply on the exact thread or comment surface that raised the item.
 5. If a change was accepted:
    - make the smallest coherent patch
@@ -128,6 +140,9 @@ Consider the loop complete only when all of these are true:
 
 - The PR is open and non-draft.
 - The current head SHA has no unhandled actionable review items or top-level asks.
+- The current head contains no unauthorized built scope or unresolved
+  scope-cycling finding, and every scope-expanding comment has an explicit human
+  decision or a documented decline.
 - GitHub no longer shows blocking review state for the current head.
   - If the repo uses required reviews, the PR should be in the repo's approved / mergeable state rather than still waiting on blocking review.
 - Required checks are green, or otherwise in the repo's accepted merge-ready state.

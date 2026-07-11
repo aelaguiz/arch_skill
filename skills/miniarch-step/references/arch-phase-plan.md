@@ -10,6 +10,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `skills/_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 5, 6, 7, and 8
 
@@ -30,9 +31,15 @@
 
 - docs-only; do not modify code
 - if the North Star, requested behavior scope, allowed architectural convergence scope, or any other plan-shaping decision is contradictory, stop and ask the exact blocker question
-- if missing work is discovered while planning, add it to the phase plan only when repo truth plus approved scope make it clearly required; if requiredness depends on an unresolved user decision, stop and ask instead of downgrading it by taste
+- map every required item to human-authorized scope or the initial
+  architecture's recorded minimal convergence closure; repo truth alone does
+  not authorize more work
 - if adjacent-surface disposition or compatibility posture is still unresolved, stop and ask instead of hiding the fork in Section 7
-- read the confirmed Simplicity Contract before extracting work; if it is missing or vague, repair Section 0 and reconfirm it before writing an implementation-ready phase plan
+- read the Scope and Simplicity Contract before extracting work; if human
+  anchors or the convergence closure are missing or vague, repair Section 0 and
+  reconfirm it before writing an implementation-ready phase plan
+- at implementation readiness, record the closure or explicit `none`, set the
+  scope-freeze boundary, and keep observations out of the execution checklist
 - before a phase is valid, run an obligation sweep across Section 5, Section 6, migration notes, delete lists, verification commitments, docs/comments propagation, approved bridge removal, and any helper-added ship-blocking work
 - every required obligation from that sweep must be represented in `Checklist (must all be done)` or `Exit criteria (all required)`; do not leave standalone required work only in `Work`, `Verification`, `Docs/comments`, migration prose, or surrounding narrative
 - for agent-backed systems, prompt, grounding, and native-capability changes get first right of refusal before new harnesses, wrappers, parsers, OCR layers, or scripts
@@ -105,7 +112,7 @@ Use this block shape:
 <!-- arch_skill:block:phase_plan:start -->
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: depth-first implementation protects the full destination while proving the path early. Treat TL;DR, Section 0, Sections 5-6, and approved decisions as the destination map: they preserve final known scope, not a Phase 1 checklist. Section 7 should choose the first working slice that proves one real path through the canonical owner path, highest-risk seam, compatibility or migration posture, and verification shape. Later phases expand along named axes from that proof. Phase boundaries are proof gates: each phase must create evidence that later work can safely rely on. Before a phase plan is valid, run an obligation sweep and either place required work in the current phase, assign it to a named later phase in the expansion map, or stop for an explicit user decision; do not hide unresolved branches. Phase count is an outcome of dependency edges, proof gates, reversibility or migration boundaries, and user-review boundaries; split only when a phase blends separately provable units. `Work` explains the unit and is explanatory only for modern docs. `Checklist (must all be done)` is the authoritative must-do list inside the phase. `Exit criteria (all required)` names the exhaustive concrete done conditions the audit must validate. Refactors, consolidations, and shared-path extractions must preserve existing behavior with credible evidence proportional to the risk. For agent-backed systems, prefer prompt, grounding, and native-capability changes before new harnesses or scripts. No fallbacks/runtime shims - the system must work correctly or fail loudly (delete superseded paths). If a bridge is explicitly approved, timebox it and include removal work; otherwise plan either clean cutover or preservation work directly. Prefer programmatic checks per phase; defer manual/UI verification to finalization. Avoid negative-value tests and heuristic gates (deletion checks, visual constants, doc-driven gates, keyword or absence gates, repo-shape policing). Also: document new patterns/gotchas in code comments at the canonical boundary (high leverage, not comment spam).
+> Rule: depth-first implementation protects the frozen destination while proving the path early. The destination map is the human-authorized outcome plus the initial minimal convergence closure recorded before implementation and any later explicit human approval. The expansion map only sequences that frozen breadth; workers and reviewers cannot add callers, variants, modes, guarantees, proof categories, or adjacent cleanup. Section 7 chooses the first working slice through the canonical owner path and highest-risk seam, then advances through already-authorized axes. Phase boundaries are proof gates, and phase count follows real dependency, proof, reversibility, migration, or user-review boundaries. `Work` is explanatory; `Checklist (must all be done)` and `Exit criteria (all required)` hold every required obligation. Refactors and consolidations preserve behavior with proportionate evidence. Prefer prompt, grounding, and native capability before new agent tooling. No fallback or runtime shim exists without explicit approval and removal work. Prefer focused programmatic checks, defer manual/UI verification to finalization, and avoid deletion proofs, visual constants, doc gates, keyword/absence gates, and repo-shape policing.
 
 ## Phase 1 — <most fundamental coherent unit>
 
@@ -131,12 +138,18 @@ Use this block shape:
 
 Use `Work` to describe the coherent unit and why it is isolated in that phase. For modern docs, do not hide standalone obligations there. Use `Checklist` for the exhaustive required actions inside that unit. Use `Exit criteria` for the exhaustive concrete done-state that auditing must validate. If a planned item could be left undone while the phase still sounds "basically complete," or if a phase-complete truth appears only in prose, the phase is underspecified and should be split or tightened.
 If the change spans a contract family or migration boundary, encode the chosen adjacent-surface follow-through and the chosen cutover, preservation, or approved-bridge work directly in the relevant phase instead of leaving that choice implicit.
-Before finalizing Section 7, reread every checklist item and exit criterion against the Simplicity Contract. Delete any item that serves neither the smallest sufficient fix nor enough proof. If an item requires an expansion the contract did not approve, stop and ask instead of writing it into the plan.
+Before finalizing Section 7, reread every checklist item and exit criterion
+against the Scope and Simplicity Contract. Delete any item that serves neither
+the human outcome, frozen initial closure, nor enough proof. After freeze, stop
+for human approval instead of writing a new adjacent path into the plan.
 Use `Docs/comments` to explain live docs/comments propagation. If deleting or rewriting those surfaces is required for the phase to be complete, also represent that required work in `Checklist` or `Exit criteria`. Do not keep legacy explanation in live surfaces just because Git already preserves the old version.
 
 ## Consistency duties beyond local ownership
 
-- if the phase plan changes sequencing, convergence scope, or verification expectations, repair the now-stale claims in TL;DR, Section 0, and Section 8; any expansion beyond the confirmed Simplicity Contract requires explicit user approval first
+- if the phase plan changes sequencing, the pre-freeze convergence closure, or
+  verification expectations, repair stale claims in TL;DR, Section 0, and
+  Section 8; any post-freeze expansion beyond the Scope and Simplicity Contract
+  requires explicit human approval first
 - if new sequencing or scope decisions replace an earlier assumption, append or update Section 10
 - Section 7 must remain the one execution checklist even after helper blocks exist
 

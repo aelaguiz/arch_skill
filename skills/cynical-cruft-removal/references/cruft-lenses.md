@@ -2,7 +2,25 @@
 
 Use these lenses to decide whether an artifact has current value or should go
 away. References are clues, not proof. A current live root plus a current
-purpose is the keep standard.
+purpose is the ordinary keep standard. For scope-backed work, authorization is
+an independent keep test: current use does not ratify unauthorized scope.
+
+## Scope-Laundered Live Code
+
+For plan-, conductor-, PR-, or history-backed work, reconstruct the initial
+human scope, frozen convergence closure, explicit later human approvals, review
+waves, and final code. A cluster is scope-laundered when it entered after freeze
+without human approval, then code, tests, schemas, configs, docs, dependencies,
+or later reviews made it look necessary.
+
+Treat the whole cluster as material cruft even when it is reachable or now has
+users. Current reachability proves liveness, not authorization. Report the
+cluster together and default to subtraction. A later agent-authored plan or
+Decision Log entry does not cure it. A human may separately approve and
+re-freeze the larger scope, but this review cannot do so.
+
+Scope cycling forces the existing `cruft-found` verdict. Do not add a new
+verdict or recommend a replacement generalized system.
 
 ## Live Purpose
 

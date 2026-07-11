@@ -22,6 +22,7 @@ After this command runs:
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `skills/_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 5, 6, 7, `WORKLOG_PATH`, and `implementation_audit`
 
@@ -83,7 +84,9 @@ When this command runs inside `implement-loop`, it alone owns the authoritative 
 - when running inside `implement-loop`, do not let the parent implementation pass stand in for this audit or author the authoritative clean outcome
 - if the implementation claims a fix but does not provide credible code-verifiable proof for it, treat that as missing code completeness
 - audit against the approved plan's explicit promises, not against a narrower story execution wrote after the fact
-- audit implementation shape against the confirmed Simplicity Contract, not only against whether every planned item was built
+- audit implementation shape against the original human anchors, frozen initial
+  closure, and explicit later human approvals, not only against whether the
+  latest plan was built
 - audit against the current approved ordered implementation frontier, not just the first visible local gap
 - a named later expansion is not missing current code until its proof gate is due
 - silent removal from the destination map, approved scope, checklist, exit criteria, or named expansion map is still a scope cut
@@ -108,7 +111,9 @@ Check all of these:
   - for agent-backed systems, implementation did not replace prompt/native-capability work with unjustified scaffolding
   - no forbidden shims slipped in
   - no new parallel path or duplicate writer was introduced
-  - no unapproved framework, harness, verifier, abstraction, command, dependency, operational surface, or test category exceeded the Simplicity Contract
+  - no unauthorized adjacent work, framework, harness, verifier, abstraction,
+    command, dependency, operational surface, or test category exceeded the
+    Scope and Simplicity Contract
   - the fix and proof surface remain proportional to the demonstrated failure and blast radius
 - idiomatic fit:
   - implementation aligns with existing repo patterns unless the plan justified divergence
@@ -148,7 +153,8 @@ Missing manual evidence should become `Manual Verification Pending`.
    - delete list and cleanup expectations
    - live docs/comments/instructions cleanup expectations in touched areas
    - definition-of-done evidence expectations
-   - the Simplicity Contract: smallest sufficient fix, enough proof, and do-not-build boundary
+   - the Scope and Simplicity Contract: human anchors, frozen initial closure,
+     smallest sufficient solution, enough proof, and do-not-build boundary
 3. split evidence expectations into:
    - code-verifiable evidence
    - manual verification evidence
@@ -169,8 +175,11 @@ Missing manual evidence should become `Manual Verification Pending`.
    - verify required preservation signals actually ran and protect the intended behavior
    - verify claimed fixes have credible code-verifiable proof instead of only a code diff
    - verify claimed tests, assertions, or automation actually exist and hit the intended failure surface
-   - compare new production concepts, code paths, operational steps, harnesses, and test categories against the Simplicity Contract
-   - if the implementation exceeds that contract without an explicit `Complexity expansion (user-approved)` entry, record subtraction of the excess as missing code correctness even when the extra machinery passes
+   - compare new production concepts, code paths, operational steps, harnesses,
+     and test categories against the frozen Scope and Simplicity Contract
+   - if implementation exceeds that contract without an explicit human approval
+     anchor, record subtraction as missing code correctness even when it passes;
+     an agent-authored Decision Log entry is not approval
    - verify testing stops at the demonstrated failure, successful path, important boundary regression, and any additional distinct demonstrated risks rather than modeling every imaginable failure
 5. determine phase truth:
    - if a phase is marked complete but any checklist item, exit criterion, required proof, or other required code work is missing, reopen it
@@ -188,7 +197,11 @@ Always name phases as `Phase <n> (<what it does>)` using the phase heading text 
 - if the plan says a touched live doc, comment, or instruction should be deleted or rewritten, treat that as implementation work and audit it accordingly
 - if the implementation introduced a forbidden shim, fallback, or parallel source of truth, treat that as missing code correctness and reopen the responsible phase
 - if the implementation introduced capability-replacing scaffolding for agent-backed behavior without explicit plan justification, treat that as missing code correctness and reopen the responsible phase
-- if implementation introduced machinery or disproportional proof beyond the Simplicity Contract without explicit user approval, treat removal or simplification as missing code correctness and reopen the responsible phase
+- if implementation introduced adjacent work, machinery, or disproportional
+  proof beyond the frozen contract without explicit human approval, treat
+  removal or simplification as missing code correctness and reopen the phase
+- a new same-contract path discovered by audit may block approval, but audit
+  cannot add it to repair scope; require a human decision and re-freeze
 - if a refactor or convergence change lacks credible preservation evidence, treat that as missing code correctness and reopen the responsible phase
 - if a claimed fix lacks credible code-verifiable proof, treat that as missing code correctness and reopen the responsible phase
 - if an exit criterion is unmet, too vague to validate honestly, or lacks the proof needed to support it, treat that as missing code correctness and reopen the responsible phase
@@ -261,7 +274,10 @@ When reopening a phase:
 ## Verdict rules
 
 - `Verdict (code): COMPLETE` only when no missing or incorrect code work remains
-- `Verdict (code): NOT COMPLETE` when any required code work, migration, delete, touched-doc cleanup, runtime or code contract expectation, preservation expectation, anti-shim expectation, or required subtraction back to the Simplicity Contract is unmet
+- `Verdict (code): NOT COMPLETE` when any required code work, migration,
+  delete, touched-doc cleanup, runtime or code contract expectation,
+  preservation expectation, anti-shim expectation, or required subtraction
+  back to the Scope and Simplicity Contract is unmet
 - manual QA pending alone does not force `NOT COMPLETE`
 - a later `arch-docs` cleanup pass is expected after a clean verdict; that broader docs-cleanup work is not by itself a reason to keep `Verdict (code): NOT COMPLETE`
 

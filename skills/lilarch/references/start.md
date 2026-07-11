@@ -11,6 +11,10 @@ Create or repair the compact doc so planning can happen safely.
 - `lilarch:block:requirements`
 - explicit defaults
 - explicit non-requirements
+- the human-authorized outcome and authorization anchors
+- a draft smallest sufficient solution, `Initial minimal convergence closure:
+  none` pending plan-mode architecture, enough proof, do-not-build boundary,
+  accepted residual risk, and pending scope freeze
 - the small set of clarifying questions that truly block planning
 
 ## Clarifying-question bar
@@ -34,3 +38,4 @@ Bad examples:
 
 - If a required product or UX answer is missing, stop for that answer.
 - Otherwise finish with a doc that is ready for lilarch plan mode.
+- Do not let a planner-authored requirement bootstrap its own authority.

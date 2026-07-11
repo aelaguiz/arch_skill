@@ -1,7 +1,7 @@
 interface:
   display_name: "Exhaustive Code Review"
   short_description: "Prompt-only exhaustive code review saved to disk"
-  default_prompt: "Use $exhaustive-code-review to review the requested branch, diff, paths, plan scope, or completion claim exhaustively, maximize usage of native parallel agents, inspect touched files, changed hunks, abstractions, callers, side doors, proof, docs, generated artifacts, prompt surfaces, and save the findings-first artifact under /tmp/exhaustive-code-review/. Do not edit code, dictate workflow, invoke external review/delegation skills, or manually spawn coding-harness executables."
+  default_prompt: "Use $exhaustive-code-review to review the requested branch, diff, paths, plan scope, or completion claim exhaustively, maximize usage of native parallel agents, inspect touched files, changed hunks, abstractions, callers, side doors, proof, docs, generated artifacts, prompt surfaces, and save the findings-first artifact under /tmp/exhaustive-code-review/. For fixed-scope work, classify findings against the frozen human scope: a reviewer-discovered adjacent path needs a human decision and cannot become automatic repair scope; unauthorized built scope defaults to subtraction. Do not edit code, dictate workflow, invoke external review/delegation skills, or manually spawn coding-harness executables."
 
 policy:
   allow_implicit_invocation: true

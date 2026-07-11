@@ -12,6 +12,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for `# TL;DR`, `# 0)` through `# 10)`, `planning_passes`, and helper blocks
 
 ## Writes
@@ -32,7 +33,14 @@
 - in Codex, use exactly two parallel `explorer` agents for the cold read
 - outside Codex, keep the same review question and block shape; do not invent a second workflow just because explorer agents are not a runtime primitive
 - if the North Star, deep-dive, or phase plan is too weak to audit honestly, stop and point to the earlier command that must repair it
-- `Decision: proceed to implement? yes` is forbidden while unresolved decisions, unauthorized scope cuts, orphan phase obligations, or non-auditable exit criteria remain
+- `Decision: proceed to implement? yes` is forbidden while unresolved decisions,
+  unauthorized scope cuts or additions, scope provenance gaps, an unfrozen or
+  unbounded convergence closure, scope laundering/cycling, orphan phase
+  obligations, or non-auditable exit criteria remain
+- compare TL;DR, Section 0, target architecture, Section 7, proof, and Section
+  10 against the original human anchors. A plan item or Decision Log entry
+  cannot cite itself as authority. Remove unauthorized additions or stop for a
+  human decision; cold readers do not create new scope
 - when running as the current `auto-plan` stage, run `python3 skills/arch-step/scripts/arch_stage_gate.py begin --doc <DOC_PATH> --stage consistency-pass` before the cold read and `python3 skills/arch-step/scripts/arch_stage_gate.py complete --doc <DOC_PATH> --stage consistency-pass` after the helper block is current
 - if the stage gate says a different stage is next, stop and report that required command instead of hand-editing receipts or treating an existing consistency marker as proof that this command ran
 

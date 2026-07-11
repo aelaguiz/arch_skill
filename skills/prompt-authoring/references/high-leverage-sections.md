@@ -108,6 +108,8 @@ Make it do real work:
 - use a numbered sequence
 - tell the model what to inspect, compare, validate, and repair
 - encourage one more obvious in-scope improvement before returning
+- never turn "one more improvement" or reviewer rejection into scope expansion;
+  for plan-backed work, the frozen scope contract decides what is in scope
 - prefer heal-and-retry loops over premature rejection
 
 Good shape:

@@ -22,6 +22,11 @@ Read the plan once, end to end, and record in the conductor log:
 - **Anchors, not prose.** Record plan section headings and `path:line` code
   anchors. Link to long plan sections; never paste them. The plan stays the
   single source of truth; the log is schedule and evidence.
+- **Scope authority and proportionality.** Record anchors for the original
+  human outcome, explicit later human approvals, smallest sufficient solution,
+  initial minimal convergence closure or `none`, pre-implementation freeze,
+  enough proof, do-not-build boundary, and accepted residual risk. Do not copy
+  the contract into the log.
 
 ## Readiness Gate
 
@@ -35,8 +40,17 @@ done-ness produces confident wandering, not implementation.
 Underspecified-but-recoverable plans do **not** trip the gate. When a phase
 says "migrate the callers" without listing them, recover the real contract
 from owning code, tests, schemas, and current behavior, and record the
-recovered facts in the log. Recovered facts support execution; they never
-expand approved scope.
+recovered facts in the log only when the frozen contract already authorizes
+that caller family. Recovered facts support execution; they never expand
+approved scope.
+
+Also stop before dispatch when the plan is visibly overbroad, cites only its
+own agent-authored text as authority, lacks a defensible scope-freeze boundary,
+has an open-ended convergence promise, or asks for proof and machinery
+disproportionate to the human outcome. If initial planning is still open, route
+the defect to the planning owner. If implementation has begun or the plan is
+legacy and the boundary cannot be recovered, request one human scope decision.
+The conductor never performs a late initial-architecture pass itself.
 
 ## Arch-Format Fast Path
 
@@ -53,13 +67,17 @@ re-deriving it:
 - Requirements come from the Holistic North Star subsections (claim, in
   scope, out of scope, definition of done, invariants) or
   `lilarch:block:requirements`.
+- Scope authority comes from the Scope and Simplicity Contract and its Section
+  10 human-approval anchors. An agent-authored Decision Log entry proves only
+  that a change was recorded; it does not prove approval.
 - Existing `Status:` annotations under phase headings tell you what prior
   runs already completed; trust them only after spot-checking the code
   anchors, since false-complete phases are exactly what the audit exists to
   catch.
 - An existing `<PLAN_STEM>_PLAN_AUDIT.md` with open `PLA-*`/`IMP-*` findings
-  supplies pre-existing constraints: treat open findings that touch your
-  slices as part of those slice contracts.
+  supplies pre-existing findings. Treat only findings dispositioned
+  `authorized` or `frozen-convergence-required` as slice constraints. Other
+  findings remain observations, subtraction work, or human decisions.
 
 This is recognition of structure that happens to be present — never a
 requirement, and never a reason to reject a plan that lacks it.

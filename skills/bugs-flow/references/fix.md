@@ -7,10 +7,17 @@ Implement the smallest credible fix that resolves the bug described by the doc a
 ## Required work
 
 1. Re-read the bug doc and confirm it is fix-ready.
-2. Tighten the fix plan in the doc if needed.
-3. Implement the smallest credible fix locally.
-4. Run the smallest credible verification.
-5. Update the implementation and verification sections.
+2. Confirm the scope closure is frozen. Implement only the corrected behavior
+   and directly competing paths already in that closure.
+3. Tighten the fix plan in the doc without expanding scope.
+4. Implement the smallest credible fix locally.
+5. Run the smallest credible verification.
+6. Update the implementation and verification sections.
+
+If fix mode discovers another same-contract path or broader improvement, stop
+with `new-scope-needs-human`; do not relabel it a systemic fix. If unauthorized
+work was already built, subtract it before completion unless a human approves
+and re-freezes the bug contract.
 
 ## Minimal-fix examples
 

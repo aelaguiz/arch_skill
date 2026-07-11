@@ -28,6 +28,14 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 - Prefer first-party evidence: Sentry, logs, traces, QA notes, repro steps, and code anchors.
 - Only move into fix mode when the bug doc is fix-ready.
 - Keep fixes minimal and localized. No runtime fallbacks, silent swallowing, or compatibility shims unless explicitly approved.
+- The human-authorized outcome is the corrected behavior for the documented
+  bug. During analyze/initial planning only, include the smallest evidenced
+  directly competing same-contract path needed to fix the shared cause; record
+  the closure or `none` and freeze it before fix mode. Apply
+  `skills/_shared/scope-and-convergence.md`.
+- Fix and review cannot widen that frozen closure. A newly discovered adjacent
+  improvement or owner path needs a human decision; review never reopens generic
+  architecture planning.
 - External cross-model review happens only if the user explicitly asks for review or code review.
 - Do not let "review" become an excuse to reopen generic architecture planning.
 
@@ -35,13 +43,14 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 
 1. Read `references/bug-doc-contract.md`.
 2. Read `references/shared-doctrine.md`.
-3. Resolve the mode:
+3. Read `skills/_shared/scope-and-convergence.md`.
+4. Resolve the mode:
    - analyze
    - fix
    - review
-4. Resolve `DOC_PATH` and read it fully if it already exists.
-5. If the user asked for fix or review but the doc is not ready, step back and repair the investigation first.
-6. Read the mode reference and `references/quality-bar.md`.
+5. Resolve `DOC_PATH` and read it fully if it already exists.
+6. If the user asked for fix or review but the doc is not ready, step back and repair the investigation first.
+7. Read the mode reference and `references/quality-bar.md`.
 
 ## Workflow
 

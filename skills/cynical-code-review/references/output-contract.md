@@ -31,6 +31,8 @@ Record:
   scope, or completion claim
 - baseline and head/current state when known
 - controlling plan, source truth, completion claim, or worklog if supplied
+- initial human scope, frozen convergence closure, freeze anchor, later human
+  approvals, and review-wave history when recoverable
 - local instruction and convention files read
 - important exclusions or unresolved target ambiguity
 
@@ -48,6 +50,7 @@ Record the starting theory of how the implementation might be lying:
 - user job and starting state
 - proof/status/doc/test surfaces that may mislead
 - environment or target binding facts when relevant
+- scope-cycle suspicion and disputed work provenance when applicable
 
 Keep this as a review map, not a second plan.
 
@@ -70,6 +73,7 @@ Record what was reviewed:
   logs, and status surfaces only where they claim code truth
 - native parallel agent usage summary and final state for each launched slice
 - known coverage gaps
+- scope-provenance coverage or `not applicable`
 
 Keep this as prose and compact lists. It is not a formal checklist engine.
 
@@ -87,6 +91,9 @@ Use this shape for each finding:
 - Evidence: <diff, file, flow, child report, command output, source anchor, or "see file">
 - Repair target: <what must change, without writing the patch>
 - Cynical review pattern: <catalog pattern>
+- Scope provenance: <human anchor | frozen closure anchor | later human approval | missing>
+- Scope-cycle evidence: <revision/wave/code chain or none>
+- Required disposition: <subtract | human decision | no scope issue>
 ```
 
 Rules:
@@ -96,6 +103,8 @@ Rules:
 - Any in-scope false completion, old authority path, duplicate truth, side
   door, partial migration, stopped-short user job, fake proof, or scope drift
   that must change before approval is a `REQUIRED REPAIR`.
+- Unauthorized post-freeze built scope or scope cycling is always a `REQUIRED
+  REPAIR` and forces `not-approved`, even when the latest plan includes it.
 - `OBSERVATION` is only for true informational facts, genuinely different
   contracts, excluded follow-ups, or proof/status/doc issues that do not hide a
   current-code gap.
@@ -139,6 +148,14 @@ VERDICT: approve | not-approved | coverage-incomplete
 - User job from starting state:
 - Proof/doc/status surfaces:
 - Target/environment binding:
+
+## Scope Provenance
+
+- Initial human-authorized scope:
+- Frozen initial convergence closure and freeze anchor:
+- Later human approvals:
+- Scope-cycle evidence:
+- Required disposition:
 
 ## Coverage Summary
 

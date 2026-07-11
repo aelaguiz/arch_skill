@@ -13,6 +13,7 @@ Current state: <one sentence>
 Changed: <paths or behavior summary>
 Proof: <run | reused | stale | not yet needed>
 Review: <clean | findings opened | findings repaired | not yet run>
+Scope: <frozen contract intact | human decision needed | unauthorized work being subtracted>
 Artifacts: <plan/audit log/implementation log updates>
 Next: <one useful move>
 ```
@@ -41,6 +42,9 @@ Proof:
 Review:
 - <IMP findings opened/repaired/rejected/open>
 
+Scope Integrity:
+- <contract anchor, finding dispositions, human decisions, or unauthorized subtraction>
+
 Still Open:
 - <real remaining gap or none>
 
@@ -58,6 +62,8 @@ Next:
 - Do not bury blockers behind progress language.
 - Do not turn the final answer into a copied worklog.
 - If the stop boundary was honored with unfinished adjacent work, say so.
+- Do not describe a review-created obligation as unfinished scope. Classify it
+  against the frozen contract and name the human decision only when needed.
 
 ## Completion Words
 

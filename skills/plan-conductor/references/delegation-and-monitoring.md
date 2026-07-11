@@ -20,7 +20,9 @@ conductor's monitoring and token-economy posture.
   a different owner surface, or a cold implementation view is needed.
 - **Cold verifier → `fresh-one-shot`**, final gate only. Statelessness is the
   feature: no conductor context, no resume, just refutation from code
-  reality.
+  reality. Give it the plan path, human baseline anchors, frozen initial
+  closure, freeze anchor, and explicit human approvals; its findings cannot
+  expand scope.
 - **Parallel waves** use agent-delegate's parallel group path: one group
   directory, one ordinary child run directory per worker, every child briefed
   that siblings may be editing the repo, must not revert unfamiliar changes,

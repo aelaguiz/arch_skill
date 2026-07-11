@@ -53,7 +53,10 @@ Strong when:
 - when agent-backed, it is explicit that prompt/native-capability work gets first right of refusal before new tooling
 - definition of done is observable
 - evidence uses credible proof proportional to the work and risk
-- the Simplicity Contract names the smallest sufficient fix, enough proof, and what not to build
+- the Scope and Simplicity Contract names the human outcome and authorization
+  anchors, smallest sufficient solution, initial minimal convergence closure or
+  `none`, scope-freeze boundary, enough proof, do-not-build boundary, and
+  accepted residual risk
 - the solution and proof surface are proportional to the demonstrated failure and blast radius
 - invariants are actionable
 - fallback stance is explicit and respected
@@ -69,7 +72,8 @@ Weak when:
 - compatibility posture is left to implication instead of being stated
 - it assumes the model or agent lacks capability without evidence
 - definition of done depends on bespoke ceremony
-- the Simplicity Contract is missing, vague, or permits open-ended machinery
+- the Scope and Simplicity Contract is missing, cites only agent-authored plan
+  text as authority, permits open-ended convergence, or lacks a freeze boundary
 - "systemic" is used to justify a generalized framework instead of a narrow fix at the shared cause
 - invariants are generic platitudes
 - it reads like inspiration instead of an execution contract
@@ -77,7 +81,8 @@ Weak when:
 
 Downstream can trust it when:
 
-- later commands can answer "is this in scope?", "is this convergence or creep?", and "what evidence is enough?" without guessing
+- later commands can answer "is this in scope?", "was this convergence frozen
+  before implementation?", and "what evidence is enough?" without guessing
 - later commands can tell when the real fix is sufficient and which tempting expansion must remain unbuilt
 - later commands can answer which sibling surfaces move together and whether the plan preserves the contract or cuts over cleanly without guessing
 - there is one clear fallback stance instead of hidden compatibility assumptions
@@ -260,6 +265,8 @@ Strong when:
 - the first phase is a real working slice through the canonical owner path and highest-risk seam, not a breadth-first shell or unused foundation
 - each phase owns one coherent unit with a proof gate that later phases can rely on
 - later phases expand along named axes instead of silently dropping scope or treating expansion as current failure
+- every phase obligation maps to human-authorized scope or the frozen initial
+  convergence closure; the expansion map only sequences that frozen breadth
 - phase count follows proof gates, dependency edges, reversibility or migration boundaries, and user-review boundaries rather than a preset number
 - each phase has goal, work, checklist, verification, docs/comments when needed, exit criteria, and rollback
 - each phase passes an obligation sweep so required work does not hide outside the authoritative phase-exit surface
@@ -288,6 +295,8 @@ Weak when:
 - `Exit criteria` are vague, summary-like, or not honestly auditable
 - a phase could be marked complete without satisfying all of its planned obligations
 - product scope creep or architecture theater appears in the authoritative checklist
+- a reviewer finding, plan revision, or later discovery appears as required work
+  without a human approval anchor or pre-freeze convergence anchor
 - checklist items do not serve the smallest sufficient fix or enough proof
 - a localized failure has expanded into a generalized subsystem, duplicate verifier, or exhaustive hypothetical test surface without demonstrated need
 - agent-backed work jumps to deterministic harnesses or wrappers without a capability-first rationale
@@ -436,7 +445,9 @@ Strong when:
 - it checks explicit details and sub-obligations, not just broad feature impressions
 - stale touched live docs/comments are treated as implementation gaps when the plan required cleanup
 - unjustified scaffolding around agent-backed behavior is treated as an implementation gap when the plan required prompt-first or capability-first handling
-- unapproved machinery or code/test growth that violates the Simplicity Contract is treated as subtraction work, not accepted because it passes
+- unauthorized machinery, adjacent work, or code/test growth that violates the
+  Scope and Simplicity Contract is treated as subtraction work, not accepted
+  because it passes
 - manual verification is tracked separately instead of treated as missing code
 
 Weak when:
@@ -447,7 +458,9 @@ Weak when:
 - phases stay marked complete despite real code gaps
 - it accepts broad "done" language while explicit plan details are still missing
 - it lets vague or unmet exit criteria stand as if they were satisfied
-- it checks only whether the plan was built and ignores whether the implementation exceeded the confirmed Simplicity Contract
+- it checks only whether the latest plan was built and ignores whether the
+  implementation exceeded the frozen Scope and Simplicity Contract or grew by
+  scope cycling
 - execution-side plan rewrites are allowed to stand as truth
 
 Downstream can trust it when:

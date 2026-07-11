@@ -28,6 +28,7 @@ By the end of the run:
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `skills/_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 
@@ -93,7 +94,11 @@ By the end of the run:
 - delete dead competing truth surfaces instead of preserving them for posterity; if a touched live doc/comment/instruction still matters, rewrite it to current reality in the same run
 - broader docs consolidation, evergreen promotion, and final plan/worklog retirement belong to `arch-docs` after the code audit is clean; do not silently stretch `implement` into that separate docs-cleanup workflow
 - do not start coding from a plan that is not decision-complete
-- do not start coding until Section 0 has a confirmed Simplicity Contract and Section 7 stays inside it
+- do not start coding until Section 0 has a confirmed, frozen Scope and
+  Simplicity Contract and Section 7 stays inside it
+- before the first edit, recover the human anchors, initial closure, freeze
+  boundary, and later human approvals. If a legacy plan cannot support that
+  boundary, stop for one human scope decision
 - treat overbuilding as a known execution failure mode: do not confuse more abstractions, edge cases, tests, or proof with better work after the approved fix is already sufficient
 - adding an unapproved framework, harness, verifier, abstraction, command, dependency, operational surface, or test category is a hard stop; explain why the smallest sufficient fix cannot work without it and obtain explicit user approval before changing the plan or code
 - do not silently cut approved behavior or required implementation work because it is larger than expected
@@ -169,7 +174,9 @@ For each phase:
 
 1. Read the phase goal, work description, checklist items, verification line, docs/comments notes, exit criteria, rollback, and any relevant call-site rows. If a modern phase still strands required obligations only in `Work`, `Verification`, `Docs/comments`, migration notes, or nearby prose, stop and repair the plan instead of guessing.
 2. Confirm which canonical path owns the behavior for this phase, which work belongs in prompt or native-capability usage versus deterministic code when agent-backed, and which preservation signal must run if the phase refactors or consolidates code.
-   Also confirm that the phase directly serves the smallest sufficient fix or enough proof and does not introduce machinery forbidden by the Simplicity Contract.
+   Also confirm that the phase directly serves the human outcome, frozen
+   initial closure, or enough proof and does not introduce work forbidden by
+   the Scope and Simplicity Contract.
 3. Mark the phase `Status: IN PROGRESS` once real work starts.
 4. Implement the planned checklist items for that phase before moving to later phases.
 5. If a later-phase task must be pulled forward to preserve correctness, record the sequencing change in Section 10 and update the affected phase descriptions so Section 7 stays truthful.
@@ -204,7 +211,9 @@ Also update only the nearby execution-truth surfaces needed to keep the artifact
 - if a touched live doc, comment, or instruction would otherwise become stale, update or delete it in the same run and keep the phase notes truthful about that work
 - do not rewrite TL;DR, Section 0, Section 5, Section 7, or Section 8 to weaken requirements, narrow scope, or lower the acceptance bar during implementation
 - if execution reveals that requirements, scope, architecture commitments, or acceptance criteria really need to change, stop and route back to planning or the user instead of editing the plan to fit the current code
-- if execution reveals that the Simplicity Contract must expand, stop before building the expansion, obtain explicit user approval, and record `Complexity expansion (user-approved)` in Section 10
+- if execution reveals that the Scope and Simplicity Contract must expand, stop
+  before building it, obtain explicit human approval, record `Scope expansion
+  (human-approved)` in Section 10, and re-freeze the plan
 - do not decide mid-run that a planned item is out of scope unless the user or already-approved plan text had already excluded it before execution started
 - if a planned item's requiredness turns out to depend on an unresolved user decision, stop and ask instead of silently downgrading it
 - if the code becomes clean before the broader feature docs are fully consolidated, leave the handoff visible for `arch-docs` instead of burying that remaining docs-cleanup work inside finish notes
@@ -271,8 +280,11 @@ Testing discipline:
 
 ## Avoid blinders
 
-- when you introduce or upgrade a centralized pattern, contract, or SSOT, scan nearby call sites for other adopters that should migrate
-- if that work is required to converge onto the same canonical path and avoid drift, do it without asking
+- when you introduce or upgrade a centralized pattern, contract, or SSOT, check
+  the nearby adopters already named in the frozen initial closure
+- if a newly discovered adopter is absent from the frozen contract, classify it
+  `new-scope-needs-human`; do not implement it merely because convergence would
+  be cleaner
 - if the plan or user already makes the work explicitly outside the current code-completion boundary, record it as a follow-up with file or symbol anchors and continue
 - if requiredness is not derivable from repo truth plus the approved plan, stop and ask instead of making a pruning decision
 
@@ -330,7 +342,8 @@ The worklog is execution evidence only:
 - every in-scope ledger item is `done`, `blocked`, or `deferred` with rationale
 - the North Star is satisfied by code and evidence
 - no new parallel path or duplicate writer was introduced
-- no unapproved machinery or disproportional proof surface was added beyond the Simplicity Contract
+- no unauthorized adjacent work, machinery, or disproportional proof surface
+  was added beyond the frozen Scope and Simplicity Contract
 - all required preservation checks for refactor-heavy work actually ran
 - no stale touched live docs, comments, or instructions were left behind
 - the plan reflects reality

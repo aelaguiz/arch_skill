@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for `reference_pack` and helper-block expectations
 
 ## Inputs
@@ -30,6 +31,9 @@
 - do not create additional planning docs
 - this command is advisory; do not edit Section 7 from here
 - do not let folded obligations become ship-blocking execution work unless a core planning command later adopts them into the main plan
+- a reference, review, or source doc is evidence, not human scope authority.
+  Preserve out-of-scope recommendations as observations; do not let repetition
+  or folding convert them into required work
 - do not let the helper become a shadow execution checklist
 - read every reference fully
 - when a reference is instruction-bearing, preserve explicit operational structure; distilled obligations are supplemental, not a replacement

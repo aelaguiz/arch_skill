@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for TL;DR, Section 0, Sections 1, 2, 8, 9, 10, and `planning_passes`
 
 ## Inputs
@@ -35,7 +36,8 @@ It is not enough to create a file with headings. This command bootstraps the who
 Treat TL;DR plus Section 0 as the planning lock:
 
 - TL;DR says outcome, problem, approach, and plan shape in the fewest lines possible
-- Section 0 says scope, exclusions, evidence, invariants, and fallback stance
+- Section 0 says scope, exclusions, evidence, invariants, fallback stance, and
+  the draft Scope and Simplicity Contract
 - later commands should be able to resolve ordinary tradeoffs from these sections without guessing
 
 If they are weak, every later stage becomes soft.
@@ -43,6 +45,10 @@ If they are weak, every later stage becomes soft.
 ## Hard rules
 
 - docs-only; do not modify code
+- capture the human-authorized outcome and its original ask as the first
+  authorization anchor; draft `Initial minimal convergence closure: none`
+  until architecture evidence proves otherwise, and leave scope freeze pending
+  until the implementation-ready planning gate
 - create exactly one plan doc; do not create sidecar planning docs
 - name the file `docs/<TITLE_SCREAMING_SNAKE>_<YYYY-MM-DD>.md`
 - derive a short 5-9 word screaming-snake title from the ask

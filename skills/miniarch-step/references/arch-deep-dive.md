@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for Sections 4, 5, 6, and `planning_passes`
 
 ## Reads for alignment
@@ -44,7 +45,11 @@
 - compatibility posture is separate from `fallback_policy`; do not leave preservation versus clean cutover implicit in the authoritative plan
 - when the change is agent-backed, decide what behavior belongs in prompt or native-capability usage versus deterministic code before designing new tooling
 - if the target design does not reuse the canonical path, justify why the existing path cannot own the change
-- keep the target design inside the confirmed Simplicity Contract; if it needs broader machinery, stop for approval instead of normalizing the expansion into architecture
+- this is the initial architecture window: add only evidenced directly
+  competing same-contract paths to the minimal closure, record cutovers/deletes,
+  and exclude merely similar neighbors
+- if scope is already frozen, do not enlarge the closure; classify a newly
+  discovered adjacent path as `new-scope-needs-human`
 - if the change retires or reroutes a live truth surface, name the code paths, docs, comments, or instructions that must be deleted or rewritten
 - if multiple viable technical approaches exist, resolve them from repo truth plus approved intent or ask the user the exact choice; do not leave multiple viable architectures open in the authoritative plan
 

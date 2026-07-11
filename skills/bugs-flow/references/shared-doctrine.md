@@ -6,7 +6,12 @@
 - Investigate before editing code.
 - Use first-party evidence before theory.
 - Keep fixes minimal and localized.
+- Apply `skills/_shared/scope-and-convergence.md`. Analyze may define the
+  smallest evidenced same-contract closure before fix; fix and review cannot
+  add to it after freeze.
 - Default to fail-loud behavior. Do not add hidden fallbacks, silent swallowing, or "try the old path too" logic.
+- "Systemic" means fix the shared cause at its narrowest owner, not open a
+  repo-wide cleanup project.
 
 ## What counts as first-party evidence
 

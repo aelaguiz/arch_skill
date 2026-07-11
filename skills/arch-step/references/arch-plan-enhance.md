@@ -10,6 +10,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for Sections 1, 5, 6, 7, and 8
 
 ## Reads for alignment
@@ -28,7 +29,11 @@
 - read `DOC_PATH` fully and enough code to make real architectural decisions
 - code is ground truth
 - do not design fallbacks or compatibility shims by default
-- treat requested behavior scope as authoritative; architectural convergence may widen when needed to remove duplicate truth or prevent a new parallel path
+- treat the frozen Scope and Simplicity Contract as authoritative. Before
+  freeze, enhancement may sharpen the smallest evidenced same-contract closure;
+  after freeze, imported suggestions and reviewer ideas cannot widen it
+- give every proposed addition a finding disposition. Only `authorized` and
+  `frozen-convergence-required` may become required plan work automatically
 - if consolidation would add product behavior or speculative infrastructure, exclude it only when the approved plan already makes that exclusion explicit; otherwise ask the user instead of downgrading it by taste
 - ask only for true product, UX, access, or other plan-shaping gaps that repo evidence cannot settle
 

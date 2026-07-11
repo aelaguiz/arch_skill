@@ -31,38 +31,45 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
   - `arch_skill:block:implementation_audit`
 - Worklog exists:
   - `WORKLOG_PATH` exists on disk
+- Scope and Simplicity Contract:
+  - human authorization anchors are present
+  - initial minimal convergence closure is present or explicit `none`
+  - scope freeze is present before implementation
+  - required phase work does not exceed the frozen contract
 
 ## Full arch checklist
 
 1. plan doc exists
 2. North Star confirmed
-3. research grounding
-4. deep dive pass 1
-5. external research when needed
-6. deep dive pass 2 when the external research materially changed the plan
-7. phase plan
-8. optional plan-shaping moves:
+3. Scope and Simplicity Contract complete and frozen
+4. research grounding
+5. deep dive pass 1
+6. external research when needed
+7. deep dive pass 2 when the external research materially changed the plan
+8. phase plan
+9. optional plan-shaping moves:
    - plan enhance
    - fold in
    - overbuild protector
    - review gate
    - UI ASCII when UI is in scope
-9. implementation + worklog
-10. post-checks:
+10. implementation + worklog
+11. post-checks:
    - gaps audit
    - implementation audit
-11. docs cleanup handoff
-12. explicit-review-only helpers such as code review or PR finalization
+12. docs cleanup handoff
+13. explicit-review-only helpers such as code review or PR finalization
 
 ## Mini full-arch checklist
 
 1. plan doc exists
 2. North Star confirmed
-3. research grounding
-4. deep dive
-5. phase plan
-6. implementation + worklog
-7. post-checks:
+3. Scope and Simplicity Contract complete and frozen
+4. research grounding
+5. deep dive
+6. phase plan
+7. implementation + worklog
+8. post-checks:
    - implementation audit
    - docs cleanup handoff
 
@@ -70,14 +77,15 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
 
 1. plan doc exists
 2. North Star confirmed
-3. one-pass canonical blocks written:
+3. Compact Scope and Simplicity Contract complete and frozen
+4. one-pass canonical blocks written:
    - research grounding
    - current architecture
    - target architecture
    - call-site audit
    - phase plan
-4. implementation + worklog
-5. post-checks:
+5. implementation + worklog
+6. post-checks:
    - implementation audit
    - docs cleanup handoff
    - any explicit follow-up audit
@@ -88,16 +96,17 @@ Recommend `miniarch-step` as the governing skill once mini-plan is complete and 
 
 1. plan doc exists
 2. North Star confirmed
-3. requirements block exists
-4. plan audit exists
-5. compatible arch blocks exist as needed:
+3. Compact Scope and Simplicity Contract complete and frozen
+4. requirements block exists
+5. plan audit exists
+6. compatible arch blocks exist as needed:
    - research grounding
    - current architecture
    - target architecture
    - call-site audit
    - phase plan
-6. finish-mode implementation + worklog
-7. implementation audit
+7. finish-mode implementation + worklog
+8. implementation audit
 
 ## Output rule
 

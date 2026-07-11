@@ -37,6 +37,7 @@ Good goal prompts teach judgment:
 - what evidence proves done
 - when outside signoff is required
 - how to keep moving when the path is unclear without silently cutting scope
+- how to keep review from silently expanding a frozen plan
 
 Weak goal prompts either under-specify the result or over-specify the source
 material. Both create guessing. A tiny "fix it properly" goal makes the agent
@@ -127,7 +128,9 @@ if it were authoritative.
 7. Ban the smallest set of shortcuts that would poison the outcome.
 8. Define proof: tests, artifacts, inspections, generated outputs, screenshots,
    review receipts, or final report details.
-9. Add signoff when requested or when the work should not self-certify.
+9. Add signoff when requested or when the work should not self-certify. For
+   plan-backed work, point to the plan's scope contract and require finding
+   disposition; reviewer rejection is not automatic expansion authority.
 10. For execution and repair goals, add persistence rules for uncertainty: read
     deeper source truth, form sharper theories, build disproof tests, instrument
     the real path, use required reviewers to choose the next move, and keep
@@ -162,8 +165,9 @@ Good signoff names:
 - model and effort when known;
 - non-leading rule: do not provide the expected verdict;
 - done rule: the reviewer agrees the goal is satisfied. If review rejects the
-  result, its objection becomes the next repair input, not the ending, unless
-  the user explicitly requested a planning-only or review-only artifact.
+  result, authorized objections become repair input, unauthorized built scope
+  becomes subtraction, and new scope stops for a human decision. A reviewer
+  cannot expand a frozen plan.
 
 Bad signoff:
 
@@ -358,6 +362,10 @@ staying small enough to paste into `/goal`.
   prompts, or implementation-plan detail already owned by a referenced doc.
 - A quality bar that only says "good," "proper," "polished," or "high quality."
 - A source-truth line that treats stale artifacts as equal to live owner paths.
+- A goal that treats an agent-authored plan revision or reviewer finding as
+  human scope authority.
+- A repair loop that keeps accepting review-created work until implementation
+  exceeds the frozen initial scope.
 - A review line that is not part of done.
 - A consensus line that does not define convergence.
 - A signoff line that makes reviewer rejection or model disagreement sound like

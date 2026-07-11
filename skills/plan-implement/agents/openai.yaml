@@ -1,7 +1,7 @@
 interface:
   display_name: "Plan Implement"
   short_description: "Plan-backed implementation with resumable review state"
-  default_prompt: "Use $plan-implement to implement code from an existing plan, phase, section, or checklist while keeping the plan, plan-audit log, implementation log, proof freshness, and warm plan-backed review aligned. Work depth-first from narrow proven slices, check adjacent same-contract paths before marking work done, update artifacts only at meaningful boundaries, reuse proof until it is stale, run checks for impact rather than habit, use native subagents when they save time, and do not manually spawn separate coding-harness executables or create scripts, runners, controllers, or deterministic harnesses."
+  default_prompt: "Use $plan-implement to implement code from an existing plan while keeping the plan, audit log, implementation log, proof freshness, and warm review aligned. Before editing, recover the human scope, frozen initial convergence closure, freeze anchor, and later human approvals. Advance depth-first only through that already-authorized breadth. Give every review finding a scope disposition; only authorized and frozen-convergence findings become automatic repairs. A newly discovered adjacent path needs a human decision, and unauthorized built scope must be subtracted rather than normalized through a plan edit. Keep logs as anchors, not a second scope contract. Reuse proof until stale, use native subagents when they save time, and do not create scripts, runners, controllers, or deterministic harnesses."
 
 policy:
   allow_implicit_invocation: true

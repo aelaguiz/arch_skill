@@ -76,6 +76,16 @@ user's broader workflow.
 - Current code behavior and current code structure are the final authority for
   what exists. Intended UX, hard constraints, and experiment requirements are
   the authority for what must continue to exist.
+- Human-authorized UX and constraints, plus the initial pre-freeze minimal
+  convergence closure and explicit later human approvals, are the authority for
+  what this change may add. Apply `skills/_shared/scope-and-convergence.md`.
+- For plan-, branch-, conductor-, PR-, or history-backed work, reconstruct
+  scope provenance and review waves. Every durable concept in the complexity
+  ledger must trace to human scope or the frozen closure. Architecture that
+  became "required" only through agent iteration or review cycling is a
+  `REQUIRED REPAIR` and forces `not-approved`; default to subtraction. If
+  provenance should exist but cannot be recovered, return `scope-incomplete`.
+  Mark this lane not applicable only for standalone targets with no scope story.
 - Do not change the intended user experience or weaken experiment requirements
   in the review. Find a simpler architecture underneath those constraints.
 - Do not focus on QA, test coverage, test hygiene, docs hygiene, README drift,
@@ -101,13 +111,16 @@ user's broader workflow.
 4. Write the architecture story in plain English: what the current structure
    appears to be, what user experience and hard constraints it claims to serve,
    and what would have to be true for that structure to be justified.
-5. Read `references/review-lenses.md`.
-6. Read `references/output-contract.md`.
-7. Read `references/agent-slices.md` before launching native parallel agents.
-8. Read `references/failure-patterns.md` when the target involves sprawl,
+5. When scope history exists, reconstruct the initial human baseline, frozen
+   convergence closure, later human approvals, and review/plan waves before
+   accepting the latest architecture story.
+6. Read `references/review-lenses.md`.
+7. Read `references/output-contract.md`.
+8. Read `references/agent-slices.md` before launching native parallel agents.
+9. Read `references/failure-patterns.md` when the target involves sprawl,
    split ownership, duplicate truth, flags, adapters, generated artifacts,
    config, or a plan-backed implementation.
-9. Read `references/examples.md` when the architecture appears to have emerged
+10. Read `references/examples.md` when the architecture appears to have emerged
    historically, when tests/docs may be misdirection, or when peer review lanes
    are easy to confuse.
 
@@ -120,6 +133,8 @@ user's broader workflow.
 3. Build `complexity-ledger.md`: live concepts, files, owner boundaries,
    states, flags, modes, adapters, registries, wrappers, shims, sync points,
    and caller obligations a maintainer must understand.
+   For scope-backed work, attach a human or pre-freeze closure anchor to every
+   durable concept; missing anchors are not cured by current reachability.
 4. Use native parallel agents for independent read-only slices when the target
    is broad enough: UX/requirement mapping, owner/invariant mapping, old-path
    and duplicate-truth search, abstraction/complexity review, state/config
@@ -138,12 +153,15 @@ user's broader workflow.
 9. Review QA/tests/docs/proof surfaces only when they are architecture evidence:
    mocked boundaries, stale generated truth, obsolete contracts, old owner
    paths, side doors, or misleading future-copy surfaces.
-10. Use `references/review-lenses.md` and `references/failure-patterns.md` to
+10. Run the scope-provenance and no-cycling lens. A newly discovered
+    architectural relationship is not permission to expand the required repair
+    beyond the frozen contract.
+11. Use `references/review-lenses.md` and `references/failure-patterns.md` to
     classify concrete risks. Use `references/examples.md` as illustrations of
     reasoning, not a lookup table.
-11. Save `coverage.md`, `subtraction-map.md`, `findings.md`, and
+12. Save `coverage.md`, `subtraction-map.md`, `findings.md`, and
     `verdict.md`.
-12. Return a short findings-first answer with the verdict and run directory.
+13. Return a short findings-first answer with the verdict and run directory.
 
 ## Output Expectations
 

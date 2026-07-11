@@ -19,7 +19,9 @@ same readiness bar that `implement-loop` depends on:
 
 - frontmatter `status` is `active` or `complete`
 - TL;DR and Section 0 are concrete, scoped, and free of unresolved decisions
-- Section 0 has a confirmed Simplicity Contract naming the smallest sufficient fix, enough proof, and what not to build
+- Section 0 has a confirmed Scope and Simplicity Contract naming human
+  authorization, the smallest sufficient solution, initial closure or `none`,
+  freeze boundary, enough proof, and what not to build
 - `arch_skill:block:research_grounding` is present and Section 3.3 has no
   unresolved blocker questions
 - current architecture, target architecture, and call-site audit blocks are

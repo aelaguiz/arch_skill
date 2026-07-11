@@ -3,6 +3,9 @@
 ## Core rules
 
 - One doc is the source of truth.
+- Apply `skills/_shared/scope-and-convergence.md`. Human scope plus the initial
+  pre-freeze minimal convergence closure is the only automatic implementation
+  scope; later reviewers and implementers cannot add to it.
 - Code is ground truth. Anchor claims in files, symbols, tests, logs, or explicit docs.
 - Planning is docs-only in this skill. No code edits.
 - Ask only for true product, UX, or access gaps that repo evidence cannot answer.
@@ -20,6 +23,7 @@
 - Write only the evidence needed to make the next implementation step safe.
 - Keep the result compact enough that one implementer can read the whole thing quickly.
 - Prefer one strong phase plan over a bloated "maybe later" backlog.
+- Freeze the compact Scope and Simplicity Contract at the ready verdict.
 
 ## What good compression looks like
 

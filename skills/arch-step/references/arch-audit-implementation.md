@@ -17,11 +17,20 @@ After this command runs:
 - missing code work is explicit and evidence-anchored
 - manual verification remains visible without softening code-completeness
 - a reader can tell whether the implementation is actually code-complete without hand-waving
+- a reader can tell whether all code is authorized by the frozen contract
+
+Audit against the original human anchors, pre-freeze convergence closure, and
+explicit later human approvals—not merely the latest plan text. Give every
+material finding a scope disposition. Unauthorized additions are subtraction
+work and force `NOT COMPLETE` even when they work or tests pass. A new
+same-contract path discovered by this audit may block approval, but it cannot be
+added to repair scope without a human decision and re-freeze.
 
 ## Shared references to carry in
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `skills/_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 5, 6, 7, `WORKLOG_PATH`, and `implementation_audit`
 

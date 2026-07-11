@@ -148,6 +148,14 @@ Ask:
 - Did a small fix become a policy?
 - Did adjacent behavior change outside the request?
 
+### `scope_provenance_reviewer`
+
+For plan-, conductor-, PR-, or history-backed work, reconstruct the initial
+human scope, frozen convergence closure, later human approvals, plan/review
+waves, and final code. Find work that became "required" only because agents
+built, documented, tested, or repeatedly reviewed it. Return subtraction as the
+default repair; do not turn a new adjacent discovery into automatic scope.
+
 ### `proof_surface_reviewer`
 
 Read changed tests, docs, worklogs, examples, comments, prompts, logs, status
@@ -174,6 +182,7 @@ Slice findings should be compact:
 - Why this means the implementation story is false or incomplete:
 - Repair target:
 - Pattern:
+- Scope provenance and required disposition:
 ```
 
 The parent converts accepted slice findings into the final output contract.

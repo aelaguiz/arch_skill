@@ -67,9 +67,20 @@ waves, run external review subprocesses, or decide the user's broader workflow.
 - Start from distrust: the implementation story, completion claim, names,
   wrappers, comments, status blocks, docs, tests, logs, and reviewer launches
   are claims, not proof.
-- Current code behavior and current code structure are the final authority.
-  Plans, docs, worklogs, tests, and status surfaces help aim review; they do
-  not replace tracing the real code path.
+- Current code behavior and structure are the authority for what exists.
+  Human requests and explicit human approvals are the authority for scope.
+  Plans, docs, worklogs, tests, and status surfaces help aim review; an
+  agent-authored revision cannot retroactively authorize code.
+- Apply `skills/_shared/scope-and-convergence.md`. For plan-, branch-,
+  conductor-, PR-, or history-backed work with a recoverable baseline,
+  reconstruct the initial human scope, pre-freeze convergence closure, later
+  human approvals, plan/review waves, and final code. Unauthorized post-freeze
+  growth or scope cycling is a `REQUIRED REPAIR` and forces `not-approved`,
+  even when it works and tests pass. The normal repair target is subtraction.
+- If provenance should be available but cannot be recovered, return
+  `coverage-incomplete`. For a standalone code target with no plan, completion
+  claim, or human-scope history, mark the provenance lane not applicable rather
+  than inventing a baseline.
 - Findings must be concrete current-code or requested-scope risks. Drop style
   preferences, generic maintainability advice, missing-test nits, and doc
   hygiene unless they expose a false implementation story.
@@ -85,10 +96,13 @@ waves, run external review subprocesses, or decide the user's broader workflow.
 4. Write the implementation story in plain English: what the work claims is now
    true, which source or plan says so if present, and what current code would
    have to do for that claim to be real.
-5. Read `references/review-catalog.md`.
-6. Read `references/output-contract.md`.
-7. Read `references/agent-slices.md` before launching native parallel agents.
-8. Read `references/examples.md` when the review involves completion claims,
+5. When scope history exists, write its human baseline, initial closure and
+   freeze anchor, explicit later approvals, and revision/review waves before
+   accepting the latest plan as context.
+6. Read `references/review-catalog.md`.
+7. Read `references/output-contract.md`.
+8. Read `references/agent-slices.md` before launching native parallel agents.
+9. Read `references/examples.md` when the review involves completion claims,
    plan-backed implementation, unification, simplification, proof/status
    claims, or confusing peer review lanes.
 
@@ -99,6 +113,8 @@ waves, run external review subprocesses, or decide the user's broader workflow.
    proxy evidence, expected code behavior, old authority paths, duplicate truth
    risks, side doors, adjacent same-contract surfaces, user job, and likely
    scope contamination.
+   For scope-backed work, start from the initial human scope, not the latest
+   plan revision.
 3. Map changed files, changed hunks, touched symbols, touched abstractions,
    visible behavior obligations, relevant old paths, and likely adjacent
    surfaces.
@@ -127,10 +143,13 @@ waves, run external review subprocesses, or decide the user's broader workflow.
     docs, worklogs, examples, comments, prompts, logs, and status blocks matter
     when they prove the wrong thing, mask code gaps, keep old paths alive, or
     would mislead the next agent.
-11. Use `references/review-catalog.md` to classify concrete risks. Use
+11. Run the Unauthorized Scope Ratchet Or Cycling pattern whenever scope
+    provenance is recoverable. A reviewer discovery can be real and still lack
+    authority; do not recommend another generalized system as the repair.
+12. Use `references/review-catalog.md` to classify concrete risks. Use
     `references/examples.md` as illustrations of reasoning, not a lookup table.
-12. Save `coverage.md`, `findings.md`, and `verdict.md`.
-13. Return a short findings-first answer with the verdict and run directory.
+13. Save `coverage.md`, `findings.md`, and `verdict.md`.
+14. Return a short findings-first answer with the verdict and run directory.
 
 ## Output Expectations
 

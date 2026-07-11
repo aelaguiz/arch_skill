@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for TL;DR, Section 0, Sections 1, 2, 8, 9, 10, and `planning_passes`
 
 ## Inputs
@@ -35,7 +36,7 @@ It is not enough to create a file with headings. This command bootstraps the who
 Treat TL;DR plus Section 0 as the planning lock:
 
 - TL;DR says outcome, problem, approach, and plan shape in the fewest lines possible
-- Section 0 says scope, exclusions, the Simplicity Contract, invariants, and fallback stance
+- Section 0 says scope, exclusions, the draft Scope and Simplicity Contract, invariants, and fallback stance
 - later commands should be able to resolve ordinary tradeoffs from these sections without guessing
 
 If they are weak, every later stage becomes soft.
@@ -43,6 +44,9 @@ If they are weak, every later stage becomes soft.
 ## Hard rules
 
 - docs-only; do not modify code
+- capture the human-authorized outcome and original ask as the first
+  authorization anchor; start with `Initial minimal convergence closure: none`
+  until initial architecture proves otherwise, and leave freeze pending
 - create exactly one plan doc; do not create sidecar planning docs
 - name the file `docs/<TITLE_SCREAMING_SNAKE>_<YYYY-MM-DD>.md`
 - derive a short 5-9 word screaming-snake title from the ask
@@ -85,7 +89,7 @@ If they are weak, every later stage becomes soft.
    - allowed architectural convergence scope
    - UX and technical out-of-scope
    - credible acceptance evidence proportional to the work and risk
-   - Simplicity Contract:
+   - Scope and Simplicity Contract:
      - smallest sufficient fix
      - enough proof
      - do not build
@@ -105,7 +109,7 @@ After writing the doc:
 
 - print the drafted TL;DR
 - print the drafted North Star
-- include the Simplicity Contract in the confirmation surface
+- include the Scope and Simplicity Contract in the confirmation surface
 - ask for confirmation or edits
 - if edits arrive, update the doc and ask again
 - do not continue into research or deeper planning from the same `new` run

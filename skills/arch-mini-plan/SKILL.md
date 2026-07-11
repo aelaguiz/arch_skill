@@ -27,9 +27,15 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 
 - This mode is planning-only. Do not modify code here.
 - Keep one canonical `DOC_PATH` as the source of truth.
+- Write the compact Scope and Simplicity Contract from
+  `references/artifact-contract.md`. Initial architecture may include only the
+  smallest evidenced same-contract convergence closure; freeze it at the ready
+  verdict. After that verdict, only explicit human approval expands scope.
 - Use the same canonical arch markers and compatible section shapes that `arch-step` expects.
 - Keep the phase plan tight: usually 1-2 phases, optionally 3 if cleanup truly needs its own pass.
-- If the scope expands beyond a compact one-pass plan, escalate to `miniarch-step` or `arch-step reformat` rather than pretending mini mode still fits.
+- Escalate when human-authorized or pre-freeze convergence work genuinely
+  exceeds a compact plan, or when decisions remain unresolved. Do not escalate
+  merely because the planner imagined adjacent work.
 - Ask questions only when repo/docs/tools cannot answer them.
 - When the changed behavior is agent- or LLM-driven, inspect prompt surfaces, native model capabilities, and existing tool/file/context exposure before designing.
 - For agent-backed systems, prefer prompt engineering, grounding, and native-capability use before new harnesses, wrappers, parsers, OCR layers, or scripts.
@@ -42,12 +48,13 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 
 1. Read `references/artifact-contract.md`.
 2. Read `references/shared-doctrine.md`.
-3. Read `references/fit-and-escalation.md`.
-4. Resolve `DOC_PATH` and read it fully.
-5. Verify the North Star and scope are coherent enough to plan against.
-6. Read `references/quality-bar.md`.
-7. Read `references/one-pass-plan.md`.
-8. Then write the canonical arch blocks in one pass.
+3. Read `skills/_shared/scope-and-convergence.md`.
+4. Read `references/fit-and-escalation.md`.
+5. Resolve `DOC_PATH` and read it fully.
+6. Verify the North Star and scope are coherent enough to plan against.
+7. Read `references/quality-bar.md`.
+8. Read `references/one-pass-plan.md`.
+9. Then write the canonical arch blocks in one pass.
 
 ## Workflow
 

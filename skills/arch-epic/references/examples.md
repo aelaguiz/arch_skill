@@ -123,6 +123,8 @@ The worklog contains this entry:
      "evidence": "SSO login endpoint is live; session tokens issued"},
     {"name": "scope_not_cut", "status": "pass",
      "evidence": "all phase checklist items are complete"},
+    {"name": "scope_provenance_and_no_cycling", "status": "fail",
+     "evidence": "background rotation appeared after scope freeze and has no human approval anchor"},
     {"name": "no_orphaned_discoveries", "status": "fail",
      "evidence": "worklog Phase 3 names token rotation background job as required for long-lived sessions but implementation is inline middleware"},
     {"name": "audit_clean", "status": "pass",
@@ -131,18 +133,18 @@ The worklog contains this entry:
   "discovered_items": [
     {
       "what": "background token rotation job for long-lived sessions; current middleware fails when session idles past refresh window",
-      "scope_relationship": "required_for_approved_scope",
-      "recommendation": "new_sub_plan"
+      "scope_relationship": "new_scope_needs_human",
+      "recommendation": "human_decision"
     }
   ],
-  "summary": "Sub-plan 1 shipped cleanly for short sessions but worklog names a required background rotation job that is not in any sub-plan's scope. Recommending new_sub_plan before sub-plan 2 (dashboard) starts."
+  "summary": "The worklog proposes background rotation after scope freeze, but no human approval authorizes it. Keep the current boundary and redesign/subtract, or ask the human to approve and re-freeze an expansion."
 }
 ```
 
 ### Skill applies scope lock
 
-One `discovered_item`; `scope_relationship:
-required_for_approved_scope`; `recommendation: new_sub_plan`. Per
+One `discovered_item`; `scope_relationship: new_scope_needs_human`;
+`recommendation: human_decision`. Per
 `scope-change-discipline.md`, material scope items never auto-apply.
 Skill halts.
 
@@ -154,9 +156,9 @@ Appends critic verdict path. Appends Decision Log entry:
 > is required for long-lived sessions. Current implementation
 > is inline middleware and fails when sessions idle past refresh
 > windows. Options:
->   a. extend_current — roll the rotation job into sub-plan 1's
->      scope, re-run implement-loop.
->   b. new_sub_plan — insert a new sub-plan between 1 and 2.
+>   a. keep_scope — redesign/subtract inside the frozen boundary.
+>   b. approve extend_current — expand sub-plan 1 and re-freeze.
+>   c. approve new_sub_plan — insert a human-approved sub-plan.
 > What do you want?
 
 Skill ends turn with the question.
@@ -200,12 +202,14 @@ arch-step audit passes. Skill runs critic.
 ```json
 {
   "sub_plan_name": "Build admin dashboard backed by SSO",
-  "verdict": "scope_change_detected",
+  "verdict": "pass",
   "checks": [
     {"name": "epic_requirement_coverage", "status": "pass",
      "evidence": "dashboard requirements are owned here; auth service SSO is satisfied by sub-plan 1; migration remains assigned to sub-plan 3"},
     {"name": "north_star_preserved", "status": "pass", "evidence": "..."},
     {"name": "scope_not_cut", "status": "pass", "evidence": "..."},
+    {"name": "scope_provenance_and_no_cycling", "status": "pass",
+     "evidence": "no post-freeze obligation or unauthorized built scope"},
     {"name": "no_orphaned_discoveries", "status": "pass",
      "evidence": "worklog notes dashboard polls every 10s and mentions WebSockets would be cleaner, but the approved North Star and gate only require timely audit event visibility"},
     {"name": "audit_clean", "status": "pass", "evidence": "..."}

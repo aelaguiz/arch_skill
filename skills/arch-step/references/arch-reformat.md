@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for TL;DR, Section 0, and the sections the source content maps into
 
 ## Inputs
@@ -41,6 +42,11 @@ This command must restore:
 - if something is truly missing, keep the gap visible as unresolved instead of inventing it or smoothing it away
 - if content cannot be confidently placed, keep it in Appendix A instead of dropping it
 - do not introduce new scope
+- reconstruct the Scope and Simplicity Contract from human-authored source
+  anchors, not from whatever obligations the latest agent-authored plan happens
+  to contain; preserve unknown provenance as a visible readiness gap
+- do not invent a historical pre-freeze closure. If implementation already
+  started and the boundary cannot be recovered, require one human scope decision
 - when source content is instruction-bearing, preserve explicit operational structure instead of silently condensing it
 - preserve or reconstruct the source's strongest claims about requested behavior scope, allowed architectural convergence scope, canonical owner path, and preservation evidence when the source supports them
 - if the source does not support one of those fields, keep the gap visible with draft inference or TODO text instead of collapsing back to a blurrier model

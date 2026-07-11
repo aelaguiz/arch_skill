@@ -13,10 +13,11 @@ whose count follows proof gates rather than a preset range, gets user approval, 
 each sub-plan through arch-step's `new` → `auto-plan` → `implement-loop`
 → `audit-implementation` arc. After each sub-plan completes, a fresh
 Claude, Codex, or Grok critic subprocess inspects the shipped work for scope
-drift against the approved North Star. If the critic finds a requirement
-needed to preserve approved scope or a non-trivial scope change, the skill
-halts and asks the user how to preserve the scope by extending the current
-sub-plan or inserting a new sub-plan.
+drift against the approved North Star. If the critic finds missing authorized
+work, post-freeze proposed expansion, or unauthorized built scope, the skill
+halts. It may resume ordinary missing work, but it never enlarges scope from
+the critic. A human decides whether to approve expansion and re-freeze, or keep
+the boundary and require subtraction/redesign.
 Otherwise it advances to the next sub-plan.
 
 The normal lane is interactive and re-entrant: arch-epic invokes or observes
@@ -108,6 +109,13 @@ Must happen every run:
   rewrite clears the decomposition-approved flag.
 - Produce a one-sentence-per-sub-plan decomposition and get user
   approval before planning any sub-plan.
+- Treat the raw human goal and approved decomposition as the epic baseline.
+  Decomposition approval does not authorize hidden infrastructure in later
+  sub-plans. Apply `skills/_shared/scope-and-convergence.md`.
+- Each sub-plan inherits its approved epic boundary, records its own initial
+  minimal convergence closure during initial architecture, and freezes that
+  closure before implementation. After freeze, only explicit human approval
+  may add a path, obligation, sub-plan, mechanism, or proof category.
 - Each sub-plan is its own full `$arch-step` canonical DOC_PATH.
   The epic doc does NOT contain plan internals (no Sections 0–10,
   no call-site audit).
@@ -172,11 +180,15 @@ Must never happen:
   sub-plan fails. A requirement assigned to a named later sub-plan is
   preserved scope, not a failure for the current sub-plan. Agent-written
   Decision Log entries are evidence, not approval to reduce scope.
-- Auto-acting on materially-different-path detections without user
-  approval. Material scope discoveries always halt and preserve scope
-  through `extend_current` or `new_sub_plan`. There is no automatic
-  drop path and no supported scope-reduction lane inside any arch-epic
-  automation lane.
+- Scope expansion by an agent, critic, review, or Decision Log. The same
+  symmetry applies to additions: initial sub-plan architecture may record the
+  smallest evidenced same-contract closure before freeze; any later addition
+  or new sub-plan needs explicit human approval. A Decision Log entry proves a
+  change was recorded, not that it was authorized.
+- Auto-acting on materially-different-path detections without user approval.
+  Material scope discoveries always halt. The human may approve expansion via
+  `extend_current` or `new_sub_plan`, or keep the frozen boundary and require
+  subtraction/redesign. No critic recommendation is self-authorizing.
 - Letting critics author repair steps. Critics report verdict,
   failed checks, evidence, and scope discoveries only. The parent
   routes the result, and the resumed planner or implementation worker
@@ -241,8 +253,9 @@ Must never happen:
    Decomposition (one-sentence descriptions, assertion-style gates,
    dependency-then-risk ordering, and count chosen from real proof
    boundaries rather than a target range).
-5. Read `references/epic-doc-contract.md`. Write the epic doc.
-6. Surface the Decomposition and ask the user to approve or adjust.
+5. Read `skills/_shared/scope-and-convergence.md`.
+6. Read `references/epic-doc-contract.md`. Write the epic doc.
+7. Surface the Decomposition and ask the user to approve or adjust.
 
 ## Modes (re-entrant; one per turn)
 
@@ -257,9 +270,10 @@ Detail per mode lives in `references/workflow-contract.md`.
 3. **`run`** — main orchestration pass. Routes per
    `references/arch-step-integration.md` to the next arch-step
    command for the first non-complete sub-plan or runs the critic.
-4. **`resume-scope-change`** — epic is `halted` after a critic
-   flagged a scope change; user has replied with their preservation
-   decision. Apply `extend_current` or `new_sub_plan`, log, resume.
+4. **`resume-scope-change`** — epic is `halted` after a critic flagged a
+   scope issue; a human has replied. Apply the explicit choice: approve and
+   re-freeze an `extend_current`/`new_sub_plan` expansion, or keep scope and
+   route subtraction/redesign. Log the human decision and resume.
 5. **`summary`** — user asked a status question. Render a table of
    sub-plan statuses and the most recent log entries. No state
    changes.

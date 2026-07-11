@@ -18,6 +18,10 @@ Read:
 State the active scope plainly. Do not silently widen into adjacent phases,
 whole-plan signoff, or unrelated cleanup.
 
+Recover the plan's human authorization anchors, initial convergence closure,
+scope-freeze boundary, and explicit later human approvals. If the plan cannot
+support a defensible frozen boundary, stop for one human scope decision.
+
 ## 2. Choose The Next Narrow Slice
 
 Choose the smallest depth-first slice that moves the plan toward its North Star
@@ -46,6 +50,7 @@ Before editing, record the useful current facts in the implementation log:
 - code areas read
 - owner path and caller families
 - adjacent same-contract or same-behavior surfaces
+- each active item's scope disposition
 - legacy paths and side doors found
 - comparable patterns
 - proof already fresh
@@ -121,6 +126,7 @@ Run checks when:
 - generated artifacts, schemas, config, prompts, docs, or examples could drift
 - prior proof is stale
 - review findings need proof after repair
+- an authorized review finding needs proof after repair
 
 Reuse prior proof when:
 
@@ -138,22 +144,24 @@ Before widening:
 - update the implementation log resume snapshot
 - update scope ledger status with code and proof anchors
 - update audit findings if any opened or closed
-- update the plan when source truth changed
-- record why adjacent same-contract work is complete, intentionally different,
-  or tracked elsewhere when it remains live
+- update plan completion truth without rewriting scope
+- record whether adjacent same-contract work is already in the frozen closure,
+  `new-scope-needs-human`, or out of scope
 - name which proof remains fresh and what would stale it
 - name the next useful move
 
 The slice is closed only when code state, plan state, review state, and proof
 state agree.
 
-## 9. Widen From Proven Ground
+## 9. Advance Through Authorized Breadth
 
-Add the next caller, variant, platform, mode, or polish layer only after the
-core path is implemented, reviewed, and sufficiently proven.
+Add the next caller, variant, platform, mode, or polish layer only when it is
+already in the human-authorized plan or frozen initial convergence closure, and
+only after the prior slice is implemented, reviewed, and sufficiently proven.
 
-This is the implementation version of depth-first planning: complexity is added
-only after previous complexity has earned its place.
+Depth-first sequencing orders frozen scope; it does not make new complexity
+earn scope authority. Any other breadth requires explicit human approval and a
+re-frozen contract.
 
 ## 10. Finalize The Requested Scope
 
@@ -164,8 +172,8 @@ At the stop boundary:
 - confirm in-scope plan items are closed or explicitly not closed
 - run a final lightweight plan-backed implementation check over the requested
   scope
-- confirm adjacent same-contract or same-behavior surfaces in scope have
-  converged, stayed intentionally different, or been named as follow-up
+- confirm adjacent surfaces in the frozen closure have converged and that new
+  observations did not enter required work without human approval
 - update plan, audit log, and implementation log so they tell the same story
 - report remaining gaps plainly
 

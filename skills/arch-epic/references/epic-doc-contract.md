@@ -61,7 +61,9 @@ Frontmatter rules:
   when the user approves the decomposition. If the user adjusts the
   decomposition after approval, the skill appends to the log and
   keeps `sub_plans_approved: true`; "approved" means "the user has
-  seen and blessed the shape," not "the decomposition is frozen."
+  seen and blessed the shape." The approved decomposition is the epic scope
+  baseline. Later agents may reorder execution inside that shape when allowed,
+  but adding a sub-plan or outcome requires explicit human approval.
 - `critic_runtime` and `critic_effort` are user-supplied per
   `model-and-effort.md` for interactive-mode completion critics. The model is
   also user-supplied except that an omitted Codex critic model defaults to
@@ -160,7 +162,7 @@ Example:
 > safe once the dashboard works. If implementation reveals a new
 > system we did not anticipate (e.g., audit logging), the skill will
 > halt and ask whether to extend the current sub-plan or insert a new
-> one.
+> one, or keep the frozen scope and subtract/redesign the surprise.
 
 ### Decomposition
 
@@ -193,6 +195,9 @@ A numbered list of sub-plans. Each entry has:
 - `Epic-critic verdict:` empty until the sub-plan reaches
   completion; then the verdict path (relative or absolute) for
   audit.
+- `Scope contract:` the Section 0 anchor in the sub-plan DOC_PATH and its
+  freeze state (`pending | frozen | human-decision-needed`). This is a pointer,
+  not a copy of the sub-plan contract.
 - In spawned-harness automatic mode, add `Auto-run status:` when useful. Keep it
   compact: current role, latest worker artifact, latest critic verdict,
   or `not started`. Do not copy child transcripts into the epic doc.
@@ -307,6 +312,13 @@ out of scope by the orchestrator or a spawned child. If it is not owned here,
 satisfied already, or assigned to a named later sub-plan, the sub-plan is not
 ready.
 
+Coverage is also not expansion authority. Each sub-plan's Section 0 Scope and
+Simplicity Contract must identify the inherited raw-goal/decomposition anchors,
+its own initial minimal convergence closure or `none`, and its scope freeze.
+Initial sub-plan architecture may add the smallest evidenced same-contract
+closure before freeze. After freeze, a critic, worklog, Decision Log, or later
+plan edit cannot add another path or sub-plan without human approval.
+
 ## Mutation rules
 
 The skill mutates the epic doc under these conditions only:
@@ -334,8 +346,9 @@ The skill mutates the epic doc under these conditions only:
   appends compact log entries. It never treats one invocation, local proof,
   worklog optimism, stored Status, or ArcStep audit alone as epic completion.
 - `resume-scope-change` mode: inserts a new sub-plan or extends an
-  existing one's scope to preserve approved requirements; always
-  appends a Decision Log entry.
+  existing one's scope only after explicit human approval, or records the
+  human choice to keep scope and subtract/redesign unauthorized work; always
+  appends the human decision anchor to the Decision Log.
 - `auto-run` mode: writes or updates `auto_execution`, writes compact
   Auto-run status fields, records role-policy changes, same-role worker
   resumes after critic failures, and auto-inserted sub-plans. Full child

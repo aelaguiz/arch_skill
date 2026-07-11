@@ -55,8 +55,9 @@ state machine, or script-backed completion judge.
 - The plan audit log owns `PLA-*` and `IMP-*` review findings. Do not turn it
   into an implementation diary.
 - Update artifacts at meaningful boundaries, not after every micro-edit.
-- Choose depth-first slices: make one narrow plan truth real, review it while
-  warm, verify impact, then widen.
+- Choose depth-first slices: make one narrow frozen plan truth real, review it
+  while warm, verify impact, then advance through breadth already authorized by
+  the plan. Depth-first sequencing is not permission to widen scope.
 - Proof freshness matters. Reuse passing proof until a real invalidator makes
   it stale; run checks when the plan, changed code, impacted behavior, or a
   review finding gives a reason.
@@ -69,18 +70,28 @@ state machine, or script-backed completion judge.
   asks for that kind of delegation.
 - Do not claim a plan item complete from logs or checkboxes alone. Read code
   anchors and confirm the outcome is true.
+- Apply `skills/_shared/scope-and-convergence.md`. Before the first edit,
+  recover the human baseline, initial minimal convergence closure, freeze
+  boundary, and explicit later human approvals. If a legacy plan cannot support
+  a defensible boundary, stop for one human scope decision.
+- A warm review, subagent, test, worklog, or plan edit cannot expand scope.
+  Give every material finding a shared scope disposition. Only `authorized` and
+  `frozen-convergence-required` enter required implementation work; a newly
+  discovered adjacent path is `new-scope-needs-human`, and already-built excess
+  is subtraction work.
 
 ## First Move
 
 1. Read `references/artifact-contract.md`.
 2. Read `references/progressive-implementation-loop.md`.
-3. Resolve the plan artifact, requested scope, stop boundary, repo root, audit
+3. Read `skills/_shared/scope-and-convergence.md`.
+4. Resolve the plan artifact, requested scope, stop boundary, repo root, audit
    log path, and implementation log path.
-4. Read the plan, existing plan audit log if present, existing implementation
+5. Read the plan, existing plan audit log if present, existing implementation
    log if present, local instructions, and current worktree state.
-5. Identify the next narrow depth-first slice and the proof or review likely to
+6. Identify the next narrow depth-first slice and the proof or review likely to
    matter.
-6. If the scope is broad, decide whether native subagents can save real time
+7. If the scope is broad, decide whether native subagents can save real time
    for independent mapping or review slices.
 
 ## Workflow
@@ -99,8 +110,9 @@ state machine, or script-backed completion judge.
    checks only because prior context was forgotten.
 7. Update the owning artifact: plan for source-truth changes, audit log for
    `PLA-*` or `IMP-*` findings, implementation log for resumability.
-8. Widen only after the prior slice's code state, plan state, review state, and
-   proof state agree.
+8. Advance to the next already-authorized slice only after the prior slice's
+   code, plan, review, and proof state agree. New breadth requires human approval
+   and re-freeze.
 9. At the requested stop boundary, perform a final lightweight plan-backed
    implementation check and report remaining gaps plainly.
 

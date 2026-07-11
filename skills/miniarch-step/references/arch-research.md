@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for TL;DR, Section 0, Section 2, and Section 3
 
 ## Reads for alignment
@@ -50,7 +51,9 @@ Good research looks like:
 - reusable patterns named explicitly so later stages do not reinvent them
 - duplicate or drifting paths relevant to the change are called out early
 - capability-first opportunities are visible before any new harness, wrapper, parser, or script is treated as necessary
-- existing proof signals and the demonstrated blast radius are concrete enough to keep the Simplicity Contract proportional
+- existing proof signals and the demonstrated blast radius are concrete enough to keep the Scope and Simplicity Contract proportional
+- candidate adjacent paths are recorded as evidence for initial architecture,
+  not added as required scope by research
 - existing preservation signals are named when refactor or consolidation is likely
 - external anchors only when they add real value, each with adopt or reject reasoning
 - any unresolved plan-shaping decisions are written as explicit blocker questions, not as parking-lot notes

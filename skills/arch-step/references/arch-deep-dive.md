@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for Sections 4, 5, 6, and `planning_passes`
 
 ## Reads for alignment
@@ -42,6 +43,12 @@
 - no fallback or shim design unless the plan explicitly approves it
 - search for the canonical existing path before proposing a new abstraction or code path
 - inspect adjacent surfaces tied to the same contract family, source of truth, migration boundary, or parity story before treating the obvious path as exhaustive
+- this is the initial architecture window: include only directly competing
+  same-contract paths whose omission would leave split authority, record the
+  exact minimal closure and cutover/delete in Section 0 and Section 10, and
+  exclude merely similar neighbors
+- if scope is already frozen, do not append or enlarge the initial closure;
+  classify a new adjacent path as `new-scope-needs-human`
 - compatibility posture is separate from `fallback_policy`; do not leave preservation versus clean cutover implicit in the authoritative plan
 - when the change is agent-backed, decide what behavior belongs in prompt or native-capability usage versus deterministic code before designing new tooling
 - if the target design does not reuse the canonical path, justify why the existing path cannot own the change

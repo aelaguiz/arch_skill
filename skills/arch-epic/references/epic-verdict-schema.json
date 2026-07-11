@@ -17,6 +17,7 @@
               "epic_requirement_coverage",
               "north_star_preserved",
               "scope_not_cut",
+              "scope_provenance_and_no_cycling",
               "no_orphaned_discoveries",
               "audit_clean"
             ]
@@ -34,9 +35,15 @@
         "required": ["what", "scope_relationship", "recommendation"],
         "properties": {
           "what": {"type": "string"},
-          "scope_relationship": {"enum": ["required_for_approved_scope"]},
+          "scope_relationship": {
+            "enum": [
+              "missing_authorized_scope",
+              "new_scope_needs_human",
+              "unauthorized_built_scope"
+            ]
+          },
           "recommendation": {
-            "enum": ["extend_current", "new_sub_plan"]
+            "enum": ["complete_authorized_scope", "human_decision", "subtract"]
           }
         }
       }

@@ -23,7 +23,9 @@ Write the canonical planning blocks in one pass without pretending the work was 
    - what constraints the code already imposes
    - what can be solved by prompt, grounding, or native-capability changes before new tooling
    - what instruction-bearing source content must keep explicit structure instead of being summarized
-4. Write `current_architecture` and `target_architecture` together.
+4. Write `current_architecture` and `target_architecture` together. Include only
+   the smallest directly competing same-contract cutovers or deletes; merely
+   similar neighboring cleanup stays out.
 5. Write the `call_site_audit`:
    - changed files
    - representative call sites
@@ -35,10 +37,14 @@ Write the canonical planning blocks in one pass without pretending the work was 
    - smallest credible verification
    - capability-first work before custom tooling when agent-backed
    - explicit deletes and follow-ups
+   - only obligations authorized by the human outcome or the initial minimal
+     convergence closure
 7. End with a readiness verdict:
    - ready for `miniarch-step implement`
    - or outgrew the faster full-arch tier / is too weak, use `arch-step reformat`
    - if preserving instruction-bearing source fidelity cleanly would need appendices or a fuller import surface, use `arch-step reformat`
+   - freeze the Scope and Simplicity Contract before returning a ready verdict;
+     use explicit `none` when no adjacent convergence is required
 
 ## External guidance rule
 

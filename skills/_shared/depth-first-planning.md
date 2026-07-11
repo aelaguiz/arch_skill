@@ -8,21 +8,31 @@ proving the architecture early, not to make the plan smaller or looser.
 
 Depth-first planning has five planning objects:
 
-- `Destination map`: the full known final scope. It is preserved across TL;DR,
-  Section 0, target architecture, call-site audit, approved decisions, and the
-  phase plan. It is not the Phase 1 checklist.
+- `Destination map`: the frozen implementation scope: the human-authorized
+  outcome plus the initial minimal convergence closure established before
+  implementation. It is preserved across TL;DR, Section 0, target
+  architecture, call-site audit, approved decisions, and the phase plan. It is
+  not the Phase 1 checklist, and later agent discoveries do not enlarge it.
 - `First working slice`: the narrowest real end-to-end path that proves the
   canonical owner path, hardest risk-bearing seam, compatibility or migration
   posture, and verification shape on real inputs. It is not a stub, fake demo,
   unused foundation layer, or special-case path.
-- `Expansion map`: the ordered widening after the first slice works. It names
-  later axes such as more callers, data states, surfaces, formats, migrations,
-  user flows, compatibility cases, or rollout coverage.
+- `Expansion map`: the ordered delivery of breadth already present in the
+  frozen destination map after the first slice works. It names later axes such
+  as more callers, data states, surfaces, formats, migrations, user flows,
+  compatibility cases, or rollout coverage. It is sequencing, not permission
+  for reviewers or workers to add scope.
 - `Proof gate`: the evidence that a phase or sub-plan is safe to build on. It
   answers what later work can now rely on.
 - `Scope cut`: a removal, downgrade, or optionalizing of destination-map scope.
   It requires explicit user approval and a `Scope cut (user-approved)` Decision
   Log entry.
+
+Apply `skills/_shared/scope-and-convergence.md` before freezing the destination
+map. Initial plan architecture may include the smallest same-contract cutover
+needed to avoid competing authority. Once implementation begins, only a human
+decision owner may expand the map; a newly discovered adjacent path is a
+finding to disposition, not an automatic expansion.
 
 The WHY: breadth-first plans feel complete because many final surfaces appear
 early, but they defer the highest-risk learning until the blast radius is large.
@@ -55,6 +65,10 @@ Apply these states when implementing, auditing, or reviewing epic scope:
 - Silent scope reduction: fail unless the user explicitly approved the cut. A
   vague "later", "defer", "out of scope", "MVP", or dropped obligation is not
   scheduled expansion.
+- Post-freeze agent expansion: fail. A worker, review, audit, or verifier added
+  work that was absent from the frozen destination map and lacks later human
+  approval. Subtract it, redesign inside the frozen boundary, or ask the human
+  to approve and re-freeze the expanded scope.
 
 ## Failure modes
 

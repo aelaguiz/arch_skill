@@ -29,6 +29,12 @@ When creating a new bug doc, include at least:
   - evidence
   - investigation
 - fix-plan and implementation sections, even if initially skeletal
+- a compact scope contract with:
+  - human-authorized corrected behavior
+  - smallest sufficient fix
+  - initial minimal convergence closure or `none`
+  - scope freeze before fix mode
+  - enough proof, do-not-build boundary, and accepted residual risk
 
 Recommended additional sections when they add signal:
 
@@ -101,3 +107,5 @@ If a tool can provide Seer-style analysis or representative events, capture that
 
 - Cross-model or external review is explicit-review-only.
 - If the user did not ask for review or code review, stop after local analysis/fix/verification.
+- Review findings cannot expand the frozen bug closure. Post-freeze scope needs
+  explicit human approval and re-freeze.

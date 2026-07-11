@@ -6,6 +6,17 @@ Template note:
 - Start filling from the relevant section below.
 -->
 
+## Plan Scope Receipt (plan-backed changes only)
+
+- Canonical plan: `<path and Scope and Simplicity Contract anchor>`
+- Human-authorized outcome: `<one line>`
+- Frozen initial convergence closure: `<items or none>`
+- Later human-approved expansions: `<approval anchors or none>`
+- Material out-of-scope findings not built: `<items or none>`
+
+Keep this compact and anchor-based. It is a review receipt, not a second plan.
+Omit the section for changes with no governing plan.
+
 ## 🐛 Bug Fix
 
 ### The Problem

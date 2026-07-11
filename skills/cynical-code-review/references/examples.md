@@ -174,6 +174,18 @@ Finding standard:
 
 - "No clear owner" is a review result, not a reason to guess.
 
+## Unauthorized Scope Ratchet
+
+Original ask: add a local reminder. Review wave 3 adds cross-device
+monotonicity, wave 5 adds a database owner, and wave 8 adds retry identifiers.
+The latest plan and tests include all of it, but no human approved expansion
+and none was in the pre-freeze convergence closure.
+
+Required finding: group the database, retry, schema, config, tests, docs, and
+dependencies as one unauthorized scope-cycled cluster. Return `not-approved`.
+The repair target is subtraction back to the smallest local reminder, or a
+human decision and re-freeze—not another generalized synchronization system.
+
 ## E08: Scratch Output Instead Of Durable Location
 
 Failure shape:

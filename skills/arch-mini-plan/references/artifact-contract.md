@@ -27,6 +27,13 @@ When creating or repairing a mini-plan doc, ensure it has at least:
   - out of scope
   - definition of done
   - invariants
+- a compact Scope and Simplicity Contract containing:
+  - human-authorized outcome and authorization anchors
+  - smallest sufficient solution
+  - initial minimal convergence closure or explicit `none`
+  - scope freeze at the ready verdict
+  - enough proof and do-not-build boundary
+  - accepted residual risk
 
 Do not leave placeholder text in the TL;DR or North Star.
 
@@ -54,6 +61,8 @@ When the change is agent-backed, these blocks must make capability-first decisio
 
 - New or unconfirmed docs stay `status: draft`.
 - Planning-complete docs move to `status: active`.
+- Before moving to `active`, freeze the scope contract. Every required phase
+  item must map to human scope or the pre-freeze minimal convergence closure.
 - Do not set `status: complete` in mini-plan mode. Implementation belongs to `miniarch-step` or `arch-step`.
 
 ## Handoff contract
@@ -62,3 +71,5 @@ When the change is agent-backed, these blocks must make capability-first decisio
 - After clean full-arch code audit, the expected docs-cleanup handoff is `arch-docs`.
 - If the doc is structurally weak or the work outgrew the faster full-arch tier, the handoff is `arch-step reformat <DOC_PATH>`.
 - Mini mode does not create `WORKLOG_PATH`; execution creates it later.
+- If a later review or implementer discovers another adjacent path, it needs a
+  human decision; it cannot be appended to the initial closure after handoff.

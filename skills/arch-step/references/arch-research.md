@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for TL;DR, Section 0, Section 2, and Section 3
 
 ## Reads for alignment
@@ -33,6 +34,10 @@
 - read code and run read-only searches as needed
 - search for the canonical existing path before blessing a new abstraction or code path
 - inspect adjacent surfaces tied to the same contract family, source of truth, migration boundary, or parity story before treating the obvious path as the whole change
+- research may identify candidate same-contract competing paths, but evidence,
+  pattern parity, and general correctness risk are not scope authority. Record
+  candidates for initial architecture to classify; do not add them directly to
+  the required phase plan
 - resolve compatibility posture separately from `fallback_policy`; if preservation versus clean cutover is still unclear after grounded inspection, ask the exact blocker question before deeper planning
 - when the change is agent-backed, inspect current prompt surfaces, runtime or agent configuration, native model capabilities, and existing tool/file/context exposure before blessing new tooling
 - if research reveals likely code changes, write them into the plan with file anchors instead of implementing them

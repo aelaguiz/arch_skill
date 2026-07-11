@@ -11,6 +11,7 @@
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md`
 - `status.md`
 
@@ -32,6 +33,13 @@ Inspect the same artifact surfaces as `status`:
 - exact canonical top-level sections `# 1)` through `# 10)`
 - required command-owned blocks
 - `WORKLOG_PATH` and `implementation_audit` when implementation has started
+- the Scope and Simplicity Contract and whether every required obligation has
+  human or pre-freeze convergence provenance
+
+Implementation is not the next move while the contract is missing,
+contradicted, unfrozen, or exceeded. Before freeze, route to the owning planning
+command. After freeze, a proposed expansion routes to a human decision rather
+than another agent review.
 
 ## Checklist statuses
 

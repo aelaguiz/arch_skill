@@ -54,6 +54,8 @@ Ask these before you change anything:
 17. Does the prompt define real done-ness?
 18. Does validation name an available check, recognition test, or next-best evidence path?
 19. For execution or repair prompts, could the agent honestly finish without the desired state becoming real?
+20. Could an agent or reviewer expand a plan-backed goal without an explicit
+    human scope decision, or cycle review findings into new authority?
 
 ## Edit discipline
 

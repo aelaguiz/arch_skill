@@ -2,6 +2,23 @@
 
 This guide describes the live workflow surface for the repo.
 
+## Scope And Architectural Convergence
+
+Fixed-scope plans build the human-authorized outcome with the smallest
+sufficient solution. During initial architecture only, a planner may include
+the smallest evidenced same-contract caller migration, owner move, cutover, or
+delete needed to avoid competing authority. That initial convergence closure
+is recorded in the plan's Scope and Simplicity Contract and freezes before
+implementation.
+
+After freeze, only explicit human approval can expand scope. Workers, audits,
+critics, cold verifiers, plan edits, Decision Log entries, tests, PR comments,
+and already-built code cannot. A newly discovered adjacent path becomes a human
+decision; unauthorized built work is normally subtracted. The three cynical
+reviews hard-fail scope cycling when agent-created work is later used to justify
+more work: code and architecture return `not-approved`, and cruft returns
+`cruft-found`.
+
 The current skill suite is:
 
 - `arch-step`

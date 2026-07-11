@@ -91,16 +91,28 @@ If a question is still necessary, say where you looked first and ask the exact b
 
 ## Scope model
 
-- Requested behavior scope is authoritative for user-visible behavior.
-- Architectural convergence scope covers internal refactors needed to route the requested behavior through a canonical path, remove duplicate truth, migrate clearly related adopters, and prevent drift.
-- Architectural convergence may broaden touched files, symbols, or nearby adopters, but it must not broaden product capability.
+- Apply `skills/_shared/scope-and-convergence.md` as the semantic authority.
+- Requested behavior scope comes from the human-authorized outcome.
+- During initial plan architecture only, minimal convergence may add the
+  evidenced same-contract caller migrations, owner moves, cutovers, or deletes
+  needed to avoid competing authority. Record that closure before scope freeze;
+  use explicit `none` when no closure is needed.
+- After scope freeze, workers and reviewers may not broaden touched files,
+  symbols, adopters, proof categories, or product capability beyond the frozen
+  contract. A newly discovered adjacent path needs a human decision.
 - Bad scope adds new commands, modes, templating, plugin or config layers, dry-run surfaces, speculative tooling, or operational surfaces that were not required by the ask.
+- Every plan-backed finding must be dispositioned as `authorized`,
+  `frozen-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
+  `unauthorized-built-scope`. Only the first two are automatic repair work.
 
-## Simplicity and proportionality contract
+## Scope, simplicity, and proportionality contract
 
 Treat overbuilding as a known default agent failure mode. Thoroughness feels safe, so an agent can keep adding abstractions, harnesses, edge cases, reviewers, and proof long after the real fix is sufficient. Assume that bias is active. Before adding machinery, ask whether the canonical path can own the behavior, whether existing proof is already enough, and what can be deleted or left unbuilt.
 
-Section 0 must make simplicity binding before deeper planning:
+Section 0 must use the Scope and Simplicity Contract from
+`references/artifact-contract.md`, including the human authorization anchors,
+initial minimal convergence closure or `none`, and scope-freeze boundary.
+It also makes these proportionality decisions binding:
 
 - `Smallest sufficient fix`: the narrowest real end-to-end change that resolves the demonstrated failure class at its canonical owner boundary
 - `Enough proof`: the smallest credible evidence set that proves the observed failure is fixed, the successful path works, and the important boundary does not regress
@@ -110,11 +122,22 @@ Match the solution surface and proof surface to the demonstrated failure and bla
 
 Prefer a change that reduces or preserves net system complexity. Large code growth is an overbuild warning, not automatic proof: migration or deletion work can justify a large diff, but new concepts, code paths, operational steps, and test machinery need direct necessity. If the fix adds more machinery than the demonstrated problem requires, stop and simplify.
 
-Every phase-plan item must directly serve `Smallest sufficient fix` or `Enough proof`. If it serves neither, remove it. Do not preserve rejected overbuild as a follow-up merely because the planner already imagined it.
+Every phase-plan item must directly serve the human-authorized outcome, frozen
+initial convergence closure, or `Enough proof`. If it serves none, remove it.
+Do not preserve rejected overbuild as a follow-up merely because the planner
+already imagined it.
 
-The confirmed Simplicity Contract outranks later plan expansion. Machinery does not become approved merely because a planner wrote it into target architecture, a phase checklist, or verification. Remove that contradiction as consistency repair unless the user explicitly approved the expansion and the Decision Log records it.
+The confirmed Scope and Simplicity Contract outranks later plan expansion.
+Machinery does not become approved merely because a planner, worker, or reviewer
+wrote it into target architecture, a phase checklist, verification, or the
+Decision Log. After freeze, remove unauthorized work or obtain explicit human
+approval and re-freeze the contract.
 
-During implementation, an unapproved framework, harness, verifier, abstraction, command, dependency, operational surface, or test category is a hard stop. Before changing the plan or code, explain why the confirmed smallest sufficient fix cannot work without it and obtain explicit user approval. Record approval with the `Complexity expansion (user-approved)` Decision Log shape.
+During implementation, an unapproved framework, harness, verifier, abstraction,
+command, dependency, operational surface, test category, or newly discovered
+adjacent path is a hard stop. Classify it as `new-scope-needs-human` before it
+is built. Record new approval with the `Scope expansion (human-approved)`
+Decision Log shape; legacy `Complexity expansion` entries remain readable.
 
 Testing stays proportional too: cover the demonstrated failure, the successful path, and the most important boundary regression. Add more only for a distinct, demonstrated risk. Do not model every malformed response, lifecycle branch, or hypothetical failure merely because it is possible.
 
@@ -131,16 +154,19 @@ Bad example:
 
 ## Adjacent-surface rule
 
-- Before locking target architecture or the authoritative phase plan, inspect adjacent surfaces tied to the same contract, source of truth, migration boundary, or parity story.
+- Before locking target architecture or the authoritative phase plan, inspect adjacent surfaces tied to the exact changed contract, source of truth, or migration boundary. This initial architecture window closes at implementation readiness.
 - Common adjacent surfaces include sibling formats, readers and writers, embedded examples, fixtures, generated artifacts, mirrored config, live docs, and agent instructions.
 - For each adjacent surface, classify one truthful disposition:
-  - include now
-  - assign to a named later phase
+  - include in the pre-freeze minimal convergence closure
+  - sequence later inside the already-frozen destination map
   - explicitly out of scope
   - blocker question
 - If repo truth plus approved intent make the disposition obvious, decide it without asking.
-- Do not silently leave a sibling surface contradictory just because the user did not spell it out.
+- Do not silently leave a directly competing same-contract path contradictory
+  during initial planning. Merely similar siblings do not enter scope.
 - A named later phase preserves the destination map; an unnamed deferral is an unresolved decision, not a disposition.
+- Pattern similarity, parity, general correctness risk, or reviewer concern can
+  shape an authorized implementation but cannot authorize another surface.
 
 ## Compatibility posture
 
@@ -246,11 +272,20 @@ Negative-value defaults to avoid:
 
 ## Scope-authority defaults
 
-- Treat the plan's scope as authoritative.
-- If work is required to converge onto the canonical path, remove duplicate truth, migrate clearly related adopters, or avoid a concrete regression, include it and proceed.
+- Treat the frozen Scope and Simplicity Contract plus explicit later human
+  approvals as authoritative; later agent-authored plan text is not enough.
+- During initial architecture only, record the smallest directly competing
+  same-contract migration or delete needed for one canonical owner. After
+  freeze, implement only that recorded closure. A newly discovered adopter,
+  duplicate path, or regression risk needs a human scope decision unless it is
+  already inside the frozen contract; do not include it and proceed from repo
+  evidence alone.
 - If work adds new product functionality, alternate ways of doing the same thing, or speculative architecture, exclude it or record it as follow-up.
 - For agent-backed systems, tooling that substitutes for prompt work or native capability use without necessity is architecture theater by default.
-- If requiredness is not derivable from repo truth plus the approved plan, ask the user. Do not downgrade that uncertainty into follow-up, defer, optional, or a silent scope cut.
+- Repo truth proves facts, not scope authority. If requiredness is not anchored
+  to the human outcome or frozen initial convergence closure, ask the human
+  decision owner. Do not downgrade that uncertainty into follow-up, defer,
+  optional, or a silent scope cut.
 - Do not remove or relabel approved behavior just because it looks larger than expected. Only the user or explicit plan text can narrow approved intent.
 - Stop and ask whenever the plan cannot truthfully become decision-complete without a user choice.
 - Feature cut is a hard stop. Any time you are about to remove, downgrade, defer, label-optional, or "simplify away" approved behavior, acceptance criteria, or a phase obligation, stop execution and surface to the user with: what you want to cut, why it looks necessary, what Section 0, TL;DR, and Section 7 say about it, and the exact approval you need. Do not resume until the user explicitly approves. Record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape in `artifact-contract.md`. Silent narrowing is forbidden.

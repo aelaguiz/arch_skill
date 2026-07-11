@@ -36,6 +36,7 @@ Scope: <whole plan | section | pasted plan | issue body>
 
 - [ ] PLA-001 - <title>
   - Lens:
+  - Scope disposition:
   - Evidence:
   - Required plan repair:
   - Status: open | resolved | accepted-risk | out-of-scope | wrong
@@ -50,6 +51,7 @@ Scope: <whole plan | section | pasted plan | issue body>
 - [ ] IMP-001 - <title>
   - Lens:
   - Scope:
+  - Scope disposition:
   - Plan expects:
   - Code reality:
   - Anchors:
@@ -68,9 +70,19 @@ Scope: <whole plan | section | pasted plan | issue body>
 | Comparable patterns |  |  |  | read/unknown |
 | Contract/proof surfaces |  |  |  | read/unknown |
 
+## Scope Provenance Anchors
+
+- Human-authorized outcome: <plan/user anchor>
+- Initial convergence closure: <plan anchor or none>
+- Scope freeze: <anchor>
+- Later human approvals: <anchors or none>
+
+This section stores anchors, not a second copy of the scope contract.
+
 ## Required Lens Checklist
 
 - [ ] Outcome North Star
+- [ ] Scope provenance and minimal convergence
 - [ ] Ambiguity and miscommunication
 - [ ] Requirements, constraints, and simplicity
 - [ ] Tiny-team maintainability
@@ -123,6 +135,8 @@ Scope: <whole plan | section | pasted plan | issue body>
   artifacts.
 - If the plan changes scope, add a pass entry explaining whether old findings
   still apply.
+- Do not treat that pass entry, an audit finding, or an agent-authored plan edit
+  as approval. Record the human decision anchor for post-freeze expansion.
 - In `implementation-audit` mode, use `IMP-*` IDs for code review findings.
   Accept supplied test-pass status as context; do not record test execution as
   proof, ask for logs, or make the log a verification ledger.

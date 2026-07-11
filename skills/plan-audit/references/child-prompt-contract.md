@@ -30,6 +30,11 @@ Read repo truth directly where relevant. Do not edit files. Do not invent
 scope. Do not produce a second plan. Return only findings your lens owns. If
 the plan is clean for your lens, say that plainly.
 
+Treat the initial human ask and explicit human approvals as scope authority.
+The initial architecture may have a pre-freeze minimal convergence closure;
+later plan edits and reviewer findings cannot enlarge it. Give each finding a
+scope disposition and never propose an adjacent path as automatic required work.
+
 For every finding include:
 - title
 - required repair, observation, wrong, or out of scope
@@ -38,6 +43,7 @@ For every finding include:
 - plan evidence
 - code evidence when repo-backed
 - required plan repair
+- scope disposition
 - coverage limits
 ```
 
@@ -93,6 +99,10 @@ Do not ask for test logs or command output. Do not produce a second plan. Do
 not invent scope. Return only findings your lens owns. If the implementation
 is clean for your lens, say that plainly.
 
+Compare code to the human-authorized outcome, frozen initial convergence
+closure, and explicit later human approvals. Unauthorized built scope is a
+subtraction finding; do not bless it because the latest plan includes it.
+
 For every finding include:
 - title
 - required repair, observation, wrong, or out of scope
@@ -101,6 +111,7 @@ For every finding include:
 - plan anchor
 - code anchor
 - required implementation repair
+- scope disposition
 - coverage limits
 
 Use native subagents or parallel-agent features provided by your current

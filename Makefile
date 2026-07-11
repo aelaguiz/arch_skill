@@ -278,6 +278,7 @@ verify_agents_install:
 		test ! -d $(AGENTS_SKILLS_DIR)/$$skill; \
 	done
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/depth-first-planning.md
+	@test -f $(AGENTS_SKILLS_DIR)/_shared/scope-and-convergence.md
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(AGENTS_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
 	@test ! -e $(AGENTS_SKILLS_DIR)/arch-step/scripts/upsert_codex_stop_hook.py
@@ -313,6 +314,7 @@ verify_claude_install:
 		test ! -d $(CLAUDE_SKILLS_DIR)/$$skill; \
 	done
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/depth-first-planning.md
+	@test -f $(CLAUDE_SKILLS_DIR)/_shared/scope-and-convergence.md
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(CLAUDE_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
 	@test ! -e $(CLAUDE_SKILLS_DIR)/arch-step/scripts/upsert_codex_stop_hook.py
@@ -343,6 +345,7 @@ verify_gemini_install:
 		test ! -d $(GEMINI_SKILLS_DIR)/$$skill; \
 	done
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/depth-first-planning.md
+	@test -f $(GEMINI_SKILLS_DIR)/_shared/scope-and-convergence.md
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/upsert_codex_stop_hook.py

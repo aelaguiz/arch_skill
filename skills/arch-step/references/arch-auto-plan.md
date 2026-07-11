@@ -28,6 +28,9 @@ Running `auto-plan` should end in one of two honest states:
   - the `consistency-pass` helper block is present, says `Decision-complete: yes`, and says `Decision: proceed to implement? yes`
   - a complete `consistency-pass` receipt exists
   - no unresolved decisions remain in the authoritative artifact
+  - the Scope and Simplicity Contract has human authorization anchors, an
+    initial minimal convergence closure or explicit `none`, and a scope-freeze
+    boundary that Section 7 does not exceed
   - no implementation has started
   - the final message says the doc is decision-complete and ready for `implement-loop`
 - `blocked`:
@@ -38,6 +41,7 @@ Running `auto-plan` should end in one of two honest states:
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `section-quality.md` for Section 3, Section 4, Section 5, Section 6, Section 7, and `planning_passes`
 - `arch-research.md`
 - `arch-deep-dive.md`

@@ -11,6 +11,12 @@ counterexample.
 
 ## Independence: when does a sub-plan deserve its own DOC_PATH?
 
+The raw human goal is the scope baseline. Decomposition approval approves the
+visible sub-plan outcomes and gates; it does not approve hidden infrastructure
+that a later planner or critic derives. Do not add a sub-plan merely to cover a
+reviewer idea or similar neighboring area. A later sub-plan can be inserted
+only after explicit human approval.
+
 A sub-plan is independent enough to split out when its North Star and
 acceptance criteria can be written without referencing another sub-plan's
 internals. The sub-plan's spec stands on its own. Someone reading it cold
@@ -87,6 +93,8 @@ sub-plan should deliver a truth later sub-plans can rely on: an API that
 serves real data, a migration path that is proven on one owner path, a
 prompt contract that handles one representative workflow, or a verified
 integration seam. Later sub-plans expand along named axes from that proof.
+Those axes must already be present in the approved decomposition. Depth-first
+ordering does not authorize new breadth.
 
 Example — ordering by dependency:
 > Sub-plan 1: Design and ship the v2 search API contract.

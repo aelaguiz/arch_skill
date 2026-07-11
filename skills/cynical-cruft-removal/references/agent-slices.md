@@ -68,6 +68,14 @@ Find reachable but low-value wrappers, registries, adapters, factories,
 single-use generic abstractions, duplicate implementations, glue files, and
 compatibility layers that do not serve a current requirement.
 
+### Scope-Laundered Live Clusters
+
+For scope-backed work, compare the initial human scope and frozen convergence
+closure with review waves and current artifacts. Group unauthorized code,
+tests, schemas, configs, docs, dependencies, and ops surfaces even when live.
+Current reachability is not approval. Recommend subtraction, not replacement
+machinery.
+
 ## Child Prompt Shape
 
 Use a compact prompt like:
@@ -81,6 +89,10 @@ Target: <target>
 Assume references are not proof of value. Identify current roots, suspicious
 artifacts, weak references, self-preserving clusters, deletion candidates, keep
 decisions, and coverage gaps for this slice only.
+
+When scope history is supplied, treat human scope and the frozen closure as
+authority. Report scope-laundered live clusters; do not keep them because later
+agents made them reachable.
 
 Return concise evidence with repo paths. Do not edit files. Do not ask for more
 tests or docs. Do not use external review/delegation tools.

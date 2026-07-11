@@ -170,11 +170,12 @@ silently advance.
 
 ### Critic verdict: `scope_change_detected`
 
-- Halt. There is no auto-defer, auto-drop, or scope-reduction branch.
+- Halt. The critic has no authority to expand or reduce scope.
 - Set epic `status: halted`, update sub-plan Status to
   `scope-changed`, write the verdict path, append a Decision Log entry
-  that names the discovered items and the scope-preserving options, end
-  the turn with the user question.
+  that names the discovered items and their provenance dispositions, then ask
+  the human whether to approve and re-freeze an `extend_current` or
+  `new_sub_plan` expansion, or keep scope and require subtraction/redesign.
 
 ### Critic verdict: `incomplete`
 

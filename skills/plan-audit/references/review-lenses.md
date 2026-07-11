@@ -9,6 +9,20 @@ plan-readiness audits before implementation.
 
 ## Required Lenses
 
+### `scope-provenance-and-minimal-convergence`
+
+Recover the initial human-authorized outcome, explicit later human approvals,
+the initial architecture's pre-freeze convergence closure, and the freeze
+anchor. Map every durable obligation to human scope or that closure. Reject
+"the plan says so" when the cited plan text was agent-authored and has no
+upstream authority. Distinguish directly competing same-contract paths from
+similar neighboring code, and reject speculative proof or infrastructure.
+
+This lens may identify the smallest plan gap but may not add scope. Before
+freeze, route the gap back to the initial planning owner. After freeze, require
+a human decision. Treat scope cycling—agent work becoming code and then being
+used to justify more work—as blocking.
+
 ### `outcome-north-star`
 
 Check whether the plan states the desired world before task detail. Verify that
@@ -58,11 +72,11 @@ that should share the same owner would still route around it.
 
 ### `existing-pattern-and-convergence`
 
-Find comparable repo patterns. Decide which pattern is canonical, which are
-debt, and which related code should migrate, delete, stay different, or become
-a named follow-up. Include adjacent same-contract or same-behavior surfaces so
-the plan cannot look locally clean while leaving the system split between old
-and new patterns. Block unjustified new patterns.
+Find comparable repo patterns and judge whether the plan chose the canonical
+owner. Comparable or same-behavior code is evidence, not scope authority. Only
+directly competing same-contract paths already inside the pre-freeze closure
+may be required automatically; newly discovered paths route to planning before
+freeze or a human decision after freeze. Block unjustified new patterns.
 
 ### `caller-invariant-state`
 

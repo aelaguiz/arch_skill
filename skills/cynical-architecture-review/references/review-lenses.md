@@ -14,17 +14,34 @@ choose this architecture again?
 
 Resolve truth in this order:
 
-1. Intended user experience: what the user should see, do, or rely on.
-2. Experiment requirements: what must stay measurable, switchable, reversible,
+1. Human-authorized user experience and outcome: what the user explicitly asked
+   to see, do, or rely on.
+2. Explicit later human scope approvals, if any.
+3. Initial architecture's pre-freeze minimal convergence closure.
+4. Experiment requirements: what must stay measurable, switchable, reversible,
    comparable, or stable for the experiment to remain valid.
-3. Hard constraints: platform, runtime, data, security, performance, model,
+5. Hard constraints: platform, runtime, data, security, performance, model,
    framework, migration, or compatibility facts that cannot be wished away.
-4. Current code behavior and current ownership paths.
-5. Existing repo patterns that are actually canonical after reading them.
-6. The smallest robust architecture that preserves items 1-3.
-7. The implementation's explanation for itself.
+6. Current code behavior and current ownership paths.
+7. Existing repo patterns that are actually canonical after reading them.
+8. The smallest robust architecture that preserves the authorized items above.
+9. The implementation's explanation for itself.
 
 The implementation explanation comes last because it is often the lie.
+
+## Scope Provenance And No-Cycling Lens
+
+For work with a recoverable scope story, map every durable concept, owner,
+state, service, dependency, compatibility path, mode, operational surface,
+harness, and proof category to human scope or the frozen initial convergence
+closure. A Decision Log entry, reviewer finding, later plan revision, or
+current reachability is not authority.
+
+Fail architecture that became "necessary" only because agents iterated it into
+the system and later reviews treated it as a premise. This is scope cycling. A
+newly discovered architectural relationship may justify a human decision, but
+the review may not expand the repair scope itself. Prefer subtracting the
+unauthorized cluster back to the smallest authorized architecture.
 
 ## Subtraction-First Lens
 

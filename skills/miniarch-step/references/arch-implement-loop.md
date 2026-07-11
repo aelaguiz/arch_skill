@@ -35,6 +35,7 @@ mode or control surface.
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `skills/_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 - `arch-implement.md`
@@ -67,7 +68,12 @@ Audit pass:
 - the current approved ordered implementation frontier is the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this loop cycle
 - each cycle must run implementation first and `audit-implementation` second against the same `DOC_PATH`
 - `implement-loop` must not continue from a plan that is not decision-complete
-- `implement-loop` must not continue when the Simplicity Contract is missing, vague, contradicted by Section 7, or exceeded by the current implementation
+- `implement-loop` must not continue when the Scope and Simplicity Contract is
+  missing, vague, unfrozen, contradicted by Section 7, or exceeded by the current
+  implementation
+- repeated review findings retain their original scope disposition. A newly
+  discovered adjacent path stops for human approval; unauthorized built scope
+  is subtracted before the loop advances
 - `implement-loop` runs against the same approved plan; the implementation side may not rewrite requirements, scope, acceptance criteria, or phase obligations while the loop is active
 - before auditing, the implementation pass must finish the current approved ordered implementation frontier or hit a real blocker, and the claimed phase work must have credible programmatic proof
 - for modern Section 7 docs, fresh audit must validate both `Checklist (must all be done)` and `Exit criteria (all required)` before any phase can stay complete or the loop can finish clean

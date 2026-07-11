@@ -25,9 +25,16 @@ Use this skill for contained feature work that is too small for the full arch fl
 ## Non-negotiables
 
 - Keep one compact `DOC_PATH` as the SSOT for the change.
+- Keep a compact Scope and Simplicity Contract in that doc: human outcome and
+  anchors, smallest sufficient solution, initial minimal convergence closure or
+  `none`, scope freeze, enough proof, do-not-build boundary, and accepted
+  residual risk.
 - Start and plan modes are docs-only. Code changes only happen in finish mode.
 - Ask the small set of clarifying questions that must be answered before planning. Do not bulldoze past unresolved requirements.
 - Keep the plan to 1-3 phases. If it grows beyond that, escalate instead of pretending the fit is still good.
+- Initial architecture may include only the smallest evidenced same-contract
+  convergence closure before plan mode declares readiness. Finish mode and
+  self-review cannot expand it; later scope requires explicit human approval.
 - Implementation stays local. Do not launch external review unless the user explicitly asks for review.
 - When the changed behavior is agent- or LLM-driven, inspect prompt surfaces, native model capabilities, and existing tool/file/context exposure before designing.
 - For agent-backed systems, prefer prompt engineering, grounding, and native-capability use before new harnesses, wrappers, parsers, OCR layers, or scripts.
@@ -40,13 +47,14 @@ Use this skill for contained feature work that is too small for the full arch fl
 
 1. Read `references/doc-contract.md`.
 2. Read `references/shared-doctrine.md`.
-3. Resolve whether you are in:
+3. Read `skills/_shared/scope-and-convergence.md`.
+4. Resolve whether you are in:
    - start mode
    - plan mode
    - finish mode
-4. Resolve `DOC_PATH` and read it fully if it exists.
-5. Check that the work still fits `lilarch`.
-6. Read the mode reference and `references/quality-bar.md`.
+5. Resolve `DOC_PATH` and read it fully if it exists.
+6. Check that the work still fits `lilarch`.
+7. Read the mode reference and `references/quality-bar.md`.
 
 ## Workflow
 
@@ -61,12 +69,14 @@ Use this skill for contained feature work that is too small for the full arch fl
 - Update the minimal research grounding.
 - Write the current architecture, target architecture, call-site audit, and a 1-3 phase plan.
 - Run the internal lilarch plan audit and tighten the doc before implementation.
+- Freeze the compact scope contract before entering finish mode.
 
 ### 3) Finish mode
 
 - Implement locally against the doc.
 - Keep a lightweight `WORKLOG_PATH`.
 - Self-audit for completeness and mark the doc complete only when the code is actually complete.
+- Subtract unauthorized built scope; do not rewrite the compact doc to bless it.
 
 ## Output expectations
 

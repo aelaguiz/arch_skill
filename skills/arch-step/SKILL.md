@@ -1,6 +1,6 @@
 ---
 name: arch-step
-description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `consistency-pass`, `review-gate`, `implement`, `implement-loop`, `auto-implement`, `full-auto`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status for work that may require architectural convergence onto canonical repo paths. Internal refactors may widen enough to remove duplicate truth or parallel paths, but the skill must not invent new product functionality, modes, or speculative infrastructure. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
+description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `consistency-pass`, `review-gate`, `implement`, `implement-loop`, `auto-implement`, `full-auto`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status. Initial architecture may include the smallest evidenced same-contract convergence closure before scope freezes; later expansion requires explicit human approval. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
 metadata:
   short-description: "Standalone full-arch operator"
 ---
@@ -38,6 +38,11 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - No command may leave the doc less canonical, less honest, or more contradictory than it found it.
 - Present-but-weak sections are not done.
 - A plan is not ready, complete, or implementation-ready while any unresolved decision remains about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, architecture, canonical owner path, required deletes, fallback policy, acceptance evidence, or implementation scope.
+- Section 0 must contain the binding Scope and Simplicity Contract from
+  `references/artifact-contract.md`. Initial architecture may add only its
+  evidenced minimal same-contract convergence closure; freeze that closure
+  before implementation. After freeze, only explicit human approval expands
+  scope. Apply `skills/_shared/scope-and-convergence.md`.
 - Correctness and approved intent outrank speed, scope trimming, or "minimum implementation."
 - The agent has no authority to cut requested behavior, acceptance criteria, or required implementation work unless the user or the governing plan already marked that item out of scope.
 - Cutting, downgrading, deferring, or "simplifying away" approved behavior, acceptance criteria, or phase obligations is a hard stop. Surface to the user with what you want to cut, why, what Section 0 / TL;DR / Section 7 say about it, and the exact approval you need. Do not proceed until the user explicitly approves; record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape.
@@ -51,14 +56,23 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 - If the doc is materially non-canonical, repair only the safe owned portion or route to `reformat`.
 - Keep one planning source of truth. Do not create sidecar plan docs or competing checklists.
 - All planning commands are docs-only. Only `implement` and `implement-loop` may change code; `full-auto` may reach code changes only by routing to `implement-loop`.
-- Distinguish requested behavior scope from architectural convergence scope. Requested behavior scope governs user-visible behavior. Architectural convergence scope covers internal refactors needed to route the ask through canonical paths, remove duplicate truth, and prevent drift.
+- Distinguish the human-authorized outcome from the initial minimal convergence
+  closure. Both must be recorded before scope freeze; neither later review nor
+  implementation may infer more scope from repo adjacency.
 - Search for the canonical existing path before designing a new one. Reuse it, refactor it as much as required to fully own the change, or justify why it cannot own the change.
-- Internal convergence work may broaden touched files or nearby adopters when needed to avoid parallel paths or shadow contracts, but it must not invent new product functionality, modes, or speculative infrastructure.
+- During initial planning, convergence may include the smallest evidenced
+  touched-file or adopter set needed to eliminate a directly competing owner.
+  After scope freeze, a newly found path requires a human decision even when it
+  would make the architecture cleaner.
 - Any refactor, shared-path extraction, or consolidation must preserve existing behavior and name a credible verification signal before it is considered done.
 - Use repo evidence first. Ask only for true product, UX, external-constraint, access, or doc-path gaps.
 - Before asking the user any plan-shaping question, consult approved intent on the plan doc: Section 0 (North Star), TL;DR, and the Section 7 phase frontier. Only ask when intent plus repo evidence genuinely leave two credible branches. Record intent-derived resolutions in the Decision Log using the `Intent-derived` shape.
 - If repo evidence cannot settle a plan-shaping decision, ask the user instead of guessing, defaulting, or parking the choice as a pseudo-complete plan.
-- Before hardening target architecture or Section 7, inspect adjacent surfaces tied to the same contract family, source of truth, migration boundary, or parity story. Include them now, assign them to a named later phase, explicitly exclude them, or ask the exact blocker question when repo truth and approved intent do not settle the disposition.
+- Before hardening target architecture or Section 7, inspect adjacent surfaces
+  tied to the exact changed contract, source of truth, or migration boundary.
+  Put directly competing paths in the pre-freeze minimal closure, sequence them
+  inside the frozen destination map, exclude merely similar neighbors, or ask
+  the exact blocker question. Pattern parity alone is not scope authority.
 - Compatibility posture is a first-class plan decision separate from `fallback_policy`. Resolve whether the change preserves the existing contract, performs a clean cutover, or uses an explicitly approved timeboxed bridge. Do not silently assume backward compatibility just because it feels safer.
 - When the changed behavior is agent- or LLM-driven, inspect current prompt surfaces, runtime or agent configuration, native model capabilities, and existing tool/file/context exposure before designing. If that capability picture is still unclear after inspection, ask narrowly instead of assuming the agent cannot do it.
 - For agent-backed systems, prefer prompt engineering, grounding/context shaping, and better use of native capabilities before custom harnesses, wrappers, parsers, OCR stacks, fuzzy matchers, or deterministic sidecars.
@@ -237,7 +251,7 @@ Workflow:
 - User-facing invocation: `$arch-step implement-loop <DOC_PATH>` or `$arch-step auto-implement <DOC_PATH>`. Do not introduce a second command, mode, or control surface.
 - Before implementation starts, run `python3 skills/arch-step/scripts/arch_stage_gate.py ready --doc <DOC_PATH>`; if it fails, report the planning stage it names instead of implementing from a marker-only plan.
 - Implementation covers the current approved ordered implementation frontier in order: the earliest incomplete or reopened phase plus later phases whose prerequisites and proof gates are reachable in this implementation arc.
-- Execution does not rewrite requirements, scope, acceptance criteria, or phase obligations mid-coding. If the plan itself needs to change, stop and repair the plan instead of continuing on a rewritten story.
+- Execution does not rewrite requirements, scope, acceptance criteria, or phase obligations mid-coding. If the frozen contract needs to expand, stop for explicit human approval and re-freeze it; an agent-authored plan repair is not authority.
 - The implementation pass may ship code and sync plan/worklog truth, but the audit must be a real `audit-implementation` pass against current repo state before the loop can finish clean.
 
 ### Output expectations
@@ -261,6 +275,7 @@ Workflow:
 
 - `references/artifact-contract.md` - canonical full-arch plan artifact, exact section shape, frontmatter, block inventory, and worklog contract
 - `references/shared-doctrine.md` - cross-cutting doctrine: question policy, alignment checks, evidence, SSOT, scope defaults, and consistency repair
+- `skills/_shared/scope-and-convergence.md` - human scope authority, initial planning convergence, scope freeze, finding dispositions, and scope-cycling prohibition
 - `skills/_shared/depth-first-planning.md` - destination map, first working slice, expansion map, proof gates, scope-cut distinction, and failure-mode recognition tests
 - `references/section-quality.md` - purpose, strong/weak bar, trust rules, and failure modes for each section and supporting block
 - `references/arch-new.md` - bootstrap the canonical artifact and stop for North Star confirmation

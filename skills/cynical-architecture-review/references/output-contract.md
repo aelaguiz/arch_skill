@@ -33,6 +33,8 @@ Record:
   subsystem, plan scope, or architecture claim
 - baseline and head/current state when known
 - controlling plan, source truth, architecture claim, or worklog if supplied
+- initial human scope, frozen convergence closure and freeze anchor, later
+  human approvals, and plan/review-wave history when recoverable
 - local instruction and convention files read
 - important exclusions or unresolved target ambiguity
 
@@ -51,6 +53,7 @@ Record:
   and adjacent same-contract surfaces
 - existing repo patterns compared and whether they are canonical, different,
   accidental-but-contained, or wrong-road
+- scope-provenance anchors and scope-cycle evidence, or `not applicable`
 
 Keep this as a review map, not a second plan.
 
@@ -70,8 +73,8 @@ Record the complexity tax the current architecture charges:
 - caller obligations and memory contracts
 - future-copy surfaces
 
-For each important item, note the requirement it claims to serve. If no real
-requirement is visible, say so.
+For each important item, note the human-scope or frozen-closure anchor it claims
+to serve. If none is visible, say so; current use is not authorization.
 
 ## `subtraction-map.md`
 
@@ -125,6 +128,9 @@ Use this shape for each finding:
 - Requirement / UX preserved: <what must keep working>
 - Simpler architecture target: <delete, consolidate, move ownership, collapse state, or make impossible>
 - Cynical architecture pattern: <catalog pattern>
+- Scope provenance: <human anchor | frozen closure anchor | later human approval | missing>
+- Scope-cycle evidence: <revision/wave/code chain or none>
+- Required disposition: <subtract | human decision | no scope issue>
 ```
 
 Rules:
@@ -135,6 +141,8 @@ Rules:
   truth, side door, unjustified abstraction, permanent shim, flags-as-owner
   split, state spread, wrong decomposition, or future-copy trap that must
   change before approval is a `REQUIRED REPAIR`.
+- Scope-cycled or unauthorized post-freeze architecture is a `REQUIRED REPAIR`
+  and forces `not-approved`, even when the latest plan calls it required.
 - `OBSERVATION` is only for true informational facts, genuinely different
   contracts, excluded follow-ups, or surfaces that do not create architecture
   risk.
@@ -181,6 +189,14 @@ VERDICT: approve | not-approved | scope-incomplete
 - Complexity tax:
 - Subtraction opportunities:
 - QA/test/docs surfaces considered only as architecture evidence:
+
+## Scope Provenance
+
+- Initial human-authorized scope:
+- Frozen initial convergence closure and freeze anchor:
+- Later human approvals:
+- Durable concepts without authority:
+- Scope-cycle evidence and required disposition:
 
 ## Coverage Summary
 

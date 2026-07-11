@@ -24,7 +24,8 @@ boundary, or lower the plan's quality bar to finish faster.
 1. Intake: plan path, boundary (whole plan default), worker
    runtime/model/effort, max parallelism, wave cap, cold verifier toggle. A
    Codex worker with no named model uses `gpt-5.6-sol`.
-2. Plan read and extraction into the conductor log; readiness gate.
+2. Plan read and extraction into the conductor log; proportionality,
+   provenance, and scope-freeze readiness gate.
 3. Initial or resume checkpoint commit.
 4. Wave loop:
 
@@ -39,6 +40,11 @@ design wave (chunking doctrine)
 -> update log, post compact status table
 -> repeat until execution map clean or hard stop
 ```
+
+Finding triage always separates factual validity from scope authority. Only
+work already authorized by the human outcome or frozen initial convergence
+closure enters a send-back. Review-created expansion never creates another
+wave or plan obligation.
 
 5. Final gate: whole-plan audit sweep by the conductor, then the cold
    verifier unless disabled; findings route through the same send-back
@@ -82,3 +88,6 @@ delegate. The line is hard:
 - Never claim completion while any slice is outside `accepted`/`deferred`,
   any deferral lacks a recorded rationale, plan-required proof is missing, or
   the final gate has open accepted findings.
+- Never claim completion while scope provenance is unresolved, a human scope
+  decision is open, unauthorized built scope remains, or the wave history shows
+  scope cycling.

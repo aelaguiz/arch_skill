@@ -31,10 +31,16 @@ User-facing invocation is `implement-loop` or `auto-implement`.
 `auto-implement` is an exact alias of `implement-loop`; do not create a second
 mode or control surface.
 
+The loop advances only through the frozen authorized frontier. Repeated review
+findings retain their original scope disposition and never become authority by
+repetition. A newly discovered adjacent path stops for human approval; already
+built unauthorized work is subtracted before the loop advances.
+
 ## Shared references to carry in
 
 - `artifact-contract.md`
 - `shared-doctrine.md`
+- `skills/_shared/scope-and-convergence.md`
 - `skills/_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 - `arch-implement.md`

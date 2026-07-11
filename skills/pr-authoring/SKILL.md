@@ -35,6 +35,11 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
 - Delete every placeholder and omit irrelevant sections. Never include template notes, old heading instructions, or empty checklist items.
 - Explain why the change exists and how it works. The code already shows what changed; the PR should make review faster and safer.
 - Do not invent verification, rollout, rollback, blast radius, metrics, or architecture facts. If evidence is missing, say what is known and what was not verified.
+- For plan-backed work, include a compact scope receipt: canonical plan path,
+  one-line human-authorized outcome, frozen initial convergence closure or
+  `none`, explicit human-approved expansions or `none`, and material
+  out-of-scope findings intentionally not built. Point to plan anchors; do not
+  copy the contract or create a second plan.
 - Do not turn the final answer into "here is the PR text." The final answer is a publication receipt plus any real caveats.
 
 ## First move
@@ -48,10 +53,15 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
 ## Workflow
 
 1. **Map the change.** Summarize the user-facing purpose, changed subsystems, important design decisions, compatibility impact, and likely reviewer concerns from repo evidence.
+   For plan-backed work, recover the human scope and freeze anchors before
+   treating the latest plan text as authority.
 2. **Choose the PR shape.** Use the vendored scaffold to pick the minimum set of sections that fit the change. Prefer a shorter precise PR over a comprehensive but noisy one.
 3. **Write the title.** Make it specific and reviewable. Avoid template headings, vague verbs, and implementation-only titles when the user impact is clearer.
 4. **Write the body.** Include the real problem or motivation, approach, notable implementation details, blast radius, verification, and follow-up boundaries that matter for this PR.
 5. **Validate the body.** Remove placeholders, unsupported claims, irrelevant template sections, stale file names, and any text that could have been written without reading the diff.
+   Confirm the diff does not exceed the scope receipt. If it does, stop for
+   subtraction or a human approval/re-freeze instead of publishing a laundered
+   scope story.
 6. **Publish to GitHub.** Use the available GitHub-capable path in the current runtime to create or update the PR with the final title/body.
 7. **Return the receipt.** Give the PR URL, title, whether it was created or updated, and any concise caveats such as missing verification or blocked publication.
 

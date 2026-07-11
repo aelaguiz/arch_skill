@@ -41,6 +41,10 @@ truthful.
 - Find requirements, non-requirements, constraints, non-constraints,
   assumptions, and complexity sources.
 - Mark missing outcome-contract pieces before judging detailed architecture.
+- Recover the original human-authorized outcome and explicit later human
+  approvals. Identify the initial minimal convergence closure and the point at
+  which implementation scope froze. Reject the latest plan text as circular
+  authority when it cannot trace an obligation to one of those anchors.
 
 ## 4. Identify Real Ambiguity
 
@@ -111,6 +115,7 @@ Run the lenses from `review-lenses.md`:
 - elegance and code-judo
 - deletion and side-door closure
 - proof and phase exit
+- scope provenance and minimal convergence
 - conditional lenses when triggered
 
 ## 9. Challenge The Architecture
@@ -121,8 +126,9 @@ Ask:
 - Can the same outcome be achieved with fewer live concepts?
 - Should an existing pattern be extended or made canonical?
 - What can be deleted, privatized, merged, or made unreachable?
-- Which adjacent same-contract surfaces should migrate now, delete now, stay
-  intentionally different, or become a named follow-up?
+- Which adjacent same-contract surfaces were already included by initial
+  architecture before freeze? Do not answer this question by expanding the
+  plan from the audit.
 - What complexity exists only because the plan assumes a false constraint?
 
 ## 10. Check Implementation Risk
@@ -141,6 +147,10 @@ Ask:
   architecture, proof, drift, or completion.
 - Wrong or out of scope: reject with a short reason in the audit log when
   applicable.
+- Give every material finding a scope disposition from the shared doctrine.
+  A pre-freeze planning gap routes back to the planning owner for architecture
+  inspection. A post-freeze gap routes to a human decision. Neither route lets
+  the auditor write the expansion into required scope.
 
 ## 12. Update The Audit Log
 

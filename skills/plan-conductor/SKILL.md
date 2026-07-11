@@ -84,10 +84,24 @@ log beside the plan is its durable memory.
   done-ness anywhere — no requirements, checklists, exit criteria, or
   verification obligations — stop before dispatching any worker and report
   what is missing instead of inventing scope.
+- Apply `skills/_shared/scope-and-convergence.md`. Intake must recover the
+  human-authorized outcome and approval anchors, smallest sufficient solution,
+  initial minimal convergence closure, scope-freeze boundary, enough proof,
+  do-not-build boundary, and accepted residual risk. Observable checklists are
+  insufficient when that provenance is missing, contradictory, or obviously
+  overbroad. Do not dispatch an unfrozen or scope-laundered plan.
+- The initial architecture window is already closed when conductor execution
+  begins. Workers, the conductor, warm audits, cold verification, cynical
+  reviews, PR feedback, and repeated findings cannot add to the frozen closure.
+  A newly discovered same-contract adjacent path requires a human decision.
 - The conductor never edits source code. It edits only coordination artifacts
   and plan completion annotations. It never edits the plan's requirements,
   checklists, or exit criteria to match what was built; scope changes escalate
   to the user.
+- Plan completion annotations may record execution truth only. The conductor
+  may not edit scope, requirements, or the initial closure to normalize worker
+  or reviewer discoveries. Post-freeze expansion requires explicit human
+  approval and a re-frozen plan before dispatch resumes.
 - Delegation is `$agent-delegate` fresh-resumable by default. Repairs resume
   the exact captured session id through the same runtime. Never resume
   "latest"; never cross runtimes. Use fresh-one-shot only for the optional
@@ -123,6 +137,12 @@ log beside the plan is its durable memory.
   acceptance. A worker rebuttal never closes a finding without
   conductor-verified evidence. A clean pass must record which lying-modes
   were checked.
+- Separate factual validity from scope authority for every finding. Record one
+  shared scope disposition. Only `authorized` and
+  `frozen-convergence-required` become send-backs. `new-scope-needs-human` is
+  escalated, `out-of-scope` stays an observation, and
+  `unauthorized-built-scope` requires subtraction unless a human ratifies and
+  re-freezes it. Repetition never changes the disposition.
 - Batch all accepted findings into one resume prompt per repair round. Caps:
   3 send-backs per session, then 1 fresh respawn with a sharpened brief, then
   escalate the slice and continue independent work. The same finding surviving
@@ -158,18 +178,19 @@ log beside the plan is its durable memory.
    plan-conductor request selected a Terra worker.
 2. Read `references/workflow-contract.md`.
 3. Read `references/plan-intake-and-readiness.md`.
-4. Resolve the plan path, boundary (whole plan unless the user named a phase
+4. Read `skills/_shared/scope-and-convergence.md`.
+5. Resolve the plan path, boundary (whole plan unless the user named a phase
    range), worker runtime/model/effort, max parallelism, wave cap, and cold
    verifier toggle. Default an omitted Codex model to `gpt-5.6-sol`; ask one
    consolidated question only for other missing execution values. The Terra
    shortcut supplies its own execution values, so do not ask for them.
-5. Read the plan once end to end. Create or update
+6. Read the plan once end to end. Create or update
    `<PLAN_STEM>_CONDUCTOR_LOG.md` with the extracted execution map, and apply
    the readiness gate.
-6. Inspect `git status` and commit an initial or resume checkpoint before
+7. Inspect `git status` and commit an initial or resume checkpoint before
    launching workers, unless a concrete safety issue such as secrets blocks
    it.
-7. Read `references/chunking-and-parallelism.md`, then design and dispatch
+8. Read `references/chunking-and-parallelism.md`, then design and dispatch
    the first wave.
 
 ## Workflow
@@ -187,8 +208,9 @@ log beside the plan is its durable memory.
 5. On return, audit per `references/audit-and-send-back.md`: enumerate the
    claims to falsify, check them against git, trace the authority path
    beyond the diff, apply the three lens groups, and require decisive proof
-   to be independently reproduced. Triage findings as accepted, rejected
-   (with conductor-verified evidence), or deferred (with rationale).
+   to be independently reproduced. Judge factual validity separately from
+   scope disposition. Only factually valid findings already inside the frozen
+   contract become repair work.
 6. Route: batch accepted findings into one resume prompt and send the session
    back; or accept the slice with evidence anchors and commit a checkpoint;
    or respawn fresh; or escalate and continue independent slices.
@@ -204,6 +226,9 @@ log beside the plan is its durable memory.
    through the same send-back machinery. Under the Terra shortcut, defer the
    instrument portion to step 10's three fresh sessions instead of duplicating
    those reviews; still run the conductor sweep and cold verifier.
+   Give every final reviewer the plan path, human baseline anchors, approval
+   entries, frozen initial closure, and freeze anchor. Their findings use the
+   same scope triage and cannot expand the plan.
 10. If the Terra delivery shortcut is active, run its stronger delivery gate:
     all three cynical reviews in independent fresh Terra sessions, repair and
     re-review accepted findings, then hand off in order to `$pr-authoring` and
@@ -229,6 +254,8 @@ Report compactly:
   counts
 - proof run, reused, or still owed, with the invalidator reasoning
 - findings triage summary and any rejected-finding evidence
+- scope-integrity summary: contract anchor, human decisions requested, scope
+  cycles found, and unauthorized work subtracted
 - commits made, files changed, and plan completion annotations written
 - escalations with the specific user decision each one needs
 - next action or final verdict with evidence

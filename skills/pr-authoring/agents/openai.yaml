@@ -1,7 +1,7 @@
 interface:
   display_name: "PR Authoring"
   short_description: "Write and publish high-quality GitHub pull requests"
-  default_prompt: "Use $pr-authoring to write and publish a high-quality GitHub PR for the current repo changes."
+  default_prompt: "Use $pr-authoring to write and publish a high-quality GitHub PR for the current repo changes. For plan-backed work, include a compact scope receipt with the canonical plan, one-line human outcome, frozen initial convergence closure or none, later human-approved expansions or none, and material out-of-scope findings not built. Point to anchors rather than copying the contract, and do not publish a diff that exceeds the receipt without subtraction or explicit human approval and re-freeze."
 
 policy:
   allow_implicit_invocation: true

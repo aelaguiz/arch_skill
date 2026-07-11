@@ -11,7 +11,7 @@ The plan is source of truth for:
 - requirements, non-requirements, constraints, and non-constraints
 - active scope, stop boundary, phase order, and exclusions
 - owner-path, delete, side-door, compatibility, and proof promises
-- convergence decisions for adjacent same-contract or same-behavior surfaces
+- initial pre-freeze convergence closure and explicit later human approvals
 - decisions that change the intended outcome
 - completion state when the plan format has checkboxes or phase status
 
@@ -24,7 +24,8 @@ Good plan updates:
   true
 - carry an ambiguity decision through requirements, architecture, phase order,
   delete list, and proof strategy
-- add a required delete or side-door closure discovered from code truth
+- add a completion anchor for a delete or side-door closure already present in
+  the frozen convergence closure
 - remove a false constraint that was creating complexity
 
 Bad plan updates:
@@ -33,6 +34,8 @@ Bad plan updates:
 - checking off tasks because files changed while the outcome remains false
 - hiding unresolved ambiguity in notes
 - turning the plan into a command log
+- adding a newly discovered adjacent path after freeze or editing the plan to
+  ratify work that was already built without human approval
 
 ## Plan Audit Log
 
@@ -72,6 +75,8 @@ Suggested shape:
 Plan: <path>
 Audit log: <path or none>
 Active scope: <phase | section | whole plan | user-defined stop boundary>
+Scope contract anchor: <plan section/revision>
+Scope status: <frozen | human decision needed | legacy boundary unresolved>
 Last updated: <date/time>
 Current checkpoint: <commit/hash/worktree/diff handle if useful>
 
@@ -85,8 +90,8 @@ Current checkpoint: <commit/hash/worktree/diff handle if useful>
 
 ## Scope Ledger
 
-| Item | Plan anchor | Status | Code anchor | Proof | Review |
-| --- | --- | --- | --- | --- | --- |
+| Item | Plan anchor | Scope disposition | Status | Code anchor | Proof | Review |
+| --- | --- | --- | --- | --- | --- | --- |
 
 ## Code Read Ledger
 
@@ -105,8 +110,9 @@ Current checkpoint: <commit/hash/worktree/diff handle if useful>
 
 ## Side Doors And Deletes
 
-Include adjacent same-contract or same-behavior surfaces here when leaving
-them live could split the system between old and new behavior.
+Include only adjacent surfaces already named in the frozen closure, plus
+observations clearly labeled `new-scope-needs-human` or `out-of-scope`. This
+ledger points to the plan contract; it does not copy or enlarge it.
 
 | Surface | Expected state | Current state | Status | Anchor |
 | --- | --- | --- | --- | --- |
@@ -153,8 +159,8 @@ Update the plan:
 
 - when a decision becomes source truth
 - when completion state changes
-- when code truth proves the plan stale
-- when the smallest correct implementation requires scope change and the
-  decision owner accepts it
+- when code truth proves an in-scope plan fact stale without changing scope
+- when the relevant human decision owner explicitly approves a scope change;
+  record the approval and re-freeze before implementation resumes
 
 Do not update all three artifacts for every event. Use the owning artifact.
