@@ -1,0 +1,13 @@
+interface:
+  display_name: "BrowserOS"
+  short_description: "Preflight before direct BrowserOS MCP use"
+  default_prompt: "Use $browseros before any direct BrowserOS MCP call. Reuse safe pages, verify identity and mutations, and reconcile task-created browser state; for connector-only work, follow live discovery and the same authorization and proof rules."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "browseros"
+      description: "BrowserOS browser automation and connector tools"
+
+policy:
+  allow_implicit_invocation: true

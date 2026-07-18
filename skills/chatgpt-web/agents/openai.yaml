@@ -1,7 +1,13 @@
 interface:
   display_name: "ChatGPT Web"
   short_description: "Query logged-in ChatGPT through BrowserOS"
-  default_prompt: "Use $chatgpt-web for the explicit ChatGPT web provider/browser-capability lane. Apply the shared agent-orchestration policy and $prompt-authoring discipline. Use one BrowserOS ChatGPT tab, but default to a new clean conversation; continue an exact existing conversation only when the user asks and it can be identified. Never silently inherit the arbitrary thread already open. Default to Pro with Extended thinking when mode or effort is omitted, respect explicit choices, run independent asks serially in clean conversations, preserve explicit follow-up chains, wait patiently for long responses, support up to 10 attachments, and fail loudly when BrowserOS or login is unavailable. Do not use API calls, scripts, runners, hidden harnesses, or automated login."
+  default_prompt: "Use $chatgpt-web for the explicit ChatGPT web provider/browser-capability lane. Apply $browseros before direct BrowserOS MCP calls, then apply the shared agent-orchestration policy and $prompt-authoring discipline. Use one eligible BrowserOS ChatGPT tab, but default to a new clean conversation; continue an exact existing conversation only when the user asks and it can be identified. Never silently inherit the arbitrary thread already open. Default to Pro with Extended thinking when mode or effort is omitted, respect explicit choices, run independent asks serially in clean conversations, preserve explicit follow-up chains, wait patiently for long responses, support up to 10 attachments, and fail loudly when BrowserOS or login is unavailable. Do not use API calls, scripts, runners, hidden harnesses, or automated login."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "browseros"
+      description: "BrowserOS access to the logged-in ChatGPT web session"
 
 policy:
   allow_implicit_invocation: true

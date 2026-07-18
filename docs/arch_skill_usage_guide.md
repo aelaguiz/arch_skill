@@ -44,6 +44,7 @@ Other shipped skills:
 - `agent-definition-auditor`
 - `agents-md-authoring`
 - `prompt-authoring`
+- `browseros`
 - `chatgpt-web`
 - `skill-authoring`
 - `figma-best-practices`
@@ -107,6 +108,7 @@ Default local path:
 - `~/.agents/skills/agent-definition-auditor/`
 - `~/.agents/skills/agents-md-authoring/`
 - `~/.agents/skills/prompt-authoring/`
+- `~/.agents/skills/browseros/`
 - `~/.agents/skills/chatgpt-web/`
 - `~/.agents/skills/skill-authoring/`
 - `~/.agents/skills/figma-best-practices/`
@@ -156,6 +158,7 @@ Installed skills:
   - `agent-definition-auditor`
   - `agents-md-authoring`
   - `prompt-authoring`
+  - `browseros`
   - `chatgpt-web`
   - `skill-authoring`
   - `figma-best-practices`
@@ -198,6 +201,7 @@ Installed skills:
   - `agent-definition-auditor`
   - `agents-md-authoring`
   - `prompt-authoring`
+  - `browseros`
   - `chatgpt-web`
   - `skill-authoring`
   - `figma-best-practices`
@@ -240,6 +244,7 @@ Installed skills:
   - `agent-definition-auditor`
   - `agents-md-authoring`
   - `prompt-authoring`
+  - `browseros`
   - `chatgpt-web`
   - `skill-authoring`
   - `figma-best-practices`
@@ -272,8 +277,9 @@ the matching local `claude`, `codex`, `agent`, or `grok` CLI. Provider and
 model ids remain exact and never cross runtimes. `agent-delegate` owns external
 editful sessions, while `fresh-consult`, `model-consensus`, `plan-conductor`,
 `stepwise`, and `arch-epic` select transport for each role under the shared
-policy. `chatgpt-web` still requires BrowserOS plus a logged-in ChatGPT session,
-and the vendored thermonuclear rubric remains unchanged.
+policy. `browseros` is the canonical preflight before direct BrowserOS MCP
+calls. `chatgpt-web` applies it and still requires BrowserOS plus a logged-in
+ChatGPT session, and the vendored thermonuclear rubric remains unchanged.
 
 ## Shared conventions
 
@@ -578,12 +584,27 @@ Examples:
 
 - `Use $prompt-authoring to refactor this prompt`
 
+### `browseros`
+
+Use before the first direct BrowserOS MCP call. It owns one-page-by-default
+reuse, page provenance and task authorization, target/profile identity,
+observe-act-verify, unknown timeout outcomes, proof selection, connector
+discovery, secrets, parallel ownership, and cleanup reconciliation. Use it
+alongside a narrower BrowserOS-backed skill; that skill owns its site workflow
+while `browseros` owns BrowserOS mechanics. It is not for BrowserOS
+installation or vendor development.
+
+Examples:
+
+- `Use $browseros before updating this record in the already-open authenticated web app`
+
 ### `chatgpt-web`
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
 capabilities, or local attachments. It shapes rough prompts with
-`prompt-authoring` discipline, verifies that BrowserOS is already logged in,
-and uses one tab without silently inheriting whatever conversation is open.
+`prompt-authoring` discipline, applies the canonical `browseros` contract,
+verifies that BrowserOS is already logged in, and uses one eligible tab without
+silently inheriting whatever conversation is open.
 `new-clean` is the default; `continue-exact` is used only when the user asks to
 continue an identifiable conversation. Independent asks remain serial but
 start clean, while explicit follow-ups preserve the intended thread. It

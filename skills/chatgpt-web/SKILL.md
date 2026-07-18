@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after shaping the prompt with prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, or an exact existing ChatGPT conversation continued. New clean conversation is the default; exact-conversation continuation must be explicit. Defaults to Pro with Extended thinking, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
+description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after applying the canonical $browseros operating contract and shaping the prompt with $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, or an exact existing ChatGPT conversation continued. New clean conversation is the default; exact-conversation continuation must be explicit. Defaults to Pro with Extended thinking, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -12,6 +12,10 @@ already logged-in BrowserOS browser session.
 
 This is a prose-only helper skill. It uses BrowserOS MCP directly. It ships no
 scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
+
+Read and apply `../browseros/SKILL.md` before the first BrowserOS call. The
+canonical BrowserOS skill owns page provenance, lifecycle, proof, recovery,
+secrets, and cleanup; this skill owns the ChatGPT-specific workflow.
 
 Read `../_shared/agent-orchestration-policy.md` before the query. ChatGPT Web is
 an intentional provider/browser-capability lane rather than a generic local
@@ -39,11 +43,14 @@ happens to be open without deciding which one the user wants.
 
 ## Non-Negotiables
 
+- Apply `$browseros` before the first direct BrowserOS MCP call and obey it
+  throughout this workflow.
 - Use BrowserOS MCP, not `web.run`, OpenAI API calls, shell browser scripts, or
   direct cookie/session handling.
 - Use one BrowserOS `https://chatgpt.com/` tab for the whole run. Reuse an
-  existing ChatGPT page when one exists; otherwise open exactly one ChatGPT
-  page. Reusing the page does not mean reusing its conversation. Do login check,
+  eligible current-agent-controlled ChatGPT page when one can be safely
+  task-adopted under `$browseros`; otherwise open exactly one ChatGPT page.
+  Reusing the page does not mean reusing its conversation. Do login check,
   conversation selection, mode selection, attachment upload, submission,
   waiting, and response reading in that same page.
 - Do not open extra ChatGPT tabs for polling, attachment handling, retries,
@@ -86,8 +93,9 @@ happens to be open without deciding which one the user wants.
 3. Resolve `conversation = new-clean | continue-exact`. Default to `new-clean`;
    use `continue-exact` only from an explicit user request and an identifiable
    target conversation.
-4. Select the single BrowserOS ChatGPT page for the run: reuse an existing
-   `https://chatgpt.com/` page if one exists, or open exactly one new page.
+4. Under `$browseros`, select the single current-agent-controlled ChatGPT page
+   for the run: safely task-adopt an eligible `https://chatgpt.com/` page, or
+   open exactly one new page.
 5. Verify that page is logged in before doing anything else.
 6. In that page, open a new chat for `new-clean`, or navigate to and verify the
    exact requested conversation for `continue-exact`. Do not submit while the
@@ -153,7 +161,8 @@ Use the BrowserOS file-upload path that works with ChatGPT in the selected
 ChatGPT page:
 
 1. Create a temporary visible file input in the page for BrowserOS MCP to use.
-2. Use BrowserOS MCP `upload_file` with the user's absolute paths.
+2. Snapshot the temporary input and use the live BrowserOS MCP `upload` tool
+   with its exact ref and the user's absolute paths.
 3. Transfer the selected `File` objects into ChatGPT's hidden `#upload-files`
    input.
 4. Dispatch `input` and `change` events on the ChatGPT input.
