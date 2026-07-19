@@ -1,6 +1,6 @@
 ---
 name: browseros
-description: "Canonical preflight and operating contract for direct BrowserOS MCP use. Read and apply before the first BrowserOS MCP call whenever an agent will operate tabs, windows, or authenticated pages; upload or download files; capture screenshots; mutate web or connector state; recover from BrowserOS errors; or coordinate browser work across agents. It owns page lifecycle, dispatch-versus-task authorization, target and profile verification, observe-act-verify, timeout recovery, secrets, proof, and cleanup. Use it alongside narrower site skills such as $chatgpt-web, which own the site workflow while this skill owns BrowserOS mechanics. Not for BrowserOS installation or vendor development, or for browsing that does not use BrowserOS MCP."
+description: "Canonical preflight and operating contract for direct BrowserOS MCP use. Read and apply before the first BrowserOS MCP call whenever an agent will operate tabs, windows, or authenticated pages; upload or download files; capture screenshots; read or mutate web or BrowserOS-managed connector state; recover from BrowserOS errors; or coordinate browser work across agents. It owns non-hidden background operation, foreground-focus discipline, page lifecycle, dispatch-versus-task authorization, target and profile verification, observe-act-verify, timeout recovery, secrets, proof, and cleanup. Use it alongside narrower site skills such as $chatgpt-web, which own the site workflow while this skill owns BrowserOS mechanics. Not for BrowserOS installation or vendor development, generic connectors, or browsing that does not use BrowserOS MCP."
 ---
 
 # BrowserOS
@@ -10,10 +10,15 @@ goal is to complete the user's requested browser outcome while leaving the
 shared authenticated browser no less understandable, safe, or clean than it
 was at the start.
 
-For page work, use one normal non-hidden, task-designated page by default and
-open it in the background when a new page is necessary. Reuse it while it
-remains safe, prove the requested result, and clean up every page, window, or
-group the task created and no longer needs.
+For page work, reuse one normal non-hidden, task-designated page. If a new page
+is necessary, request exactly one with `hidden=false` and `background=true`.
+When routed into an existing visible window, this produces a regular
+unselected tab in the normal tab strip. Treat the flags as a request, not
+proof: verify the new page's actual window, visibility, and active state, and
+do not work through it if those facts cannot be established or host routing
+placed it in a hidden window. Reconcile or report that page instead. Prove the
+requested result, then clean up every page, window, or group the task created
+and no longer needs.
 
 ## Scope
 
@@ -38,19 +43,43 @@ drift; live tool-specific schemas outrank remembered names, shared overview
 text, saved configuration, and old traces.
 
 Read [references/operating-details.md](references/operating-details.md) before
-profile- or account-specific work, external or connector mutations, OAuth or
-secret-bearing flows, uploads or downloads, timeout recovery, raw `run` or CDP
-use, or live browser work split across agents. The core contract is sufficient
-for an ordinary single-page read-only task.
+opening a new page; profile- or account-specific work; focus- or
+visibility-capable lifecycle work; recording or manual takeover;
+BrowserOS-managed connector work or other external mutations; OAuth or
+secret-bearing flows; uploads or downloads; timeout recovery; raw `run` or CDP
+use; or live browser work split across agents. The core contract is sufficient
+for an ordinary single-page read-only task on a compatible current page.
 
 ## Non-negotiables
 
 - For page work, list tabs before opening one. List windows when profile,
   account, visibility, or recording context matters.
-- Use one normal non-hidden page, opened in the background when new, by
-  default. A new page needs a concrete simultaneous-state requirement,
-  explicit user request, or lack of a safe authorized page for the task.
-  Convenience is not enough.
+- Reuse one normal non-hidden page. A new page needs a concrete
+  simultaneous-state requirement, explicit user request, or lack of a safe
+  authorized page for the task. When justified, request exactly one with
+  `hidden=false` and `background=true`, then verify its actual window,
+  visibility, and active state; convenience is not enough.
+- Never create or work from hidden tabs or hidden windows, and never hide a
+  task window as a focus workaround. Hidden surfaces consume resources while
+  staying outside the normal user-visible tab strip and are easy to orphan.
+- Ordinary page-targeted tools operate against a page ID without requiring
+  tab or window activation. Keep reads, navigation, interaction, screenshots,
+  uploads, downloads, waits, and verification backgrounded unless a concrete
+  observed constraint requires foreground state.
+- Default to zero deliberate foreground takeovers. Do not use
+  `windows activate`, `tabs new` with `background=false`, or
+  `windows set_visibility` with `activate=true` for routine work. When the
+  user explicitly requests a foreground handoff or a proved constraint has no
+  background-safe alternative, warn once, serialize it, and avoid repeated
+  activation.
+- Creating a visible window is focus-capable. This includes `windows create`
+  with `hidden=false` and `tabs new` when no visible target window exists and
+  the host must create one. Use either only when genuinely required, capture
+  the focus baseline, warn that focus may move, and serialize the call.
+- Window activation is never profile or account proof and is not a direct or
+  general profile selector. Verify supported page-to-window/context evidence
+  and an in-application account or workspace marker before credentialed or
+  mutating work.
 - Require both current-agent dispatch control and current-task authorization
   before acting. A technically reachable page is not automatically safe for
   this task.
@@ -76,18 +105,26 @@ for an ordinary single-page read-only task.
 1. Resolve the requested outcome, intended site/account/profile, mutation
    authority, and the proof needed to call the task complete.
 2. Inspect the live BrowserOS tool-specific schema for any nontrivial call.
-3. List tabs. List windows as well when context or visibility matters.
+3. List tabs. When profile, visibility, recording, manual takeover, or a
+   focus-capable lifecycle action matters, also read the current active page
+   and list windows.
 4. Record a sanitized baseline: page handle, origin plus stable path without
-   query or fragment, title, any returned window/context evidence, and known
-   provenance.
+   query or fragment, title, any returned window/context evidence, known
+   provenance, and relevant BrowserOS active-page/window and visibility state.
+   The previously focused non-BrowserOS desktop application is not observable
+   or restorable through BrowserOS MCP.
 5. If profile or account context matters and the live schema cannot target or
    prove the intended context, stop for a supported targeting handoff or ask
    the user to complete that browser step manually. Do not open pages hoping
    one lands in the right profile; a user-opened page does not become
    agent-controlled automatically.
 6. Otherwise choose one current-agent-controlled page that this task may use.
-   Open exactly one normal non-hidden page in the background only when no
-   compatible authorized page exists.
+   Only when no compatible authorized page exists, request exactly one with
+   `hidden=false` and `background=true`, then verify its actual containing
+   window, visibility, and active state. If no visible target window existed,
+   treat any implicit visible-window creation as focus-capable. If the page
+   state cannot be established or it landed hidden, do not work through it;
+   reconcile or report it under the lifecycle rules.
 
 ## Page provenance
 
@@ -111,8 +148,10 @@ Act only when both axes allow it.
   is inventory only. Do not navigate, mutate, group, or close it. BrowserOS
   has no general claim or ownership-transfer operation.
 
-`Your tabs` can include pages from earlier work. Tool ownership is dispatch
-capability, not current-task authorization.
+Tab inventories may be flat and do not themselves establish ownership.
+Derive dispatch provenance from task creation receipts, the task ledger, and
+ownership fields actually returned by the current tool. Tool actionability is
+not current-task authorization.
 
 ## Main loop
 
@@ -124,6 +163,10 @@ list/select -> snapshot -> act once -> inspect diff -> verify postcondition
 
 - Use refs from a fresh `snapshot` instead of coordinate guesses.
 - Treat every ref as stale after navigation or a substantial rerender.
+- Keep ordinary page operations addressed to the verified page ID; they do
+  not require selecting the tab or activating its window. Read the focus and
+  background-behavior caveats in the operating details before relying on a
+  site feature that may behave differently when its tab is not selected.
 - Use `diff`, `grep`, or a bounded `read` for semantic state.
 - Use `screenshot` only for visual proof and bound its size and frequency.
 - Wait for a real text, selector, processing, or object-state condition. Do
@@ -144,7 +187,9 @@ baseline pages/windows/groups
 task-adopted pages and their allowed workflow
 task-created pages/windows/groups, purpose, and lifecycle state
 task-created local artifacts, exact returned path, purpose, and lifecycle state
-temporary visibility or focus changes
+task-created hidden surfaces: expected 0; observed and attributed exceptions
+relevant baseline active page/window and window visibility
+foreground takeovers, window visibility changes, and provable restoration
 retained state and reason
 unknown or orphan state
 ```
@@ -155,6 +200,13 @@ the action receipt plus sanitized semantic evidence; never assume every
 baseline delta belongs to this task when the user or another agent may be
 active. Record a possibly task-caused but unattributable resource as unknown or
 orphan instead of omitting it from the ledger.
+
+If an action unexpectedly causes a hidden page or window, do not continue
+working through it. Attribute it using the action receipt and current identity
+evidence. Expose the containing window without activation only when that
+window is task-controlled and its current membership and profile context are
+proved safe to reveal. If only the page is proved, close that page when safe
+or retain and report it; never expose a whole window on page ownership alone.
 
 Before closing a page, relist and match the creation receipt handles plus
 sanitized semantic identity. If the match is not unique, leave it open and
@@ -220,28 +272,56 @@ record any local artifacts it creates, and return its own cleanup
 reconciliation. A parent-created page cannot be assigned to a child as an
 ownership transfer. Never let two agents act or poll the same page concurrently.
 
+Designate one focus owner for any phase that can activate a window,
+foreground-create a tab, create a visible window directly or implicitly,
+expose-and-activate a window, or close the selected page. Serialize those
+foreground-capable calls. Other agents may continue independent background
+page work, but they must not spend the shared focus budget. Focus ownership
+does not transfer page ownership.
+
 Resume the exact owning agent to clean up its retained page. If that agent
 cannot be resumed, report an orphan for manual cleanup; do not send a fresh
 agent or raw CDP around the ownership boundary.
 
 ## Completion receipt
 
-Return the requested result first, then a concise safe receipt:
+Return the requested result first, then these core receipt fields:
 
 ```text
 BrowserOS result: <completed outcome or exact blocker>
 Target: <non-sensitive site/workspace/object label>
 Proof: <proof rail and limitation>
 Mutation outcome: <not applicable, verified, or unknown; safe readback evidence>
+```
+
+For page work, add this page-state block:
+
+```text
 Pre-existing pages adopted/reused: <unique count>
 Pages: created <n> = closed <n> + retained <n> + unknown/orphan <n>
+Hidden browser surfaces: deliberately created 0; task-caused observed <n>; unknown <n or not inventoried>
+Foreground takeover: <none deliberately made, intentional, unexpected, or unknown>
+```
+
+Add resource reconciliation for windows, groups, or artifacts only when the
+task touched them. Add browser window/tab state, window visibility, and
+desktop app focus when focus- or visibility-capable work occurred or those
+states were inventoried. Add retained-state or unknown/orphan detail only when
+nonempty. Never fabricate a zero for shared state that was not inventoried.
+
+```text
 Windows: created <n> = closed <n> + retained <n> + unknown/orphan <n>
 Groups: created <n> = removed <n> + retained <n> + unknown <n>
 Artifacts: created <n> = removed <n> + retained <n> + unknown <n>
-Visibility/focus: <restored, intentionally retained, or unknown>
-Retained task-created state: <none or safe identity and reason>
-Unknown/orphan state: <none or safe identity and risk>
+Browser window/tab state: <unchanged, restored, changed/unrestored, intentionally retained, or unknown>
+Window visibility: <unchanged, restored, changed/unrestored, intentionally retained, or unknown>
+Desktop app focus: <not changed deliberately, user-controlled, or not observable>
+Retained or unknown state: <safe identity, reason, and risk>
 ```
+
+For connector-only work, omit browser lifecycle fields and add the
+BrowserOS-managed connector/service, exact safe action or query, structured
+outcome, and readback limitation.
 
 Do not put emails, account IDs, signed URLs, raw callback URLs, session data,
 or sensitive artifact links in the receipt.
@@ -249,5 +329,6 @@ or sensitive artifact links in the receipt.
 ## Reference map
 
 - [references/operating-details.md](references/operating-details.md) — current
-  compact tool roles, identity and profile constraints, state-change recovery,
-  secrets, proof selection, and parallel ownership details.
+  compact tool roles; focus, visibility, hidden-surface, and manual-gate
+  handling; identity and profile constraints; BrowserOS-managed connectors;
+  state-change recovery; secrets; proof selection; and parallel ownership.

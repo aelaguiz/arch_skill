@@ -1,12 +1,13 @@
 # BrowserOS Operating Details
 
-Use this reference for BrowserOS work where identity, external state,
-recovery, sensitive data, or multiple agents make the core contract
-insufficient.
+Use this reference before creating a page or doing BrowserOS work involving
+focus, visibility, manual takeover, identity, BrowserOS-managed connectors,
+external state, recovery, sensitive data, or multiple agents.
 
 ## Contents
 
 - Live tool contract
+- Focus, visibility, and hidden surfaces
 - Identity and profile constraints
 - Lifecycle and state-change reconciliation
 - Mutation safety
@@ -52,6 +53,77 @@ create an ownership side door. Do not batch consequential mutations. A
 transport-successful `run` can still have `ok: false`, so inspect the
 structured result.
 
+## Focus, visibility, and hidden surfaces
+
+Routine page work is background-targetable. `snapshot`, `diff`, `grep`,
+`read`, `navigate`, `act`, `evaluate`, `screenshot`, `upload`, `download`,
+`pdf`, and `wait` address a verified page ID and normally do not need its tab
+selected or its window activated. `act` with `kind="focus"` focuses a DOM
+element inside that page; it is not permission to focus the BrowserOS window
+or desktop application.
+
+Background-targetable does not promise identical foreground semantics. A page
+that is not selected may report a different visibility state, throttle timers
+or media, defer paint, or need browser-chrome permission UI. Verify the real
+postcondition. Move foreground only after observing a concrete constraint,
+not preemptively.
+
+`background` and `hidden` are different:
+
+- Request `tabs new` with `hidden=false` and `background=true`. When the host
+  routes it into an existing visible window, this creates a regular unselected
+  tab in the normal tab strip. The flags are the required request shape, not
+  proof of the result: verify the page's actual containing window, visibility,
+  and active state. If those facts cannot be established, do not work through
+  the new page; reconcile or report it.
+- `tabs new` or `windows create` with `hidden=true` creates a browser surface
+  outside the normal user-visible tab/window surface. Never use it. Hidden
+  surfaces still consume resources, are easy to orphan, delay user inspection
+  or takeover, and can carry an unintended hidden-window profile context.
+- Do not hide a task window as a workaround. If an action unexpectedly creates
+  a hidden task-owned surface, stop working through it and reconcile it under
+  the lifecycle rules.
+- If no visible target window exists, `tabs new` may implicitly create one.
+  Treat that path as focus-capable even with `background=true`. A host default
+  can also route a page unexpectedly; if the result is hidden, do not work
+  through it.
+
+Treat these operations as foreground-capable shared-state changes:
+
+| Operation | Contract |
+| --- | --- |
+| `tabs new` with `background=false` | Selects the new page; use only for an explicit user-visible handoff or a proved foreground-only constraint. |
+| `windows activate` | Focuses a BrowserOS window; never use for routine targeting, observation, polling, screenshots, or profile guessing. |
+| `windows set_visibility` with `activate=true` | Shows and activates a window; use `activate=false` when visibility alone is sufficient. |
+| `windows create` | A new visible window may affect focus; create one only when a separate window is genuinely required. |
+| Closing the selected task page | May select another tab; treat it as focus-capable cleanup. |
+| Site-created popup or window | May change active state; relist, attribute, and avoid reinforcing the takeover. |
+
+To expose a uniquely task-owned containing window without focusing it, use
+the live equivalent of:
+
+```text
+windows action="set_visibility" windowId=<current-window-id> visible=true activate=false
+```
+
+`set_visibility` operates on a window. It does not select an existing
+background tab. Its result may supply a replacement window ID, so track the
+returned ID instead of reusing a stale handle.
+
+Before a focus-capable task phase, record `tabs active` when available and the
+BrowserOS active/visible window state. BrowserOS can prove only the
+browser-internal state exposed by its current tools. It cannot observe or
+restore the previously focused non-BrowserOS desktop application. The compact
+surface may also lack a symmetrical action to reselect the exact baseline
+tab. Report only the restoration current state proves.
+
+For CAPTCHA, 2FA, login, secure-field entry, consent, or another manual gate,
+verify and identify the safe page/window without sensitive details, then ask
+the user to switch to BrowserOS when ready. Do not activate or present the
+window unless the user asks. After the user finishes, relist and revalidate the
+page, profile/account, and target before continuing. A manual gate is not by
+itself proof that automation needs to take foreground focus.
+
 ## Identity and profile constraints
 
 Build page identity from both ephemeral handles and semantic evidence:
@@ -72,22 +144,32 @@ target IDs, context IDs, session IDs, and refs can drift; they address a
 verified identity but never replace it.
 
 The current compact `tabs new` schema has no target-window or profile
-argument, and `windows create` has no profile selector. Flat tab inventories
-may also omit page-to-window mapping. Do not combine separate lists and invent
-that association.
+argument, and `windows create` has no profile selector. Tab inventories may
+be flat and may omit page-to-window mapping. Derive ownership only from the
+task ledger, creation receipts, and fields actually returned. Do not combine
+separate lists and invent an association.
 
 For a selected current-agent-controlled page, a bounded
 `browser.pages.getInfo(pageId)` call through `run` may provide window or
 browser-context evidence when the live schema supports it. Use that only for
 identity, not broad inventory or dispatch bypass. Do not assume a window
-result's active-tab handle is the same kind of ID as an MCP page handle.
+result's `activeTabId` is an MCP page ID: it can be a native tab ID. Correlate
+it only through a supported page-info result that returns both identities.
+A `browserContextId` can support a profile mapping but does not prove which
+account or workspace is authenticated inside the application.
 
-If a current runbook and live schema provide a supported
-activate-window-then-open mechanism, use it and immediately verify the account
-on the new page. Otherwise stop automation and request manual completion or a
-supported targeting mechanism. Do not open repeated pages hoping one lands in
-the right profile. A user-opened page remains user-owned under the current
-no-claim schema.
+Permit an indirect activate-then-open exception only when a current runbook
+and inspected installed host/configuration establish the active-window
+fallback, the live schema still exposes the required component actions, no
+request-default window overrides that fallback, the target window/profile is
+already proved, the active-window race is controlled, and the focus disruption
+is justified. Immediately query the new page's supported window/context
+evidence and verify an in-application account or workspace marker. Activation
+by itself is never profile/account proof or a direct/general profile selector.
+Otherwise stop automation and request manual completion or a supported
+targeting mechanism. Do not open repeated pages hoping one lands in the right
+profile. A user-opened page remains user-owned under the current no-claim
+schema.
 
 A diagnostic profile-path page is not a profile-acquisition mechanism. Never
 navigate a preserved application page away merely to inspect its profile.
@@ -128,6 +210,17 @@ report the window rather than risking a user or other-agent page.
 Track temporary focus and visibility changes. Restore a pre-existing window's
 visibility when safe unless the user requested the final visible state. Never
 close a pre-existing window.
+
+Task calls should deliberately create zero hidden surfaces. If a task action
+unexpectedly causes one, attribute it from the action receipt and current
+identity evidence. Expose the containing window with `activate=false` only
+when that window is task-controlled and its current page membership and
+profile context are proved safe to reveal. If only the page is proved or
+window membership is unknown, close only the verified page when safe or retain
+and report it; do not expose the whole window.
+Keep window visibility, selected/active BrowserOS state, and desktop
+application focus separate: restore and report each only when the applicable
+tool evidence proves it.
 
 ## Mutation safety
 
@@ -255,6 +348,13 @@ Assign independent browser tasks, not parent-owned pages. Each agent selects
 or creates its own page, records exact paths for its own local outputs, and
 returns created, closed or removed, retained, and unknown resource counts.
 Never let two agents act or poll the same page concurrently.
+
+Designate one focus owner for any phase that can activate a window,
+foreground-create a tab, create a visible window directly or implicitly,
+show-and-activate a window, or close a selected page. Serialize those
+operations. Other agents may continue independent background work, but must
+not make foreground-capable calls. Focus ownership does not transfer page
+ownership.
 
 Saved-artifact analysis can be parallel only after authorization and
 sanitization. Serialize large screenshots and long evaluations so agents do

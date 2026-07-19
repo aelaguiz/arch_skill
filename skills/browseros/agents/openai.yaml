@@ -1,7 +1,7 @@
 interface:
   display_name: "BrowserOS"
-  short_description: "Preflight before direct BrowserOS MCP use"
-  default_prompt: "Use $browseros before any direct BrowserOS MCP call. Reuse safe pages, verify identity and mutations, and reconcile task-created browser state; for connector-only work, follow live discovery and the same authorization and proof rules."
+  short_description: "Safe preflight for direct BrowserOS MCP use"
+  default_prompt: "Use $browseros before any direct BrowserOS MCP call. For page work, reuse one safe task-authorized normal non-hidden tab; if a new tab is necessary, request hidden=false and background=true, then verify its actual window, visibility, and active state. Keep routine page tools backgrounded, prove profile/account identity when relevant, and reconcile task-created state; use live discovery without tab work for BrowserOS-managed connector-only work."
 
 dependencies:
   tools:
