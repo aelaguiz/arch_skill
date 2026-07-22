@@ -189,6 +189,15 @@ log beside the plan is its durable memory.
   acceptance. A worker rebuttal never closes a finding without
   conductor-verified evidence. A clean pass must record which lying-modes
   were checked.
+- Verify the work product itself before believing any completion claim.
+  Existence is not evidence. A screenshot is accepted only after the
+  conductor has opened it and confirmed it shows the claimed state — not a
+  blank page, error screen, wrong screen, or stale build; a report only
+  after its assertions were checked against current code; a generated file
+  only after it was opened and found well-formed and current. When the
+  conductor cannot view an artifact class directly, a different clean child
+  inspects it with concrete look-for instructions. The implementing worker's
+  description of its own artifact never counts as inspection.
 - Separate factual validity from scope authority for every finding. Record one
   shared scope disposition. Only `authorized` and
   `frozen-convergence-required` become send-backs. `new-scope-needs-human` is

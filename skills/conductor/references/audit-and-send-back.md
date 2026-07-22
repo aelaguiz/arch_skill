@@ -66,7 +66,23 @@ to break the story and accept only what survives.
      behavior alive or test mocks instead of behavior, and un-executed
      entries from the plan's delete list. The delete list is a checklist,
      not a hope.
-5. **Treat proof as a claim until reproduced.** Quoted verification output is
+5. **Personally inspect every claimed work product.** When a slice's
+   deliverable is an artifact rather than (or besides) code — a screenshot,
+   rendered page, report, generated file, exported document, chart, dataset,
+   recording — its existence is zero evidence. A worker saying "screenshot
+   attached showing X" has made two claims: that a file exists, and that it
+   shows X. Only the second one matters, and it is the one routinely taken
+   on faith. Open the artifact itself and confirm its content matches the
+   claim: view the screenshot and check it depicts the claimed state — not a
+   blank page, error screen, wrong screen, login wall, stale build, or
+   placeholder; read the report's assertions against current code; open the
+   generated file and check it is well-formed, current, and derived from the
+   changed source. When the conductor cannot view an artifact class
+   directly, delegate its inspection to a different clean child with
+   concrete look-for instructions and consume that child's observations as
+   the evidence — the implementing worker's description of its own artifact
+   never counts.
+6. **Treat proof as a claim until reproduced.** Quoted verification output is
    text a worker produced; it can be stale, partial, run against the
    wrong tree, or fabricated. Decisive proof — the checks the slice's
    acceptance actually rides on — must be independently reproduced by a
@@ -77,7 +93,7 @@ to break the story and accept only what survives.
    from reading the diff, not the worker's assurance. Also check the proof
    itself proves the right thing: right commands for the changed surface,
    assertions that would actually fail if the claim were false.
-6. **Judge factual validity** for every finding: `accepted` (technically real),
+7. **Judge factual validity** for every finding: `accepted` (technically real),
    `rejected` (wrong, with contradicting evidence), or `unresolved`. Then assign
    a separate scope disposition: `authorized`,
    `frozen-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
@@ -86,7 +102,7 @@ to break the story and accept only what survives.
    and `unauthorized-built-scope` routes to subtraction unless a human approves
    and re-freezes. Findings carry an id (`PC-<n>`), evidence, consequence,
    disposition, and route.
-7. **Break the ratchet before send-back.** Compare each proposed repair with
+8. **Break the ratchet before send-back.** Compare each proposed repair with
    the original frozen contract. A new table, queue, state machine, service,
    dependency, compatibility path, mode, operational surface, harness, test
    category, caller family, or cleanup area requires an existing authority
@@ -150,6 +166,9 @@ A slice is `accepted` only when:
 
 - every contract claim was traced to current code truth (not to the worker's
   report),
+- every claimed work-product artifact was personally opened and its content
+  verified against the claim, or its inspection was delegated to a different
+  clean child whose observations are recorded,
 - decisive proof was independently reproduced,
 - zero accepted findings remain open, and
 - no unauthorized built scope, open human scope decision, or scope-cycle

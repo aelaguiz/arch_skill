@@ -152,7 +152,11 @@ automation.
 - Do not use external continuation controllers as a strategy. This skill is
   a foreground subprocess path, not an ordered workflow runner.
 - If the child changed files or reports a blocker, inspect the repo state before
-  presenting the result as fact.
+  presenting the result as fact. If the child claims a work-product artifact —
+  a screenshot, report, generated file, export — open the artifact itself and
+  confirm its content matches the claim before relaying it; existence is not
+  evidence, and a screenshot that exists but shows a blank page, error, or
+  wrong screen is a failed claim, not a delivered result.
 
 ## First Move
 
@@ -226,7 +230,9 @@ automation.
    malformed. For fresh-resumable and resume runs, preserve the session handle
    for the next explicit resume.
 9. **Inspect local truth.** Check git status and any changed files named by the
-   child or children before reporting upstream.
+   child or children before reporting upstream. Open any claimed work-product
+   artifact (screenshot, report, generated file) and verify its content shows
+   the claimed result, not merely that the file exists.
 10. **Report upstream.** For one worker, lead with status, changed files,
    verification, blockers, confidence limits, and the run directory. For a
    parallel group, report one compact child-by-child table plus the parent repo
