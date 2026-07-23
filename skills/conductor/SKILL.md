@@ -30,8 +30,9 @@ log beside the plan is its durable memory.
 
 - A plan or outcome goes in; verified, reviewed, contract-faithful code comes
   out.
-- Parent tokens go to plan understanding, slice design, and cynical audit.
-  Worker tokens go to implementation, repair, and proof runs.
+- Parent tokens go to plan understanding, slice design, cynical audit, and
+  first-hand verification of finished work products. Worker tokens go to
+  investigation, implementation, repair, and proof runs.
 - The parent is the scope judge. Fast cheap workers are genuinely smart but
   over-scope and over-iterate; the parent trims every proposal to the
   smallest sufficient solution and holds the frozen boundary against
@@ -43,8 +44,10 @@ log beside the plan is its durable memory.
   proves liveness and catches a wedge early with cheap signals. Never tail
   raw worker event streams.
 - Every worker return starts NOT ACCEPTED. Worker output — status, summary,
-  quoted proof, labels — is a claims manifest to falsify against repo truth,
-  never a report to consume. Current code is the only authority.
+  quoted proof, labels, conclusions — is a claims manifest to falsify against
+  repo truth, never a report to consume. The authority is what the conductor
+  verifies first-hand: current code, and the work products it has personally
+  loaded and checked.
 
 ## Use When
 
@@ -189,15 +192,25 @@ log beside the plan is its durable memory.
   acceptance. A worker rebuttal never closes a finding without
   conductor-verified evidence. A clean pass must record which lying-modes
   were checked.
-- Verify the work product itself before believing any completion claim.
-  Existence is not evidence. A screenshot is accepted only after the
-  conductor has opened it and confirmed it shows the claimed state — not a
-  blank page, error screen, wrong screen, or stale build; a report only
-  after its assertions were checked against current code; a generated file
-  only after it was opened and found well-formed and current. When the
-  conductor cannot view an artifact class directly, a different clean child
-  inspects it with concrete look-for instructions. The implementing worker's
-  description of its own artifact never counts as inspection.
+- Verify the work product itself before believing any completion claim, and
+  treat that verification as sanctioned first-class parent spend — loading
+  the artifact is never token waste. Existence is not evidence, and neither
+  is plausible shape. A screenshot is accepted only after the conductor has
+  viewed it and confirmed it shows the claimed state — not a blank page,
+  error screen, wrong screen, or stale build; a spreadsheet or data model
+  only after the conductor opened it and checked the math — representative
+  totals spot-recomputed, formulas traced to stated assumptions, key
+  numbers tied to their sources; a report only after its assertions were
+  checked against current code; a generated file only after it was opened
+  and spot-checked against its claimed source. Delegate inspection only for
+  an artifact class the conductor genuinely cannot render, and require
+  extracted evidence back — values, quotes, described screen content —
+  never a verdict. The implementing worker's description of its own
+  artifact never counts as inspection.
+- Never adopt a worker's analytical conclusion at face value. A conclusion
+  the conductor acts on, relays, or closes a finding with must carry
+  anchors the conductor has verified; an unanchored conclusion goes back
+  for evidence as a hypothesis, not forward as a fact.
 - Separate factual validity from scope authority for every finding. Record one
   shared scope disposition. Only `authorized` and
   `frozen-convergence-required` become send-backs. `new-scope-needs-human` is
@@ -214,9 +227,12 @@ log beside the plan is its durable memory.
   `$agent-delegate`'s usage-limit continuity and
   `../_shared/aim-rotation.md`. Rotation is not a send-back, respawn, or
   failed run for cap purposes; record it in the conductor log.
-- Delegate all verification runs (tests, builds, generators, simulators) to
-  workers. The parent runs only cheap read-only inspection commands. Reuse
-  fresh passing proof; rerun only on a real invalidator.
+- Delegate all proof runs (tests, builds, generators, simulators) to
+  workers; decisive proof counts only when a different clean child
+  reproduced it. The parent runs read-only inspection, which includes
+  personally loading and reading work-product artifacts — that verification
+  belongs to the parent and is never delegated for economy. Reuse fresh
+  passing proof; rerun only on a real invalidator.
 - The parent commits local checkpoints after accepted slices and meaningful
   batches. During the conductor stage it never pushes or opens PRs. Only the
   explicit Terra delivery shortcut continues past that boundary, by handing
@@ -224,8 +240,10 @@ log beside the plan is its durable memory.
   `$pr-review-followthrough`. Workers never commit, push, stash, or revert
   unrelated work.
 - Before phase closure, plan-required proof must be recorded passing. Before
-  plan closure, run the final gate: one whole-plan cynical audit sweep plus a
-  new clean cold verifier (default on; user may disable).
+  plan closure, run the final gate: one whole-plan cynical audit sweep —
+  which personally loads the plan's end-state work products, a check no
+  toggle disables — plus a new clean cold verifier (default on; user may
+  disable).
 - Record completion the way the plan format already records it (for example
   `Status: COMPLETE` under arch phase headings plus a worklog entry, or
   checkbox ticks). Never hand-edit script-owned `arch_skill:block:*` receipt
@@ -294,10 +312,11 @@ log beside the plan is its durable memory.
    exact-session resume, not by replacement.
 6. On return, audit per `references/audit-and-send-back.md`: enumerate the
    claims to falsify, check them against git, trace the authority path
-   beyond the diff, apply the three lens groups, and require decisive proof
-   to be independently reproduced. Judge factual validity separately from
-   scope disposition. Only factually valid findings already inside the frozen
-   contract become repair work.
+   beyond the diff, personally load and verify every claimed work product,
+   falsify analytical conclusions at their anchors, apply the three lens
+   groups, and require decisive proof to be independently reproduced. Judge
+   factual validity separately from scope disposition. Only factually valid
+   findings already inside the frozen contract become repair work.
 7. Route: batch accepted findings into one resume prompt and send the session
    back; or accept the slice with evidence anchors and commit a checkpoint;
    or respawn fresh; or escalate and continue independent slices.

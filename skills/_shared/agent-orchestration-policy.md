@@ -215,8 +215,11 @@ A useful child return tells the parent:
 - the exact session/child handle and receipt path when continuation matters.
 
 The parent verifies claims against current workspace truth, reconciles overlap,
-decides what to accept, and owns the final user-facing answer. Child output is
-evidence, not automatic acceptance.
+decides what to accept, and owns the final user-facing answer. Claimed work
+products are part of that truth: the parent loads the artifact itself and
+verifies its substance — or assigns an inspector that returns extracted
+evidence rather than a verdict — and adopts analytical conclusions only at
+anchors it has verified. Child output is evidence, not automatic acceptance.
 
 ## Representative decisions
 

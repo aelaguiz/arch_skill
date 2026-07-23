@@ -113,10 +113,14 @@ Please do all of the following:
 
 # Report Contract
 
+Your report is a claims manifest, not a verdict: the parent will check it
+against the repo and will load and inspect any work products you name.
+
 End with this exact footer:
 
 STATUS: done | partial | blocked | failed
 CHANGED FILES: <paths or "none">
+WORK PRODUCTS: <artifact paths, each with the claim it supports, or "none">
 SKILLS USED: <skills or "none">
 VERIFICATION: <commands/results or "not run: reason">
 BLOCKERS: <bullets or "none">
@@ -138,23 +142,38 @@ SUMMARY FOR PARENT: <one concise paragraph>
 `CHANGED FILES` must name every file the child intentionally changed. If the
 child changed generated or lock files, include those too.
 
+`WORK PRODUCTS` must name every produced deliverable artifact — screenshot,
+report, spreadsheet, generated file, export — with the specific claim it
+supports (for example "screenshot showing the logged-in dashboard"). An
+artifact buried in summary prose instead of this field is a reporting
+failure. This field exists so the parent can load each artifact and verify
+the claim.
+
 `VERIFICATION` must say exactly what ran and whether it passed. If verification
-did not run, the reason must be concrete.
+did not run, the reason must be concrete. The parent treats it as the child's
+claim and may independently reproduce it before relying on it.
 
 ## Parent Report
 
 When reporting the result upstream:
 
 1. Lead with `STATUS` verbatim.
-2. Include changed files, skills used, verification, blockers, and follow-up.
+2. Include changed files, work products, skills used, verification, blockers,
+   and follow-up.
 3. Name the runtime/model/effort and the run directory.
 4. Name the external transport, concrete benefit, starting context, delegation
    mode, and session id when the run is resumable.
 5. Check repo status before reporting changed files as final truth.
-6. Spot-check blockers and changed-file claims before treating them as true.
-7. If you disagree with the child after spot-checking, say so explicitly.
-8. For parallel groups, report each child status separately before writing the
-   combined outcome, then include the parent-side repo-state check.
+6. Load every artifact named in `WORK PRODUCTS` and verify its substance
+   against its stated claim before including it — view the screenshot, check
+   the spreadsheet's math, read the report. An artifact that fails its claim
+   is a finding to report, not a deliverable to relay.
+7. Relay the child's analytical conclusions as verified only after checking
+   their anchors; otherwise attribute them explicitly as the child's claims.
+8. Spot-check blockers and changed-file claims before treating them as true.
+9. If you disagree with the child after spot-checking, say so explicitly.
+10. For parallel groups, report each child status separately before writing the
+    combined outcome, then include the parent-side repo-state check.
 
 A `partial` child result is progress, not closure. It must never close the
 parent user goal by itself. Before reporting the combined outcome as complete,

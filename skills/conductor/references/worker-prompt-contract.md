@@ -92,6 +92,7 @@ its credibility. End with exactly:
 STATUS: done | partial | blocked | failed
 SLICE: <id>
 CHANGED FILES: <paths or none>
+WORK PRODUCTS: <artifact paths, each with the claim it supports, or none>
 VERIFICATION: <commands run + real results, or "not run: reason">
 DELETES EXECUTED: <what was removed, or "none required" / "NOT done: reason">
 SESSION HEALTH: healthy | struggling | stuck
@@ -102,7 +103,11 @@ SUMMARY FOR PARENT: <one concise paragraph>
 
 The `DELETES EXECUTED:` line is deliberate: un-executed deletes are a common
 worker omission, so the footer forces a claim the conductor can
-cheaply falsify against the diff.
+cheaply falsify against the diff. The `WORK PRODUCTS:` line is equally
+deliberate: every deliverable artifact is named with the claim it supports —
+"screenshot showing the logged-in dashboard", "model spreadsheet with Q3
+projections" — so the conductor can load each one and verify the claim
+rather than discovering artifacts in summary prose.
 
 ## Send-Back Prompt Skeleton
 

@@ -43,8 +43,8 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 - Resolution evidence: <anchor>
 
 ## Proof Ledger
-| Proof | Scope covered | Result | Fresh until | Rerun trigger |
-|---|---|---|---|---|
+| Proof | Scope covered | Result | Ran by | Fresh until | Rerun trigger |
+|---|---|---|---|---|---|
 
 ## Wave History
 | Wave | Dispatched | Returned | Verdicts | Commit |
@@ -79,7 +79,10 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
   disposition answers whether it is authorized work. A valid finding is not
   automatically a send-back. Repeated findings keep the same disposition.
 - **Proof Ledger** entries carry the freshness reasoning: what would force a
-  rerun. Reuse passing proof until a recorded invalidator fires.
+  rerun. Reuse passing proof until a recorded invalidator fires. **Ran by**
+  names the independent child that produced the result; an entry marked
+  `implementer-only` never satisfies decisive-proof acceptance and is never
+  reused as passing proof — it is a claim awaiting reproduction.
 - **Wave History** is one compact line per wave — enough breadcrumbs to
   recover progress, not a narrative.
 

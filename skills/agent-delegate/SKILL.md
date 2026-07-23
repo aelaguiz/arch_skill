@@ -153,10 +153,13 @@ automation.
   a foreground subprocess path, not an ordered workflow runner.
 - If the child changed files or reports a blocker, inspect the repo state before
   presenting the result as fact. If the child claims a work-product artifact —
-  a screenshot, report, generated file, export — open the artifact itself and
-  confirm its content matches the claim before relaying it; existence is not
-  evidence, and a screenshot that exists but shows a blank page, error, or
-  wrong screen is a failed claim, not a delivered result.
+  a screenshot, report, spreadsheet, generated file, export — open the
+  artifact itself and verify its substance matches the claim before relaying
+  it: existence is not evidence, a screenshot showing a blank page, error, or
+  wrong screen is a failed claim, and plausible spreadsheet cells are not
+  checked math. Relay the child's analytical conclusions as verified only
+  when their anchors were checked; otherwise present them explicitly as the
+  child's claims.
 
 ## First Move
 
@@ -231,8 +234,9 @@ automation.
    for the next explicit resume.
 9. **Inspect local truth.** Check git status and any changed files named by the
    child or children before reporting upstream. Open any claimed work-product
-   artifact (screenshot, report, generated file) and verify its content shows
-   the claimed result, not merely that the file exists.
+   artifact and verify its substance shows the claimed result — view the
+   screenshot, check the spreadsheet's math, read the report — not merely
+   that the file exists.
 10. **Report upstream.** For one worker, lead with status, changed files,
    verification, blockers, confidence limits, and the run directory. For a
    parallel group, report one compact child-by-child table plus the parent repo
@@ -250,6 +254,8 @@ automation.
   - runtime/model/effort used
   - delegated task status, or one status per child for parallel groups
   - changed files or `none`
+  - work products claimed, with the parent's load-and-verify result for each,
+    or `none`
   - skills the child says it used or `none`
   - verification run or `not run: <reason>`
   - blockers or `none`
@@ -258,8 +264,9 @@ automation.
   - session id, or `none` only for explicit `fresh-one-shot` or failed capture
 - If the child output is missing or malformed, say that plainly and preserve the
   run directory for debugging. Do not invent a status.
-- If the child is wrong about a changed file, blocker, or verification result,
-  say so explicitly and cite the evidence that contradicts it.
+- If the child is wrong about a changed file, blocker, verification result,
+  artifact's content, or a conclusion's anchors, say so explicitly and cite
+  the evidence that contradicts it.
 
 ## Reference Map
 

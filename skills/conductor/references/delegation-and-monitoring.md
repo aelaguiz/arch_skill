@@ -123,26 +123,48 @@ while you wait or work; where it does not, poll at the scoped interval.
 
 ## Conductor Token Economy
 
-The conductor's context is the most expensive resource in the run. Explicit
-spending rules:
+The conductor's context is the most expensive resource in the run, and the
+economy is about spending it on the right layer — not about spending less.
+The ledger has two sides:
+
+**Sanctioned spend — judgment and first-hand verification.** Decomposition,
+scope calls, planning back-and-forth with workers, cynical audit, and
+personally loading the finished work product to verify it qualitatively:
+opening the spreadsheet and checking its numbers, viewing the screenshot,
+reading the report or generated document. Verifying what a worker *produced*
+is one of the core things the expensive model exists to do. It is never
+token waste and is never capped by the intake ladder below.
+
+**Delegated spend — investigation and production.** Nitty-gritty
+investigation, tracing through piles of files to understand how something
+works, reconstructing what a worker did from raw output, and implementing
+anything. That work routes to workers, who read the files so the conductor
+does not.
+
+Operating rules:
 
 - The plan gets one full read, at intake. Afterwards re-read only the
   anchored sections named by the slice under audit.
 - The conductor log is the durable memory. Never re-derive what the log
   records; after interruption or compaction, rebuild from log plus plan,
   never from chat history.
-- Evidence intake is layered, cheapest first: (1) the worker's status footer
-  from `final.txt` — read solely to enumerate the claims to falsify, never as
-  the account of what happened; (2) `git status` / `git diff --stat` to check
-  the `CHANGED FILES` and `DELETES EXECUTED` claims against reality; (3)
-  targeted `git diff -- <paths>` hunks, file reads, and authority-path traces
-  for the actual audit. Never "read the repo to see what happened," and never
-  read worker transcripts. Cheap intake bounds token spend; it never lowers
-  the audit bar — the burden of proof stays on the worker's output
+- Reconstructing what the worker *did* is layered, cheapest first: (1) the
+  worker's status footer from `final.txt` — read solely to enumerate the
+  claims to falsify, never as the account of what happened; (2) `git status`
+  / `git diff --stat` to check the `CHANGED FILES` and `DELETES EXECUTED`
+  claims against reality; (3) targeted `git diff -- <paths>` hunks, file
+  reads, and authority-path traces for the actual audit. Never "read the
+  repo to see what happened," and never read worker transcripts. This
+  ladder bounds *did*-side intake only; it is not a cap on loading
+  deliverables for the work-product verification the audit requires
   (`references/audit-and-send-back.md`).
 - Batch findings into one resume prompt per repair round, not one message per
   nit. Each round-trip costs conductor context and wall clock.
-- All proof runs are delegated. The conductor reads proof results; it does
-  not produce them.
+- All proof runs (tests, builds, generators, simulators) are delegated. The
+  conductor reads proof results; it does not produce them — and decisive
+  proof counts only when independently reproduced by a different clean
+  child, never from the implementing worker's own quoted run
+  (`references/audit-and-send-back.md`). Loading and reading a finished
+  artifact is verification the conductor owns, not a proof run to delegate.
 - Chat output stays compact: one small status table per wave; detail goes to
   the log.

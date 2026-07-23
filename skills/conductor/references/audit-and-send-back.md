@@ -10,8 +10,9 @@ burden of proof:
 earn acceptance out of repo truth. Everything the worker returns — status,
 summary, changed-file list, quoted test output, rationale, labels like
 "migrated", "unified", "deleted", "verified" — is a claim, not evidence.
-Current code behavior and structure are the authority for factual completion;
-the frozen plan contract and explicit human approvals are the authority for
+Current code behavior and structure — and the work products the conductor has
+personally loaded and checked — are the authority for factual completion; the
+frozen plan contract and explicit human approvals are the authority for
 scope.**
 
 The trust failure this exists to prevent: reading `STATUS: done`, a plausible
@@ -66,23 +67,47 @@ to break the story and accept only what survives.
      behavior alive or test mocks instead of behavior, and un-executed
      entries from the plan's delete list. The delete list is a checklist,
      not a hope.
-5. **Personally inspect every claimed work product.** When a slice's
+5. **Personally load and verify every claimed work product.** When a slice's
    deliverable is an artifact rather than (or besides) code — a screenshot,
-   rendered page, report, generated file, exported document, chart, dataset,
-   recording — its existence is zero evidence. A worker saying "screenshot
-   attached showing X" has made two claims: that a file exists, and that it
-   shows X. Only the second one matters, and it is the one routinely taken
-   on faith. Open the artifact itself and confirm its content matches the
-   claim: view the screenshot and check it depicts the claimed state — not a
-   blank page, error screen, wrong screen, login wall, stale build, or
-   placeholder; read the report's assertions against current code; open the
-   generated file and check it is well-formed, current, and derived from the
-   changed source. When the conductor cannot view an artifact class
-   directly, delegate its inspection to a different clean child with
-   concrete look-for instructions and consume that child's observations as
-   the evidence — the implementing worker's description of its own artifact
-   never counts.
-6. **Treat proof as a claim until reproduced.** Quoted verification output is
+   rendered page, report, spreadsheet or data model, generated file,
+   exported document, chart, dataset, recording — its existence is zero
+   evidence, and loading it is sanctioned first-class conductor spend, never
+   an economy to skim. A worker saying "screenshot attached showing X" has
+   made two claims: that a file exists, and that it shows X. Only the second
+   one matters, and it is the one routinely taken on faith. Verify
+   substance, not shape:
+   - a screenshot is viewed and depicts the claimed state — not a blank
+     page, error screen, wrong screen, login wall, stale build, or
+     placeholder;
+   - a spreadsheet or data model is opened and its math is checked:
+     spot-recompute representative totals, trace formulas to their stated
+     assumptions, tie key numbers to their claimed sources — plausible
+     cells are not verification;
+   - a report or document is read and its assertions are checked against
+     current code or the primary evidence it cites;
+   - a generated file is opened, well-formed, current, and spot-checked
+     against the source it claims to derive from.
+   Delegate inspection only for an artifact class the conductor genuinely
+   cannot render — the format cannot be opened with available tools at all,
+   such as video or a proprietary binary with no textual extraction. Large,
+   tedious, or numerous artifacts are not unrenderable; images, PDFs, HTML,
+   spreadsheets, and every text-based format are renderable by default.
+   Record the delegation and its cannot-render reason in the acceptance
+   entry, and require the inspecting child to return extracted evidence —
+   actual cell values, recomputed figures, quoted text, described screen
+   content — never a verdict. "Confirmed, looks correct" from a child is a
+   claim, not an inspection. The implementing worker's description of its
+   own artifact never counts.
+6. **Falsify analytical conclusions before relying on them.** Workers return
+   conclusions as well as code and artifacts: "the bottleneck is X", "Y is
+   already handled", "this approach can't work", "I checked Z and it's
+   fine". Any conclusion the conductor will act on, relay upstream, or use
+   to close a finding must carry anchors — files, symbols, commands, data —
+   and the conductor verifies the anchors it relies on first-hand or through
+   a different clean child. An unanchored conclusion is a hypothesis: send
+   it back for evidence rather than adopting it. Fluent, confident prose is
+   exactly what a capable model produces when it is wrong.
+7. **Treat proof as a claim until reproduced.** Quoted verification output is
    text a worker produced; it can be stale, partial, run against the
    wrong tree, or fabricated. Decisive proof — the checks the slice's
    acceptance actually rides on — must be independently reproduced by a
@@ -90,10 +115,15 @@ to break the story and accept only what survives.
    verification pass) before the slice is accepted. The implementing
    worker's own run never closes its own slice for anything beyond trivial,
    directly-inspectable changes, and "trivial" is the conductor's judgment
-   from reading the diff, not the worker's assurance. Also check the proof
-   itself proves the right thing: right commands for the changed surface,
-   assertions that would actually fail if the claim were false.
-7. **Judge factual validity** for every finding: `accepted` (technically real),
+   from reading the diff, not the worker's assurance. Trivial means the
+   conductor confirmed correctness completely by direct reading during the
+   audit — a doc edit, a config value, a rename traced end to end; anything
+   whose correctness rides on runtime behavior is not trivial, and every
+   trivial call is recorded in the acceptance entry so the shortcut stays
+   auditable. Also check the proof itself proves the right thing: right
+   commands for the changed surface, assertions that would actually fail if
+   the claim were false.
+8. **Judge factual validity** for every finding: `accepted` (technically real),
    `rejected` (wrong, with contradicting evidence), or `unresolved`. Then assign
    a separate scope disposition: `authorized`,
    `frozen-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
@@ -102,7 +132,7 @@ to break the story and accept only what survives.
    and `unauthorized-built-scope` routes to subtraction unless a human approves
    and re-freezes. Findings carry an id (`PC-<n>`), evidence, consequence,
    disposition, and route.
-8. **Break the ratchet before send-back.** Compare each proposed repair with
+9. **Break the ratchet before send-back.** Compare each proposed repair with
    the original frozen contract. A new table, queue, state machine, service,
    dependency, compatibility path, mode, operational surface, harness, test
    category, caller family, or cleanup area requires an existing authority
@@ -164,11 +194,14 @@ redesign/subtraction inside the frozen boundary.
 
 A slice is `accepted` only when:
 
-- every contract claim was traced to current code truth (not to the worker's
-  report),
-- every claimed work-product artifact was personally opened and its content
-  verified against the claim, or its inspection was delegated to a different
-  clean child whose observations are recorded,
+- every contract claim was traced to current code truth or loaded-artifact
+  truth (not to the worker's report),
+- every claimed work-product artifact was personally loaded and its substance
+  verified against the claim — or, only for an artifact class the conductor
+  cannot render, a different clean child inspected it and returned extracted
+  evidence that is recorded,
+- every analytical conclusion the acceptance relies on was verified at its
+  anchors, not adopted from confident prose,
 - decisive proof was independently reproduced,
 - zero accepted findings remain open, and
 - no unauthorized built scope, open human scope decision, or scope-cycle
@@ -196,6 +229,11 @@ After all phases:
    of done — hunting specifically what per-slice audits miss: cross-slice
    integration seams, orphaned cruft between slices, requirements no slice
    ended up owning, and accidental architecture that accreted across slices.
+   The sweep also personally loads the plan's end-state work products — the
+   final deliverable artifacts and whatever the North Star says an observer
+   would check — because per-slice audits only ever saw per-slice artifacts.
+   This load is part of the non-togglable sweep; disabling the cold verifier
+   never disables it.
    Reconstruct the initial human scope, frozen closure, approval history, wave
    findings, plan annotations, and final diff. Any expansion that became
    "required" only through worker/reviewer cycles is a hard fail and normally
@@ -214,10 +252,11 @@ After all phases:
    approval entries, frozen initial closure, and freeze anchor. Its findings
    use the same scope dispositions and cannot expand repair scope.
 3. **Cold verifier** (default on): one new clean child with no conductor
-   narrative, prompted to *refute* completion — trust only command
-   output and code reality, list every plan promise not literally true in
-   code. Its ignorance of the run is the feature; it catches what the
-   conductor's accumulated context has normalized.
+   narrative, prompted to *refute* completion — trust only command output,
+   code reality, and work products it loads itself; list every plan promise
+   not literally true in code or in the artifacts. Its ignorance of the run
+   is the feature; it catches what the conductor's accumulated context has
+   normalized.
    Give it the same scope anchors. Prefer a native clean child in the active
    host; use an external one-shot when its provider, exact profile, isolation,
    or receipt is the deliberate value. It may reject completion, but it may

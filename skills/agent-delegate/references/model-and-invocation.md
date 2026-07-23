@@ -681,6 +681,15 @@ failure when the event stream is still alive. Investigate only after the
 process exits non-zero, the stream shows an error, or there is no stream
 activity for a long quiet window.
 
+This section governs in-flight liveness only, never result acceptance: a
+clean exit with `STATUS: done` still gets the post-completion checks in
+`delegate-prompt-and-output.md` — repo truth, loaded work products, and
+conclusion anchors. When a calling skill imposes its own monitoring doctrine
+(for example the conductor's heartbeat rules, which forbid streaming
+`events.jsonl` into its context), the caller's doctrine governs the parent
+side; prefer cheap signals — process liveness, `stderr.log` growth,
+changed-file mtimes — over consuming the event stream.
+
 ## Codex Usage-Limit Continuity
 
 A Codex worker that dies on a hard usage limit is recoverable without losing
