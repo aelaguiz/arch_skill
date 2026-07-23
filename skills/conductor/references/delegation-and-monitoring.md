@@ -2,21 +2,26 @@
 
 The conductor chooses transport under
 `../../_shared/agent-orchestration-policy.md`; transport does not choose the
-workflow. Same-host phase work normally stays under the active host's native
-child lifecycle. `$agent-delegate` remains the external editful adapter when a
-different provider, load-bearing exact cheaper model/profile, durable session,
-worktree/process isolation, automation surface, structured receipt, or another
-concrete benefit is worth the additional process and integration cost. Those
-examples teach the decision; they are not a closed allowlist.
+workflow. The conductor's standing transport policy is the cheap parallel
+external fleet through `$agent-delegate` — for phase workers, research
+workers, verification workers, the cynical review instruments, and the cold
+verifier alike. The reason is money, said plainly: native children on the
+parent's host run the parent's expensive model, so a "native review" or
+"native worker" spends premium tokens on exactly the bulk reading the fleet
+exists to absorb. Native children are not a budget lane and not free
+parallelism — they are the parent's wallet with a different face. Reserve
+them for genuinely tiny errands a fleet round-trip would dwarf (a one-file
+read-only check), a capability only the host exposes, an explicit user
+request, or an unavailable external runtime.
 
 ## Dispatch And Continuation Mapping
 
-- **Initial slice dispatch → new clean child.** Give it the plan path, log
-  path, slice anchors, constraints, and return contract. In Codex set
-  `fork_turns: "none"`; in Claude use a clean named subagent. If the external
-  lane was selected, use `$agent-delegate` `fresh-resumable`. Record the
-  transport, starting context, exact handle, and external run directory when
-  one exists.
+- **Initial slice dispatch → new clean fleet session.** Give it the plan
+  path, log path, slice anchors, constraints, and return contract. Default
+  transport is `$agent-delegate` `fresh-resumable` on the fleet model. In
+  the rare deliberate-native case, set `fork_turns: "none"` in Codex or use
+  a clean named subagent in Claude. Record the transport, starting context,
+  exact handle, and external run directory when one exists.
 - **Send-back / repair → exact-child resume.** Send one bounded findings delta
   to the same native child handle or the exact external session id through its
   original transport. Never select "latest," cross runtimes, or replace the
@@ -25,13 +30,22 @@ examples teach the decision; they are not a closed allowlist.
   restart, its prior handle is lost or unhealthy under the audit caps, or its
   owner surface changed enough to invalidate the earlier view. Record why the
   replacement was necessary.
-- **Cold verifier → new clean critic**, final gate only. Independence is the
-  feature: no conductor narrative, no resume, just refutation from plan and
-  code reality. In Codex set `fork_turns: "none"`; in Claude use another clean
-  named subagent. Give it the plan path, human baseline anchors, frozen initial
-  closure, freeze anchor, and explicit human approvals; its findings cannot
-  expand scope. An external one-shot remains valid when its provider, exact
-  profile, isolation, or receipt is the deliberate value.
+- **Final-gate review instruments → new clean fleet sessions.** Each
+  selected cynical review runs as its own clean external fleet session that
+  invokes the installed review skill itself against the repo, so any slices
+  it fans out bill the fleet host's cheap model, not the parent's. The
+  conductor consumes each instrument's findings as claims under the normal
+  audit machinery. Never run these reviews through native subagents — bulk
+  review reading on the parent's model is the exact spend this skill exists
+  to avoid.
+- **Cold verifier → new clean fleet one-shot**, final gate only.
+  Independence is the feature: no conductor narrative, no resume, just
+  refutation from plan, code, and the artifacts it loads itself. A
+  whole-plan cold read is bulk reading, so it rides the fleet by default.
+  Give it the plan path, human baseline anchors, frozen initial closure,
+  freeze anchor, and explicit human approvals; its findings cannot expand
+  scope. Use a native clean child only on explicit user request or when no
+  external runtime exists.
 - **Parallel waves** are parent-owned. Use only the active host slots or
   external sessions that independent, non-overlapping slices justify. Every
   child knows that siblings may be editing the repo, must not revert unfamiliar
@@ -135,11 +149,13 @@ reading the report or generated document. Verifying what a worker *produced*
 is one of the core things the expensive model exists to do. It is never
 token waste and is never capped by the intake ladder below.
 
-**Delegated spend — investigation and production.** Nitty-gritty
-investigation, tracing through piles of files to understand how something
-works, reconstructing what a worker did from raw output, and implementing
-anything. That work routes to workers, who read the files so the conductor
-does not.
+**Delegated spend — investigation, production, and review labor.**
+Nitty-gritty investigation, tracing through piles of files to understand how
+something works, reconstructing what a worker did from raw output,
+implementing anything, and the heavy review reading: cynical instruments,
+cold verification, re-reviews, and delegated artifact inspections. That work
+routes to fleet workers, who read the files so the conductor does not — on
+a cheap model, which a native subagent is not.
 
 Operating rules:
 

@@ -93,7 +93,7 @@ to break the story and accept only what survives.
    tedious, or numerous artifacts are not unrenderable; images, PDFs, HTML,
    spreadsheets, and every text-based format are renderable by default.
    Record the delegation and its cannot-render reason in the acceptance
-   entry, and require the inspecting child to return extracted evidence —
+   entry, and require the inspecting fleet worker to return extracted evidence —
    actual cell values, recomputed figures, quoted text, described screen
    content — never a verdict. "Confirmed, looks correct" from a child is a
    claim, not an inspection. The implementing worker's description of its
@@ -104,15 +104,15 @@ to break the story and accept only what survives.
    fine". Any conclusion the conductor will act on, relay upstream, or use
    to close a finding must carry anchors — files, symbols, commands, data —
    and the conductor verifies the anchors it relies on first-hand or through
-   a different clean child. An unanchored conclusion is a hypothesis: send
+   a different clean fleet worker. An unanchored conclusion is a hypothesis: send
    it back for evidence rather than adopting it. Fluent, confident prose is
    exactly what a capable model produces when it is wrong.
 7. **Treat proof as a claim until reproduced.** Quoted verification output is
    text a worker produced; it can be stale, partial, run against the
    wrong tree, or fabricated. Decisive proof — the checks the slice's
    acceptance actually rides on — must be independently reproduced by a
-   verification worker in a different clean child (or the delegated phase
-   verification pass) before the slice is accepted. The implementing
+   verification worker in a different clean fleet session (or the delegated
+   phase verification pass) before the slice is accepted. The implementing
    worker's own run never closes its own slice for anything beyond trivial,
    directly-inspectable changes, and "trivial" is the conductor's judgment
    from reading the diff, not the worker's assurance. Trivial means the
@@ -198,7 +198,7 @@ A slice is `accepted` only when:
   truth (not to the worker's report),
 - every claimed work-product artifact was personally loaded and its substance
   verified against the claim — or, only for an artifact class the conductor
-  cannot render, a different clean child inspected it and returned extracted
+  cannot render, a clean fleet worker inspected it and returned extracted
   evidence that is recorded,
 - every analytical conclusion the acceptance relies on was verified at its
   anchors, not adopted from confident prose,
@@ -238,29 +238,38 @@ After all phases:
    findings, plan annotations, and final diff. Any expansion that became
    "required" only through worker/reviewer cycles is a hard fail and normally
    subtraction work.
-2. **Cynical review instruments.** When the cynical review skills are
-   installed, the conductor runs them directly as the final-gate instrument —
-   they are review-only and conductor-executed, so the never-edit-source rule
-   holds: `$cynical-code-review` over the full change set against the plan's
-   completion claims; `$cynical-architecture-review` when the plan changed
-   structure, ownership, or boundaries; `$cynical-cruft-removal` when the
-   plan carried delete lists or replaced paths. Default to running
+2. **Cynical review instruments — fleet-executed.** When the cynical review
+   skills are installed, dispatch each selected instrument as its own new
+   clean external fleet session that invokes the installed skill itself
+   against the repo: `$cynical-code-review` over the full change set against
+   the plan's completion claims; `$cynical-architecture-review` when the
+   plan changed structure, ownership, or boundaries; `$cynical-cruft-removal`
+   when the plan carried delete lists or replaced paths. Default to running
    `$cynical-code-review` for any non-trivial plan; add the other two by
-   judgment from what the plan changed. When the skills are not installed,
-   apply their lens groups from this reference in the sweep instead.
-   Give each instrument the plan path, human baseline anchors, explicit human
-   approval entries, frozen initial closure, and freeze anchor. Its findings
-   use the same scope dispositions and cannot expand repair scope.
+   judgment from what the plan changed. Never run these reviews through
+   native subagents: they bill the parent's expensive model, and bulk review
+   reading is exactly the spend the fleet exists to absorb — a fleet
+   reviewer's own slices run on the fleet host's cheap model. The reviews
+   stay review-only; the conductor never edits source on their behalf and
+   triages their returned findings as claims under the normal audit
+   machinery. Give each instrument the plan path, human baseline anchors,
+   explicit human approval entries, frozen initial closure, and freeze
+   anchor. Its findings use the same scope dispositions and cannot expand
+   repair scope. When the review skills or the external runtime are
+   unavailable, apply the lens groups from this reference in the conductor's
+   own sweep instead.
 3. **Cold verifier** (default on): one new clean child with no conductor
    narrative, prompted to *refute* completion — trust only command output,
    code reality, and work products it loads itself; list every plan promise
    not literally true in code or in the artifacts. Its ignorance of the run
    is the feature; it catches what the conductor's accumulated context has
    normalized.
-   Give it the same scope anchors. Prefer a native clean child in the active
-   host; use an external one-shot when its provider, exact profile, isolation,
-   or receipt is the deliberate value. It may reject completion, but it may
-   not add a newly discovered adjacent path to the frozen closure.
+   Give it the same scope anchors. Run it as a clean external fleet one-shot
+   by default — a whole-plan cold read is bulk reading, and native subagents
+   bill the parent's expensive model. Use a native clean child only on
+   explicit user request or when no external runtime exists. It may reject
+   completion, but it may not add a newly discovered adjacent path to the
+   frozen closure.
 4. Triage all instrument findings like any others; repair through send-backs
    (resuming the owning sessions where healthy); re-run the affected
    instrument on material repairs.

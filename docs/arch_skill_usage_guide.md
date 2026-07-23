@@ -786,11 +786,15 @@ readiness gate is never waived.
 
 Execution defaults to the cheap parallel external fleet — fresh-resumable
 Codex `gpt-5.6-sol` workers at `ultra` through `$agent-delegate`, with
-one-word fleet swaps to Kimi, Grok, Cursor, or Claude — and native children
-by request or fit. Codex usage limits rotate via `aim` with exact-session
-resume, so a rate-limited worker continues instead of being replaced.
-Accepted findings resume the exact worker through its original transport;
-independent review gates start clean. The parent audits every claim,
+one-word fleet swaps to Kimi, Grok, Cursor, or Claude — for every heavy
+role: implementation, research, verification, the cynical review
+instruments, and the cold verifier. Native subagents bill the parent's
+expensive model and are never the review lane; they are reserved for tiny
+errands, explicit requests, or an unavailable external runtime. Codex usage
+limits rotate via `aim` with exact-session resume, so a rate-limited worker
+continues instead of being replaced. Accepted findings resume the exact
+worker through its original transport; independent review gates start clean
+on the fleet. The parent audits every claim,
 delegates proof, records checkpoints, and closes only on the plan-required
 proof and final whole-plan gate.
 

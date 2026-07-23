@@ -1,6 +1,6 @@
 ---
 name: conductor
-description: "Conduct work to verified completion from a finished plan, a partial plan, or a described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake first runs an executive shaping stage — parallel worker research, a parent trim to the smallest sufficient solution, a lightweight outcome map, one scope approval — and workers never dispatch before observable done-ness and a frozen scope boundary exist. Default execution is the cheap parallel external fleet (Codex gpt-5.6-sol at ultra via agent-delegate, one-word swaps to Kimi, Grok, Cursor, or Claude); native children remain available by request or fit, and Codex usage limits rotate via aim without losing sessions. The `conductor terra` preset keeps its dedicated-worktree, Terra xhigh, three-review, PR-publication, and follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
+description: "Conduct work to verified completion from a finished plan, a partial plan, or a described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake first runs an executive shaping stage — parallel worker research, a parent trim to the smallest sufficient solution, a lightweight outcome map, one scope approval — and workers never dispatch before observable done-ness and a frozen scope boundary exist. Default execution is the cheap parallel external fleet (Codex gpt-5.6-sol at ultra via agent-delegate, one-word swaps to Kimi, Grok, Cursor, or Claude); native children stay a narrow exception, and Codex usage limits rotate via aim without losing sessions. The `conductor terra` preset keeps its dedicated-worktree, Terra xhigh, three-review, PR-publication, and follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
 metadata:
   short-description: "Plan-or-outcome conductor with executive shaping and a cheap external fleet"
 ---
@@ -30,9 +30,11 @@ log beside the plan is its durable memory.
 
 - A plan or outcome goes in; verified, reviewed, contract-faithful code comes
   out.
-- Parent tokens go to plan understanding, slice design, cynical audit, and
-  first-hand verification of finished work products. Worker tokens go to
-  investigation, implementation, repair, and proof runs.
+- Parent tokens go to plan understanding, slice design, cynical audit
+  judgment, and first-hand verification of finished work products. Fleet
+  tokens go to investigation, implementation, repair, proof runs, and heavy
+  review reading. Native subagents bill the parent's expensive model — they
+  are not a cheap lane, so bulk work never routes to them.
 - The parent is the scope judge. Fast cheap workers are genuinely smart but
   over-scope and over-iterate; the parent trims every proposal to the
   smallest sufficient solution and holds the frozen boundary against
@@ -103,10 +105,14 @@ log beside the plan is its durable memory.
   Codex workers through `$agent-delegate` — as a deliberate standing policy
   choice: conduction exists to preserve parent context and buy fast cheap
   worker cycles, and that exact cheaper/faster model is the concrete benefit
-  the shared policy asks external transport to name. Use a native child
-  instead when the user asks, when a slice genuinely fits one better (small
-  read-only checks, same-host verification), or when the external runtime is
-  unavailable. Honor explicit user choices in both directions.
+  the shared policy asks external transport to name. The fleet default
+  applies to every role — phase workers, research workers, verification
+  workers, the cynical review instruments, and the cold verifier. Native
+  children run the parent's expensive model, so they are never the cheap
+  lane and never the default for reviews or any other bulk reading; reserve
+  them for a genuinely tiny errand a fleet round-trip would dwarf, a
+  capability only the host exposes, an explicit user ask, or an unavailable
+  external runtime. Honor explicit user choices in both directions.
 - For an external lane, runtime and normally model/profile plus effort are
   supplied by the user. An external Codex worker with no named model defaults
   to `gpt-5.6-sol`, and an omitted effort on that Sol worker defaults to
@@ -152,10 +158,13 @@ log beside the plan is its durable memory.
   may not edit scope, requirements, or the initial closure to normalize worker
   or reviewer discoveries. Post-freeze expansion requires explicit human
   approval and a re-frozen plan before dispatch resumes.
-- Initial workers are new clean children. Repairs resume the exact captured
-  child or external session through its original transport. Never resume
-  "latest" or reuse an unrelated handle. The optional cold verifier and every
-  independent review gate start as new clean children.
+- Initial workers are new clean fleet sessions (native children only under
+  the narrow exceptions above). Repairs resume the exact captured session
+  through its original transport. Never resume "latest" or reuse an
+  unrelated handle. The optional cold verifier and every independent review
+  gate start as new clean fleet sessions — external cheap-model workers,
+  never native subagents by default, because review reading is bulk work
+  and native subagents bill the parent's model.
 - Native starting context is explicit at dispatch. Codex always sets
   `fork_turns` to `"none"` for a clean phase worker or critic, to a positive
   count for deliberately bounded chat context, or to `"all"` only when the
@@ -188,8 +197,8 @@ log beside the plan is its durable memory.
   authority path beyond the diff (side doors live in files the diff did not
   touch), and apply the integrity, architecture, and cruft lens groups from
   `references/audit-and-send-back.md`. Worker-quoted verification is a claim;
-  decisive proof is independently reproduced by a different clean child before
-  acceptance. A worker rebuttal never closes a finding without
+  decisive proof is independently reproduced by a different clean fleet
+  worker before acceptance. A worker rebuttal never closes a finding without
   conductor-verified evidence. A clean pass must record which lying-modes
   were checked.
 - Verify the work product itself before believing any completion claim, and
@@ -228,7 +237,7 @@ log beside the plan is its durable memory.
   `../_shared/aim-rotation.md`. Rotation is not a send-back, respawn, or
   failed run for cap purposes; record it in the conductor log.
 - Delegate all proof runs (tests, builds, generators, simulators) to
-  workers; decisive proof counts only when a different clean child
+  workers; decisive proof counts only when a different clean fleet worker
   reproduced it. The parent runs read-only inspection, which includes
   personally loading and reading work-product artifacts — that verification
   belongs to the parent and is never delegated for economy. Reuse fresh
@@ -329,11 +338,12 @@ log beside the plan is its durable memory.
    verification, record proof in the log, and record phase completion in the
    plan's own format.
 9. Repeat until the execution map is clean or a hard stop triggers.
-10. Run the final gate: whole-plan cynical audit sweep, the cynical review
-   instruments when installed (`$cynical-code-review` by default for
-   non-trivial plans, `$cynical-architecture-review` and
+10. Run the final gate: whole-plan cynical audit sweep, then the cynical
+   review instruments when installed — each dispatched as its own clean
+   external fleet session, never a native subagent (`$cynical-code-review`
+   by default for non-trivial plans, `$cynical-architecture-review` and
    `$cynical-cruft-removal` by judgment from what the plan changed), then
-   the delegated cold verifier unless disabled. Triage and repair findings
+   the fleet cold verifier unless disabled. Triage and repair findings
    through the same send-back machinery. Under the Terra shortcut, defer the
    instrument portion to step 11's three new clean external sessions instead of
    duplicating those reviews; still run the conductor sweep and cold verifier.

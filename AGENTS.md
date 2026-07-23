@@ -212,7 +212,9 @@ Claude Code, and Gemini.
   rotation and exact-session resume across Codex usage limits; the parent
   audits every diff assuming workers cut corners, resumes the exact worker
   with batched findings until exit criteria are true in code, and closes
-  with a new clean whole-plan audit plus optional cold verifier. When the
+  with a new clean whole-plan audit plus fleet-run cynical reviews and an
+  optional fleet cold verifier — review labor rides the cheap fleet, never
+  native subagents, which bill the parent's expensive model. When the
   user wants the work shipped, a dedicated delivery worker — never the
   parent — runs `$pr-authoring` and `$pr-review-followthrough` through CI
   to merge-ready, with a standard at-a-glance delivery report at PR-up and
