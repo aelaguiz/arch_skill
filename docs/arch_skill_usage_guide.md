@@ -60,6 +60,7 @@ Other shipped skills:
 - `agent-delegate`
 - `plan-audit`
 - `plan-implement`
+- `plan-interview`
 - `conductor`
 - `agent-history`
 - `model-consensus`
@@ -122,6 +123,7 @@ Default local path:
 - `~/.agents/skills/agent-delegate/`
 - `~/.agents/skills/plan-audit/`
 - `~/.agents/skills/plan-implement/`
+- `~/.agents/skills/plan-interview/`
 - `~/.agents/skills/conductor/`
 - `~/.agents/skills/agent-history/`
 - `~/.agents/skills/model-consensus/`
@@ -172,6 +174,7 @@ Installed skills:
   - `agent-delegate`
   - `plan-audit`
   - `plan-implement`
+  - `plan-interview`
   - `conductor`
   - `agent-history`
   - `model-consensus`
@@ -215,6 +218,7 @@ Installed skills:
   - `agent-delegate`
   - `plan-audit`
   - `plan-implement`
+  - `plan-interview`
   - `conductor`
   - `agent-history`
   - `model-consensus`
@@ -258,6 +262,7 @@ Installed skills:
   - `agent-delegate`
   - `plan-audit`
   - `plan-implement`
+  - `plan-interview`
   - `conductor`
   - `model-consensus`
   - `contact-sheet-builder`

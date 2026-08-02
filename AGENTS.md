@@ -199,6 +199,17 @@ Claude Code, and Gemini.
   `agent`, `grok`, or `kimi` executables for ordinary acceleration. Route a deliberate
   external worker or conductor through `$agent-delegate` or
   `$conductor` under the shared policy.
+- Use `$plan-interview` when the user wants an intent interview before any
+  plan exists: it educates itself on code, docs, git history, and the user's
+  past asks (facts and a blank template, never a pre-drafted plan), then
+  interviews breadth-first in plain non-jargon English with
+  investigate-and-return cycles to produce a frozen Intent Pack — journey
+  maps, UX delta with visual references, plain-language numbered
+  requirements, non-goals, an in-interview-approved test grid, definition of
+  done, execution policy, and autonomy contract — closing with a decision
+  table and a steerable plan-step gate that defaults to `$arch-mini-plan`.
+  Not for writing the implementation plan, auditing an existing plan, or
+  executing one.
 - Use `$conductor` when the user wants a goal driven to verified completion
   by delegated workers while the parent stays the executive architect, scope
   judge, and cynical reviewer. Intake spans a finished plan, a partial plan,
