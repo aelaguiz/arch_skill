@@ -59,6 +59,16 @@ make install
   retroactively authorize built scope. Scope cycling or unauthorized
   implementation prevents merge-ready until it is subtracted or explicitly
   human-approved and re-frozen.
+- Treat the PR's `## User-Facing Changes` section as a blocking surface on
+  every pass. A missing section, a `None` claim contradicted by the diff, a
+  user-visible change absent from the enumerated list, or a dead embedded
+  image means not merge-ready. Open every embedded image, confirm it renders,
+  and confirm it plausibly shows what its caption claims.
+- Never apply, remove, or edit user-facing approval or waiver labels (for
+  example `ufc-approved` / `ufc-waived`); those are human-only. A push that
+  changes user-facing surfaces after approval invalidates that approval: flag
+  that the PR needs fresh human review of the updated screenshots instead of
+  treating it as merge-ready.
 - Prefer one branch, one PR, one coherent follow-through loop. Do not fork the work into side branches or parallel PRs unless the user explicitly wants that.
 - After each accepted change, run the smallest relevant verification, push to the same PR branch, and continue polling.
 - Stop at merge-ready. Do not click merge, enable auto-merge, or queue the PR unless the user separately asks for that.
@@ -147,6 +157,9 @@ Consider the loop complete only when all of these are true:
   - If the repo uses required reviews, the PR should be in the repo's approved / mergeable state rather than still waiting on blocking review.
 - Required checks are green, or otherwise in the repo's accepted merge-ready state.
 - The branch is mergeable, not conflicted, and not blocked on being behind base.
+- The `## User-Facing Changes` section matches the current head: the list is
+  complete, every image renders, and any required human approval or waiver
+  label is in place for this head, not an earlier one.
 - Every accepted, partially accepted, declined, or already-fixed review item has a reply on the thread that raised it.
 
 ## Output expectations

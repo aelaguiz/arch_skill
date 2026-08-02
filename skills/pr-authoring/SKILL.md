@@ -40,6 +40,20 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
   `none`, explicit human-approved expansions or `none`, and material
   out-of-scope findings intentionally not built. Point to plan anchors; do not
   copy the contract or create a second plan.
+- Every PR body includes a `## User-Facing Changes` section, in one of three
+  shapes: an exhaustive numbered list of every user-visible change, each item
+  with at least one embedded screenshot captured from the running app; the
+  literal claim `None. Nothing a user can see, read, hear, or do changes in
+  this PR.`; or a quoted human waiver recorded verbatim. Exhaustive includes
+  loaders, spinners, skeletons, empty states, error toasts, copy edits, layout
+  shifts, color, animation, and timing changes, re-sequenced screens, and
+  removed states. Only a human can approve or waive the section: never write a
+  waiver the human did not utter, and never downgrade an enumerated list to
+  `None`.
+- Verify every embedded image URL before publishing: it must be HTTPS and
+  return HTTP 200 with an image or video content type. `file://`, localhost,
+  and local filesystem paths are forbidden. A dead image is a publication
+  blocker, not a caveat.
 - Do not turn the final answer into "here is the PR text." The final answer is a publication receipt plus any real caveats.
 
 ## First move
@@ -52,13 +66,13 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
 
 ## Workflow
 
-1. **Map the change.** Summarize the user-facing purpose, changed subsystems, important design decisions, compatibility impact, and likely reviewer concerns from repo evidence.
+1. **Map the change.** Summarize the user-facing purpose, changed subsystems, important design decisions, compatibility impact, and likely reviewer concerns from repo evidence. Enumerate every user-facing change in the diff and collect or capture the screenshot that proves each one before writing the body.
    For plan-backed work, recover the human scope and freeze anchors before
    treating the latest plan text as authority.
 2. **Choose the PR shape.** Use the vendored scaffold to pick the minimum set of sections that fit the change. Prefer a shorter precise PR over a comprehensive but noisy one.
 3. **Write the title.** Make it specific and reviewable. Avoid template headings, vague verbs, and implementation-only titles when the user impact is clearer.
 4. **Write the body.** Include the real problem or motivation, approach, notable implementation details, blast radius, verification, and follow-up boundaries that matter for this PR.
-5. **Validate the body.** Remove placeholders, unsupported claims, irrelevant template sections, stale file names, and any text that could have been written without reading the diff.
+5. **Validate the body.** Remove placeholders, unsupported claims, irrelevant template sections, stale file names, and any text that could have been written without reading the diff. Confirm the `## User-Facing Changes` section is present and truthful, and fetch every embedded image URL to confirm it renders.
    Confirm the diff does not exceed the scope receipt. If it does, stop for
    subtraction or a human approval/re-freeze instead of publishing a laundered
    scope story.

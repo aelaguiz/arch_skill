@@ -6,6 +6,38 @@ Template note:
 - Start filling from the relevant section below.
 -->
 
+## User-Facing Changes (required in every PR — never delete this section)
+
+Pick exactly one shape:
+
+**None:**
+
+```
+None. Nothing a user can see, read, hear, or do changes in this PR.
+```
+
+**Enumerated** (the default when anything visible changes):
+
+```
+1. **<what changed, named from the user's seat>** — screen/flow: <where>.
+   ![<caption>](<https image URL that renders>)
+```
+
+**Waived:**
+
+```
+Waived by <human>: <date>, "<their words, quoted>". Changes: <one-line list anyway>.
+```
+
+Rules: the enumerated list is exhaustive — every loader, spinner, skeleton,
+empty state, error toast, copy edit, layout shift, color/animation/timing
+change, re-sequenced or removed screen. Screenshots come from the running app
+on this PR's head build; before/after pairs when modifying an existing
+surface; a screen recording or frame series for timing/animation changes.
+Verify every image URL returns HTTP 200 with an image or video content type
+before publishing. Only a human can approve or waive; never write a waiver
+the human did not utter, and never downgrade an enumerated list to `None`.
+
 ## Plan Scope Receipt (plan-backed changes only)
 
 - Canonical plan: `<path and Scope and Simplicity Contract anchor>`
