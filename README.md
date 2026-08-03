@@ -45,7 +45,6 @@ Other shipped skills are:
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
 - `fal-ai-tools` — prompt-first fal.ai tool workflow for model discovery, schema and pricing lookup, file upload, background removal, media generation or editing, inference, polling, and result receipts using MCP when available and SDK/HTTP fallback otherwise
-- `transcribe-audio`: transcribes local recordings to verified plain-text files with live OpenAI transcription-model discovery, transport adaptation, ordered chunking, requested parallelism, and secret-safe API use
 - `flutter-reference` — doctrine-only Flutter app and game-building reference for architecture, Dart style, state management, lifecycle, performance, testing, CI, accessibility, localization, security, platform integration, and Flame/game-loop guidance
 - `eli10` — optional source-retained response-style skill; it is not installed by default
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based frozen-scope receipt for plan-backed work
@@ -149,7 +148,6 @@ Installed skills:
   - `~/.agents/skills/skill-authoring/`
   - `~/.agents/skills/figma-best-practices/`
   - `~/.agents/skills/fal-ai-tools/`
-  - `~/.agents/skills/transcribe-audio/`
   - `~/.agents/skills/flutter-reference/`
   - `~/.agents/skills/pr-authoring/`
   - `~/.agents/skills/pr-review-followthrough/`
@@ -198,7 +196,6 @@ Installed skills:
   - `~/.claude/skills/skill-authoring/`
   - `~/.claude/skills/figma-best-practices/`
   - `~/.claude/skills/fal-ai-tools/`
-  - `~/.claude/skills/transcribe-audio/`
   - `~/.claude/skills/flutter-reference/`
   - `~/.claude/skills/pr-authoring/`
   - `~/.claude/skills/pr-review-followthrough/`
@@ -247,7 +244,6 @@ Installed skills:
   - `~/.gemini/skills/skill-authoring/`
   - `~/.gemini/skills/figma-best-practices/`
   - `~/.gemini/skills/fal-ai-tools/`
-  - `~/.gemini/skills/transcribe-audio/`
   - `~/.gemini/skills/flutter-reference/`
   - `~/.gemini/skills/pr-authoring/`
   - `~/.gemini/skills/commit-history-authoring/`
@@ -274,7 +270,7 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, and `eli10` are removed from the live installed surface; `codex-babysit` and `eli10` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex and Claude Code local history; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
+`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, and `eli10` are removed from the live installed surface; `codex-babysit` and `eli10` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex and Claude Code local history; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
 
 External lanes still require the selected local `claude`, `codex`, `agent`,
 `grok`, or `kimi` CLI at invocation time. Ordinary same-host work uses the active host's
@@ -510,16 +506,6 @@ Use when the user wants to create, audit, or repair a Figma file, component libr
 ### `fal-ai-tools`
 
 Use when the user wants to use fal.ai tools, models, MCP, SDK/API calls, background removal, media generation or editing, model discovery, schema lookup, pricing checks, file upload, inference, polling, or result receipts. The skill is prompt-first: it prefers visible fal MCP tools, falls back to `fal_client` or raw HTTP when MCP is unavailable, checks live schemas and pricing before paid calls, and keeps fal keys redacted. Use provider-specific implementation or frontend skills instead when the task does not call fal.
-
-### `transcribe-audio`
-
-Use when the user wants a local recording transcribed to a saved plain-text
-file with OpenAI. The skill discovers the newest eligible transcription model
-from current official sources, follows that model's supported API even when it
-is realtime-only, protects the API key, chunks long recordings, preserves
-timeline order under parallel execution, and verifies the completed text file.
-It does not own speech generation, audio editing, summary-only work, timed
-subtitles, or live microphone captioning.
 
 ### `flutter-reference`
 
@@ -791,7 +777,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -844,7 +830,6 @@ Examples:
 - `Use $skill-authoring to audit this skill package`
 - `Use $figma-best-practices to audit this Figma library for Dev Mode and MCP readiness`
 - `Use $fal-ai-tools to remove the background from this image with fal.ai`
-- `Use $transcribe-audio to transcribe the M4A in Downloads with the latest OpenAI transcription model`
 - `Use $flutter-reference to review this Flutter app architecture`
 - `Use $pr-authoring to write and publish a PR for this branch`
 - `Use $pr-review-followthrough on PR #1234`
