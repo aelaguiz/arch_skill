@@ -54,6 +54,14 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
   return HTTP 200 with an image or video content type. `file://`, localhost,
   and local filesystem paths are forbidden. A dead image is a publication
   blocker, not a caveat.
+- When the PR enumerates user-facing changes, or changes behavior a human
+  could verify, include a QA Test Plan written from the tester's seat, not the
+  debugger's: numbered steps on a real build with the expected result per
+  step, runnable by a non-engineer; the setup lane that gets a tester into
+  the right state (account type, seeded data, dev-menu toggle, internal
+  build), or exactly what an engineer must hand the tester; and a link to a
+  visual guide when the path is more than a couple of steps. "Verified
+  locally" and test-file names are not a test plan.
 - Do not turn the final answer into "here is the PR text." The final answer is a publication receipt plus any real caveats.
 
 ## First move

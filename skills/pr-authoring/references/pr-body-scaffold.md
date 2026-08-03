@@ -38,6 +38,22 @@ Verify every image URL returns HTTP 200 with an image or video content type
 before publishing. Only a human can approve or waive; never write a waiver
 the human did not utter, and never downgrade an enumerated list to `None`.
 
+## QA Test Plan (required whenever User-Facing Changes are enumerated)
+
+Answer from the tester's seat, not the debugger's:
+
+1. **Steps:** numbered, on a real build, with the expected result per step. A
+   non-engineer must be able to run them: no code, no debugger, no shell.
+2. **Setup:** how the tester reaches the state this PR changes: account type,
+   seeded data, dev-menu toggle, internal/TestFlight build. If setup needs an
+   engineer, name exactly what the engineer hands the tester.
+3. **Visual guide:** link an annotated walkthrough when the path is more than
+   a couple of steps.
+
+Omit only when the User-Facing Changes claim is a truthful `None` and no
+behavior a human could verify changed. "Verified locally" and test-file names
+are not a test plan.
+
 ## Plan Scope Receipt (plan-backed changes only)
 
 - Canonical plan: `<path and Scope and Simplicity Contract anchor>`
