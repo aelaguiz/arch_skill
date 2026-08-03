@@ -39,6 +39,14 @@ back with questions it could not have known to ask before looking.
 
 ## Non-negotiables
 
+- **The interview runs in the foreground conversation.** The user answers
+  in this thread, so the interviewer must be this thread: never delegate
+  the interview itself to a background agent, subagent, or external
+  worker. If this skill finds itself running in a background or child
+  context where the user cannot reply directly, stop and return control so
+  the main conversation runs it. Children are for education research and
+  the explicitly requested proxy interviewee only; they report to the
+  parent, and the parent asks the questions.
 - **Educate, don't draft.** After the opening ask and at most 1–3 orienting
   questions, education produces facts, reference material, and a blank
   template — zero decisions. Never pre-fill the pack from the opening
@@ -107,7 +115,11 @@ back with questions it could not have known to ask before looking.
    `references/interview-doctrine.md`: open questions with informed
    framing, investigate-and-return cycles as answers demand, journey maps
    and the test grid produced and approved in-flow, standing items as
-   one-line confirms, answers written into the pack immediately.
+   one-line confirms, answers written into the pack immediately. Open
+   every questioning round after the first with the compact running
+   decisions table — what's settled so far — so the user follows along by
+   table while answering; the gate-1 table is the final version of the
+   same table, never a reveal.
 4. **Proxy on request.** "Have <model> answer as me" swaps in a clean
    proxy child under the same open-question rules; answers are marked,
    user-visible decisions stay provisional unless delegated, and the user

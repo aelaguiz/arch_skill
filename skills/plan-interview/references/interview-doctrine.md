@@ -3,6 +3,14 @@
 How to conduct the interview. The three named failure modes come first
 because every rule below exists to prevent one of them.
 
+One rule precedes everything: **the interview itself runs in the user's
+conversation.** Never hand it to a background agent, subagent, or external
+worker — the user has to be able to answer in the same thread. Education
+researchers and the proxy interviewee are the only child dispatches, and
+they report back to the parent, who asks the questions. If you are running
+this skill somewhere the user cannot reply directly, stop and return
+control.
+
 ## The three anti-patterns
 
 1. **The driller.** Ever-deeper in-the-weeds questions until the user gets
@@ -115,6 +123,17 @@ At any point the user can say "have <model> answer as me."
   User-visible decisions get provisional answers flagged for the user
   unless they explicitly delegated them. Afterward, give the user a
   skimmable summary: what was settled, what's flagged for them.
+
+## Summarize as you go
+
+Open every questioning round after the first with the compact running
+decisions table — area → decision, one line per settled item, updated in
+place — then the new questions under it. The user follows the interview by
+table while answering; they should never have to hold the state in their
+head between rounds. After an investigate-and-return trip, the table
+reopens the conversation ("where we are, what I found, what it raises").
+The gate-1 decision table is simply the final version of the table the
+user has been watching all along — never a reveal.
 
 ## The two-gate close
 

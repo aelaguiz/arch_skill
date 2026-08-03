@@ -10,7 +10,11 @@ questions lead, framed by evidence and the user's own history; options with
 recommendations are the fallback; journey maps and the full test grid are
 approved inside the interview; investigate-and-return cycles happen whenever
 an answer demands one; every close is a decision table, then a steerable
-plan-step gate.
+plan-step gate. The interview always runs in the user's own conversation —
+never on a background agent. For brevity these transcripts mostly abridge
+the running decisions-so-far table that opens each questioning round
+(Example 3 shows one); the closing decision table is that table's final
+form, not a reveal.
 
 ---
 
@@ -344,6 +348,15 @@ more than one journey, and this one creates three. All go in the pack:
 Anything about journeys two or three that isn't obvious?
 
 **User:** no. midnight local is right.
+
+**Interviewer:** Where we are so far, then two more shape questions:
+
+| Area | Decided so far |
+|---|---|
+| Job of the card | Habit anchor — the reason to open the app today |
+| Done-state | Card flips to done + teases tomorrow; never disappears |
+| Journeys (3 mapped) | Daily play; same-day return; next-day reset at local midnight |
+| Visuals | No mocks; daily-quest energy as reference; mock gate pending |
 
 **3. Who gets it — everyone including free users, or is the paygate
 involved?** (Flagging: if free users see it locked, that's a paygate
