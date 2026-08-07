@@ -29,6 +29,7 @@ This is prompt-only shell orchestration. Do not add scripts, harnesses, controll
 Publish to these SSH targets, skipping whichever one is the current machine:
 
 - `amirs-m3-max-new`
+- `amir-m3-36gb`
 - `agents@amirs-mac-studio`
 - `amir-m5`
 - `home`
