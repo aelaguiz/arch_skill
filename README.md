@@ -57,6 +57,7 @@ Other shipped skills are:
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs and strict `approve | not-approved | inconclusive` verdicts
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
+- `prime-agent-ops` — inventories discoverable Prime daemon/session universes and performs one exact authorized Prime/AIM session operation through capability-gated public host-local commands, with compound identity checks and layered receipts
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-freeze minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
 - `plan-implement` — prompt-first plan-backed implementation loop that advances only through the frozen authorized frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
 - `plan-interview` — evidence-grounded intent interview that educates itself first (facts and a blank template, never a pre-drafted plan), then interviews breadth-first in plain non-jargon English with investigate-and-return cycles to produce a frozen Intent Pack — journey maps, UX delta with visual references, numbered plain-language requirements, non-goals, an in-interview-approved test grid, definition of done, execution policy, autonomy contract — closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`
@@ -159,6 +160,7 @@ Installed skills:
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/fresh-consult/`
   - `~/.agents/skills/agent-delegate/`
+  - `~/.agents/skills/prime-agent-ops/`
   - `~/.agents/skills/plan-audit/`
   - `~/.agents/skills/plan-implement/`
   - `~/.agents/skills/plan-interview/`
@@ -208,6 +210,7 @@ Installed skills:
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/fresh-consult/`
   - `~/.claude/skills/agent-delegate/`
+  - `~/.claude/skills/prime-agent-ops/`
   - `~/.claude/skills/plan-audit/`
   - `~/.claude/skills/plan-implement/`
   - `~/.claude/skills/plan-interview/`
@@ -256,6 +259,7 @@ Installed skills:
   - `~/.gemini/skills/codex-review-yolo/`
   - `~/.gemini/skills/fresh-consult/`
   - `~/.gemini/skills/agent-delegate/`
+  - `~/.gemini/skills/prime-agent-ops/`
   - `~/.gemini/skills/plan-audit/`
   - `~/.gemini/skills/plan-implement/`
   - `~/.gemini/skills/plan-interview/`
@@ -274,7 +278,7 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, and `eli10` are removed from the live installed surface; `codex-babysit` and `eli10` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex and Claude Code local history; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
+`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, and `eli10` are removed from the live installed surface; `codex-babysit` and `eli10` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex and Claude Code local history; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `prime-agent-ops`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
 
 External lanes still require the selected local `claude`, `codex`, `agent`,
 `grok`, or `kimi` CLI at invocation time. Ordinary same-host work uses the active host's
@@ -615,6 +619,25 @@ the parent's integration capacity. Use `fresh-consult` for read-only opinions,
 two-participant convergence, and `stepwise` or `arch-epic` for ordered role
 lifecycles.
 
+### `prime-agent-ops`
+
+Use when an authorized operator wants every Prime daemon/session universe
+visible to an approved local or SSH host user inventoried, a root/RLM tree and
+layered activity state explained, or one exact Prime/AIM session action carried
+out with compound active/durable identity checks and a typed receipt. The skill
+uses only capability-advertised public host-local commands; remote dynamic
+values travel only through each verb's fixed `--request-json -` SSH form. A
+missing brief/input/create/precondition capability is reported, never replaced
+with raw socket or hidden daemon machinery.
+
+Use native family APIs for current-tree observation/message, `$agent-delegate`
+for a deliberately external model process, and `$agent-history` for offline
+transcript search.
+
+Example:
+
+- `Use $prime-agent-ops to inventory every discoverable Prime universe on this approved Mac and explain each root/RLM tree without changing anything.`
+
 ### `plan-audit`
 
 Use when the user wants an existing planning artifact audited before work starts, in whatever format it already uses: PRD, migration plan, architecture plan, checklist, issue body, inline plan, or design doc. It improves plan quality by checking the North Star, done-state requirements, real ambiguity, constraints and non-constraints, repo/code truth when relevant, depth-first implementation risk, tiny-team simplicity, existing-pattern fit, drift-proofing, side doors, required deletes, and proof gaps.
@@ -791,7 +814,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `prime-agent-ops`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.

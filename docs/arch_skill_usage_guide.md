@@ -58,6 +58,7 @@ Other shipped skills:
 - `codex-review-yolo`
 - `fresh-consult`
 - `agent-delegate`
+- `prime-agent-ops`
 - `plan-audit`
 - `plan-implement`
 - `plan-interview`
@@ -121,6 +122,7 @@ Default local path:
 - `~/.agents/skills/codex-review-yolo/`
 - `~/.agents/skills/fresh-consult/`
 - `~/.agents/skills/agent-delegate/`
+- `~/.agents/skills/prime-agent-ops/`
 - `~/.agents/skills/plan-audit/`
 - `~/.agents/skills/plan-implement/`
 - `~/.agents/skills/plan-interview/`
@@ -172,6 +174,7 @@ Installed skills:
   - `codex-review-yolo`
   - `fresh-consult`
   - `agent-delegate`
+  - `prime-agent-ops`
   - `plan-audit`
   - `plan-implement`
   - `plan-interview`
@@ -216,6 +219,7 @@ Installed skills:
   - `codex-review-yolo`
   - `fresh-consult`
   - `agent-delegate`
+  - `prime-agent-ops`
   - `plan-audit`
   - `plan-implement`
   - `plan-interview`
@@ -260,6 +264,7 @@ Installed skills:
   - `codex-review-yolo`
   - `fresh-consult`
   - `agent-delegate`
+  - `prime-agent-ops`
   - `plan-audit`
   - `plan-implement`
   - `plan-interview`
@@ -742,6 +747,29 @@ Practical rule:
 - Use `model-consensus` for two-model plan convergence.
 - Use `stepwise` or `arch-epic` when new clean workers, exact-role repair,
   independent critics, and durable orchestration are part of an ordered flow.
+
+### `prime-agent-ops`
+
+Use for cross-universe Prime operations on an approved local or SSH-reachable
+host: inventory every daemon/session universe visible to the verified OS user,
+reconstruct root/RLM trees, explain layered activity without inventing a
+waiting flag, or carry out one exact authorized message/input/lifecycle action
+with active and durable identity checks.
+
+The skill uses only public commands advertised by the installed Prime/AIM build
+and selected runtime. Remote dynamic values use each verb's fixed
+`--request-json -` stdin form. Missing brief, input, create, compound-target, or
+journaled AIM capabilities are reported rather than replaced with raw sockets,
+private descriptors, hidden daemon commands, or a wrapper.
+
+Examples:
+
+- `Use $prime-agent-ops to inventory every discoverable Prime universe on this approved Mac and explain the root/RLM trees without changing anything.`
+- `Use $prime-agent-ops on operator@prime-lab.example to deliver this exact follow-up to the fully identified session and return the admission and post-state receipt.`
+
+Use `agent-message`/`agent-observe` for the current Prime family,
+`agent-delegate` for a deliberately external model process, and `agent-history`
+for offline Codex or Claude history.
 
 ### `plan-audit`
 

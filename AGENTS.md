@@ -144,6 +144,10 @@ Claude Code, and Gemini.
   exact model/profile, durable session, isolation, automation, or receipt is
   the concrete benefit. Ordinary same-host delegated work should use native
   children directly under the shared policy.
+- Use `$prime-agent-ops` for cross-universe Prime session inventory or one exact
+  authorized Prime/AIM session operation on an approved host; use native
+  `agent-message`/`agent-observe` for the current family, `$agent-delegate` for
+  an external model process, and `$agent-history` for offline transcript search.
 - Use `$codex-babysit` when the user wants to monitor, babysit, or keep alive
   an already-running Codex goal-mode tmux session across real usage limits,
   account rotations, restarts, and same-session resumes. It is not for
