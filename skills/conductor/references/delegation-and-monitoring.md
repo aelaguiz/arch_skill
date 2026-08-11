@@ -32,12 +32,12 @@ request, or an unavailable external runtime.
   replacement was necessary.
 - **Final-gate review instruments → new clean fleet sessions.** Each
   selected cynical review runs as its own clean external fleet session that
-  invokes the installed review skill itself against the repo, so any slices
-  it fans out bill the fleet host's cheap model, not the parent's. The
-  conductor consumes each instrument's findings as claims under the normal
-  audit machinery. Never run these reviews through native subagents — bulk
-  review reading on the parent's model is the exact spend this skill exists
-  to avoid.
+  invokes the installed review skill itself against the repo. Its own native
+  slices are expected and need no assignment: they bill the fleet host's
+  cheap model, not the parent's. The conductor consumes each instrument's
+  findings as claims under the normal audit machinery. Never run these reviews
+  through the parent's own native subagents — bulk review reading on the
+  parent's model is the exact spend this skill exists to avoid.
 - **Cold verifier → new clean fleet one-shot**, final gate only.
   Independence is the feature: no conductor narrative, no resume, just
   refutation from plan, code, and the artifacts it loads itself. A
@@ -49,8 +49,8 @@ request, or an unavailable external runtime.
 - **Parallel waves** are parent-owned. Use only the active host slots or
   external sessions that independent, non-overlapping slices justify. Every
   child knows that siblings may be editing the repo, must not revert unfamiliar
-  changes, must not create more agents unless explicitly assigned a bounded
-  nested scope, and must report actual conflicts with file evidence.
+  changes, must not start external agents of its own, and must report actual
+  conflicts with file evidence.
 
 ## Native Starting Context
 

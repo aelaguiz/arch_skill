@@ -82,17 +82,16 @@ non-overlapping lens, the relevant references, and the return contract below.
 In Codex, set `fork_turns: "none"`. In Claude Code, use a clean named or custom
 subagent rather than a conversation fork. Request a read-only capability when
 the host exposes one and also say: inspect and propose only; do not edit or
-write files, apply patches, commit, or create children. The parent captures
+write files, apply patches, commit, or start external agents. Its own native
+sub-agents are fine. The parent captures
 relevant repo state before dispatch, checks it after returns, resolves
 disagreements, and alone updates the canonical plan.
 
 Each planner returns whether its bounded lens completed, evidence with path or
 section anchors, the proposed planning conclusions or repairs, checks
-performed, unresolved assumptions, and confirmation that it made no writes or
-children. Keep fanout proportional to independent lenses, host slots,
-collision risk, and the parent's capacity to inspect every return. Nested
-fanout requires an explicit parent-assigned scope and budget; this planning
-contract assigns none.
+performed, unresolved assumptions, and confirmation that it made no writes and
+started no external agents. Keep the parent's fanout proportional to independent
+lenses, host slots, collision risk, and its capacity to inspect every return.
 
 `gpt-5.4-mini` with `xhigh` reasoning is the preferred miniarch planning
 profile only when the active native schema can select and confirm both. If it

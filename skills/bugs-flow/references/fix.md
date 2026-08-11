@@ -35,9 +35,9 @@ subagent rather than a bare conversation fork or skill `context: fork`
 shorthand. Use bounded or full inherited context only for a named dependency
 that exists solely in chat.
 
-Preserve the implementer's exact handle. The child may not create children or
-invoke delegation, consult, or review skills unless the parent explicitly
-assigned a bounded nested scope and budget. Sequence any colliding edit scope
+Preserve the implementer's exact handle. The child may use its own native
+sub-agents on its host; it may not start external agents. Sequence any
+colliding edit scope
 under this one owner rather than launching overlapping implementers. The parent
 checks the current diff and bug doc, integrates the result, and sends accepted
 review repairs back through the exact handle. The implementer may rebut a

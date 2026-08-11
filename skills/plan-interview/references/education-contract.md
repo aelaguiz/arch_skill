@@ -18,8 +18,9 @@ template — zero decisions**.
 
 Apply `../../_shared/agent-orchestration-policy.md`; apply
 `$prompt-authoring` to each populated brief. Clean read-only native
-children, non-overlapping lenses, no nested fanout, compact returns with
-file and symbol anchors plus the 5–10 key files that matter. The parent
+children, non-overlapping lenses, their own native sub-agents allowed and
+no external agents, compact returns with file and symbol anchors plus the
+5–10 key files that matter. The parent
 reads the key files itself and owns synthesis.
 
 Lenses to cover (merge or drop by judgment for small work):

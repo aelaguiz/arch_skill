@@ -45,10 +45,10 @@ fork or skill `context: fork` shorthand. Use inherited chat context only for a
 named chat-only dependency.
 
 Use the strongest read-only capability the host exposes and still say: do not
-edit or write files, including `_comment_ledger.md`; do not create children or
-invoke delegation, consult, or review skills unless the parent explicitly
-assigned a bounded nested scope and budget. Require the return to name files
-and symbols read, mapped contracts and dependents, proof and explanation
+edit or write files, including `_comment_ledger.md`; use your own native
+sub-agents on your host if they help, and do not start external agents.
+Require the return to name files and symbols read, mapped contracts and
+dependents, proof and explanation
 quality, candidate comment fronts and canonical owner sites, coverage limits,
 and collision risks. The parent waits for and accounts for every slice,
 compares current status and diff with the pre-dispatch state, reconciles

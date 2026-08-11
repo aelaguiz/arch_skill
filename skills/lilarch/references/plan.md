@@ -35,11 +35,11 @@ or custom subagent rather than a conversation fork.
 
 Mapping and review roles are analysis-only. Use a read-only capability when
 the host exposes one and also say: do not edit or write files, apply patches,
-commit, or create children. Divide mapping by non-overlapping surface or
-question, keep fanout within available host slots and the parent's integration
-capacity, and do not add nested fanout without an explicit bounded scope and
-budget. The parent records relevant repo state before dispatch, checks it after
-returns, reconciles the evidence, and alone writes the compact doc and
+commit, or start external agents; your own native sub-agents are fine. Divide
+mapping by non-overlapping surface or question and keep the parent's fanout
+within available host slots and its integration capacity. The parent records
+relevant repo state before dispatch, checks it after returns, reconciles the
+evidence, and alone writes the compact doc and
 `lilarch:block:plan_audit`.
 
 Each role returns whether its bounded job completed, path or symbol anchors,

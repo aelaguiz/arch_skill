@@ -27,9 +27,8 @@ another deliberate benefit warrants an external process.
 - Context inheritance is separate from permissions, capabilities, filesystem
   sharing, background lifetime, and worktree isolation. Record those choices
   independently in the dispatch receipt.
-- The parent owns fanout and integration. Children may not create more agents
-  or invoke delegation/consult skills unless the parent assigned a bounded
-  nested scope and budget.
+- The parent owns external topology and integration. Children may use their own
+  native sub-agents freely and may not start external agents.
 
 ## Why external sessions matter
 

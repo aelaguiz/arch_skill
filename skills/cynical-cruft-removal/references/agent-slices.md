@@ -110,9 +110,8 @@ authority. Report scope-laundered live clusters; do not keep them because later
 agents made them reachable.
 
 Return concise evidence with repo paths. Do not edit or write files. Do not ask
-for more tests or docs. Do not create child agents or invoke delegation,
-consult, or review skills unless the parent brief explicitly assigns a nested
-scope and budget.
+for more tests or docs. You may use your own native sub-agents on this host; do
+not start external agents.
 ```
 
 ## Parent Accounting

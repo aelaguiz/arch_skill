@@ -16,10 +16,10 @@ The critic reads `.doc-audit-ledger.md` and current code, then recommends:
 - `BLOCKED` when the next pass would be speculative, taxonomy-imposing, disconnected from a narrowed scope, or materially unchanged.
 
 Use the strongest read-only capability available and explicitly prohibit the
-critic from editing or writing any file. It may not create children or invoke
-delegation, consult, or review skills unless the parent assigned a bounded
-nested scope and budget. The parent captures current git status and the
-relevant diff before dispatch, compares current state afterward, accounts for
+critic from editing or writing any file. It may use its own native sub-agents
+on its host; it may not start external agents. The parent captures current git
+status and the relevant diff before dispatch, compares current state afterward,
+accounts for
 the critic result, spot-checks its evidence, and owns the accepted verdict and
 any next-pass repair decision.
 

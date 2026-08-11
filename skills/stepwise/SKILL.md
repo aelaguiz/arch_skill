@@ -74,9 +74,9 @@ break.
   by default; an explicit conversation fork means full inherited conversation,
   while a skill with `context: fork` is an isolated clean subagent context.
   Context is separate from permissions, capabilities, and worktree isolation.
-- The orchestrator owns fanout and integration. Worker and critic prompts
-  forbid creating other model agents or invoking delegation/consult skills
-  unless the orchestrator explicitly assigns a bounded nested scope and budget.
+- The orchestrator owns external topology and integration. Worker and critic
+  prompts allow each role its own native sub-agents on its own host and forbid
+  starting external agents.
 - Every critic fail and every inspectable abstain enters the same diagnostic
   protocol. Stepwise holds read-only diagnostic conversation with the agents
   involved, walking upstream when evidence points there, until root cause is

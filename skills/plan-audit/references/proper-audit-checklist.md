@@ -75,8 +75,7 @@ For repo-backed plans:
   integration capacity.
 - Review children used an enforced read-only capability when available and an
   explicit no-edit/no-write prompt in all cases.
-- Children did not create children or invoke delegation, consult, or review
-  skills without an explicitly assigned nested scope and budget.
+- No child started an external agent; their own native sub-agents were fine.
 - Child reports included exact files, symbols, and evidence.
 - Parent accounting covered every child final state; synthesis spot-checked
   evidence, reconciled conflicts, deduplicated findings, and decided each

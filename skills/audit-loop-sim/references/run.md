@@ -43,10 +43,10 @@ fork or skill `context: fork` shorthand. Use inherited chat context only for a
 named chat-only dependency.
 
 Use the strongest read-only capability the host exposes and still say: do not
-edit or write files, including `_audit_sim_ledger.md`; do not create children
-or invoke delegation, consult, or review skills unless the parent explicitly
-assigned a bounded nested scope and budget. Require the return to name files,
-journeys, and harness paths read, mapped contracts and platform obligations,
+edit or write files, including `_audit_sim_ledger.md`; use your own native
+sub-agents on your host if they help, and do not start external agents.
+Require the return to name files, journeys, and harness paths read, mapped
+contracts and platform obligations,
 current real-app proof and gaps, candidate risk fronts, coverage limits, and
 collision risks. Dispatch the child only after confirming it inherits the
 sanctioned simulator or device capabilities required by `audit-loop-sim`.

@@ -23,8 +23,8 @@ Every child should have seven clear properties:
 4. **Continuation** — new child, exact-child resume, or fresh replacement.
 5. **Isolation and capabilities** — read/write scope, tools, permissions,
    filesystem/worktree behavior, and any device or browser access.
-6. **Topology** — who may create children, how independent scopes divide, and
-   who integrates the results.
+6. **Topology** — who launches external agents, how independent scopes divide,
+   and who integrates the results.
 7. **Return contract** — the evidence the parent needs to accept, repair, or
    reject the work.
 
@@ -191,18 +191,27 @@ Permissions, browser/device access, network access, and background lifetime are
 separate choices. Do not use an external process merely to smuggle in a
 capability the workflow has not authorized.
 
-## Keep topology parent-owned
+## Keep external topology parent-owned
 
-The parent owns decomposition, the concurrency budget, and final integration.
-Parallelize work that is genuinely independent; do not "maximize agents" as an
-end in itself. Account for available host slots, shared files, external process
-cost, and the parent's ability to review every result.
+The parent owns decomposition, the concurrency budget, and final integration of
+the agents it launches. Parallelize work that is genuinely independent; do not
+"maximize agents" as an end in itself. Account for available host slots, shared
+files, external process cost, and the parent's ability to review every result.
 
-Children must not create their own children or invoke delegation/consult skills
-unless the parent explicitly assigns a nested scope and budget. Ordinary
-worker and critic prompts should say that plainly. If peers need to communicate
-directly rather than through the parent, choose a host-native team deliberately
-and name why that topology helps.
+A child may always create its own native sub-agents on its own host. That needs
+no parent permission, no assigned nested scope, and no budget: native fan-out is
+the child's local execution choice, and its cost and coordination stay on the
+child's host. This holds for every child role, including read-only reviewers and
+single-shot critics.
+
+A child must not spawn external agents. A worker or reviewer started through
+`$agent-delegate` — or through any other external process or session — may not
+itself use `$agent-delegate`, launch another external Claude, Codex, Cursor
+Agent, Grok, or Kimi session, or manually start a coding-harness executable.
+External topology stays parent-owned. Ordinary worker and critic prompts should
+say both halves plainly. If peers need to communicate directly rather than
+through the parent, choose a host-native team deliberately and name why that
+topology helps.
 
 ## Require an integration-ready return
 

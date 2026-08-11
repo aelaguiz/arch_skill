@@ -47,9 +47,8 @@ The parent must:
   addition to the explicit no-edit child prompt
 - tell slices to cite files and code paths they actually read
 - keep slices from doing implementation or patch design
-- keep children from creating children or invoking delegation, consult, or
-  review skills unless the parent has explicitly assigned a nested scope and
-  budget
+- let each slice use its own native sub-agents on its host, and keep every slice
+  from starting external agents
 - wait for every launched slice to reach a final state
 - spot-check returned evidence, reconcile conflicts, deduplicate findings, and
   decide the scope disposition of every accepted finding
@@ -85,8 +84,8 @@ Posture:
 - Treat the supplied implementation story as a hypothesis, not a conclusion.
 - Current code behavior is authority.
 - Do not edit or write files.
-- Do not create child agents or invoke delegation, consult, or review skills
-  unless the parent brief explicitly assigns a nested scope and budget.
+- You may use your own native sub-agents on this host; do not start external
+  agents.
 - Do not propose broad refactors unless they are needed to make a false
   implementation story true.
 

@@ -36,8 +36,8 @@ are still current.
 
 - Starting context: <clean | exact-reviewer history>
 - Continuation: <new-clean | exact-resume | clean-rotation>
-- Nested fanout: <"prohibited" by default, or an explicit bounded scope and
-  concurrency budget assigned by the parent>
+- Native sub-agents: allowed on your own host whenever they help
+- External agents: you may not start any
 
 Keep transport rationale, native mechanism, session handles, chain paths,
 receipt mode, turn counters, and rotation bookkeeping in the parent dispatch
@@ -62,10 +62,9 @@ nearby repo, docs, research, tests, command output, or local evidence you judge
 necessary to answer the user's ask. Report what you read and what answer the
 evidence supports.
 
-Do not edit or write files, run formatters, coordinate directly with sibling
-consults, create child agents, invoke delegation/consult skills, or start
-another controller. Only a nested scope and budget explicitly assigned above
-can relax the no-child rule.
+Use your own native sub-agents on this host whenever they help you cover the
+material. Do not edit or write files, run formatters, coordinate directly with
+sibling consults, start external agents, or start another controller.
 
 # Report Contract
 
@@ -145,6 +144,6 @@ Do not:
 - Launch an external same-provider process merely to obtain clean context or
   exact continuation that the host already provides natively. External
   transport remains valid when its concrete benefit is worth the process cost.
-- Tell reviewers to maximize their own fanout. The parent owns decomposition,
-  concurrency, evidence checking, and synthesis unless it explicitly budgets a
-  nested scope.
+- Manage a reviewer's internal native fan-out. The reviewer owns that choice on
+  its own host; the parent owns external topology, evidence checking, and
+  synthesis.

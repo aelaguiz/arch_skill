@@ -19,9 +19,8 @@
   no-edit/no-write guidance. The parent checks current repository state,
   accounts for every return, owns scope and synthesis, and decides the final
   verdict.
-- Children do not create children or invoke delegation, consult, or review
-  skills unless the parent explicitly assigned a bounded nested scope and
-  budget.
+- Children may use their own native sub-agents on their own host at will; they
+  may not start external agents.
 
 ## What counts as first-party evidence
 

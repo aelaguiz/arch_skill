@@ -65,9 +65,9 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
   `yolo` reviewers merely as a speed reflex; choose the fanout that the concrete
   review benefit and current host state justify. This is a cost judgment, not a
   ban or fixed process limit.
-- **Keep topology parent-owned.** The review prompt tells Codex not to spawn
-  nested agents or invoke delegation/consult skills. The parent verifies and
-  integrates the verdict.
+- **Keep external topology parent-owned.** The review prompt lets Codex use its
+  own native sub-agents and tells it not to start external agents. The parent
+  verifies and integrates the verdict.
 - **Verify the review-only boundary from repository state.** The `yolo`
   profile grants `danger-full-access`; a no-edit prompt is guidance, not an
   enforced capability boundary. Record the reviewed repository's status and
@@ -98,8 +98,9 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
    populated brief before launch (never inline — prompts get long and
    multi-line is inevitable).
 6. Note that this dispatch is a new clean external review with no continuation
-   handle. Tell the reviewer not to edit or spawn children. Record the current
-   repository status and diff before launch; this is required because the
+   handle. Tell the reviewer not to edit files and not to start external
+   agents; its own native sub-agents are fine. Record the current repository
+   status and diff before launch; this is required because the
    profile has `danger-full-access` even though the role is review-only.
 7. Invoke via `codex exec -p yolo -C <repo-root> --json -o "$FINAL_PATH" < "$PROMPT_PATH" > "$STREAM_PATH" 2>&1`, in background.
 8. Continue other work while Codex reasons; when it completes, compare the

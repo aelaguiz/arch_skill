@@ -336,7 +336,7 @@ critic -> native, clean, new child for every independent gate; read-only
 For Codex native dispatch, each new role uses `fork_turns: "none"`. In Claude,
 each is a clean named subagent, not a full conversation fork. The parent records
 the exact planner/worker handles, keeps context separate from permissions and
-worktree sharing, and forbids nested fanout in every role prompt.
+worktree sharing, and forbids externally spawned agents in every role prompt.
 
 ### `auto-run` mode
 

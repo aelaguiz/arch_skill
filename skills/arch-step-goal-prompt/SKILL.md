@@ -61,10 +61,11 @@ reviewers only when they are requested or already required.
   reasoning decisions, not a mandatory form to paste into every goal.
 - Default independent reviewers and mappers to new clean same-host native
   children when the host can do the job. Make them read-only by capability
-  when available, also say no edit/no write, prevent unassigned nested fanout,
-  and require the parent to check current repo state before accepting the
-  result. Resume the exact implementer for its authorized repairs; start the
-  next independent recheck as a fresh clean child.
+  when available, also say no edit/no write, let each child use its own native
+  sub-agents while forbidding it to start external agents, and require the
+  parent to check current repo state before accepting the result. Resume the
+  exact implementer for its authorized repairs; start the next independent
+  recheck as a fresh clean child.
 - Keep generic goal semantics free of provider CLI syntax. When an external
   lane is selected, say what concrete provider, exact-model/profile,
   lifecycle, isolation, automation, or receipt benefit it provides and weigh

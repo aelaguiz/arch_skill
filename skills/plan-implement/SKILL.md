@@ -78,8 +78,8 @@ state machine, or script-backed completion judge.
   children, also tell them not to edit or write, and have the parent compare
   repository status and diffs with the pre-dispatch state before accepting
   their evidence.
-- Children do not create children or invoke delegation, consult, or review
-  skills unless the parent explicitly assigns a nested scope and budget.
+- Children may use their own native sub-agents on their own host at will; they
+  may not start external agents.
 - The parent owns child accounting, evidence spot-checking, deduplication,
   integration, finding scope disposition, source-of-truth updates, proof
   claims, and final completion claims.

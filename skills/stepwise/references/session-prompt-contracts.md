@@ -56,10 +56,9 @@ use them as part of this step. Required support is not scope drift.
   prove the blocker, then say so explicitly and stop with that evidence.
 - Do not jump to a different stage owner, restart the whole process, or invoke
   unrelated workflow/loop skills.
-- The parent owns fanout and integration. Do not create or coordinate other
-  model agents, manually start coding-harness processes, or invoke delegation
-  or consult skills unless this prompt explicitly assigns a bounded nested
-  scope and budget.
+- You may use your own native sub-agents on this host whenever they help. Do
+  not start external agents or manually launch coding-harness processes; the
+  parent owns external topology and integration.
 - Do not replace declared authority with repo-wide guessing. When the owner
   runbook or declared support names the authoritative primitive, config,
   endpoint, or command, use that first.
@@ -77,8 +76,7 @@ intermediate session during upstream traversal. It is read-only by default.
 ```text
 Diagnostic conversation only. Do not modify files. Do not run commands beyond
 safe reads explicitly allowed below. Do not attempt repair.
-Do not create or coordinate other model agents or invoke delegation/consult
-skills.
+Your own native sub-agents are fine; do not start external agents.
 
 ## What the transcript already shows
 
@@ -134,8 +132,8 @@ issue and leads below are challengeable; they are not task authority.
 Satisfy the authoritative step outcome inside the boundaries below. Own the
 diagnosis and repair path. Do not add constraints beyond the user prompt,
 manifest, and owner runbook.
-Do not create or coordinate other model agents or invoke delegation/consult
-skills unless this prompt explicitly assigns a bounded nested scope and budget.
+You may use your own native sub-agents on this host; do not start external
+agents.
 
 ## Observed issue
 

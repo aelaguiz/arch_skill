@@ -82,10 +82,10 @@ architecture, and avoids kitchen-sink plans.
   another peer-messaging topology merely because there are two participants.
   Use direct participant messaging only when the user genuinely requested that
   method and explain why it improves the dialogue.
-- The parent owns fanout, the concurrency budget, round sequencing, evidence
-  relay, and final integration. Participant prompts prohibit child-created
-  fanout and delegation/consult skills unless the parent explicitly assigns a
-  bounded nested scope and budget.
+- The parent owns external topology, the concurrency budget, round sequencing,
+  evidence relay, and final integration. Participant prompts allow each
+  participant its own native sub-agents on its own host and forbid starting
+  external agents.
 - Context is separate from permissions, filesystem sharing, and worktree
   isolation. Participants are read-only collaborators. Prefer enforced
   read-only capability where available, include no-edit/no-write guidance, and
@@ -167,7 +167,8 @@ Then:
    with the same faithful goal brief and mode-specific evidence obligations.
    For native Codex use `fork_turns: "none"`; for native Claude use separate
    clean named/custom subagents; for external participants use fresh resumable
-   sessions. Prohibit nested fanout unless explicitly budgeted.
+   sessions. Each participant may use its own native sub-agents; none may start
+   an external agent.
 2. **Collect both views before relay.** Do not let either participant see the
    other's answer before it has formed its own position.
 3. **Relay through the parent.** Send Model A's pass to Model B for critique and

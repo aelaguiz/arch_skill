@@ -131,10 +131,9 @@ Must happen every run:
   conversation, while a skill with `context: fork` is an isolated clean
   subagent context. Context is separate from permissions, capabilities, and
   worktree isolation.
-- The parent owns sequencing, any fanout, and final integration. Planner,
-  worker, and critic prompts forbid creating other model agents or invoking
-  delegation/consult skills unless the parent explicitly assigns a bounded
-  nested scope and budget.
+- The parent owns sequencing, external topology, and final integration.
+  Planner, worker, and critic prompts allow each role its own native sub-agents
+  on its own host and forbid starting external agents.
 - Each sub-plan inherits its approved epic boundary, records its own initial
   minimal convergence closure during initial architecture, and freezes that
   closure before implementation. After freeze, only explicit human approval

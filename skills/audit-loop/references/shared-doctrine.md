@@ -28,8 +28,8 @@
   named dependency that exists solely in chat.
 - Select the strongest read-only capability available and also tell each
   mapper not to edit or write files, including the ledger. Mapping children
-  may not create children or invoke delegation, consult, or review skills
-  unless the parent explicitly assigned a bounded nested scope and budget.
+  may use their own native sub-agents on their own host; they may not start
+  external agents.
 - Bound fanout by independent surface families, available host slots,
   shared-file or shared-state collision risk, and the parent's capacity to
   account for, inspect, and synthesize every return.

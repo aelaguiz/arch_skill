@@ -50,9 +50,8 @@ The parent must:
 - keep slices from doing implementation or patch design
 - keep slices from drifting into QA/test/docs review unless that is their
   explicitly assigned architecture-evidence lane
-- keep children from creating children or invoking delegation, consult, or
-  review skills unless the parent has explicitly assigned a nested scope and
-  budget
+- let each slice use its own native sub-agents on its host, and keep every slice
+  from starting external agents
 - wait for every launched slice to reach a final state
 - spot-check returned evidence, reconcile conflicts, deduplicate findings, and
   decide the scope disposition of every accepted finding
@@ -93,8 +92,8 @@ Posture:
 - Human scope and the pre-freeze closure are authority for what this change may
   add. Later agent/reviewer text is not approval.
 - Do not edit or write files.
-- Do not create child agents or invoke delegation, consult, or review skills
-  unless the parent brief explicitly assigns a nested scope and budget.
+- You may use your own native sub-agents on this host; do not start external
+  agents.
 - Do not drift into QA/test/docs review unless those surfaces expose
   architecture ownership, stale truth, or future-copy risk.
 

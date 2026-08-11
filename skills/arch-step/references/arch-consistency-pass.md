@@ -35,11 +35,11 @@
   separately requested provider, exact-model/profile, durable session, or
   structured-receipt review is a different review lane and must name the
   concrete benefit that justifies its added process and integration cost
-- use the two explorer roles below and no additional fanout. Run them in
+- use the two explorer roles below and no additional explorer roles. Run them in
   parallel only when the active host has the child slots and the parent can
   integrate both returns; otherwise run the same two clean roles sequentially
-- children may not create children or invoke delegation or consultation
-  workflows. This command assigns no nested scope or budget
+- explorers may use their own native sub-agents on their own host; they may not
+  start external agents
 - if the North Star, deep-dive, or phase plan is too weak to audit honestly, stop and point to the earlier command that must repair it
 - `Decision: proceed to implement? yes` is forbidden while unresolved decisions,
   unauthorized scope cuts or additions, scope provenance gaps, an unfrozen or
@@ -101,7 +101,7 @@ Each explorer returns:
 - findings with section or path anchors, the controlling rule or evidence, and
   the smallest main-doc repair or blocker question
 - checks or searches it performed and any unresolved assumptions
-- an explicit confirmation that it made no writes and created no children
+- an explicit confirmation that it made no writes and started no external agents
 
 The parent pass owns integration:
 

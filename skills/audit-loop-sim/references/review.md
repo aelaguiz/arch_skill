@@ -22,9 +22,8 @@ changes are allowed in `review`.
 - Give the critic the ledger and exact repo paths. Use bounded or full
   inherited context only for a named dependency that exists solely in chat.
 - Select the strongest read-only capability available and explicitly tell the
-  critic not to edit or write any file, including the ledger. It may not create
-  children or invoke delegation, consult, or review skills unless the parent
-  assigned a bounded nested scope and budget.
+  critic not to edit or write any file, including the ledger. It may use its own
+  native sub-agents on its host; it may not start external agents.
 - Select the critic only after confirming that it inherits the sanctioned
   simulator or device capabilities required by `audit-loop-sim`. If the host
   cannot confirm that inheritance, keep the review with the authorized parent

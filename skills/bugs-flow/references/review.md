@@ -23,8 +23,8 @@ repairs return to the exact implementer that owns the fix.
   dependency that exists solely in chat.
 - Select the strongest read-only capability available and explicitly tell the
   critic not to edit or write code, the bug doc, or any other file. The critic
-  may not create children or invoke delegation, consult, or review skills
-  unless the parent explicitly assigned a bounded nested scope and budget.
+  may use its own native sub-agents on its host; it may not start external
+  agents.
 - If independent lenses genuinely warrant fanout, keep them non-overlapping
   and bound the wave by host slots, shared-file or shared-state collision risk,
   and the parent's capacity to inspect and integrate every return.

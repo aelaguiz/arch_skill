@@ -68,7 +68,8 @@ When this command runs inside `implement-loop`, it alone owns the authoritative 
 Direct invocation follows the normal writes above. When `implement-loop`
 dispatches an independent auditor, the child performs the same audit reasoning
 but is analysis-only: request a read-only capability when the host exposes one
-and explicitly forbid edits, writes, patches, commits, or child creation. The
+and explicitly forbid edits, writes, patches, commits, or starting external
+agents; its own native sub-agents are fine. The
 parent captures and rechecks repo state and remains the command owner that
 integrates accepted findings into `DOC_PATH`, writes the authoritative audit
 block, and reopens phases.
@@ -82,8 +83,8 @@ The child returns:
   subtraction
 - checks and searches performed, their results, and any unresolved assumptions
 - manual-verification items kept separate from code blockers
-- confirmation that it made no writes and created no children, plus its exact
-  handle when the parent may need a bounded follow-up
+- confirmation that it made no writes and started no external agents, plus its
+  exact handle when the parent may need a bounded follow-up
 
 The parent verifies those claims against current workspace truth before
 acceptance. A later independent recheck uses a new clean auditor; a bounded

@@ -94,9 +94,8 @@ Use this skill when the code is stable enough to ground documentation against cu
   chat; ordinary scope travels through paths, the ledger, and a bounded brief.
 - Give mapping and evaluator children the strongest read-only capability the
   host exposes and also tell them not to edit or write files, including the
-  ledger. They may not create children or invoke delegation, consult, or review
-  skills unless the parent explicitly assigns a bounded nested scope and
-  budget.
+  ledger. They may use their own native sub-agents on their own host; they may
+  not start external agents.
 - Split mapping only across independent topic or doc-surface families. Bound
   fanout by available host slots, shared-file or shared-state collision risk,
   and the parent's capacity to inspect and integrate every return.

@@ -83,8 +83,8 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
   the ledger, exact paths, and the child brief.
 - Give mappers and critics the strongest read-only capability the host exposes
   and explicitly tell them not to edit or write files, including the ledger.
-  They may not create children or invoke delegation, consult, or review skills
-  unless the parent explicitly assigns a bounded nested scope and budget.
+  They may use their own native sub-agents on their own host; they may not start
+  external agents.
 - Select a mapping or review child only when the host confirms that it inherits
   the sanctioned simulator or device capabilities required by
   `audit-loop-sim`. If the host cannot confirm that inheritance, keep the work

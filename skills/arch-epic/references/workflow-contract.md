@@ -376,8 +376,8 @@ the next routing decision.
    - new clean critics run plan-readiness and completion/scope gates.
    - in-scope critic failures resume the exact planner or implementation
      worker with observation-only feedback through its original transport.
-6. The parent owns sequencing and integration; role prompts prohibit nested
-   fanout unless the parent assigned a bounded scope and budget. Role-based
+6. The parent owns sequencing and integration; role prompts allow each role its
+   own native sub-agents and prohibit starting external agents. Role-based
    planning and implementation remain sequential across sub-plans.
 7. Monitor native roles with host status/wait primitives. In the external lane,
    choose foreground or detached invocation deliberately; detached children

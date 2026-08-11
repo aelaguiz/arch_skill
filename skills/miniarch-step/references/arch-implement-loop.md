@@ -120,7 +120,8 @@ fresh audit.
 
 The auditor is analysis-only even though the parent command ultimately updates
 `DOC_PATH`. Use a read-only capability when the host exposes one and also say:
-do not edit or write files, apply patches, commit, or create children. Give it
+do not edit or write files, apply patches, commit, or start external agents;
+its own native sub-agents are fine. Give it
 the exact `DOC_PATH`, current repo state, frozen scope anchors, current
 frontier, relevant proof receipts, and the return contract from
 `arch-audit-implementation.md`. The parent records repo status or diff before
@@ -129,9 +130,9 @@ workspace truth, and alone writes the audit block or reopens phases.
 
 If implementation was delegated and the audit finds authorized repair work,
 resume the exact implementer handle with the accepted delta. The next
-independent audit starts as another new clean child. No nested fanout is
-assigned; overall fanout must fit independent work, host slots, collision risk,
-and parent integration capacity.
+independent audit starts as another new clean child. The parent's overall
+fanout must fit independent work, host slots, collision risk, and parent
+integration capacity.
 
 Prefer `gpt-5.4-mini` at `xhigh` only when the active native schema can select
 and confirm both model and effort. Otherwise use inherited native capability

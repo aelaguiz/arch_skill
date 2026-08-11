@@ -74,8 +74,8 @@ user's broader workflow.
 - Use the strongest read-only capability the host exposes, also tell every
   review child not to edit or write, and have the parent compare repository
   status and diffs with the pre-dispatch state before accepting child evidence.
-- Children do not create children or invoke delegation, consult, or review
-  skills unless the parent explicitly assigns a nested scope and budget.
+- Children may use their own native sub-agents on their own host at will; they
+  may not start external agents.
 - The parent owns child accounting, deduplication, integration, scope
   disposition, the saved artifact, and the final verdict.
 - Do not manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or any other

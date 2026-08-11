@@ -56,8 +56,8 @@ The parent agent must:
   context instead of the parent's completion narrative
 - select the strongest read-only capability or sandbox available for mapping
   and review children, in addition to their explicit no-edit prompt
-- prohibit children from creating children or invoking delegation, consult, or
-  review skills unless the brief assigns a nested scope and budget
+- let children use their own native sub-agents on their own host, and prohibit
+  them from starting external agents
 - account for every child final state, dedupe and spot-check findings, resolve
   conflicts, and compare repository status and diffs with the pre-dispatch
   state before accepting read-only evidence
@@ -94,8 +94,8 @@ Active scope: <phase/section/checklist item>
 Surface: <owner path | callers | side doors | docs/prompts | tests as code>
 
 Read code directly. This mapping slice is read-only: do not edit or write
-files. Do not create child agents or invoke delegation, consult, or review
-skills unless the parent brief explicitly assigns a nested scope and budget.
+files. You may use your own native sub-agents on this host; do not start
+external agents.
 Return:
 - files/symbols read
 - current owner path
@@ -118,9 +118,8 @@ Scope: <phase/section/slice>
 Lens: <plan-audit implementation-audit lens>
 
 Read the current code directly. Do not edit or write files. Do not run tests.
-Do not ask for logs. Do not create child agents or invoke delegation, consult,
-or review skills unless the parent brief explicitly assigns a nested scope and
-budget. Return only findings for this lens:
+Do not ask for logs. You may use your own native sub-agents on this host; do
+not start external agents. Return only findings for this lens:
 - title
 - required repair, observation, wrong, or out of scope
 - problem
@@ -149,7 +148,6 @@ Read code only as needed. Do not run tests. Return:
 - smallest high-value proof to run next
 - proof that would be low-value or duplicate
 
-Do not edit or write files. Do not create child agents or invoke delegation,
-consult, or review skills unless the parent brief explicitly assigns a nested
-scope and budget.
+Do not edit or write files. You may use your own native sub-agents on this
+host; do not start external agents.
 ```

@@ -108,10 +108,9 @@ add a universal runner, controller, state machine, or harness for this skill.
   or exact same-runtime external session captured for the same consult line.
 - A new independent gate, cold check, or second verifier is a new clean child,
   even when an older reviewer handle is convenient.
-- The parent owns fanout, the concurrency budget, evidence spot-checking, and
-  synthesis. Every reviewer prompt prohibits child-created fanout and
-  delegation/consult skills unless the parent explicitly assigns a bounded
-  nested scope and budget.
+- The parent owns external topology, the concurrency budget, evidence
+  spot-checking, and synthesis. Every reviewer prompt lets the reviewer use its
+  own native sub-agents on its own host and forbids starting external agents.
 - For external consults, preserve the existing namespaced chain directories,
   per-turn receipts, event streams, final output, execution metadata, and exact
   session handles described in the invocation reference.
@@ -143,8 +142,8 @@ add a universal runner, controller, state machine, or harness for this skill.
    `references/model-and-invocation.md`, resolve the model and effort exactly,
    confirm the CLI, and use its receipt mechanics. Ask one consolidated
    question only when a load-bearing external execution value is missing.
-7. Dispatch the reviewer with the prompt contract and explicit no-edit/no-child
-   rules.
+7. Dispatch the reviewer with the prompt contract, explicit no-edit rules, and
+   the no-external-agent boundary.
 
 ## Workflow
 
@@ -163,8 +162,8 @@ add a universal runner, controller, state machine, or harness for this skill.
    a clean named/custom subagent and exact-subagent resume. For external, use
    the exact command and chain/turn receipt shape in the invocation reference.
 5. **Protect read-only scope.** Use enforced read-only capability where
-   available, include the no-edit/no-write prompt contract, and prohibit nested
-   fanout unless explicitly budgeted.
+   available, include the no-edit/no-write prompt contract, and prohibit the
+   reviewer from starting external agents.
 6. **Consume the result.** Require the verdict footer and evidence actually
    read. Spot-check failure reasons and inspect parent-owned status/diff for
    unexpected writes before treating the result as fact.

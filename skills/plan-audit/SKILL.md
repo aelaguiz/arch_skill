@@ -83,8 +83,8 @@ ledger beside the plan, not a state machine and not a second plan.
 - Use the strongest read-only capability the host exposes, also tell every
   audit child not to edit or write, and have the parent compare repository
   status and diffs with the pre-dispatch state before accepting child evidence.
-- Children do not create children or invoke delegation, consult, or review
-  skills unless the parent explicitly assigns a nested scope and budget.
+- Children may use their own native sub-agents on their own host at will; they
+  may not start external agents.
 - The parent owns child accounting, evidence spot-checking, deduplication,
   integration, finding scope disposition, audit-log updates, and the final
   verdict.

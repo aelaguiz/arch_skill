@@ -52,10 +52,10 @@ same-host native children. Codex uses `fork_turns: "none"`; Claude uses a clean
 named or custom subagent rather than a bare conversation fork or skill
 `context: fork` shorthand. Give each child the strongest available read-only
 capability and an explicit instruction not to edit or write files, including
-the ledger. Children may not fan out or invoke delegation, consult, or review
-skills unless the parent assigns a bounded nested scope and budget. Bound the
-wave by host slots, shared-file or shared-state collision risk, and the
-parent's integration capacity. The parent captures and later compares current
+the ledger. Children may use their own native sub-agents on their own host and
+may not start external agents. Bound the parent's own wave by host slots,
+shared-file or shared-state collision risk, and the parent's integration
+capacity. The parent captures and later compares current
 git status and the relevant diff, accounts for every return, reconciles
 overlap, and writes accepted mapping evidence into the ledger.
 

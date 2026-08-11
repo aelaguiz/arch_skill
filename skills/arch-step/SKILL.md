@@ -92,8 +92,9 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
   parent-owned synthesis. In Codex, set `fork_turns: "none"`; in Claude Code,
   use clean named or custom subagents rather than a conversation fork. Give
   every review child explicit no-edit/no-write guidance, use a read-only
-  capability when the host confirms one, forbid unassigned nested fanout, and
-  compare current repo state before accepting its return.
+  capability when the host confirms one, let each explorer use its own native
+  sub-agents while forbidding it to start external agents, and compare current
+  repo state before accepting its return.
 - `advance` must choose from structure first, quality second, stage order third. Helper commands stay explicit.
 - `status` is compact, read-only, and grounded in the actual artifact.
 - `advance` owns the longer checklist surface and optional one-step execution.

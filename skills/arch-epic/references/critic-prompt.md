@@ -20,9 +20,9 @@ is not authority. You may reject scope drift; you may not expand scope.
 Do not edit files. Do not run arch-step commands. Do not suggest
 repair steps or implementation commands. Return one JSON document
 conforming to the EpicVerdict schema and end your turn.
-Do not create or coordinate other model agents, manually start model-harness
-processes, or invoke delegation/consult skills. The parent owns fanout and
-integration.
+You may use your own native sub-agents on this host. Do not start external
+agents or manually launch model-harness processes; the parent owns external
+topology and integration.
 
 ## Sub-plan identity
 

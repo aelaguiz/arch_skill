@@ -62,6 +62,17 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
   build), or exactly what an engineer must hand the tester; and a link to a
   visual guide when the path is more than a couple of steps. "Verified
   locally" and test-file names are not a test plan.
+- Every bug-fix PR includes a `Reproduction: Before And After` section: the
+  exact steps that made the bug happen on a build without the fix with the
+  observed failure, then the same steps re-run on the fixed build with the
+  observed correct behavior, naming the build identity (version/build or
+  commit) on both sides. The pair is the proof that the fix fixes the bug
+  rather than a theory about it. Compressed triggers, seeded state, and
+  direct entry at the failing step are encouraged over soaks and
+  full-journey replays; name the compression so the reader knows why it is
+  equally valid. Write `not attempted because <blocking fact>` plus the
+  substituting evidence only when reproduction was genuinely impossible;
+  "low value", "obvious", and time pressure are not blocking facts.
 - Do not turn the final answer into "here is the PR text." The final answer is a publication receipt plus any real caveats.
 
 ## First move

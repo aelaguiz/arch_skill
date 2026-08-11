@@ -296,9 +296,9 @@ multiple delegated tasks for this skill and the parent can review every result.
 Parallel workers are still ordinary external delegates; the group only gives
 the parent a place to organize prompts, streams, finals, execution metadata,
 and the combined report. The parent owns the concurrency budget and assigns
-non-overlapping owner paths when edits would otherwise collide; children do
-not create their own children unless an explicit nested scope and budget says
-otherwise.
+non-overlapping owner paths when edits would otherwise collide. Each worker may
+still use its own native sub-agents, and no worker starts another external
+agent.
 
 Create one group directory:
 

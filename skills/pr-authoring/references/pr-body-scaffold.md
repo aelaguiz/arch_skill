@@ -76,6 +76,28 @@ Omit the section for changes with no governing plan.
 
 **Affected platforms/devices:** [iOS 14 and below / Android API < 28 / 32-bit ARM only / Safari / etc.]
 
+### Reproduction: Before And After
+
+[Required for every bug fix. The pair is the proof: exact steps that made
+the bug happen on a build without the fix, then the same steps re-run clean
+on the fixed build, with build identity (version/build or commit) named on
+both sides. Compressed triggers, seeded state, and direct entry at the
+failing step beat soaks and full-journey replays; name the compression so
+the reader knows why it is equally valid. If reproduction was genuinely
+impossible, write `not attempted because <blocking fact>` and the evidence
+that substitutes.]
+
+**Before — build without the fix:** `<version/build or commit>`
+1. [Exact step]
+2. [Exact step]
+
+**Observed:** [the failure, quoted or screenshotted]
+
+**After — fixed build:** `<version/build or commit>`
+1. [Same steps]
+
+**Observed:** [the corrected behavior]
+
 ### Root Cause Analysis
 
 **The bug lives here:**

@@ -46,9 +46,9 @@ Use this skill for contained feature work that is too small for the full arch fl
   rechecks repo state, owns doc/worklog updates, and integrates every return.
 - Give editful children explicit non-overlapping owner paths. Resume the exact
   implementer handle for authorized repair of its own slice; start an
-  independent recheck as a new clean child. Children do not fan out unless the
-  parent explicitly assigns a bounded nested scope and budget, and total
-  fanout stays proportional to independent work, host slots, collision risk,
+  independent recheck as a new clean child. Children may use their own native
+  sub-agents on their own host and may not start external agents; the parent's
+  own fanout stays proportional to independent work, host slots, collision risk,
   and parent integration capacity.
 - External review or work remains available when a concrete provider,
   load-bearing exact model/profile, lifecycle, isolation, automation, or

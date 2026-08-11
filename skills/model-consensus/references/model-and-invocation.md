@@ -42,9 +42,9 @@ genuinely requested.
 
 Context is separate from permission and workspace isolation. Participants are
 read-only; use enforced read-only capability when available, a no-edit/no-write
-prompt, and a parent-owned status or diff check. The parent owns fanout and
-integration. Participant prompts prohibit nested fanout unless a bounded scope
-and concurrency budget are explicit.
+prompt, and a parent-owned status or diff check. The parent owns external
+topology and integration. Participant prompts allow each participant's own
+native sub-agents and forbid starting external agents.
 
 ## Required Participant Values
 
@@ -209,8 +209,8 @@ child, route a follow-up to the other participant, or replace a participant
 silently. Store each returned final in the corresponding round artifact.
 
 Parent relay remains the default. Do not create a team for ordinary consensus
-rounds. Participant prompts are read-only and prohibit child-created fanout
-unless an explicit bounded scope and budget says otherwise.
+rounds. Participant prompts are read-only, allow each participant's own native
+sub-agents, and prohibit starting external agents.
 
 ## External Codex: First Turn
 

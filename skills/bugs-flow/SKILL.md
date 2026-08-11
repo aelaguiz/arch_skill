@@ -82,11 +82,11 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
   no-write contract. Send every accepted repair finding back to the exact
   implementer that owns the fix; never resume a critic as an implementer and
   never reuse a prior critic for the next independent gate.
-- Implementers and critics may not create children or invoke delegation,
-  consult, or review skills unless the parent explicitly assigns a bounded
-  nested scope and budget. If multiple independent review lenses genuinely
-  help, bound fanout by host slots, shared-file or shared-state collision risk,
-  and the parent's capacity to inspect and integrate every return.
+- Implementers and critics may use their own native sub-agents on their own
+  host at will; they may not start external agents. If multiple independent
+  review lenses genuinely help, bound the parent's own fanout by host slots,
+  shared-file or shared-state collision risk, and the parent's capacity to
+  inspect and integrate every return.
 - External review is a transport choice, not a freshness requirement or a
   prohibited lane. Use it when a concrete benefit is worth its added cost; the
   same clean critic, read-only, return, parent-state-check, and independent

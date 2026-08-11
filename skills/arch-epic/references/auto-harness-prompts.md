@@ -53,9 +53,8 @@ Every child must:
 - leave compact, inspectable evidence
 - avoid nested automatic continuation commands such as `auto-plan` or
   `implement-loop`
-- do not create or coordinate other model agents, manually start model-harness
-  processes, or invoke delegation/consult skills unless the parent explicitly
-  assigned a bounded nested scope and budget
+- use your own native sub-agents freely, but do not start external agents or
+  manually launch model-harness processes
 - avoid broad repo rewrites unrelated to the active sub-plan
 
 ## Sub-plan planner prompt
@@ -110,9 +109,9 @@ failure.
 - Do not start the next sub-plan.
 - Do not invoke `auto-plan`, `implement-loop`, or any nested automatic
   continuation command. Apply the arch-step doctrine directly from the references.
-- Do not create or coordinate other model agents, manually start model-harness
-  processes, or invoke delegation/consult skills. The parent owns fanout and
-  integration.
+- You may use your own native sub-agents on this host. Do not start external
+  agents or manually launch model-harness processes; the parent owns external
+  topology and integration.
 - Do not narrow, drop, or mark an approved epic requirement out of scope. The
   epic scope is the epic scope. A requirement can move later only when Epic
   Requirement Coverage names the later sub-plan owner.
@@ -198,9 +197,9 @@ long-run floors apply before deciding that attention is needed.
 - Implement the active sub-plan depth-first.
 - Do not rewrite the plan to make partial work look complete.
 - Do not invoke nested automatic continuation commands.
-- Do not create or coordinate other model agents, manually start model-harness
-  processes, or invoke delegation/consult skills. The parent owns fanout and
-  integration.
+- You may use your own native sub-agents on this host. Do not start external
+  agents or manually launch model-harness processes; the parent owns external
+  topology and integration.
 - Do not cut, narrow, or drop approved behavior, acceptance criteria, or
   verification. Missing approved work is a blocker unless it is explicitly
   assigned to a named later sub-plan.
@@ -292,9 +291,9 @@ movement. If you need to stop, say why instead of going silent.
   contract, explicit human decisions, and applicable owner doctrine. Critic
   evidence may reopen reasoning but cannot create a constraint.
 - Do not invoke nested automatic continuation commands.
-- Do not create or coordinate other model agents, manually start model-harness
-  processes, or invoke delegation/consult skills. The parent owns fanout and
-  integration.
+- You may use your own native sub-agents on this host. Do not start external
+  agents or manually launch model-harness processes; the parent owns external
+  topology and integration.
 - Do not alter the approved North Star, Epic Requirement Coverage, or Section 7
   to make unfinished work disappear. Same-scope clarifications are allowed only
   when they preserve approved scope and are recorded honestly.
@@ -372,9 +371,9 @@ state or external stream activity shows real inspection.
 - Do not run implementation commands.
 - Do not suggest implementation commands or repair steps.
 - Do not run arch-step or Stop-hook controllers.
-- Do not create or coordinate other model agents, manually start model-harness
-  processes, or invoke delegation/consult skills. The parent owns fanout and
-  integration.
+- You may use your own native sub-agents on this host. Do not start external
+  agents or manually launch model-harness processes; the parent owns external
+  topology and integration.
 - Do not invent a compromise scope; report drift instead.
 - Do not treat an agent-written Decision Log entry as approval to reduce
   scope.

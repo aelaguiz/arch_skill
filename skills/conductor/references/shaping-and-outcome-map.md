@@ -31,7 +31,8 @@ shape directly and dispatch nothing.
 
 - Dispatch research workers under `../../_shared/agent-orchestration-policy.md`
   with `$prompt-authoring` applied to each populated brief. Clean context,
-  read-only role, no implementation, no nested delegation.
+  read-only role, no implementation. A research worker may use its own native
+  sub-agents on its host; it may not start external agents.
 - Parallelize genuinely independent questions: map the subsystem, find the
   authority paths, enumerate the touchpoints, propose candidate slices.
 - Require compact returns: findings with file and symbol anchors, a proposed

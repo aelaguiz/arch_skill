@@ -58,10 +58,11 @@ proceeding.
 # Capabilities And Boundaries
 You may: read and search files, edit within scope, run commands to
 implement and verify, and make implementation decisions the plan implies.
-The parent owns fanout and integration. Do not create or coordinate other model
-agents, manually spawn coding-harness executables, or invoke delegation or
-consult skills unless this prompt explicitly assigns a bounded nested scope and
-budget.
+You may use your own native sub-agents on this host whenever they help; you do
+not need permission, an assigned scope, or a budget for that. Do not spawn
+external agents: no `$agent-delegate`, no other external Claude, Codex, Cursor
+Agent, Grok, or Kimi session, and no manually launched coding-harness
+executable. The parent owns external topology and integration.
 You must not: commit, push, stash, revert unrelated work, expand scope
 (stop and report instead), weaken or skip tests, or leave the old code path
 alive when the contract says replace it.

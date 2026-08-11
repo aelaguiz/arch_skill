@@ -20,9 +20,9 @@ The parent agent's job is orchestration only:
 - report the agreed result without adding a third plan of its own
 
 Parent relay is the default topology. Participants do not message each other
-directly and do not create children unless the parent explicitly budgets a
-bounded nested scope. Use a host-native peer team only when direct participant
-communication is genuinely part of the user's requested method.
+directly and do not start external agents; their own native sub-agents are
+fine. Use a host-native peer team only when direct participant communication is
+genuinely part of the user's requested method.
 
 ## Operating Principles
 
@@ -132,9 +132,8 @@ sessions for the remaining participants. Give both models:
 - the raw goal and goal brief
 - the participant roles
 - repo root and evidence obligations when a repo or workspace is involved
-- an explicit no-edit/no-write contract and a prohibition on child-created
-  fanout or delegation/consult skills unless the parent assigned a bounded
-  nested scope and budget
+- an explicit no-edit/no-write contract, permission to use their own native
+  sub-agents, and a prohibition on starting external agents
 - the quality bar
 - the output contract
 

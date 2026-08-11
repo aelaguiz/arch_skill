@@ -14,8 +14,8 @@ Do not suggest this surface to users.
   solely in chat.
 - Select the strongest read-only capability the host exposes and retain the
   explicit no-edit/no-write rules below.
-- Do not create child agents or invoke delegation, consult, or review skills
-  unless the parent explicitly assigns a bounded nested scope and budget.
+- You may use your own native sub-agents on this host; do not start external
+  agents.
 - The parent owns result accounting, evidence spot-checking, synthesis, any
   accepted repair, and the final verdict. Evaluator output is evidence, not an
   automatic controller decision.

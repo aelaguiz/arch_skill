@@ -56,8 +56,8 @@ Read repo truth directly where relevant. Do not edit or write files. Do not
 invent scope. Do not produce a second plan. Return only findings your lens
 owns. If the plan is clean for your lens, say that plainly.
 
-Do not create child agents or invoke delegation, consult, or review skills
-unless the parent brief explicitly assigns a nested scope and budget.
+You may use your own native sub-agents on this host; do not start external
+agents.
 
 Treat the initial human ask and explicit human approvals as scope authority.
 The initial architecture may have a pre-freeze minimal convergence closure;
@@ -120,8 +120,8 @@ run tests. Do not ask for test logs or command output. Do not produce a second
 plan. Do not invent scope. Return only findings your lens owns. If the
 implementation is clean for your lens, say that plainly.
 
-Do not create child agents or invoke delegation, consult, or review skills
-unless the parent brief explicitly assigns a nested scope and budget.
+You may use your own native sub-agents on this host; do not start external
+agents.
 
 Compare code to the human-authorized outcome, frozen initial convergence
 closure, and explicit later human approvals. Unauthorized built scope is a

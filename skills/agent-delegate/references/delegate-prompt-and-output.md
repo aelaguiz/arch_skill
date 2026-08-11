@@ -24,8 +24,8 @@ and report exactly what changed.
 - Continuation: <new one-shot | new resumable session | exact-session resume>
 - Group: <group objective, or "none">
 - Sibling tasks: <short names of sibling tasks, or "none">
-- Nested fanout: <"prohibited" by default, or an explicit bounded scope and
-  concurrency budget assigned by the parent>
+- Native sub-agents: allowed on your own host whenever they help
+- External agents: you may not start any
 
 Keep the external benefit, runtime/model/effort, delegation mode, session
 handle, run directory, and receipt bookkeeping in the parent dispatch record.
@@ -79,6 +79,8 @@ You may:
 6. Make local implementation choices inside the assigned scope.
 7. Reject an advisory parent lead and follow a better evidence-backed path
    while still satisfying the authoritative task.
+8. Create your own native sub-agents on this host whenever they help. You do not
+   need parent permission, an assigned scope, or a budget for that.
 
 You must not:
 
@@ -87,8 +89,9 @@ You must not:
 2. Revert unrelated work or user changes.
 3. Start external continuation controllers, detached background workers, or nested
    orchestration workflows as a continuation strategy.
-4. Create child agents or invoke delegation/consult skills unless the parent
-   explicitly assigned a bounded nested scope and concurrency budget above.
+4. Spawn external agents. Do not use `$agent-delegate`, start another external
+   Claude, Codex, Cursor Agent, Grok, or Kimi session, or manually launch a
+   coding-harness executable. External topology belongs to the parent.
 5. Expand beyond the allowed write scope unless the task is impossible without
    it; if that happens, stop and report the blocker.
 6. Paste or expose secrets. Use environment variables when the task requires a
@@ -104,7 +107,7 @@ Please do all of the following:
 3. Choose the evidence and implementation path needed to satisfy the
    authoritative success bar, then implement the smallest sufficient change.
 4. Use installed skills only when they directly improve the delegated work and
-   do not violate the parent-owned fanout boundary.
+   do not spawn external agents.
 5. Run verification proportional to the changed surface.
 6. Re-read changed files or inspect the diff before finalizing.
 7. If the brief's premise conflicts with repo truth, report the contradiction
@@ -216,7 +219,8 @@ Do not:
   created the session.
 - Treat the child as final authority. It is a capable worker whose output still
   needs parent-side sanity checks.
-- Tell workers to maximize their own fanout. The parent owns decomposition and
-  concurrency unless it explicitly assigns a bounded nested scope and budget.
+- Manage a worker's internal native fan-out. The worker owns that choice on its
+  own host; the parent owns decomposition across delegated workers and the
+  external topology.
 - Reuse old run directories for new turns. A resume turn still gets a new run
   directory that points back to the previous session source.

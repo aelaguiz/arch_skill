@@ -159,7 +159,7 @@ present regardless of profile.
 ## What the critic never does
 
 - Edit files.
-- Create or coordinate other model agents or invoke delegation/consult skills.
+- Start external agents. Its own native sub-agents are fine.
 - Re-run the worker's work.
 - Suggest repair steps.
 - Recommend paths or commands to the worker.

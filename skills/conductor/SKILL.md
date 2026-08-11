@@ -173,9 +173,10 @@ log beside the plan is its durable memory.
   conversation, while a skill with `context: fork` is an isolated clean
   subagent context. Context choice never implies permissions, capabilities, or
   worktree isolation.
-- The parent owns decomposition, fanout, and integration. Every child prompt
-  forbids creating more model agents or invoking delegation/consult skills
-  unless the parent deliberately assigns a bounded nested scope and budget.
+- The parent owns decomposition, external fanout, and integration. Every child
+  prompt tells the worker it may fan out to its own native sub-agents on its own
+  host — that is how fleet review slices stay on the cheap model — and that it
+  must not spawn external agents itself.
 - Chunk default is one plan phase per worker. Split only along owner
   boundaries the plan itself names; merge trivial adjacent phases that share
   one design intent; when unsure, chunk bigger. Never one file per worker,

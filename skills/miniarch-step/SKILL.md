@@ -76,9 +76,10 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - Planner and auditor children are analysis-only: use a read-only capability
   when the host confirms one, also give explicit no-edit/no-write guidance,
   and let the parent verify repo state, synthesize returns, and own all
-  `DOC_PATH` or audit-block writes. Children do not fan out without a bounded
-  nested scope and budget assigned by the parent; fanout stays proportional to
-  independent work, host slots, collision risk, and parent integration capacity.
+  `DOC_PATH` or audit-block writes. Children may use their own native sub-agents
+  on their own host and may not start external agents; the parent's fanout stays
+  proportional to independent work, host slots, collision risk, and parent
+  integration capacity.
 - For miniarch planner and auditor roles, prefer `gpt-5.4-mini` with `xhigh`
   reasoning only when the active native tool schema can select and confirm
   both. Otherwise use the inherited native capability and do not claim the

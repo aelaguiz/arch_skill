@@ -195,9 +195,9 @@ handoff paragraph. Keep it as compact prose, but make clear:
   replacement whose independence is the point
 - its real isolation and capabilities, including read/write scope, workspace
   or worktree behavior, permissions, and any required browser or device access
-- the topology: the parent owns fanout and integration; children do not create
-  children unless the parent explicitly assigns a bounded nested scope and
-  budget
+- the topology: the parent owns external topology and integration; children may
+  use their own native sub-agents on their own host and may not start external
+  agents
 - the evidence it must return so the parent can accept, repair, or reject the
   result, including file or section anchors, checks, findings, and a durable
   handle or receipt when continuation matters
@@ -230,7 +230,8 @@ Compact native-review example:
 Start a new clean same-host native completion reviewer over the controlling
 plan, final diff, ArcStep audit block, and check receipts. Give it read-only
 capability if the host exposes one and explicit no-edit/no-write guidance. It
-may not create children. The parent records repo state before dispatch,
+may use its own native sub-agents but may not start external agents. The parent
+records repo state before dispatch,
 verifies it afterward, and integrates the result. Return a non-leading verdict,
 evidence-anchored findings, checks performed, unresolved assumptions, and the
 child handle. Authorized repairs go to the exact implementer; the next

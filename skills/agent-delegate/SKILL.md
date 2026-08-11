@@ -131,8 +131,8 @@ automation.
 - Brief the child like a capable colleague walking in cold: include the
   authoritative outcome and success criteria, source evidence, work root,
   allowed write scope, real constraints, exact user-named inputs, the
-  parent-owned topology and nested-fanout boundary, and report contract. Let
-  the child choose the evidence and implementation path inside that contract
+  parent-owned external-topology boundary, and report contract. Let the child
+  choose the evidence and implementation path inside that contract
   and report when the brief's premise conflicts with repo truth. For resume
   prompts, state the new instruction or evidence and what remains unchanged
   from the original delegation.
@@ -141,9 +141,10 @@ automation.
 - In parallel groups, tell each child it is not alone in the codebase, must not
   revert unfamiliar changes, should make the smallest task-relevant edits, and
   should report actual conflicts if they happen.
-- Tell every worker not to create children or invoke delegation/consult skills.
-  Nested fanout is allowed only when the parent explicitly assigns a bounded
-  nested scope and concurrency budget in that worker's prompt.
+- Tell every worker it may fan out to its own native sub-agents on its host
+  whenever that helps, with no assigned nested scope or budget, and that it must
+  not spawn external agents: a worker started through this skill cannot itself
+  use `$agent-delegate` or any other external transport to start another agent.
 - Do not paste secrets into prompts. If a token is needed, source it into the
   child environment and tell the child which environment variable to read.
 - Do not ask the child to commit, push, open PRs, rewrite history, stash, or

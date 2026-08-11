@@ -246,10 +246,10 @@ After all phases:
    plan changed structure, ownership, or boundaries; `$cynical-cruft-removal`
    when the plan carried delete lists or replaced paths. Default to running
    `$cynical-code-review` for any non-trivial plan; add the other two by
-   judgment from what the plan changed. Never run these reviews through
-   native subagents: they bill the parent's expensive model, and bulk review
-   reading is exactly the spend the fleet exists to absorb — a fleet
-   reviewer's own slices run on the fleet host's cheap model. The reviews
+   judgment from what the plan changed. Never run these reviews through the
+   parent's own native subagents: they bill the parent's expensive model, and
+   bulk review reading is exactly the spend the fleet exists to absorb — a
+   fleet reviewer's own slices run on the fleet host's cheap model. The reviews
    stay review-only; the conductor never edits source on their behalf and
    triages their returned findings as claims under the normal audit
    machinery. Give each instrument the plan path, human baseline anchors,

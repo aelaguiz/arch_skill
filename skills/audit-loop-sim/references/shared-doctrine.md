@@ -27,8 +27,8 @@
   named dependency that exists solely in chat.
 - Select the strongest read-only capability available and also tell each
   mapper not to edit or write files, including the ledger. Mapping children
-  may not create children or invoke delegation, consult, or review skills
-  unless the parent explicitly assigned a bounded nested scope and budget.
+  may use their own native sub-agents on their own host; they may not start
+  external agents.
 - Select a mapping child only after confirming that it inherits the sanctioned
   simulator or device capabilities required by `audit-loop-sim`. If the host
   cannot confirm that inheritance, keep the slice with the authorized parent

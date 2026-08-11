@@ -77,8 +77,8 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
   the ledger, exact paths, and the child brief.
 - Give mappers and critics the strongest read-only capability the host exposes
   and explicitly tell them not to edit or write files, including the ledger.
-  They may not create children or invoke delegation, consult, or review skills
-  unless the parent explicitly assigns a bounded nested scope and budget.
+  They may use their own native sub-agents on their own host; they may not start
+  external agents.
 - Split only across independent surface families or review lenses. Bound
   fanout by available host slots, shared-file or shared-state collision risk,
   and the parent's capacity to inspect and integrate every return.

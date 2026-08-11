@@ -27,7 +27,7 @@ directly. If the work is not approved, say so plainly.
 # Hard Constraints
 
 - Review only. Do not edit files, create commits, or change external state.
-- Do not spawn child agents or invoke delegation/consult workflows.
+- Use your own native sub-agents freely. Do not start external agents.
 - <token/env handling, local boundary, or other review-specific constraint>
 
 # How To Work

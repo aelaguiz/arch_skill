@@ -27,8 +27,8 @@ Give it `DOC_PATH`, the exact slice, allowed write paths, required checks, the
 frozen scope boundary, and a return contract covering files changed, checks
 and results, unresolved findings, collision risks, and its durable handle. The
 parent retains ownership of `DOC_PATH`, `WORKLOG_PATH`, scope decisions, and
-final integration. Children do not create children unless the parent
-explicitly assigned a bounded nested scope and budget.
+final integration. Children may use their own native sub-agents on their own
+host and may not start external agents.
 
 If that slice needs repair, resume the exact implementer handle with the
 accepted findings and current delta. If confidence needs an independent
