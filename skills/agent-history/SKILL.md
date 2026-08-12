@@ -1,6 +1,6 @@
 ---
 name: agent-history
-description: "Search and interpret local Codex or Claude Code session history from natural-language asks about prior prompts, goals, commands, corrections, tool use, timelines, or agent behavior. Use the current runtime, current project, and last 24h by default unless the user says otherwise. Run the bundled helpers for JSONL/SQLite extraction, then synthesize evidence with confidence notes. Do not require rigid syntax, replace Git commit history tools, launch subprocesses, or dump raw transcripts by default."
+description: "Search and interpret local Codex, Claude Code, Pi, or Prime Agent session history from natural-language asks about prior prompts, goals, commands, corrections, tool use, child agents, timelines, or agent behavior. Handles asks that name a runtime loosely, such as prime, prime agent, prime-agent, or pi. Use the current runtime, current project, and last 24h by default unless the user says otherwise. Run the bundled helpers for JSONL/SQLite extraction, then synthesize evidence with confidence notes. Do not require rigid syntax, replace Git commit history tools, launch subprocesses, or dump raw transcripts by default."
 metadata:
   short-description: "Search local agent session history"
 ---
@@ -23,9 +23,12 @@ skill remains read-only and does not dispatch that agent itself.
 
 ## When To Use
 
-- The user asks about prior Codex or Claude Code prompts, turns, commands,
-  goals, tool calls, corrections, confusion, or session timelines.
+- The user asks about prior Codex, Claude Code, Pi, or Prime Agent prompts,
+  turns, commands, goals, tool calls, corrections, confusion, or session
+  timelines.
 - The user asks what happened in the current project during recent agent work.
+- The user asks what a Prime child agent was told to do or what it reported
+  back.
 - The user wants to search local session history by natural-language clues.
 - Another skill needs grounded history evidence before deciding what happened.
 
@@ -45,8 +48,16 @@ skill remains read-only and does not dispatch that agent itself.
 ## Non-Negotiables
 
 - Use the current agent runtime by default. In Codex, search Codex history. In
-  Claude Code, search Claude history. Search another runtime only when the user
-  asks for it or clearly implies it.
+  Claude Code, search Claude history. In Prime Agent or Pi, search that
+  runtime's history. Search another runtime only when the user asks for it or
+  clearly implies it. Map "prime", "prime agent", and "prime-agent" to
+  `--runtime prime`. If the current runtime is genuinely ambiguous, pick the
+  store with recent activity for this project and say which one you assumed.
+- Pi and Prime Agent have no global prompt store and no goal store. Prompts and
+  `/goal` text come from transcripts only, so say that plainly instead of
+  reporting a clean absence.
+- Never read `auth.json` in any runtime home, and never run daemon lifecycle
+  commands. This skill only reads history.
 - If the user does not name a project, default to the current working
   directory. If they do not name a time range, default to the last 24 hours.
   If they say "today", use the local calendar day.

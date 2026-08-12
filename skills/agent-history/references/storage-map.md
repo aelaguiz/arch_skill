@@ -194,6 +194,94 @@ when the pasted content matters.
   if present, as an ordinary slash command unless a custom workflow created its
   own state.
 
+## Pi And Prime Agent
+
+Pi and Prime Agent write the **same session-event schema** (`version: 3`). Only
+the on-disk layout and Prime's child-agent artifacts differ. Read this section
+once for both runtimes.
+
+### Primary Stores
+
+Prime Agent (`~/.prime/agent/`):
+
+- `sessions/<session_uuid>.jsonl` is the transcript store. Flat, one file per
+  session, no project subdirectories.
+- `session-artifacts/<root_session_id>/rlm-subagents.jsonl` indexes child (RLM)
+  agents: `childId`, `sessionName`, `sessionFile`, `parentSessionId`,
+  `rlmDepth`, and the full dispatch `prompt`.
+- `session-artifacts/<root_session_id>/sub-<child_id>/<child_uuid>.jsonl` is the
+  child transcript, in the same schema.
+
+Pi (`~/.pi/agent/`):
+
+- `sessions/--<encoded-cwd>--/<iso_timestamp>_<session_uuid>.jsonl` is the
+  transcript store. The directory encodes the project path with `/` replaced by
+  `-`, wrapped in `--`.
+- No `session-artifacts/` and no child transcripts were observed.
+
+Adjacent Prime stores, best-effort only:
+
+- `logs/agent.jsonl`, `logs/daemon.sock.*.log`, `logs/worker-*.log`
+- `session-leases/<sha256>.lock`
+- `session-artifacts/<id>/kernel-state.json`, `scheduled-jobs.json`, `harness/`
+- `auth.json` holds credentials. Never read it.
+
+### Session JSONL
+
+Line 1 is always the session header:
+
+```json
+{"type":"session","version":3,"id":"<uuid>","timestamp":"<ISO>","cwd":"<abs path>","rlmDepth":0,"git":{"branch":"main"}}
+```
+
+`rlmDepth` and `git` are Prime-only and optional. Use the header `cwd` as
+project truth. Pi's encoded directory name is lossy and is only a hint.
+
+Later lines are events chained by `id` and `parentId`:
+
+- `message`: the transcript. `message.role` is `user`, `assistant`, or
+  `toolResult`. `message.content` blocks are `text`, `thinking`, `toolCall`
+  (with `name` and `arguments`), and `image`. Note `toolResult` is a **role**,
+  not a content block.
+- `custom_message`: `customType` carries the interesting kinds —
+  `agent_message` (agent-to-agent relay naming source and target sessions),
+  `session_slash_command` and `session_slash_command_result`
+  (`details.command.text` is the literal command), `heartbeat_prompt`,
+  `rlm_child_terminal_notice`, `compaction_outcome`.
+- `custom`: `customType` plus `data`. `aimgr_credential_binding_v1` records the
+  AI Manager provider and account label that ran the session; labels are
+  non-secret. `aimgr.session-identity` carries the auto title.
+- `compaction`: `summary` replacing earlier turns.
+- `agent_status`: `status.taskState` and `status.summary`.
+- `session_info` (`name`), `model_change` (`provider`, `modelId`),
+  `thinking_level_change`, `service_tier_change`, `session_state`.
+- `child_usage_attributed`: token and cost accounting. High volume, never
+  evidence.
+
+### What These Runtimes Do Not Store
+
+- **No `history.jsonl`.** There is no global submitted-prompt recall and no
+  cross-project shortcut. Prompts come only from transcript `message` records.
+- **No SQLite state database.** There is no equivalent of Codex `state_5.sqlite`.
+- **No goal store.** `/goal` text inside a transcript is the only goal evidence,
+  so treat it as an ordinary slash command and say the store does not exist.
+- **No separate command journal.** Slash commands survive as
+  `session_slash_command` events and as user message text.
+
+### Reading Traps
+
+- Pi session directories also hold extension artifacts: `<name>-debug.jsonl`
+  (keyed `event`, not `type`) and `<name>-state.json`. Match the session
+  filename shape and require a `type: session` first line.
+- For headless Prime runs the filename UUID differs from the header `id`. The
+  header `id` is the resume handle; `aim` selectors match the filename.
+- Transcripts reach tens of megabytes. Read the header line first, filter by
+  `cwd` and time, and only then scan a file.
+- A session started days ago can still be active today. Treat a session as
+  spanning header timestamp to file mtime.
+- A `compaction` event means earlier turns were replaced by a summary. Absence of
+  a match inside a compacted range is `best_effort`, not proof.
+
 ## Confidence Labels
 
 - `exact`: directly stored user prompt, command text, message text, or tool

@@ -43,6 +43,7 @@ Other shipped skills are:
 - `browseros` — canonical preflight and operating contract to apply before direct BrowserOS MCP use; owns safe page reuse, provenance, profile and target identity, connector discovery, proof, timeout recovery, secrets, and task-created browser cleanup
 - `chatgpt-web` — explicit ChatGPT web-provider/browser lane with optional attachments; defaults to a new clean conversation, continues an exact conversation only when requested, and defaults to Pro with Extended thinking unless the user specifies another mode or effort
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
+- `herdr-helper` — higher-level Herdr workflows that safely reconstruct workspaces across sessions, preserve exact resumable agent continuity when available, verify the destination, and require confirmation before removing the source
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
 - `fal-ai-tools` — prompt-first fal.ai tool workflow for model discovery, schema and pricing lookup, file upload, background removal, media generation or editing, inference, polling, and result receipts using MCP when available and SDK/HTTP fallback otherwise
 - `transcribe-audio`: transcribes local recordings to verified plain-text files with live OpenAI transcription-model discovery, transport adaptation, ordered chunking, requested parallelism, and secret-safe API use
@@ -61,7 +62,7 @@ Other shipped skills are:
 - `plan-implement` — prompt-first plan-backed implementation loop that advances only through the frozen authorized frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
 - `plan-interview` — evidence-grounded intent interview that educates itself first (facts and a blank template, never a pre-drafted plan), then interviews breadth-first in plain non-jargon English with investigate-and-return cycles to produce a frozen Intent Pack — journey maps, UX delta with visual references, numbered plain-language requirements, non-goals, an in-interview-approved test grid, definition of done, execution policy, autonomy contract — closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`
 - `conductor` — prompt-first plan-or-outcome conductor with an executive shaping stage, parent-owned scope judgment and cynical review, and a default cheap parallel external fleet; its explicit Terra shortcut remains the deliberate external exact-model/worktree/PR lane
-- `agent-history` — searches local Codex or Claude Code session history for prior prompts, goals, commands, corrections, tool use, and timelines from natural-language asks, using bundled read-only JSONL/SQLite helpers and concise evidence summaries
+- `agent-history` — searches local Codex, Claude Code, Pi, or Prime Agent session history for prior prompts, goals, commands, corrections, tool use, child-agent work, and timelines from natural-language asks, using bundled read-only JSONL/SQLite helpers and concise evidence summaries
 - `model-consensus` — prompt-only parent-relayed dialogue between two exact participants, resolving native or external transport separately for each, resuming each exact handle across rounds, and converging or exposing the smallest unresolved decision
 - `contact-sheet-builder` — builds quick local contact sheet PNGs from existing images, folders, globs, or attached local image paths using a lean prompt contract plus one Pillow renderer; defaults to dense labeled sheets, dynamic near-native edge-to-edge canvas sizing, safe temp output, Preview opening on macOS, and concise receipts
 - `fc-branded-pdf` — converts Markdown or document content into local FC / Poker Skill branded PDFs using bundled letterhead CSS, logo assets, and a local Markdown-to-PDF renderer; it verifies the rendered file and does not upload or archive to Drive
@@ -147,6 +148,7 @@ Installed skills:
   - `~/.agents/skills/browseros/`
   - `~/.agents/skills/chatgpt-web/`
   - `~/.agents/skills/skill-authoring/`
+  - `~/.agents/skills/herdr-helper/`
   - `~/.agents/skills/figma-best-practices/`
   - `~/.agents/skills/fal-ai-tools/`
   - `~/.agents/skills/transcribe-audio/`
@@ -196,6 +198,7 @@ Installed skills:
   - `~/.claude/skills/browseros/`
   - `~/.claude/skills/chatgpt-web/`
   - `~/.claude/skills/skill-authoring/`
+  - `~/.claude/skills/herdr-helper/`
   - `~/.claude/skills/figma-best-practices/`
   - `~/.claude/skills/fal-ai-tools/`
   - `~/.claude/skills/transcribe-audio/`
@@ -245,6 +248,7 @@ Installed skills:
   - `~/.gemini/skills/browseros/`
   - `~/.gemini/skills/chatgpt-web/`
   - `~/.gemini/skills/skill-authoring/`
+  - `~/.gemini/skills/herdr-helper/`
   - `~/.gemini/skills/figma-best-practices/`
   - `~/.gemini/skills/fal-ai-tools/`
   - `~/.gemini/skills/transcribe-audio/`
@@ -274,7 +278,10 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, and `eli10` are removed from the live installed surface; `codex-babysit` and `eli10` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex and Claude Code local history; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
+`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, and `eli10` are removed from the live installed surface; `codex-babysit` and `eli10` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex, Claude Code, Pi, and Prime Agent local history, including Prime child-agent transcripts; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
+
+`herdr-helper` is installed on the agents/Codex, Claude Code, and Gemini CLI
+surfaces and requires an installed Herdr CLI at runtime.
 
 External lanes still require the selected local `claude`, `codex`, `agent`,
 `grok`, or `kimi` CLI at invocation time. Ordinary same-host work uses the active host's
@@ -502,6 +509,16 @@ prose-only: no scripts, runners, harnesses, API calls, or automated login.
 ### `skill-authoring`
 
 Use when the user wants to write, edit, refactor, or audit a reusable agent skill package so it stays prompt-first, simple by default, generalized from user intent, anti-heuristic, and clear about peer boundaries, packaging, references, and validation.
+
+### `herdr-helper`
+
+Use when the user wants a higher-level Herdr operation that composes several
+session, workspace, pane, and agent steps. Its first workflow migrates a
+workspace between sessions by reconstructing the destination without stealing
+focus, attaching the exact resumable agent conversation when available,
+verifying both sides, and obtaining fresh confirmation before closing the
+source. Use `$herdr` directly for ordinary navigation, splitting, renaming, or
+same-session pane movement.
 
 ### `figma-best-practices`
 
@@ -791,7 +808,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.

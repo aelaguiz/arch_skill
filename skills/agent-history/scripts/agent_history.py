@@ -3,7 +3,7 @@
 # requires-python = ">=3.11"
 # dependencies = []
 # ///
-"""Read-only helpers for local Codex and Claude Code session history.
+"""Read-only helpers for local Codex, Claude Code, Pi, and Prime Agent history.
 
 The script prints bounded summaries for agents and writes complete result
 artifacts to a run directory. It uses only the Python standard library.
@@ -28,6 +28,20 @@ from typing import Any, Iterable
 DEFAULT_LIMIT = 20
 DEFAULT_PREVIEW_CHARS = 240
 DEFAULT_TEXT_CHARS = 10000
+# Keeps one broad query from writing a multi-hundred-MB results artifact. The
+# newest results are kept; the summary says when the cap bit.
+DEFAULT_MAX_RESULTS = 2000
+
+# Pi and Prime Agent write the same `version: 3` session-event schema. Only the
+# on-disk layout differs: Prime keeps flat `sessions/<uuid>.jsonl`, Pi keeps
+# `sessions/--<encoded-cwd>--/<iso>_<uuid>.jsonl`. Extension debug and state
+# files live beside Pi transcripts, so session files are matched by name and
+# then confirmed by a `type: session` first line.
+SESSION_UUID_NAME = re.compile(r"^[0-9a-fA-F-]{36}\.jsonl$")
+PI_SESSION_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}T[0-9:.\-]+Z_[0-9a-fA-F-]{36}\.jsonl$")
+
+# Token/cost accounting for child agents. High volume, never evidence.
+SESSION_SKIP_TYPES = {"child_usage_attributed"}
 
 
 class HistoryError(RuntimeError):
@@ -50,12 +64,27 @@ class RunContext:
     output_root: Path
     codex_home: Path
     claude_home: Path
+    pi_home: Path
+    prime_home: Path
     limit: int
     page: int
     max_preview_chars: int
     fmt: str
     include_sidechains: bool
+    max_results: int = DEFAULT_MAX_RESULTS
     run_dir: Path | None = None
+    truncated: bool = False
+
+
+@dataclass
+class SessionCandidate:
+    """One Pi/Prime transcript that survived the cwd and time-window prefilter."""
+
+    path: Path
+    header: dict[str, Any]
+    source: str
+    label: str = ""
+    parent_session_id: str = ""
 
 
 def eprint(message: str) -> None:
@@ -336,6 +365,8 @@ def write_artifacts(
         "result_count": len(results),
         "source_count": len(sources),
         "error_count": len(errors),
+        "max_results": ctx.max_results,
+        "truncated": ctx.truncated,
     }
     (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     write_jsonl(run_dir / "results.jsonl", results)
@@ -363,10 +394,16 @@ def print_summary(
             print(json.dumps(result, sort_keys=True, ensure_ascii=False))
         return
 
-    searched = ",".join(source.get("name", "unknown") for source in sources) or "none"
+    searched_names = list(dict.fromkeys(source.get("name", "unknown") for source in sources))
+    searched = ",".join(searched_names) or "none"
+    if len(sources) > len(searched_names):
+        searched = f"{searched} ({len(sources)} stores)"
     if results:
+        capped = (
+            f" (capped at {ctx.max_results}; narrow --since or add terms)" if ctx.truncated else ""
+        )
         print(
-            f"OK agent-history {ctx.command}: {len(results)} matches; "
+            f"OK agent-history {ctx.command}: {len(results)} matches{capped}; "
             f"showing {len(visible)}; run={run_dir}"
         )
     else:
@@ -960,6 +997,429 @@ def collect_claude(ctx: RunContext, mode: str, matcher: Any | None = None) -> tu
     return sort_results(results), sources, errors
 
 
+def session_home(ctx: RunContext) -> Path:
+    base = ctx.pi_home if ctx.runtime == "pi" else ctx.prime_home
+    return base / "agent"
+
+
+def session_message_text(content: Any, *, text_only: bool = False) -> str:
+    """Flatten Pi/Prime message content blocks: text, thinking, toolCall, image."""
+    if isinstance(content, str):
+        return content
+    parts: list[str] = []
+    if not isinstance(content, list):
+        return ""
+    for block in content:
+        if isinstance(block, str):
+            parts.append(block)
+            continue
+        if not isinstance(block, dict):
+            continue
+        block_type = block.get("type")
+        if block_type == "text" and isinstance(block.get("text"), str):
+            parts.append(block["text"])
+        elif text_only:
+            continue
+        elif block_type == "thinking" and isinstance(block.get("thinking"), str):
+            parts.append(block["thinking"])
+        elif block_type == "toolCall":
+            name = str(block.get("name") or "")
+            arguments = block.get("arguments")
+            rendered = (
+                arguments
+                if isinstance(arguments, str)
+                else json.dumps(arguments, sort_keys=True, default=str)
+            )
+            parts.append(f"toolCall {name} {rendered}")
+        elif block_type == "image":
+            parts.append("[image]")
+        elif isinstance(block.get("text"), str):
+            parts.append(block["text"])
+    return "\n".join(part for part in parts if part)
+
+
+def read_session_header(path: Path, errors: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Return the `type: session` first line, or None when this is not a transcript."""
+    try:
+        with path.open("r", encoding="utf-8", errors="replace") as handle:
+            first_line = handle.readline()
+    except OSError as exc:
+        errors.append({"path": str(path), "error": str(exc)})
+        return None
+    if not first_line.strip():
+        return None
+    try:
+        header = json.loads(first_line)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(header, dict) or header.get("type") != "session":
+        return None
+    return header
+
+
+def file_mtime(path: Path) -> dt.datetime | None:
+    try:
+        return dt.datetime.fromtimestamp(path.stat().st_mtime).astimezone()
+    except OSError:
+        return None
+
+
+def session_overlaps_window(header: dict[str, Any], path: Path, window: TimeWindow | None) -> bool:
+    """A session spans [header timestamp, file mtime]; keep it when that overlaps."""
+    if window is None:
+        return True
+    start = parse_timestamp(header.get("timestamp"))
+    end = file_mtime(path)
+    if start is not None and start > window.until:
+        return False
+    if end is not None and end < window.since:
+        return False
+    return True
+
+
+def pi_session_files(home: Path) -> list[Path]:
+    root = home / "sessions"
+    if not root.exists():
+        return []
+    return sorted(path for path in root.glob("*/*.jsonl") if PI_SESSION_NAME.match(path.name))
+
+
+def prime_session_files(home: Path) -> list[Path]:
+    root = home / "sessions"
+    if not root.exists():
+        return []
+    return sorted(path for path in root.glob("*.jsonl") if SESSION_UUID_NAME.match(path.name))
+
+
+def prime_subagent_files(
+    home: Path,
+    root_session_id: str,
+    errors: list[dict[str, Any]],
+) -> list[tuple[Path, str]]:
+    """Child transcripts for one Prime root, labelled from `rlm-subagents.jsonl`."""
+    artifacts = home / "session-artifacts" / root_session_id
+    if not artifacts.is_dir():
+        return []
+    labels: dict[str, str] = {}
+    index = artifacts / "rlm-subagents.jsonl"
+    if index.exists():
+        for _, row in read_jsonl(index, errors):
+            child_id = str(row.get("childId") or "")
+            if child_id:
+                labels[child_id] = str(row.get("sessionName") or child_id)
+    found: list[tuple[Path, str]] = []
+    for child_dir in sorted(artifacts.glob("sub-*")):
+        for path in sorted(child_dir.glob("*.jsonl")):
+            if SESSION_UUID_NAME.match(path.name):
+                found.append((path, labels.get(child_dir.name, child_dir.name)))
+    return found
+
+
+def pi_prime_candidates(ctx: RunContext, errors: list[dict[str, Any]]) -> list[SessionCandidate]:
+    home = session_home(ctx)
+    files = pi_session_files(home) if ctx.runtime == "pi" else prime_session_files(home)
+    candidates: list[SessionCandidate] = []
+    for path in files:
+        header = read_session_header(path, errors)
+        if header is None:
+            continue
+        if not same_project(str(header.get("cwd") or ""), ctx.cwd, ctx.scope):
+            continue
+        if not session_overlaps_window(header, path, ctx.window):
+            continue
+        candidates.append(SessionCandidate(path=path, header=header, source=f"{ctx.runtime}_sessions"))
+
+    if ctx.runtime != "prime" or not ctx.include_sidechains:
+        return candidates
+
+    children: list[SessionCandidate] = []
+    for root in candidates:
+        root_id = str(root.header.get("id") or "")
+        if not root_id:
+            continue
+        for path, label in prime_subagent_files(home, root_id, errors):
+            header = read_session_header(path, errors)
+            if header is None:
+                continue
+            if not session_overlaps_window(header, path, ctx.window):
+                continue
+            children.append(
+                SessionCandidate(
+                    path=path,
+                    header=header,
+                    source="prime_subagents",
+                    label=label,
+                    parent_session_id=root_id,
+                )
+            )
+    return candidates + children
+
+
+def collect_pi_prime_records(
+    ctx: RunContext,
+    candidate: SessionCandidate,
+    errors: list[dict[str, Any]],
+    *,
+    mode: str,
+    matcher: Any | None = None,
+    max_results: int | None = None,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    header = candidate.header
+    session_id = str(header.get("id") or "")
+    cwd = str(header.get("cwd") or "")
+    path = candidate.path
+    prefix = f"{ctx.runtime}_session"
+
+    results: list[dict[str, Any]] = []
+    name = candidate.label
+    model = ""
+    binding = ""
+    messages = 0
+    compactions = 0
+    last_ts = parse_timestamp(header.get("timestamp"))
+
+    def emit(**kwargs: Any) -> None:
+        results.append(
+            make_result(
+                ctx=ctx,
+                session_id=session_id,
+                cwd=cwd,
+                path=path,
+                **kwargs,
+            )
+        )
+
+    truncated = False
+    for line_no, row in read_jsonl(path, errors):
+        if max_results is not None and len(results) >= max_results:
+            truncated = True
+            break
+        row_type = str(row.get("type") or "")
+        if row_type in SESSION_SKIP_TYPES:
+            continue
+        ts = parse_timestamp(row.get("timestamp"))
+        if ts is not None and (last_ts is None or ts > last_ts):
+            last_ts = ts
+
+        if row_type == "session_info":
+            name = str(row.get("name") or name)
+        elif row_type == "model_change":
+            model = str(row.get("modelId") or model)
+        elif row_type == "message":
+            messages += 1
+        elif row_type == "compaction":
+            compactions += 1
+        elif row_type == "custom" and row.get("customType") == "aimgr_credential_binding_v1":
+            data = row.get("data") if isinstance(row.get("data"), dict) else {}
+            binding = str(data.get("binding") or binding)
+
+        if mode == "sessions" or not in_window(ts, ctx.window):
+            continue
+
+        if row_type == "message":
+            message = row.get("message") if isinstance(row.get("message"), dict) else {}
+            role = str(message.get("role") or "")
+            if mode == "prompts":
+                if role != "user":
+                    continue
+                text = session_message_text(message.get("content"), text_only=True)
+                if not text.strip():
+                    continue
+                emit(
+                    kind="prompt",
+                    source=f"{prefix}.user",
+                    confidence="exact",
+                    timestamp=ts,
+                    line=line_no,
+                    text=text,
+                    role=role,
+                )
+            elif mode in {"commands", "goals"}:
+                if role != "user":
+                    continue
+                text = session_message_text(message.get("content"), text_only=True)
+                if not text.strip().startswith("/goal" if mode == "goals" else "/"):
+                    continue
+                emit(
+                    kind="goal" if mode == "goals" else "command",
+                    source=f"{prefix}.user",
+                    confidence="exact",
+                    timestamp=ts,
+                    line=line_no,
+                    text=text,
+                    role=role,
+                )
+            elif mode == "search":
+                text = session_message_text(message.get("content"))
+                if not text or not matcher(text):
+                    continue
+                emit(
+                    kind="message",
+                    source=f"{prefix}.{role or 'message'}",
+                    confidence="exact",
+                    timestamp=ts,
+                    line=line_no,
+                    text=text,
+                    role=role,
+                )
+        elif row_type == "custom_message":
+            custom_type = str(row.get("customType") or "")
+            text = str(row.get("content") or "")
+            if not text:
+                continue
+            if mode in {"commands", "goals"} and custom_type == "session_slash_command":
+                details = row.get("details") if isinstance(row.get("details"), dict) else {}
+                command = details.get("command") if isinstance(details.get("command"), dict) else {}
+                command_text = str(command.get("text") or text)
+                if mode == "goals" and not command_text.strip().startswith("/goal"):
+                    continue
+                emit(
+                    kind="goal" if mode == "goals" else "command",
+                    source=f"{prefix}.session_slash_command",
+                    confidence="exact",
+                    timestamp=ts,
+                    line=line_no,
+                    text=command_text,
+                    role="user",
+                )
+            elif mode == "search" and matcher(text):
+                emit(
+                    kind="agent_message" if custom_type == "agent_message" else "custom",
+                    source=f"{prefix}.{custom_type or 'custom_message'}",
+                    confidence="exact",
+                    timestamp=ts,
+                    line=line_no,
+                    text=text,
+                )
+        elif row_type == "compaction" and mode == "search":
+            summary = str(row.get("summary") or "")
+            if summary and matcher(summary):
+                emit(
+                    kind="compaction",
+                    source=f"{prefix}.compaction",
+                    confidence="best_effort",
+                    timestamp=ts,
+                    line=line_no,
+                    text=summary,
+                    context="compaction summary; the replaced turns are no longer in this transcript",
+                )
+        elif row_type == "agent_status" and mode == "search":
+            status = row.get("status") if isinstance(row.get("status"), dict) else {}
+            summary = str(status.get("summary") or "")
+            if summary and matcher(summary):
+                emit(
+                    kind="status",
+                    source=f"{prefix}.agent_status",
+                    confidence="exact",
+                    timestamp=ts,
+                    line=line_no,
+                    text=summary,
+                )
+        elif row_type == "custom" and mode == "search":
+            text = "\n".join(recursively_collect_strings(row.get("data")))
+            if text and matcher(text):
+                emit(
+                    kind="custom",
+                    source=f"{prefix}.{row.get('customType') or 'custom'}",
+                    confidence="exact",
+                    timestamp=ts,
+                    line=line_no,
+                    text=text,
+                )
+
+    if mode == "sessions":
+        detail = [f"{messages} messages"]
+        if model:
+            detail.append(model)
+        if binding:
+            detail.append(f"account {binding}")
+        if compactions:
+            detail.append(f"{compactions} compactions")
+        if candidate.parent_session_id:
+            detail.append(f"child of {candidate.parent_session_id}")
+        emit(
+            kind="session",
+            source=f"{prefix}.session",
+            confidence="exact",
+            timestamp=last_ts,
+            text=f"{name or session_id} ({', '.join(detail)})",
+        )
+
+    stats: dict[str, Any] = {
+        "session_id": session_id,
+        "messages": messages,
+        "compactions": compactions,
+    }
+    if candidate.label:
+        stats["child"] = candidate.label
+    if truncated:
+        stats["truncated"] = True
+    return results, stats
+
+
+def collect_pi_prime(
+    ctx: RunContext,
+    mode: str,
+    matcher: Any | None = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    errors: list[dict[str, Any]] = []
+    home = session_home(ctx)
+    store_root = home / "sessions"
+
+    candidates = pi_prime_candidates(ctx, errors)
+    if not candidates:
+        return [], [{"name": f"{ctx.runtime}_sessions", "path": str(store_root)}], errors
+
+    results: list[dict[str, Any]] = []
+    sources: list[dict[str, Any]] = []
+    if mode == "goals":
+        # There is no durable goal store in either runtime; `/goal` command text
+        # inside transcripts is the only evidence, so say that in the receipt.
+        sources.append(
+            {
+                "name": f"{ctx.runtime}_sessions",
+                "path": str(store_root),
+                "note": "no goal store in this runtime; /goal command text only",
+            }
+        )
+    # Newest session first, so a capped scan keeps the most recent evidence.
+    def recency(candidate: SessionCandidate) -> str:
+        started = parse_timestamp(candidate.header.get("timestamp")) or file_mtime(candidate.path)
+        return iso_or_empty(started)
+
+    ordered = sorted(candidates, key=recency, reverse=True)
+    remaining = max(ctx.max_results, 0) if ctx.max_results else None
+    skipped = 0
+    for candidate in ordered:
+        if remaining is not None and remaining <= 0:
+            ctx.truncated = True
+            skipped += 1
+            continue
+        candidate_results, stats = collect_pi_prime_records(
+            ctx,
+            candidate,
+            errors,
+            mode=mode,
+            matcher=matcher,
+            max_results=remaining,
+        )
+        results.extend(candidate_results)
+        sources.append({"name": candidate.source, "path": str(candidate.path), **stats})
+        if stats.get("truncated"):
+            ctx.truncated = True
+        if remaining is not None:
+            remaining -= len(candidate_results)
+    if skipped:
+        sources.append(
+            {
+                "name": f"{ctx.runtime}_sessions_unscanned",
+                "path": str(store_root),
+                "note": f"{skipped} older sessions not scanned after the result cap",
+            }
+        )
+    return sort_results(results), sources, errors
+
+
 def build_matcher(args: argparse.Namespace) -> Any:
     terms = list(args.query or [])
     if args.regex:
@@ -978,8 +1438,14 @@ def execute_search_command(args: argparse.Namespace) -> int:
         results, sources, errors = collect_codex(ctx, args.command, matcher=matcher)
     elif ctx.runtime == "claude":
         results, sources, errors = collect_claude(ctx, args.command, matcher=matcher)
+    elif ctx.runtime in {"pi", "prime"}:
+        results, sources, errors = collect_pi_prime(ctx, args.command, matcher=matcher)
     else:
-        raise HistoryError("--runtime must be codex or claude")
+        raise HistoryError("--runtime must be codex, claude, pi, or prime")
+
+    if ctx.max_results and len(results) > ctx.max_results:
+        results = results[: ctx.max_results]
+        ctx.truncated = True
 
     visible = paginate(results, ctx.limit, ctx.page)
     run_dir = write_artifacts(ctx, results, sources, errors)
@@ -994,6 +1460,14 @@ def rebuild_args_for_next_page(args: argparse.Namespace) -> list[str]:
         pieces.extend(["--until", args.until])
     if args.include_sidechains:
         pieces.append("--include-sidechains")
+    for flag, value, default in (
+        ("--codex-home", args.codex_home, Path.home() / ".codex"),
+        ("--claude-home", args.claude_home, Path.home() / ".claude"),
+        ("--pi-home", args.pi_home, Path.home() / ".pi"),
+        ("--prime-home", args.prime_home, Path.home() / ".prime"),
+    ):
+        if str(value) != str(default):
+            pieces.extend([flag, str(value)])
     if args.command == "search":
         if args.regex:
             pieces.extend(["--regex", args.regex])
@@ -1014,7 +1488,10 @@ def context_from_args(args: argparse.Namespace, *, command: str) -> RunContext:
         output_root=Path(args.output_root).expanduser(),
         codex_home=Path(args.codex_home).expanduser(),
         claude_home=Path(args.claude_home).expanduser(),
+        pi_home=Path(args.pi_home).expanduser(),
+        prime_home=Path(args.prime_home).expanduser(),
         limit=args.limit,
+        max_results=args.max_results,
         page=args.page,
         max_preview_chars=args.max_preview_chars,
         fmt=args.format,
@@ -1065,19 +1542,22 @@ def cmd_show(args: argparse.Namespace) -> int:
 
 
 def add_common_options(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--runtime", required=True, choices=("codex", "claude"))
+    parser.add_argument("--runtime", required=True, choices=("codex", "claude", "pi", "prime"))
     parser.add_argument("--cwd", default=os.getcwd())
     parser.add_argument("--scope", default="current-project", choices=("current-project", "all-projects"))
     parser.add_argument("--since", default="24h")
     parser.add_argument("--until", default=None)
     parser.add_argument("--include-sidechains", action="store_true")
     parser.add_argument("--limit", type=int, default=DEFAULT_LIMIT)
+    parser.add_argument("--max-results", type=int, default=DEFAULT_MAX_RESULTS)
     parser.add_argument("--page", type=int, default=1)
     parser.add_argument("--format", default="summary", choices=("summary", "jsonl"))
     parser.add_argument("--max-preview-chars", type=int, default=DEFAULT_PREVIEW_CHARS)
     parser.add_argument("--output-root", default=str(Path(tempfile.gettempdir()) / "agent-history"))
     parser.add_argument("--codex-home", default=str(Path.home() / ".codex"))
     parser.add_argument("--claude-home", default=str(Path.home() / ".claude"))
+    parser.add_argument("--pi-home", default=str(Path.home() / ".pi"))
+    parser.add_argument("--prime-home", default=str(Path.home() / ".prime"))
 
 
 def build_parser() -> argparse.ArgumentParser:

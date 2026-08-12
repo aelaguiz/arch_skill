@@ -1,0 +1,7 @@
+interface:
+  display_name: "Herdr Helper"
+  short_description: "Safe higher-level Herdr session workflows"
+  default_prompt: "Use $herdr-helper for a higher-level Herdr operation. For cross-session workspace migration, apply $herdr, inspect both sessions, reconstruct the destination without stealing focus, preserve the exact resumable agent handle when available, verify the destination while the source remains intact, and require fresh confirmation before closing the source."
+
+policy:
+  allow_implicit_invocation: true

@@ -39,10 +39,13 @@ actual wording, inspect context, and revise if the first pass is too narrow.
 1. Start with cheap metadata:
    - Codex `state_5.sqlite.threads`
    - Claude project JSONL `cwd`, `sessionId`, title, and timestamp records
+   - Pi/Prime session header lines (`type: session`) for id, cwd, and start time
    - global prompt recall files for prompt/command questions
 2. Move to transcript records:
    - Codex rollout `event_msg.UserMessage` and `response_item.message`
    - Claude `user` and `assistant` records and content blocks
+   - Pi/Prime `message` events, then `custom_message` for slash commands and
+     agent-to-agent relay
 3. Use adjacent stores only when they answer the question:
    - paste cache for pasted prompt bodies
    - file history for file snapshots
@@ -62,6 +65,9 @@ python3 skills/agent-history/scripts/agent_history.py prompts --runtime codex
 python3 skills/agent-history/scripts/agent_history.py goals --runtime codex --since today
 python3 skills/agent-history/scripts/agent_history.py commands --runtime claude --since today
 python3 skills/agent-history/scripts/agent_history.py search --runtime claude struggling correction wrong instead
+python3 skills/agent-history/scripts/agent_history.py sessions --runtime prime --since today
+python3 skills/agent-history/scripts/agent_history.py search --runtime prime --include-sidechains worktree
+python3 skills/agent-history/scripts/agent_history.py prompts --runtime pi --scope all-projects --since 30d
 python3 skills/agent-history/scripts/agent_history.py show --run /tmp/agent-history/<run> --id <id> --context 3
 ```
 
@@ -87,6 +93,19 @@ when the user asks beyond the current project.
   `queue-operation.content`.
 - Claude custom command definitions under `commands/prompts` explain command
   meaning but are not history.
+- Pi/Prime: `custom_message.session_slash_command` holds the literal command in
+  `details.command.text`. There is no goal store, so a `/goal` line is command
+  evidence and nothing durable survives after it.
+
+### Prime Child Agents
+
+- `rlm-subagents.jsonl` names each child, its dispatch prompt, and its
+  transcript file. Read it before opening child transcripts.
+- Pass `--include-sidechains` to search child work. Children usually run in
+  their own worktrees, so their cwd differs from the parent's.
+- `custom_message.agent_message` is what the child actually reported back to the
+  parent; `rlm_child_terminal_notice` records a child that ended without
+  replying.
 
 ### Corrections And Struggle
 

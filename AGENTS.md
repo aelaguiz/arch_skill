@@ -98,6 +98,9 @@ Claude Code, and Gemini.
   worth the added cost. This is a reasoned preference, not a ban or threshold.
 - Use `$skill-authoring` for new, edited, refactored, or audited skill
   packages.
+- Use `$herdr-helper` for higher-level Herdr workflows that span sessions,
+  beginning with safe workspace migration and exact agent continuation. Use
+  `$herdr` directly for ordinary one-session pane, tab, and workspace control.
 - Use `$agents-md-authoring` for `AGENTS.md` authoring or refactors.
 - Use `$figma-best-practices` when the user wants Figma file-craft,
   component-library, variables/token, Dev Mode, Code Connect, Make, Sites,
@@ -130,6 +133,10 @@ Claude Code, and Gemini.
   flow consistency question, or readability/confusion check. Use a clean
   same-host native child when capable; use its external lane for another
   provider, an unavailable exact model/profile, or another concrete benefit.
+- Use `$agent-history` when the user wants to find or explain past local agent
+  work: prior prompts, slash or goal commands, corrections, tool calls, child
+  agents, or session timelines in Codex, Claude Code, Pi, or Prime Agent. It is
+  read-only history retrieval, not repo search and not Git commit history.
 - Use `$cf-share` when the user wants a local artifact file or directory
   (HTML report, screenshots, analysis bundle, any static files) uploaded to
   Cloudflare and shared with the team by a public unguessable
