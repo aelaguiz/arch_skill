@@ -91,11 +91,24 @@ pre-approve routine steps, or referee implementation debates.
 
 ## What to send at a consult
 
+A consult is a status share, not a question. You are not commissioning an
+audit; you are showing the user's advocate what happened and letting it react
+under its own mandate. The default consult message is: here is what the user
+said (verbatim), here is what we did and decided since last time, here are
+the artifacts — per your mandate, what are your thoughts?
+
+Do not ask it narrow or leading questions — "is this done-claim honest?",
+"check only whether the plan lists each requirement", "verify section 3."
+Narrow questions get narrow answers and quietly turn the advocate into an
+auditor scoped by your framing, which is exactly the framing it exists to be
+independent of. If you have a specific worry, name it as context after the
+open ask; never make it the question.
+
 Keep its context clean. Send:
 
 - New user messages since the last consult, verbatim.
 - A short factual status: what is built or decided, the current work-item
-  list, and the question on the table.
+  list, and what is about to happen next.
 - Review findings as a summarized list of proposed changes with their claimed
   justification, labeled as reviewer proposals — never raw reviewer or panel
   transcripts.
