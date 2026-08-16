@@ -296,7 +296,7 @@ External lanes still require the selected local `claude`, `codex`, `agent`,
 native child system instead. External provider routing remains exact: Codex
 runs OpenAI model ids and Fugu profiles, Claude Code runs supported Claude
 models, Cursor Agent runs `composer-2.5-fast`, natural Grok requests use
-`grok-4.5`, and Kimi Code uses `kimi-code/k3`; model ids never cross runtimes.
+`grok-4.6`, and Kimi Code uses `kimi-code/k3`; model ids never cross runtimes.
 
 `agent-delegate` owns external editful sessions and receipts. `fresh-consult`
 and `model-consensus` select native or external transport per role while
@@ -597,7 +597,7 @@ For an external consult, the user supplies enough information to resolve the
 runtime, model/profile, and effort, or the skill asks once. Codex aliases remain
 exact (`sol`, `luna`, `terra`), and an omitted external Codex model defaults to
 `gpt-5.6-sol`; an omitted effort on that Sol lane defaults to `ultra`. Bare
-Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.5`
+Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.6`
 and still require an explicit effort. Exact model versions and profiles are
 preserved without silent downgrade or provider switch.
 
@@ -632,7 +632,7 @@ resume.
 
 Fresh-resumable is the default. When the caller explicitly requests parallel workers, `agent-delegate` creates a group directory and launches ordinary fresh-resumable child workers, then inspects repo state before reporting the combined result. Stateless one-shot is available only when explicitly requested and the selected CLI can honor it; Kimi always persists a session, even when its receipt is ignored. Explicit resume uses a same-runtime session id or prior run directory. Claude and Kimi resume use `-r <session_id>` from the original work root; Codex resume uses `codex exec resume <thread_id>` and never `--last`; Cursor Agent and Grok resume use `--resume <session_id>` and never latest-session selection. The skill does not resume "latest" sessions, cross runtimes, or use external continuation controllers as a strategy.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `luna`, and `terra` as the exact `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-5.6-sol`, and an omitted effort on that Sol lane defaults to `ultra`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.5`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `luna`, and `terra` as the exact `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-5.6-sol`, and an omitted effort on that Sol lane defaults to `ultra`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -683,7 +683,7 @@ readiness gate is never waived.
 
 Execution defaults to the cheap parallel external fleet: fresh-resumable
 Codex `gpt-5.6-sol` workers at `ultra` through `$agent-delegate`, with
-one-word fleet swaps to Kimi (`kimi-code/k3` at `max`), Grok (`grok-4.5`),
+one-word fleet swaps to Kimi (`kimi-code/k3` at `max`), Grok (`grok-4.6`),
 Cursor (`composer-2.5-fast`), or Claude. The fleet default covers every
 heavy role — implementation, research, verification, the cynical review
 instruments, and the cold verifier. Native subagents bill the parent's
@@ -736,7 +736,7 @@ identity selects the external lane. External shorthand follows the shared
 model resolver, preserves exact versions/profiles, and defaults an omitted
 external Codex model to `gpt-5.6-sol` and its omitted Sol effort to `ultra`.
 Bare Kimi selects `kimi-code/k3` at `max`; natural Grok wording selects
-`grok-4.5` and keeps the explicit-effort requirement.
+`grok-4.6` and keeps the explicit-effort requirement.
 
 External participants preserve event/final receipts; native participants
 preserve exact host child handles. Both remain read-only, and the parent checks

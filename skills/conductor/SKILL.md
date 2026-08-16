@@ -122,7 +122,7 @@ log beside the plan is its durable memory.
   question only for load-bearing external values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording
-  resolves to `grok-4.5`, and Kimi runs `kimi-code/k3` with an omitted-effort
+  resolves to `grok-4.6`, and Kimi runs `kimi-code/k3` with an omitted-effort
   default of `max`. Explicit legacy Grok ids remain exact and discovery-gated.
 - When intake is a described outcome or a partial plan, run the executive
   shaping stage per `references/shaping-and-outcome-map.md` before any plan
@@ -287,7 +287,7 @@ log beside the plan is its durable memory.
    phase range), per-role transport and starting context, max parallelism,
    wave cap, and cold-verifier toggle. The fleet default is external Codex
    `gpt-5.6-sol` at `ultra`; a user-named provider swaps the whole fleet —
-   Kimi to `kimi-code/k3` at `max`, Grok to `grok-4.5`, Cursor to
+   Kimi to `kimi-code/k3` at `max`, Grok to `grok-4.6`, Cursor to
    `composer-2.5-fast`, Claude to a supported Claude model — resolved
    through `$agent-delegate`. Ask one consolidated question only for
    load-bearing missing values. The Terra shortcut supplies its own external

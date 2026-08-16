@@ -77,7 +77,7 @@ when its model and effort are omitted; Kimi defaults to kimi-code/k3 at max. I
 will use native children where the active host can honor the requested
 capability and external sessions for the remaining participants; external
 sessions spend separate model budget. Cursor Agent is Composer-only; natural
-Grok wording resolves to grok-4.5.
+Grok wording resolves to grok-4.6.
 ```
 
 ## Model Phrase Resolution
@@ -103,7 +103,7 @@ Follow the shared model-resolution doctrine:
   `fugu-ultra`/`codex`/`sol`/`luna`/`terra` implies Codex; `claude fable`, `fable`,
   `claude opus`, or `opus` implies Claude; `agent`, `cursor`, `cursor agent`,
   or `cursor-agent` implies Cursor Agent only for Composer.
-  natural `grok`, `grok build`, `grok cli`, `grok-4.5`, or an explicit legacy
+  natural `grok`, `grok build`, `grok cli`, `grok-4.6`, or an explicit legacy
   `grok-*` slug implies Grok; `kimi`, `kimi code`, `kimi k3`, `k3`, or
   `moonshot` implies Kimi.
   If a phrase mixes Cursor Agent with GPT/GBT model ids, Fugu profiles, or
@@ -124,8 +124,8 @@ Follow the shared model-resolution doctrine:
   for non-Composer routing, and do not pass GPT/GBT model ids, Fugu profiles,
   or Claude model ids to Cursor Agent.
 - For Grok, natural `grok`, `grok cli`, and `grok build` wording resolves to
-  `grok-4.5`; “Grok Build” is the harness, not a model id. If that wording
-  names a numeric version other than `4.5`, fail loud rather than discarding
+  `grok-4.6`; “Grok Build” is the harness, not a model id. If that wording
+  names a numeric version other than `4.6`, fail loud rather than discarding
   it. Preserve explicit
   legacy slugs such as `grok-build` and `grok-composer-2.5-fast` exactly and
   require discovery to confirm them. Never rewrite an explicit slug.
@@ -154,12 +154,12 @@ Model D: "codex high" -> runtime=codex, model=gpt-5.6-sol, effort=high, model_so
 Model E: "luna xhigh" -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
 Model F: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
 Model G: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
-Model H: "Grok Build high" -> runtime=grok, model=grok-4.5, effort=high
+Model H: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
 Model I: "Kimi K3 high" -> runtime=kimi, model=kimi-code/k3, effort=high
 Model J: "Kimi" -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
 ```
 
-Effort follows the selected model's real contract. `grok-4.5` supports
+Effort follows the selected model's real contract. `grok-4.6` supports
 `low`, `medium`, and `high`; do not infer support for `xhigh` or `max` from the
 generic CLI parser. Kimi K3 advertises `low`, `high`, and `max`, with omitted
 effort defaulting to `max`. Pass Kimi effort through

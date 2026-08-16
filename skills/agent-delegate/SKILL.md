@@ -93,7 +93,7 @@ automation.
   defaults to `gpt-5.6-sol` and a Kimi lane defaults to `kimi-code/k3`. Codex runs
   GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, Grok CLI naturally
-  resolves to `grok-4.5`, and Kimi Code runs `kimi-code/k3`. Explicit legacy
+  resolves to `grok-4.6`, and Kimi Code runs `kimi-code/k3`. Explicit legacy
   Grok ids remain exact and discovery-gated. If any other required value is
   missing or ambiguous, ask one consolidated question before invoking.
 - Never run GPT/GBT model ids, Fugu profiles, or Claude models through Cursor

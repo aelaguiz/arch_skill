@@ -96,8 +96,8 @@ This is reasoning, not a lookup table:
   Codex profiles, preserve those profile names exactly, and launch them with
   `-p`.
 - For Grok, natural `grok`, `grok cli`, and `grok build` wording resolves to
-  `grok-4.5`. “Grok Build” names the harness, not a model id. If that wording
-  names a numeric version other than `4.5`, fail loud rather than discarding
+  `grok-4.6`. “Grok Build” names the harness, not a model id. If that wording
+  names a numeric version other than `4.6`, fail loud rather than discarding
   it. Preserve an
   explicit legacy slug such as `grok-build` or `grok-composer-2.5-fast`
   exactly and require discovery to confirm it; never rewrite it.
@@ -119,7 +119,7 @@ This is reasoning, not a lookup table:
 
 Always announce the raw-to-resolved mapping before execution, for example:
 `Claude Fable 5 high -> runtime=claude, model=claude-fable-5,
-effort=high` or `Grok Build high -> runtime=grok, model=grok-4.5,
+effort=high` or `Grok Build high -> runtime=grok, model=grok-4.6,
 effort=high`. `Kimi -> runtime=kimi, model=kimi-code/k3, effort=max,
 effort_source=model_default` records the K3 default explicitly.
 `Codex -> runtime=codex, model=gpt-5.6-sol, effort=ultra,
@@ -134,7 +134,7 @@ default (`fugu` defaults to `high`; `fugu-ultra` defaults to `xhigh`). Add the
 `-c` override only when the user explicitly requests a supported non-default
 Fugu Ultra effort.
 
-`grok-4.5` supports only `low`, `medium`, and `high`. Kimi K3 advertises `low`,
+`grok-4.6` supports only `low`, `medium`, and `high`. Kimi K3 advertises `low`,
 `high`, and `max`, with omitted effort defaulting to `max`; pass it through
 `KIMI_MODEL_THINKING_EFFORT`. Preserve an explicit `medium` or `xhigh` verbatim
 as a forced override, but never choose either by default or inference. Every

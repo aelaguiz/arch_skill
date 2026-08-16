@@ -84,7 +84,7 @@ launch, per agent-delegate's resolution doctrine. Do not silently change
 runtime, model, or effort mid-run; if a worker model is clearly failing the
 work, that is a user decision, not a silent substitution.
 
-Natural `grok`, `grok cli`, or `grok build` wording resolves to `grok-4.5`;
+Natural `grok`, `grok cli`, or `grok build` wording resolves to `grok-4.6`;
 explicit legacy `grok-*` ids remain exact. A Kimi worker inherits
 `$agent-delegate`'s process contract: `KIMI_CODE_NO_AUTO_UPDATE=1`, effort via
 `KIMI_MODEL_THINKING_EFFORT`, same-cwd exact `kimi -r <session-id>` resume, and
