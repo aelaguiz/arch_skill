@@ -128,6 +128,14 @@ Claude Code, and Gemini.
   `implement-loop` → `audit-implementation` arc, and have a new clean critic check
   for scope drift between sub-plans before advancing. Resolve each role under
   the shared agent policy rather than assuming every role is a subprocess.
+- Use `$intent-police` when the user wants a long-lived intent police, intent
+  guardian, or standing check that a long, delegated, or overnight run stays
+  what they asked for. The main agent stands up one read-only advocate per
+  run and consults it at plan changes and decisions, after feedback from
+  other agents before adopting findings, before calling work done, when the
+  user's direction changes, and periodically during long unattended
+  stretches. Its feedback is advisory and subtraction-only; it is not a code
+  reviewer, gate, or escalation channel, and it never turns on automatically.
 - Use `$fresh-consult` when the user or another skill wants one or more
   clean independent second opinions on a concrete artifact, completion claim,
   flow consistency question, or readability/confusion check. Use a clean
