@@ -25,7 +25,7 @@ unauthorized scope cycling.
 - `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `miniarch-step` or `arch-step`
 - `lilarch` — compact 1-3 phase feature flow
 - `bugs-flow` — evidence-first bug analyze/fix/review flow whose analyze stage freezes the smallest same-contract fix closure before code
-- `bottom-up-diagnostic` — disaggregates hard investigations into inspectable primary evidence before reaggregating and diagnosing
+- `bottom-up-diagnostic` — disaggregates hard investigations into inspectable evidence, with reusable artifact patterns and fifteen worked examples
 - `audit-loop` — exhaustive map-first repo audit loop with a root audit ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
 - `comment-loop` — exhaustive map-first repo comment hardening loop with a root comment ledger and native goal-mode `auto` continuation
 - `audit-loop-sim` — exhaustive map-first real-app automation audit loop with a root simulator ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
@@ -455,7 +455,7 @@ Use for Sentry/log-driven bug analysis, narrow fixes, and explicit-review-only f
 
 ### `bottom-up-diagnostic`
 
-Use when a difficult investigation needs the underlying users, events, transactions, requests, journeys, screenshots, or frames materialized and inspected before aggregate conclusions are trusted. It owns the evidence pass and bounded diagnosis, not implementation of a known fix.
+Use when a difficult investigation needs the underlying users, events, transactions, requests, journeys, screenshots, recordings, frames, or test attempts materialized and inspected before aggregate conclusions are trusted. It owns the evidence pass and bounded diagnosis, not implementation of a known fix. The package includes concrete evidence-artifact patterns, sample tables, fifteen end-to-end worked examples, and anti-examples that distinguish strong proof from aggregate storytelling.
 
 ### `audit-loop`
 

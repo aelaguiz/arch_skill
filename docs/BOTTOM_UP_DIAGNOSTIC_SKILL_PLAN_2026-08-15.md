@@ -423,6 +423,42 @@ Success would mean:
 The intended result is fewer missed facts, less speculative looping, and a
 higher chance of finding the real cause of a difficult problem.
 
+## Runtime Package Standard
+
+The shipped package must carry enough reusable knowledge to change execution,
+not merely name the philosophy. Its canonical asks are:
+
+- inspect a funnel or event stream case by case before explaining the aggregate;
+- reconcile every affected transaction across independent authorities;
+- inspect a visual recording or test attempt at the frame and action level
+  before assigning failure to the named surface.
+
+The nearest lookalike is `bugs-flow`: that skill owns an ordinary bug from
+analysis through repair and verification, while this skill owns the deeper
+evidence pass and proof-bounded diagnosis. It can be invoked inside the broader
+bug workflow when aggregate reasoning is the blocker.
+
+The runtime package therefore includes:
+
+- a lean top-level contract in `SKILL.md` covering mission, evidence authority,
+  workflow, quality, output validity, error handling, and completion;
+- `references/evidence-artifacts.md` with concrete, adaptable artifact patterns
+  and sample tables;
+- `references/worked-examples.md` with fifteen end-to-end examples and explicit
+  anti-examples that teach reasoning without becoming a lookup table;
+- `agents/openai.yaml` for accurate invocation metadata.
+
+The references are justified because the artifact shapes and case-level pivots
+are the hard-won reusable leverage, while placing them all in `SKILL.md` would
+bloat the default context. The package intentionally has no script, runner,
+formal input schema, or controller: choosing the natural grain and interpreting
+heterogeneous evidence are judgment-heavy tasks, and no repeated deterministic
+failure has earned code.
+
+Completion requires separate package, trigger, execution, and anti-case
+validation. Installation checks alone are not evidence that the skill performs
+well.
+
 ## Boundary of This Document
 
 This document captures **what is being sought and why**. The operational
