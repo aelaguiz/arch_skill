@@ -49,7 +49,7 @@ Other shipped skills:
 - `skill-authoring`
 - `figma-best-practices`
 - `fal-ai-tools`
-- `eli10` (source-retained; not installed by default)
+- `eli10` (source-retained; active installation owned by `utility-skill`)
 - `pr-authoring`
 - `commit-history-authoring`
 - `amir-publish`
@@ -638,7 +638,7 @@ Examples:
 
 ### `eli10`
 
-This package remains available in the repository for manual use but is not installed by `make install` or `make remote_install`. Normal Codex, Claude Code, and Gemini sessions therefore do not discover it from the arch_skill installed surface.
+This package remains available in the repository for manual use but is not installed by `make install` or `make remote_install`. Its active installation is owned by `utility-skill`, and arch_skill leaves that installed copy untouched.
 
 ### `commit-history-authoring`
 
