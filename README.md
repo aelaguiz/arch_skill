@@ -25,6 +25,7 @@ unauthorized scope cycling.
 - `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `miniarch-step` or `arch-step`
 - `lilarch` — compact 1-3 phase feature flow
 - `bugs-flow` — evidence-first bug analyze/fix/review flow whose analyze stage freezes the smallest same-contract fix closure before code
+- `bottom-up-diagnostic` — disaggregates hard investigations into inspectable primary evidence before reaggregating and diagnosing
 - `audit-loop` — exhaustive map-first repo audit loop with a root audit ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
 - `comment-loop` — exhaustive map-first repo comment hardening loop with a root comment ledger and native goal-mode `auto` continuation
 - `audit-loop-sim` — exhaustive map-first real-app automation audit loop with a root simulator ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
@@ -135,6 +136,7 @@ Installed skills:
   - `~/.agents/skills/arch-mini-plan/`
   - `~/.agents/skills/lilarch/`
   - `~/.agents/skills/bugs-flow/`
+  - `~/.agents/skills/bottom-up-diagnostic/`
   - `~/.agents/skills/audit-loop/`
   - `~/.agents/skills/comment-loop/`
   - `~/.agents/skills/audit-loop-sim/`
@@ -185,6 +187,7 @@ Installed skills:
   - `~/.claude/skills/arch-mini-plan/`
   - `~/.claude/skills/lilarch/`
   - `~/.claude/skills/bugs-flow/`
+  - `~/.claude/skills/bottom-up-diagnostic/`
   - `~/.claude/skills/audit-loop/`
   - `~/.claude/skills/comment-loop/`
   - `~/.claude/skills/audit-loop-sim/`
@@ -235,6 +238,7 @@ Installed skills:
   - `~/.gemini/skills/arch-mini-plan/`
   - `~/.gemini/skills/lilarch/`
   - `~/.gemini/skills/bugs-flow/`
+  - `~/.gemini/skills/bottom-up-diagnostic/`
   - `~/.gemini/skills/audit-loop/`
   - `~/.gemini/skills/comment-loop/`
   - `~/.gemini/skills/audit-loop-sim/`
@@ -448,6 +452,10 @@ Use for contained features or improvements that should fit in 1-3 phases.
 ### `bugs-flow`
 
 Use for Sentry/log-driven bug analysis, narrow fixes, and explicit-review-only follow-up.
+
+### `bottom-up-diagnostic`
+
+Use when a difficult investigation needs the underlying users, events, transactions, requests, journeys, screenshots, or frames materialized and inspected before aggregate conclusions are trusted. It owns the evidence pass and bounded diagnosis, not implementation of a known fix.
 
 ### `audit-loop`
 
@@ -808,7 +816,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `bottom-up-diagnostic`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -840,6 +848,7 @@ Examples:
 - `Use $arch-mini-plan docs/MY_PLAN.md`
 - `Use $lilarch for this small feature`
 - `Use $bugs-flow on this Sentry issue`
+- `Use $bottom-up-diagnostic to trace this drop-off user by user before trusting the funnel`
 - `Use $audit-loop`
 - `Use $audit-loop review`
 - `Use $audit-loop auto`

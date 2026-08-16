@@ -28,6 +28,7 @@ The current skill suite is:
 - `arch-mini-plan`
 - `lilarch`
 - `bugs-flow`
+- `bottom-up-diagnostic`
 - `audit-loop`
 - `comment-loop`
 - `audit-loop-sim`
@@ -99,6 +100,7 @@ Default local path:
 - `~/.agents/skills/arch-mini-plan/`
 - `~/.agents/skills/lilarch/`
 - `~/.agents/skills/bugs-flow/`
+- `~/.agents/skills/bottom-up-diagnostic/`
 - `~/.agents/skills/audit-loop/`
 - `~/.agents/skills/comment-loop/`
 - `~/.agents/skills/audit-loop-sim/`
@@ -150,6 +152,7 @@ Installed skills:
   - `arch-mini-plan`
   - `lilarch`
   - `bugs-flow`
+  - `bottom-up-diagnostic`
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
@@ -194,6 +197,7 @@ Installed skills:
   - `arch-mini-plan`
   - `lilarch`
   - `bugs-flow`
+  - `bottom-up-diagnostic`
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
@@ -238,6 +242,7 @@ Installed skills:
   - `arch-mini-plan`
   - `lilarch`
   - `bugs-flow`
+  - `bottom-up-diagnostic`
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
@@ -526,6 +531,10 @@ If lilarch stops fitting, escalate to `miniarch-step reformat` first, and to `ar
 ### `bugs-flow`
 
 Use for regressions, crashes, incidents, or Sentry/log-driven fixes.
+
+### `bottom-up-diagnostic`
+
+Use when aggregate metrics or high-level theories are not resolving a hard investigation. It materializes and inspects the underlying users, events, transactions, requests, journeys, screenshots, or frames, then reaggregates from that evidence and returns a bounded diagnosis. Use `bugs-flow` when the broader job is to carry a known bug through repair and verification.
 
 ### `audit-loop`
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Bottom-Up Diagnostic"
+  short_description: "Disaggregate primary evidence before diagnosing"
+  default_prompt: "Use $bottom-up-diagnostic to move beneath aggregates, materialize and inspect the constituent cases, reaggregate from those artifacts, and return only the diagnosis the evidence supports."
+
+policy:
+  allow_implicit_invocation: true

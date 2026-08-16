@@ -137,6 +137,11 @@ Claude Code, and Gemini.
   work: prior prompts, slash or goal commands, corrections, tool calls, child
   agents, or session timelines in Codex, Claude Code, Pi, or Prime Agent. It is
   read-only history retrieval, not repo search and not Git commit history.
+- Use `$bottom-up-diagnostic` when a hard investigation is stuck at aggregate
+  metrics or high-level theories and the user wants the underlying users,
+  events, transactions, requests, journeys, screenshots, or frames materialized
+  and inspected before reaggregation. It owns the evidence pass and bounded
+  diagnosis, not implementation of a known fix.
 - Use `$cf-share` when the user wants a local artifact file or directory
   (HTML report, screenshots, analysis bundle, any static files) uploaded to
   Cloudflare and shared with the team by a public unguessable
