@@ -392,29 +392,29 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 ):
                     self.model_resolution.resolve_execution_phrase(phrase)
 
-    def test_natural_grok_harness_names_default_to_grok_45(self):
+    def test_natural_grok_harness_names_default_to_grok_46(self):
         for phrase in (
             "grok high",
             "Grok CLI medium",
             "Grok Build low",
-            "Grok 4.5 high",
-            "Grok CLI 4.5 medium",
-            "Grok Build 4.5 low",
+            "Grok 4.6 high",
+            "Grok CLI 4.6 medium",
+            "Grok Build 4.6 low",
         ):
             with self.subTest(phrase=phrase):
                 resolved = self.model_resolution.resolve_execution_phrase(
                     phrase,
-                    grok_models=["grok-4.5"],
+                    grok_models=["grok-4.6", "grok-4.5"],
                 )
 
                 self.assertEqual(resolved.runtime, "grok")
-                self.assertEqual(resolved.model, "grok-4.5")
+                self.assertEqual(resolved.model, "grok-4.6")
                 self.assertEqual(resolved.model_source, "default")
 
-    def test_natural_grok_build_refuses_non_45_numeric_versions(self):
+    def test_natural_grok_build_refuses_non_46_numeric_versions(self):
         for phrase in (
             "Grok Build 2.5 high",
-            "Grok Build version 4.6 medium",
+            "Grok Build version 4.5 medium",
             "Grok Build v3 high",
             "Grok Build model 2.5 high",
         ):
@@ -425,7 +425,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 ):
                     self.model_resolution.resolve_execution_phrase(
                         phrase,
-                        grok_models=["grok-4.5"],
+                        grok_models=["grok-4.6", "grok-4.5"],
                     )
 
     def test_natural_grok_ignores_unrelated_later_numbers(self):
@@ -433,37 +433,47 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             ("Grok Build high for 2 reviewers", "high"),
             ("Grok CLI medium with 3 passes", "medium"),
             ("Grok high in 2026", "high"),
-            ("Grok Build 4.5 low for 2 reviewers", "low"),
+            ("Grok Build 4.6 low for 2 reviewers", "low"),
         ):
             with self.subTest(phrase=phrase):
                 resolved = self.model_resolution.resolve_execution_phrase(
                     phrase,
-                    grok_models=["grok-4.5"],
+                    grok_models=["grok-4.6", "grok-4.5"],
                 )
 
-                self.assertEqual(resolved.model, "grok-4.5")
+                self.assertEqual(resolved.model, "grok-4.6")
                 self.assertEqual(resolved.effort, effort)
 
     def test_explicit_grok_slug_stays_exact(self):
         resolved = self.model_resolution.resolve_execution_phrase(
             "grok-build high",
-            grok_models=["grok-build", "grok-4.5"],
+            grok_models=["grok-build", "grok-4.6", "grok-4.5"],
         )
 
         self.assertEqual(resolved.model, "grok-build")
         self.assertEqual(resolved.model_source, "explicit")
 
-    def test_grok_45_rejects_efforts_outside_cli_catalog(self):
-        for effort in ("xhigh", "max", "ultra"):
-            with self.subTest(effort=effort):
-                with self.assertRaisesRegex(
-                    self.model_resolution.ModelResolutionError,
-                    "supports only: high, low, medium",
-                ):
-                    self.model_resolution.resolve_execution_phrase(
-                        f"grok-4.5 {effort}",
-                        grok_models=["grok-4.5"],
-                    )
+    def test_explicit_grok_45_slug_stays_exact(self):
+        resolved = self.model_resolution.resolve_execution_phrase(
+            "grok-4.5 high",
+            grok_models=["grok-4.6", "grok-4.5"],
+        )
+
+        self.assertEqual(resolved.model, "grok-4.5")
+        self.assertEqual(resolved.model_source, "explicit")
+
+    def test_grok_catalog_models_reject_efforts_outside_cli_catalog(self):
+        for model in ("grok-4.6", "grok-4.5"):
+            for effort in ("xhigh", "max", "ultra"):
+                with self.subTest(model=model, effort=effort):
+                    with self.assertRaisesRegex(
+                        self.model_resolution.ModelResolutionError,
+                        "supports only: high, low, medium",
+                    ):
+                        self.model_resolution.resolve_execution_phrase(
+                            f"{model} {effort}",
+                            grok_models=["grok-4.6", "grok-4.5"],
+                        )
 
     def test_role_policy_defaults_to_long_run_monitoring_and_allows_same_as(self):
         policy = self.model_resolution.resolve_role_execution_policy(

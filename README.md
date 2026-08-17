@@ -25,6 +25,7 @@ unauthorized scope cycling.
 - `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `miniarch-step` or `arch-step`
 - `lilarch` — compact 1-3 phase feature flow
 - `bugs-flow` — evidence-first bug analyze/fix/review flow whose analyze stage freezes the smallest same-contract fix closure before code
+- `bottom-up-diagnostic` — disaggregates hard investigations into inspectable evidence, with reusable artifact patterns and fifteen worked examples
 - `audit-loop` — exhaustive map-first repo audit loop with a root audit ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
 - `comment-loop` — exhaustive map-first repo comment hardening loop with a root comment ledger and native goal-mode `auto` continuation
 - `audit-loop-sim` — exhaustive map-first real-app automation audit loop with a root simulator ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
@@ -57,6 +58,7 @@ Other shipped skills are:
 - `codex-babysit` — optional source-retained skill for watching an already-running Codex goal-mode tmux pane; it is not installed by default
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs and strict `approve | not-approved | inconclusive` verdicts
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
+- `intent-police` — long-lived read-only advocate that derives the user's intent from their verbatim words, keeps an on-disk intent ledger, classifies direction changes as micro-adjustment versus fundamental shift, filters other agents' review findings for scope creep, and gives blunt subtraction-only alignment feedback at decisions, post-review, and done-claims
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-freeze minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
 - `plan-implement` — prompt-first plan-backed implementation loop that advances only through the frozen authorized frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
@@ -135,6 +137,7 @@ Installed skills:
   - `~/.agents/skills/arch-mini-plan/`
   - `~/.agents/skills/lilarch/`
   - `~/.agents/skills/bugs-flow/`
+  - `~/.agents/skills/bottom-up-diagnostic/`
   - `~/.agents/skills/audit-loop/`
   - `~/.agents/skills/comment-loop/`
   - `~/.agents/skills/audit-loop-sim/`
@@ -160,6 +163,7 @@ Installed skills:
   - `~/.agents/skills/codex-cleanup/`
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/fresh-consult/`
+  - `~/.agents/skills/intent-police/`
   - `~/.agents/skills/agent-delegate/`
   - `~/.agents/skills/plan-audit/`
   - `~/.agents/skills/plan-implement/`
@@ -185,6 +189,7 @@ Installed skills:
   - `~/.claude/skills/arch-mini-plan/`
   - `~/.claude/skills/lilarch/`
   - `~/.claude/skills/bugs-flow/`
+  - `~/.claude/skills/bottom-up-diagnostic/`
   - `~/.claude/skills/audit-loop/`
   - `~/.claude/skills/comment-loop/`
   - `~/.claude/skills/audit-loop-sim/`
@@ -210,6 +215,7 @@ Installed skills:
   - `~/.claude/skills/codex-cleanup/`
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/fresh-consult/`
+  - `~/.claude/skills/intent-police/`
   - `~/.claude/skills/agent-delegate/`
   - `~/.claude/skills/plan-audit/`
   - `~/.claude/skills/plan-implement/`
@@ -235,6 +241,7 @@ Installed skills:
   - `~/.gemini/skills/arch-mini-plan/`
   - `~/.gemini/skills/lilarch/`
   - `~/.gemini/skills/bugs-flow/`
+  - `~/.gemini/skills/bottom-up-diagnostic/`
   - `~/.gemini/skills/audit-loop/`
   - `~/.gemini/skills/comment-loop/`
   - `~/.gemini/skills/audit-loop-sim/`
@@ -259,6 +266,7 @@ Installed skills:
   - `~/.gemini/skills/codex-cleanup/`
   - `~/.gemini/skills/codex-review-yolo/`
   - `~/.gemini/skills/fresh-consult/`
+  - `~/.gemini/skills/intent-police/`
   - `~/.gemini/skills/agent-delegate/`
   - `~/.gemini/skills/plan-audit/`
   - `~/.gemini/skills/plan-implement/`
@@ -278,7 +286,7 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, `wait`, `code-review`, and `codex-babysit` are removed from the live installed surface. `codex-babysit` remains in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `eli10` also remains here for manual use, but its active installation is owned by `utility-skill`; arch_skill does not install or purge it. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex, Claude Code, Pi, and Prime Agent local history, including Prime child-agent transcripts; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
+`arch-loop`, `delay-poll`, `wait`, `code-review`, and `codex-babysit` are removed from the live installed surface. `codex-babysit` remains in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `eli10` also remains here for manual use, but its active installation is owned by `utility-skill`; arch_skill does not install or purge it. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex, Claude Code, Pi, and Prime Agent local history, including Prime child-agent transcripts; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `intent-police`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
 
 `herdr-helper` is installed on the agents/Codex, Claude Code, and Gemini CLI
 surfaces and requires an installed Herdr CLI at runtime.
@@ -288,7 +296,7 @@ External lanes still require the selected local `claude`, `codex`, `agent`,
 native child system instead. External provider routing remains exact: Codex
 runs OpenAI model ids and Fugu profiles, Claude Code runs supported Claude
 models, Cursor Agent runs `composer-2.5-fast`, natural Grok requests use
-`grok-4.5`, and Kimi Code uses `kimi-code/k3`; model ids never cross runtimes.
+`grok-4.6`, and Kimi Code uses `kimi-code/k3`; model ids never cross runtimes.
 
 `agent-delegate` owns external editful sessions and receipts. `fresh-consult`
 and `model-consensus` select native or external transport per role while
@@ -449,6 +457,10 @@ Use for contained features or improvements that should fit in 1-3 phases.
 
 Use for Sentry/log-driven bug analysis, narrow fixes, and explicit-review-only follow-up.
 
+### `bottom-up-diagnostic`
+
+Use when a difficult investigation needs the underlying users, events, transactions, requests, journeys, screenshots, recordings, frames, or test attempts materialized and inspected before aggregate conclusions are trusted. It owns the evidence pass and bounded diagnosis, not implementation of a known fix. The package includes concrete evidence-artifact patterns, sample tables, fifteen end-to-end worked examples, and anti-examples that distinguish strong proof from aggregate storytelling.
+
 ### `audit-loop`
 
 Use for repo-wide audit passes where the agent should exhaustively map the codebase and current proof surface before editing, then rank and attack the biggest real unresolved risks by consequence instead of picking something convenient. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
@@ -585,7 +597,7 @@ For an external consult, the user supplies enough information to resolve the
 runtime, model/profile, and effort, or the skill asks once. Codex aliases remain
 exact (`sol`, `luna`, `terra`), and an omitted external Codex model defaults to
 `gpt-5.6-sol`; an omitted effort on that Sol lane defaults to `ultra`. Bare
-Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.5`
+Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.6`
 and still require an explicit effort. Exact model versions and profiles are
 preserved without silent downgrade or provider switch.
 
@@ -620,7 +632,7 @@ resume.
 
 Fresh-resumable is the default. When the caller explicitly requests parallel workers, `agent-delegate` creates a group directory and launches ordinary fresh-resumable child workers, then inspects repo state before reporting the combined result. Stateless one-shot is available only when explicitly requested and the selected CLI can honor it; Kimi always persists a session, even when its receipt is ignored. Explicit resume uses a same-runtime session id or prior run directory. Claude and Kimi resume use `-r <session_id>` from the original work root; Codex resume uses `codex exec resume <thread_id>` and never `--last`; Cursor Agent and Grok resume use `--resume <session_id>` and never latest-session selection. The skill does not resume "latest" sessions, cross runtimes, or use external continuation controllers as a strategy.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `luna`, and `terra` as the exact `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-5.6-sol`, and an omitted effort on that Sol lane defaults to `ultra`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.5`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `luna`, and `terra` as the exact `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-5.6-sol`, and an omitted effort on that Sol lane defaults to `ultra`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -671,7 +683,7 @@ readiness gate is never waived.
 
 Execution defaults to the cheap parallel external fleet: fresh-resumable
 Codex `gpt-5.6-sol` workers at `ultra` through `$agent-delegate`, with
-one-word fleet swaps to Kimi (`kimi-code/k3` at `max`), Grok (`grok-4.5`),
+one-word fleet swaps to Kimi (`kimi-code/k3` at `max`), Grok (`grok-4.6`),
 Cursor (`composer-2.5-fast`), or Claude. The fleet default covers every
 heavy role — implementation, research, verification, the cynical review
 instruments, and the cold verifier. Native subagents bill the parent's
@@ -724,7 +736,7 @@ identity selects the external lane. External shorthand follows the shared
 model resolver, preserves exact versions/profiles, and defaults an omitted
 external Codex model to `gpt-5.6-sol` and its omitted Sol effort to `ultra`.
 Bare Kimi selects `kimi-code/k3` at `max`; natural Grok wording selects
-`grok-4.5` and keeps the explicit-effort requirement.
+`grok-4.6` and keeps the explicit-effort requirement.
 
 External participants preserve event/final receipts; native participants
 preserve exact host child handles. Both remain read-only, and the parent checks
@@ -808,7 +820,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `bottom-up-diagnostic`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
@@ -840,6 +852,7 @@ Examples:
 - `Use $arch-mini-plan docs/MY_PLAN.md`
 - `Use $lilarch for this small feature`
 - `Use $bugs-flow on this Sentry issue`
+- `Use $bottom-up-diagnostic to trace this drop-off user by user before trusting the funnel`
 - `Use $audit-loop`
 - `Use $audit-loop review`
 - `Use $audit-loop auto`

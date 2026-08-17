@@ -72,7 +72,7 @@ Frontmatter rules:
   `gpt-5.6-sol`, an omitted effort on that Sol role defaults to `ultra`, and
   Kimi defaults to `kimi-code/k3` at `max`; store the resolved runnable
   identifier and default provenance, not raw shorthand. Natural Grok wording
-  resolves to `grok-4.5`; explicit legacy Grok ids remain exact.
+  resolves to `grok-4.6`; explicit legacy Grok ids remain exact.
   During same-session `auto-plan` these fields may stay null because no critic
   runs. External-harness critics use `auto_execution.roles.critic`.
 - `models_sha256` is computed over the runtime/model/effort tuple when

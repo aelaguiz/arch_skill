@@ -189,7 +189,7 @@ Must happen every run:
   `gpt-5.6-sol`, and an omitted effort on that Sol role defaults to `ultra`.
   An external Kimi role defaults to `kimi-code/k3` and the model-default `max`
   effort; other runtimes, Codex models, and efforts never silently default.
-  Natural Grok wording resolves to `grok-4.5`, while explicitly named legacy
+  Natural Grok wording resolves to `grok-4.6`, while explicitly named legacy
   Grok ids remain exact. Existing external
   policies with legacy `repair_worker` values may load, but ordinary critic
   failures resume the exact original planner or implementation worker.

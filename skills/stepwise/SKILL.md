@@ -105,7 +105,7 @@ break.
   except that an external Codex lane with no named model defaults to
   `gpt-5.6-sol`, and that Sol lane defaults an omitted effort to `ultra`; Kimi
   defaults to `kimi-code/k3` and an omitted effort to `max`. Natural Grok
-  wording resolves to `grok-4.5`, while explicit legacy Grok ids stay exact.
+  wording resolves to `grok-4.6`, while explicit legacy Grok ids stay exact.
   Ask once only for missing load-bearing external values.
 - Optional execution preferences are interpreted after the Step Manifest is
   drafted. A phrase like "copywriting steps use Claude Fable 5" is a routing

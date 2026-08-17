@@ -82,7 +82,7 @@ the same doctrine used by Stepwise and fresh-consult:
 - inspect `codex debug models` when ordinary Codex model availability matters
 - resolve `fugu` and `fugu-ultra` as Codex profiles, not model-list ids
 - inspect `grok models` when Grok model availability matters
-- resolve natural Grok/Grok Build wording to `grok-4.5`, while preserving an
+- resolve natural Grok/Grok Build wording to `grok-4.6`, while preserving an
   explicitly named legacy `grok-*` id exactly
 - resolve Kimi/K3 wording to `runtime=kimi`, `model=kimi-code/k3`; default an
   omitted Kimi effort to `max`
@@ -135,8 +135,8 @@ Treat model text as intent, not a loose alias:
   normalize to `claude-opus-4-7`. Neither may become another Claude family or
   version.
 - Natural `grok`, `grok cli`, and `grok build` wording normalizes to
-  `grok-4.5`. “Grok Build” identifies the harness, not a model id. If that
-  wording names a numeric version other than `4.5`, fail loud rather than
+  `grok-4.6`. “Grok Build” identifies the harness, not a model id. If that
+  wording names a numeric version other than `4.6`, fail loud rather than
   discarding it. Preserve an
   explicitly named legacy id such as `grok-build` or
   `grok-composer-2.5-fast` exactly and require discovery to confirm it.
@@ -159,7 +159,7 @@ default (`fugu` defaults to `high`; `fugu-ultra` defaults to `xhigh`). Add the
 `-c` override only when the user explicitly requests a supported non-default
 Fugu Ultra effort.
 
-`grok-4.5` supports only `low`, `medium`, and `high`; generic CLI effort parsing
+`grok-4.6` supports only `low`, `medium`, and `high`; generic CLI effort parsing
 does not widen that model's catalog contract. Kimi K3 advertises `low`, `high`,
 and `max`, with omitted effort defaulting to `max`. Pass Kimi effort through
 `KIMI_MODEL_THINKING_EFFORT`, not a nonexistent `--effort` flag. Preserve an
@@ -186,7 +186,7 @@ implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-5.6-luna, effort
 critic: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
 critic: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 planner: "Claude Fable 5 high" -> runtime=claude, model=claude-fable-5, effort=high
-implementation_worker: "Grok Build high" -> runtime=grok, model=grok-4.5, effort=high
+implementation_worker: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
 implementation_worker: "Kimi K3 high" -> runtime=kimi, model=kimi-code/k3, effort=high
 critic: "Kimi" -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
 ```

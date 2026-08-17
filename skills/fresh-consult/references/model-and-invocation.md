@@ -9,7 +9,7 @@ isolation, automation, or receipt benefit justifies the added process.
 For the external lane, use this reference to resolve what the user meant by
 "Claude", "Codex", "Cursor Agent", "Grok", "Kimi", "fable 5 high", "opus high",
 "gpt-5.6-sol ultra", "luna xhigh", "terra high", "GPT56SOLXI", "fugu high",
-"fugu-ultra xhigh", "composer-2.5-fast", "grok-4.5", "kimi k3", or similar phrasing,
+"fugu-ultra xhigh", "composer-2.5-fast", "grok-4.6", "kimi k3", or similar phrasing,
 and to run the selected read-only consult subprocess.
 
 Fresh consult is review/second-opinion work. Provider routing is fixed: Codex
@@ -101,7 +101,7 @@ Infer runtime only when the user's wording makes it unambiguous:
 - `agent`, `cursor`, `cursor agent`, or `cursor-agent` implies
   `runtime=agent` only for Composer. Cursor Agent always resolves to
   `composer-2.5-fast`.
-- `grok`, natural `grok build`, natural `grok cli`, `grok-4.5`, or an explicit
+- `grok`, natural `grok build`, natural `grok cli`, `grok-4.6`, or an explicit
   legacy `grok-*` slug implies `runtime=grok`.
 - `kimi`, `kimi code`, `kimi k3`, `k3`, or `moonshot` implies `runtime=kimi`.
   Kimi defaults to `kimi-code/k3` at `max` when model or effort is omitted.
@@ -160,11 +160,11 @@ Treat model text as intent, not a loose alias:
   non-Composer routing, and do not pass GPT/GBT model ids, Fugu profiles,
   Claude, or Grok model ids to Cursor Agent.
 - For Grok, natural `grok`, `grok cli`, and `grok build` wording resolves to
-  `grok-4.5`. “Grok Build” names the harness, not a model id. If that wording
-  names a numeric version other than `4.5`, fail loud rather than discarding
+  `grok-4.6`. “Grok Build” names the harness, not a model id. If that wording
+  names a numeric version other than `4.6`, fail loud rather than discarding
   it. Preserve an
   explicit legacy slug such as `grok-build` or `grok-composer-2.5-fast`
-  exactly and require discovery to confirm it; never rewrite it to `grok-4.5`.
+  exactly and require discovery to confirm it; never rewrite it to `grok-4.6`.
 - For Kimi, `kimi`, `kimi code`, `kimi k3`, `k3`, and `moonshot` resolve to
   the exact callable alias `kimi-code/k3`. Do not auto-resolve older
   Kimi-for-coding/K2.7 aliases and do not cross provider model ids. When
@@ -184,7 +184,7 @@ Luna xhigh -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
 Terra high -> runtime=codex, model=gpt-5.6-terra, effort=high
 Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 Cursor Agent composer 2.5 -> runtime=agent, model=composer-2.5-fast, effort=encoded-in-model
-Grok Build high -> runtime=grok, model=grok-4.5, effort=high
+Grok Build high -> runtime=grok, model=grok-4.6, effort=high
 Kimi K3 high -> runtime=kimi, model=kimi-code/k3, effort=high
 Kimi -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
 ```
@@ -210,7 +210,7 @@ visible output contract to verdict, evidence, session metadata, and directories.
   the profile default (`fugu` defaults to `high`; `fugu-ultra` defaults to
   `xhigh`). Add `-c model_reasoning_effort='"<level>"'` only when the user
   explicitly requests a supported non-default Fugu Ultra effort.
-- `grok-4.5` accepts only `low`, `medium`, and `high` via `--effort`. Generic
+- `grok-4.6` accepts only `low`, `medium`, and `high` via `--effort`. Generic
   CLI effort parsing does not widen that model's catalog contract.
 - Kimi K3 advertises `low`, `high`, and `max`, with `max` as the model default.
   Set `KIMI_MODEL_THINKING_EFFORT=<level>` on the process; there is no

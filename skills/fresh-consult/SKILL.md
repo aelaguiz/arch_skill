@@ -95,7 +95,7 @@ add a universal runner, controller, state machine, or harness for this skill.
   natively.
 - Preserve exact external model resolution. Codex runs GPT/GBT/OpenAI model ids
   and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
-  runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.5`; Kimi
+  runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
   runs `kimi-code/k3` and defaults an omitted effort to `max`. An omitted
   external Codex model defaults to `gpt-5.6-sol`, and an omitted effort on
   that Sol lane defaults to `ultra`. Preserve explicitly named legacy Grok ids

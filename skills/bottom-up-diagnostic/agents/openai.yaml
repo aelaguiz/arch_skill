@@ -1,0 +1,7 @@
+interface:
+  display_name: "Bottom-Up Diagnostic"
+  short_description: "Inspect constituent evidence before diagnosis"
+  default_prompt: "Use $bottom-up-diagnostic to materialize and save the constituent evidence, inspect consequential cases and contradictions, reconcile the population from those artifacts, and return a diagnosis whose confidence matches the proof."
+
+policy:
+  allow_implicit_invocation: true

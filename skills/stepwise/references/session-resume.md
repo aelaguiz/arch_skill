@@ -436,7 +436,7 @@ codex exec --cd /tmp/smoke --ephemeral \
 printf 'Say PING.' > /tmp/smoke/grok-step.prompt
 RUST_LOG=off grok --cwd /tmp/smoke --no-auto-update --no-memory \
   --no-subagents --disable-web-search --permission-mode bypassPermissions \
-  --always-approve --model grok-4.5 --effort low \
+  --always-approve --model grok-4.6 --effort low \
   --output-format streaming-json --prompt-file /tmp/smoke/grok-step.prompt \
   | tee /tmp/smoke/grok-step.events.jsonl
 
@@ -444,7 +444,7 @@ RUST_LOG=off grok --cwd /tmp/smoke --no-auto-update --no-memory \
 printf 'Say PONG.' > /tmp/smoke/grok-resume.prompt
 RUST_LOG=off grok --cwd /tmp/smoke --no-auto-update --no-memory \
   --no-subagents --disable-web-search --permission-mode bypassPermissions \
-  --always-approve --model grok-4.5 --effort low \
+  --always-approve --model grok-4.6 --effort low \
   --output-format streaming-json --resume <SESSION_ID> \
   --prompt-file /tmp/smoke/grok-resume.prompt \
   | tee /tmp/smoke/grok-resume.events.jsonl
@@ -453,7 +453,7 @@ RUST_LOG=off grok --cwd /tmp/smoke --no-auto-update --no-memory \
 printf 'Return JSON only: {"verdict":"pass"}' > /tmp/smoke/grok-critic.prompt
 RUST_LOG=off grok --cwd /tmp/smoke --no-auto-update --no-memory \
   --no-subagents --disable-web-search --permission-mode bypassPermissions \
-  --always-approve --model grok-4.5 --effort low \
+  --always-approve --model grok-4.6 --effort low \
   --output-format streaming-json --prompt-file /tmp/smoke/grok-critic.prompt \
   | tee /tmp/smoke/grok-critic.events.jsonl
 

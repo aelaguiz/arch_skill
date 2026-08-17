@@ -23,7 +23,7 @@ VALID_RUNTIMES = {"agent", "claude", "codex", "grok", "kimi"}
 VALID_EFFORTS = {"low", "medium", "high", "xhigh", "max", "ultra"}
 PREFERRED_CODEX_MODEL = "gpt-5.6-sol"
 PREFERRED_CODEX_EFFORT = "ultra"
-PREFERRED_GROK_MODEL = "grok-4.5"
+PREFERRED_GROK_MODEL = "grok-4.6"
 PREFERRED_KIMI_MODEL = "kimi-code/k3"
 KIMI_DEFAULT_EFFORT = "max"
 KIMI_EFFORT_ENV = "KIMI_MODEL_THINKING_EFFORT"
@@ -87,7 +87,8 @@ _NATURAL_GROK_VERSION_RE = re.compile(
     r"(?P<version>\d+(?:\.\d+)*)(?![a-z0-9])",
     re.IGNORECASE,
 )
-_GROK_45_EFFORTS = {"low", "medium", "high"}
+_GROK_CATALOG_EFFORTS = {"low", "medium", "high"}
+_GROK_MODELS_WITH_CATALOG_EFFORTS = frozenset({"grok-4.5", "grok-4.6"})
 _ROLE_ALIASES = {
     "planner": "epic_planner",
     "plan": "epic_planner",
@@ -293,7 +294,7 @@ def resolve_execution_phrase(
     - "Fugu Ultra xhigh" -> codex / profile fugu-ultra / xhigh
     - "cursor agent composer-2.5-fast" -> agent / composer-2.5-fast / encoded-in-model
     - "cursor agent composer 2.5" -> agent / composer-2.5-fast / encoded-in-model
-    - "grok build high" -> grok / grok-4.5 / high
+    - "grok build high" -> grok / grok-4.6 / high
     - "grok composer 2.5 high" -> grok / grok-composer-2.5-fast / high
     - "kimi k3" -> kimi / kimi-code/k3 / max
     - "kimi-code/k3 xhigh" -> kimi / kimi-code/k3 / xhigh
@@ -789,7 +790,8 @@ def _extract_grok_model_candidate(lowered: str) -> tuple[str | None, str]:
 
 def _validate_natural_grok_version(lowered: str) -> None:
     match = _NATURAL_GROK_VERSION_RE.search(lowered)
-    if match is None or match.group("version") == "4.5":
+    preferred_version = PREFERRED_GROK_MODEL.removeprefix("grok-")
+    if match is None or match.group("version") == preferred_version:
         return
     raise ModelResolutionError(
         "natural Grok wording names unsupported numeric version "
@@ -799,9 +801,9 @@ def _validate_natural_grok_version(lowered: str) -> None:
 
 
 def _validate_grok_effort(model: str, effort: str, raw: str) -> None:
-    if model != PREFERRED_GROK_MODEL or effort in _GROK_45_EFFORTS:
+    if model not in _GROK_MODELS_WITH_CATALOG_EFFORTS or effort in _GROK_CATALOG_EFFORTS:
         return
-    allowed_text = ", ".join(sorted(_GROK_45_EFFORTS))
+    allowed_text = ", ".join(sorted(_GROK_CATALOG_EFFORTS))
     raise ModelResolutionError(
         f"{raw!r} uses effort {effort!r}, but {model!r} supports only: {allowed_text}"
     )

@@ -82,7 +82,7 @@ For each drafted step, resolve execution in this order:
 6. **Defaults.** Use clean native dispatch when no external benefit or hard
    doctrine applies. Use external defaults only within a selected external
    lane. In a selected Kimi lane, omitted model/effort means
-   `kimi-code/k3`/`max`; natural Grok wording means `grok-4.5`. Explicit legacy
+   `kimi-code/k3`/`max`; natural Grok wording means `grok-4.6`. Explicit legacy
    Grok ids remain exact.
 
 Critic execution resolves independently. The default critic runtime is the
