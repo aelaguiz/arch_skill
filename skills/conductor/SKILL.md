@@ -107,7 +107,7 @@ log beside the plan is its durable memory.
   worker cycles, and that exact cheaper/faster model is the concrete benefit
   the shared policy asks external transport to name. The fleet default
   applies to every role — phase workers, research workers, verification
-  workers, the cynical review instruments, and the cold verifier. Native
+  workers, any cynical review the user asked for, and the cold verifier. Native
   children run the parent's expensive model, so they are never the cheap
   lane and never the default for reviews or any other bulk reading; reserve
   them for a genuinely tiny errand a fleet round-trip would dwarf, a
@@ -258,7 +258,12 @@ log beside the plan is its durable memory.
   plan closure, run the final gate: one whole-plan cynical audit sweep —
   which personally loads the plan's end-state work products, a check no
   toggle disables — plus a new clean cold verifier (default on; user may
-  disable).
+  disable). The installed `$cynical-code-review`,
+  `$cynical-architecture-review`, and `$cynical-cruft-removal` skills are not
+  part of that gate. Run them only when the user asks for them, treat what
+  they return as advice triaged like any other claim, and let their verdicts
+  gate completion only if the user said they should. The Terra shortcut is
+  itself such a request and keeps its own three-review gate.
 - Record completion the way the plan format already records it (for example
   `Status: COMPLETE` under arch phase headings plus a worklog entry, or
   checkbox ticks). Never hand-edit script-owned `arch_skill:block:*` receipt
@@ -339,18 +344,17 @@ log beside the plan is its durable memory.
    verification, record proof in the log, and record phase completion in the
    plan's own format.
 9. Repeat until the execution map is clean or a hard stop triggers.
-10. Run the final gate: whole-plan cynical audit sweep, then the cynical
-   review instruments when installed — each dispatched as its own clean
-   external fleet session, never a native subagent (`$cynical-code-review`
-   by default for non-trivial plans, `$cynical-architecture-review` and
-   `$cynical-cruft-removal` by judgment from what the plan changed), then
-   the fleet cold verifier unless disabled. Triage and repair findings
-   through the same send-back machinery. Under the Terra shortcut, defer the
-   instrument portion to step 11's three new clean external sessions instead of
-   duplicating those reviews; still run the conductor sweep and cold verifier.
-   Give every final reviewer the plan path, human baseline anchors, approval
-   entries, frozen initial closure, and freeze anchor. Their findings use the
-   same scope triage and cannot expand the plan.
+10. Run the final gate: whole-plan cynical audit sweep, then the fleet cold
+   verifier unless disabled. Triage and repair findings through the same
+   send-back machinery. Run a cynical review skill only when the user asked
+   for it — each requested one as its own clean external fleet session, never
+   a native subagent — and treat its return as advice, not a gate. When the
+   change set is large or structural, or the completion story is one you
+   could not fully verify, say so in the final report and offer the reviews
+   instead of running them unasked. Under the Terra shortcut, step 11 owns the
+   three reviews. Give every final reviewer the plan path, human baseline
+   anchors, approval entries, frozen initial closure, and freeze anchor. Their
+   findings use the same scope triage and cannot expand the plan.
 11. If the Terra delivery shortcut is active, run its stronger delivery gate:
     all three cynical reviews in independent new clean external Terra
     sessions, with accepted findings repaired and re-reviewed.
@@ -391,8 +395,8 @@ Then four short bullet sections:
   with their anchors.
 - **Tested** — the decisive proof: each check, its scope, its result, and
   who ran it (from the proof ledger's `Ran by`).
-- **Reviewed** — which audits, review instruments, and verifiers ran, their
-  verdicts, and finding counts: accepted / repaired / rejected.
+- **Reviewed** — which audits, requested cynical reviews, and verifiers ran,
+  their verdicts, and finding counts: accepted / repaired / rejected.
 - **Issues** — escalations, notable send-backs, usage-limit rotations,
   deferred items, and anything the user should know; `none` when true.
 

@@ -238,27 +238,7 @@ After all phases:
    findings, plan annotations, and final diff. Any expansion that became
    "required" only through worker/reviewer cycles is a hard fail and normally
    subtraction work.
-2. **Cynical review instruments — fleet-executed.** When the cynical review
-   skills are installed, dispatch each selected instrument as its own new
-   clean external fleet session that invokes the installed skill itself
-   against the repo: `$cynical-code-review` over the full change set against
-   the plan's completion claims; `$cynical-architecture-review` when the
-   plan changed structure, ownership, or boundaries; `$cynical-cruft-removal`
-   when the plan carried delete lists or replaced paths. Default to running
-   `$cynical-code-review` for any non-trivial plan; add the other two by
-   judgment from what the plan changed. Never run these reviews through the
-   parent's own native subagents: they bill the parent's expensive model, and
-   bulk review reading is exactly the spend the fleet exists to absorb — a
-   fleet reviewer's own slices run on the fleet host's cheap model. The reviews
-   stay review-only; the conductor never edits source on their behalf and
-   triages their returned findings as claims under the normal audit
-   machinery. Give each instrument the plan path, human baseline anchors,
-   explicit human approval entries, frozen initial closure, and freeze
-   anchor. Its findings use the same scope dispositions and cannot expand
-   repair scope. When the review skills or the external runtime are
-   unavailable, apply the lens groups from this reference in the conductor's
-   own sweep instead.
-3. **Cold verifier** (default on): one new clean child with no conductor
+2. **Cold verifier** (default on): one new clean child with no conductor
    narrative, prompted to *refute* completion — trust only command output,
    code reality, and work products it loads itself; list every plan promise
    not literally true in code or in the artifacts. Its ignorance of the run
@@ -270,9 +250,25 @@ After all phases:
    explicit user request or when no external runtime exists. It may reject
    completion, but it may not add a newly discovered adjacent path to the
    frozen closure.
-4. Triage all instrument findings like any others; repair through send-backs
-   (resuming the owning sessions where healthy); re-run the affected
-   instrument on material repairs.
+3. **Requested cynical reviews — advisory, fleet-executed.** The installed
+   `$cynical-code-review`, `$cynical-architecture-review`, and
+   `$cynical-cruft-removal` skills are not part of this gate. Run one only
+   when the user asked for it, and dispatch each requested review as its own
+   new clean external fleet session that invokes the installed skill against
+   the repo. Never run them through the parent's own native subagents: they
+   bill the parent's expensive model, and bulk review reading is exactly the
+   spend the fleet exists to absorb. Give each review the plan path, human
+   baseline anchors, explicit human approval entries, frozen initial closure,
+   and freeze anchor. What comes back is advice: the conductor triages the
+   findings as claims under the normal audit machinery, never edits source on
+   their behalf, and does not let a review verdict block completion unless
+   the user asked for it to gate. Its findings use the same scope dispositions
+   and cannot expand repair scope. When the change set is large or
+   structural, or the completion story could not be fully verified, offer
+   these reviews in the final report rather than running them unasked.
+4. Triage findings from any of these like any others; repair through
+   send-backs (resuming the owning sessions where healthy); re-run an
+   affected review on material repairs.
 
 ## Escalation
 

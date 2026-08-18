@@ -4,8 +4,8 @@ The conductor chooses transport under
 `../../_shared/agent-orchestration-policy.md`; transport does not choose the
 workflow. The conductor's standing transport policy is the cheap parallel
 external fleet through `$agent-delegate` — for phase workers, research
-workers, verification workers, the cynical review instruments, and the cold
-verifier alike. The reason is money, said plainly: native children on the
+workers, verification workers, any cynical review the user asked for, and the
+cold verifier alike. The reason is money, said plainly: native children on the
 parent's host run the parent's expensive model, so a "native review" or
 "native worker" spends premium tokens on exactly the bulk reading the fleet
 exists to absorb. Native children are not a budget lane and not free
@@ -30,14 +30,15 @@ request, or an unavailable external runtime.
   restart, its prior handle is lost or unhealthy under the audit caps, or its
   owner surface changed enough to invalidate the earlier view. Record why the
   replacement was necessary.
-- **Final-gate review instruments → new clean fleet sessions.** Each
-  selected cynical review runs as its own clean external fleet session that
-  invokes the installed review skill itself against the repo. Its own native
-  slices are expected and need no assignment: they bill the fleet host's
-  cheap model, not the parent's. The conductor consumes each instrument's
-  findings as claims under the normal audit machinery. Never run these reviews
-  through the parent's own native subagents — bulk review reading on the
-  parent's model is the exact spend this skill exists to avoid.
+- **Requested cynical reviews → new clean fleet sessions.** The cynical
+  review skills run only when the user asked for them, and each one runs as
+  its own clean external fleet session that invokes the installed review skill
+  itself against the repo. Its own native slices are expected and need no
+  assignment: they bill the fleet host's cheap model, not the parent's. The
+  conductor consumes each review's findings as advisory claims under the
+  normal audit machinery. Never run these reviews through the parent's own
+  native subagents — bulk review reading on the parent's model is the exact
+  spend this skill exists to avoid.
 - **Cold verifier → new clean fleet one-shot**, final gate only.
   Independence is the feature: no conductor narrative, no resume, just
   refutation from plan, code, and the artifacts it loads itself. A
@@ -152,8 +153,8 @@ token waste and is never capped by the intake ladder below.
 **Delegated spend — investigation, production, and review labor.**
 Nitty-gritty investigation, tracing through piles of files to understand how
 something works, reconstructing what a worker did from raw output,
-implementing anything, and the heavy review reading: cynical instruments,
-cold verification, re-reviews, and delegated artifact inspections. That work
+implementing anything, and the heavy review reading: requested cynical
+reviews, cold verification, re-reviews, and delegated artifact inspections. That work
 routes to fleet workers, who read the files so the conductor does not — on
 a cheap model, which a native subagent is not.
 

@@ -37,9 +37,10 @@ scope such as an explicit phase range remains binding.
   triage, proof freshness, and the final acceptance decision. Terra workers
   own source edits and proof runs during the conductor stage.
 - Keep the ordinary cold verifier enabled unless the user explicitly disables
-  it. The three new clean external cynical reviews satisfy and strengthen the
-  ordinary cynical-instrument portion of the final gate; they do not duplicate
-  direct instrument runs, and they do not replace the cold verifier.
+  it. Invoking this preset is itself the request for the three cynical
+  reviews, so they run here and they do gate this lane — unlike ordinary
+  conductor runs, where the reviews are advisory and only run on request. They
+  do not replace the cold verifier.
 - Keep the same worktree and branch through implementation, review repairs,
   PR publication, and PR follow-through.
 
