@@ -352,9 +352,9 @@ The right move is to define the key term once, keep the exact term after that,
 and explain how it affects the user-facing result.
 
 Example:
-"AIVAT is the noise reducer. It does not make poker deterministic; it makes the
-RTS versus non-RTS comparison less noisy when the policy probabilities are
-known."
+"Backpressure is how a slow consumer tells a fast producer to send less data.
+It does not make the consumer faster; it prevents the queue from growing
+without limit."
 
 Net: plain speech should make the real mechanism easier to see.
 ```
@@ -609,11 +609,11 @@ This should not be one table. The rows carry too much prose, so the table makes
 the reader reconstruct the meaning from wrapped cells.
 
 ✅ Include now
-- Shared per-kind doctrine: emit one shared contract into every kind skill.
-  Why: prevents 32 packages from drifting on evidence posture.
+- Shared validation rules: keep one contract for every package.
+  Why: prevents evidence and failure rules from drifting between packages.
 
 ⚠️ Defer
-- MCP playable-author contexts: read as adjacent evidence only.
+- Runtime-specific adapters: inspect them as adjacent evidence only.
   Why: useful for contradictions, but too wide for this pass.
 
 ❌ Exclude unless factual drift is found
@@ -672,8 +672,9 @@ Patch the owning skill file, add the response-pattern reference, update public
 metadata if it changed, then run the required skill check.
 
 ⚠️ Constraint:
-The skill stays a response-style skill. It may use the Codex table renderer for
-readable compact tables, but it does not become a runner or fake memory layer.
+The skill stays a response-style skill. It may use a compact Markdown table
+when that reduces reader effort, but it does not become a runner or fake memory
+layer.
 
 Net: this is an implementation turn, not another planning turn.
 ```

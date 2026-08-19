@@ -210,7 +210,7 @@ Do not treat these as one problem. A skill can trigger perfectly and still execu
 - Run the repo-level diagnostic when available:
 
 ```bash
-npx skills check
+npx skills add . --list
 ```
 
 - Read the package top-to-bottom and ask:
