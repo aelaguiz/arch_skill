@@ -798,17 +798,21 @@ that freezes the boundary. The parent extracts a conductor log and stops
 before dispatch when done-state or frozen scope is not defensible; the
 readiness gate is never waived.
 
-Execution defaults to the cheap parallel external fleet — fresh-resumable
-Codex `gpt-5.6-sol` workers at `ultra` through `$agent-delegate`, with
-one-word fleet swaps to Kimi, Grok, Cursor, or Claude — for every heavy
-role: implementation, research, verification, any requested cynical review,
-and the cold verifier. Native subagents bill the parent's
-expensive model and are never the review lane; they are reserved for tiny
-errands, explicit requests, or an unavailable external runtime. Codex usage
-limits rotate via `aim` with exact-session resume, so a rate-limited worker
-continues instead of being replaced. Accepted findings resume the exact
-worker through its original transport; independent review gates start clean
-on the fleet. The parent audits every claim,
+Execution resolves a worker profile before a lane. The fleet default is Codex
+`gpt-5.6-sol` at `ultra`, with one-word swaps to Kimi, Grok, Cursor, or
+Claude, and it covers every heavy role: implementation, research,
+verification, any requested cynical review, and the cold verifier. That
+profile runs on a native child when the host can reach the model in its child
+catalog, pin both the model and the thinking level, and hold the pin across
+send-back resumes; otherwise it runs as a fresh-resumable `$agent-delegate`
+session, and the log names which test failed. Cross-provider reach, `aim`
+rotation, sessions outliving the parent, required receipts, and concurrency
+past the native cap are the recognized external reasons. An unpinned native
+child runs the parent's expensive model and never carries bulk reading. Codex
+usage limits rotate via `aim` with exact-session resume, so a rate-limited
+worker continues instead of being replaced. Accepted findings resume the exact
+worker through its original transport; independent review gates start clean on
+the fleet profile. The parent audits every claim,
 delegates proof, records checkpoints, and closes only on the plan-required
 proof and final whole-plan gate. That gate is the conductor's own sweep plus
 the cold verifier; `cynical-code-review`, `cynical-architecture-review`, and

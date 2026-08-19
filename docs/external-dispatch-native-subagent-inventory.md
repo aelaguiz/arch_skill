@@ -8,6 +8,16 @@
 > `$agent-delegate` cannot itself use `$agent-delegate` or any other external
 > transport. External topology stays parent-owned. Read everything below as the
 > pre-change record, not current doctrine.
+>
+> **Second resolution (2026-08-19):** the "native sub-agents are an economic
+> category" finding below is also superseded. Verified harness inspection shows
+> Prime Agent, Codex, and Claude Code all let a parent pin a child's model, and
+> Prime Agent and Codex also let it set the child's thinking level, so a native
+> child bills its own model rather than the parent's whenever the dispatch pins
+> the profile. `conductor` no longer defaults to external transport on cost
+> grounds; it resolves a worker profile first and takes the cheapest lane that
+> can hold that profile. See `skills/_shared/native-child-capabilities.md` and
+> `CONDUCTOR_NATIVE_TRANSPORT_PLAN_2026-08-19.md`.
 
 **Date:** 2026-08-11
 **Repo:** `arch_skill`

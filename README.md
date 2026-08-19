@@ -63,7 +63,7 @@ Other shipped skills are:
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-freeze minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
 - `plan-implement` — prompt-first plan-backed implementation loop that advances only through the frozen authorized frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
 - `plan-interview` — evidence-grounded intent interview that educates itself first (facts and a blank template, never a pre-drafted plan), then interviews breadth-first in plain non-jargon English with investigate-and-return cycles to produce a frozen Intent Pack — journey maps, UX delta with visual references, numbered plain-language requirements, non-goals, an in-interview-approved test grid, definition of done, execution policy, autonomy contract — closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`
-- `conductor` — prompt-first plan-or-outcome conductor with an executive shaping stage, parent-owned scope judgment and cynical review, and a default cheap parallel external fleet; its explicit Terra shortcut remains the deliberate external exact-model/worktree/PR lane
+- `conductor` — prompt-first plan-or-outcome conductor with an executive shaping stage, parent-owned scope judgment and cynical review, and a cheap parallel worker fleet defined by a pinned model and thinking level: native children when the host can pin that profile, external `agent-delegate` sessions when it cannot; its explicit Terra shortcut remains the deliberate external exact-model/worktree/PR lane
 - `agent-history` — searches local Codex, Claude Code, Pi, or Prime Agent session history for prior prompts, goals, commands, corrections, tool use, child-agent work, and timelines from natural-language asks, using bundled read-only JSONL/SQLite helpers and concise evidence summaries
 - `model-consensus` — prompt-only parent-relayed dialogue between two exact participants, resolving native or external transport separately for each, resuming each exact handle across rounds, and converging or exposing the smallest unresolved decision
 - `contact-sheet-builder` — builds quick local contact sheet PNGs from existing images, folders, globs, or attached local image paths using a lean prompt contract plus one Pillow renderer; defaults to dense labeled sheets, dynamic near-native edge-to-edge canvas sizing, safe temp output, Preview opening on macOS, and concise receipts
@@ -302,8 +302,8 @@ models, Cursor Agent runs `composer-2.5-fast`, natural Grok requests use
 and `model-consensus` select native or external transport per role while
 preserving exact continuation. `plan-implement` is the parent-implemented
 native lane; `stepwise` and `arch-epic` are transport-neutral orchestrators
-with deliberate external modes, while `conductor` defaults to the cheap
-parallel external fleet with native children by request or fit. The cynical and exhaustive
+with deliberate external modes, while `conductor` runs a cheap pinned worker
+fleet on whichever lane can hold that model and thinking level. The cynical and exhaustive
 reviews use clean native read-only slices and remain prompt-only.
 
 ### Remote install
@@ -681,18 +681,22 @@ approval freezes the boundary. The parent extracts an execution map into
 artifact has no observable done-state or defensible frozen scope; the
 readiness gate is never waived.
 
-Execution defaults to the cheap parallel external fleet: fresh-resumable
-Codex `gpt-5.6-sol` workers at `ultra` through `$agent-delegate`, with
-one-word fleet swaps to Kimi (`kimi-code/k3` at `max`), Grok (`grok-4.6`),
-Cursor (`composer-2.5-fast`), or Claude. The fleet default covers every
-heavy role — implementation, research, verification, any requested cynical
-review, and the cold verifier. Native subagents bill the parent's
-expensive model, so they are never the review lane; they are reserved for
-tiny errands, explicit requests, or an unavailable external runtime. Codex
-usage limits rotate via `aim` with exact-session resume, so a rate-limited
-worker continues instead of being replaced. Accepted findings return to the
-exact worker through its original transport; independent reviewers and the
-cold verifier start clean on the fleet. The parent audits
+Execution resolves a worker profile before a lane. The fleet default is
+Codex `gpt-5.6-sol` at `ultra`, with one-word swaps to Kimi (`kimi-code/k3`
+at `max`), Grok (`grok-4.6`), Cursor (`composer-2.5-fast`), or Claude, and it
+covers every heavy role — implementation, research, verification, any
+requested cynical review, and the cold verifier. That profile runs on a native
+child when the host can reach the model in its child catalog, pin both the
+model and the thinking level, and hold the pin across send-back resumes;
+otherwise it runs as a fresh-resumable `$agent-delegate` session, and the log
+says which test failed. Cross-provider reach, `aim` usage-limit rotation,
+sessions outliving the parent, required receipts, and concurrency past the
+native cap are the recognized external reasons. An unpinned native child runs
+the parent's expensive model and never carries bulk reading. Codex usage
+limits rotate via `aim` with exact-session resume, so a rate-limited worker
+continues instead of being replaced. Accepted findings return to the exact
+worker through its original transport; independent reviewers and the cold
+verifier start clean on the fleet profile. The parent audits
 every claim against code, delegates proof, records checkpoints, and closes
 only on plan-required proof plus the final whole-plan gate. That gate is the
 conductor's own sweep plus the cold verifier: `cynical-code-review`,

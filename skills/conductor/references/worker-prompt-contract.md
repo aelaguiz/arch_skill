@@ -17,6 +17,7 @@ You do not have the parent chat context. Read the repo and the referenced
 plan sections directly from disk.
 
 # Worker Context
+- Worker profile: <model> at <thinking level>
 - Starting context: clean
 - Continuation: new child; accepted repair findings resume this exact handle
 - Workspace and capabilities: <shared worktree or named worktree; permissions
@@ -58,11 +59,14 @@ proceeding.
 # Capabilities And Boundaries
 You may: read and search files, edit within scope, run commands to
 implement and verify, and make implementation decisions the plan implies.
-You may use your own native sub-agents on this host whenever they help; you do
-not need permission, an assigned scope, or a budget for that. Do not spawn
-external agents: no `$agent-delegate`, no other external Claude, Codex, Cursor
-Agent, Grok, or Kimi session, and no manually launched coding-harness
-executable. The parent owns external topology and integration.
+<Fan-out, filled from what this host actually allows: "You may use your own
+native sub-agents on this host whenever they help; you do not need permission,
+an assigned scope, or a budget for that." — or, on a host that caps child
+depth: "This host does not let you create sub-agents; do this slice yourself
+and say so if it is too large to finish alone.">
+Do not spawn external agents: no `$agent-delegate`, no other external Claude,
+Codex, Cursor Agent, Grok, or Kimi session, and no manually launched
+coding-harness executable. The parent owns external topology and integration.
 You must not: commit, push, stash, revert unrelated work, expand scope
 (stop and report instead), weaken or skip tests, or leave the old code path
 alive when the contract says replace it.

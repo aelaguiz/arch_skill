@@ -67,6 +67,40 @@ that capability. Inspect the active tool surface. If a load-bearing capability
 is unavailable natively, use the appropriate external or background lane and
 say what it buys.
 
+## Pin model and thinking level, or inherit knowingly
+
+A native child normally inherits the parent's model and thinking level. That
+inheritance is the whole cost question. An unpinned native child runs the
+parent's model on whatever you gave it, so bulk reading and long implementation
+turns land on the most expensive model in the run. A child pinned to a cheaper
+model bills that model instead. Neither outcome is a property of "native" — it
+is a property of whether the dispatch stated the profile.
+
+So state the child's model and thinking level at dispatch the same way you state
+its starting context, and treat "cheap worker" as a profile you resolve rather
+than a transport you pick. Hosts differ in what they will accept: some take both
+values as spawn arguments, some take the model at the call site but the thinking
+level only in a stored agent definition, and some accept only aliases where you
+expected a full model id.
+
+Check three things before you rely on a pin:
+
+- **Reach.** Is the model you want in this host's native child catalog at all?
+  Cross-provider reach is a per-installation fact, not a vendor fact — some
+  hosts constrain a child to the parent's provider, and some only gate on which
+  providers that installation is authenticated for.
+- **Grip.** Can this host set the thinking level as well as the model? A pinned
+  model with an inherited thinking level is a half-pin.
+- **Durability.** Does the pin survive the continuation pattern the work needs?
+  A pin that holds for one turn but silently reverts to the parent's profile on
+  a later resume is worse than no pin, because nothing announces the change.
+
+When a pin cannot be made or cannot be trusted, that is a concrete benefit the
+external lane provides, and it should be named as such. See
+`native-child-capabilities.md` for the current per-host facts and their known
+sharp edges; verify a capability against the live tool schema before promising
+it.
+
 ## Choose starting context deliberately
 
 **Clean context** is the default for independent work. Give the child the goal,
@@ -152,8 +186,18 @@ In Claude Code, distinguish several native mechanisms:
 - an agent team is for work that benefits from direct peer coordination, not
   ordinary parent-mediated fanout.
 
+In Prime Agent, a native child is always clean — there is no fork primitive, so
+a load-bearing recent decision has to be written into the child's brief. Model
+and thinking level are ordinary spawn arguments, and the child's reach is
+whatever that installation is authenticated for rather than the parent's own
+provider. Depth is limited: at the default setting a child cannot create
+children of its own, so give a Prime child work it can finish without fanning
+out unless the host was deliberately configured otherwise.
+
 Other hosts may expose different primitives. Preserve the clean, bounded, and
-full distinction even when the exact syntax differs.
+full distinction even when the exact syntax differs, and read
+`native-child-capabilities.md` when a choice turns on what the active host can
+actually pin.
 
 ## Continue the role, not merely the process
 

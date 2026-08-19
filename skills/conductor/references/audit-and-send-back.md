@@ -93,7 +93,7 @@ to break the story and accept only what survives.
    tedious, or numerous artifacts are not unrenderable; images, PDFs, HTML,
    spreadsheets, and every text-based format are renderable by default.
    Record the delegation and its cannot-render reason in the acceptance
-   entry, and require the inspecting fleet worker to return extracted evidence —
+   entry, and require the inspecting worker to return extracted evidence —
    actual cell values, recomputed figures, quoted text, described screen
    content — never a verdict. "Confirmed, looks correct" from a child is a
    claim, not an inspection. The implementing worker's description of its
@@ -104,15 +104,15 @@ to break the story and accept only what survives.
    fine". Any conclusion the conductor will act on, relay upstream, or use
    to close a finding must carry anchors — files, symbols, commands, data —
    and the conductor verifies the anchors it relies on first-hand or through
-   a different clean fleet worker. An unanchored conclusion is a hypothesis: send
-   it back for evidence rather than adopting it. Fluent, confident prose is
+   a different clean worker on the fleet profile. An unanchored conclusion is
+   a hypothesis: send it back for evidence rather than adopting it. Fluent, confident prose is
    exactly what a capable model produces when it is wrong.
 7. **Treat proof as a claim until reproduced.** Quoted verification output is
    text a worker produced; it can be stale, partial, run against the
    wrong tree, or fabricated. Decisive proof — the checks the slice's
    acceptance actually rides on — must be independently reproduced by a
-   verification worker in a different clean fleet session (or the delegated
-   phase verification pass) before the slice is accepted. The implementing
+   verification worker in a different clean session on the fleet profile (or
+   the delegated phase verification pass) before the slice is accepted. The implementing
    worker's own run never closes its own slice for anything beyond trivial,
    directly-inspectable changes, and "trivial" is the conductor's judgment
    from reading the diff, not the worker's assurance. Trivial means the
@@ -198,8 +198,8 @@ A slice is `accepted` only when:
   truth (not to the worker's report),
 - every claimed work-product artifact was personally loaded and its substance
   verified against the claim — or, only for an artifact class the conductor
-  cannot render, a clean fleet worker inspected it and returned extracted
-  evidence that is recorded,
+  cannot render, a clean worker on the fleet profile inspected it and returned
+  extracted evidence that is recorded,
 - every analytical conclusion the acceptance relies on was verified at its
   anchors, not adopted from confident prose,
 - decisive proof was independently reproduced,
@@ -244,20 +244,21 @@ After all phases:
    not literally true in code or in the artifacts. Its ignorance of the run
    is the feature; it catches what the conductor's accumulated context has
    normalized.
-   Give it the same scope anchors. Run it as a clean external fleet one-shot
-   by default — a whole-plan cold read is bulk reading, and native subagents
-   bill the parent's expensive model. Use a native clean child only on
-   explicit user request or when no external runtime exists. It may reject
+   Give it the same scope anchors. Run it on the cheap fleet profile — a
+   whole-plan cold read is bulk reading, and an unpinned native child would
+   put it on the conductor's own model. A one-shot with no resume is the
+   easiest role to pin natively, because no eviction can quietly re-price it;
+   take the external lane when this host cannot pin the profile. It may reject
    completion, but it may not add a newly discovered adjacent path to the
    frozen closure.
 3. **Requested cynical reviews — advisory, fleet-executed.** The installed
    `$cynical-code-review`, `$cynical-architecture-review`, and
    `$cynical-cruft-removal` skills are not part of this gate. Run one only
    when the user asked for it, and dispatch each requested review as its own
-   new clean external fleet session that invokes the installed skill against
-   the repo. Never run them through the parent's own native subagents: they
-   bill the parent's expensive model, and bulk review reading is exactly the
-   spend the fleet exists to absorb. Give each review the plan path, human
+   new clean session on the fleet profile that invokes the installed skill
+   against the repo. Never run one through an unpinned native child: a whole
+   review skill is the largest block of bulk reading in the run, and unpinned
+   it lands on the conductor's own model. Give each review the plan path, human
    baseline anchors, explicit human approval entries, frozen initial closure,
    and freeze anchor. What comes back is advice: the conductor triages the
    findings as claims under the normal audit machinery, never edits source on

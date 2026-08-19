@@ -237,16 +237,18 @@ Claude Code, and Gemini.
   shaping stage (parallel worker research as evidence, a parent trim to the
   smallest sufficient solution, a lightweight outcome map, one scope
   approval that freezes the boundary), and workers never dispatch before
-  observable done-ness exists. Execution defaults to the cheap parallel
-  external fleet — Codex `gpt-5.6-sol` at `ultra` through `$agent-delegate`,
-  one-word fleet swaps to Kimi, Grok, Cursor, or Claude — with `aim`
-  rotation and exact-session resume across Codex usage limits; the parent
-  audits every diff assuming workers cut corners, resumes the exact worker
-  with batched findings until exit criteria are true in code, and closes
-  with a new clean whole-plan audit plus an optional fleet cold verifier;
-  the three cynical review skills are advisory and run only when the user
-  asks — review labor rides the cheap fleet, never native subagents, which
-  bill the parent's expensive model. When the
+  observable done-ness exists. Execution runs a cheap parallel worker fleet
+  defined by a pinned model and thinking level — Codex `gpt-5.6-sol` at
+  `ultra` by default, one-word swaps to Kimi, Grok, Cursor, or Claude — on a
+  native child when the host can pin that profile durably and on an
+  `$agent-delegate` session when it cannot, with `aim` rotation and
+  exact-session resume across Codex usage limits; the parent audits every diff
+  assuming workers cut corners, resumes the exact worker with batched findings
+  until exit criteria are true in code, and closes with a new clean whole-plan
+  audit plus an optional fleet cold verifier; the three cynical review skills
+  are advisory and run only when the user asks — review labor rides the cheap
+  profile, never an unpinned native child, which would bill the parent's
+  expensive model. When the
   user wants the work shipped, a dedicated delivery worker — never the
   parent — runs `$pr-authoring` and `$pr-review-followthrough` through CI
   to merge-ready, with a standard at-a-glance delivery report at PR-up and

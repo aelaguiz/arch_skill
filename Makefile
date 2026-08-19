@@ -333,6 +333,7 @@ verify_agents_install:
 	done
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(AGENTS_SKILLS_DIR)/_shared/native-child-capabilities.md
 	@if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(AGENTS_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(AGENTS_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(AGENTS_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
@@ -370,6 +371,7 @@ verify_claude_install:
 	done
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(CLAUDE_SKILLS_DIR)/_shared/native-child-capabilities.md
 	@if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(CLAUDE_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(CLAUDE_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(CLAUDE_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
@@ -402,6 +404,7 @@ verify_gemini_install:
 	done
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(GEMINI_SKILLS_DIR)/_shared/native-child-capabilities.md
 	@if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(GEMINI_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(GEMINI_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
@@ -429,6 +432,7 @@ verify_hermes_install:
 			if [ -d "$$dest/$$skill" ]; then echo "ERROR: removed skill still installed at $$dest/$$skill"; exit 1; fi; \
 		done; \
 		if [ ! -f "$$dest/_shared/depth-first-planning.md" ]; then echo "ERROR: missing $$dest/_shared/depth-first-planning.md"; exit 1; fi; \
+		if [ ! -f "$$dest/_shared/native-child-capabilities.md" ]; then echo "ERROR: missing $$dest/_shared/native-child-capabilities.md"; exit 1; fi; \
 		if ! cmp -s skills/_shared/agent-orchestration-policy.md "$$dest/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $$dest/_shared/agent-orchestration-policy.md"; exit 1; fi; \
 		if [ ! -f "$$dest/_shared/model_resolution.py" ]; then echo "ERROR: missing $$dest/_shared/model_resolution.py"; exit 1; fi; \
 		for item in $(SKILLS) $(SHARED_DIRS); do \

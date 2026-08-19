@@ -17,7 +17,8 @@ constraints).
 # Conductor Log
 Plan: <path to the conducted plan or outcome map>
 Start commit: <hash>
-Workers: <transport/context; external runtime/model/effort when selected>
+Workers: <model @ thinking level; lane and starting context; external runtime
+         and run directory when selected>
 Max parallel: <N>   Wave cap: <N>
 Boundary: <whole plan | phases X-Y>   Cold verifier: <on|off>
 Final gate: <not run | clean | findings open>
@@ -62,11 +63,14 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 - **Size rationale** is one line saying why this chunk (whole phase, named
   owner-boundary split, merged trivial phases) — it makes the chunking
   judgment visible and reviewable.
-- **Worker/handle** names transport, starting context, and the exact native
-  child handle or external session id. For an external lane it also records
-  runtime/model/effort and the `$agent-delegate` run directory. These receipts
-  preserve exact-role continuation without treating transport as workflow
-  meaning.
+- **Worker/handle** names the lane, the pinned model and thinking level, the
+  starting context, and the exact native child handle or external session id.
+  For an external lane it also records the runtime and the `$agent-delegate`
+  run directory. Record the profile even when it matches the fleet default: a
+  slice whose model or thinking level differs from the run's default is the
+  first thing to check when its output looks unlike its siblings. These
+  receipts preserve exact-role continuation without treating transport as
+  workflow meaning.
 - **Attempts** counts dispatch + send-backs + respawns toward the per-slice
   caps.
 - **Evidence** for an `accepted` slice anchors the proof: diff anchors,

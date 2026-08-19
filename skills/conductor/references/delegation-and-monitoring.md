@@ -2,26 +2,47 @@
 
 The conductor chooses transport under
 `../../_shared/agent-orchestration-policy.md`; transport does not choose the
-workflow. The conductor's standing transport policy is the cheap parallel
-external fleet through `$agent-delegate` — for phase workers, research
-workers, verification workers, any cynical review the user asked for, and the
-cold verifier alike. The reason is money, said plainly: native children on the
-parent's host run the parent's expensive model, so a "native review" or
-"native worker" spends premium tokens on exactly the bulk reading the fleet
-exists to absorb. Native children are not a budget lane and not free
-parallelism — they are the parent's wallet with a different face. Reserve
-them for genuinely tiny errands a fleet round-trip would dwarf (a one-file
-read-only check), a capability only the host exposes, an explicit user
-request, or an unavailable external runtime.
+workflow. Resolve the **worker profile** first — provider and model, thinking
+level, durability, isolation, receipts — then take the cheapest lane that can
+actually deliver that profile. The fleet is a profile, not a runtime: fast,
+capable, cheap workers doing bulk investigation, implementation, proof, and
+review reading while the conductor stays on the expensive model.
+
+The cost rule is about pinning, not about transport. A native child inherits
+the parent's model and thinking level unless the dispatch pins them, so an
+unpinned native worker spends premium tokens on exactly the bulk reading the
+fleet exists to absorb. A pinned one bills its own model. Pin the profile or
+take the external lane; never route bulk work to an unpinned native child.
+
+Take the native lane when all four hold:
+
+- **Reachable** — the fleet model is in this host's native child catalog.
+- **Pinnable** — this host can set that model *and* that thinking level.
+- **Durable enough** — the pin survives this run's resume pattern, which for a
+  conductor means surviving up to three send-back rounds against the same
+  handle.
+- **No external-only benefit is load-bearing.**
+
+Take the external lane through `$agent-delegate` when any of those fails, and
+say which one. These recognizably fail it: cross-provider work from a host that
+binds a child to the parent's provider, usage-limit rotation across accounts,
+sessions that must outlive the parent process, required run-directory receipts,
+concurrency past the host's native cap, worktree or process isolation the host
+cannot give, and the `conductor terra` preset. Honor explicit user choices in
+both directions.
+
+`../../_shared/native-child-capabilities.md` holds the current per-host facts
+and their sharp edges. Verify a capability against the live tool schema before
+promising it.
 
 ## Dispatch And Continuation Mapping
 
-- **Initial slice dispatch → new clean fleet session.** Give it the plan
-  path, log path, slice anchors, constraints, and return contract. Default
-  transport is `$agent-delegate` `fresh-resumable` on the fleet model. In
-  the rare deliberate-native case, set `fork_turns: "none"` in Codex or use
-  a clean named subagent in Claude. Record the transport, starting context,
-  exact handle, and external run directory when one exists.
+- **Initial slice dispatch → new clean child on the selected lane.** Give it
+  the plan path, log path, slice anchors, constraints, and return contract.
+  On the external lane that is `$agent-delegate` `fresh-resumable` on the
+  fleet model; on the native lane it is a clean child pinned to the same
+  model and thinking level. Record the lane, model, thinking level, starting
+  context, exact handle, and external run directory when one exists.
 - **Send-back / repair → exact-child resume.** Send one bounded findings delta
   to the same native child handle or the exact external session id through its
   original transport. Never select "latest," cross runtimes, or replace the
@@ -30,23 +51,22 @@ request, or an unavailable external runtime.
   restart, its prior handle is lost or unhealthy under the audit caps, or its
   owner surface changed enough to invalidate the earlier view. Record why the
   replacement was necessary.
-- **Requested cynical reviews → new clean fleet sessions.** The cynical
-  review skills run only when the user asked for them, and each one runs as
-  its own clean external fleet session that invokes the installed review skill
-  itself against the repo. Its own native slices are expected and need no
-  assignment: they bill the fleet host's cheap model, not the parent's. The
-  conductor consumes each review's findings as advisory claims under the
-  normal audit machinery. Never run these reviews through the parent's own
-  native subagents — bulk review reading on the parent's model is the exact
-  spend this skill exists to avoid.
-- **Cold verifier → new clean fleet one-shot**, final gate only.
+- **Requested cynical reviews → new clean children on the fleet profile.** The
+  cynical review skills run only when the user asked for them, and each one
+  runs as its own clean session that invokes the installed review skill itself
+  against the repo. Its own native slices are expected and need no assignment:
+  they bill the reviewer's own host and model, not the conductor's. The
+  conductor consumes each review's findings as advisory claims under the normal
+  audit machinery. Whole-skill review reading is the largest single block of
+  bulk tokens in a run, so it never goes to an unpinned native child.
+- **Cold verifier → new clean one-shot on the fleet profile**, final gate only.
   Independence is the feature: no conductor narrative, no resume, just
-  refutation from plan, code, and the artifacts it loads itself. A
-  whole-plan cold read is bulk reading, so it rides the fleet by default.
-  Give it the plan path, human baseline anchors, frozen initial closure,
-  freeze anchor, and explicit human approvals; its findings cannot expand
-  scope. Use a native clean child only on explicit user request or when no
-  external runtime exists.
+  refutation from plan, code, and the artifacts it loads itself. A whole-plan
+  cold read is bulk reading, so it runs on the cheap profile on whichever lane
+  carries it — and a one-shot with no resume is the easiest role to pin
+  natively, because no eviction can quietly re-price it. Give it the plan path,
+  human baseline anchors, frozen initial closure, freeze anchor, and explicit
+  human approvals; its findings cannot expand scope.
 - **Parallel waves** are parent-owned. Use only the active host slots or
   external sessions that independent, non-overlapping slices justify. Every
   child knows that siblings may be editing the repo, must not revert unfamiliar
@@ -56,12 +76,17 @@ request, or an unavailable external runtime.
 ## Native Starting Context
 
 Clean context is the default because the plan and conductor log already carry
-the durable inputs. In Codex, every native spawn states `fork_turns`:
+the durable inputs. In Codex, every native spawn states `fork_turns` explicitly:
 `"none"` for ordinary phase workers and critics, a positive count only for a
 small chat-only dependency, and `"all"` only when the whole conversation is
-load-bearing. In Claude, a clean named subagent is distinct from an explicit
-full conversation fork; a skill declared with `context: fork` is an isolated
-clean subagent context, not full inheritance.
+load-bearing. Omitting it is not the same as `"none"` — the current default is
+full inheritance, which is the wrong context and the wrong bill for a phase
+worker. In Claude, a clean named subagent is distinct from an explicit full
+conversation fork, and that fork also forces the parent's model, so it is never
+the way to reach a cheap worker; a skill declared with `context: fork` is an
+isolated clean subagent context, not full inheritance. In Prime Agent every
+child is clean and no fork exists, so a load-bearing recent decision must be
+written into the brief.
 
 Context inheritance is separate from permissions, capabilities, filesystem
 sharing, and worktree isolation. State those independently. Native clean
@@ -69,30 +94,44 @@ children commonly share the current worktree. For a read-only critic, use an
 enforced read-only capability when the host exposes one, keep the no-edit
 prompt rule, and have the conductor compare repository state before and after.
 
-## External Worker Identity
+## Worker Identity And Profile
 
-Resolve these values only when an external lane was selected. The user supplies
-worker runtime and normally effort plus a model/profile outside the Codex and Kimi
-defaults. When the selected external lane is Codex and the model is omitted,
-use `gpt-5.6-sol`; when that Sol lane also omits effort, use `ultra`. When it
-is Kimi, use `kimi-code/k3` and default omitted effort to `max`. For Codex,
-accept explicit `sol`, `luna`, and `terra` as `gpt-5.6-sol`,
+The worker profile is one set of values that applies on either lane: model,
+thinking level, durability, isolation, and receipts. Resolve it before choosing
+transport, and carry the same model and thinking level across whichever lane you
+choose — the fleet is defined by that profile, not by the runtime that hosts it.
+
+The user supplies the runtime and normally the thinking level plus a
+model/profile outside the defaults. When the fleet is Codex and the model is
+omitted, use `gpt-5.6-sol`; when that Sol lane also omits the level, use
+`ultra`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
+`max`. For Codex, accept explicit `sol`, `luna`, and `terra` as `gpt-5.6-sol`,
 `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
-missing execution values. The intended fleet is "smart but not the smartest"
-— fast, cheap implementation models — while the conductor runs on the
-expensive model. Announce the raw-to-resolved model mapping before the first
-launch, per agent-delegate's resolution doctrine. Do not silently change
-runtime, model, or effort mid-run; if a worker model is clearly failing the
-work, that is a user decision, not a silent substitution.
+missing execution values. The intended fleet is "smart but not the smartest" —
+fast, cheap implementation models — while the conductor runs on the expensive
+model. Announce the raw-to-resolved model mapping and the selected lane before
+the first launch, per agent-delegate's resolution doctrine. Do not silently
+change runtime, model, or thinking level mid-run; if a worker model is clearly
+failing the work, that is a user decision, not a silent substitution.
+
+On the native lane, pin both values at dispatch and confirm the host accepted
+them. A host that pins the model but not the thinking level gives you a half-pin
+and the parent's session effort; a host whose pin expires when a child is
+evicted and rebuilt gives you a worker that silently returns to the conductor's
+own model mid-repair. Either one is a concrete reason to run that role
+externally instead, and the log should say so.
+
+These external-only mechanics apply when the external lane was selected. A Kimi
+worker inherits `$agent-delegate`'s process contract:
+`KIMI_CODE_NO_AUTO_UPDATE=1`, effort via `KIMI_MODEL_THINKING_EFFORT`, same-cwd
+exact `kimi -r <session-id>` resume, and fresh `session.resume_hint` receipts.
+Kimi always persists a session and cannot satisfy a load-bearing
+stateless/no-persist requirement. Missing assistant text or a required fresh
+hint is unrecoverable; never reuse the input id, select a latest session, or
+fall back to another provider, model, or effort.
 
 Natural `grok`, `grok cli`, or `grok build` wording resolves to `grok-4.6`;
-explicit legacy `grok-*` ids remain exact. A Kimi worker inherits
-`$agent-delegate`'s process contract: `KIMI_CODE_NO_AUTO_UPDATE=1`, effort via
-`KIMI_MODEL_THINKING_EFFORT`, same-cwd exact `kimi -r <session-id>` resume, and
-fresh `session.resume_hint` receipts. Kimi always persists a session and cannot
-satisfy a load-bearing stateless/no-persist requirement. Missing assistant text
-or a required fresh hint is unrecoverable; never reuse the input id, select a
-latest session, or fall back to another provider, model, or effort.
+explicit legacy `grok-*` ids remain exact.
 
 ## Patient Monitoring
 
@@ -116,8 +155,12 @@ while you wait or work; where it does not, poll at the scoped interval.
   consume the real result when the child finishes — the heartbeat is a
   liveness and wedge signal, not the account of what the worker did.
 - **Each beat emits one compact line from cheap signals only**: native child
-  state or external process liveness, `git diff --stat` shape, changed-file
-  mtimes, and external `stderr.log` growth when available.
+  state from the host's own status or list call, or external process liveness,
+  plus `git diff --stat` shape, changed-file mtimes, and external `stderr.log`
+  growth when available. Native lanes may not report a child's token spend back
+  to the parent, so do not treat a quiet parent-side cost total as proof the
+  run is cheap — the pinned profile is what makes it cheap, and the log records
+  it.
   Relay it to the user as a brief "still moving, N files touched" check-in.
   **Never stream an external lane's `events.jsonl` into conductor context
   during normal operation** — it is a diagnostic artifact for post-mortems on
@@ -155,8 +198,8 @@ Nitty-gritty investigation, tracing through piles of files to understand how
 something works, reconstructing what a worker did from raw output,
 implementing anything, and the heavy review reading: requested cynical
 reviews, cold verification, re-reviews, and delegated artifact inspections. That work
-routes to fleet workers, who read the files so the conductor does not — on
-a cheap model, which a native subagent is not.
+routes to fleet workers, who read the files so the conductor does not — on the
+cheap pinned profile, on whichever lane carries it.
 
 Operating rules:
 
