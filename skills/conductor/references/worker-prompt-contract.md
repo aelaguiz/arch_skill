@@ -33,9 +33,9 @@ report the files and evidence instead of guessing.>
 - Slice: <id — one-line outcome>
 - Plan: <path> — read sections: <anchors>. The plan is authoritative; this
   prompt summarizes, the plan decides.
-- Frozen scope contract: <plan anchor and freeze anchor>
+- Approved scope contract: <plan anchor and approval anchor>
 - Directly human-authorized checklist items: <exact items owned by this slice>
-- Frozen initial-convergence items: <exact items owned by this slice, or none>
+- Approved initial-convergence items: <exact items owned by this slice, or none>
 - Goal: <the phase/slice goal, one paragraph>
 - Checklist (all must become literally true in code):
   <the phase checklist items owned by this slice>
@@ -74,7 +74,7 @@ alive when the contract says replace it.
 A repo pattern, review concern, test idea, or newly discovered adjacent path is
 not authority. Do not add a durable table, queue, state machine, service,
 dependency, compatibility path, mode, operational surface, harness, test
-category, caller migration, or cleanup absent from the frozen items above.
+category, caller migration, or cleanup absent from the approved items above.
 Report it as `new-scope-needs-human` or `out-of-scope`. If you find existing
 work beyond the contract, report `unauthorized-built-scope`; do not extend it
 or edit the plan to bless it.
@@ -129,7 +129,7 @@ footer — is unchanged. Your previous result was audited and is NOT accepted.
   Evidence: <path:line or command output>
   Why it fails the contract: <checklist item / exit criterion / guardrail>
   Repair direction (advisory): <parent's hint — you own the implementation>
-  Scope disposition: <authorized | frozen-convergence-required | unauthorized-built-scope>
+  Scope disposition: <authorized | approved-convergence-required | unauthorized-built-scope>
 
 # Rules for this repair pass
 - Fix root causes, not symptoms; do not weaken tests or the contract to
@@ -149,11 +149,11 @@ End with the same report footer as the original contract.
 - Micromanaged file-by-file scripts, or five-line micro-tasks that belong in
   a bigger slice.
 - vague scope phrasing that lets a worker infer adjacent fixes. Name the exact
-  human-authorized and frozen-convergence items, while allowing implementation
+  human-authorized and approved-convergence items, while allowing implementation
   judgment inside those surfaces.
 - Pasting long plan sections when a path plus heading anchor is enough.
 - Prompting the worker to self-certify: the footer reports claims; the
   conductor's audit decides truth.
 - Sending findings one at a time. Batch the round.
 - Turning a conductor diagnosis, preferred abstraction, or selected file list
-  into a binding method when the frozen plan did not authorize it.
+  into a binding method when the approved plan did not authorize it.

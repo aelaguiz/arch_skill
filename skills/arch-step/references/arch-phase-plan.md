@@ -36,10 +36,10 @@
   architecture's recorded minimal convergence closure. Repo truth alone does
   not authorize more work
 - before declaring Section 7 implementation-ready, finalize the Scope and
-  Simplicity Contract, record an explicit closure or `none`, set the scope-freeze
+  Simplicity Contract, record an explicit closure or `none`, set the scope sign-off
   boundary, and ensure observations remain outside the execution checklist
-- after the freeze, do not add a newly discovered adjacent path to Section 7;
-  require a human decision and re-freeze, or redesign/subtract inside the
+- after sign-off, do not add a newly discovered adjacent path to Section 7;
+  require a human decision and re-approval, or redesign/subtract inside the
   existing boundary
 - if adjacent-surface disposition or compatibility posture is still unresolved, stop and ask instead of hiding the fork in Section 7
 - before a phase is valid, run an obligation sweep across Section 5, Section 6, migration notes, delete lists, verification commitments, docs/comments propagation, approved bridge removal, and any helper-added ship-blocking work
@@ -111,7 +111,7 @@ Use this block shape:
 <!-- arch_skill:block:phase_plan:start -->
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: depth-first implementation protects the frozen destination while proving the path early. The destination map is the human-authorized outcome plus the initial minimal convergence closure recorded before implementation and any later explicit human approval. The expansion map only sequences that frozen breadth; workers and reviewers cannot add callers, variants, modes, guarantees, proof categories, or adjacent cleanup. Section 7 chooses the first working slice through the canonical owner path and highest-risk seam, then advances through already-authorized axes. Phase boundaries are proof gates, and phase count follows real dependency, proof, reversibility, migration, or user-review boundaries. `Work` is explanatory; `Checklist (must all be done)` and `Exit criteria (all required)` hold every required obligation. Refactors and consolidations preserve behavior with proportionate evidence. Prefer prompt, grounding, and native capability before new agent tooling. No fallback or runtime shim exists without explicit approval and removal work. Prefer focused programmatic checks, defer manual/UI verification to finalization, and avoid deletion proofs, visual constants, doc gates, keyword/absence gates, and repo-shape policing.
+> Rule: depth-first implementation protects the approved destination while proving the path early. The destination map is the human-authorized outcome plus the initial minimal convergence closure recorded before implementation and any later explicit human approval. The expansion map only sequences that approved breadth; workers and reviewers cannot add callers, variants, modes, guarantees, proof categories, or adjacent cleanup. Section 7 chooses the first working slice through the canonical owner path and highest-risk seam, then advances through already-authorized axes. Phase boundaries are proof gates, and phase count follows real dependency, proof, reversibility, migration, or user-review boundaries. `Work` is explanatory; `Checklist (must all be done)` and `Exit criteria (all required)` hold every required obligation. Refactors and consolidations preserve behavior with proportionate evidence. Prefer prompt, grounding, and native capability before new agent tooling. No fallback or runtime shim exists without explicit approval and removal work. Prefer focused programmatic checks, defer manual/UI verification to finalization, and avoid deletion proofs, visual constants, doc gates, keyword/absence gates, and repo-shape policing.
 
 ## Phase 1 — <most fundamental coherent unit>
 

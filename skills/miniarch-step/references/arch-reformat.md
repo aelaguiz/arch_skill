@@ -45,7 +45,7 @@ This command must restore:
 - when source content is instruction-bearing, preserve explicit operational structure instead of silently condensing it
 - preserve or reconstruct the source's strongest claims about requested behavior scope, allowed architectural convergence scope, canonical owner path, and preservation evidence when the source supports them
 - preserve or reconstruct human authorization, convergence, simplicity,
-  proof-sufficiency, proportionality, freeze, and do-not-build constraints; if
+  proof-sufficiency, proportionality, sign-off, and do-not-build constraints; if
   absent, draft the smallest defensible Scope and Simplicity Contract from
   human-authored source evidence and leave provenance uncertainty visible
 - if the source does not support one of those fields, keep the gap visible with draft inference or TODO text instead of collapsing back to a blurrier model

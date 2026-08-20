@@ -8,7 +8,7 @@ review still has to read the target code and cite current evidence.
 Original human scope is one local reminder. Review wave 3 adds cross-device
 monotonicity, wave 5 adds a database owner, and wave 8 adds retry identifiers.
 The latest plan and current code treat all three as foundational, but no human
-approved expansion and none appeared in the frozen initial convergence closure.
+approved expansion and none appeared in the approved initial convergence closure.
 
 Strong finding: group the database, sync state, retry schema, config, tests,
 docs, and dependencies as one scope-cycled architecture cluster. Return

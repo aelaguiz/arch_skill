@@ -43,11 +43,11 @@ Use the plan's requirements and the `plan-audit` implementation-audit lenses:
 
 Give every material finding one scope disposition from
 `../../_shared/scope-and-convergence.md`. Repair directly only when it is
-`authorized` or `frozen-convergence-required`. A real finding outside the
-frozen contract, including a newly discovered same-contract path, is
+`authorized` or `approved-convergence-required`. A real finding outside the
+approved contract, including a newly discovered same-contract path, is
 `new-scope-needs-human` or `out-of-scope`; it does not enter the active ledger.
 If code already implements it, classify it `unauthorized-built-scope` and
-subtract it unless a human approves and re-freezes.
+subtract it unless a human approves and re-approves.
 
 Repair trivial self-review issues directly when they are local and obvious.
 Record them in the worklog only when they affect resumability, proof freshness,
@@ -97,7 +97,7 @@ critic.
   ordinary continuous review.
 - Do not block implementation on missing CI logs when this is plan-backed code
   review.
-- Do not let review become a reason to widen scope beyond the frozen contract.
+- Do not let review become a reason to widen scope beyond the approved contract.
   Repetition by later reviewers does not change the finding's disposition.
 - Do not wait until the final report to run the first serious architecture
   review.

@@ -1,6 +1,6 @@
 ---
 name: conductor
-description: "Conduct work to verified completion from a finished plan, partial plan, or described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake first runs an executive shaping stage — worker research, a parent trim to the smallest sufficient solution, an outcome map, one scope approval — and workers never dispatch before observable done-ness and a frozen boundary exist. Execution runs a cheap parallel worker fleet on a pinned model and thinking level (Codex gpt-5.6-sol at ultra; swap to Kimi, Grok, Cursor, Claude): native children when the host can pin that profile, external agent-delegate sessions when it cannot or when cross-provider reach, aim rotation, or durable sessions matter. The `conductor terra` preset keeps its worktree, Terra xhigh, three-review, and PR follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
+description: "Conduct work to verified completion from a finished plan, partial plan, or described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake runs an executive shaping stage — worker research, a parent trim to the smallest sufficient solution, an outcome map, one scope approval — and workers never dispatch before observable done-ness and an approved boundary exist. Execution runs a cheap parallel worker fleet on a pinned model and thinking level (Codex gpt-5.6-sol at ultra; swap to Kimi, Grok, Cursor, Claude): native children when the host can pin that profile, external agent-delegate sessions when it cannot or when cross-provider reach, aim rotation, or durable sessions matter. The `conductor terra` preset keeps its worktree, Terra xhigh, three-review, and PR follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
 metadata:
   short-description: "Plan-or-outcome conductor with executive shaping and a cheap pinned worker fleet"
 ---
@@ -40,7 +40,7 @@ log beside the plan is its durable memory.
   child.
 - The parent is the scope judge. Fast cheap workers are genuinely smart but
   over-scope and over-iterate; the parent trims every proposal to the
-  smallest sufficient solution and holds the frozen boundary against
+  smallest sufficient solution and holds the approved boundary against
   expansion pressure from any direction.
 - Chunk size balances two failure modes: micro-tasks turn the parent into a
   slow programmer with extra round-trips; mega-tasks produce unreviewable
@@ -145,16 +145,16 @@ log beside the plan is its durable memory.
   shaping happens before the gate, never around it.
 - Apply `../_shared/scope-and-convergence.md`. Intake must recover the
   human-authorized outcome and approval anchors, smallest sufficient solution,
-  initial minimal convergence closure, scope-freeze boundary, enough proof,
+  initial minimal convergence closure, scope sign-off boundary, enough proof,
   do-not-build boundary, and accepted residual risk. Observable checklists are
   insufficient when that provenance is missing, contradictory, or obviously
-  overbroad. Do not dispatch an unfrozen or scope-laundered plan. When
+  overbroad. Do not dispatch an unapproved or scope-laundered plan. When
   shaping produced the outcome map, the recorded scope approval (or the
   explicit `full-auto` grant) is the human authorization anchor and the
-  freeze.
+  sign-off.
 - The initial architecture window is already closed when conductor execution
   begins. Workers, the conductor, warm audits, cold verification, cynical
-  reviews, PR feedback, and repeated findings cannot add to the frozen closure.
+  reviews, PR feedback, and repeated findings cannot add to the approved closure.
   A newly discovered same-contract adjacent path requires a human decision.
 - The conductor never edits source code. It edits only coordination artifacts
   and plan completion annotations. It never edits the plan's requirements,
@@ -162,8 +162,8 @@ log beside the plan is its durable memory.
   to the user.
 - Plan completion annotations may record execution truth only. The conductor
   may not edit scope, requirements, or the initial closure to normalize worker
-  or reviewer discoveries. Post-freeze expansion requires explicit human
-  approval and a re-frozen plan before dispatch resumes.
+  or reviewer discoveries. Post-approval expansion requires explicit human
+  approval and a re-approved plan before dispatch resumes.
 - Initial workers are new clean children on the selected lane. Repairs resume
   the exact captured handle through its original transport. Never resume
   "latest" or reuse an unrelated handle. The optional cold verifier and every
@@ -231,10 +231,10 @@ log beside the plan is its durable memory.
   for evidence as a hypothesis, not forward as a fact.
 - Separate factual validity from scope authority for every finding. Record one
   shared scope disposition. Only `authorized` and
-  `frozen-convergence-required` become send-backs. `new-scope-needs-human` is
+  `approved-convergence-required` become send-backs. `new-scope-needs-human` is
   escalated, `out-of-scope` stays an observation, and
   `unauthorized-built-scope` requires subtraction unless a human ratifies and
-  re-freezes it. Repetition never changes the disposition.
+  re-approves it. Repetition never changes the disposition.
 - Batch all accepted findings into one resume prompt per repair round. Caps:
   3 send-backs per worker handle, then 1 new clean respawn with a sharpened
   brief, then escalate the slice and continue independent work. The same finding surviving
@@ -324,7 +324,7 @@ log beside the plan is its durable memory.
 1. If intake is a described outcome or a partial plan, run the shaping stage
    per `references/shaping-and-outcome-map.md`: worker research as evidence,
    parent trim to the smallest sufficient solution, the outcome map written
-   beside the work, one scope approval, freeze. The approved map is the
+   beside the work, one scope approval, sign-off. The approved map is the
    conducted artifact everywhere "the plan" appears below.
 2. Extract the plan into the conductor log: requirements, non-goals, phases
    with dependency order, per-phase checklist, verification, exit criteria,
@@ -346,7 +346,7 @@ log beside the plan is its durable memory.
    falsify analytical conclusions at their anchors, apply the three lens
    groups, and require decisive proof to be independently reproduced. Judge
    factual validity separately from scope disposition. Only factually valid
-   findings already inside the frozen contract become repair work.
+   findings already inside the approved contract become repair work.
 7. Route: batch accepted findings into one resume prompt and send the session
    back; or accept the slice with evidence anchors and commit a checkpoint;
    or respawn fresh; or escalate and continue independent slices.
@@ -363,7 +363,7 @@ log beside the plan is its durable memory.
    is one you could not fully verify, say so in the final report and offer the
    reviews instead of running them unasked. Under the Terra shortcut, step 11
    owns the three reviews. Give every final reviewer the plan path, human baseline
-   anchors, approval entries, frozen initial closure, and freeze anchor. Their
+   anchors, approval entries, approved initial closure, and approval anchor. Their
    findings use the same scope triage and cannot expand the plan.
 11. If the Terra delivery shortcut is active, run its stronger delivery gate:
     all three cynical reviews in independent new clean external Terra

@@ -13,18 +13,18 @@ This repo ships installable agent skills centered on the arch suite for Codex CL
 The live arch suite is:
 
 All fixed-scope lanes use the same scope law: initial architecture may include
-only the smallest evidenced same-contract convergence closure, scope freezes
+only the smallest evidenced same-contract convergence closure, scope is signed off
 before implementation, and later expansion requires explicit human approval.
 Workers and reviewers cannot create scope; the cynical reviews hard-fail
 unauthorized scope cycling.
 
-- `arch-step` — the broad full-arch execution surface; owns the full staged workflow, a frozen Scope and Simplicity Contract, extended helper passes, receipt-gated `auto-plan`, implementation-frontier `implement-loop`, re-entrant `full-auto`, compact `status`, and guided `advance`
+- `arch-step` — the broad full-arch execution surface; owns the full staged workflow, an approved Scope and Simplicity Contract, extended helper passes, receipt-gated `auto-plan`, implementation-frontier `implement-loop`, re-entrant `full-auto`, compact `status`, and guided `advance`
 - `arch-step-goal-prompt` — writes Markdown-backed goal prompt files for ArcStep `auto-plan`, `implement-loop`, `auto-implement`, and `full-auto` runs without copying the controlling plan into a second source of truth
-- `miniarch-step` — the trimmed full-arch surface; keeps canonical arch docs, the same frozen scope contract, phasing, doctrine-only `full-auto`, and native goal-mode auto flow without the broader `arch-step` helper surface
+- `miniarch-step` — the trimmed full-arch surface; keeps canonical arch docs, the same approved scope contract, phasing, doctrine-only `full-auto`, and native goal-mode auto flow without the broader `arch-step` helper surface
 - `arch-docs` — standalone docs-audit and cleanup skill; owns topic-first stale-doc cleanup, consolidation onto canonical docs, working-doc retirement, and native goal-mode `auto` docs cleanup
 - `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `miniarch-step` or `arch-step`
 - `lilarch` — compact 1-3 phase feature flow
-- `bugs-flow` — evidence-first bug analyze/fix/review flow whose analyze stage freezes the smallest same-contract fix closure before code
+- `bugs-flow` — evidence-first bug analyze/fix/review flow whose analyze stage signs off the smallest same-contract fix closure before code
 - `bottom-up-diagnostic` — disaggregates hard investigations into inspectable evidence, with reusable artifact patterns and fifteen worked examples
 - `audit-loop` — exhaustive map-first repo audit loop with a root audit ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
 - `comment-loop` — exhaustive map-first repo comment hardening loop with a root comment ledger and native goal-mode `auto` continuation
@@ -50,8 +50,8 @@ Other shipped skills are:
 - `transcribe-audio`: transcribes local recordings to verified plain-text files with live OpenAI transcription-model discovery, transport adaptation, ordered chunking, requested parallelism, and secret-safe API use
 - `flutter-reference` — doctrine-only Flutter app and game-building reference for architecture, Dart style, state management, lifecycle, performance, testing, CI, accessibility, localization, security, platform integration, and Flame/game-loop guidance
 - `eli10` — optional source-retained response-style skill; it is not installed by default
-- `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based frozen-scope receipt for plan-backed work
-- `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the frozen plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
+- `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based approved-scope receipt for plan-backed work
+- `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the approved plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
@@ -60,9 +60,9 @@ Other shipped skills are:
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
 - `intent-police` — long-lived read-only advocate that derives the user's intent from their verbatim words, keeps an on-disk intent ledger, classifies direction changes as micro-adjustment versus fundamental shift, filters other agents' review findings for scope creep, and gives blunt subtraction-only alignment feedback at decisions, post-review, and done-claims
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
-- `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-freeze minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
-- `plan-implement` — prompt-first plan-backed implementation loop that advances only through the frozen authorized frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
-- `plan-interview` — evidence-grounded intent interview that educates itself first (facts and a blank template, never a pre-drafted plan), then interviews breadth-first in plain non-jargon English with investigate-and-return cycles to produce a frozen Intent Pack — journey maps, UX delta with visual references, numbered plain-language requirements, non-goals, an in-interview-approved test grid, definition of done, execution policy, autonomy contract — closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`
+- `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-approval minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
+- `plan-implement` — prompt-first plan-backed implementation loop that advances only through the approved frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
+- `plan-interview` — evidence-grounded intent interview that educates itself first (facts and a blank template, never a pre-drafted plan), then interviews breadth-first in plain non-jargon English with investigate-and-return cycles to produce an approved Intent Pack — journey maps, UX delta with visual references, numbered plain-language requirements, non-goals, an in-interview-approved test grid, definition of done, execution policy, autonomy contract — closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`
 - `conductor` — prompt-first plan-or-outcome conductor with an executive shaping stage, parent-owned scope judgment and cynical review, and a cheap parallel worker fleet defined by a pinned model and thinking level: native children when the host can pin that profile, external `agent-delegate` sessions when it cannot; its explicit Terra shortcut remains the deliberate external exact-model/worktree/PR lane
 - `agent-history` — searches local Codex, Claude Code, Pi, or Prime Agent session history for prior prompts, goals, commands, corrections, tool use, child-agent work, and timelines from natural-language asks, using bundled read-only JSONL/SQLite helpers and concise evidence summaries
 - `model-consensus` — prompt-only parent-relayed dialogue between two exact participants, resolving native or external transport separately for each, resuming each exact handle across rounds, and converging or exposing the smallest unresolved decision
@@ -70,9 +70,9 @@ Other shipped skills are:
 - `fc-branded-pdf` — converts Markdown or document content into local FC / Poker Skill branded PDFs using bundled letterhead CSS, logo assets, and a local Markdown-to-PDF renderer; it verifies the rendered file and does not upload or archive to Drive
 - `cf-share` — uploads local artifact files or directories to the team's `fc-share` Cloudflare R2 bucket and returns a public unguessable `https://share.fun.country/<slug>/...` URL; requires a secret env file at `~/.config/cf-share/env` (token scopes and setup in the skill's `references/setup.md`)
 - `cynical-code-review` — prompt-only skeptical implementation-integrity review that also reconstructs human scope provenance and hard-fails unauthorized scope ratchets/cycling as `not-approved`, normally targeting subtraction
-- `cynical-architecture-review` — prompt-only subtraction-first review that requires durable concepts to trace to human scope or the frozen initial closure and hard-fails architecture made "required" through review cycling as `not-approved`
+- `cynical-architecture-review` — prompt-only subtraction-first review that requires durable concepts to trace to human scope or the approved initial closure and hard-fails architecture made "required" through review cycling as `not-approved`
 - `cynical-cruft-removal` — prompt-only skeptical cleanup review that treats current reachability as separate from authorization and reports scope-laundered live code/tests/config/docs/dependencies as a `cruft-found` deletion cluster
-- `exhaustive-code-review` — prompt-only exhaustive review with coverage-led clean native slices, proportional host-aware fanout, parent accounting, frozen-scope discipline, and a saved artifact under `/tmp/exhaustive-code-review/`
+- `exhaustive-code-review` — prompt-only exhaustive review with coverage-led clean native slices, proportional host-aware fanout, parent accounting, approved-scope discipline, and a saved artifact under `/tmp/exhaustive-code-review/`
 - `thermo-nuclear-code-quality-review` — vendored Cursor Team Kit rubric for unusually strict maintainability reviews focused on code-judo simplification, 1k-line file growth, spaghetti branching, abstraction boundaries, and structural quality
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; uses a new clean same-host native worker and critic when capable, resumes the exact worker for repair, and retains its subprocess machinery as the deliberate external lane
 
@@ -676,9 +676,9 @@ partial plan, or a described outcome. Outcome and partial-plan intake first
 run an executive shaping stage — parallel research workers propose as
 evidence, the parent trims to the smallest sufficient solution and writes an
 outcome map with observable done-ness and non-goals, and one user scope
-approval freezes the boundary. The parent extracts an execution map into
+approval signs off the boundary. The parent extracts an execution map into
 `<PLAN_STEM>_CONDUCTOR_LOG.md` and stops before dispatch if the conducted
-artifact has no observable done-state or defensible frozen scope; the
+artifact has no observable done-state or defensible approved scope; the
 readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is

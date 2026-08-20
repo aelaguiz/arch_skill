@@ -58,7 +58,7 @@ A clean audit can return `ready` when:
 - deletes and side-door closure are explicit
 - proof targets the highest-risk seam
 - the audit log is current when applicable
-- every durable obligation traces to human scope or the pre-freeze minimal
+- every durable obligation traces to human scope or the pre-approval minimal
   convergence closure
 
 ## Blocking: Audit-Created Scope
@@ -68,11 +68,11 @@ adds its cleanup to the plan because convergence would be cleaner.
 
 Why it matters: audit is not scope authority. Similarity is weaker than a
 directly competing same-contract path, and even a real adjacent path discovered
-after freeze needs a human decision.
+after sign-off needs a human decision.
 
-Required repair: remove the audit-created obligation. Before freeze, ask the
+Required repair: remove the audit-created obligation. Before sign-off, ask the
 initial planning owner to inspect whether it belongs in the minimal closure.
-After freeze, request explicit human approval.
+After sign-off, request explicit human approval.
 
 ## Blocking Implementation: Retroactive Plan Ratification
 
@@ -84,7 +84,7 @@ ratify unauthorized built scope.
 
 Required repair: record `unauthorized-built-scope`, return `not-approved`, and
 subtract the database machinery unless a human decision owner explicitly
-approves and re-freezes the expanded contract.
+approves and re-approves the expanded contract.
 
 ## Blocking Implementation-Audit Pattern
 

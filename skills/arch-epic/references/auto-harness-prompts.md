@@ -44,7 +44,7 @@ Every child must:
   drop, or silently remove a requirement from the epic destination
 - treat additions symmetrically: only the planner's initial architecture may
   record the smallest evidenced same-contract closure before the sub-plan
-  freezes; implementation workers and critics cannot add scope
+  is signed off; implementation workers and critics cannot add scope
 - do not invent any defer/drop/out-of-scope compromise
 - preserve scope by naming the owner: current sub-plan, prior sub-plan,
   or named later sub-plan
@@ -137,7 +137,7 @@ failure.
    evidence, not as permission to reduce or expand scope.
 9. Complete the Scope and Simplicity Contract with inherited human anchors,
    initial minimal convergence closure or `none`, enough proof, do-not-build
-   boundary, residual risk, and a freeze before implementation readiness.
+   boundary, residual risk, and a sign-off before implementation readiness.
 
 ## Quality Bar
 Strong output lets a later implementation worker see why this sub-plan exists,
@@ -182,7 +182,7 @@ native child state or external streamed thinking/tool/output events; external
 long-run floors apply before deciding that attention is needed.
 
 ## Inputs And Authority
-- Binding authority: approved epic goal and decomposition, the frozen sub-plan
+- Binding authority: approved epic goal and decomposition, the approved sub-plan
   contract, explicit human decisions, and applicable arch-step doctrine.
 - Working artifacts: epic doc {{epic_doc_path}}, sub-plan DOC_PATH
   {{sub_plan_doc_path}}, and worklog {{worklog_path}}.
@@ -204,7 +204,7 @@ long-run floors apply before deciding that attention is needed.
   verification. Missing approved work is a blocker unless it is explicitly
   assigned to a named later sub-plan.
 - Missing approved work is a blocker, not a scope decision.
-- The frozen Scope and Simplicity Contract is binding. A newly discovered
+- The approved Scope and Simplicity Contract is binding. A newly discovered
   adjacent path, mechanism, test category, or sub-plan needs a human decision;
   do not edit the plan to bless it.
 
@@ -217,9 +217,9 @@ long-run floors apply before deciding that attention is needed.
    whose prerequisites and proof gates are reachable in this arc.
 4. Run verification proportional to the risk and record exact commands.
 5. Update the worklog with what changed, evidence, and residual risk.
-6. If implementation discovers work not represented in the frozen sub-plan,
+6. If implementation discovers work not represented in the approved sub-plan,
    record `new-scope-needs-human` and stop. Continue only for a repair already
-   authorized by the human outcome or frozen initial closure. If the work was
+   authorized by the human outcome or approved initial closure. If the work was
    already built without authority, record it for subtraction.
 
 ## Quality Bar
@@ -242,7 +242,7 @@ Return:
   than naming the owner that preserves it
 - a needed decision is absent from the epic or sub-plan Decision Log
 - a Decision Log note exists but no explicit human approval authorizes a
-  post-freeze addition
+  post-approval addition
 - verification cannot run and no bounded unblock remains
 ```
 
@@ -276,7 +276,7 @@ targeted tool calls, verification output, and worklog/doc updates show forward
 movement. If you need to stop, say why instead of going silent.
 
 ## Inputs And Authority
-- Binding authority: approved epic goal and decomposition, the frozen sub-plan
+- Binding authority: approved epic goal and decomposition, the approved sub-plan
   contract, explicit human decisions, and applicable arch-step doctrine.
 - Working artifacts: epic doc {{epic_doc_path}}, sub-plan DOC_PATH
   {{sub_plan_doc_path}}, and worklog {{worklog_path}}.
@@ -359,7 +359,7 @@ invent a verdict just to finish quickly; the parent can wait when native child
 state or external stream activity shows real inspection.
 
 ## Inputs And Authority
-- Binding authority: raw epic goal, approved decomposition, frozen sub-plan
+- Binding authority: raw epic goal, approved decomposition, approved sub-plan
   contract, explicit human decisions, and the gate's declared checks.
 - Working artifacts: epic doc {{epic_doc_path}}, sub-plan DOC_PATH
   {{sub_plan_doc_path}}, and worklog {{worklog_path}}.
@@ -400,7 +400,7 @@ state or external stream activity shows real inspection.
 3. `scope_not_cut`: Section 7 checklist items and exit criteria are completed
    or represented as a blocking scope-preserving finding.
 4. `scope_provenance_and_no_cycling`: every durable obligation traces to the
-   raw goal, approved decomposition, pre-freeze closure, or explicit human
+   raw goal, approved decomposition, pre-approval closure, or explicit human
    approval; no review-created scope ratchet exists.
 5. `no_orphaned_discoveries`: discoveries are correctly classified without
    treating a plan or Decision Log edit as authority.

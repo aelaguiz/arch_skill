@@ -17,7 +17,7 @@ Resolve truth in this order:
 1. Human-authorized user experience and outcome: what the user explicitly asked
    to see, do, or rely on.
 2. Explicit later human scope approvals, if any.
-3. Initial architecture's pre-freeze minimal convergence closure.
+3. Initial architecture's pre-approval minimal convergence closure.
 4. Experiment requirements: what must stay measurable, switchable, reversible,
    comparable, or stable for the experiment to remain valid.
 5. Hard constraints: platform, runtime, data, security, performance, model,
@@ -33,7 +33,7 @@ The implementation explanation comes last because it is often the lie.
 
 For work with a recoverable scope story, map every durable concept, owner,
 state, service, dependency, compatibility path, mode, operational surface,
-harness, and proof category to human scope or the frozen initial convergence
+harness, and proof category to human scope or the approved initial convergence
 closure. A Decision Log entry, reviewer finding, later plan revision, or
 current reachability is not authority.
 

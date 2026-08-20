@@ -23,7 +23,7 @@ For quick-lane work the whole pack may be one quarter-page `INTENT.md`.
 
 Sections map 1:1 to the must-always-know list (see `must-know-list.md`):
 what and why, success signals, project type, UX delta (journey maps,
-stay-dead list, vocabulary freeze, visual references), numbered
+stay-dead list, agreed vocabulary, visual references), numbered
 requirements, non-goals and deferral ledger, architecture requirements,
 test grid and proof obligations, definition of done, execution policy,
 autonomy contract, open decisions and assumptions.
@@ -35,8 +35,8 @@ Two additional sections:
   one-line reason; every agent-made derivation flagged as such with its
   approval. This log is what makes the pack auditable: any decision in the
   pack traces to a line here.
-- **Approval and freeze** — who approved the decision table and when, the
-  chosen plan step from gate 2, and the freeze statement, carrying seven
+- **Approval and sign-off** — who approved the decision table and when, the
+  chosen plan step from gate 2, and the sign-off statement, carrying seven
   fields the downstream planning skill consumes directly:
   - *authorized outcome and anchors* — what the user asked for, pointing at
     the decision-log lines where they said it;
@@ -45,7 +45,7 @@ Two additional sections:
     education found that planning may need to migrate or delete so one
     owner remains (candidates only; the planning skill decides, the user
     approves);
-  - *freeze boundary* — what is in and out as of approval;
+  - *sign-off boundary* — what is in and out as of approval;
   - *enough proof* — the approved grid and artifacts;
   - *do-not-build boundary* — the non-goals and rejected machinery;
   - *accepted residual risk* — what stays imperfect on purpose.
@@ -71,12 +71,12 @@ rubber-stamping.
   is growing past that, detail is leaking in that belongs to the downstream
   plan or to `research/`.
 
-## Freeze rules
+## Sign-off rules
 
-- The pack freezes when gate 1 feedback is folded in and gate 2 chooses
-  the plan step. After freeze, changes are human decisions recorded in the
+- The pack is signed off when gate 1 feedback is folded in and gate 2 chooses
+  the plan step. After sign-off, changes are human decisions recorded in the
   decision log — the pack is never silently edited to match what got built.
-- Nothing in the frozen pack says "coming later" except items the user
+- Nothing in the approved pack says "coming later" except items the user
   explicitly parked (recorded with where they land, e.g. "copy rides with
   the mock round").
 - Downstream skills must not re-ask what the pack answers; the handoff

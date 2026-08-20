@@ -169,16 +169,16 @@ Canonical Scope and Simplicity Contract shape:
 - Authorization anchors: <original ask and explicit later human decisions>
 - Smallest sufficient solution: <narrowest real end-to-end solution>
 - Initial minimal convergence closure: <same-contract cutovers/deletes found before implementation, or none>
-- Scope freeze: <implementation-ready revision/date or equivalent boundary>
+- Scope sign-off: <implementation-ready revision/date or equivalent boundary>
 - Enough proof: <smallest credible proof set>
 - Do not build: <tempting but unauthorized expansion>
 - Residual risk accepted by this plan: <bounded risk that does not justify expansion>
 ```
 
 Apply `../../_shared/scope-and-convergence.md`. Initial planning may add only
-the smallest evidenced same-contract convergence closure. Freeze the contract
-before the first implementation edit or dispatch. After freeze, an agent may
-complete the frozen closure, subtract unauthorized work, or ask for a human
+the smallest evidenced same-contract convergence closure. Sign off the contract
+before the first implementation edit or dispatch. After sign-off, an agent may
+complete the approved closure, subtract unauthorized work, or ask for a human
 scope decision; it may not enlarge the closure. A later plan edit, review
 finding, test, worklog, Decision Log note, or already-built path is not scope
 authority.
@@ -312,7 +312,7 @@ Canonical heading plus rule line:
 ```text
 # Depth-First Phased Implementation Plan (authoritative)
 
-> Rule: depth-first implementation protects the frozen destination while proving the path early. The destination map is the human-authorized outcome plus the initial minimal convergence closure recorded before implementation and any later explicit human approval. The expansion map only sequences that frozen breadth; workers and reviewers cannot add callers, variants, modes, guarantees, proof categories, or adjacent cleanup. Section 7 chooses the first working slice through the canonical owner path and highest-risk seam, then advances through already-authorized axes. Phase boundaries are proof gates, and phase count follows real dependency, proof, reversibility, migration, or user-review boundaries. `Work` is explanatory; `Checklist (must all be done)` and `Exit criteria (all required)` hold every required obligation. Refactors and consolidations preserve behavior with proportionate evidence. Prefer prompt, grounding, and native capability before new agent tooling. No fallback or runtime shim exists without explicit approval and removal work. Prefer focused programmatic checks, defer manual/UI verification to finalization, and avoid deletion proofs, visual constants, doc gates, keyword/absence gates, and repo-shape policing.
+> Rule: depth-first implementation protects the approved destination while proving the path early. The destination map is the human-authorized outcome plus the initial minimal convergence closure recorded before implementation and any later explicit human approval. The expansion map only sequences that approved breadth; workers and reviewers cannot add callers, variants, modes, guarantees, proof categories, or adjacent cleanup. Section 7 chooses the first working slice through the canonical owner path and highest-risk seam, then advances through already-authorized axes. Phase boundaries are proof gates, and phase count follows real dependency, proof, reversibility, migration, or user-review boundaries. `Work` is explanatory; `Checklist (must all be done)` and `Exit criteria (all required)` hold every required obligation. Refactors and consolidations preserve behavior with proportionate evidence. Prefer prompt, grounding, and native capability before new agent tooling. No fallback or runtime shim exists without explicit approval and removal work. Prefer focused programmatic checks, defer manual/UI verification to finalization, and avoid deletion proofs, visual constants, doc gates, keyword/absence gates, and repo-shape policing.
 ```
 
 Canonical per-phase fields:
@@ -407,27 +407,27 @@ Additional canonical entry shape for user-approved scope cuts (required whenever
 - `Consequences:` plan updates, follow-ups, any phases reopened
 
 Additional canonical entry shape for the planning-derived convergence closure
-(written only before scope freeze):
+(written only before scope sign-off):
 
 - `## <YYYY-MM-DD> - Initial convergence closure (planning-derived): <title>`
 - `Changed contract:` the exact behavior or data contract being changed
 - `Competing live paths:` repo evidence for the split authority
 - `Minimal closure:` the caller migrations, owner moves, cutovers, or deletes
 - `Why narrower is split-brained:` the concrete failure created or preserved
-- `Freeze effect:` the plan sections updated before implementation readiness
+- `Sign-off effect:` the plan sections updated before implementation readiness
 
-Additional canonical entry shape for post-freeze human-approved expansion:
+Additional canonical entry shape for post-approval human-approved expansion:
 
 - `## <YYYY-MM-DD> - Scope expansion (human-approved): <title>`
 - `Expansion:` the newly authorized outcome, constraint, or adjacent path
-- `Tradeoff presented:` what grows and why the frozen solution cannot absorb it
+- `Tradeoff presented:` what grows and why the approved solution cannot absorb it
 - `Decision owner:` the human who approved it
 - `Approval:` when and how approval was given
-- `Consequences:` plan sections changed and the new re-freeze boundary
+- `Consequences:` plan sections changed and the new re-approval boundary
 
 This section is append-only. A Decision Log entry records a decision; an
 agent-authored entry is not human approval. Do not silently rewrite history
-when real plan drift occurs. Silent narrowing is forbidden, and post-freeze
+when real plan drift occurs. Silent narrowing is forbidden, and post-approval
 expansion requires the human-approved shape above. Existing `Complexity
 expansion (user-approved)` entries remain valid legacy approval evidence.
 
@@ -519,7 +519,7 @@ Treat these as hard checks:
 - command-owned blocks exist or can be inserted safely
 - dependent sections are strong enough for the command to trust
 - the Scope and Simplicity Contract names human authorization, an initial
-  convergence closure or explicit `none`, and a scope-freeze boundary before
+  convergence closure or explicit `none`, and a scope sign-off boundary before
   implementation
 
 ## North Star confirmation rule

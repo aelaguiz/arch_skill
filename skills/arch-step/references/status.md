@@ -17,7 +17,7 @@ Before grading stages, inspect the artifact itself:
 - `WORKLOG_PATH` and `implementation_audit` when implementation has started
 - the relevant quality bars from `section-quality.md`
 - the Scope and Simplicity Contract, its authorization anchors, initial closure
-  or `none`, freeze boundary, and any post-freeze human approvals
+  or `none`, sign-off boundary, and any post-approval human approvals
 
 ## What status reports
 
@@ -36,8 +36,8 @@ Report in this order:
 11. Best next move
 
 Do not grade the plan implementation-ready when the scope contract is missing,
-contradicted, unfrozen, or exceeded. Route a pre-freeze architecture gap to its
-planning owner; route post-freeze expansion to a human decision.
+contradicted, unapproved, or exceeded. Route a pre-approval architecture gap to its
+planning owner; route post-approval expansion to a human decision.
 
 ## Allowed grades
 

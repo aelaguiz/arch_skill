@@ -85,8 +85,8 @@ waves, run external review subprocesses, or decide the user's broader workflow.
   agent-authored revision cannot retroactively authorize code.
 - Apply `../_shared/scope-and-convergence.md`. For plan-, branch-,
   conductor-, PR-, or history-backed work with a recoverable baseline,
-  reconstruct the initial human scope, pre-freeze convergence closure, later
-  human approvals, plan/review waves, and final code. Unauthorized post-freeze
+  reconstruct the initial human scope, pre-approval convergence closure, later
+  human approvals, plan/review waves, and final code. Unauthorized post-approval
   growth or scope cycling is a `REQUIRED REPAIR` and forces `not-approved`,
   even when it works and tests pass. The normal repair target is subtraction.
 - If provenance should be available but cannot be recovered, return
@@ -109,7 +109,7 @@ waves, run external review subprocesses, or decide the user's broader workflow.
    true, which source or plan says so if present, and what current code would
    have to do for that claim to be real.
 5. When scope history exists, write its human baseline, initial closure and
-   freeze anchor, explicit later approvals, and revision/review waves before
+   approval anchor, explicit later approvals, and revision/review waves before
    accepting the latest plan as context.
 6. Read `references/review-catalog.md`.
 7. Read `references/output-contract.md`.

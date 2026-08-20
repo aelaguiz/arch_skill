@@ -48,7 +48,7 @@
 - this is the initial architecture window: add only evidenced directly
   competing same-contract paths to the minimal closure, record cutovers/deletes,
   and exclude merely similar neighbors
-- if scope is already frozen, do not enlarge the closure; classify a newly
+- if scope is already signed off, do not enlarge the closure; classify a newly
   discovered adjacent path as `new-scope-needs-human`
 - if the change retires or reroutes a live truth surface, name the code paths, docs, comments, or instructions that must be deleted or rewritten
 - if multiple viable technical approaches exist, resolve them from repo truth plus approved intent or ask the user the exact choice; do not leave multiple viable architectures open in the authoritative plan

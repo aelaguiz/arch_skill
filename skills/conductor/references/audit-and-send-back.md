@@ -12,7 +12,7 @@ summary, changed-file list, quoted test output, rationale, labels like
 "migrated", "unified", "deleted", "verified" — is a claim, not evidence.
 Current code behavior and structure — and the work products the conductor has
 personally loaded and checked — are the authority for factual completion; the
-frozen plan contract and explicit human approvals are the authority for
+approved plan contract and explicit human approvals are the authority for
 scope.**
 
 The trust failure this exists to prevent: reading `STATUS: done`, a plausible
@@ -27,8 +27,8 @@ to break the story and accept only what survives.
    plus every discrete claim in the worker's footer. The footer is a claims
    manifest — use it to enumerate what to check, never to frame conclusions.
    Do not let the worker's narrative order or emphasis steer the audit.
-   Re-read the plan's human authorization anchors, frozen initial convergence
-   closure, and freeze anchor. Do not audit against only the latest phase text.
+   Re-read the plan's human authorization anchors, approved initial convergence
+   closure, and approval anchor. Do not audit against only the latest phase text.
 2. **Falsify the cheap claims against git.** `CHANGED FILES` vs `git status`;
    `DELETES EXECUTED` vs the slice's delete obligations vs the actual diff.
    Any mismatch between a worker claim and repo reality is itself a finding
@@ -126,14 +126,14 @@ to break the story and accept only what survives.
 8. **Judge factual validity** for every finding: `accepted` (technically real),
    `rejected` (wrong, with contradicting evidence), or `unresolved`. Then assign
    a separate scope disposition: `authorized`,
-   `frozen-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
+   `approved-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
    `unauthorized-built-scope`. Only the first two route to ordinary repair.
    `new-scope-needs-human` is an escalation, `out-of-scope` is an observation,
    and `unauthorized-built-scope` routes to subtraction unless a human approves
-   and re-freezes. Findings carry an id (`PC-<n>`), evidence, consequence,
+   and re-approves. Findings carry an id (`PC-<n>`), evidence, consequence,
    disposition, and route.
 9. **Break the ratchet before send-back.** Compare each proposed repair with
-   the original frozen contract. A new table, queue, state machine, service,
+   the original approved contract. A new table, queue, state machine, service,
    dependency, compatibility path, mode, operational surface, harness, test
    category, caller family, or cleanup area requires an existing authority
    anchor. This is a judgment check, not a numeric threshold. Repeated reviewer
@@ -146,7 +146,7 @@ lying have actually been checked, and the acceptance record says which ones
 ## Send-Back
 
 Batch all factually accepted findings dispositioned `authorized` or
-`frozen-convergence-required`, plus required subtraction for
+`approved-convergence-required`, plus required subtraction for
 `unauthorized-built-scope`, into **one** resume prompt to the exact same child
 or external session (shape in `worker-prompt-contract.md`). Repair directions are
 advisory hints — the worker owns implementation judgment; conductor diagnosis
@@ -167,7 +167,7 @@ root cause; do not diff-of-diff skim the repair against the findings list.
 Never edit plan scope to make a finding send-back eligible. If a review is the
 first agent to find an adjacent same-contract path, it may prevent acceptance,
 but it cannot append a late initial-convergence entry. Ask the human or require
-redesign/subtraction inside the frozen boundary.
+redesign/subtraction inside the approved boundary.
 
 ## Caps And Worker Health
 
@@ -234,7 +234,7 @@ After all phases:
    would check — because per-slice audits only ever saw per-slice artifacts.
    This load is part of the non-togglable sweep; disabling the cold verifier
    never disables it.
-   Reconstruct the initial human scope, frozen closure, approval history, wave
+   Reconstruct the initial human scope, approved closure, approval history, wave
    findings, plan annotations, and final diff. Any expansion that became
    "required" only through worker/reviewer cycles is a hard fail and normally
    subtraction work.
@@ -250,7 +250,7 @@ After all phases:
    easiest role to pin natively, because no eviction can quietly re-price it;
    take the external lane when this host cannot pin the profile. It may reject
    completion, but it may not add a newly discovered adjacent path to the
-   frozen closure.
+   approved closure.
 3. **Requested cynical reviews — advisory, fleet-executed.** The installed
    `$cynical-code-review`, `$cynical-architecture-review`, and
    `$cynical-cruft-removal` skills are not part of this gate. Run one only
@@ -259,8 +259,8 @@ After all phases:
    against the repo. Never run one through an unpinned native child: a whole
    review skill is the largest block of bulk reading in the run, and unpinned
    it lands on the conductor's own model. Give each review the plan path, human
-   baseline anchors, explicit human approval entries, frozen initial closure,
-   and freeze anchor. What comes back is advice: the conductor triages the
+   baseline anchors, explicit human approval entries, approved initial closure,
+   and approval anchor. What comes back is advice: the conductor triages the
    findings as claims under the normal audit machinery, never edits source on
    their behalf, and does not let a review verdict block completion unless
    the user asked for it to gate. Its findings use the same scope dispositions

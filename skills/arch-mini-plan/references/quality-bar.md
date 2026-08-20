@@ -46,7 +46,7 @@
   - agent-backed plans prefer prompt, grounding, and native-capability changes before new tooling
   - instruction-bearing imported content is preserved explicitly or escalated rather than silently compressed
   - explicit follow-ups separated from ship-blocking work
-  - every ship-blocking item maps to human scope or the pre-freeze initial
+  - every ship-blocking item maps to human scope or the pre-approval initial
     convergence closure
 - Weak:
   - pseudo-chronological task dump
@@ -59,7 +59,7 @@
 - Ready:
   - the implementer can start with `miniarch-step implement` and does not need to invent architecture
   - the compact Scope and Simplicity Contract names human anchors, closure or
-    `none`, enough proof, do-not-build boundary, residual risk, and freeze
+    `none`, enough proof, do-not-build boundary, residual risk, and sign-off
 - Not ready:
   - open architecture questions still control the plan
   - the doc needs full-arch restructuring first

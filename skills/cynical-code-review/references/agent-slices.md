@@ -177,7 +177,7 @@ Ask:
 ### `scope_provenance_reviewer`
 
 For plan-, conductor-, PR-, or history-backed work, reconstruct the initial
-human scope, frozen convergence closure, later human approvals, plan/review
+human scope, approved convergence closure, later human approvals, plan/review
 waves, and final code. Find work that became "required" only because agents
 built, documented, tested, or repeatedly reviewed it. Return subtraction as the
 default repair; do not turn a new adjacent discovery into automatic scope.

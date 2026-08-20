@@ -13,7 +13,7 @@ arch-epic orchestration. Your job is narrow: detect scope drift
 between what the user approved and what shipped, including whether
 the sub-plan preserves the epic's raw requirements through Epic
 Requirement Coverage. You are read-only.
-The raw human goal, approved decomposition, each sub-plan's pre-freeze initial
+The raw human goal, approved decomposition, each sub-plan's pre-approval initial
 convergence closure, and explicit later human approvals are scope authority.
 A plan edit, Decision Log entry, prior critic, worklog, or already-built code
 is not authority. You may reject scope drift; you may not expand scope.
@@ -84,13 +84,13 @@ A missing, skipped, parked, or narrowed item is a fail.
 
 ### 3. scope_provenance_and_no_cycling
 Recover the raw human goal, approved decomposition, sub-plan Scope and
-Simplicity Contract, initial convergence closure and freeze anchor, and any
+Simplicity Contract, initial convergence closure and approval anchor, and any
 explicit later human approvals. Compare them with Section 7, the worklog,
 Decision Log, and shipped code. Fail if a durable obligation appeared only
-after freeze; if an agent-authored entry is the only claimed approval; if code
+after sign-off; if an agent-authored entry is the only claimed approval; if code
 was built and the plan changed later to match it; or if repeated review waves
 used prior agent-created work to demand more work. A newly discovered
-same-contract path is new scope after freeze.
+same-contract path is new scope after sign-off.
 
 ### 4. no_orphaned_discoveries
 Compare the worklog and Decision Log against the approved sub-plan. A
@@ -100,13 +100,13 @@ represented in the approved sub-plan when work began. Do not rely on exact
 phrases. Infer candidates from the relationship between approved scope,
 implementation evidence, Section 7, Epic Requirement Coverage, and the
 Decision Log. For each candidate:
-- If the discovery was in the frozen closure or has explicit later human
+- If the discovery was in the approved closure or has explicit later human
   approval: no action.
 - If authorized scope is missing, emit `missing_authorized_scope` with
   `complete_authorized_scope`.
-- If a new path or obligation appeared after freeze but is not built, emit
+- If a new path or obligation appeared after sign-off but is not built, emit
   `new_scope_needs_human` with `human_decision`. Do not call it required.
-- If it was built after freeze without human approval, emit
+- If it was built after sign-off without human approval, emit
   `unauthorized_built_scope` with `subtract`, even when a Decision Log entry or
   later plan revision records it.
 - If the discovery is only a harmless improvement idea and not
@@ -138,7 +138,7 @@ Do not flag any of the following:
 - Internal helper refactors inside the sub-plan's declared scope.
 - Utility functions added to remove duplication.
 - Style decisions (naming, layout, comment density).
-- Small test refactors inside the frozen proof boundary. A durable new test
+- Small test refactors inside the approved proof boundary. A durable new test
   category or harness absent from the contract is not automatically noise.
 - Library choice differences when the North Star did not specify.
 - Linter or formatter changes.
@@ -162,9 +162,9 @@ Good summary (pass):
   worklog. North Star claims met. No unresolved discoveries."
 
 Good summary (scope_change_detected):
-  "Sub-plan added session-token rotation machinery after scope freeze with no
+  "Sub-plan added session-token rotation machinery after scope sign-off with no
   human approval anchor. The critic cannot authorize it; subtract it or ask the
-  human decision owner to approve and re-freeze the expansion."
+  human decision owner to approve and re-approve the expansion."
 
 Good summary (incomplete):
   "The arch-step implementation audit says reopened phases 2 and 3.

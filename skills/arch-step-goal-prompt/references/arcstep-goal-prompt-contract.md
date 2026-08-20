@@ -44,7 +44,7 @@ acceptance evidence, and implementation order. Do not copy it into this prompt
 or create a second plan.
 ```
 
-Point to that plan's Scope and Simplicity Contract and freeze anchor. Do not
+Point to that plan's Scope and Simplicity Contract and approval anchor. Do not
 copy them into the goal. All reviewer findings must be classified against that
 contract before they become repair work.
 
@@ -118,7 +118,7 @@ points and ask:
 - Did I treat an agent-authored plan edit, goal edit, or reviewer finding as
   human approval for scope?
 - Am I cycling through review repairs that grow implementation beyond the
-  frozen contract?
+  approved contract?
 - Am I building process, policy, harness, or ceremony when the next useful move
   is direct implementation, focused inspection, or a small diagnostic check?
 
@@ -159,7 +159,7 @@ The goal prompt should say:
 - implement the approved ordered implementation frontier
 - run ArcStep `audit-implementation`
 - if audit or a required review rejects the result, classify the
-  objection against the frozen scope contract: repair authorized work,
+  objection against the approved scope contract: repair authorized work,
   subtract unauthorized work, or stop for a human scope decision
 - never mark complete while reviewers, delegated workers, or required repairs
   are pending
@@ -282,7 +282,7 @@ writes, and keep fanout and integration with the parent. Return a verdict,
 evidence-anchored findings, checks performed, unresolved assumptions, and the
 child handle. Do not give the reviewer the desired verdict. Done requires
 reviewer agreement that the goal is satisfied; if review rejects the result,
-resume the exact implementer for repairs authorized by the frozen contract,
+resume the exact implementer for repairs authorized by the approved contract,
 subtract unauthorized work, or ask the human decision owner before expansion.
 Start the next independent signoff as a new clean reviewer.
 ```
@@ -315,7 +315,7 @@ Use only the ones that fit the run:
 - An agent-authored plan revision or reviewer finding was treated as human
   scope authority.
 - The goal kept repairing reviewer findings until implementation exceeded the
-  frozen initial scope.
+  approved initial scope.
 - Fixes landed after review but the relevant check did not rerun.
 - The final report lists activity instead of evidence tied to source truth.
 

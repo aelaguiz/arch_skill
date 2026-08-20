@@ -351,14 +351,14 @@ code carries through consistently.
 ## Unauthorized Scope Ratchet Or Cycling
 
 For plan-, branch-, conductor-, PR-, or history-backed work, flag durable code
-that entered after the scope freeze without explicit human approval, especially
+that entered after the scope sign-off without explicit human approval, especially
 when a worker or reviewer introduced it and later plan revisions, tests, docs,
 or reviews treated it as authority for still more work.
 
 Read:
 
 - the initial human ask and explicit human approval anchors;
-- the initial minimal convergence closure and pre-implementation freeze;
+- the initial minimal convergence closure and pre-implementation sign-off;
 - plan revisions, Decision Log entries, worker/review waves, worklogs, and PR
   comments;
 - the final diff and the code/tests/config/docs/dependencies that keep the
@@ -366,14 +366,14 @@ Read:
 
 Block when a durable concept, caller family, product guarantee, platform, mode,
 compatibility path, operational surface, harness, or proof category lacks a
-human or pre-freeze closure anchor. A later agent-authored plan edit does not
+human or pre-approval closure anchor. A later agent-authored plan edit does not
 ratify it. Repeated reviewer agreement does not create authority. The finding
 is `REQUIRED REPAIR`, the verdict is `not-approved`, and the repair target is
 normally subtraction to the smallest authorized implementation.
 
 Do not misclassify a directly competing same-contract path already recorded in
-the frozen initial closure. If a newly discovered adjacent path is real but
-post-freeze, report `new-scope-needs-human`; do not make it an automatic repair.
+the approved initial closure. If a newly discovered adjacent path is real but
+post-approval, report `new-scope-needs-human`; do not make it an automatic repair.
 When a standalone review has no recoverable human-scope history, mark this
 pattern not applicable.
 

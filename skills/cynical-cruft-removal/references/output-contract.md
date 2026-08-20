@@ -38,7 +38,7 @@ Record:
   docs/examples/prompt surface, or user-named suspicious area
 - baseline and head/current state when known
 - controlling plan, source truth, cleanup claim, or worklog if supplied
-- initial human scope, frozen convergence closure and freeze anchor, later
+- initial human scope, approved convergence closure and approval anchor, later
   human approvals, and plan/review-wave history when recoverable
 - explicit exclusions
 - local instruction and convention files read
@@ -190,7 +190,7 @@ Use this shape for each finding:
 - Evidence read: <files, flows, commands, history, source anchors, or child report>
 - Expected risk if removed: <real breakage risk, not vague fear>
 - Recommended action: <delete/rewrite/consolidate/quarantine/owner-check/keep>
-- Scope provenance: <human anchor | frozen closure anchor | later human approval | missing>
+- Scope provenance: <human anchor | approved closure anchor | later human approval | missing>
 - Scope-cycle evidence: <revision/wave/cluster chain or none>
 ```
 
@@ -262,7 +262,7 @@ VERDICT: cruft-found | no-material-cruft-found | scope-incomplete | unsafe-to-ju
 ## Scope Provenance
 
 - Initial human-authorized scope:
-- Frozen initial convergence closure and freeze anchor:
+- Approved initial convergence closure and approval anchor:
 - Later human approvals:
 - Scope-laundered live clusters:
 - Required disposition:

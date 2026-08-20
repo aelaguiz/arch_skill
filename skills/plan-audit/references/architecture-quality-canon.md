@@ -59,7 +59,7 @@ Challenge every complexity source with: can this be simpler without breaking
 the stated requirements? Complexity that cannot point back to a real
 requirement, hard constraint, or drift-proofing need should be removed.
 
-## Scope Provenance And Freeze
+## Scope Provenance And Sign-Off
 
 Apply `../../_shared/scope-and-convergence.md`. The implementation boundary is
 the human-authorized outcome plus the smallest directly competing
@@ -69,9 +69,9 @@ review findings, agent-authored plan edits, and already-built code are not
 authority.
 
 Audit may reject missing provenance, an unbounded closure, or scope cycling. It
-must not repair those defects by adding adjacent work itself. Before freeze,
-return the gap to the planning owner. After freeze, require a human decision or
-subtraction/redesign inside the frozen boundary.
+must not repair those defects by adding adjacent work itself. Before sign-off,
+return the gap to the planning owner. After sign-off, require a human decision or
+subtraction/redesign inside the approved boundary.
 
 ## Real Ambiguity
 
@@ -85,7 +85,7 @@ impact, the required decision, and whether repo truth resolves it.
 
 Resolution is not a chat answer. A human decision owner must resolve outcome,
 scope, compatibility, or constraint changes. An explicitly authorized agent
-may resolve only implementation choices already inside the frozen contract.
+may resolve only implementation choices already inside the approved contract.
 The plan must carry the decision through all affected sections before the item
 is resolved.
 
@@ -129,7 +129,7 @@ Before accepting a new pattern, audit comparable patterns. Classify related
 code as:
 
 - `already authorized`
-- `frozen convergence closure`
+- `approved convergence closure`
 - `leave different`
 - `new scope needs human`
 

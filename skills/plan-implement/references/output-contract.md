@@ -13,7 +13,7 @@ Current state: <one sentence>
 Changed: <paths or behavior summary>
 Proof: <run | reused | stale | not yet needed>
 Review: <clean | findings opened | findings repaired | not yet run>
-Scope: <frozen contract intact | human decision needed | unauthorized work being subtracted>
+Scope: <approved contract intact | human decision needed | unauthorized work being subtracted>
 Artifacts: <plan/audit log/implementation log updates>
 Next: <one useful move>
 ```
@@ -63,7 +63,7 @@ Next:
 - Do not turn the final answer into a copied worklog.
 - If the stop boundary was honored with unfinished adjacent work, say so.
 - Do not describe a review-created obligation as unfinished scope. Classify it
-  against the frozen contract and name the human decision only when needed.
+  against the approved contract and name the human decision only when needed.
 
 ## Completion Words
 

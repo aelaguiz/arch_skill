@@ -14,7 +14,7 @@ Create or repair the compact doc so planning can happen safely.
 - the human-authorized outcome and authorization anchors
 - a draft smallest sufficient solution, `Initial minimal convergence closure:
   none` pending plan-mode architecture, enough proof, do-not-build boundary,
-  accepted residual risk, and pending scope freeze
+  accepted residual risk, and pending scope sign-off
 - the small set of clarifying questions that truly block planning
 
 ## Clarifying-question bar

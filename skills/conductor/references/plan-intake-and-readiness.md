@@ -3,7 +3,7 @@
 The conductor works with any plan document that has recoverable requirements
 and phases. An approved outcome map from the shaping stage is such a
 document by construction; its Approval block is the human authorization
-anchor and freeze. Intake is a one-time extraction pass by the parent, not format
+anchor and sign-off. Intake is a one-time extraction pass by the parent, not format
 parsing, and it is the single largest deliberate spend of parent tokens —
 worth it because every later decision keys off this read.
 
@@ -26,7 +26,7 @@ Read the plan once, end to end, and record in the conductor log:
   single source of truth; the log is schedule and evidence.
 - **Scope authority and proportionality.** Record anchors for the original
   human outcome, explicit later human approvals, smallest sufficient solution,
-  initial minimal convergence closure or `none`, pre-implementation freeze,
+  initial minimal convergence closure or `none`, pre-implementation sign-off,
   enough proof, do-not-build boundary, and accepted residual risk. Do not copy
   the contract into the log.
 
@@ -42,12 +42,12 @@ done-ness produces confident wandering, not implementation.
 Underspecified-but-recoverable plans do **not** trip the gate. When a phase
 says "migrate the callers" without listing them, recover the real contract
 from owning code, tests, schemas, and current behavior, and record the
-recovered facts in the log only when the frozen contract already authorizes
+recovered facts in the log only when the approved contract already authorizes
 that caller family. Recovered facts support execution; they never expand
 approved scope.
 
 Also stop before dispatch when the plan is visibly overbroad, cites only its
-own agent-authored text as authority, lacks a defensible scope-freeze boundary,
+own agent-authored text as authority, lacks a defensible scope sign-off boundary,
 has an open-ended convergence promise, or asks for proof and machinery
 disproportionate to the human outcome. If initial planning is still open, route
 the defect to the planning owner. If implementation has begun or the plan is
@@ -78,7 +78,7 @@ re-deriving it:
   catch.
 - An existing `<PLAN_STEM>_PLAN_AUDIT.md` with open `PLA-*`/`IMP-*` findings
   supplies pre-existing findings. Treat only findings dispositioned
-  `authorized` or `frozen-convergence-required` as slice constraints. Other
+  `authorized` or `approved-convergence-required` as slice constraints. Other
   findings remain observations, subtraction work, or human decisions.
 
 This is recognition of structure that happens to be present — never a

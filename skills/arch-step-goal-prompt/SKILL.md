@@ -43,7 +43,7 @@ reviewers only when they are requested or already required.
 
 - Keep the ArcStep plan doc as the planning source of truth. The goal prompt is
   an execution brief, not a second plan.
-- Point to the plan's Scope and Simplicity Contract and freeze anchor without
+- Point to the plan's Scope and Simplicity Contract and approval anchor without
   copying them. The goal prompt, its reviewer language, and later goal edits
   cannot authorize scope.
 - Do not copy plan phases, checklists, implementation details, examples,
@@ -76,9 +76,9 @@ reviewers only when they are requested or already required.
   reviewers, and unhandled required repairs.
 - Include these when applicable: an agent-authored plan revision or reviewer
   finding was treated as human scope authority; the goal kept "repairing"
-  review findings until implementation exceeded the frozen initial scope.
+  review findings until implementation exceeded the approved initial scope.
 - Treat reviewer rejection as repair input only when the finding is directly
-  authorized or already in the frozen convergence closure. New scope needs a
+  authorized or already in the approved convergence closure. New scope needs a
   human decision; out-of-scope findings stay observations; unauthorized built
   scope is subtraction work. The goal prompt should not add reviewers by
   default.

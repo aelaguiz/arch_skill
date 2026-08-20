@@ -8,7 +8,7 @@
 - Keep fixes minimal and localized.
 - Apply `../../_shared/scope-and-convergence.md`. Analyze may define the
   smallest evidenced same-contract closure before fix; fix and review cannot
-  add to it after freeze.
+  add to it after sign-off.
 - Default to fail-loud behavior. Do not add hidden fallbacks, silent swallowing, or "try the old path too" logic.
 - "Systemic" means fix the shared cause at its narrowest owner, not open a
   repo-wide cleanup project.

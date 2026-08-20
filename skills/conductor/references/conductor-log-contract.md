@@ -22,7 +22,7 @@ Workers: <model @ thinking level; lane and starting context; external runtime
 Max parallel: <N>   Wave cap: <N>
 Boundary: <whole plan | phases X-Y>   Cold verifier: <on|off>
 Final gate: <not run | clean | findings open>
-Scope contract: <plan anchor>   Scope status: <frozen-clean | human decision needed | unresolved>
+Scope contract: <plan anchor>   Scope status: <approved-clean | human decision needed | unresolved>
 Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 
 ## Resume Snapshot
@@ -39,7 +39,7 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 ### PC-001 - <title>
 - Slice: <id>  Lens: <lens>  Evidence: <path:line>
 - Factual status: accepted | rejected | unresolved
-- Scope disposition: authorized | frozen-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
+- Scope disposition: authorized | approved-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
 - Route: send-back | observe | human-decision | subtract | resolved
 - Resolution evidence: <anchor>
 
@@ -106,7 +106,7 @@ The run is complete when all three hold:
 2. Every phase's plan-required verification is recorded passing in the Proof
    Ledger (fresh, or valid-until untouched).
 3. The `Final gate:` header line reads `clean`.
-4. `Scope status:` reads `frozen-clean`, with no open
+4. `Scope status:` reads `approved-clean`, with no open
    `new-scope-needs-human` decision, scope-cycle finding, or
    `unauthorized-built-scope` subtraction.
 

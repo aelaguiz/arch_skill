@@ -97,9 +97,9 @@ broader workflow.
 - For plan-, branch-, conductor-, PR-, or history-backed work, current
   reachability and product use do not prove the work was authorized. Apply
   `../_shared/scope-and-convergence.md`: reconstruct the initial human
-  scope, frozen initial convergence closure, later human approvals, review
+  scope, approved initial convergence closure, later human approvals, review
   waves, and final code. A live cluster created through unauthorized
-  post-freeze expansion or scope cycling is cruft and forces `cruft-found`.
+  post-approval expansion or scope cycling is cruft and forces `cruft-found`.
 - Group scope-laundered code with the tests, schemas, configs, dependencies,
   docs, prompts, and operational surfaces that keep it alive. The normal action
   is subtraction of the cluster. If provenance should exist but cannot be
@@ -123,7 +123,7 @@ broader workflow.
 4. Save `target.md`: target, scope, user concern, current branch/diff context,
    supplied plan or cleanup claim if any, explicit exclusions, and local
    instructions read.
-5. When scope history exists, reconstruct the human baseline, frozen closure,
+5. When scope history exists, reconstruct the human baseline, approved closure,
    later human approvals, and review waves before accepting current liveness as
    keep evidence.
 6. Read `references/cruft-lenses.md`.

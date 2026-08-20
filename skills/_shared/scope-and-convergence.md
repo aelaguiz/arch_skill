@@ -8,14 +8,14 @@ and when it is unauthorized scope growth.
 
 Build exactly the human-authorized outcome with the smallest sufficient
 solution. During initial plan architecture, include only the adjacent
-same-contract work required to leave one authoritative owner. Freeze that scope
-before implementation. After the freeze, scope increases only when a human
+same-contract work required to leave one authoritative owner. Sign off that scope
+before implementation. After sign-off, scope increases only when a human
 asks for or explicitly approves the increase.
 
 ```text
 Allowed implementation scope
   = human-authorized outcome and constraints
-  + initial minimal convergence closure frozen before implementation
+  + initial minimal convergence closure signed off before implementation
   + later expansion explicitly approved by a human decision owner
 ```
 
@@ -38,7 +38,7 @@ already-built code path cannot authorize scope.
   migrations, owner moves, cutovers, or deletes that initial plan architecture
   must include because the narrow change would otherwise create or preserve a
   competing authority for the exact changed contract.
-- **Scope freeze:** the implementation-ready boundary after initial
+- **Scope sign-off:** the implementation-ready boundary after initial
   architecture, call-site mapping, cutover/delete decisions, and phase planning
   are complete, but before the first implementation edit or worker dispatch.
 - **Scope cycling:** agent- or reviewer-created work becomes code, then later
@@ -58,7 +58,7 @@ ask only when every condition below is true:
    new product behavior, guarantee, platform, mode, generic extension point,
    or speculative infrastructure.
 5. The chosen boundary is the smallest set that restores one authority.
-6. The plan records the closure and delete/cutover before it freezes.
+6. The plan records the closure and delete/cutover before it is signed off.
 
 If any condition fails, keep the item out of scope or ask a human. Pattern
 parity, general correctness, architectural taste, a real edge case, or a
@@ -69,7 +69,7 @@ The plan's Scope and Simplicity Contract should record:
 - human-authorized outcome and authorization anchors;
 - smallest sufficient solution;
 - initial minimal convergence closure, including explicit `none`;
-- scope-freeze boundary;
+- scope sign-off boundary;
 - enough proof;
 - do-not-build boundary;
 - accepted residual risk.
@@ -77,15 +77,15 @@ The plan's Scope and Simplicity Contract should record:
 The canonical plan owns those facts. Logs and review artifacts point to plan
 anchors; they do not copy or replace the contract.
 
-## After Scope Freeze
+## After Scope Sign-Off
 
 Implementation and review may:
 
-- complete or repair work already named by the human outcome or frozen initial
+- complete or repair work already named by the human outcome or approved initial
   convergence closure;
-- subtract unauthorized machinery or redesign inside the frozen boundary;
+- subtract unauthorized machinery or redesign inside the approved boundary;
 - report a newly discovered adjacent path and ask a human to expand and
-  re-freeze the plan;
+  re-approve the plan;
 - record a real out-of-scope observation when it materially matters.
 
 Implementation and review may not:
@@ -99,17 +99,17 @@ Implementation and review may not:
 
 If a review is the first agent to find a competing same-contract path, the
 review may reject the result but cannot expand the repair scope. The next move
-is either human-approved expansion and re-freeze, or subtraction/redesign
+is either human-approved expansion and re-approval, or subtraction/redesign
 inside the existing boundary.
 
 ## Finding Dispositions
 
 For plan-backed implementation or review, classify each material finding as:
 
-- **authorized:** directly required by frozen human scope;
-- **frozen-convergence-required:** already named in the initial convergence
+- **authorized:** directly required by approved human scope;
+- **approved-convergence-required:** already named in the initial convergence
   closure;
-- **new-scope-needs-human:** absent from the frozen contract, including a newly
+- **new-scope-needs-human:** absent from the approved contract, including a newly
   discovered same-contract path;
 - **out-of-scope:** real but not required for this change;
 - **unauthorized-built-scope:** implemented without authority and requiring
@@ -121,15 +121,15 @@ same disposition; repetition does not create authority.
 ## Scope-Cycling Hard Fail
 
 For plan-backed or history-backed cynical review, reconstruct the initial human
-scope, frozen convergence closure, later human approvals, plan revisions,
-worker/review waves, and final code. Unauthorized post-freeze growth is
+scope, approved convergence closure, later human approvals, plan revisions,
+worker/review waves, and final code. Unauthorized post-approval growth is
 blocking even when it works and tests pass.
 
 The accepted resolutions are:
 
-1. subtract or consolidate the unauthorized work back to the frozen contract;
+1. subtract or consolidate the unauthorized work back to the approved contract;
 2. obtain explicit approval from the human decision owner, update the canonical
-   plan, and re-freeze before implementation resumes.
+   plan, and re-approve before implementation resumes.
 
 Reviewer findings never satisfy option 2. When a plan-backed review should
 have scope provenance but cannot recover it, return the review's non-approving
@@ -139,6 +139,6 @@ completion claim, or human-scope history may mark this lane not applicable.
 ## Legacy Plans
 
 Do not bulk-rewrite historical plans. Before implementing a legacy or
-non-canonical plan, recover and record the equivalent frozen contract at
+non-canonical plan, recover and record the equivalent approved contract at
 intake. If the boundary cannot be established without inventing intent, stop
 for one human scope decision before editing.

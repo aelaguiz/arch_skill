@@ -23,7 +23,7 @@ By the end of the run:
 - the plan says what is actually true
 - unresolved items are visible instead of implied away
 - no newly discovered unresolved decision has been silently guessed or scoped away
-- no post-freeze finding was silently converted into scope, and no unauthorized
+- no post-approval finding was silently converted into scope, and no unauthorized
   built scope remains
 
 ## Shared references to carry in
@@ -34,11 +34,11 @@ By the end of the run:
 - `../../_shared/depth-first-planning.md`
 - `section-quality.md` for Sections 0, 5, 6, 7, 8, `WORKLOG_PATH`, and `implementation_audit`
 
-Before the first edit, recover the human authorization anchors, frozen initial
-convergence closure, freeze boundary, and explicit later human approvals. If a
+Before the first edit, recover the human authorization anchors, approved initial
+convergence closure, sign-off boundary, and explicit later human approvals. If a
 legacy plan cannot support that boundary, stop for one human scope decision.
 During implementation, every new material finding gets a scope disposition.
-Only `authorized` and `frozen-convergence-required` enter the active ledger.
+Only `authorized` and `approved-convergence-required` enter the active ledger.
 Subtract `unauthorized-built-scope`; do not normalize it by editing the plan.
 
 ## Inputs and `DOC_PATH` resolution
@@ -274,8 +274,8 @@ Testing discipline:
 ## Avoid blinders
 
 - when you introduce or upgrade a centralized pattern, contract, or SSOT, check
-  the nearby adopters already named in the frozen initial convergence closure
-- if a newly discovered adopter is absent from the frozen contract, classify it
+  the nearby adopters already named in the approved initial convergence closure
+- if a newly discovered adopter is absent from the approved contract, classify it
   `new-scope-needs-human`; do not implement it merely because convergence would
   be cleaner
 - if the plan or user already makes the work explicitly outside the current code-completion boundary, record it as a follow-up with file or symbol anchors and continue

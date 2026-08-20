@@ -47,7 +47,7 @@ If they are weak, every later stage becomes soft.
 - docs-only; do not modify code
 - capture the human-authorized outcome and its original ask as the first
   authorization anchor; draft `Initial minimal convergence closure: none`
-  until architecture evidence proves otherwise, and leave scope freeze pending
+  until architecture evidence proves otherwise, and leave scope sign-off pending
   until the implementation-ready planning gate
 - create exactly one plan doc; do not create sidecar planning docs
 - name the file `docs/<TITLE_SCREAMING_SNAKE>_<YYYY-MM-DD>.md`

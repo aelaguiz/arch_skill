@@ -70,7 +70,7 @@ Audit pass:
 - each cycle must run implementation first and `audit-implementation` second against the same `DOC_PATH`
 - `implement-loop` must not continue from a plan that is not decision-complete
 - `implement-loop` must not continue when the Scope and Simplicity Contract is
-  missing, vague, unfrozen, contradicted by Section 7, or exceeded by the current
+  missing, vague, unapproved, contradicted by Section 7, or exceeded by the current
   implementation
 - repeated review findings retain their original scope disposition. A newly
   discovered adjacent path stops for human approval; unauthorized built scope
@@ -122,7 +122,7 @@ The auditor is analysis-only even though the parent command ultimately updates
 `DOC_PATH`. Use a read-only capability when the host exposes one and also say:
 do not edit or write files, apply patches, commit, or start external agents;
 its own native sub-agents are fine. Give it
-the exact `DOC_PATH`, current repo state, frozen scope anchors, current
+the exact `DOC_PATH`, current repo state, approved scope anchors, current
 frontier, relevant proof receipts, and the return contract from
 `arch-audit-implementation.md`. The parent records repo status or diff before
 dispatch, verifies it after the return, checks findings against current

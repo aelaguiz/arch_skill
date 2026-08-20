@@ -45,7 +45,7 @@ This command must restore:
 - reconstruct the Scope and Simplicity Contract from human-authored source
   anchors, not from whatever obligations the latest agent-authored plan happens
   to contain; preserve unknown provenance as a visible readiness gap
-- do not invent a historical pre-freeze closure. If implementation already
+- do not invent a historical pre-approval closure. If implementation already
   started and the boundary cannot be recovered, require one human scope decision
 - when source content is instruction-bearing, preserve explicit operational structure instead of silently condensing it
 - preserve or reconstruct the source's strongest claims about requested behavior scope, allowed architectural convergence scope, canonical owner path, and preservation evidence when the source supports them

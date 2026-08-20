@@ -65,7 +65,7 @@ promising it.
   cold read is bulk reading, so it runs on the cheap profile on whichever lane
   carries it — and a one-shot with no resume is the easiest role to pin
   natively, because no eviction can quietly re-price it. Give it the plan path,
-  human baseline anchors, frozen initial closure, freeze anchor, and explicit
+  human baseline anchors, approved initial closure, approval anchor, and explicit
   human approvals; its findings cannot expand scope.
 - **Parallel waves** are parent-owned. Use only the active host slots or
   external sessions that independent, non-overlapping slices justify. Every

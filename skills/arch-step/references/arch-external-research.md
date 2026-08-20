@@ -41,7 +41,7 @@
   new platform, mode, guarantee, caller, dependency, proof system, or adjacent
   cleanup. Keep such recommendations out of required scope unless a human
   approves them or initial architecture independently proves the minimal
-  same-contract closure before freeze
+  same-contract closure before sign-off
 
 ## Relevance filter
 

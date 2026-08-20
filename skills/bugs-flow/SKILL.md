@@ -31,9 +31,9 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 - The human-authorized outcome is the corrected behavior for the documented
   bug. During analyze/initial planning only, include the smallest evidenced
   directly competing same-contract path needed to fix the shared cause; record
-  the closure or `none` and freeze it before fix mode. Apply
+  the closure or `none` and sign it off before fix mode. Apply
   `../_shared/scope-and-convergence.md`.
-- Fix and review cannot widen that frozen closure. A newly discovered adjacent
+- Fix and review cannot widen that approved closure. A newly discovered adjacent
   improvement or owner path needs a human decision; review never reopens generic
   architecture planning.
 - Review side work happens only if the user explicitly asks for review or code
@@ -42,7 +42,7 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
   isolation, automation, receipt, or other benefit is worth the added process
   and integration cost under the shared agent policy.
 - Apply `$prompt-authoring` to every actual populated implementer or critic
-  brief. The human-authorized corrected behavior, frozen closure, safety
+  brief. The human-authorized corrected behavior, approved closure, safety
   constraints, and proof obligations are binding. The bug doc's ranked
   hypotheses, most likely cause, investigation narrative, and candidate fix
   plan remain challengeable evidence unless a human explicitly selected them.
@@ -65,7 +65,7 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 
 ## Parent And Child Roles
 
-- The active parent owns the human-authorized bug scope, frozen convergence
+- The active parent owns the human-authorized bug scope, approved convergence
   closure, bug-doc writes, decomposition, result accounting, synthesis,
   accepted findings, and final review verdict. Capture current git status and
   the relevant diff before a read-only critic runs, then compare current state
@@ -103,7 +103,7 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 ### 2) Fix mode
 
 - Read the bug doc as the canonical evidence and scope record. Treat its
-  human-authorized corrected behavior, frozen closure, constraints, and proof
+  human-authorized corrected behavior, approved closure, constraints, and proof
   obligations as the implementation contract; do not treat its hypotheses,
   likely cause, or candidate fix plan as unquestionable.
 - Write or tighten the candidate fix plan in the doc without making it the

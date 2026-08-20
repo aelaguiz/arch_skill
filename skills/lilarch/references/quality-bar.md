@@ -38,8 +38,8 @@
   - catches prompt-first or capability-first misses before finish mode
   - catches silent compression of instruction-bearing content before finish mode
   - catches scope creep before finish mode
-  - rejects any required item without human or pre-freeze convergence provenance
-  - freezes the closure and cannot add scope itself
+  - rejects any required item without human or pre-approval convergence provenance
+  - signs off the closure and cannot add scope itself
   - rejects repo-policing heuristics when they are not the user-requested feature
   - when independent mapping or review is delegated, uses clean native
     read-only roles with disjoint lenses, parent synthesis, and repo-state proof
@@ -55,7 +55,7 @@
 
 - Strong:
   - checks code reality against the compact doc
-  - checks against the original human anchors and frozen closure, not merely the
+  - checks against the original human anchors and approved closure, not merely the
     latest edited doc
   - treats unjustified scaffolding around agent-backed behavior as a real miss
   - names missing work if any

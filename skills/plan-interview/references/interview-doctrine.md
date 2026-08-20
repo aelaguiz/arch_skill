@@ -21,7 +21,7 @@ control.
    the user into rubber-stamping decisions they never made; the errors
    surface weeks later as "who decided this?"
 3. **The transactional transcriber.** One-shot linear pass: ask, record,
-   freeze. The user might say no more than "build this" — recording it is
+   sign off. The user might say no more than "build this" — recording it is
    not understanding it. Dictation produces packs that are confidently,
    precisely wrong.
 
@@ -65,9 +65,9 @@ control.
   everything before drilling anything. Restate progress each turn.
 - Roughly two follow-ups per topic in the broad pass. When a topic needs
   more, note it and move on; it becomes a checkpoint offer, not a spiral.
-- Checkpoints offer depth instead of imposing it: "I can freeze now; these
-  two areas would each take a few more minutes — want them, or freeze?"
-- "Good enough" is always accepted: freeze with every remaining unknown
+- Checkpoints offer depth instead of imposing it: "I can sign off now; these
+  two areas would each take a few more minutes — want them, or sign off?"
+- "Good enough" is always accepted: sign off with every remaining unknown
   listed as an owned assumption with a recommendation.
 - Batch small related confirms into one round; never drip questions one at
   a time when they aren't sequential. Every batched question carries its
@@ -140,7 +140,7 @@ user has been watching all along — never a reveal.
 - **Gate 1 — the decision table.** One clean table of everything decided
   (area → decision), assumptions marked as the agent's and owned, the
   approved grid and journey maps referenced. Ask: "is this good?" Fold
-  feedback in before freezing. Nothing in the table says "later" except
+  feedback in before sign-off. Nothing in the table says "later" except
   items the user explicitly parked.
 - **Gate 2 — the plan step.** Ask: "ready for me to run the plan step?"
   Default: `$arch-mini-plan` against the pack. A bare yes runs the

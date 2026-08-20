@@ -14,9 +14,9 @@ each sub-plan through arch-step's `new` → `auto-plan` → `implement-loop`
 → `audit-implementation` arc. After each sub-plan completes, a new clean
 critic child inspects the shipped work for scope
 drift against the approved North Star. If the critic finds missing authorized
-work, post-freeze proposed expansion, or unauthorized built scope, the skill
+work, post-approval proposed expansion, or unauthorized built scope, the skill
 halts. It may resume ordinary missing work, but it never enlarges scope from
-the critic. A human decides whether to approve expansion and re-freeze, or keep
+the critic. A human decides whether to approve expansion and re-approve, or keep
 the boundary and require subtraction/redesign.
 Otherwise it advances to the next sub-plan.
 
@@ -135,8 +135,8 @@ Must happen every run:
   Planner, worker, and critic prompts allow each role its own native sub-agents
   on its own host and forbid starting external agents.
 - Each sub-plan inherits its approved epic boundary, records its own initial
-  minimal convergence closure during initial architecture, and freezes that
-  closure before implementation. After freeze, only explicit human approval
+  minimal convergence closure during initial architecture, and signs off that
+  closure before implementation. After sign-off, only explicit human approval
   may add a path, obligation, sub-plan, mechanism, or proof category.
 - Each sub-plan is its own full `$arch-step` canonical DOC_PATH.
   The epic doc does NOT contain plan internals (no Sections 0–10,
@@ -213,12 +213,12 @@ Must never happen:
   Decision Log entries are evidence, not approval to reduce scope.
 - Scope expansion by an agent, critic, review, or Decision Log. The same
   symmetry applies to additions: initial sub-plan architecture may record the
-  smallest evidenced same-contract closure before freeze; any later addition
+  smallest evidenced same-contract closure before sign-off; any later addition
   or new sub-plan needs explicit human approval. A Decision Log entry proves a
   change was recorded, not that it was authorized.
 - Auto-acting on materially-different-path detections without user approval.
   Material scope discoveries always halt. The human may approve expansion via
-  `extend_current` or `new_sub_plan`, or keep the frozen boundary and require
+  `extend_current` or `new_sub_plan`, or keep the approved boundary and require
   subtraction/redesign. No critic recommendation is self-authorizing.
 - Letting critics author repair steps. Critics report verdict,
   failed checks, evidence, and scope discoveries only. The parent
@@ -300,7 +300,7 @@ Detail per mode lives in `references/workflow-contract.md`.
    command for the first non-complete sub-plan or runs the critic.
 4. **`resume-scope-change`** — epic is `halted` after a critic flagged a
    scope issue; a human has replied. Apply the explicit choice: approve and
-   re-freeze an `extend_current`/`new_sub_plan` expansion, or keep scope and
+   re-approve an `extend_current`/`new_sub_plan` expansion, or keep scope and
    route subtraction/redesign. Log the human decision and resume.
 5. **`summary`** — user asked a status question. Render a table of
    sub-plan statuses and the most recent log entries. No state

@@ -74,7 +74,7 @@ Scope: <whole plan | section | pasted plan | issue body>
 
 - Human-authorized outcome: <plan/user anchor>
 - Initial convergence closure: <plan anchor or none>
-- Scope freeze: <anchor>
+- Scope sign-off: <anchor>
 - Later human approvals: <anchors or none>
 
 This section stores anchors, not a second copy of the scope contract.
@@ -137,7 +137,7 @@ This section stores anchors, not a second copy of the scope contract.
 - If the plan changes scope, add a pass entry explaining whether old findings
   still apply.
 - Do not treat that pass entry, an audit finding, or an agent-authored plan edit
-  as approval. Record the human decision anchor for post-freeze expansion.
+  as approval. Record the human decision anchor for post-approval expansion.
 - In `implementation-audit` mode, use `IMP-*` IDs for code review findings.
   Accept supplied test-pass status as context; do not record test execution as
   proof, ask for logs, or make the log a verification ledger.

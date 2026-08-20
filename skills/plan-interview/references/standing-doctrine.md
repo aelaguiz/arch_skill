@@ -22,7 +22,7 @@ are never re-interviewed.
    sandbox modes, approval workflows, receipt systems) needs a named,
    current, real failure to justify it.
 6. **Reviewer findings are input, never scope.** Review waves will propose
-   more than the outcome needs; each finding is triaged against the frozen
+   more than the outcome needs; each finding is triaged against the approved
    boundary, feature-shaped findings are rejected by default, and review
    loops are capped — reviewers never terminate on their own.
 7. **Proof at the right altitude, wall-clock efficient.** Journey-level

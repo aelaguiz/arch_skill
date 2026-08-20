@@ -163,7 +163,7 @@ Example:
 > safe once the dashboard works. If implementation reveals a new
 > system we did not anticipate (e.g., audit logging), the skill will
 > halt and ask whether to extend the current sub-plan or insert a new
-> one, or keep the frozen scope and subtract/redesign the surprise.
+> one, or keep the approved scope and subtract/redesign the surprise.
 
 ### Decomposition
 
@@ -197,7 +197,7 @@ A numbered list of sub-plans. Each entry has:
   completion; then the verdict path (relative or absolute) for
   audit.
 - `Scope contract:` the Section 0 anchor in the sub-plan DOC_PATH and its
-  freeze state (`pending | frozen | human-decision-needed`). This is a pointer,
+  sign-off state (`pending | approved | human-decision-needed`). This is a pointer,
   not a copy of the sub-plan contract.
 - In role-based automatic mode, add `Auto-run status:` when useful. Keep it
   compact: transport, exact role handle or latest worker artifact, latest
@@ -318,9 +318,9 @@ ready.
 
 Coverage is also not expansion authority. Each sub-plan's Section 0 Scope and
 Simplicity Contract must identify the inherited raw-goal/decomposition anchors,
-its own initial minimal convergence closure or `none`, and its scope freeze.
+its own initial minimal convergence closure or `none`, and its scope sign-off.
 Initial sub-plan architecture may add the smallest evidenced same-contract
-closure before freeze. After freeze, a critic, worklog, Decision Log, or later
+closure before sign-off. After sign-off, a critic, worklog, Decision Log, or later
 plan edit cannot add another path or sub-plan without human approval.
 
 ## Mutation rules

@@ -30,7 +30,7 @@ quality bar to finish faster.
 2. Plan read and extraction in context; capture the start commit and inherited
    worktree state before writing the conductor log.
 3. Write the log, recording the start commit, then apply and record the
-   proportionality, provenance, and scope-freeze readiness gate. On a passing
+   proportionality, provenance, and scope sign-off readiness gate. On a passing
    gate, take an initial or resume checkpoint only when the inherited worktree
    held plan work to preserve (see Git Posture).
 4. Wave loop:
@@ -48,7 +48,7 @@ design wave (chunking doctrine)
 ```
 
 Finding triage always separates factual validity from scope authority. Only
-work already authorized by the human outcome or frozen initial convergence
+work already authorized by the human outcome or approved initial convergence
 closure enters a send-back. Review-created expansion never creates another
 wave or plan obligation.
 
@@ -70,7 +70,7 @@ delegate. The line is hard:
   commands (`git status`, `git diff`, searches) as audit work.
 - A materially useful parent diagnosis may travel only as a challengeable lead
   with its evidence or provenance, not as task truth. Let workers reject it,
-  choose the evidence path, and own implementation judgment inside the frozen
+  choose the evidence path, and own implementation judgment inside the approved
   contract.
 
 ## Git Posture

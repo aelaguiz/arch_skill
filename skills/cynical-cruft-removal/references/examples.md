@@ -10,9 +10,9 @@ finite checklist. The current repo evidence decides each review.
 
 - Item: database owner, retry identifiers, sync config, tests, docs, and dependency added across review waves
 - Live purpose test: passed; current code reaches the cluster
-- Scope provenance: failed; the human asked for a local reminder, the frozen closure was `none`, and no later human approval exists
+- Scope provenance: failed; the human asked for a local reminder, the approved closure was `none`, and no later human approval exists
 - Scope-cycle evidence: wave 3 added cross-device monotonicity, wave 5 used it to justify a database, and wave 8 used the database to justify retries
-- Recommended action: delete the cluster and return to the smallest local reminder, or obtain an explicit human approval and re-freeze outside this review
+- Recommended action: delete the cluster and return to the smallest local reminder, or obtain an explicit human approval and re-approval outside this review
 ```
 
 Why it is strong: it separates liveness from authorization, groups the whole

@@ -44,7 +44,7 @@ The parent agent must:
 - state whether the subagent may edit or must stay read-only
 - include plan path, active scope, implementation log path, and relevant code
   anchors
-- include the frozen scope-contract anchor and state that the child cannot add
+- include the approved scope-contract anchor and state that the child cannot add
   adjacent scope
 - require file and symbol anchors
 - choose starting context explicitly; each new independent child starts clean,
@@ -126,7 +126,7 @@ not start external agents. Return only findings for this lens:
 - plan anchor
 - code anchor
 - required repair
-- scope disposition: authorized | frozen-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
+- scope disposition: authorized | approved-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
 - coverage limits
 
 If clean for this lens, say so plainly.

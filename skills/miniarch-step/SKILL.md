@@ -38,15 +38,15 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - A plan is not ready, complete, or implementation-ready while any unresolved decision remains about requested behavior, adjacent surfaces that must stay in sync, compatibility posture, architecture, canonical owner path, required deletes, fallback policy, acceptance evidence, or implementation scope.
 - Section 0 must contain the binding Scope and Simplicity Contract from
   `references/artifact-contract.md`: human authorization, smallest sufficient
-  solution, initial convergence closure or `none`, scope freeze, enough proof,
+  solution, initial convergence closure or `none`, scope sign-off, enough proof,
   do-not-build boundary, and accepted residual risk.
 - Treat overbuilding as a known default failure mode. Agents often confuse thoroughness with quality and keep adding abstractions, harnesses, edge cases, and proof after the real fix is already sufficient. Assume that bias is active; before adding machinery, try to reuse, delete, or simplify.
 - Match the size of the solution and its proof to the demonstrated failure and blast radius. A systemic fix belongs at the narrowest shared boundary that eliminates the failure class; "systemic" does not mean "build a framework around the incident."
-- Every Section 7 item must directly serve the human outcome, the pre-freeze
+- Every Section 7 item must directly serve the human outcome, the pre-approval
   minimal convergence closure, or enough proof. Remove items that serve none
   before calling the plan implementation-ready.
 - Initial architecture may add only the smallest evidenced same-contract
-  convergence closure before implementation readiness. The frozen contract
+  convergence closure before implementation readiness. The approved contract
   outranks later plan expansion. A later planner, worker, review, audit, or
   Decision Log entry cannot authorize new work; only explicit human approval
   recorded as `Scope expansion (human-approved)` can widen it.
@@ -89,19 +89,19 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
   automation, or receipt benefit that makes its added process and integration
   cost worthwhile.
 - Distinguish the human-authorized outcome from the initial minimal convergence
-  closure, and freeze both before implementation.
+  closure, and sign off both before implementation.
 - Search for the canonical existing path before designing a new one. Reuse it, refactor it as much as required to fully own the change, or justify why it cannot own the change.
 - During initial planning, convergence may include the smallest evidenced
   touched-file or adopter set needed to eliminate a directly competing owner.
-  After freeze, a newly found path requires a human decision.
+  After sign-off, a newly found path requires a human decision.
 - Any refactor, shared-path extraction, or consolidation must preserve existing behavior and name a credible verification signal before it is considered done.
 - Use repo evidence first. Ask only for true product, UX, external-constraint, access, or doc-path gaps.
 - Before asking the user any plan-shaping question, consult approved intent on the plan doc: Section 0 (North Star), TL;DR, and the Section 7 phase frontier. Only ask when intent plus repo evidence genuinely leave two credible branches. Record intent-derived resolutions in the Decision Log using the `Intent-derived` shape.
 - If repo evidence cannot settle a plan-shaping decision, ask the user instead of guessing, defaulting, or parking the choice as a pseudo-complete plan.
 - Before hardening target architecture or Section 7, inspect adjacent surfaces
   tied to the exact changed contract, source of truth, or migration boundary.
-  Put directly competing paths in the pre-freeze closure, sequence them inside
-  the frozen destination map, exclude merely similar neighbors, or ask the exact
+  Put directly competing paths in the pre-approval closure, sequence them inside
+  the approved destination map, exclude merely similar neighbors, or ask the exact
   blocker question. Pattern parity alone is not scope authority.
 - Compatibility posture is a first-class plan decision separate from `fallback_policy`.
 - When the changed behavior is agent- or LLM-driven, inspect current prompt surfaces, runtime or agent configuration, native model capabilities, and existing tool/file/context exposure before designing.
@@ -116,8 +116,8 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - `status` is compact, read-only, and grounded in the actual artifact.
 - `advance` owns the longer checklist surface and optional one-step execution.
 - **No-progress rule.** After two consecutive passes with no real change (no repo file edit, no plan/doc edit, no new evidence a fresh audit has not seen), stop with the exact blocker instead of firing another identical pass.
-- **No invented budgets.** Do not call authorized work blocked because it feels expensive. This does not authorize violating the frozen Scope and Simplicity Contract or adding unapproved machinery. In goal mode, keep moving until the objective is complete or a real blocker meets the native goal-mode stop rule.
-- **Exhaust the frontier before auditing.** Do not hand to audit after one local fix when later frozen-contract-compliant phases are reachable. Finish that frontier or record the real blocker plainly.
+- **No invented budgets.** Do not call authorized work blocked because it feels expensive. This does not authorize violating the approved Scope and Simplicity Contract or adding unapproved machinery. In goal mode, keep moving until the objective is complete or a real blocker meets the native goal-mode stop rule.
+- **Exhaust the frontier before auditing.** Do not hand to audit after one local fix when later approved-contract-compliant phases are reachable. Finish that frontier or record the real blocker plainly.
 - **Respect the tree state the user gave you.** Do not stash changes, create new branches, split the work across multiple PRs, or rewrite history. Commit hygiene, branch strategy, and PR shape are the user's decisions.
 - **Parallel-agent edits are a pause signal, not a revert signal.** If the working tree contains edits this pass did not make (foreign file, unexpected compiler error, unfamiliar commit), pause briefly to let the other agent land its fix. Do not revert. Escalate to the user only after two pause-retry cycles fail.
 
@@ -280,7 +280,7 @@ Workflow:
 - `../_shared/agent-orchestration-policy.md` - transport, clean context,
   continuation, isolation, topology, and return evidence for optional planners
   and independent auditors
-- `../_shared/scope-and-convergence.md` - human scope authority, initial planning convergence, scope freeze, finding dispositions, and scope-cycling prohibition
+- `../_shared/scope-and-convergence.md` - human scope authority, initial planning convergence, scope sign-off, finding dispositions, and scope-cycling prohibition
 - `../_shared/depth-first-planning.md` - destination map, first working slice, expansion map, proof gates, scope-cut distinction, and failure-mode recognition tests
 - `references/section-quality.md` - purpose, strong/weak bar, trust rules, and failure modes for each section and supporting block
 - `references/arch-new.md` - bootstrap the canonical artifact and stop for North Star confirmation

@@ -110,7 +110,7 @@ Why it fails:
 
 Good use case:
 
-- a release-freeze or incident-response directory where normal commands and autonomy rules would be actively wrong
+- a release-hold or incident-response directory where normal commands and autonomy rules would be actively wrong
 
 Good file shape:
 
@@ -118,10 +118,10 @@ Good file shape:
 # AGENTS.override.md
 
 ## Mode
-- Freeze mode. Do not ship normal feature work from this directory.
+- Release-hold mode. Do not ship normal feature work from this directory.
 
 ## Local verify
-- `make freeze-check`
+- `make hold-check`
 - `make incident-smoke`
 
 ## Red lines

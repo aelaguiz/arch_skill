@@ -25,7 +25,7 @@ Adjust in exactly two directions:
   intent (a small implementation phase plus its doc-propagation phase), so
   the worker gets a whole thought.
 
-All splits and merges must stay inside the frozen plan contract. Chunk size is
+All splits and merges must stay inside the approved plan contract. Chunk size is
 an execution decision, never authority to pull in another caller family,
 cleanup area, proof category, or reviewer suggestion.
 
@@ -49,7 +49,7 @@ Judgment aids, not a rule engine:
    work? If describing the failure requires writing the code, the slice
    contract was too vague — tighten the contract, not the leash.
 
-**Tie-break: when unsure, chunk bigger inside the same frozen scope.** The send-back loop is the safety
+**Tie-break: when unsure, chunk bigger inside the same approved scope.** The send-back loop is the safety
 net and worker attempts are cheap; parent round-trips are the scarce
 resource. The review-tractability test is the ceiling that keeps "bigger"
 from becoming "unreviewable."
@@ -62,7 +62,7 @@ Parallelism is a bonus the plan either offers or does not:
   ordering, touch disjoint owner surfaces, and share no unsettled decision.
 - The conductor owns the external fanout budget and integration. Workers may
   use their own native sub-agents freely; they never start external agents.
-- Do not create a new slice from a post-freeze audit finding. Route it by scope
+- Do not create a new slice from a post-approval audit finding. Route it by scope
   disposition: repair authorized work, subtract unauthorized work, or ask the
   human decision owner.
 - Run replacement paths before deletion paths; never parallel-delete what a

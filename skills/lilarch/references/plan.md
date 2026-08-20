@@ -50,7 +50,7 @@ new clean role rather than a resume of the first reviewer.
 The plan audit is not scope authority. It may reject a missing or overbroad
 contract, but it cannot add an adjacent surface. Before finish mode, record an
 explicit closure or `none`, verify every phase item maps to human scope or that
-closure, and freeze the contract.
+closure, and sign off the contract.
 
 If preserving instruction-bearing source fidelity cleanly would no longer fit the compact doc, escalate to `miniarch-step reformat` or `arch-step reformat` instead of silently compressing it.
 
@@ -65,7 +65,7 @@ If preserving instruction-bearing source fidelity cleanly would no longer fit th
 
 ## Escalation rule
 
-- If the authorized outcome plus minimal pre-freeze closure needs a fourth
+- If the authorized outcome plus minimal pre-approval closure needs a fourth
   phase, stop and escalate to `miniarch-step reformat`. Do not escalate because
   the audit imagined more work.
 - If the work also brings broad rollout logic or heavy plan shaping, stop and escalate to `arch-step reformat`.

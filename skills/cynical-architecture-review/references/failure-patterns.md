@@ -38,18 +38,18 @@ now has a clear owner, narrow interface, and real requirement.
 ## Scope-Cycled Architecture Presented As Required
 
 Flag when a worker or reviewer introduced durable architecture after scope
-freeze, later plan/docs/tests encoded it as current truth, and subsequent
+sign-off, later plan/docs/tests encoded it as current truth, and subsequent
 reviews used that truth to demand more services, state, retries, schemas, or
 operational machinery.
 
-Read the initial human ask, frozen convergence closure, explicit human
+Read the initial human ask, approved convergence closure, explicit human
 approvals, plan revisions, Decision Log, review waves, and final complexity
 ledger. Current reachability proves the architecture exists, not that it was
 authorized.
 
 This is a `REQUIRED REPAIR` and forces `not-approved`. Group the unauthorized
 concepts as one subtraction target. Do not recommend a new generalized system
-as the repair. A newly found relationship absent from the frozen contract needs
+as the repair. A newly found relationship absent from the approved contract needs
 a human decision rather than automatic expansion.
 
 ## Invalid Split Ownership

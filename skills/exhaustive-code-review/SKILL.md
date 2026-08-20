@@ -72,7 +72,7 @@ or decide what workflow the user should use next.
   the genuinely different contract or controlling out-of-scope anchor. For a
   fixed-scope plan or history-backed change, apply
   `../_shared/scope-and-convergence.md`: a reviewer-discovered adjacent path
-  cannot enter repair scope. Require subtraction or redesign inside the frozen
+  cannot enter repair scope. Require subtraction or redesign inside the approved
   boundary, or stop for an explicit human scope decision.
 - A clean review is allowed. Do not invent findings to justify the run.
 
@@ -109,8 +109,8 @@ or decide what workflow the user should use next.
    direct writers, alternate readers, duplicate helpers, command aliases,
    generated artifacts, docs, prompts, examples, tests, and side doors. Classify
    each in-scope competing path as a required repair, observation, genuinely
-   different contract, or named out-of-scope follow-up. When scope is frozen,
-   classify every material finding against its human-scope or pre-freeze
+   different contract, or named out-of-scope follow-up. When scope is signed off,
+   classify every material finding against its human-scope or pre-approval
    convergence anchor before naming a repair; review discovery is not scope
    authority.
 7. Review touched behavior: entrypoints, success paths, failure paths, state,

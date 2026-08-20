@@ -34,14 +34,14 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
 - Scope and Simplicity Contract:
   - human authorization anchors are present
   - initial minimal convergence closure is present or explicit `none`
-  - scope freeze is present before implementation
-  - required phase work does not exceed the frozen contract
+  - scope sign-off is present before implementation
+  - required phase work does not exceed the approved contract
 
 ## Full arch checklist
 
 1. plan doc exists
 2. North Star confirmed
-3. Scope and Simplicity Contract complete and frozen
+3. Scope and Simplicity Contract complete and signed off
 4. research grounding
 5. deep dive pass 1
 6. external research when needed
@@ -64,7 +64,7 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
 
 1. plan doc exists
 2. North Star confirmed
-3. Scope and Simplicity Contract complete and frozen
+3. Scope and Simplicity Contract complete and signed off
 4. research grounding
 5. deep dive
 6. phase plan
@@ -77,7 +77,7 @@ Use this file when `arch-flow` needs to decide what is done vs pending from `DOC
 
 1. plan doc exists
 2. North Star confirmed
-3. Compact Scope and Simplicity Contract complete and frozen
+3. Compact Scope and Simplicity Contract complete and signed off
 4. one-pass canonical blocks written:
    - research grounding
    - current architecture
@@ -96,7 +96,7 @@ Recommend `miniarch-step` as the governing skill once mini-plan is complete and 
 
 1. plan doc exists
 2. North Star confirmed
-3. Compact Scope and Simplicity Contract complete and frozen
+3. Compact Scope and Simplicity Contract complete and signed off
 4. requirements block exists
 5. plan audit exists
 6. compatible arch blocks exist as needed:

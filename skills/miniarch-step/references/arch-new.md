@@ -46,7 +46,7 @@ If they are weak, every later stage becomes soft.
 - docs-only; do not modify code
 - capture the human-authorized outcome and original ask as the first
   authorization anchor; start with `Initial minimal convergence closure: none`
-  until initial architecture proves otherwise, and leave freeze pending
+  until initial architecture proves otherwise, and leave sign-off pending
 - create exactly one plan doc; do not create sidecar planning docs
 - name the file `docs/<TITLE_SCREAMING_SNAKE>_<YYYY-MM-DD>.md`
 - derive a short 5-9 word screaming-snake title from the ask

@@ -60,7 +60,7 @@ You may use your own native sub-agents on this host; do not start external
 agents.
 
 Treat the initial human ask and explicit human approvals as scope authority.
-The initial architecture may have a pre-freeze minimal convergence closure;
+The initial architecture may have a pre-approval minimal convergence closure;
 later plan edits and reviewer findings cannot enlarge it. Give each finding a
 scope disposition and never propose an adjacent path as automatic required work.
 
@@ -123,7 +123,7 @@ implementation is clean for your lens, say that plainly.
 You may use your own native sub-agents on this host; do not start external
 agents.
 
-Compare code to the human-authorized outcome, frozen initial convergence
+Compare code to the human-authorized outcome, approved initial convergence
 closure, and explicit later human approvals. Unauthorized built scope is a
 subtraction finding; do not bless it because the latest plan includes it.
 

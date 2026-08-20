@@ -31,7 +31,7 @@ User-facing invocation is `implement-loop` or `auto-implement`.
 `auto-implement` is an exact alias of `implement-loop`; do not create a second
 mode or control surface.
 
-The loop advances only through the frozen authorized frontier. Repeated review
+The loop advances only through the approved frontier. Repeated review
 findings retain their original scope disposition and never become authority by
 repetition. A newly discovered adjacent path stops for human approval; already
 built unauthorized work is subtracted before the loop advances.

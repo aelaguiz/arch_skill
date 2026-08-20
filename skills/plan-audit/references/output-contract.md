@@ -44,7 +44,7 @@ Audit log: <path or not applicable>
      - <code path:line or symbol when repo-backed>
    - Required plan repair:
    - Review lens:
-   - Scope disposition: authorized | frozen-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
+   - Scope disposition: authorized | approved-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
 
 ## Observations / Out-Of-Scope Follow-Ups
 
@@ -66,7 +66,7 @@ Audit log: <path or not applicable>
 ## Scope Provenance
 
 - Human-authorized outcome and anchors:
-- Initial minimal convergence closure and freeze anchor:
+- Initial minimal convergence closure and approval anchor:
 - Later human-approved expansions:
 - Obligations without authority:
 - Scope-cycle evidence:
@@ -142,8 +142,8 @@ Audit log: <path or not applicable>
   is not approved.
 - Do not turn the answer into workflow routing advice. The job is to improve
   the plan.
-- Do not repair scope by writing a new adjacent obligation. Before freeze,
-  return the gap to the planning owner; after freeze, require a human decision.
+- Do not repair scope by writing a new adjacent obligation. Before sign-off,
+  return the gap to the planning owner; after sign-off, require a human decision.
 
 ## Implementation-Audit Shape
 
@@ -173,7 +173,7 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
      - <code path:line or symbol>
    - Required implementation repair:
    - Review lens:
-   - Scope disposition: authorized | frozen-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
+   - Scope disposition: authorized | approved-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
 
 ## Observations / Out-Of-Scope Follow-Ups
 
@@ -187,7 +187,7 @@ Test/CI context: <accepted if supplied | not supplied | not reviewed by this mod
 - Test/CI assumptions accepted:
 - Phase status recommendations:
 - Initial human scope and approval anchors:
-- Frozen initial convergence closure:
+- Approved initial convergence closure:
 - Scope-cycle or unauthorized-built-scope findings:
 
 ## Architecture And Elegance

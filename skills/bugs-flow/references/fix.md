@@ -7,7 +7,7 @@ Implement the smallest credible fix that resolves the bug described by the doc a
 ## Required work
 
 1. Re-read the bug doc and confirm it is fix-ready.
-2. Confirm the scope closure is frozen. Implement only the corrected behavior
+2. Confirm the scope closure is signed off. Implement only the corrected behavior
    and directly competing paths already in that closure.
 3. Tighten the candidate fix plan in the doc without expanding scope or
    presenting one diagnosis or method as unquestionable.
@@ -18,15 +18,15 @@ Implement the smallest credible fix that resolves the bug described by the doc a
 If fix mode discovers another same-contract path or broader improvement, stop
 with `new-scope-needs-human`; do not relabel it a systemic fix. If unauthorized
 work was already built, subtract it before completion unless a human approves
-and re-freezes the bug contract.
+and re-approves the bug contract.
 
 ## Delegated implementer contract
 
 The parent may keep a small fix local. When delegation saves real work, start
-one new clean same-host native implementer and give it the bug doc, frozen
+one new clean same-host native implementer and give it the bug doc, approved
 closure, exact owned paths, verification obligation, and explicit edit scope.
 Apply `$prompt-authoring` to the populated brief. Bind the implementer to the
-human-authorized corrected behavior, frozen closure, safety constraints, and
+human-authorized corrected behavior, approved closure, safety constraints, and
 proof obligations. Present the bug doc's likely cause and candidate fix plan
 as evidence-backed but challengeable leads unless the human explicitly chose
 them, and let the implementer choose a better in-scope path from code evidence.

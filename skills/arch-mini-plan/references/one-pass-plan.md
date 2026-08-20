@@ -43,7 +43,7 @@ Write the canonical planning blocks in one pass without pretending the work was 
    - ready for `miniarch-step implement`
    - or outgrew the faster full-arch tier / is too weak, use `arch-step reformat`
    - if preserving instruction-bearing source fidelity cleanly would need appendices or a fuller import surface, use `arch-step reformat`
-   - freeze the Scope and Simplicity Contract before returning a ready verdict;
+   - sign off the Scope and Simplicity Contract before returning a ready verdict;
      use explicit `none` when no adjacent convergence is required
 
 ## External guidance rule

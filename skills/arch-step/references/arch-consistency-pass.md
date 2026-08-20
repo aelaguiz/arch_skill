@@ -42,7 +42,7 @@
   start external agents
 - if the North Star, deep-dive, or phase plan is too weak to audit honestly, stop and point to the earlier command that must repair it
 - `Decision: proceed to implement? yes` is forbidden while unresolved decisions,
-  unauthorized scope cuts or additions, scope provenance gaps, an unfrozen or
+  unauthorized scope cuts or additions, scope provenance gaps, an unapproved or
   unbounded convergence closure, scope laundering/cycling, orphan phase
   obligations, or non-auditable exit criteria remain
 - compare TL;DR, Section 0, target architecture, Section 7, proof, and Section
@@ -81,7 +81,7 @@ by its lens:
 
 - Scope and execution-authority explorer:
   - owns human authorization, North Star, scope provenance, convergence
-    closure, scope freeze, compatibility decisions, phase-frontier
+    closure, scope sign-off, compatibility decisions, phase-frontier
     completeness, exhaustive checklist/exit obligations, Decision Log
     authority, helper-block drift, unresolved decisions, and unauthorized
     cuts or additions

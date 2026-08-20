@@ -1,8 +1,8 @@
 ---
 name: plan-interview
-description: "Conduct an evidence-grounded intent interview that turns a described outcome — even three words like 'build this' — into a frozen Intent Pack: north star, user journey maps, UX delta with visual references, plain-language numbered requirements, non-goals, architecture constraints, an in-interview-approved test grid, definition of done, execution policy, and autonomy contract, closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`. Educates itself on code, docs, git history, and the user's past asks first — facts and a blank template, never a pre-drafted plan — then interviews breadth-first in plain non-jargon English with investigate-and-return cycles, with a proxy model able to answer as the user. Use when the user wants a planning interview, an intent pack, or intent captured before planning. Not for writing the implementation plan (arch-mini-plan/arch-step), auditing a plan (plan-audit), executing one (conductor), or read-only opinions (fresh-consult)."
+description: "Conduct an evidence-grounded intent interview that turns a described outcome — even three words like 'build this' — into an approved Intent Pack: north star, user journey maps, UX delta with visual references, plain-language numbered requirements, non-goals, architecture constraints, an in-interview-approved test grid, definition of done, execution policy, and autonomy contract, closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`. Educates itself on code, docs, git history, and the user's past asks first — facts and a blank template, never a pre-drafted plan — then interviews breadth-first in plain non-jargon English with investigate-and-return cycles, with a proxy model able to answer as the user. Use when the user wants a planning interview, an intent pack, or intent captured before planning. Not for writing the implementation plan (arch-mini-plan/arch-step), auditing a plan (plan-audit), executing one (conductor), or read-only opinions (fresh-consult)."
 metadata:
-  short-description: "Interview-driven intent capture producing a frozen Intent Pack"
+  short-description: "Interview-driven intent capture producing an approved Intent Pack"
 ---
 
 # Plan Interview
@@ -24,7 +24,7 @@ back with questions it could not have known to ask before looking.
   this out", or just "build this" plus a pointer.
 - Plan quality has been spotty and the user wants intent, requirements,
   user experience, testing, and execution logistics extracted up front.
-- A conductor-sized effort needs a frozen scope boundary, journey maps, an
+- A conductor-sized effort needs an approved scope boundary, journey maps, an
   approved test grid, and a definition of done before any plan is written.
 
 ## When not to use
@@ -72,7 +72,7 @@ back with questions it could not have known to ask before looking.
   advances.
 - **Breadth before depth, always advancing.** Walk the must-always-know
   list breadth-first; roughly two follow-ups per topic in the broad pass;
-  checkpoints offer depth ("freeze now, or take a few more minutes on
+  checkpoints offer depth ("sign off now, or take a few more minutes on
   these areas?") instead of imposing it. "Good enough" is always accepted
   and produces the pack with assumptions listed and owned. Restate
   progress each turn.
@@ -139,7 +139,7 @@ back with questions it could not have known to ask before looking.
 
 ## Output expectations
 
-- The Intent Pack per `references/intent-pack-contract.md`, frozen after
+- The Intent Pack per `references/intent-pack-contract.md`, signed off after
   gate 1 feedback is folded in.
 - A decision log in the pack: every question and answer, proxy answers
   marked, rejected alternatives, flagged derivations.
@@ -153,7 +153,7 @@ back with questions it could not have known to ask before looking.
 - `references/must-know-list.md` — the 13 items every pack must have a
   line for, with tags and strong/weak bars
 - `references/intent-pack-contract.md` — artifact layout, blank template,
-  decision log, freeze rules, acceptance bar
+  decision log, sign-off rules, acceptance bar
 - `references/interview-doctrine.md` — elicitation, framing, the
   investigate-and-return loop, budgets, jargon ban, grid-up-front, journey
   maps, visuals, two-gate close, proxy mode
