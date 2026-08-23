@@ -260,6 +260,14 @@ Claude Code, and Gemini.
   adversarial simplification. Resolve transport separately for each participant,
   keep each participant's exact continuation, and let the parent relay; do not
   introduce a deterministic runner, script, controller, or harness layer.
+- Use `$startup-pragmatism` when the user invokes a startup reality check or
+  says the agent is overbuilding, over-proving, being pedantic, or
+  perfection-maximizing. It re-frames the current plan, answer, or in-flight
+  work through the early-stage startup lens: cut list, forced decision at
+  current information, and an explicit note of where rigor is still owed. It
+  is not code-defect review, plan-readiness audit, or intent-drift policing,
+  and it never waives rigor on genuinely irreversible high-blast-radius
+  moves.
 - Use `$thermo-nuclear-code-quality-review` only when the user explicitly wants
   a thermonuclear, code-judo, or especially harsh maintainability review.
   Handle ordinary code review requests with the normal review response unless

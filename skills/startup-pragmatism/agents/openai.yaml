@@ -1,0 +1,7 @@
+interface:
+  display_name: "Startup Pragmatism"
+  short_description: "Early-stage startup reality check"
+  default_prompt: "Use $startup-pragmatism to reality-check the current plan, answer, or in-flight work through the early-stage startup operating frame. Restate what was actually asked versus what is being built. Self-check against the eight anti-patterns (overbuild by default, proof/receipt machinery, scope contagion, pedantic precision, refusing partial-information decisions, hypothetical-hazard armor, wall-clock overruns, experimental scaffolding) and run the four rigor questions (reversibility, cost of wrong vs slow, information available, learning per unit time). Reply with: what I was doing, anti-patterns present, cut list, decide now (estimate + one-line caveat + recommendation), rigor still owed, proceeding with. Subtraction and a forced decision only - no new gates, processes, or verification lanes. Genuinely irreversible or high-blast-radius moves keep full rigor."
+
+policy:
+  allow_implicit_invocation: true

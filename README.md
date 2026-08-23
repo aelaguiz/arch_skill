@@ -74,6 +74,7 @@ Other shipped skills are:
 - `cynical-cruft-removal` — prompt-only skeptical cleanup review that treats current reachability as separate from authorization and reports scope-laundered live code/tests/config/docs/dependencies as a `cruft-found` deletion cluster
 - `exhaustive-code-review` — prompt-only exhaustive review with coverage-led clean native slices, proportional host-aware fanout, parent accounting, approved-scope discipline, and a saved artifact under `/tmp/exhaustive-code-review/`
 - `thermo-nuclear-code-quality-review` — vendored Cursor Team Kit rubric for unusually strict maintainability reviews focused on code-judo simplification, 1k-line file growth, spaghetti branching, abstraction boundaries, and structural quality
+- `startup-pragmatism` — invokable early-stage startup reality check that snaps an agent out of proof/receipt/perfection-maximizing behavior and into 3-person seed-stage operating mode: self-check against eight trace-mined anti-patterns, run the four-question rigor budget (reversibility, cost of wrong vs slow, information available, learning per unit time), and reply with a cut list, a forced decision at current information, and where rigor is still owed
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; uses a new clean same-host native worker and critic when capable, resumes the exact worker for repair, and retains its subprocess machinery as the deliberate external lane
 
 Examples in this repo use Codex `$skill` notation. In Claude Code, invoke the same skill as `/skill`.
@@ -179,6 +180,7 @@ Installed skills:
   - `~/.agents/skills/cynical-cruft-removal/`
   - `~/.agents/skills/exhaustive-code-review/`
   - `~/.agents/skills/thermo-nuclear-code-quality-review/`
+  - `~/.agents/skills/startup-pragmatism/`
   - `~/.agents/skills/stepwise/`
   - `~/.agents/skills/arch-epic/`
 - Claude Code:
@@ -231,6 +233,7 @@ Installed skills:
   - `~/.claude/skills/cynical-cruft-removal/`
   - `~/.claude/skills/exhaustive-code-review/`
   - `~/.claude/skills/thermo-nuclear-code-quality-review/`
+  - `~/.claude/skills/startup-pragmatism/`
   - `~/.claude/skills/stepwise/`
   - `~/.claude/skills/arch-epic/`
 - Gemini CLI:
@@ -281,6 +284,7 @@ Installed skills:
   - `~/.gemini/skills/cynical-cruft-removal/`
   - `~/.gemini/skills/exhaustive-code-review/`
   - `~/.gemini/skills/thermo-nuclear-code-quality-review/`
+  - `~/.gemini/skills/startup-pragmatism/`
   - `~/.gemini/skills/stepwise/`
   - `~/.gemini/skills/arch-epic/`
 
