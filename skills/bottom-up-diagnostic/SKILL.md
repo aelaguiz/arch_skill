@@ -1,55 +1,63 @@
 ---
 name: bottom-up-diagnostic
-description: "Run an evidence-first bottom-up diagnostic that materializes and inspects constituent cases before trusting an aggregate explanation. Use when the user wants raw events, users, transactions, requests, logs, journeys, screenshots, recordings, frames, or test attempts examined case by case, or when an investigation is stuck at dashboard totals, averages, samples, or plausible high-level theories. Save inspectable evidence artifacts, reconcile the population from them, and return a diagnosis whose confidence matches coverage. This owns the evidence pass; use bugs-flow for end-to-end bug repair, north-star-investigation for math-first experiment selection, and exhaustive-code-review for coverage-led code review."
+description: "Run case-level statistical analysis of a bounded population by materializing raw observations, inspecting variation, cohorts, and outliers, and reaggregating results instead of trusting totals or averages. Use for funnels, telemetry, transactions, user behavior, experiments, operations, or other quantitative questions where conclusions must be grounded in constituent rows or cases. It may surface evidence of a software defect, but it does not own diagnosis, reproduction, repair, or verification; use bugs-flow when the goal is to diagnose or fix errors, regressions, crashes, Sentry issues, or other broken software behavior. Not for code review or math-first experiment selection."
 metadata:
-  short-description: "Inspect constituent evidence before diagnosis"
+  short-description: "Case-level statistics, not bug diagnosis"
 ---
 
-# Bottom-Up Diagnostic
+# Bottom-Up Population Analysis
 
-Own one job: turn an aggregate-shaped question into inspectable constituent
-evidence, then build a diagnosis that another investigator can audit.
+Own one job: turn an aggregate statistical question into inspectable
+constituent observations, then reaggregate them into a population conclusion
+that another analyst can audit.
 
 ## Mission And Stakes
 
-Aggregates compress different mechanisms into one number. A missing event may
-mean the event never happened, was never constructed, was rejected, was stored
-under another identity, or was excluded by the query. A gray button may be
-styling, disabled semantics, stale state, or a blocked backend action. Treating
-those cases as interchangeable sends product, incident, data, and engineering
-work toward the wrong fix.
+Totals, averages, and dashboards can compress different cohorts, mechanisms,
+and data-quality problems into one number. A missing event may mean the action
+did not occur, the observation was not constructed, the request was rejected,
+the record used another identity, or the query excluded it. Treating those
+cases as interchangeable produces false statistical conclusions.
 
-This output becomes the evidence base for the next decision. Strong work lets a
-reader open the artifacts, follow the important cases, reproduce the counts,
-and see exactly what is proven, supported, refuted, and still unknown. Weak
-work paraphrases a dashboard, promotes a sample or screenshot into a population
-claim, or gives a confident root cause that the retained evidence cannot prove.
+This output becomes the evidence base for the next product, operational, or
+engineering decision. Strong work lets a reader open the artifacts, follow the
+important cases, reproduce the counts, and see exactly what is observed,
+derived, inferred, and still unknown. Weak work paraphrases a dashboard,
+promotes a convenient sample into a population claim, or treats a statistical
+anomaly as a diagnosed software cause.
 
 ## Use When
 
 Use this skill for asks such as:
 
-- "Dump the raw event stream and trace the drop-off user by user before telling
-  me what the funnel means."
-- "Reconcile every affected purchase against the store record, entitlement,
-  and telemetry instead of reasoning from the total."
-- "Inspect the recording frame by frame and tell me what the pixels prove
-  versus what the logs merely suggest."
+- "Dump the raw event population and trace the drop-off user by user before
+  telling me what the funnel means."
+- "Reconcile every purchase behind this revenue total against the store,
+  entitlement, and telemetry records."
+- "Break this average down by cohort and inspect the outliers before deciding
+  whether the change is real."
 
-Also use it when a plausible theory has survived only because nobody has
-materialized the underlying cases, or when a sample and an aggregate disagree.
+Also use it when a sample and an aggregate disagree, when a population-level
+claim cannot be audited from its constituent observations, or when statistical
+analysis may reveal a cohort or pattern worth handing to a product or bug
+workflow.
 
 ## Do Not Use When
 
-- The broader job is an ordinary bug lifecycle from symptoms through repair and
-  verification, without a missing disaggregated evidence pass. Use `bugs-flow`.
-  This skill may supply the evidence pass inside that workflow.
+- The root ask is to diagnose, reproduce, repair, or verify a software error,
+  regression, crash, Sentry issue, failed test, or broken user flow. Use
+  `bugs-flow`, even when logs, screenshots, events, or several affected users
+  are available. That workflow may use a bottom-up population analysis as one
+  evidence method without changing ownership.
+- The evidence is one user's journey, one recording, one stack trace, or one
+  failing request and the goal is to explain why the software broke. Use
+  `bugs-flow`.
 - The job is to rank hypotheses and choose the fastest quantitative experiment
   under a math-first investigation loop. Use `north-star-investigation`.
 - The deliverable is exhaustive code-review coverage over files, callers, and
   side doors. Use `exhaustive-code-review`.
 - The answer is already available from one authoritative record and no
-  aggregate or case-level ambiguity remains.
+  aggregate, cohort, or case-level ambiguity remains.
 
 ## Ground Truth And Proof
 
@@ -73,12 +81,14 @@ materialized the underlying cases, or when a sample and an aggregate disagree.
 
 ## First Move
 
-1. Restate the decision-relevant question without embedding a cause.
-2. Name the smallest useful atomic grain: one event, user journey, request,
-   transaction, record, screenshot, frame interval, or test attempt.
+1. Restate the statistical or population question without embedding a software
+   cause.
+2. Name the smallest independent grain that can be counted or compared: one
+   event, user, journey, request, transaction, record, entity-day, or other
+   population unit.
 3. Bound the evidence universe. Record the source, time window, population,
    identity rule, inclusion and exclusion rules, and expected count when known.
-4. Choose a durable artifact that makes both raw evidence and case-level
+4. Choose a durable artifact that makes both raw observations and case-level
    interpretation inspectable. Read
    [`references/evidence-artifacts.md`](references/evidence-artifacts.md) before
    constructing it.
@@ -121,19 +131,22 @@ the total coverage, inspect the consequential cohorts and contradictions, and
 make the remaining population available for reaggregation. A few convenient
 anecdotes are not a population analysis.
 
-### 3. Let Cases Revise The Theory
+### 3. Let Cases Revise The Statistical Explanation
 
 Compare the observed cases with the starting explanations. Seek the cases that
-should exist if a theory is true, the near-misses that distinguish competing
-mechanisms, and the contradictions that would force a narrower claim.
+should exist if an explanation is true, the near-misses that distinguish
+competing mechanisms, and the contradictions that would force a narrower
+population claim.
 
 Separate mechanisms that an aggregate can collapse, such as an action not
 occurring, an observation not being emitted, a payload not being constructed,
 a request being rejected, or a query excluding valid rows. These are examples
-of distinctions to investigate, not a finite classification menu.
+of distinctions to analyze, not a finite classification menu.
 
 When the detailed evidence disagrees with the initial story, update the story.
-Do not reinterpret the cases to preserve a favored cause.
+Do not reinterpret the cases to preserve a favored cause. If the pattern points
+to a software defect, report the affected cohort and evidence boundary, then
+hand diagnosis, reproduction, repair, and verification to `bugs-flow`.
 
 ### 4. Reaggregate And Reconcile
 
@@ -147,14 +160,14 @@ entitlement or analytics event; a visible control is not the same as an
 actionable control. Join them to answer the question without pretending they
 are equivalent facts.
 
-### 5. Stress-Test The Diagnosis
+### 5. Stress-Test The Population Conclusion
 
 Before finalizing:
 
 - inspect the strongest contradiction and at least one near-miss or negative
   case that separates the leading explanation from its nearest alternative;
 - check whether the artifact represents the intended environment, identity,
-  time boundary, and user state;
+  time boundary, and population state;
 - check that every important numeric claim can be recomputed from the saved
   artifact;
 - lower confidence or retrieve the next discriminating evidence when a causal
@@ -163,55 +176,60 @@ Before finalizing:
 If the primary source is unavailable, use the next-best evidence path and name
 its limit. If no available evidence can responsibly distinguish the leading
 explanations, return a coverage gap and the smallest evidence acquisition that
-would resolve it; do not invent a root cause.
+would resolve it. Do not convert an anomaly into a diagnosed software cause.
 
-### 6. Save The Evidence And Return The Diagnosis
+### 6. Save The Evidence And Return The Population Analysis
 
-Keep the primary artifact and any case ledger, contact sheet, reconciliation,
+Keep the primary artifact and any case ledger, cohort table, reconciliation,
 or query result at stable paths available to the user. The final answer should
 point to them rather than replacing them with prose.
 
 ## Quality Bar
 
-Strong diagnostic work:
+Strong population analysis:
 
-- changes the grain of the investigation rather than decorating the aggregate;
-- makes consequential cases and contradictions visible in artifacts;
+- changes the grain of the analysis rather than decorating the aggregate;
+- makes consequential cohorts, cases, outliers, and contradictions visible in
+  artifacts;
 - reconciles the final counts from those artifacts;
 - distinguishes observation, derivation, inference, and unknowns;
-- gives the next decision-maker a narrower, more defensible model of reality.
+- gives the next decision-maker a narrower, more defensible model of the
+  population.
 
 Weak work:
 
 - retells dashboard totals with more prose;
 - inspects only a hand-picked sample and generalizes silently;
-- says screenshots or logs were checked without saving or indexing them;
+- says raw observations were checked without saving or indexing them;
 - treats missing telemetry, HTTP acceptance, a green workflow, or a passing
-  summary as proof of the user-visible outcome;
-- names a root cause more strongly than the evidence permits.
+  summary as proof of a population outcome;
+- claims a software root cause instead of reporting a statistical bug signal
+  and handing it to `bugs-flow`.
 
 ## Output Contract
 
-Adapt the headings to the investigation; do not fabricate empty sections. A
-valid result includes:
+Adapt the headings to the analysis; do not fabricate empty sections. A valid
+result includes:
 
-1. **Question and scope** — the neutral question, atomic grain, evidence
-   universe, time and identity boundaries, and coverage achieved.
+1. **Question and scope** — the neutral statistical question, population grain,
+   evidence universe, time and identity boundaries, and coverage achieved.
 2. **Evidence artifacts** — stable paths or links, source provenance, how to
-   inspect them, and which columns, rows, cases, or frames carry the result.
-3. **Case-level findings** — the recurring mechanisms, consequential cases,
-   contradictions, and unknowns with source anchors.
-4. **Reaggregation and reconciliation** — recomputed totals and an explanation
-   for material differences from the original aggregate or claim.
-5. **Diagnosis** — what is observed, derived, inferred, refuted, and still
-   unknown. Confidence must match coverage and proof level.
-6. **Next discriminating action** — only the smallest evidence read, query,
-   instrumentation, or handoff that would materially reduce the remaining
-   uncertainty. Do not silently turn this evidence skill into implementation.
+   inspect them, and which columns, rows, cohorts, or cases carry the result.
+3. **Case-level findings** — the recurring patterns, consequential cohorts,
+   outliers, contradictions, and unknowns with source anchors.
+4. **Reaggregation and reconciliation** — recomputed totals, rates, or
+   distributions and an explanation for material differences from the original
+   aggregate or claim.
+5. **Population conclusion** — what is observed, derived, inferred, refuted,
+   and still unknown. Confidence must match coverage and proof level.
+6. **Next analytical action or handoff** — only the smallest evidence read,
+   query, or instrumentation that would materially reduce uncertainty. If the
+   result is a credible software-defect signal, hand it to `bugs-flow`; do not
+   diagnose or repair it here.
 
 A result is invalid if its key claims cannot be traced to the saved artifacts,
-if its population math does not reconcile, or if it reports causal certainty
-from correlation, missing data, or an unobserved system boundary.
+if its population math does not reconcile, if it reports causal certainty from
+correlation or missing data, or if it becomes a software bug-fix workflow.
 
 ## Completion Test
 
@@ -221,16 +239,16 @@ Finish only when:
 - primary evidence is saved in an inspectable artifact;
 - the necessary cases, including contradictions, were directly inspected;
 - the population was reaggregated or the coverage limit was quantified;
-- the diagnosis can survive the strongest observed counterexample;
+- the population conclusion can survive the strongest observed counterexample;
 - every material conclusion is labeled at the proof level the artifact earns;
 - another investigator could follow the paths and reproduce the reasoning.
 
 ## Reference Map
 
 - [`references/evidence-artifacts.md`](references/evidence-artifacts.md) — how
-  to choose, build, inspect, and reconcile event, journey, transaction,
-  request, visual, test-attempt, and population artifacts, with concrete sample
-  tables
-- [`references/worked-examples.md`](references/worked-examples.md) — fifteen
-  end-to-end examples and compact anti-examples showing how case-level evidence
+  to choose, build, inspect, and reconcile event, journey, transaction, request,
+  visual-observation, repeated-attempt, and population artifacts, with concrete
+  sample tables
+- [`references/worked-examples.md`](references/worked-examples.md) — worked
+  examples and compact anti-examples showing how case-level evidence
   can confirm, overturn, or narrow an attractive aggregate story

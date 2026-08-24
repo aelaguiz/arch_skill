@@ -534,7 +534,7 @@ Use for regressions, crashes, incidents, or Sentry/log-driven fixes.
 
 ### `bottom-up-diagnostic`
 
-Use when aggregate metrics or high-level theories are not resolving a hard investigation. It materializes and inspects the underlying users, events, transactions, requests, journeys, screenshots, recordings, frames, or test attempts, then reaggregates from that evidence and returns a bounded diagnosis. Its bundled references provide concrete artifact patterns, sample tables, fifteen worked examples, and anti-examples. Use `bugs-flow` when the broader job is to carry a known bug through repair and verification.
+Use for case-level statistical analysis when aggregate metrics, averages, funnels, cohort comparisons, or samples cannot be trusted without the underlying population. It materializes constituent observations, inspects variation and outliers, then reaggregates the statistics from that evidence. Its bundled references provide concrete artifact patterns, sample tables, worked examples, and anti-examples. It may surface a software-defect signal, but use `bugs-flow` when the goal is to diagnose, reproduce, repair, or verify errors, regressions, crashes, Sentry issues, failed tests, or broken flows.
 
 ### `audit-loop`
 

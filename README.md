@@ -25,7 +25,7 @@ unauthorized scope cycling.
 - `arch-mini-plan` — one-pass canonical mini planning that hands follow-through to `miniarch-step` or `arch-step`
 - `lilarch` — compact 1-3 phase feature flow
 - `bugs-flow` — evidence-first bug analyze/fix/review flow whose analyze stage signs off the smallest same-contract fix closure before code
-- `bottom-up-diagnostic` — disaggregates hard investigations into inspectable evidence, with reusable artifact patterns and fifteen worked examples
+- `bottom-up-diagnostic` — rebuilds aggregate statistics from constituent population evidence; not a software bug diagnosis or repair workflow
 - `audit-loop` — exhaustive map-first repo audit loop with a root audit ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
 - `comment-loop` — exhaustive map-first repo comment hardening loop with a root comment ledger and native goal-mode `auto` continuation
 - `audit-loop-sim` — exhaustive map-first real-app automation audit loop with a root simulator ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
@@ -463,7 +463,7 @@ Use for Sentry/log-driven bug analysis, narrow fixes, and explicit-review-only f
 
 ### `bottom-up-diagnostic`
 
-Use when a difficult investigation needs the underlying users, events, transactions, requests, journeys, screenshots, recordings, frames, or test attempts materialized and inspected before aggregate conclusions are trusted. It owns the evidence pass and bounded diagnosis, not implementation of a known fix. The package includes concrete evidence-artifact patterns, sample tables, fifteen end-to-end worked examples, and anti-examples that distinguish strong proof from aggregate storytelling.
+Use for case-level statistical analysis when an aggregate, average, funnel, cohort comparison, or sample must be rebuilt from the underlying population. It materializes constituent observations, inspects variation and outliers, and reaggregates the result. It may surface evidence of a software defect, but `bugs-flow` owns error diagnosis, reproduction, repair, and verification. The package includes concrete evidence-artifact patterns, sample tables, worked examples, and anti-examples that distinguish population evidence from aggregate storytelling.
 
 ### `audit-loop`
 
@@ -864,7 +864,7 @@ Examples:
 - `Use $arch-mini-plan docs/MY_PLAN.md`
 - `Use $lilarch for this small feature`
 - `Use $bugs-flow on this Sentry issue`
-- `Use $bottom-up-diagnostic to trace this drop-off user by user before trusting the funnel`
+- `Use $bottom-up-diagnostic to rebuild this funnel rate user by user before trusting the aggregate`
 - `Use $audit-loop`
 - `Use $audit-loop review`
 - `Use $audit-loop auto`

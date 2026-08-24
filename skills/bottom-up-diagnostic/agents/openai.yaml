@@ -1,7 +1,7 @@
 interface:
-  display_name: "Bottom-Up Diagnostic"
-  short_description: "Inspect constituent evidence before diagnosis"
-  default_prompt: "Use $bottom-up-diagnostic to materialize and save the constituent evidence, inspect consequential cases and contradictions, reconcile the population from those artifacts, and return a diagnosis whose confidence matches the proof."
+  display_name: "Bottom-Up Population Analysis"
+  short_description: "Analyze populations, not software bugs"
+  default_prompt: "Use $bottom-up-diagnostic for case-level statistical analysis of this bounded population. Save the constituent observations, inspect cohorts and outliers, reaggregate the statistics, and return a population conclusion whose confidence matches coverage. Do not use this as a software bug workflow; route asks to diagnose, reproduce, repair, or verify errors, regressions, crashes, Sentry issues, and broken behavior to $bugs-flow."
 
 policy:
   allow_implicit_invocation: true
