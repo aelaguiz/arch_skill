@@ -33,7 +33,7 @@ When creating a new bug doc, include at least:
   - human-authorized corrected behavior
   - smallest sufficient fix
   - initial minimal convergence closure or `none`
-  - scope freeze before fix mode
+  - scope sign-off before fix mode
   - enough proof, do-not-build boundary, and accepted residual risk
 
 Recommended additional sections when they add signal:
@@ -111,5 +111,5 @@ If a tool can provide Seer-style analysis or representative events, capture that
   External review remains available when a concrete provider, model,
   lifecycle, isolation, automation, receipt, or other benefit is worth its
   added process and integration cost; it is not required for freshness.
-- Review findings cannot expand the frozen bug closure. Post-freeze scope needs
-  explicit human approval and re-freeze.
+- Review findings cannot expand the approved bug closure. Post-approval scope needs
+  explicit human approval and re-approval.

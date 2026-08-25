@@ -30,7 +30,7 @@ Move to fix-ready only when:
 - there is a minimally credible verification plan
 - the human-authorized corrected behavior, smallest sufficient fix, closure or
   `none`, enough proof, do-not-build boundary, accepted residual risk, and
-  pre-fix scope freeze are explicit
+  pre-fix scope sign-off are explicit
 
 ## Bad analyze behavior
 

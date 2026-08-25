@@ -30,7 +30,7 @@ When creating or repairing a fresh lilarch doc, ensure it has at least:
   - human-authorized outcome and authorization anchors
   - smallest sufficient solution
   - initial minimal convergence closure or `none`
-  - scope-freeze boundary before finish mode
+  - scope sign-off boundary before finish mode
   - enough proof, do-not-build boundary, and accepted residual risk
 
 When the change is agent-backed, the requirements or architecture notes must make clear whether the primary lever is prompt/capability work or deterministic code. Do not leave that decision implicit.
@@ -63,10 +63,10 @@ Compatible arch blocks:
 
 - New or unresolved docs stay `status: draft`.
 - Ready-to-build or active work uses `status: active`.
-- Before setting `active`, freeze the contract and map every required phase item
-  to human scope or the pre-freeze convergence closure.
+- Before setting `active`, sign off the contract and map every required phase item
+  to human scope or the pre-approval convergence closure.
 - Set `status: complete` only after finish mode confirms the code and doc agree.
-- A post-freeze reviewer or implementer finding cannot enlarge the initial
+- A post-approval reviewer or implementer finding cannot enlarge the initial
   closure. It needs a human scope decision or stays out of implementation.
 
 ## Fit guard

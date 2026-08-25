@@ -88,12 +88,12 @@ user's broader workflow.
 - Current code behavior and current code structure are the final authority for
   what exists. Intended UX, hard constraints, and experiment requirements are
   the authority for what must continue to exist.
-- Human-authorized UX and constraints, plus the initial pre-freeze minimal
+- Human-authorized UX and constraints, plus the initial pre-approval minimal
   convergence closure and explicit later human approvals, are the authority for
   what this change may add. Apply `../_shared/scope-and-convergence.md`.
 - For plan-, branch-, conductor-, PR-, or history-backed work, reconstruct
   scope provenance and review waves. Every durable concept in the complexity
-  ledger must trace to human scope or the frozen closure. Architecture that
+  ledger must trace to human scope or the approved closure. Architecture that
   became "required" only through agent iteration or review cycling is a
   `REQUIRED REPAIR` and forces `not-approved`; default to subtraction. If
   provenance should exist but cannot be recovered, return `scope-incomplete`.
@@ -123,7 +123,7 @@ user's broader workflow.
 4. Write the architecture story in plain English: what the current structure
    appears to be, what user experience and hard constraints it claims to serve,
    and what would have to be true for that structure to be justified.
-5. When scope history exists, reconstruct the initial human baseline, frozen
+5. When scope history exists, reconstruct the initial human baseline, approved
    convergence closure, later human approvals, and review/plan waves before
    accepting the latest architecture story.
 6. Read `references/review-lenses.md`.
@@ -147,7 +147,7 @@ user's broader workflow.
 3. Build `complexity-ledger.md`: live concepts, files, owner boundaries,
    states, flags, modes, adapters, registries, wrappers, shims, sync points,
    and caller obligations a maintainer must understand.
-   For scope-backed work, attach a human or pre-freeze closure anchor to every
+   For scope-backed work, attach a human or pre-approval closure anchor to every
    durable concept; missing anchors are not cured by current reachability.
 4. When broader coverage warrants children, dispatch a proportional set of new
    clean native read-only slices with distinct lenses or path families:
@@ -170,7 +170,7 @@ user's broader workflow.
    paths, side doors, or misleading future-copy surfaces.
 10. Run the scope-provenance and no-cycling lens. A newly discovered
     architectural relationship is not permission to expand the required repair
-    beyond the frozen contract.
+    beyond the approved contract.
 11. Use `references/review-lenses.md` and `references/failure-patterns.md` to
     classify concrete risks. Use `references/examples.md` as illustrations of
     reasoning, not a lookup table.

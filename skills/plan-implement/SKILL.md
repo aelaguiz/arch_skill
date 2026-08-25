@@ -57,7 +57,7 @@ state machine, or script-backed completion judge.
 - The plan audit log owns `PLA-*` and `IMP-*` review findings. Do not turn it
   into an implementation diary.
 - Update artifacts at meaningful boundaries, not after every micro-edit.
-- Choose depth-first slices: make one narrow frozen plan truth real, review it
+- Choose depth-first slices: make one narrow approved plan truth real, review it
   while warm, verify impact, then advance through breadth already authorized by
   the plan. Depth-first sequencing is not permission to widen scope.
 - Proof freshness matters. Reuse passing proof until a real invalidator makes
@@ -94,12 +94,12 @@ state machine, or script-backed completion judge.
 - Do not claim a plan item complete from logs or checkboxes alone. Read code
   anchors and confirm the outcome is true.
 - Apply `../_shared/scope-and-convergence.md`. Before the first edit,
-  recover the human baseline, initial minimal convergence closure, freeze
+  recover the human baseline, initial minimal convergence closure, sign-off
   boundary, and explicit later human approvals. If a legacy plan cannot support
   a defensible boundary, stop for one human scope decision.
 - A warm review, subagent, test, worklog, or plan edit cannot expand scope.
   Give every material finding a shared scope disposition. Only `authorized` and
-  `frozen-convergence-required` enter required implementation work; a newly
+  `approved-convergence-required` enter required implementation work; a newly
   discovered adjacent path is `new-scope-needs-human`, and already-built excess
   is subtraction work.
 
@@ -140,7 +140,7 @@ state machine, or script-backed completion judge.
    `PLA-*` or `IMP-*` findings, implementation log for resumability.
 8. Advance to the next already-authorized slice only after the prior slice's
    code, plan, review, and proof state agree. New breadth requires human approval
-   and re-freeze.
+   and re-approval.
 9. At the requested stop boundary, perform a final lightweight plan-backed
    implementation check and report remaining gaps plainly.
 

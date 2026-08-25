@@ -112,7 +112,7 @@ clarification of the same audit may resume the exact auditor handle.
 - when running inside `implement-loop`, do not let the parent implementation pass stand in for this audit or author the authoritative clean outcome
 - if the implementation claims a fix but does not provide credible code-verifiable proof for it, treat that as missing code completeness
 - audit against the approved plan's explicit promises, not against a narrower story execution wrote after the fact
-- audit implementation shape against the original human anchors, frozen initial
+- audit implementation shape against the original human anchors, approved initial
   closure, and explicit later human approvals, not only against whether the
   latest plan was built
 - audit against the current approved ordered implementation frontier, not just the first visible local gap
@@ -181,7 +181,7 @@ Missing manual evidence should become `Manual Verification Pending`.
    - delete list and cleanup expectations
    - live docs/comments/instructions cleanup expectations in touched areas
    - definition-of-done evidence expectations
-   - the Scope and Simplicity Contract: human anchors, frozen initial closure,
+   - the Scope and Simplicity Contract: human anchors, approved initial closure,
      smallest sufficient solution, enough proof, and do-not-build boundary
 3. split evidence expectations into:
    - code-verifiable evidence
@@ -204,7 +204,7 @@ Missing manual evidence should become `Manual Verification Pending`.
    - verify claimed fixes have credible code-verifiable proof instead of only a code diff
    - verify claimed tests, assertions, or automation actually exist and hit the intended failure surface
    - compare new production concepts, code paths, operational steps, harnesses,
-     and test categories against the frozen Scope and Simplicity Contract
+     and test categories against the approved Scope and Simplicity Contract
    - if implementation exceeds that contract without an explicit human approval
      anchor, record subtraction as missing code correctness even when it passes;
      an agent-authored Decision Log entry is not approval
@@ -226,10 +226,10 @@ Always name phases as `Phase <n> (<what it does>)` using the phase heading text 
 - if the implementation introduced a forbidden shim, fallback, or parallel source of truth, treat that as missing code correctness and reopen the responsible phase
 - if the implementation introduced capability-replacing scaffolding for agent-backed behavior without explicit plan justification, treat that as missing code correctness and reopen the responsible phase
 - if implementation introduced adjacent work, machinery, or disproportional
-  proof beyond the frozen contract without explicit human approval, treat
+  proof beyond the approved contract without explicit human approval, treat
   removal or simplification as missing code correctness and reopen the phase
 - a new same-contract path discovered by audit may block approval, but audit
-  cannot add it to repair scope; require a human decision and re-freeze
+  cannot add it to repair scope; require a human decision and re-approval
 - if a refactor or convergence change lacks credible preservation evidence, treat that as missing code correctness and reopen the responsible phase
 - if a claimed fix lacks credible code-verifiable proof, treat that as missing code correctness and reopen the responsible phase
 - if an exit criterion is unmet, too vague to validate honestly, or lacks the proof needed to support it, treat that as missing code correctness and reopen the responsible phase

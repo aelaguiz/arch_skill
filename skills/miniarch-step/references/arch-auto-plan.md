@@ -21,7 +21,7 @@ Running `auto-plan` should end in one of two honest states:
   - the authoritative phase plan is present
   - no unresolved decisions remain in the authoritative artifact
   - the Scope and Simplicity Contract has human anchors, an initial closure or
-    explicit `none`, a freeze boundary, and every phase item serves that frozen
+    explicit `none`, a sign-off boundary, and every phase item serves that approved
     contract or enough proof
   - no implementation has started
   - the final message says the doc is decision-complete and ready for `implement-loop`
@@ -67,7 +67,7 @@ Running `auto-plan` should end in one of two honest states:
 - if any stage uncovers an unresolved decision that repo truth cannot settle, stop and ask the exact blocker question
 - after successful `phase-plan`, say the doc is decision-complete and ready for `implement-loop`
 - do not emit the implementation handoff when the Scope and Simplicity Contract
-  is missing, vague, unfrozen, contradicted by Section 7, or exceeded by planned
+  is missing, vague, unapproved, contradicted by Section 7, or exceeded by planned
   machinery or adjacent work
 
 ## Native planning child contract
@@ -117,7 +117,7 @@ Use these signals before continuing:
   - `arch_skill:block:phase_plan` is present
   - the plan has no unresolved architecture-shaping decisions
   - Section 7 phases have exhaustive checklists and exit criteria for the approved scope
-  - Section 7 contains no item outside the frozen Scope and Simplicity Contract
+  - Section 7 contains no item outside the approved Scope and Simplicity Contract
 
 ## Procedure
 

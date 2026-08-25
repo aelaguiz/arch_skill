@@ -86,15 +86,15 @@ or `incomplete`, not pass.
 ### 3. `scope_provenance_and_no_cycling`
 
 Recover the raw human goal, approved decomposition, sub-plan Scope and
-Simplicity Contract, initial convergence closure and freeze anchor, and any
+Simplicity Contract, initial convergence closure and approval anchor, and any
 explicit later human approvals. Compare those anchors with the worklog,
 Decision Log, and shipped code.
 
-Fail when an obligation or durable concept appeared only after freeze, when an
+Fail when an obligation or durable concept appeared only after sign-off, when an
 agent-authored Decision Log entry is the only claimed authority, when code was
 built and the plan was edited later to match it, or when repeated critic waves
 used prior agent-created work to demand further expansion. A newly discovered
-same-contract path is still new scope after freeze.
+same-contract path is still new scope after sign-off.
 
 ### 4. `no_orphaned_discoveries`
 
@@ -107,9 +107,9 @@ scope, what implementation says became necessary, and what is now recorded
 in Section 7, Epic Requirement Coverage, or the Decision Log. Classify each
 candidate:
 
-- If the discovery was present in the frozen initial closure or has an explicit
+- If the discovery was present in the approved initial closure or has an explicit
   later human-approval anchor: fine. Not orphaned.
-- If it was added to the phase plan or implemented after freeze without human
+- If it was added to the phase plan or implemented after sign-off without human
   approval: fail, even when the Decision Log records it.
 - If the discovery was called out but left unresolved ("we'll need
   X eventually, punting for now"): this is a `discovered_items[]`
@@ -254,7 +254,7 @@ The critic does not have authority to downgrade approved scope as a
 and epic requirements are met, not on what would make the epic proceed
 smoothly.
 It also has no authority to expand scope. Its finding can halt the epic, but
-only a human approval can add a new path or sub-plan after freeze.
+only a human approval can add a new path or sub-plan after sign-off.
 
 ## What this critic is NOT
 

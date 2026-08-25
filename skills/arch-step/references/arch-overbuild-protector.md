@@ -33,14 +33,14 @@ Treat these as the scope contract when present:
 - Section 0.4 Definition of done
 - `fallback_policy`
 - Section 0 `Scope and Simplicity Contract`, including authorization anchors,
-  frozen initial convergence closure, freeze boundary, and explicit human
+  approved initial convergence closure, sign-off boundary, and explicit human
   expansion entries in Section 10
 
 If those sections are vague on a work item, do not reclassify it by taste. Record a blocker question in the helper block and stop when that gap affects Section 7 readiness.
 
 The only automatic keep lanes are work directly required by human scope and
-work already recorded in the pre-freeze minimal convergence closure. A real
-correctness concern, pattern parity, or newly found competing path after freeze
+work already recorded in the pre-approval minimal convergence closure. A real
+correctness concern, pattern parity, or newly found competing path after sign-off
 may be important, but it becomes `new-scope-needs-human`, not required work.
 Already-built unauthorized scope becomes subtraction work.
 

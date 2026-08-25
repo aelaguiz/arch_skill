@@ -1,8 +1,8 @@
 ---
 name: conductor
-description: "Conduct work to verified completion from a finished plan, a partial plan, or a described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake first runs an executive shaping stage — parallel worker research, a parent trim to the smallest sufficient solution, a lightweight outcome map, one scope approval — and workers never dispatch before observable done-ness and a frozen scope boundary exist. Default execution is the cheap parallel external fleet (Codex gpt-5.6-sol at ultra via agent-delegate, one-word swaps to Kimi, Grok, Cursor, or Claude); native children stay a narrow exception, and Codex usage limits rotate via aim without losing sessions. The `conductor terra` preset keeps its dedicated-worktree, Terra xhigh, three-review, PR-publication, and follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
+description: "Conduct work to verified completion from a finished plan, partial plan, or described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake runs an executive shaping stage — worker research, a parent trim to the smallest sufficient solution, an outcome map, one scope approval — and workers never dispatch before observable done-ness and an approved boundary exist. Execution runs a cheap parallel worker fleet on a pinned model and thinking level (Codex gpt-5.6-sol at ultra; swap to Kimi, Grok, Cursor, Claude): native children when the host can pin that profile, external agent-delegate sessions when it cannot or when cross-provider reach, aim rotation, or durable sessions matter. The `conductor terra` preset keeps its worktree, Terra xhigh, three-review, and PR follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
 metadata:
-  short-description: "Plan-or-outcome conductor with executive shaping and a cheap external fleet"
+  short-description: "Plan-or-outcome conductor with executive shaping and a cheap pinned worker fleet"
 ---
 
 # Conductor
@@ -33,11 +33,14 @@ log beside the plan is its durable memory.
 - Parent tokens go to plan understanding, slice design, cynical audit
   judgment, and first-hand verification of finished work products. Fleet
   tokens go to investigation, implementation, repair, proof runs, and heavy
-  review reading. Native subagents bill the parent's expensive model — they
-  are not a cheap lane, so bulk work never routes to them.
+  review reading — on a cheap worker profile, whichever lane carries it. A
+  native child inherits the parent's expensive model unless the dispatch pins
+  its model and thinking level; a pinned child bills its own. Pin the profile
+  or take the external lane, and never route bulk work to an unpinned native
+  child.
 - The parent is the scope judge. Fast cheap workers are genuinely smart but
   over-scope and over-iterate; the parent trims every proposal to the
-  smallest sufficient solution and holds the frozen boundary against
+  smallest sufficient solution and holds the approved boundary against
   expansion pressure from any direction.
 - Chunk size balances two failure modes: micro-tasks turn the parent into a
   slow programmer with extra round-trips; mega-tasks produce unreviewable
@@ -100,30 +103,33 @@ log beside the plan is its durable memory.
 - Whole plan is the default boundary; honor an explicit phase range exactly.
 - Apply `../_shared/agent-orchestration-policy.md` at every worker and
   reviewer dispatch, and apply `$prompt-authoring` to every actual populated
-  first brief or materially reframed follow-up. The conductor's default
-  execution lane is the cheap parallel external fleet — clean resumable
-  Codex workers through `$agent-delegate` — as a deliberate standing policy
-  choice: conduction exists to preserve parent context and buy fast cheap
-  worker cycles, and that exact cheaper/faster model is the concrete benefit
-  the shared policy asks external transport to name. The fleet default
-  applies to every role — phase workers, research workers, verification
-  workers, the cynical review instruments, and the cold verifier. Native
-  children run the parent's expensive model, so they are never the cheap
-  lane and never the default for reviews or any other bulk reading; reserve
-  them for a genuinely tiny errand a fleet round-trip would dwarf, a
-  capability only the host exposes, an explicit user ask, or an unavailable
-  external runtime. Honor explicit user choices in both directions.
-- For an external lane, runtime and normally model/profile plus effort are
-  supplied by the user. An external Codex worker with no named model defaults
-  to `gpt-5.6-sol`, and an omitted effort on that Sol worker defaults to
-  `ultra`; a Kimi worker with omitted model and effort defaults to
-  `kimi-code/k3` at `max`. Accept `sol`, `luna`, and `terra` as
+  first brief or materially reframed follow-up. Resolve the worker profile
+  before the lane: model, thinking level, durability, isolation, receipts.
+  The fleet is that profile — fast, capable, cheap — and it applies to every
+  role: phase workers, research workers, verification workers, any cynical
+  review the user asked for, and the cold verifier. Take the native lane when
+  the profile is reachable in this host's child catalog, pinnable in both
+  model and thinking level, durable across this run's resume pattern, and
+  unblocked by any external-only need. Otherwise take `$agent-delegate` and
+  name which test failed — cross-provider reach the host cannot give, `aim`
+  usage-limit rotation, a session that must outlive the parent process,
+  required run receipts, concurrency past the native cap, or isolation the
+  host cannot enforce. An unpinned native child runs the conductor's own
+  expensive model, so it is never the cheap lane and never carries bulk
+  reading. Honor explicit user choices in both directions.
+- Model and thinking level are first-class worker values on both lanes, drawn
+  from one vocabulary, and the user normally supplies them. A Codex worker
+  with no named model defaults to `gpt-5.6-sol`, and an omitted level on that
+  Sol worker defaults to `ultra`; a Kimi worker with omitted model and level
+  defaults to `kimi-code/k3` at `max`. Accept `sol`, `luna`, and `terra` as
   `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated
-  question only for load-bearing external values. Provider routing remains:
+  question only for load-bearing missing values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording
-  resolves to `grok-4.6`, and Kimi runs `kimi-code/k3` with an omitted-effort
+  resolves to `grok-4.6`, and Kimi runs `kimi-code/k3` with an omitted-level
   default of `max`. Explicit legacy Grok ids remain exact and discovery-gated.
+  Announce the resolved model, thinking level, and lane before the first
+  launch, and never change any of the three silently mid-run.
 - When intake is a described outcome or a partial plan, run the executive
   shaping stage per `references/shaping-and-outcome-map.md` before any plan
   intake: worker research as evidence, a parent-owned trim to the smallest
@@ -139,16 +145,16 @@ log beside the plan is its durable memory.
   shaping happens before the gate, never around it.
 - Apply `../_shared/scope-and-convergence.md`. Intake must recover the
   human-authorized outcome and approval anchors, smallest sufficient solution,
-  initial minimal convergence closure, scope-freeze boundary, enough proof,
+  initial minimal convergence closure, scope sign-off boundary, enough proof,
   do-not-build boundary, and accepted residual risk. Observable checklists are
   insufficient when that provenance is missing, contradictory, or obviously
-  overbroad. Do not dispatch an unfrozen or scope-laundered plan. When
+  overbroad. Do not dispatch an unapproved or scope-laundered plan. When
   shaping produced the outcome map, the recorded scope approval (or the
   explicit `full-auto` grant) is the human authorization anchor and the
-  freeze.
+  sign-off.
 - The initial architecture window is already closed when conductor execution
   begins. Workers, the conductor, warm audits, cold verification, cynical
-  reviews, PR feedback, and repeated findings cannot add to the frozen closure.
+  reviews, PR feedback, and repeated findings cannot add to the approved closure.
   A newly discovered same-contract adjacent path requires a human decision.
 - The conductor never edits source code. It edits only coordination artifacts
   and plan completion annotations. It never edits the plan's requirements,
@@ -156,27 +162,29 @@ log beside the plan is its durable memory.
   to the user.
 - Plan completion annotations may record execution truth only. The conductor
   may not edit scope, requirements, or the initial closure to normalize worker
-  or reviewer discoveries. Post-freeze expansion requires explicit human
-  approval and a re-frozen plan before dispatch resumes.
-- Initial workers are new clean fleet sessions (native children only under
-  the narrow exceptions above). Repairs resume the exact captured session
-  through its original transport. Never resume "latest" or reuse an
-  unrelated handle. The optional cold verifier and every independent review
-  gate start as new clean fleet sessions — external cheap-model workers,
-  never native subagents by default, because review reading is bulk work
-  and native subagents bill the parent's model.
-- Native starting context is explicit at dispatch. Codex always sets
-  `fork_turns` to `"none"` for a clean phase worker or critic, to a positive
-  count for deliberately bounded chat context, or to `"all"` only when the
-  whole conversation is genuinely required. Claude uses a clean named
-  subagent by default; an explicit conversation fork means full inherited
-  conversation, while a skill with `context: fork` is an isolated clean
-  subagent context. Context choice never implies permissions, capabilities, or
-  worktree isolation.
-- The parent owns decomposition, external fanout, and integration. Every child
-  prompt tells the worker it may fan out to its own native sub-agents on its own
-  host — that is how fleet review slices stay on the cheap model — and that it
-  must not spawn external agents itself.
+  or reviewer discoveries. Post-approval expansion requires explicit human
+  approval and a re-approved plan before dispatch resumes.
+- Initial workers are new clean children on the selected lane. Repairs resume
+  the exact captured handle through its original transport. Never resume
+  "latest" or reuse an unrelated handle. The optional cold verifier and every
+  independent review gate start as new clean children on the cheap worker
+  profile, never on an unpinned native child, because review reading is the
+  largest block of bulk tokens in the run.
+- Native model, thinking level, and starting context are all explicit at
+  dispatch. Codex states `fork_turns` — `"none"` for a clean phase worker or
+  critic, a positive count for deliberately bounded chat context, `"all"` only
+  when the whole conversation is genuinely required — because omitting it
+  currently inherits everything. Claude uses a clean named subagent by default;
+  an explicit conversation fork means full inherited conversation and also
+  forces the parent's model, while a skill with `context: fork` is an isolated
+  clean subagent context. Prime Agent children are always clean, so a
+  load-bearing recent decision goes in the brief. Context choice never implies
+  permissions, capabilities, or worktree isolation.
+- The parent owns decomposition, external fanout, and integration. Confirm
+  whether this host actually lets a child fan out before promising it — some
+  hosts cap depth so that a child cannot create children at all — then tell
+  each worker what it may do, and tell every worker it must not spawn external
+  agents itself.
 - Chunk default is one plan phase per worker. Split only along owner
   boundaries the plan itself names; merge trivial adjacent phases that share
   one design intent; when unsure, chunk bigger. Never one file per worker,
@@ -223,26 +231,26 @@ log beside the plan is its durable memory.
   for evidence as a hypothesis, not forward as a fact.
 - Separate factual validity from scope authority for every finding. Record one
   shared scope disposition. Only `authorized` and
-  `frozen-convergence-required` become send-backs. `new-scope-needs-human` is
+  `approved-convergence-required` become send-backs. `new-scope-needs-human` is
   escalated, `out-of-scope` stays an observation, and
   `unauthorized-built-scope` requires subtraction unless a human ratifies and
-  re-freezes it. Repetition never changes the disposition.
+  re-approves it. Repetition never changes the disposition.
 - Batch all accepted findings into one resume prompt per repair round. Caps:
   3 send-backs per worker handle, then 1 new clean respawn with a sharpened
   brief, then escalate the slice and continue independent work. The same finding surviving
   two consecutive send-backs marks the worker unhealthy immediately. Two
   consecutive malformed or failed child runs on one slice escalate it.
-- A Codex fleet worker that dies on a hard usage limit is continued, not
+- An external Codex worker that dies on a hard usage limit is continued, not
   replaced: rotate accounts and resume the exact captured session per
   `$agent-delegate`'s usage-limit continuity and
   `../_shared/aim-rotation.md`. Rotation is not a send-back, respawn, or
   failed run for cap purposes; record it in the conductor log.
 - Delegate all proof runs (tests, builds, generators, simulators) to
-  workers; decisive proof counts only when a different clean fleet worker
-  reproduced it. The parent runs read-only inspection, which includes
-  personally loading and reading work-product artifacts — that verification
-  belongs to the parent and is never delegated for economy. Reuse fresh
-  passing proof; rerun only on a real invalidator.
+  workers; decisive proof counts only when a different clean worker on the
+  fleet profile reproduced it. The parent runs read-only inspection, which
+  includes personally loading and reading work-product artifacts — that
+  verification belongs to the parent and is never delegated for economy.
+  Reuse fresh passing proof; rerun only on a real invalidator.
 - The parent commits local checkpoints after accepted slices and meaningful
   batches. During the conductor stage it never pushes or opens PRs. Delivery
   past that boundary — when the user asked for the work to be published, and
@@ -258,7 +266,12 @@ log beside the plan is its durable memory.
   plan closure, run the final gate: one whole-plan cynical audit sweep —
   which personally loads the plan's end-state work products, a check no
   toggle disables — plus a new clean cold verifier (default on; user may
-  disable).
+  disable). The installed `$cynical-code-review`,
+  `$cynical-architecture-review`, and `$cynical-cruft-removal` skills are not
+  part of that gate. Run them only when the user asks for them, treat what
+  they return as advice triaged like any other claim, and let their verdicts
+  gate completion only if the user said they should. The Terra shortcut is
+  itself such a request and keeps its own three-review gate.
 - Record completion the way the plan format already records it (for example
   `Status: COMPLETE` under arch phase headings plus a worklog entry, or
   checkbox ticks). Never hand-edit script-owned `arch_skill:block:*` receipt
@@ -284,14 +297,16 @@ log beside the plan is its durable memory.
 4. Read `references/plan-intake-and-readiness.md`.
 5. Read `../_shared/scope-and-convergence.md`.
 6. Resolve the artifact path, boundary (whole plan unless the user named a
-   phase range), per-role transport and starting context, max parallelism,
-   wave cap, and cold-verifier toggle. The fleet default is external Codex
-   `gpt-5.6-sol` at `ultra`; a user-named provider swaps the whole fleet —
-   Kimi to `kimi-code/k3` at `max`, Grok to `grok-4.6`, Cursor to
-   `composer-2.5-fast`, Claude to a supported Claude model — resolved
-   through `$agent-delegate`. Ask one consolidated question only for
-   load-bearing missing values. The Terra shortcut supplies its own external
-   execution values, so do not ask for them.
+   phase range), the worker profile, per-role lane and starting context, max
+   parallelism, wave cap, and cold-verifier toggle. The fleet profile defaults
+   to Codex `gpt-5.6-sol` at `ultra`; a user-named provider swaps the whole
+   fleet — Kimi to `kimi-code/k3` at `max`, Grok to `grok-4.6`, Cursor to
+   `composer-2.5-fast`, Claude to a supported Claude model. Then pick the lane
+   per `references/delegation-and-monitoring.md`: a native child when this host
+   can pin that model and thinking level durably, otherwise `$agent-delegate`.
+   Ask one consolidated question only for load-bearing missing values. The
+   Terra shortcut supplies its own external execution values, so do not ask for
+   them.
 7. Read the plan once end to end and extract the execution map in context.
 8. Before creating or updating the conductor log, inspect `git status` and
    capture the start commit and inherited worktree state. Then write the
@@ -309,7 +324,7 @@ log beside the plan is its durable memory.
 1. If intake is a described outcome or a partial plan, run the shaping stage
    per `references/shaping-and-outcome-map.md`: worker research as evidence,
    parent trim to the smallest sufficient solution, the outcome map written
-   beside the work, one scope approval, freeze. The approved map is the
+   beside the work, one scope approval, sign-off. The approved map is the
    conducted artifact everywhere "the plan" appears below.
 2. Extract the plan into the conductor log: requirements, non-goals, phases
    with dependency order, per-phase checklist, verification, exit criteria,
@@ -317,10 +332,10 @@ log beside the plan is its durable memory.
    prose.
 3. Each wave: pick the next dependency-ready slice or slices, sized by the
    chunking doctrine.
-4. Dispatch each slice as a new clean child using the worker prompt contract —
-   by default a fresh-resumable external fleet worker through
-   `$agent-delegate`, or a native child when that lane was selected. Record
-   transport, starting context, exact child or session handle, and any
+4. Dispatch each slice as a new clean child on the selected lane using the
+   worker prompt contract — a native child pinned to the fleet model and
+   thinking level, or a fresh-resumable `$agent-delegate` session. Record the
+   lane, model, thinking level, starting context, exact handle, and any
    external run directory in the log.
 5. Arm the slice's size-scoped watchdog, then wait patiently per the
    monitoring doctrine. A hard usage-limit death is continued by rotate and
@@ -331,7 +346,7 @@ log beside the plan is its durable memory.
    falsify analytical conclusions at their anchors, apply the three lens
    groups, and require decisive proof to be independently reproduced. Judge
    factual validity separately from scope disposition. Only factually valid
-   findings already inside the frozen contract become repair work.
+   findings already inside the approved contract become repair work.
 7. Route: batch accepted findings into one resume prompt and send the session
    back; or accept the slice with evidence anchors and commit a checkpoint;
    or respawn fresh; or escalate and continue independent slices.
@@ -339,18 +354,17 @@ log beside the plan is its durable memory.
    verification, record proof in the log, and record phase completion in the
    plan's own format.
 9. Repeat until the execution map is clean or a hard stop triggers.
-10. Run the final gate: whole-plan cynical audit sweep, then the cynical
-   review instruments when installed — each dispatched as its own clean
-   external fleet session, never a native subagent (`$cynical-code-review`
-   by default for non-trivial plans, `$cynical-architecture-review` and
-   `$cynical-cruft-removal` by judgment from what the plan changed), then
-   the fleet cold verifier unless disabled. Triage and repair findings
-   through the same send-back machinery. Under the Terra shortcut, defer the
-   instrument portion to step 11's three new clean external sessions instead of
-   duplicating those reviews; still run the conductor sweep and cold verifier.
-   Give every final reviewer the plan path, human baseline anchors, approval
-   entries, frozen initial closure, and freeze anchor. Their findings use the
-   same scope triage and cannot expand the plan.
+10. Run the final gate: whole-plan cynical audit sweep, then the fleet cold
+   verifier unless disabled. Triage and repair findings through the same
+   send-back machinery. Run a cynical review skill only when the user asked
+   for it — each requested one as its own clean session on the fleet profile,
+   never an unpinned native child — and treat its return as advice, not a
+   gate. When the change set is large or structural, or the completion story
+   is one you could not fully verify, say so in the final report and offer the
+   reviews instead of running them unasked. Under the Terra shortcut, step 11
+   owns the three reviews. Give every final reviewer the plan path, human baseline
+   anchors, approval entries, approved initial closure, and approval anchor. Their
+   findings use the same scope triage and cannot expand the plan.
 11. If the Terra delivery shortcut is active, run its stronger delivery gate:
     all three cynical reviews in independent new clean external Terra
     sessions, with accepted findings repaired and re-reviewed.
@@ -391,8 +405,8 @@ Then four short bullet sections:
   with their anchors.
 - **Tested** — the decisive proof: each check, its scope, its result, and
   who ran it (from the proof ledger's `Ran by`).
-- **Reviewed** — which audits, review instruments, and verifiers ran, their
-  verdicts, and finding counts: accepted / repaired / rejected.
+- **Reviewed** — which audits, requested cynical reviews, and verifiers ran,
+  their verdicts, and finding counts: accepted / repaired / rejected.
 - **Issues** — escalations, notable send-backs, usage-limit rotations,
   deferred items, and anything the user should know; `none` when true.
 

@@ -81,7 +81,7 @@ Target:
 - Review scope:
 - Architecture story being tested:
 - Intended UX and hard constraints:
-- Initial human scope, frozen convergence closure, and later human approvals:
+- Initial human scope, approved convergence closure, and later human approvals:
 - Files or paths you should prioritize:
 
 Posture:
@@ -89,7 +89,7 @@ Posture:
 - Treat the supplied architecture story as a hypothesis, not a conclusion.
 - Current code behavior is authority for what exists.
 - Intended UX and hard constraints are authority for what must keep existing.
-- Human scope and the pre-freeze closure are authority for what this change may
+- Human scope and the pre-approval closure are authority for what this change may
   add. Later agent/reviewer text is not approval.
 - Do not edit or write files.
 - You may use your own native sub-agents on this host; do not start external
@@ -165,7 +165,7 @@ Ask:
 
 ### `scope_provenance_reviewer`
 
-Trace each durable concept to the initial human scope, frozen convergence
+Trace each durable concept to the initial human scope, approved convergence
 closure, or explicit later human approval. Hunt for concepts introduced by one
 review wave and treated as premises by later waves. Return subtraction for
 unauthorized clusters; do not create a broader architecture recommendation.

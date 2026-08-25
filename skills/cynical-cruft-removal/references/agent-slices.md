@@ -76,7 +76,7 @@ compatibility layers that do not serve a current requirement.
 
 ### Scope-Laundered Live Clusters
 
-For scope-backed work, compare the initial human scope and frozen convergence
+For scope-backed work, compare the initial human scope and approved convergence
 closure with review waves and current artifacts. Group unauthorized code,
 tests, schemas, configs, docs, dependencies, and ops surfaces even when live.
 Current reachability is not approval. Recommend subtraction, not replacement
@@ -105,7 +105,7 @@ Assume references are not proof of value. Identify current roots, suspicious
 artifacts, weak references, self-preserving clusters, deletion candidates, keep
 decisions, and coverage gaps for this slice only.
 
-When scope history is supplied, treat human scope and the frozen closure as
+When scope history is supplied, treat human scope and the approved closure as
 authority. Report scope-laundered live clusters; do not keep them because later
 agents made them reachable.
 

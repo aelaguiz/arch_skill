@@ -7,8 +7,8 @@
 - If the code audit is clean and the feature still needs docs cleanup or plan/worklog retirement, recommend `arch-docs`.
 - Otherwise recommend the exact next move that matches the earliest missing or weak required stage.
 - Never recommend implementation while the Scope and Simplicity Contract is
-  missing, contradictory, unfrozen, or exceeded. Route a pre-freeze gap to the
-  owning planning step; route post-freeze expansion to a human decision.
+  missing, contradictory, unapproved, or exceeded. Route a pre-approval gap to the
+  owning planning step; route post-approval expansion to a human decision.
 
 ## Mini full-arch docs
 
@@ -21,7 +21,7 @@
 ## Arch-mini-plan docs
 
 - If planning blocks are still incomplete, recommend `arch-mini-plan`.
-- If the mini plan and its frozen scope contract are ready for build, recommend `miniarch-step implement`.
+- If the mini plan and its approved scope contract are ready for build, recommend `miniarch-step implement`.
 - If the code audit is clean and the feature still needs docs cleanup or plan/worklog retirement, recommend `arch-docs`.
 - If the mini plan outgrew the faster full-arch tier or is structurally weak, recommend `arch-step reformat`.
 

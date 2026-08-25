@@ -58,7 +58,7 @@ are not a test plan.
 
 - Canonical plan: `<path and Scope and Simplicity Contract anchor>`
 - Human-authorized outcome: `<one line>`
-- Frozen initial convergence closure: `<items or none>`
+- Approved initial convergence closure: `<items or none>`
 - Later human-approved expansions: `<approval anchors or none>`
 - Material out-of-scope findings not built: `<items or none>`
 

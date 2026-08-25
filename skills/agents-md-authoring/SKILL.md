@@ -19,7 +19,7 @@ make install
 
 - The user wants a new repo-root or path-local `AGENTS.md` for Codex, Copilot, Cursor, Claude Code, or another compatible coding agent.
 - The user wants to tighten, split, or refactor an existing `AGENTS.md` so it stops wasting prompt budget every run.
-- The user wants an `AGENTS.override.md` for a subtree, release freeze, incident mode, or security-sensitive service.
+- The user wants an `AGENTS.override.md` for a subtree, release hold, incident mode, or security-sensitive service.
 - The user wants a findings-first audit of instructions for missing commands, weak definition-of-done rules, stale scope boundaries, or noisy inferred content.
 - The user wants to add a compressed docs index or a compact map of deeper docs without copying a whole documentation tree into always-on context.
 - The repo's agent instructions create, resume, replace, or coordinate model agents and need a concise route to the shared orchestration policy.

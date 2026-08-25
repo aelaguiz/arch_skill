@@ -10,9 +10,9 @@ REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio arch-loop del
 # per-skill directories in every install root.
 SHARED_DIRS := _shared
 # `SKILLS` is the active agents/Codex surface. Claude mirrors it.
-SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup thermo-nuclear-code-quality-review intent-police
-CLAUDE_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup thermo-nuclear-code-quality-review intent-police
-GEMINI_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup thermo-nuclear-code-quality-review intent-police
+SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism
+CLAUDE_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism
+GEMINI_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim goal-loop north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism
 CURSOR_TEAM_KIT_SKILLS_DIR := vendor/cursor/plugins/cursor-team-kit/skills
 VENDORED_CURSOR_TEAM_KIT_SKILLS := thermo-nuclear-code-quality-review
 LOCAL_SKILLS := $(filter-out $(VENDORED_CURSOR_TEAM_KIT_SKILLS),$(SKILLS))
@@ -335,6 +335,7 @@ verify_agents_install:
 	done
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(AGENTS_SKILLS_DIR)/_shared/native-child-capabilities.md
 	@if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(AGENTS_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(AGENTS_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi
 	@test -f $(AGENTS_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(AGENTS_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
@@ -372,6 +373,7 @@ verify_claude_install:
 	done
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(CLAUDE_SKILLS_DIR)/_shared/native-child-capabilities.md
 	@if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(CLAUDE_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(CLAUDE_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi
 	@test -f $(CLAUDE_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(CLAUDE_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
@@ -404,6 +406,7 @@ verify_gemini_install:
 	done
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/depth-first-planning.md
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/scope-and-convergence.md
+	@test -f $(GEMINI_SKILLS_DIR)/_shared/native-child-capabilities.md
 	@if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(GEMINI_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(GEMINI_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi
 	@test -f $(GEMINI_SKILLS_DIR)/_shared/model_resolution.py
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/arch_controller_stop_hook.py
@@ -431,6 +434,7 @@ verify_hermes_install:
 			if [ -d "$$dest/$$skill" ]; then echo "ERROR: removed skill still installed at $$dest/$$skill"; exit 1; fi; \
 		done; \
 		if [ ! -f "$$dest/_shared/depth-first-planning.md" ]; then echo "ERROR: missing $$dest/_shared/depth-first-planning.md"; exit 1; fi; \
+		if [ ! -f "$$dest/_shared/native-child-capabilities.md" ]; then echo "ERROR: missing $$dest/_shared/native-child-capabilities.md"; exit 1; fi; \
 		if ! cmp -s skills/_shared/agent-orchestration-policy.md "$$dest/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $$dest/_shared/agent-orchestration-policy.md"; exit 1; fi; \
 		if [ ! -f "$$dest/_shared/model_resolution.py" ]; then echo "ERROR: missing $$dest/_shared/model_resolution.py"; exit 1; fi; \
 		for item in $(SKILLS) $(SHARED_DIRS); do \

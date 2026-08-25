@@ -1,8 +1,10 @@
 # Evidence Artifacts
 
-Use this reference after choosing the atomic grain and before building the
+Use this reference after choosing the population grain and before building the
 primary artifact. The patterns are starting shapes, not formal schemas. Add,
-remove, or rename fields to preserve the real source semantics.
+remove, or rename fields to preserve the real source semantics. They support
+statistical analysis across constituent observations; diagnosing or fixing a
+software error, regression, crash, or broken flow remains owned by `bugs-flow`.
 
 ## What The Artifact Must Make Possible
 
@@ -12,7 +14,7 @@ A strong artifact lets another investigator:
 2. open one case without reconstructing it from a dashboard;
 3. distinguish raw fields from derived classifications;
 4. find contradictions, unknowns, and exclusions;
-5. recompute the claims in the diagnosis.
+5. recompute the claims in the population analysis.
 
 Prefer one stable case grain per table or view. Keep raw evidence beside derived
 interpretation, or link it through a stable case key. Do not bury a raw payload,
@@ -86,14 +88,14 @@ P04  | renewal      | $9.99          | inactive    | present         | "no acces
 
 The row preserves separate proof layers. A store record can prove a transaction
 without proving telemetry delivery. An active entitlement can refute an access
-failure without proving attribution. The final diagnosis should state which
+failure without proving attribution. The final conclusion should state which
 layer is harmed instead of calling all mismatches "purchase failures."
 
-## Pattern 3: Request And Queue Trace
+## Pattern 3: Request And Queue Population
 
-Use when one request appears to trigger a limit, timeout, duplicate, or backlog
-incident. Reconstruct the surrounding requests and preserve both production time
-and send time.
+Use when an aggregate error, latency, duplicate, or backlog rate may hide
+variation across producers or queue ages. Reconstruct the bounded request
+population and preserve both production time and send time.
 
 ```text
 request_id | sent_at  | produced_at | producer        | queue_age | result | retry_no | source
@@ -103,10 +105,9 @@ R773       | 12:03:05 | 12:03:05    | mobile_coldopen | 0s        | 429    | 0  
 R774       | 12:03:06 | 08:54:10    | marketing_link  | 3h09m     | 200    | 3        | edge:4415
 ```
 
-This trace changes the question from "why did this phone send too much?" to
-"what occupied the shared boundary when the phone arrived?" It also lets the
-investigator test a retry theory from actual retry numbers rather than assuming
-backoff is absent.
+This population changes the question from "what caused one phone's error?" to
+"how do outcomes vary by producer, queue age, and retry state?" It can expose a
+cohort worth handing to `bugs-flow` without diagnosing the software defect.
 
 Useful companion views:
 
@@ -115,51 +116,50 @@ Useful companion views:
 - retry intervals by case;
 - the exact limiter identity or shared boundary.
 
-## Pattern 4: Visual Or Recording Evidence Index
+## Pattern 4: Visual Observation Population
 
-Do not write only "watched the video." Save frames or a contact sheet and index
-the moments that carry the claim. Pair pixels with semantic reads or real input
-when appearance cannot prove behavior.
-
-```text
-frame | t_ms | visible_state          | action          | semantic_state | pixel_change | source
-F01   | 0    | gray Fold/Call buttons | none            | disabled       | baseline     | run.mp4#0.000
-F02   | 420  | gray Fold/Call buttons | tap Call        | disabled       | none          | run.mp4#0.420
-F03   | 890  | app backgrounded       | foreground app  | n/a            | transition    | run.mp4#0.890
-F04   | 1320 | colored Fold/Call      | none            | enabled        | changed       | run.mp4#1.320
-```
-
-What the index supports:
-
-- observed: controls were gray, semantically disabled, and ignored the tap;
-- observed: foregrounding changed the same decision to enabled controls;
-- supported: presentation state was stale;
-- not yet proved: the exact code field that failed to invalidate the state.
-
-For timing claims, index first-visible, fully-visible, input, response, and end
-frames. A total duration cannot tell whether a human had time to act unless the
-relevant surface's presentation time is known.
-
-## Pattern 5: Test-Attempt Timeline
-
-Use when a named test failure may come from the product, setup, harness,
-selector, environment, or assertion. Record the actual attempted journey rather
-than reasoning from the test name.
+Use when a quantitative claim depends on a bounded set of recordings,
+screenshots, or frame observations. Index one row per independent case and keep
+the source frames that support each classification. Use `bugs-flow` instead to
+diagnose one broken UI journey.
 
 ```text
-step | intended_state       | attempted_action       | observed_state              | reached? | evidence
-1    | lesson card visible  | wait for generic card  | target card + Start Lesson  | yes      | video 0:00
-2    | lesson entered       | tap selector "lesson" | no matching selector        | no       | junit action 14
-3    | energy gate visible  | wait for checkout      | target card still visible   | no       | video 0:05-0:35
-4    | assertion            | timeout                | never left catalog          | no       | junit failure
+case | cohort  | first_visible_ms | actionable_ms | response_ms | outcome   | source
+V01  | current | 536              | 672           | 1534        | dismissed | run-01.mp4
+V02  | current | 481              | 615           | 1210        | completed | run-02.mp4
+V03  | prior   | 744              | 901           | 1040        | dismissed | run-03.mp4
+V04  | prior   | 510              | 650           | 1812        | completed | run-04.mp4
 ```
 
-The product gate cannot be diagnosed from this attempt because the attempt never
-reached it. The artifact does prove a harness-selector failure. Keep those two
-conclusions separate.
+What the population supports:
 
-For flaky or repeated tests, add attempt id, device/build binding, setup state,
-and whether each required waypoint was visibly reached.
+- visible and actionable timing distributions by cohort;
+- outcome rates joined to the actual decision window;
+- inspectable outliers and unknown classifications;
+- no claim about a software cause unless a separate bug workflow proves it.
+
+For timing claims, preserve first-visible, fully-actionable, input, response, and
+end frames. A total duration cannot establish the available decision time.
+
+## Pattern 5: Repeated Attempt Population
+
+Use when an aggregate test or automation failure rate may combine setup,
+harness, environment, assertion, and product-gate outcomes. Record one row per
+attempt and the last visibly reached waypoint. Use `bugs-flow` for an ordinary
+single failed test or for diagnosis and repair after the affected cohort is
+known.
+
+```text
+attempt | build | device | setup_ok | last_waypoint | failure_layer | reached_target | source
+A01     | 410   | iPhone | yes      | lesson card   | selector      | no             | run-01
+A02     | 410   | Pixel  | yes      | energy gate   | assertion     | yes            | run-02
+A03     | 411   | iPhone | no       | login         | environment   | no             | run-03
+A04     | 411   | Pixel  | yes      | lesson card   | selector      | no             | run-04
+```
+
+This population can quantify how much of the reported failure rate reached the
+target surface and how outcomes vary by build or device. It does not itself
+diagnose or fix the selector, environment, assertion, or product defect.
 
 ## Pattern 6: Population Recut After A Sample Story
 

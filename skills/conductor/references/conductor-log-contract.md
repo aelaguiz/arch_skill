@@ -17,11 +17,12 @@ constraints).
 # Conductor Log
 Plan: <path to the conducted plan or outcome map>
 Start commit: <hash>
-Workers: <transport/context; external runtime/model/effort when selected>
+Workers: <model @ thinking level; lane and starting context; external runtime
+         and run directory when selected>
 Max parallel: <N>   Wave cap: <N>
 Boundary: <whole plan | phases X-Y>   Cold verifier: <on|off>
 Final gate: <not run | clean | findings open>
-Scope contract: <plan anchor>   Scope status: <frozen-clean | human decision needed | unresolved>
+Scope contract: <plan anchor>   Scope status: <approved-clean | human decision needed | unresolved>
 Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 
 ## Resume Snapshot
@@ -38,7 +39,7 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 ### PC-001 - <title>
 - Slice: <id>  Lens: <lens>  Evidence: <path:line>
 - Factual status: accepted | rejected | unresolved
-- Scope disposition: authorized | frozen-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
+- Scope disposition: authorized | approved-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope
 - Route: send-back | observe | human-decision | subtract | resolved
 - Resolution evidence: <anchor>
 
@@ -62,11 +63,14 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 - **Size rationale** is one line saying why this chunk (whole phase, named
   owner-boundary split, merged trivial phases) — it makes the chunking
   judgment visible and reviewable.
-- **Worker/handle** names transport, starting context, and the exact native
-  child handle or external session id. For an external lane it also records
-  runtime/model/effort and the `$agent-delegate` run directory. These receipts
-  preserve exact-role continuation without treating transport as workflow
-  meaning.
+- **Worker/handle** names the lane, the pinned model and thinking level, the
+  starting context, and the exact native child handle or external session id.
+  For an external lane it also records the runtime and the `$agent-delegate`
+  run directory. Record the profile even when it matches the fleet default: a
+  slice whose model or thinking level differs from the run's default is the
+  first thing to check when its output looks unlike its siblings. These
+  receipts preserve exact-role continuation without treating transport as
+  workflow meaning.
 - **Attempts** counts dispatch + send-backs + respawns toward the per-slice
   caps.
 - **Evidence** for an `accepted` slice anchors the proof: diff anchors,
@@ -102,7 +106,7 @@ The run is complete when all three hold:
 2. Every phase's plan-required verification is recorded passing in the Proof
    Ledger (fresh, or valid-until untouched).
 3. The `Final gate:` header line reads `clean`.
-4. `Scope status:` reads `frozen-clean`, with no open
+4. `Scope status:` reads `approved-clean`, with no open
    `new-scope-needs-human` decision, scope-cycle finding, or
    `unauthorized-built-scope` subtraction.
 

@@ -3,7 +3,7 @@
 Apply `../../_shared/scope-and-convergence.md`. The raw human goal and
 human-approved decomposition are the epic baseline. Each sub-plan inherits that
 boundary, may record the smallest evidenced same-contract convergence closure
-during its initial architecture pass, and freezes that closure before
+during its initial architecture pass, and signs off that closure before
 implementation.
 
 The epic critic is a read-only detector. It can reject drift; it cannot create
@@ -13,18 +13,18 @@ finding, or already-built path does not authorize an addition.
 ## What The Critic Checks
 
 The critic compares the raw goal, approved decomposition, current sub-plan
-Scope and Simplicity Contract, its freeze anchor, explicit human approvals,
+Scope and Simplicity Contract, its approval anchor, explicit human approvals,
 worklog, Decision Log, and shipped code.
 
 Material failures are:
 
-1. **Missing authorized scope.** A raw-goal, decomposition, or frozen sub-plan
+1. **Missing authorized scope.** A raw-goal, decomposition, or approved sub-plan
    obligation was cut, narrowed, skipped, or left without a named later owner.
-2. **Post-freeze proposed expansion.** A newly discovered caller, behavior,
-   constraint, mechanism, proof category, or sub-plan is absent from the frozen
+2. **Post-approval proposed expansion.** A newly discovered caller, behavior,
+   constraint, mechanism, proof category, or sub-plan is absent from the approved
    contract. This includes a real same-contract path first found by the critic.
 3. **Unauthorized built scope.** Code, tests, schemas, configs, dependencies,
-   docs, or operational surfaces were added after freeze without explicit human
+   docs, or operational surfaces were added after sign-off without explicit human
    approval.
 4. **Scope cycling.** Agent-created work became plan or code truth and later
    reviews used it to demand further expansion.
@@ -51,17 +51,17 @@ Allowed relationships and routes are:
 - `unauthorized_built_scope` → `subtract`.
 
 The critic reports the disposition and evidence, not implementation steps. A
-human may explicitly approve a new outcome or sub-plan and re-freeze it. Until
+human may explicitly approve a new outcome or sub-plan and re-approve it. Until
 then, the orchestrator may only finish already-authorized work or
-subtract/redesign inside the frozen boundary.
+subtract/redesign inside the approved boundary.
 
 ## Noise
 
-Ignore implementation choices that stay inside the frozen outcome and do not
+Ignore implementation choices that stay inside the approved outcome and do not
 create durable new product or operational surface: file renames, local helper
 refactors, ordinary style choices, or a library substitution that preserves the
 same contract. Also ignore nice-to-have observations that are neither required
-by frozen scope nor already built.
+by approved scope nor already built.
 
 Extra tests, utilities, or abstractions are not automatically noise. When they
 create durable maintenance surface absent from the contract, classify them as
@@ -72,14 +72,14 @@ unauthorized built scope.
 When scope expansion is proposed, halt and present two classes of choice:
 
 - approve the expansion, choose whether it extends the current sub-plan or
-  becomes a new sub-plan, update the canonical contracts, and re-freeze before
+  becomes a new sub-plan, update the canonical contracts, and re-approve before
   implementation; or
-- keep the frozen scope and require subtraction/redesign within it.
+- keep the approved scope and require subtraction/redesign within it.
 
 Do not phrase critic-derived expansion as already required. A critic may have
 found a real architectural relationship; only the human decision owner can
 decide that it belongs in this epic now.
 
 Agent-written Decision Log entries are evidence, not approval. The log must
-name the human decision owner and visible approval for any post-freeze
+name the human decision owner and visible approval for any post-approval
 expansion.

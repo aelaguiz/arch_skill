@@ -47,7 +47,7 @@
   same-contract paths whose omission would leave split authority, record the
   exact minimal closure and cutover/delete in Section 0 and Section 10, and
   exclude merely similar neighbors
-- if scope is already frozen, do not append or enlarge the initial closure;
+- if scope is already signed off, do not append or enlarge the initial closure;
   classify a new adjacent path as `new-scope-needs-human`
 - compatibility posture is separate from `fallback_policy`; do not leave preservation versus clean cutover implicit in the authoritative plan
 - when the change is agent-backed, decide what behavior belongs in prompt or native-capability usage versus deterministic code before designing new tooling

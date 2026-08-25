@@ -145,11 +145,12 @@ Claude Code, and Gemini.
   work: prior prompts, slash or goal commands, corrections, tool calls, child
   agents, or session timelines in Codex, Claude Code, Pi, or Prime Agent. It is
   read-only history retrieval, not repo search and not Git commit history.
-- Use `$bottom-up-diagnostic` when a hard investigation is stuck at aggregate
-  metrics or high-level theories and the user wants the underlying users,
-  events, transactions, requests, journeys, screenshots, or frames materialized
-  and inspected before reaggregation. It owns the evidence pass and bounded
-  diagnosis, not implementation of a known fix.
+- Use `$bottom-up-diagnostic` for case-level statistical analysis when an
+  aggregate, average, funnel, or sample must be rebuilt from the underlying
+  population. It may surface a software-defect signal, but it does not own bug
+  diagnosis, reproduction, repair, or verification. Use `$bugs-flow` when the
+  goal is to diagnose or fix errors, regressions, crashes, Sentry issues,
+  failed tests, or broken flows.
 - Use `$cf-share` when the user wants a local artifact file or directory
   (HTML report, screenshots, analysis bundle, any static files) uploaded to
   Cloudflare and shared with the team by a public unguessable
@@ -237,15 +238,18 @@ Claude Code, and Gemini.
   shaping stage (parallel worker research as evidence, a parent trim to the
   smallest sufficient solution, a lightweight outcome map, one scope
   approval that freezes the boundary), and workers never dispatch before
-  observable done-ness exists. Execution defaults to the cheap parallel
-  external fleet — Codex `gpt-5.6-sol` at `ultra` through `$agent-delegate`,
-  one-word fleet swaps to Kimi, Grok, Cursor, or Claude — with `aim`
-  rotation and exact-session resume across Codex usage limits; the parent
-  audits every diff assuming workers cut corners, resumes the exact worker
-  with batched findings until exit criteria are true in code, and closes
-  with a new clean whole-plan audit plus fleet-run cynical reviews and an
-  optional fleet cold verifier — review labor rides the cheap fleet, never
-  native subagents, which bill the parent's expensive model. When the
+  observable done-ness exists. Execution runs a cheap parallel worker fleet
+  defined by a pinned model and thinking level — Codex `gpt-5.6-sol` at
+  `ultra` by default, one-word swaps to Kimi, Grok, Cursor, or Claude — on a
+  native child when the host can pin that profile durably and on an
+  `$agent-delegate` session when it cannot, with `aim` rotation and
+  exact-session resume across Codex usage limits; the parent audits every diff
+  assuming workers cut corners, resumes the exact worker with batched findings
+  until exit criteria are true in code, and closes with a new clean whole-plan
+  audit plus an optional fleet cold verifier; the three cynical review skills
+  are advisory and run only when the user asks — review labor rides the cheap
+  profile, never an unpinned native child, which would bill the parent's
+  expensive model. When the
   user wants the work shipped, a dedicated delivery worker — never the
   parent — runs `$pr-authoring` and `$pr-review-followthrough` through CI
   to merge-ready, with a standard at-a-glance delivery report at PR-up and
@@ -257,6 +261,14 @@ Claude Code, and Gemini.
   adversarial simplification. Resolve transport separately for each participant,
   keep each participant's exact continuation, and let the parent relay; do not
   introduce a deterministic runner, script, controller, or harness layer.
+- Use `$startup-pragmatism` when the user invokes a startup reality check or
+  says the agent is overbuilding, over-proving, being pedantic, or
+  perfection-maximizing. It re-frames the current plan, answer, or in-flight
+  work through the early-stage startup lens: cut list, forced decision at
+  current information, and an explicit note of where rigor is still owed. It
+  is not code-defect review, plan-readiness audit, or intent-drift policing,
+  and it never waives rigor on genuinely irreversible high-blast-radius
+  moves.
 - Use `$thermo-nuclear-code-quality-review` only when the user explicitly wants
   a thermonuclear, code-judo, or especially harsh maintainability review.
   Handle ordinary code review requests with the normal review response unless

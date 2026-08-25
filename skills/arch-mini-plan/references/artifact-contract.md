@@ -31,7 +31,7 @@ When creating or repairing a mini-plan doc, ensure it has at least:
   - human-authorized outcome and authorization anchors
   - smallest sufficient solution
   - initial minimal convergence closure or explicit `none`
-  - scope freeze at the ready verdict
+  - scope sign-off at the ready verdict
   - enough proof and do-not-build boundary
   - accepted residual risk
 
@@ -61,8 +61,8 @@ When the change is agent-backed, these blocks must make capability-first decisio
 
 - New or unconfirmed docs stay `status: draft`.
 - Planning-complete docs move to `status: active`.
-- Before moving to `active`, freeze the scope contract. Every required phase
-  item must map to human scope or the pre-freeze minimal convergence closure.
+- Before moving to `active`, sign off the scope contract. Every required phase
+  item must map to human scope or the pre-approval minimal convergence closure.
 - Do not set `status: complete` in mini-plan mode. Implementation belongs to `miniarch-step` or `arch-step`.
 
 ## Handoff contract

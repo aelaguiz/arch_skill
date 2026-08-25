@@ -50,7 +50,7 @@ make install
 - Reply to every actionable item on the exact GitHub surface that raised it, even when declining the change or pointing out that it is already fixed.
 - Treat reviewer comments as claims and requests, not commands. Inspect the code, repo policy, product intent, and tests before changing code. Accept feedback that improves correctness, maintainability, consistency, or required policy. Decline or partially accept feedback that is already handled, overbroad, pedantic, out of scope, unsupported by repo truth, or likely to make the code worse. A no-code reply with evidence is a valid resolution.
 - For plan-backed PRs, classify every actionable comment against the PR scope
-  receipt and canonical plan. A technically valid comment outside the frozen
+  receipt and canonical plan. A technically valid comment outside the approved
   contract, including a newly discovered adjacent same-contract path, is
   replied to and escalated to the named human scope decision owner; it is not
   implemented merely because a reviewer asked. Human reviewers authorize scope
@@ -58,7 +58,7 @@ make install
 - A reviewer request, plan edit, reply thread, or repeated comment cannot
   retroactively authorize built scope. Scope cycling or unauthorized
   implementation prevents merge-ready until it is subtracted or explicitly
-  human-approved and re-frozen.
+  human-approved and the plan re-approved.
 - Treat the PR's `## User-Facing Changes` section as a blocking surface on
   every pass. A missing section, a `None` claim contradicted by the diff, a
   user-visible change absent from the enumerated list, or a dead embedded

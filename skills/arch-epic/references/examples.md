@@ -125,7 +125,7 @@ The worklog contains this entry:
     {"name": "scope_not_cut", "status": "pass",
      "evidence": "all phase checklist items are complete"},
     {"name": "scope_provenance_and_no_cycling", "status": "fail",
-     "evidence": "background rotation appeared after scope freeze and has no human approval anchor"},
+     "evidence": "background rotation appeared after scope sign-off and has no human approval anchor"},
     {"name": "no_orphaned_discoveries", "status": "fail",
      "evidence": "worklog Phase 3 names token rotation background job as required for long-lived sessions but implementation is inline middleware"},
     {"name": "audit_clean", "status": "pass",
@@ -138,7 +138,7 @@ The worklog contains this entry:
       "recommendation": "human_decision"
     }
   ],
-  "summary": "The worklog proposes background rotation after scope freeze, but no human approval authorizes it. Keep the current boundary and redesign/subtract, or ask the human to approve and re-freeze an expansion."
+  "summary": "The worklog proposes background rotation after scope sign-off, but no human approval authorizes it. Keep the current boundary and redesign/subtract, or ask the human to approve and re-approve an expansion."
 }
 ```
 
@@ -157,8 +157,8 @@ Appends critic verdict path. Appends Decision Log entry:
 > is required for long-lived sessions. Current implementation
 > is inline middleware and fails when sessions idle past refresh
 > windows. Options:
->   a. keep_scope — redesign/subtract inside the frozen boundary.
->   b. approve extend_current — expand sub-plan 1 and re-freeze.
+>   a. keep_scope — redesign/subtract inside the approved boundary.
+>   b. approve extend_current — expand sub-plan 1 and re-approve.
 >   c. approve new_sub_plan — insert a human-approved sub-plan.
 > What do you want?
 
@@ -210,7 +210,7 @@ arch-step audit passes. Skill runs critic.
     {"name": "north_star_preserved", "status": "pass", "evidence": "..."},
     {"name": "scope_not_cut", "status": "pass", "evidence": "..."},
     {"name": "scope_provenance_and_no_cycling", "status": "pass",
-     "evidence": "no post-freeze obligation or unauthorized built scope"},
+     "evidence": "no post-approval obligation or unauthorized built scope"},
     {"name": "no_orphaned_discoveries", "status": "pass",
      "evidence": "worklog notes dashboard polls every 10s and mentions WebSockets would be cleaner, but the approved North Star and gate only require timely audit event visibility"},
     {"name": "audit_clean", "status": "pass", "evidence": "..."}

@@ -17,14 +17,14 @@ After this command runs:
 - missing code work is explicit and evidence-anchored
 - manual verification remains visible without softening code-completeness
 - a reader can tell whether the implementation is actually code-complete without hand-waving
-- a reader can tell whether all code is authorized by the frozen contract
+- a reader can tell whether all code is authorized by the approved contract
 
-Audit against the original human anchors, pre-freeze convergence closure, and
+Audit against the original human anchors, pre-approval convergence closure, and
 explicit later human approvals—not merely the latest plan text. Give every
 material finding a scope disposition. Unauthorized additions are subtraction
 work and force `NOT COMPLETE` even when they work or tests pass. A new
 same-contract path discovered by this audit may block approval, but it cannot be
-added to repair scope without a human decision and re-freeze.
+added to repair scope without a human decision and re-approval.
 
 ## Shared references to carry in
 

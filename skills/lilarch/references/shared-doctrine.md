@@ -5,7 +5,7 @@
 - One compact doc is the planning source of truth.
 - Apply `../../_shared/scope-and-convergence.md`. Start and plan may define the
   smallest evidenced initial convergence closure; finish and review may not
-  expand it after the plan-ready freeze.
+  expand it after the plan-ready sign-off.
 - Code is ground truth. Anchor claims in files, symbols, tests, logs, or explicit UX docs.
 - Start and plan modes are docs-only.
 - Finish mode implements under active-host ownership and keeps the worklog
@@ -30,8 +30,8 @@
 - Requirements should resolve decisions, not restate the user prompt.
 - Plan audits are quality gates, not second plans.
 - A plan-audit finding cannot authorize a new phase, adjacent path, proof
-  category, or mechanism. It may route a pre-freeze gap back to plan mode or a
-  post-freeze gap to a human decision.
+  category, or mechanism. It may route a pre-approval gap back to plan mode or a
+  post-approval gap to a human decision.
 
 ## What strong lilarch looks like
 

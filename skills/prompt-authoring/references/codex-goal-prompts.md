@@ -37,7 +37,7 @@ Good goal prompts teach judgment:
 - what evidence proves done
 - when outside signoff is required
 - how to keep moving when the path is unclear without silently cutting scope
-- how to keep review from silently expanding a frozen plan
+- how to keep review from silently expanding an approved plan
 
 Weak goal prompts either under-specify the result or over-specify the source
 material. Both create guessing. A tiny "fix it properly" goal makes the agent
@@ -167,7 +167,7 @@ Good signoff names:
 - done rule: the reviewer agrees the goal is satisfied. If review rejects the
   result, authorized objections become repair input, unauthorized built scope
   becomes subtraction, and new scope stops for a human decision. A reviewer
-  cannot expand a frozen plan.
+  cannot expand an approved plan.
 
 Bad signoff:
 
@@ -365,7 +365,7 @@ staying small enough to paste into `/goal`.
 - A goal that treats an agent-authored plan revision or reviewer finding as
   human scope authority.
 - A repair loop that keeps accepting review-created work until implementation
-  exceeds the frozen initial scope.
+  exceeds the approved initial scope.
 - A review line that is not part of done.
 - A consensus line that does not define convergence.
 - A signoff line that makes reviewer rejection or model disagreement sound like

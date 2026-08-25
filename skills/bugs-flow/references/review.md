@@ -8,15 +8,15 @@ repairs return to the exact implementer that owns the fix.
 
 ## Dispatch And Ownership
 
-- The parent owns the bug scope, frozen convergence closure, bug-doc writes,
+- The parent owns the bug scope, approved convergence closure, bug-doc writes,
   finding disposition, accepted repairs, synthesis, and final verdict.
 - Capture current git status and the relevant diff before dispatch, then start
   a new clean same-host native critic by default. In Codex set
   `fork_turns: "none"`; in Claude use a clean named or custom subagent, not a
   bare conversation fork or skill `context: fork` shorthand.
 - Pass `DOC_PATH`, exact implementation paths, verification evidence, and the
-  frozen closure directly. Apply `$prompt-authoring` to the populated brief:
-  identify the human-authorized corrected behavior, frozen closure, safety
+  approved closure directly. Apply `$prompt-authoring` to the populated brief:
+  identify the human-authorized corrected behavior, approved closure, safety
   constraints, and proof obligations as authority; present the bug doc's root
   cause and fix plan only as challengeable context, or omit them when a cold
   read is the point. Use bounded or full inherited context only for a named
@@ -40,7 +40,7 @@ repairs return to the exact implementer that owns the fix.
 - Does the verification evidence match the bug?
 - Did the implementation introduce forbidden fallback or shim behavior?
 - Did the doc truth stay current?
-- Did the implementation stay inside the frozen bug scope and avoid scope
+- Did the implementation stay inside the approved bug scope and avoid scope
   cycling?
 
 ## Rules
@@ -48,7 +48,7 @@ repairs return to the exact implementer that owns the fix.
 - Review is explicit-review-only.
 - Findings should be bug-specific, not a generic cleanup wishlist.
 - Classify material findings using the shared scope dispositions. Review may
-  require repair of authorized/frozen-closure work or subtraction of
+  require repair of authorized/approved-closure work or subtraction of
   unauthorized work; it may not add an adjacent area to the fix.
 - If the fix is incomplete, reopen the doc status and name the missing work.
 - If the user did not ask for review, stop after local verification.
@@ -62,7 +62,7 @@ git status and diff with the pre-dispatch state, spot-checks the evidence, and
 decides which findings to accept.
 
 Send accepted repair findings to the exact implementer handle that produced or
-owns the fix. Keep the repair inside the frozen closure, include the finding's
+owns the fix. Keep the repair inside the approved closure, include the finding's
 evidence and contract anchor, keep any proposed repair direction advisory, and
 let the implementer rebut it with code evidence. After repair and verification,
 start a different new clean critic for the next independent gate; do not resume

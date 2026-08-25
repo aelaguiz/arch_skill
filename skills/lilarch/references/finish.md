@@ -10,13 +10,13 @@ current, and audit without inventing a new plan.
 - Re-read `DOC_PATH` before changing code.
 - Create or repair `WORKLOG_PATH`.
 - Implement phase by phase.
-- Before the first edit, verify the contract is frozen and every active item is
-  `authorized` or `frozen-convergence-required`.
+- Before the first edit, verify the contract is signed off and every active item is
+  `authorized` or `approved-convergence-required`.
 - For agent-backed behavior, prefer the planned prompt, grounding, or native-capability edits before adding new tooling.
 - Run the smallest credible checks after meaningful work.
 - Update `arch_skill:block:implementation_audit` before declaring completion.
 - Classify new findings with the shared scope dispositions. A newly discovered
-  same-contract path is still `new-scope-needs-human` after freeze; do not add
+  same-contract path is still `new-scope-needs-human` after sign-off; do not add
   it automatically. Subtract `unauthorized-built-scope`.
 
 ## Optional clean child use
@@ -24,7 +24,7 @@ current, and audit without inventing a new plan.
 The parent may assign a clean same-host native implementation child a
 low-collision slice only when its owner paths do not overlap another writer.
 Give it `DOC_PATH`, the exact slice, allowed write paths, required checks, the
-frozen scope boundary, and a return contract covering files changed, checks
+approved scope boundary, and a return contract covering files changed, checks
 and results, unresolved findings, collision risks, and its durable handle. The
 parent retains ownership of `DOC_PATH`, `WORKLOG_PATH`, scope decisions, and
 final integration. Children may use their own native sub-agents on their own

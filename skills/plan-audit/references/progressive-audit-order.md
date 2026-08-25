@@ -128,7 +128,7 @@ Ask:
 - Should an existing pattern be extended or made canonical?
 - What can be deleted, privatized, merged, or made unreachable?
 - Which adjacent same-contract surfaces were already included by initial
-  architecture before freeze? Do not answer this question by expanding the
+  architecture before sign-off? Do not answer this question by expanding the
   plan from the audit.
 - What complexity exists only because the plan assumes a false constraint?
 
@@ -149,8 +149,8 @@ Ask:
 - Wrong or out of scope: reject with a short reason in the audit log when
   applicable.
 - Give every material finding a scope disposition from the shared doctrine.
-  A pre-freeze planning gap routes back to the planning owner for architecture
-  inspection. A post-freeze gap routes to a human decision. Neither route lets
+  A pre-approval planning gap routes back to the planning owner for architecture
+  inspection. A post-approval gap routes to a human decision. Neither route lets
   the auditor write the expansion into required scope.
 
 ## 12. Update The Audit Log

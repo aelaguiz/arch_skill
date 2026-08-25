@@ -37,9 +37,10 @@ scope such as an explicit phase range remains binding.
   triage, proof freshness, and the final acceptance decision. Terra workers
   own source edits and proof runs during the conductor stage.
 - Keep the ordinary cold verifier enabled unless the user explicitly disables
-  it. The three new clean external cynical reviews satisfy and strengthen the
-  ordinary cynical-instrument portion of the final gate; they do not duplicate
-  direct instrument runs, and they do not replace the cold verifier.
+  it. Invoking this preset is itself the request for the three cynical
+  reviews, so they run here and they do gate this lane — unlike ordinary
+  conductor runs, where the reviews are advisory and only run on request. They
+  do not replace the cold verifier.
 - Keep the same worktree and branch through implementation, review repairs,
   PR publication, and PR follow-through.
 
@@ -65,10 +66,10 @@ scope such as an explicit phase range remains binding.
 4. **Triage and repair.** Treat every reviewer result as a claim. The conductor
    checks each finding against the plan and current repo, judges factual
    validity separately from scope disposition, and sends only `authorized`,
-   `frozen-convergence-required`, or required subtraction work to the
+   `approved-convergence-required`, or required subtraction work to the
    healthy owning implementation session, or a new clean external Terra xhigh
    repair worker when ownership or session health requires it. A broader
-   reviewer recommendation needs explicit human approval and re-freeze.
+   reviewer recommendation needs explicit human approval and re-approval.
    Independently reproduce the affected proof.
 5. **Re-review.** A review is clean only at its own native clean verdict:
    `approve` for code and architecture, and `no-material-cruft-found` for
@@ -76,7 +77,7 @@ scope such as an explicit phase range remains binding.
    clean external Terra xhigh session. `coverage-incomplete`, `scope-incomplete`,
    `unsafe-to-judge`, or open required repairs do not pass the gate.
 6. **Publish the PR (delegated).** After all plan proof and all three review
-   lanes are clean and the scope-provenance gate is `frozen-clean`, dispatch
+   lanes are clean and the scope-provenance gate is `approved-clean`, dispatch
    a dedicated delivery worker in the same worktree and branch — a child,
    never the conductor — to invoke `$pr-authoring`: inspect repo truth,
    publish or update the GitHub PR, and return the PR URL. The conductor

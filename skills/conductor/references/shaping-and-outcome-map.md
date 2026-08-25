@@ -5,7 +5,7 @@ outcome ("get X working end to end") or a partial plan (real requirements,
 missing done-ness or ordering). Its output is the **outcome map** — the
 smallest artifact that passes the same readiness gate a finished plan must
 pass. Shaping happens before the gate, never around it: if the map still
-lacks observable done-ness or a frozen boundary, the run stops exactly as it
+lacks observable done-ness or an approved boundary, the run stops exactly as it
 would for a defective plan.
 
 Skip this stage entirely when the intake is a finished plan. Do not "improve"
@@ -52,7 +52,7 @@ Required blocks — content, not ceremony; each may be short:
 - **North Star** — the outcome in the user's language, plus how anyone would
   observe that it is true.
 - **Non-Goals / Do-Not-Build** — the trimmed proposals and adjacent work
-  deliberately excluded. This block is what makes the freeze auditable.
+  deliberately excluded. This block is what makes the sign-off auditable.
 - **Slices** — ordered, phase-sized work units, each with observable
   done-ness and its verification obligation (the command, test, or check
   that proves it). Slices follow the chunking doctrine: default one coherent
@@ -69,15 +69,15 @@ non-goals where scope is implicit. Never rewrite or re-scope the author's
 decisions; a real conflict between the partial plan and repo truth is an
 escalation, not an edit.
 
-## Approval and freeze
+## Approval and sign-off
 
 Present the map compactly for approval: North Star, the slice list with
 done-ness, and the non-goals. One pause, one decision. The user may adjust
 scope freely at this moment — that is the point of the pause.
 
 Approval (or an explicit prior `full-auto` grant from the user, recorded in
-the Approval block) freezes the boundary with the same discipline as a
-finished plan's scope freeze: workers, audits, reviews, and repeated
+the Approval block) signs off the boundary with the same discipline as a
+finished plan's scope sign-off: workers, audits, reviews, and repeated
 findings cannot expand it, and a newly discovered same-contract adjacent
 path requires a human decision. From this moment the map is "the plan" for
 every downstream rule in `SKILL.md` and the other references.

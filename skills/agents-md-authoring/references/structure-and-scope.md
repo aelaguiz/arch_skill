@@ -54,7 +54,7 @@ Use `AGENTS.override.md` when a directory needs a clean replacement because inhe
 Good examples:
 
 - payments or compliance-heavy services
-- incident or freeze mode
+- incident or release-hold mode
 - generated-code or vendor directories with unusual editing rules
 - directories whose commands differ so much that "append local notes" becomes more confusing than replacement
 
@@ -90,7 +90,7 @@ Use them when:
 
 - the local file must replace, not extend, the normal doctrine
 - inheriting nearby instructions would produce the wrong commands or unsafe behavior
-- the mode is temporary but materially different, such as freeze mode or incident response
+- the mode is temporary but materially different, such as release-hold mode or incident response
 
 Do not use them when:
 

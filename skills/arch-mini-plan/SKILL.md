@@ -29,11 +29,11 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 - Keep one canonical `DOC_PATH` as the source of truth.
 - Write the compact Scope and Simplicity Contract from
   `references/artifact-contract.md`. Initial architecture may include only the
-  smallest evidenced same-contract convergence closure; freeze it at the ready
+  smallest evidenced same-contract convergence closure; sign it off at the ready
   verdict. After that verdict, only explicit human approval expands scope.
 - Use the same canonical arch markers and compatible section shapes that `arch-step` expects.
 - Keep the phase plan tight: usually 1-2 phases, optionally 3 if cleanup truly needs its own pass.
-- Escalate when human-authorized or pre-freeze convergence work genuinely
+- Escalate when human-authorized or pre-approval convergence work genuinely
   exceeds a compact plan, or when decisions remain unresolved. Do not escalate
   merely because the planner imagined adjacent work.
 - Ask questions only when repo/docs/tools cannot answer them.

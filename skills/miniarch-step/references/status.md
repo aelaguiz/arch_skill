@@ -79,7 +79,7 @@ Grade:
 
 - `strong` when TL;DR and Section 0 are concrete, scoped, falsifiable,
   evidence-aware, contain a binding Scope and Simplicity Contract with human
-  anchors, initial closure or `none`, and a freeze boundary, contain no
+  anchors, initial closure or `none`, and a sign-off boundary, contain no
   unresolved plan-shaping decisions, and `status` is `active` or `complete`
 - `decent` when the content is mostly real but thin in one important place
 - `weak` when the draft is vague, contradictory, placeholder-heavy, or still leaves plan-shaping decisions unresolved
@@ -126,10 +126,10 @@ Inspect:
 Grade:
 
 - `strong` when the authoritative phased plan exists, remains the single
-  execution checklist, sequences only the frozen destination map, starts with a
+  execution checklist, sequences only the approved destination map, starts with a
   real working slice, uses proof-gate phase boundaries, keeps every item inside
-  the frozen Scope and Simplicity Contract, and contains no unresolved branches
-  or post-freeze reviewer expansion
+  the approved Scope and Simplicity Contract, and contains no unresolved branches
+  or post-approval reviewer expansion
 - `decent` when present but one or more phases are thin
 - `weak` when generic, incomplete, blends coherent units into oversized phases,
   omits phase obligations, uses non-auditable exit criteria, mixes product creep
@@ -163,7 +163,7 @@ Grade:
 
 - `strong` when the audit block is evidence-anchored, reopened phases are
   updated in place, missing code is separated from manual verification, and
-  unauthorized adjacent work, machinery, or proof beyond the frozen Scope and
+  unauthorized adjacent work, machinery, or proof beyond the approved Scope and
   Simplicity Contract is treated as subtraction work
 - `decent` when present but thin
 - `weak` when nominal but not convincingly reconciled, or when exit-criteria validation is missing, vague, or clearly incomplete

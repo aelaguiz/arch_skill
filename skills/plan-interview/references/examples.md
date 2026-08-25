@@ -67,7 +67,7 @@ same flash, or is any visible change off the table?
 **User:** skeleton is fine, same as home. nothing else changes.
 
 **Interviewer:** Written: UX delta = skeleton on intro (reusing the
-existing pattern), everything else frozen. Journey map — required whenever
+existing pattern), everything else unchanged. Journey map — required whenever
 we touch a journey, and here it's the confirm-only kind: home → tap a
 lesson → intro screen → start. No step added, removed, or reordered; this
 work only makes the intro step paint faster. Is that the whole journey
@@ -124,7 +124,7 @@ is this good?
 | Must (hard) | Intro paint behavior matches the home screen |
 | Must (hard) | Sim automation measures it and joins the default suite |
 | Must (hard) | The old fetch path is deleted; no new caching infrastructure |
-| UX delta | Skeleton only, existing pattern; everything else frozen |
+| UX delta | Skeleton only, existing pattern; everything else unchanged |
 | Journey | Existing lesson-entry journey confirmed, unchanged |
 | Visuals | None needed — target is existing in-app behavior |
 | Non-goals | Puzzle intro (deferred, logged); anything visually new |
@@ -232,7 +232,7 @@ full test grid, or is the account diff the decisive proof here?
 
 **User:** account diff is the proof. add automation only if it's cheap.
 
-**Interviewer:** Recorded with your wording. Checkpoint: I can freeze now.
+**Interviewer:** Recorded with your wording. Checkpoint: I can sign off now.
 One area would benefit from three more minutes: the two accounts I found
 with corrupted streak history (they'll diff no matter what we do). Handle
 them, or leave-as-is and log?
@@ -266,7 +266,7 @@ external. The decision table — is this good?
 **User:** good. run it
 
 **Interviewer:** Default plan step: `$arch-mini-plan` against this pack —
-running it now, conductor when the plan freezes.
+running it now, conductor when the plan is signed off.
 
 *Moves: the disagreement resolution came out of the user's own intent
 statement; the classification and stay-dead list were derived then
@@ -360,7 +360,7 @@ Anything about journeys two or three that isn't obvious?
 
 **3. Who gets it — everyone including free users, or is the paygate
 involved?** (Flagging: if free users see it locked, that's a paygate
-change, which is currently a frozen surface.)
+change, which is currently out of scope.)
 
 **User:** everyone. paygate untouched.
 
@@ -369,7 +369,7 @@ change, which is currently a frozen surface.)
 **User:** own counter. real streak untouched.
 
 **Interviewer:** Both recorded as hard requirements — and both keep this
-project off two frozen surfaces (paygate, streak logic), which keeps it
+project off two out-of-scope surfaces (paygate, streak logic), which keeps it
 small. One thing your answers raise that I can't answer from what I've
 read so far: how the daily hand actually gets picked. Give me a few
 minutes with the puzzle-serving code.
@@ -410,10 +410,10 @@ the lesson rail around.
 **Interviewer:** Both added: offline behavior (needs one answer — what
 should the card show offline? I'll bring options with the mock round) and
 a layout requirement — card insertion must not reflow existing rail
-content. Checkpoint: freeze now with the mock gate pending, or spend five
+content. Checkpoint: sign off now with the mock gate pending, or spend five
 more minutes on done-state copy and edge details?
 
-**User:** freeze. copy and the offline thing both come with the mocks.
+**User:** sign off. copy and the offline thing both come with the mocks.
 
 **Interviewer:** Standard setup + attendance?
 
@@ -426,8 +426,8 @@ more minutes on done-state copy and edge details?
 | Outcome | Daily challenge card: the reason to open the app today |
 | Journeys (3 mapped) | Daily play (see hand → tap → solve → done-state); same-day return (done-state holds); next-day reset at local midnight |
 | Visuals | No mocks; reference = daily-quest energy, our look; **mock gate: you pick from 2–3 options before implementation** |
-| Audience | Everyone; paygate untouched (frozen surface) |
-| Streak | Own counter; real streak untouched (frozen surface) |
+| Audience | Everyone; paygate untouched (out of scope) |
+| Streak | Own counter; real streak untouched (out of scope) |
 | Daily hand | Same for everyone; auto-selected, solvable at every level |
 | Layout (hard) | Card must not reflow existing rail content |
 | Non-goals | Push, share, gems hook, history screen, difficulty tuning |
@@ -613,7 +613,7 @@ decompiled into ones.*
 > intent, requirements, UX, or architecture. The user's thinking comes
 > first.
 >
-> ~~Freeze silently and auto-run the next skill~~ → The close is always
+> ~~Sign off silently and auto-run the next skill~~ → The close is always
 > two gates: the decision table ("is this good?"), then "ready for me to
 > run the plan step?" — where a bare yes runs `$arch-mini-plan` and a
 > sentence of steering runs exactly that instead.

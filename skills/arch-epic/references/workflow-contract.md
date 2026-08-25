@@ -419,7 +419,7 @@ the next routing decision.
 - Critic finds missing epic requirement coverage or unfinished in-scope
   implementation work: resume the exact planner or implementation worker that
   owns the failed gate until the retry budget is exhausted.
-- Critic finds post-freeze expansion, unauthorized built scope, scope cycling,
+- Critic finds post-approval expansion, unauthorized built scope, scope cycling,
   material product-intent change, or two valid scope paths: halt and ask the
   user; do not resume a worker with expansion as required work.
 - Failing worker cannot be resumed: halt with its handle and available receipts,
@@ -438,11 +438,11 @@ the next routing decision.
   Decision Log section (or the critic verdict that halted the
   run).
 - The user's decision: approve expansion through `extend_current` or
-  `new_sub_plan`, or keep frozen scope and require subtraction/redesign.
+  `new_sub_plan`, or keep approved scope and require subtraction/redesign.
 
 ### Outputs
 - Decomposition and sub-plan contract updated only when the user approved
-  expansion; otherwise the frozen boundary remains unchanged.
+  expansion; otherwise the approved boundary remains unchanged.
 - Epic doc `status: active`.
 - Decision Log entry recording the resolution.
 
@@ -452,7 +452,7 @@ the next routing decision.
   DOC_PATH. Reset the sub-plan's Status in the epic doc to
   `implementing`. Next turn's `run` mode will invoke
   `$arch-step implement-loop` again. Record the human approval and new
-  re-freeze boundary before implementation.
+  re-approval boundary before implementation.
 - **new_sub_plan**: Insert a new sub-plan entry in the epic's
   Decomposition. Its name is the "what" field from the discovered
   item or a user-supplied name. Its one-sentence description is
@@ -460,7 +460,7 @@ the next routing decision.
   Insert it after the current sub-plan. Current sub-plan Status
   becomes `complete` (its own scope is met; the discovered items
   are carried in the new sub-plan).
-- **keep_scope**: Leave the decomposition and frozen contract unchanged.
+- **keep_scope**: Leave the decomposition and approved contract unchanged.
   Reopen the current implementation for subtraction/redesign when unauthorized
   built scope exists; otherwise record the observation and continue only when
   all authorized work is complete.

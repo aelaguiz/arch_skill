@@ -27,7 +27,7 @@ Use this skill for contained feature work that is too small for the full arch fl
 - Keep one compact `DOC_PATH` as the SSOT for the change.
 - Keep a compact Scope and Simplicity Contract in that doc: human outcome and
   anchors, smallest sufficient solution, initial minimal convergence closure or
-  `none`, scope freeze, enough proof, do-not-build boundary, and accepted
+  `none`, scope sign-off, enough proof, do-not-build boundary, and accepted
   residual risk.
 - Start and plan modes are docs-only. Code changes only happen in finish mode.
 - Ask the small set of clarifying questions that must be answered before planning. Do not bulldoze past unresolved requirements.
@@ -91,7 +91,7 @@ Use this skill for contained feature work that is too small for the full arch fl
 - Write the current architecture, target architecture, call-site audit, and a 1-3 phase plan.
 - Run the internal lilarch plan audit, directly or through a clean native
   read-only reviewer, and let the parent tighten the doc before implementation.
-- Freeze the compact scope contract before entering finish mode.
+- Sign off the compact scope contract before entering finish mode.
 
 ### 3) Finish mode
 

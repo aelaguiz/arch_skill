@@ -31,7 +31,7 @@ Record:
   scope, or completion claim
 - baseline and head/current state when known
 - controlling plan, source truth, completion claim, or worklog if supplied
-- initial human scope, frozen convergence closure, freeze anchor, later human
+- initial human scope, approved convergence closure, approval anchor, later human
   approvals, and review-wave history when recoverable
 - local instruction and convention files read
 - important exclusions or unresolved target ambiguity
@@ -93,7 +93,7 @@ Use this shape for each finding:
 - Evidence: <diff, file, flow, child report, command output, source anchor, or "see file">
 - Repair target: <what must change, without writing the patch>
 - Cynical review pattern: <catalog pattern>
-- Scope provenance: <human anchor | frozen closure anchor | later human approval | missing>
+- Scope provenance: <human anchor | approved closure anchor | later human approval | missing>
 - Scope-cycle evidence: <revision/wave/code chain or none>
 - Required disposition: <subtract | human decision | no scope issue>
 ```
@@ -105,7 +105,7 @@ Rules:
 - Any in-scope false completion, old authority path, duplicate truth, side
   door, partial migration, stopped-short user job, fake proof, or scope drift
   that must change before approval is a `REQUIRED REPAIR`.
-- Unauthorized post-freeze built scope or scope cycling is always a `REQUIRED
+- Unauthorized post-approval built scope or scope cycling is always a `REQUIRED
   REPAIR` and forces `not-approved`, even when the latest plan includes it.
 - `OBSERVATION` is only for true informational facts, genuinely different
   contracts, excluded follow-ups, or proof/status/doc issues that do not hide a
@@ -154,7 +154,7 @@ VERDICT: approve | not-approved | coverage-incomplete
 ## Scope Provenance
 
 - Initial human-authorized scope:
-- Frozen initial convergence closure and freeze anchor:
+- Approved initial convergence closure and approval anchor:
 - Later human approvals:
 - Scope-cycle evidence:
 - Required disposition:

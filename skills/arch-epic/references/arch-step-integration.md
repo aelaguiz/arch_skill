@@ -174,7 +174,7 @@ silently advance.
 - Set epic `status: halted`, update sub-plan Status to
   `scope-changed`, write the verdict path, append a Decision Log entry
   that names the discovered items and their provenance dispositions, then ask
-  the human whether to approve and re-freeze an `extend_current` or
+  the human whether to approve and re-approve an `extend_current` or
   `new_sub_plan` expansion, or keep scope and require subtraction/redesign.
 
 ### Critic verdict: `incomplete`

@@ -91,10 +91,10 @@ ledger beside the plan, not a state machine and not a second plan.
 - Do not mark ambiguity or constraint questions resolved until a decision owner
   resolves them and the plan carries the decision through.
 - Apply `../_shared/scope-and-convergence.md`. Plan-readiness audit must
-  recover the human baseline, initial pre-freeze convergence closure, and scope
-  freeze. It may mark the plan not ready and route a gap back to the initial
+  recover the human baseline, initial pre-approval convergence closure, and scope
+  sign-off. It may mark the plan not ready and route a gap back to the initial
   planning owner, but it must never add an adjacent area to required scope.
-- After scope freeze, a new adjacent path requires a human decision. An
+- After scope sign-off, a new adjacent path requires a human decision. An
   agent-authored plan revision, audit finding, review consensus, or Decision Log
   entry is not approval.
 - Findings must include consequence, evidence, and the concrete plan repair.
@@ -172,7 +172,7 @@ Return a concise, findings-first audit:
 - the smallest next plan repair
 
 Every material finding must include one scope disposition: `authorized`,
-`frozen-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
+`approved-convergence-required`, `new-scope-needs-human`, `out-of-scope`, or
 `unauthorized-built-scope`. Only the first two may be required plan or code
 repairs without another human decision. In implementation-audit mode,
 unauthorized built scope is a blocking `IMP-*` subtraction finding even when a
@@ -187,7 +187,7 @@ constraint question remains unresolved or uncaptured in the plan.
 - `references/architecture-quality-canon.md` - strict plan-quality and code-quality doctrine
 - `references/review-lenses.md` - required and conditional audit lenses
 - `references/progressive-audit-order.md` - ordered pass for using the skill
-- `../_shared/scope-and-convergence.md` - scope authority, pre-freeze
+- `../_shared/scope-and-convergence.md` - scope authority, pre-approval
   convergence, finding dispositions, and scope-cycling rules
 - `references/implementation-audit-mode.md` - plan-backed code review mode after implementation
 - `references/audit-log-contract.md` - sidecar audit log shape and loop rules

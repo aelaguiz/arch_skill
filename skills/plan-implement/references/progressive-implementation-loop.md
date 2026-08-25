@@ -19,8 +19,8 @@ State the active scope plainly. Do not silently widen into adjacent phases,
 whole-plan signoff, or unrelated cleanup.
 
 Recover the plan's human authorization anchors, initial convergence closure,
-scope-freeze boundary, and explicit later human approvals. If the plan cannot
-support a defensible frozen boundary, stop for one human scope decision.
+scope sign-off boundary, and explicit later human approvals. If the plan cannot
+support a defensible approved boundary, stop for one human scope decision.
 
 ## 2. Choose The Next Narrow Slice
 
@@ -154,7 +154,7 @@ Before widening:
 - update scope ledger status with code and proof anchors
 - update audit findings if any opened or closed
 - update plan completion truth without rewriting scope
-- record whether adjacent same-contract work is already in the frozen closure,
+- record whether adjacent same-contract work is already in the approved closure,
   `new-scope-needs-human`, or out of scope
 - name which proof remains fresh and what would stale it
 - name the next useful move
@@ -165,12 +165,12 @@ state agree.
 ## 9. Advance Through Authorized Breadth
 
 Add the next caller, variant, platform, mode, or polish layer only when it is
-already in the human-authorized plan or frozen initial convergence closure, and
+already in the human-authorized plan or approved initial convergence closure, and
 only after the prior slice is implemented, reviewed, and sufficiently proven.
 
-Depth-first sequencing orders frozen scope; it does not make new complexity
+Depth-first sequencing orders approved scope; it does not make new complexity
 earn scope authority. Any other breadth requires explicit human approval and a
-re-frozen contract.
+re-approved contract.
 
 ## 10. Finalize The Requested Scope
 
@@ -181,7 +181,7 @@ At the stop boundary:
 - confirm in-scope plan items are closed or explicitly not closed
 - run a final lightweight plan-backed implementation check over the requested
   scope
-- confirm adjacent surfaces in the frozen closure have converged and that new
+- confirm adjacent surfaces in the approved closure have converged and that new
   observations did not enter required work without human approval
 - update plan, audit log, and implementation log so they tell the same story
 - report remaining gaps plainly

@@ -11,7 +11,7 @@ The plan is source of truth for:
 - requirements, non-requirements, constraints, and non-constraints
 - active scope, stop boundary, phase order, and exclusions
 - owner-path, delete, side-door, compatibility, and proof promises
-- initial pre-freeze convergence closure and explicit later human approvals
+- initial pre-approval convergence closure and explicit later human approvals
 - decisions that change the intended outcome
 - completion state when the plan format has checkboxes or phase status
 
@@ -25,7 +25,7 @@ Good plan updates:
 - carry an ambiguity decision through requirements, architecture, phase order,
   delete list, and proof strategy
 - add a completion anchor for a delete or side-door closure already present in
-  the frozen convergence closure
+  the approved convergence closure
 - remove a false constraint that was creating complexity
 
 Bad plan updates:
@@ -34,7 +34,7 @@ Bad plan updates:
 - checking off tasks because files changed while the outcome remains false
 - hiding unresolved ambiguity in notes
 - turning the plan into a command log
-- adding a newly discovered adjacent path after freeze or editing the plan to
+- adding a newly discovered adjacent path after sign-off or editing the plan to
   ratify work that was already built without human approval
 
 ## Plan Audit Log
@@ -76,7 +76,7 @@ Plan: <path>
 Audit log: <path or none>
 Active scope: <phase | section | whole plan | user-defined stop boundary>
 Scope contract anchor: <plan section/revision>
-Scope status: <frozen | human decision needed | legacy boundary unresolved>
+Scope status: <approved | human decision needed | legacy boundary unresolved>
 Last updated: <date/time>
 Current checkpoint: <commit/hash/worktree/diff handle if useful>
 
@@ -112,7 +112,7 @@ Current checkpoint: <commit/hash/worktree/diff handle if useful>
 
 ## Side Doors And Deletes
 
-Include only adjacent surfaces already named in the frozen closure, plus
+Include only adjacent surfaces already named in the approved closure, plus
 observations clearly labeled `new-scope-needs-human` or `out-of-scope`. This
 ledger points to the plan contract; it does not copy or enlarge it.
 
@@ -165,6 +165,6 @@ Update the plan:
 - when completion state changes
 - when code truth proves an in-scope plan fact stale without changing scope
 - when the relevant human decision owner explicitly approves a scope change;
-  record the approval and re-freeze before implementation resumes
+  record the approval and re-approve before implementation resumes
 
 Do not update all three artifacts for every event. Use the owning artifact.

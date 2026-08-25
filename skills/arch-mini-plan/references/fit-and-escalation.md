@@ -15,7 +15,7 @@
 
 ## Escalate out of mini mode when
 
-- the human-authorized outcome plus pre-freeze minimal convergence closure needs
+- the human-authorized outcome plus pre-approval minimal convergence closure needs
   4 or more real phases
 - the task spans several subsystems and wants staged checkpoints
 - external research becomes a first-class deliverable instead of a narrow helper

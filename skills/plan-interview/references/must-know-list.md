@@ -2,7 +2,7 @@
 
 Every Intent Pack has a written line for each item below, even when the line
 is "none" or "standard." Complexity scales how much discovery an item gets —
-never whether it exists. A pack with a missing line is not ready to freeze.
+never whether it exists. A pack with a missing line is not ready to sign off.
 
 Tags say how each item gets answered:
 
@@ -35,9 +35,9 @@ procedure, which is a derivation the user approves in-flow).
 4. **Project type** — feature / centralization+deletion / repair /
    investigation. Decides which standing rules bite hardest: in a
    non-feature project any new user-facing noun is auto-rejected. [derived]
-5. **UX delta** — exactly what users see change; everything else frozen.
+5. **UX delta** — exactly what users see change; everything else unchanged.
    Includes: new-UX-or-not declared; a stay-dead list (intentionally
-   removed things no parity pass may resurrect); a vocabulary freeze (no
+   removed things no parity pass may resurrect); an agreed vocabulary (no
    code-internal label may surface as a product concept); **a user journey
    map wherever the work touches a journey** — in a mature product usually
    the existing journey confirmed unchanged or the tweak marked on it,
@@ -66,7 +66,7 @@ procedure, which is a derivation the user approves in-flow).
    claims); where proof must be seen (simulator, device, production);
    required artifacts (before/after journey screenshots, live data — never
    placeholder content). **Built and approved inside the interview, before
-   freeze. It is part of the approval, never a follow-up.** [user sets the
+   sign-off. It is part of the approval, never a follow-up.** [user sets the
    bar; agent builds the grid on the spot; user approves or edits it there]
 
 ## Finish
@@ -93,7 +93,7 @@ procedure, which is a derivation the user approves in-flow).
 
 13. **Open decisions and assumptions** — every remaining unknown, each
     with an owner (user or agent) and a default. Nothing unwritten;
-    nothing silently decided. [derived; listed in full at freeze]
+    nothing silently decided. [derived; listed in full at sign-off]
 
 ## Using the list
 

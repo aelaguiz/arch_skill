@@ -29,7 +29,7 @@ Running `auto-plan` should end in one of two honest states:
   - a complete `consistency-pass` receipt exists
   - no unresolved decisions remain in the authoritative artifact
   - the Scope and Simplicity Contract has human authorization anchors, an
-    initial minimal convergence closure or explicit `none`, and a scope-freeze
+    initial minimal convergence closure or explicit `none`, and a scope sign-off
     boundary that Section 7 does not exceed
   - no implementation has started
   - the final message says the doc is decision-complete and ready for `implement-loop`

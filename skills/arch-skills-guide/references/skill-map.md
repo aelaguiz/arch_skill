@@ -36,7 +36,7 @@ Start with the strongest discriminator first:
 
 All fixed-scope planning and implementation lanes share one law: initial
 architecture may include only the smallest evidenced same-contract convergence
-closure; scope freezes before implementation; afterward only explicit human
+closure; scope is signed off before implementation; afterward only explicit human
 approval expands it. Reviewer findings never create scope.
 
 | Skill | Use when | Do not default to it when | Example asks |
