@@ -45,14 +45,18 @@ happens to be open without deciding which one the user wants.
 
 ## Non-Negotiables
 
-- Apply `$browseros` before the first direct BrowserOS MCP call and obey it
-  throughout this workflow.
+- Read and apply `../browseros/SKILL.md` before the first direct BrowserOS MCP
+  call and obey it throughout this workflow; a name-drop of the skill without
+  reading it does not count.
 - Use BrowserOS MCP, not `web.run`, OpenAI API calls, shell browser scripts, or
   direct cookie/session handling.
 - Use one BrowserOS `https://chatgpt.com/` tab for the whole run. Reuse an
   eligible current-agent-controlled ChatGPT page when one can be safely
   task-adopted under `$browseros`; otherwise open exactly one ChatGPT page.
-  Reusing the page does not mean reusing its conversation. Do login check,
+- Never open a new BrowserOS window when a BrowserOS window is already open.
+  Open the ChatGPT page as a new tab in the existing window; a new window is
+  allowed only when BrowserOS has no window at all.
+- Reusing the page does not mean reusing its conversation. Do login check,
   conversation selection, mode selection, attachment upload, submission,
   waiting, and response reading in that same page.
 - Do not open extra ChatGPT tabs for polling, attachment handling, retries,
@@ -138,7 +142,8 @@ happens to be open without deciding which one the user wants.
    `new-root` only when no project fits.
 4. Under `$browseros`, select the single current-agent-controlled ChatGPT page
    for the run: safely task-adopt an eligible `https://chatgpt.com/` page, or
-   open exactly one new page.
+   open exactly one new page as a tab in the already-open BrowserOS window.
+   Never create a new window when one exists.
 5. Verify that page is logged in before doing anything else.
 6. In that page, open the resolved conversation: a new chat inside the chosen
    project, the recent Pro thread, or the exact requested conversation. Verify
