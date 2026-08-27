@@ -33,7 +33,6 @@ Publish to these SSH targets, skipping whichever one is the current machine:
 - `agents@amirs-mac-studio`
 - `amir-m5`
 - `home`
-- `claw`
 
 Treat `agents@amirs-mac-studio` as the host `amirs-mac-studio` when deciding whether to skip the current machine.
 
