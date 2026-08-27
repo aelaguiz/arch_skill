@@ -64,10 +64,17 @@ happens to be open without deciding which one the user wants.
   parallel ChatGPT Web runs, explain that this skill runs serially to avoid web
   session rate limits, then proceed sequentially. If simultaneous ChatGPT Web
   runs are mandatory, fail loudly instead of opening parallel tabs.
-- Apply `$prompt-authoring` to the actual populated prompt before every
-  submission. Preserve the user's intent and any explicitly requested verbatim
+- Read and apply `../prompt-authoring/SKILL.md` to the actual populated prompt
+  before every submission; a name-drop of the skill without reading it does not
+  count. Preserve the user's intent and any explicitly requested verbatim
   relay; otherwise remove hidden caller assumptions, leading success criteria,
   and closed evidence paths before sending.
+- Do not over-prompt Pro. Pro is a frontier model, not a junior worker: send
+  the ask, the essential context it cannot infer, and the desired output shape,
+  then stop. Do not stack roles, personas, invented rubrics, step-by-step
+  methodologies, output schemas, repeated constraints, motivational framing, or
+  restated context the thread already has. When in doubt, cut; a short faithful
+  prompt beats an engineered one.
 - Default to ChatGPT `Pro` with `Extended` thinking when the user does not name
   a mode or effort. Default the model to the latest GPT Pro model, currently
   `GPT-5.6 Pro`; if that exact name is missing from the picker, choose the
@@ -116,10 +123,11 @@ happens to be open without deciding which one the user wants.
 
 1. Resolve the user's desired ChatGPT ask and any explicit mode, effort, model,
    or attachment requests.
-2. Apply `$prompt-authoring` to the populated prompt before touching ChatGPT.
-   Keep it faithful to the user's intent, preserve an explicitly requested
-   verbatim relay, and make caller hypotheses challengeable rather than task
-   truth.
+2. Read `../prompt-authoring/SKILL.md` and apply it to the populated prompt
+   before touching ChatGPT. Keep it faithful to the user's intent, preserve an
+   explicitly requested verbatim relay, and make caller hypotheses
+   challengeable rather than task truth. Keep the prompt lean per the
+   over-prompting rule above: cut scaffolding instead of adding it.
 3. Resolve conversation placement: identify the most applicable ChatGPT
    project, then resolve
    `conversation = continue-exact | continue-recent-pro | new-in-project |
