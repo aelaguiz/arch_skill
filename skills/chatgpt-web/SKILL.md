@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after applying the canonical $browseros operating contract and shaping the prompt with $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, or an exact existing ChatGPT conversation continued. New clean conversation is the default; exact-conversation continuation must be explicit. Defaults to Pro with Extended thinking, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
+description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after applying the canonical $browseros operating contract and shaping the prompt with $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Defaults to Pro with Extended thinking on the latest GPT Pro model (currently GPT-5.6 Pro), places chats in the most applicable ChatGPT project rather than context-free root chats, reuses a same-workstream Pro thread from the last 24-48 hours unless it is already ~6+ turns deep, keeps a cleared-on-response heartbeat during long Pro waits, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -30,6 +30,8 @@ happens to be open without deciding which one the user wants.
 - The user wants BrowserOS MCP to drive logged-in ChatGPT instead of using the
   OpenAI API.
 - The user wants local attachments included in a ChatGPT web prompt.
+- The user wants ChatGPT Pro to review code that lives on a pushed branch or PR
+  through the ChatGPT GitHub connector.
 - The user has a rough prompt and wants it shaped before sending.
 
 ## Do Not Use When
@@ -67,7 +69,10 @@ happens to be open without deciding which one the user wants.
   relay; otherwise remove hidden caller assumptions, leading success criteria,
   and closed evidence paths before sending.
 - Default to ChatGPT `Pro` with `Extended` thinking when the user does not name
-  a mode or effort.
+  a mode or effort. Default the model to the latest GPT Pro model, currently
+  `GPT-5.6 Pro`; if that exact name is missing from the picker, choose the
+  newest GPT Pro entry instead. Only deviate when the user explicitly names a
+  different model.
 - Respect explicit user choices for `Instant`, `Thinking`, `Pro`, `Light`,
   `Standard`, `Extended`, or `Heavy`.
 - Do not downgrade or upgrade the requested mode silently.
@@ -80,10 +85,30 @@ happens to be open without deciding which one the user wants.
   raw session payloads, or other secrets.
 - Enforce a maximum of 10 attachments. Do not silently drop files.
 - Keep the result simple: ChatGPT's answer plus a short receipt.
-- Default to a new clean ChatGPT conversation. Continue an exact conversation
-  only when the user asks to continue it and the intended conversation can be
-  identified. If it cannot, stop and ask for the missing conversation choice
-  rather than sending into an unrelated history.
+- Place every conversation in the most applicable ChatGPT project. A root chat
+  outside any project has no project context, so its review is useless; use a
+  root chat only when no existing project plausibly fits, and say so in the
+  receipt.
+- Before starting a new conversation for continuing work, check whether the
+  workstream already has a live Pro thread: look in the most applicable project
+  for a Pro thread from the last 24-48 hours on this same work and continue it
+  instead of starting fresh. If that thread is already about 6 or more
+  prompt/response turns deep, start a new conversation in the same project
+  instead of overloading it. An explicit user choice of an exact thread or a
+  new chat always wins over this default.
+- Continue an exact conversation the user names only when the intended
+  conversation can be identified. If it cannot, stop and ask for the missing
+  conversation choice rather than sending into an unrelated history.
+- While a `Pro` response is generating, keep a periodic check-in heartbeat,
+  defaulting to about every 5 minutes, using the host's heartbeat capability
+  when one exists, so the run never wedges silently during a long wait. Clear
+  the heartbeat as soon as the response is read or the run terminally fails;
+  never leave a stale heartbeat running.
+- To show code to ChatGPT, do not paste large diffs. Commit and push the work
+  to its PR branch, then @mention GitHub in the composer and paste the PR URL
+  so Pro reviews the actual branch through the ChatGPT GitHub connector. Never
+  automate connecting or authorizing the connector; if it is not connected,
+  fail loudly and tell the user to connect it manually.
 
 ## First Move
 
@@ -93,16 +118,22 @@ happens to be open without deciding which one the user wants.
    Keep it faithful to the user's intent, preserve an explicitly requested
    verbatim relay, and make caller hypotheses challengeable rather than task
    truth.
-3. Resolve `conversation = new-clean | continue-exact`. Default to `new-clean`;
-   use `continue-exact` only from an explicit user request and an identifiable
-   target conversation.
+3. Resolve conversation placement: identify the most applicable ChatGPT
+   project, then resolve
+   `conversation = continue-exact | continue-recent-pro | new-in-project |
+   new-root`. `continue-exact` requires an explicit user request and an
+   identifiable target. `continue-recent-pro` applies when the ask continues a
+   workstream with a Pro thread from the last 24-48 hours in that project and
+   the thread is under about 6 turns. Otherwise use `new-in-project`, or
+   `new-root` only when no project fits.
 4. Under `$browseros`, select the single current-agent-controlled ChatGPT page
    for the run: safely task-adopt an eligible `https://chatgpt.com/` page, or
    open exactly one new page.
 5. Verify that page is logged in before doing anything else.
-6. In that page, open a new chat for `new-clean`, or navigate to and verify the
-   exact requested conversation for `continue-exact`. Do not submit while the
-   page is merely showing an arbitrary prior thread.
+6. In that page, open the resolved conversation: a new chat inside the chosen
+   project, the recent Pro thread, or the exact requested conversation. Verify
+   the thread before submitting into it. Do not submit while the page is merely
+   showing an arbitrary prior thread.
 
 ## Login Check
 
@@ -126,6 +157,43 @@ log in manually, then rerun $chatgpt-web.
 If the endpoint cannot be checked, fail loudly. Do not infer login from visible
 page controls.
 
+## Projects And Conversation Selection
+
+Root chats without a project have none of the project's files, instructions, or
+prior threads, so a review sent there is context-free and useless. Pick where
+the conversation lives before composing anything:
+
+1. Read the project list in the ChatGPT sidebar and judge which project
+   actually matches the current ask: same repo, product, or workstream.
+2. If the ask continues work that recently went through Pro, open that
+   project's thread list and look for a Pro thread from the last 24-48 hours on
+   this same work. Open the candidate and skim enough of it to confirm it is
+   the same workstream, not just a similar title.
+3. Continue that thread when it matches and is under about 6 prompt/response
+   turns. Around 6 or more turns, treat it as saturated and start a new
+   conversation in the same project instead.
+4. With no matching recent thread, start a new conversation inside the chosen
+   project.
+5. Use a root chat only when no existing project plausibly fits the ask, and
+   note that choice in the receipt.
+
+An explicit user request for a specific thread, a specific project, or a fresh
+chat overrides all of the defaults above.
+
+## Code Review Via GitHub
+
+When the material to review is code, do not paste diffs or file dumps into the
+composer:
+
+1. Make sure the work is committed and pushed to its PR branch, and have the
+   exact PR URL.
+2. In the composer, @mention GitHub to invoke the ChatGPT GitHub connector and
+   paste the PR URL, then ask for the review of that PR on its branch.
+3. Confirm the GitHub mention is attached before sending. If the connector is
+   not connected or cannot see the repo, fail loudly and tell the user to
+   connect it manually in ChatGPT settings; never automate connector
+   authorization.
+
 ## Mode And Effort
 
 Default when the user does not specify:
@@ -133,7 +201,7 @@ Default when the user does not specify:
 ```text
 mode = Pro
 effort = Extended
-model family = current ChatGPT default
+model = latest GPT Pro model (currently GPT-5.6 Pro)
 ```
 
 Use the ChatGPT model pill beside the composer. Prefer `Configure...` when
@@ -144,7 +212,8 @@ Observed controls to select from:
 
 - mode: `Instant`, `Thinking`, `Pro`
 - effort: `Light`, `Standard`, `Extended`, `Heavy`
-- model family: leave as current unless the user explicitly names one
+- model: select `GPT-5.6 Pro`, or the newest GPT Pro entry when that exact
+  name is missing, unless the user explicitly names another model
 
 Do not run a Pro prompt merely to test the skill. Only use Pro when the user's
 actual request needs the default or explicitly asks for it.
@@ -177,15 +246,18 @@ submitting.
 
 ## Submission
 
-1. Verify the selected conversation mode one final time. For a new clean run,
-   the page must be a new chat; for continuation, the visible thread must be the
-   exact requested conversation.
+1. Verify the resolved conversation placement one final time. For
+   `new-in-project` the page must be a new chat inside the chosen project; for
+   `continue-recent-pro` or `continue-exact` the visible thread must be the
+   resolved thread; for `new-root` the page must be a new root chat.
 2. Fill the ChatGPT composer with the final prompt.
 3. Confirm the selected mode and effort match the request or default.
 4. Confirm every attachment chip is present.
 5. Click `Send prompt`.
 6. Wait in the same tab until generation finishes. For `Pro`, `Extended`, or
-   `Heavy`, 10+ minutes can be normal; poll slowly and let ChatGPT finish.
+   `Heavy`, 10+ minutes can be normal; poll slowly and let ChatGPT finish. For
+   a `Pro` run, set the check-in heartbeat (default about every 5 minutes)
+   before settling into the long wait so the run cannot wedge silently.
 7. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
    while a response is still generating.
 8. Treat failure as concrete, not time-based: visible ChatGPT error, lost
@@ -193,16 +265,22 @@ submitting.
    or a clearly inactive page with no generation indicator and no response
    progress after a patient wait.
 9. Read the latest assistant response from the page.
+10. Clear the check-in heartbeat as soon as the response is read or the run
+    terminally fails. Do not leave it running past the run.
 
 ## Output
 
 Return:
 
 - ChatGPT's answer
-- mode and effort used
-- conversation mode used (`new-clean` or `continue-exact`)
-- attachment filenames, if any
+- model, mode, and effort used
+- conversation placement used: the project name plus `continue-exact`,
+  `continue-recent-pro`, `new-in-project`, or `new-root` with a one-line reason
+  when the choice was `new-root`
+- attachment filenames, if any, and the PR URL when the GitHub connector was
+  used
 - a short note if the prompt was shaped before submission
-- a short note when the run waited for a long Pro response
+- a short note when the run waited for a long Pro response, including that the
+  heartbeat was set and cleared
 
 If the run fails, name the exact failed condition and the next manual repair.

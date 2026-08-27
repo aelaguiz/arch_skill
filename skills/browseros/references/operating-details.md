@@ -14,6 +14,7 @@ external state, recovery, sensitive data, or multiple agents.
 - Failure classification and recovery
 - Secrets and sensitive artifacts
 - Proof selection
+- Authenticated bulk file retrieval (worked recipe: ChatGPT project files)
 - BrowserOS connector lane
 - Parallel ownership
 
@@ -319,6 +320,51 @@ out of the completion receipt.
 
 An HTTP response, DOM read, PDF, or image fetch does not prove visual layout.
 A screenshot does not by itself prove durable external state.
+
+## Authenticated bulk file retrieval (worked recipe: ChatGPT project files)
+
+When a task needs many files out of an authenticated site, do not guess API
+endpoints and do not script one `download` click per file by default. Use this
+proven sequence (established 2026-08-27 pulling 58 ChatGPT project files):
+
+1. Prove one download through the real UI: `snapshot`, open the file row's
+   actions menu, then call `download` with the menu item's ref. The tool saves
+   the artifact under `~/.browseros/tool-output/` and proves the site path
+   works.
+2. Sniff what the UI just did: in `evaluate`, read
+   `performance.getEntriesByType('resource')` and filter for the download
+   URLs. This yields the exact endpoint, parameters, and order of calls the
+   site actually uses; live-sniffed endpoints outrank remembered API shapes.
+3. Replicate per file with in-page `fetch` inside `evaluate`. Signed download
+   URLs are often cookie-bound to the site origin, so fetch them from the page
+   context, never from an external HTTP client that lacks the session. Return
+   file text from `evaluate`; oversized results are auto-saved to
+   `~/.browseros/tool-output/*.txt` for local parsing.
+
+ChatGPT-project specifics that cost real time:
+
+- Project (gizmo) metadata, instructions, and the file list come from
+  `GET /backend-api/gizmos/{gizmo_id}` with
+  `Authorization: Bearer <accessToken from /api/auth/session>`. Use each file
+  record's `file_id` field (`file-...` or `file_...`), not its record `id`.
+- Signed URL: `GET /backend-api/files/download/{file_id}?gizmo_id={gizmo_id}
+  &download_intent=true`. Fetch the returned `download_url` in-page with
+  `credentials:'include'`.
+- Legacy `file-...` era uploads can 500 permanently on the content service
+  even through the real UI; a `download` tool call on them times out because
+  the browser download never starts. Treat that timeout as the site failing,
+  not BrowserOS, and recover the content from local originals instead.
+- chatgpt.com menus and popovers (Radix/headless-ui) often ignore plain `act`
+  clicks on background tabs. Dispatch synthetic `PointerEvent`
+  `pointerdown`/`pointerup` plus `.click()` via `evaluate` on the resolved
+  element, then verify the menu or dialog actually mounted before acting on
+  it. React inputs need the native value setter plus an `input` event;
+  `element.value = x` alone is ignored.
+- Project file uploads go through the visible file input on the project
+  Sources tab (`upload` with that ref, batches of 10 work). Verify server
+  registration by re-fetching the gizmo file list and comparing byte sizes;
+  an upload acknowledgment is not registration, and a file stuck in phantom
+  "already exists" state clears on page reload with a renamed copy.
 
 ## BrowserOS connector lane
 
