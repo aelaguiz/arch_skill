@@ -104,11 +104,13 @@ happens to be open without deciding which one the user wants.
   when one exists, so the run never wedges silently during a long wait. Clear
   the heartbeat as soon as the response is read or the run terminally fails;
   never leave a stale heartbeat running.
-- To show code to ChatGPT, do not paste large diffs. Commit and push the work
-  to its PR branch, then @mention GitHub in the composer and paste the PR URL
-  so Pro reviews the actual branch through the ChatGPT GitHub connector. Never
-  automate connecting or authorizing the connector; if it is not connected,
-  fail loudly and tell the user to connect it manually.
+- Whenever the ask touches our repositories at all, tag `@GitHub` in the
+  composer so ChatGPT can see the repos through the ChatGPT GitHub connector.
+  To show code, do not paste large diffs. Commit and push the work to its PR
+  branch, then tag `@GitHub` and paste the PR URL so Pro reviews the actual
+  branch through the connector. Never automate connecting or authorizing the
+  connector; if it is not connected, fail loudly and tell the user to connect
+  it manually.
 
 ## First Move
 
@@ -180,7 +182,12 @@ the conversation lives before composing anything:
 An explicit user request for a specific thread, a specific project, or a fresh
 chat overrides all of the defaults above.
 
-## Code Review Via GitHub
+## Repo Visibility Via GitHub
+
+Tag `@GitHub` in the composer for any repo-grounded ask - code review, design
+or architecture questions about our code, or anything where ChatGPT should see
+the actual repository - so the connector gives it direct repo visibility
+instead of relying on pasted fragments.
 
 When the material to review is code, do not paste diffs or file dumps into the
 composer:
