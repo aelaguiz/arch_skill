@@ -92,6 +92,17 @@ happens to be open without deciding which one the user wants.
 - Treat `Pro`, especially `Extended` or `Heavy`, as a long-running mode. A
   response can take 10+ minutes. Wait patiently in the same tab until generation
   finishes before reading or submitting anything else.
+- Actually read everything Pro emits - interim messages, the visible thinking
+  or reasoning summary, and the final response - during heartbeat check-ins
+  and at the end, and act on what it says. Errors often surface first in the
+  thinking trace or an interim message, such as Pro noting it cannot open a
+  file or reach a repo, long before the final text. A completed generation is
+  not automatically a success: if Pro says it cannot see an attachment, repo,
+  PR, or connector, if
+  it answers a different question than the one submitted, if it reports an
+  error, refuses, or returns something empty or degenerate, treat that as a
+  failed run. Fix the input and resubmit in the same tab; never relay a broken
+  response as the answer or report success without having read the text.
 - Submit any plan, and any other multi-paragraph body, as an attached file,
   never typed or pasted into the composer. Newlines in the composer can send
   early and split the message, so the composer gets only a short single-
@@ -296,7 +307,13 @@ submitting.
 6. Wait in the same tab until generation finishes. For `Pro`, `Extended`, or
    `Heavy`, 10+ minutes can be normal; poll slowly and let ChatGPT finish. For
    a `Pro` run, set the check-in heartbeat (default about every 5 minutes)
-   before settling into the long wait so the run cannot wedge silently.
+   before settling into the long wait so the run cannot wedge silently. At
+   each check-in, read what is actually on the page - the visible thinking or
+   reasoning summary, interim assistant messages, partial response text, error
+   banners, connector failures - not just whether a spinner exists. If the
+   thinking trace or an interim message already shows the run going wrong,
+   such as a missing attachment or an unreachable repo, act on it then rather
+   than waiting out the full generation.
 7. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
    while a response is still generating. Dismissing a rate-limit or other
    transient blocker dialog is always allowed. If the submission itself was
@@ -306,7 +323,14 @@ submitting.
    login/session, required manual user action, missing attachment before send,
    or a clearly inactive page with no generation indicator and no response
    progress after a patient wait.
-9. Read the latest assistant response from the page.
+9. Read the latest assistant response from the page in full, plus its visible
+   thinking or reasoning summary and any interim messages, and check them
+   against the submitted ask. Error signals anywhere in that output count as
+   failures even though generation completed: Pro saying it cannot access or
+   see the attachment, repo, PR, or connector; Pro answering a different or
+   partial question; a refusal; an empty or degenerate reply. On any of these,
+   diagnose the input, repair it, and resubmit in the same tab instead of
+   relaying the broken response.
 10. Clear the check-in heartbeat as soon as the response is read or the run
     terminally fails. Do not leave it running past the run.
 
