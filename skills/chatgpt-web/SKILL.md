@@ -98,7 +98,7 @@ happens to be open without deciding which one the user wants.
   thinking trace or an interim message, such as Pro noting it cannot open a
   file or reach a repo, long before the final text. A completed generation is
   not automatically a success: if Pro says it cannot see an attachment, repo,
-  PR, or connector, if
+  PR, or connector, if it improvised around a missing input, if
   it answers a different question than the one submitted, if it reports an
   error, refuses, or returns something empty or degenerate, treat that as a
   failed run. Fix the input and resubmit in the same tab; never relay a broken
@@ -108,6 +108,13 @@ happens to be open without deciding which one the user wants.
   early and split the message, so the composer gets only a short single-
   paragraph ask that points at the attached file. After sending, read back the
   submitted user message and confirm the full body arrived.
+- A response built on an input Pro never actually received is invalid even
+  when it reads as polished and confident. If Pro did not get something it was
+  supposed to get and worked around it - "I don't have the file, so I'll
+  assume...", reviewing a plan from its description instead of the attachment,
+  imagining repo contents it could not open - discard the response, fix the
+  delivery of the missing input, and resubmit. Never relay or build on an
+  answer Pro invented around a missing input.
 - Dismiss rate-limit dialogs and similar transient blocker popups immediately.
   They are UI noise, not part of the response; closing one never counts as
   altering the run. If a submission is rate-limited or does not go through,
@@ -327,10 +334,13 @@ submitting.
    thinking or reasoning summary and any interim messages, and check them
    against the submitted ask. Error signals anywhere in that output count as
    failures even though generation completed: Pro saying it cannot access or
-   see the attachment, repo, PR, or connector; Pro answering a different or
-   partial question; a refusal; an empty or degenerate reply. On any of these,
-   diagnose the input, repair it, and resubmit in the same tab instead of
-   relaying the broken response.
+   see the attachment, repo, PR, or connector; Pro improvising around a
+   missing input by assuming, imagining, or working from a description of an
+   artifact it never opened; Pro answering a different or partial question; a
+   refusal; an empty or degenerate reply. On any of these, diagnose the input,
+   repair it, and resubmit in the same tab instead of relaying the broken
+   response - a polished answer built on an input Pro never received is still
+   invalid.
 10. Clear the check-in heartbeat as soon as the response is read or the run
     terminally fails. Do not leave it running past the run.
 
