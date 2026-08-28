@@ -263,6 +263,16 @@ Observed controls to select from:
 - model: select `GPT-5.6 Pro`, or the newest GPT Pro entry when that exact
   name is missing, unless the user explicitly names another model
 
+`Pro` means the literal `Pro` picker entry - the maximum option, shown as
+`5/5` when the UI renders levels as a scale. Never substitute a lower level or
+a different model and call it the closest equivalent: `Extra High (4/5)`, a
+Sol/fast variant, or any non-Pro entry is not Pro. If you cannot find the
+literal `Pro` option, re-open the picker and the `Intelligence` dialog and
+enumerate every entry before concluding anything; if it is genuinely absent,
+fail loudly and tell the user instead of silently approximating. Before
+sending, confirm the picker displays the literal selection you resolved, not
+a stand-in.
+
 Do not run a Pro prompt merely to test the skill. Only use Pro when the user's
 actual request needs the default or explicitly asks for it.
 
