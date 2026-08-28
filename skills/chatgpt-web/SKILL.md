@@ -92,6 +92,11 @@ happens to be open without deciding which one the user wants.
 - Treat `Pro`, especially `Extended` or `Heavy`, as a long-running mode. A
   response can take 10+ minutes. Wait patiently in the same tab until generation
   finishes before reading or submitting anything else.
+- Submit any plan, and any other multi-paragraph body, as an attached file,
+  never typed or pasted into the composer. Newlines in the composer can send
+  early and split the message, so the composer gets only a short single-
+  paragraph ask that points at the attached file. After sending, read back the
+  submitted user message and confirm the full body arrived.
 - Dismiss rate-limit dialogs and similar transient blocker popups immediately.
   They are UI noise, not part of the response; closing one never counts as
   altering the run. If a submission is rate-limited or does not go through,
@@ -248,6 +253,11 @@ requires patient waiting. Do not treat a long silent period as failure by itself
 
 ## Attachments
 
+When the material to send is a plan or any multi-paragraph body, write it to a
+file (a temp file is fine) and attach it through the upload path below instead
+of typing it into the composer. The composer then carries only a short
+single-paragraph ask that references the attached file by name.
+
 Preflight attachments before browser interaction:
 
 - every path must be absolute
@@ -275,10 +285,14 @@ submitting.
    `new-in-project` the page must be a new chat inside the chosen project; for
    `continue-recent-pro` or `continue-exact` the visible thread must be the
    resolved thread; for `new-root` the page must be a new root chat.
-2. Fill the ChatGPT composer with the final prompt.
+2. Fill the ChatGPT composer with the final prompt. If the ask includes a plan
+   or any multi-paragraph body, that body must already be an attached file and
+   the composer text must be a short single-paragraph ask referencing it.
 3. Confirm the selected mode and effort match the request or default.
 4. Confirm every attachment chip is present.
-5. Click `Send prompt`.
+5. Click `Send prompt`, then read back the just-submitted user message and
+   confirm it contains the full intended text and attachments. If it was
+   truncated or split, stop the resulting generation and resubmit correctly.
 6. Wait in the same tab until generation finishes. For `Pro`, `Extended`, or
    `Heavy`, 10+ minutes can be normal; poll slowly and let ChatGPT finish. For
    a `Pro` run, set the check-in heartbeat (default about every 5 minutes)
