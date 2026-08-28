@@ -92,6 +92,11 @@ happens to be open without deciding which one the user wants.
 - Treat `Pro`, especially `Extended` or `Heavy`, as a long-running mode. A
   response can take 10+ minutes. Wait patiently in the same tab until generation
   finishes before reading or submitting anything else.
+- Dismiss rate-limit dialogs and similar transient blocker popups immediately.
+  They are UI noise, not part of the response; closing one never counts as
+  altering the run. If a submission is rate-limited or does not go through,
+  wait about 5 minutes, dismiss any blocker, and resubmit the same prompt in
+  the same tab. Repeat until it sends or a hard non-transient error appears.
 - Do not print, save, summarize, or inspect account details, cookies, tokens,
   raw session payloads, or other secrets.
 - Enforce a maximum of 10 attachments. Do not silently drop files.
@@ -279,7 +284,10 @@ submitting.
    a `Pro` run, set the check-in heartbeat (default about every 5 minutes)
    before settling into the long wait so the run cannot wedge silently.
 7. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
-   while a response is still generating.
+   while a response is still generating. Dismissing a rate-limit or other
+   transient blocker dialog is always allowed. If the submission itself was
+   rejected by a rate limit, wait about 5 minutes and resubmit the same prompt
+   in the same tab.
 8. Treat failure as concrete, not time-based: visible ChatGPT error, lost
    login/session, required manual user action, missing attachment before send,
    or a clearly inactive page with no generation indicator and no response
