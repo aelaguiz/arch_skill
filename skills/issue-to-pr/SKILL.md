@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation delivery lane, fired only when the user invokes it by name (\"issue-to-pr on 4484\") or a wrapping skill the user invoked (epic-to-prs) delegates to it; never self-select it as a helper for adjacent work. Takes one GitHub issue to a merge-ready, externally reviewed PR through a fixed pipeline: ramp up on the issue, full implementation plan on disk shaped by $startup-pragmatism, one GPT Pro plan review via $chatgpt-web (literal Pro (5/5)), implement and test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one GPT Pro review of the exact PR head, then stop at merge-ready with receipts. Fix-verification re-reviews are allowed until Pro approves; scope expansion from any reviewer is rejected or escalated. Never merges, never releases, never applies approval labels. Not for investigation-only asks (root cause without delivery), standalone planning, or work with no GitHub issue."
+description: "Explicit-invocation delivery lane, fired only when the user invokes it by name (\"issue-to-pr on 4484\") or a wrapping skill the user invoked (epic-to-prs) delegates to it; never self-select it as a helper for adjacent work. Takes one GitHub issue to a merge-ready, externally reviewed PR through a fixed pipeline: ramp up on the issue, full implementation plan on disk shaped by $startup-pragmatism, one GPT Pro plan review via $chatgpt-web (literal Pro (5/5)), implement and test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one GPT Pro review of the exact PR head, then stop at merge-ready with receipts. Fix-verification re-reviews are allowed until Pro approves; blockers and scope conflicts consult the Pro thread to get unblocked, with user escalation only when Pro cannot resolve it. Never merges, never releases, never applies approval labels. Not for investigation-only asks (root cause without delivery), standalone planning, or work with no GitHub issue."
 metadata:
   short-description: "One issue to a Pro-reviewed merge-ready PR"
 ---
@@ -49,8 +49,10 @@ make install
 ## Non-negotiables
 
 - Scope is the issue's accepted scope, frozen at contract time. No reviewer,
-  bot, or agent may expand it; a genuine scope conflict escalates to the user
-  as one question with a recommendation. Never silently shrink scope either.
+  bot, or agent may expand it; a genuine scope conflict goes to the Pro
+  thread to arbitrate against the frozen contract, and only a real change to
+  what the user asked for goes to the user as one question with a
+  recommendation. Never silently shrink scope either.
 - The implementation plan lives on disk before implementation starts, shaped
   by `$startup-pragmatism` (the overbuild cut happens at plan time).
 - External review means GPT Pro through `$chatgpt-web`: the literal Pro (5/5)
@@ -82,8 +84,8 @@ make install
    verification the change needs.
 3. **Pro plan review.** One round via `$chatgpt-web` with the plan file
    attached. Apply the verdict with judgment: take what is agreed with,
-   escalate genuine scope disputes, never scope creep. Re-verify fixes with
-   Pro until approved when the verdict demanded changes.
+   arbitrate genuine scope disputes in the Pro thread, never scope creep.
+   Re-verify fixes with Pro until approved when the verdict demanded changes.
 4. **Implement and test.** Dedicated worktree, smallest coherent change,
    self-documenting code with clear comments at boundaries and role seams.
    Run the relevant tests and the repo's required checks.
@@ -96,12 +98,17 @@ make install
    verdict, PR verdict on the final head, CI state, head SHA, and any
    escalations. Do not merge.
 
-## Escalation contract
+## Unblocking contract
 
-When blocked (ambiguous contract, scope conflict, failing dependency, a
-reviewer demanding out-of-scope work), surface exactly one question with a
-recommendation and stop that gate. Do not loop, do not decide scope, do not
-quietly deliver less.
+Blocked or unclear means consult, not stall. On any blocker (ambiguous
+contract, scope conflict, failing dependency, a reviewer demanding
+out-of-scope work), take it to the Pro thread this issue is already using:
+state the blocker, the options, and your recommendation, and ask for the
+right way to proceed. The goal is to get unblocked and keep delivering.
+Only when Pro cannot resolve it - the matter needs the user's authority,
+their access, or changes what they asked for - surface exactly one question
+with a recommendation to the user and stop that gate. Do not idle waiting,
+do not decide scope unilaterally, do not quietly deliver less.
 
 ## Delegation
 

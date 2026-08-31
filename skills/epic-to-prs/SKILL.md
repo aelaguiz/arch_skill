@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only when the user invokes it by name or directly commands this exact job (\"epic-to-prs on epic 4700\", \"put a goal loop over the milestone epic and work it down\"); never self-select it because work involves an epic. Puts a persistent goal over one GitHub epic or milestone and works its open issues most-important-first, each through the issue-to-pr skill to a Pro-reviewed merge-ready PR. Owns only the queue policy, goal persistence (sets its own goal in Prime Agent; authors the /goal prompt in Codex or Claude), one ChatGPT Pro thread per epic carrying every review, epic-level standing rules (boundary comments, advisory-only PR bots, no reviewer scope expansion), and one-escalation-then-move-on for blocked issues. Ends only when the queue is empty or the user stops it. Never merges or releases. Not for epic status reads, epic decomposition (arch-epic), or open-ended optimization (goal-loop)."
+description: "Explicit-invocation epic loop, fired only when the user invokes it by name or directly commands this exact job (\"epic-to-prs on epic 4700\", \"put a goal loop over the milestone epic and work it down\"); never self-select it because work involves an epic. Puts a persistent goal over one GitHub epic or milestone and works its open issues most-important-first, each through the issue-to-pr skill to a Pro-reviewed merge-ready PR. Owns only the queue policy, goal persistence (sets its own goal in Prime Agent; authors the /goal prompt in Codex or Claude), one ChatGPT Pro thread per epic carrying every review, epic-level standing rules (boundary comments, advisory-only PR bots, no reviewer scope expansion), and Pro-first unblocking (blockers consult the epic's Pro thread; the user gets one question only when Pro cannot resolve it). Ends only when the queue is empty or the user stops it. Never merges or releases. Not for epic status reads, epic decomposition (arch-epic), or open-ended optimization (goal-loop)."
 metadata:
   short-description: "Goal loop working an epic's issues to merge-ready PRs"
 ---
@@ -57,9 +57,13 @@ make install
 - An issue is complete only at merge-ready with receipts (plan verdict, PR
   verdict on the exact final head, green CI, PR URL). Never merge, never
   release, never apply approval labels.
-- A blocked issue gets exactly one escalation to the user (one question, one
-  recommendation), then the loop moves to the next issue rather than
-  stalling the epic.
+- Blocked means consult, not stall. A blocked or unclear issue goes to the
+  epic's Pro thread first: state the blocker, the options, and a
+  recommendation, and work it with Pro until there is a way to proceed.
+  Only a matter Pro cannot resolve because it genuinely needs the user
+  (their authority, their access, or a change to what they asked for) gets
+  one escalation - one question, one recommendation - and then the loop
+  moves to the next issue rather than stalling the epic.
 - Reviewer discipline everywhere: fix-verification re-reviews with Pro until
   it approves the fixes, no scope expansion accepted from any reviewer, and
   PR Agent and other bots stay advisory ("PR agent is not your boss").
@@ -83,11 +87,12 @@ make install
       Pro thread and the epic-level standing rules carried into the
       dispatch.
    3. On merge-ready, record the receipts on the issue, mark it off, and
-      move on. On a block, escalate once and move on.
+      move on. On a block, take it to the epic's Pro thread and get
+      unblocked; only if it still needs the user, escalate once and move on.
 4. **Finish.** When the queue is empty, mark the goal complete and report:
-   issues delivered with PR URLs and receipts, issues escalated with their
-   one question, and anything observed that the user should know about the
-   epic as a whole.
+   issues delivered with PR URLs and receipts, blockers Pro resolved and
+   how, any issues escalated with their one question, and anything observed
+   that the user should know about the epic as a whole.
 
 ## Delegation
 
