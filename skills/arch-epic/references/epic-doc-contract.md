@@ -35,7 +35,7 @@ raw_goal: |
 raw_goal_sha256: <hex digest of the raw_goal string>
 sub_plans_approved: false
 critic_runtime: null | claude | codex | grok | kimi  # legacy/external critic only
-critic_model: null | <resolved external CLI model, e.g. claude-fable-5>
+critic_model: null | <resolved external CLI model, e.g. claude-fable-5-1>
 critic_effort: null | <low | medium | high | xhigh | max | ultra>
 models_sha256: null | <hex digest of external {runtime, model, effort} tuple>
 auto_execution: null | <explicit external-harness policy block>
@@ -98,13 +98,13 @@ auto_execution:
   max_runtime_seconds: 7200
   auto_run_dir: .arch_skill/arch-epic/auto/<epic-slug>/run-<ts>
   source_quotes:
-    epic_planner: claude fable 5 high
+    epic_planner: claude fable 5.1 high
     implementation_worker: codex gpt-5.6-sol ultra
     critic: codex gpt-5.6-sol ultra
   roles:
     epic_planner:
       runtime: claude
-      model: claude-fable-5
+      model: claude-fable-5-1
       effort: high
       source: user_table
     implementation_worker:

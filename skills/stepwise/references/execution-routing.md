@@ -4,7 +4,7 @@ Dispatch routing is how the orchestrator turns the shared native preference,
 host capabilities, target doctrine, and optional user preferences into
 per-step transport/context choices and any external runtime/model/effort. It
 exists so a user can say
-"do all copywriting steps with Claude Fable 5" without forcing every step
+"do all copywriting steps with Claude Fable 5.1" without forcing every step
 onto that model or teaching the skill a hidden taxonomy.
 
 Routing is a manifest-resolution step, not a script concern. The orchestrator
@@ -27,13 +27,13 @@ reasoning:
 
 ```json
 {
-  "source_quote": "all copywriting steps using Claude Fable 5",
+  "source_quote": "all copywriting steps using Claude Fable 5.1",
   "applies_to": "steps whose primary artifact is learner-facing copy",
   "step_execution": {
     "transport": "external",
     "starting_context": "clean",
     "runtime": "claude",
-    "model": "claude-fable-5"
+    "model": "claude-fable-5-1"
   },
   "resolution_rationale": "The user named a semantic class, so resolve it against step labels, declared instructions, and expected artifacts after manifest drafting."
 }
@@ -56,7 +56,7 @@ honor it. `step_execution.model` and
 `model-and-effort.md`. When Codex uses Fugu, `step_execution.codex_profile` or
 `critic_execution.codex_profile` stores the profile name; the subprocess
 command uses `codex exec -p <profile>`. Do not pass raw shorthand such as
-`opus-4-7` to a subprocess when the runtime requires `claude-fable-5`.
+`opus-4-7` to a subprocess when the runtime requires `claude-fable-5-1`.
 
 ## Resolution order
 
@@ -144,7 +144,7 @@ Every StepDescriptor gets both resolved execution blocks:
     "starting_context": "clean",
     "continuation": "new-then-exact-resume",
     "runtime": "claude",
-    "model": "claude-fable-5",
+    "model": "claude-fable-5-1",
     "effort": "xhigh",
     "source": "execution_preferences[0]",
     "reason": "Matched learner-facing copy artifact lesson-copy.json."

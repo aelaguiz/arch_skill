@@ -40,7 +40,7 @@ The external-harness lane asks for a role table after decomposition approval:
 Example table:
 
 ```text
-epic_planner: claude fable 5 high
+epic_planner: claude fable 5.1 high
 implementation_worker: codex gpt-5.6-sol ultra
 critic: codex gpt-5.6-sol ultra
 poll_seconds: 180
@@ -102,7 +102,7 @@ All of these explicitly request an external provider or exact model/profile;
 that deliberate value selects the external harness. They are valid when they
 include a role:
 
-- "planner on Claude Fable 5 high"
+- "planner on Claude Fable 5.1 high"
 - "implementation worker on Codex gpt-5.6-sol ultra"
 - "implementation worker on Luna xhigh"
 - "critic on Terra high"
@@ -131,7 +131,7 @@ Treat model text as intent, not a loose alias:
 - `gpt 5.3 codex` may normalize to `gpt-5.3-codex`.
 - `fugu` and `fugu-ultra` are Codex profile names; preserve them as `fugu` and
   `fugu-ultra` and launch them with `codex exec -p`.
-- `fable 5` under Claude may normalize to `claude-fable-5`; `opus 4.7` may
+- `fable 5.1` under Claude may normalize to `claude-fable-5-1`; `opus 4.7` may
   normalize to `claude-opus-4-7`. Neither may become another Claude family or
   version.
 - Natural `grok`, `grok cli`, and `grok build` wording normalizes to
@@ -185,7 +185,7 @@ implementation_worker: "codex high" -> runtime=codex, model=gpt-5.6-sol, effort=
 implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
 critic: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
 critic: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
-planner: "Claude Fable 5 high" -> runtime=claude, model=claude-fable-5, effort=high
+planner: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high
 implementation_worker: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
 implementation_worker: "Kimi K3 high" -> runtime=kimi, model=kimi-code/k3, effort=high
 critic: "Kimi" -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default

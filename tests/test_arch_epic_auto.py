@@ -46,18 +46,18 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         self.assertEqual(resolved.effort, "xhigh")
         self.assertIn("exact model family/version", resolved.resolution_reason)
 
-    def test_claude_fable_5_shorthand_resolves_to_full_model_id(self):
+    def test_claude_fable_5_1_shorthand_resolves_to_full_model_id(self):
         cases = [
-            ("Claude Fable 5 high", "high"),
-            ("fable 5 xhigh", "xhigh"),
-            ("claude-fable-5 max", "max"),
+            ("Claude Fable 5.1 high", "high"),
+            ("fable 5.1 xhigh", "xhigh"),
+            ("claude-fable-5-1 max", "max"),
         ]
 
         for phrase, effort in cases:
             with self.subTest(phrase=phrase):
                 resolved = self.model_resolution.resolve_execution_phrase(phrase)
                 self.assertEqual(resolved.runtime, "claude")
-                self.assertEqual(resolved.model, "claude-fable-5")
+                self.assertEqual(resolved.model, "claude-fable-5-1")
                 self.assertEqual(resolved.effort, effort)
 
     def test_codex_shorthand_resolves_against_available_model_names(self):
@@ -503,7 +503,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
     def test_role_policy_accepts_claude_fable_for_auto_mode_roles(self):
         policy = self.model_resolution.resolve_role_execution_policy(
             {
-                "epic_planner": "claude fable 5 high",
+                "epic_planner": "claude fable 5.1 high",
                 "implementation_worker": "codex gpt-5.6-sol xhigh",
                 "critic": "codex gpt 5.4 mini xhigh",
             },
@@ -511,7 +511,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         )
 
         self.assertEqual(policy["roles"]["epic_planner"]["runtime"], "claude")
-        self.assertEqual(policy["roles"]["epic_planner"]["model"], "claude-fable-5")
+        self.assertEqual(policy["roles"]["epic_planner"]["model"], "claude-fable-5-1")
         self.assertEqual(policy["roles"]["epic_planner"]["effort"], "high")
 
     def test_arch_policy_file_threads_kimi_catalog_and_default_effort(self):

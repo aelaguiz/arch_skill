@@ -65,7 +65,7 @@ Resolved dispatch blocks appear on every step for both worker and critic:
   "starting_context": "clean",
   "continuation": "new-then-exact-resume",
   "runtime": "claude",
-  "model": "claude-fable-5",
+  "model": "claude-fable-5-1",
   "codex_profile": "",
   "effort": "xhigh",
   "source": "execution_preferences[0]",
@@ -204,7 +204,7 @@ The manifest is a read-then-think product, not a template.
 The user said: "Work in ../lessons_studio. Ramp up on track 3 section 3 and
 implement lesson 2 strictly according to the skill order, no fabrication.
 Default steps on Codex gpt-5.6-sol high, critic on Codex gpt-5.6-sol ultra. Use
-Claude Fable 5 for copywriting steps."
+Claude Fable 5.1 for copywriting steps."
 
 Assume the active host cannot confirm those exact model/effort choices; the
 external adapter is therefore the deliberate lane. After reading target
@@ -241,13 +241,13 @@ doctrine, Stepwise drafts an abbreviated manifest:
   },
   "execution_preferences": [
     {
-      "source_quote": "Use Claude Fable 5 for copywriting steps",
+      "source_quote": "Use Claude Fable 5.1 for copywriting steps",
       "applies_to": "steps whose primary artifact is learner-facing copy",
       "step_execution": {
         "transport": "external",
         "starting_context": "clean",
         "runtime": "claude",
-        "model": "claude-fable-5"
+        "model": "claude-fable-5-1"
       },
       "resolution_rationale": "Apply only after comparing drafted step label, instruction, and artifact."
     }

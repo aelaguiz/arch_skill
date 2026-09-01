@@ -108,7 +108,7 @@ break.
   wording resolves to `grok-4.6`, while explicit legacy Grok ids stay exact.
   Ask once only for missing load-bearing external values.
 - Optional execution preferences are interpreted after the Step Manifest is
-  drafted. A phrase like "copywriting steps use Claude Fable 5" is a routing
+  drafted. A phrase like "copywriting steps use Claude Fable 5.1" is a routing
   preference to resolve against real steps, not a built-in category.
 - Orchestrator does not persistently load the target repo's contents into its
   own context. It points clean children at paths; children read source truth.

@@ -281,7 +281,7 @@ def resolve_execution_phrase(
     """Resolve a compact user phrase into runtime/model/effort.
 
     Examples:
-    - "Claude Fable 5 high" -> claude / claude-fable-5 / high
+    - "Claude Fable 5.1 high" -> claude / claude-fable-5-1 / high
     - "Claude Opus 4.7 xhigh" -> claude / claude-opus-4-7 / xhigh
     - "codex gpt 5.4 mini high" -> codex / gpt-5.4-mini / high
     - "GPT56SOLXI" -> codex / gpt-5.6-sol / xhigh

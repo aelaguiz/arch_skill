@@ -31,7 +31,7 @@ User:
 
 ```text
 Use $model-consensus. Put Codex gpt-5.6-sol ultra in adversarial mode against
-Claude Fable 5 high. The goal is the most elegant plan for removing the
+Claude Fable 5.1 high. The goal is the most elegant plan for removing the
 duplicate install path without breaking existing users.
 ```
 

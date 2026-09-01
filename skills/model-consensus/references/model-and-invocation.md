@@ -92,8 +92,8 @@ Follow the shared model-resolution doctrine:
   resulting Sol lane names no effort, resolve it to `ultra` and report
   `effort_source=preference_default`.
 - Preserve family and numeric version exactly. `gpt-5.6-luna` may normalize to
-  `gpt-5.6-luna`; it must not become `gpt-5.6-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5` may normalize to
-  `claude-fable-5`, and `opus 4.7` may normalize to `claude-opus-4-7`;
+  `gpt-5.6-luna`; it must not become `gpt-5.6-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
+  `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
@@ -115,8 +115,8 @@ Follow the shared model-resolution doctrine:
   exact version. For Fugu, resolve `fugu` and `fugu-ultra` as Codex profiles,
   not model-list ids; preserve the profile names exactly and launch them with
   `-p`.
-- For Claude, preserve the named supported Claude family and version. Fable 5
-  resolves to `claude-fable-5`; Opus 4.7 resolves to `claude-opus-4-7`. If the
+- For Claude, preserve the named supported Claude family and version. Fable 5.1
+  resolves to `claude-fable-5-1`; Opus 4.7 resolves to `claude-opus-4-7`. If the
   user names Sonnet or Haiku, fail loud and ask for a supported Claude choice.
 - For Cursor Agent, always use `composer-2.5-fast`. Accept `composer`,
   `composer 2.5`, `composer-2.5`, `composer-2.5-fast`, or bare `2.5` in a
@@ -147,7 +147,7 @@ to this skill.
 Always announce the mapping before execution:
 
 ```text
-Model A: "Claude Fable 5 high" -> runtime=claude, model=claude-fable-5, effort=high
+Model A: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high
 Model B: "Claude Opus 4.7 xhigh" -> runtime=claude, model=claude-opus-4-7, effort=xhigh
 Model C: "codex" -> runtime=codex, model=gpt-5.6-sol, effort=ultra, model_source=default, effort_source=preference_default
 Model D: "codex high" -> runtime=codex, model=gpt-5.6-sol, effort=high, model_source=default

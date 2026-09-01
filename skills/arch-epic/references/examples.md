@@ -11,13 +11,13 @@ not a script to copy.
 > "Work on this repo. I want to ship a new admin dashboard with SSO
 > support. Three plans roughly: SSO in the auth service, the
 > dashboard itself, then migrate existing admins. Use claude
-> fable-5 high for the critic."
+> fable-5.1 high for the critic."
 
 ### `start` mode
 
 Skill proposes `docs/EPIC_ADMIN_DASHBOARD_SSO_2026-04-22.md`. User
 is silent on path, so proceed. Skill writes frontmatter with
-`critic_runtime: claude`, `critic_model: claude-fable-5`,
+`critic_runtime: claude`, `critic_model: claude-fable-5-1`,
 `critic_effort: high`, hashes set.
 
 Drafts the Decomposition:
@@ -357,7 +357,7 @@ sub-plan 1 passes its critic gates.
 
 ### Explicit external-harness variant
 
-If the user instead says, "Use external harnesses: planner Claude Fable 5 high,
+If the user instead says, "Use external harnesses: planner Claude Fable 5.1 high,
 implementation Codex gpt-5.6-sol ultra, critic Codex gpt-5.6-sol ultra," those
 provider/model choices are the concrete external benefit. The skill resolves
 and pins that role table, writes `auto_execution`, initializes

@@ -50,7 +50,7 @@ provider/model choice load-bearing. Honor it natively only when the active host
 exposes and confirms that choice; otherwise the external adapter supplies the
 requested capability. Any of these is clear:
 
-- "use Claude Fable 5 high for steps and Codex gpt-5.6-sol ultra for critic"
+- "use Claude Fable 5.1 high for steps and Codex gpt-5.6-sol ultra for critic"
 - "use Codex Fugu high for steps and Codex Fugu Ultra xhigh for critic"
 - "Codex gpt-5.6-sol high everywhere" (one value reused for all defaults)
 - "Codex luna high for steps and terra xhigh for critic"
@@ -58,7 +58,7 @@ requested capability. Any of these is clear:
 - "Grok Build high for steps and Codex gpt-5.6-sol ultra for critic"
 - "Kimi K3 high for steps and Kimi max for critic"
 - "steps on gpt-5.6-sol high, critic on gpt-5.6-sol ultra"
-- "default to Codex gpt-5.6-sol high, but use Claude Fable 5 for copywriting"
+- "default to Codex gpt-5.6-sol high, but use Claude Fable 5.1 for copywriting"
 
 None of these is magic. The intake reads the phrase, maps the baseline into
 execution defaults, records routing preferences separately, and prints back
@@ -78,9 +78,9 @@ This is reasoning, not a lookup table:
   `5.5` must stay `5.5`, never `5.4`.
 - For Claude, if the runtime is Claude and the user names a supported family
   plus a version, prefer the full Claude CLI identifier:
-  `claude-<family>-<version-with-hyphens>`. For example, "Claude Fable 5",
-  "claude fable-5", and "fable 5" under a Claude runtime all resolve to
-  `claude-fable-5`; "opus 4.7" resolves to `claude-opus-4-7`. Family-only
+  `claude-<family>-<version-with-hyphens>`. For example, "Claude Fable 5.1",
+  "claude fable-5.1", and "fable 5.1" under a Claude runtime all resolve to
+  `claude-fable-5-1`; "opus 4.7" resolves to `claude-opus-4-7`. Family-only
   aliases such as `fable` or `opus` are acceptable only when the user did not
   pin a version.
 - For ordinary Codex model ids, accept `sol`, `luna`, and `terra` as
@@ -118,7 +118,7 @@ This is reasoning, not a lookup table:
   Use the CLI's help/list surface when available; otherwise ask.
 
 Always announce the raw-to-resolved mapping before execution, for example:
-`Claude Fable 5 high -> runtime=claude, model=claude-fable-5,
+`Claude Fable 5.1 high -> runtime=claude, model=claude-fable-5-1,
 effort=high` or `Grok Build high -> runtime=grok, model=grok-4.6,
 effort=high`. `Kimi -> runtime=kimi, model=kimi-code/k3, effort=max,
 effort_source=model_default` records the K3 default explicitly.
@@ -178,7 +178,7 @@ discovered, proceed natively instead of manufacturing this question.
 If the user answers with one complete value ("Codex gpt-5.6-sol medium
 everywhere"), apply it to both worker and critic defaults and announce that
 before executing. If they answer with a worker-only override ("copywriting on
-Claude Fable 5"), resolve only the affected steps externally and leave other
+Claude Fable 5.1"), resolve only the affected steps externally and leave other
 roles on their confirmed native/default policy unless the user says otherwise.
 Do not ask merely because the user used spaces, dots, or omitted a runtime
 prefix when the runtime and exact version are otherwise clear; resolve the
@@ -191,7 +191,7 @@ External runtime is separate from model and effort.
 Infer runtime only when the evidence is unambiguous:
 
 - a target repo says "run with Codex"
-- the user says "Claude Fable 5", "Codex gpt-5.6-sol", "Luna", "Terra",
+- the user says "Claude Fable 5.1", "Codex gpt-5.6-sol", "Luna", "Terra",
   "Grok Build", "Kimi", or "K3"
 - the user says "Codex Fugu", "Fugu high", or "Fugu Ultra xhigh"
 - an installed CLI supports only the named model family and the user clearly
