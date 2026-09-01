@@ -69,6 +69,12 @@ make install
   self-imposed gate: take it to the epic's unblocker (per `$unblocker`),
   or to the Pro thread when none is armed, and get a decision from the
   plan's intent. Waiting-for-user is never a resting state.
+- Decide like a startup. Apply `$startup-pragmatism` to every judgment
+  call in the loop - ordering, blockers, when to move on - and decide at
+  current information instead of building certainty. The pipeline's named
+  receipts are the complete proof set: never invent extra limits,
+  thresholds, proof harnesses, evidence bundles, or verification ceremony
+  the epic did not ask for.
 - Live GitHub state is the queue. Re-read the epic's open issues between
   items; new, closed, and re-prioritized issues supersede any snapshot.
 - Most important first. Use the epic's stated priorities; when unstated,
@@ -103,10 +109,12 @@ make install
    epic's single Pro thread.
 2. **Arm the run.** Stand up the epic's unblocker per `$unblocker`,
    charged with the user's verbatim ask, the epic, and the production
-   boundary. Then author the goal prompt via `$prompt-authoring` so it
-   names the Pro thread, the unblocker and how to reach it, and the rule
-   that blocked or needing authorization means consult the unblocker -
-   never park in waiting-for-user. In Prime Agent, set the goal yourself
+   boundary. Then author the goal prompt via `$prompt-authoring`, shaped
+   by `$startup-pragmatism` so it drives delivery rather than ceremony: it
+   names the Pro thread, the unblocker and how to reach it, the rule that
+   blocked or needing authorization means consult the unblocker - never
+   park in waiting-for-user - and no proof or receipt demands beyond the
+   pipeline's own. In Prime Agent, set the goal yourself
    with the goal skill and spawn the unblocker; in Codex or Claude,
    present the exact /goal text and unblocker spawn instruction for the
    user to arm. The goal's completion condition: every issue on the epic

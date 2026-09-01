@@ -71,8 +71,11 @@ overrides a terminal state such as `issue-to-pr` never merging.
   do X that the plan already names?" is "you were already authorized;
   proceed."
 - Decisions come from the user's intent and the plan, not the worker's
-  anxiety. Answer bluntly and concretely: "proceed", "do X not Y and here
-  is why", or "user-owned; here is the one question."
+  anxiety. Decide with `$startup-pragmatism`: the smallest useful move, at
+  current information. Answer bluntly and concretely: "proceed", "do X
+  not Y and here is why", or "user-owned; here is the one question."
+  Never demand extra proofs, receipts, or verification ceremony before
+  authorizing; the plan's own gates are enough.
 - When unsure, consult the run's Pro thread with the full goal context -
   the intent, the plan, the disputed step, options, and a recommendation -
   rather than guessing or bouncing "ask the user" back to the worker.

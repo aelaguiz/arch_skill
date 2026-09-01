@@ -80,6 +80,13 @@ make install
   need authorization" moment goes to the run's unblocker (per
   `$unblocker`) when one is armed, else the Pro thread, and gets decided
   from the issue's intent. Waiting-for-user is never a resting state.
+- Decide like a startup everywhere, not just at plan time. Apply
+  `$startup-pragmatism` to in-flight judgment calls - blockers, ordering,
+  how much testing is enough - and decide at current information. The
+  receipts this pipeline names (plan verdict, PR verdict on the final
+  head, green CI, PR URL) are the complete proof set: never invent extra
+  limits, proof harnesses, evidence bundles, or verification ceremony the
+  issue did not ask for.
 - The PR review round binds to the exact current head; a changed head
   invalidates the verdict.
 - PR Agent and other repo bots are advisory. Handle their threads with
@@ -143,10 +150,12 @@ decide scope unilaterally, do not quietly deliver less.
 ## Running as a persistent goal
 
 When this lane runs under a persistent goal (a long or overnight run),
-author the goal prompt yourself via `$prompt-authoring`: it names the Pro
-thread, the unblocker per `$unblocker` and how to reach it, and the rule
-that blocked or needing authorization means consult the unblocker, never
-park in waiting-for-user. In Prime Agent, arm the goal and spawn the
+author the goal prompt yourself via `$prompt-authoring`, shaped by
+`$startup-pragmatism` so it drives delivery rather than ceremony: it
+names the Pro thread, the unblocker per `$unblocker` and how to reach it,
+the rule that blocked or needing authorization means consult the
+unblocker, never park in waiting-for-user, and no proof or receipt
+demands beyond the pipeline's own. In Prime Agent, arm the goal and spawn the
 unblocker yourself; otherwise present the exact /goal text and unblocker
 spawn instruction for the user to arm.
 
