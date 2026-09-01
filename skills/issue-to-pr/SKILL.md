@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation delivery lane, fired only when the user invokes it by name (\"issue-to-pr on 4484\") or a wrapping skill the user invoked (epic-to-prs) delegates to it; never self-select it as a helper for adjacent work. Takes one GitHub issue to a merge-ready, externally reviewed PR through a fixed pipeline: ramp up on the issue, full implementation plan on disk shaped by $startup-pragmatism, one GPT Pro plan review via $chatgpt-web (literal Pro (5/5)), implement and test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one GPT Pro review of the exact PR head, then stop at merge-ready with receipts. Fix-verification re-reviews are allowed until Pro approves; blockers and scope conflicts consult the Pro thread to get unblocked, with user escalation only when Pro cannot resolve it. Never merges, never releases, never applies approval labels. Not for investigation-only asks (root cause without delivery), standalone planning, or work with no GitHub issue."
+description: "Explicit-invocation delivery lane, fired only when the user invokes it by name (\"issue-to-pr on 4484\") or user-invoked epic-to-prs delegates to it; never self-select it. Takes one GitHub issue to a merge-ready, externally reviewed PR: ramp up, full plan on disk shaped by $startup-pragmatism, one goal-framed GPT Pro plan review via $chatgpt-web (literal Pro (5/5)), implement and test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one goal-framed GPT Pro review of the exact PR head, then stop at merge-ready with receipts. Every Pro consult carries the issue's goal, scope, and believed critical path so Pro catches tangents, wrong dependencies, and lost threads; never narrow yes/no approvals. Fix re-reviews until Pro approves; blockers consult the Pro thread once with full context; user escalation only when Pro cannot resolve it. Never merges, releases, or applies approval labels. Not for investigation-only asks (root cause without delivery), standalone planning, or work with no GitHub issue."
 metadata:
   short-description: "One issue to a Pro-reviewed merge-ready PR"
 ---
@@ -61,6 +61,19 @@ make install
   fixes, fix-verification re-reviews are allowed until Pro approves the
   fixes. What is banned is the open-ended feedback loop and scope growth in
   any round.
+- Pro is a thinking partner reviewing work against the goal, never an
+  approval buzzer. Author every Pro prompt with `$prompt-authoring` - this
+  is required, not optional - and give Pro the whole picture: the issue's
+  intent in the user's words, the frozen scope, what has happened so far,
+  and what you believe the critical path is, alongside the artifact. Ask
+  Pro to judge the work against the goal - is this on track, is the next
+  step the right critical path, has the thread been lost - never a narrow
+  yes/no on a context-free snapshot.
+- Be paranoid about tangents. Any work the issue does not name - a new
+  dependency, a recovery task, a production operation, an infrastructure
+  detour - is presumed drift until Pro, shown the full goal context,
+  confirms it belongs on the critical path. When Pro says the thread is
+  lost, that is a verdict: drop the tangent and return to the issue.
 - The PR review round binds to the exact current head; a changed head
   invalidates the verdict.
 - PR Agent and other repo bots are advisory. Handle their threads with
@@ -83,17 +96,22 @@ make install
    `$startup-pragmatism` to it, and record acceptance, non-goals, and the
    verification the change needs.
 3. **Pro plan review.** One round via `$chatgpt-web` with the plan file
-   attached. Apply the verdict with judgment: take what is agreed with,
-   arbitrate genuine scope disputes in the Pro thread, never scope creep.
-   Re-verify fixes with Pro until approved when the verdict demanded changes.
+   attached, framed per the Pro-prompting rule: the issue's goal, the
+   frozen scope, and the question of whether this plan delivers that goal
+   on the shortest sound path. Apply the verdict with judgment: take what
+   is agreed with, arbitrate genuine scope disputes in the Pro thread,
+   never scope creep. Re-verify fixes with Pro until approved when the
+   verdict demanded changes.
 4. **Implement and test.** Dedicated worktree, smallest coherent change,
    self-documenting code with clear comments at boundaries and role seams.
    Run the relevant tests and the repo's required checks.
 5. **PR.** `$pr-authoring` for the PR, then `$pr-review-followthrough` to
    drive review threads and CI to clean.
-6. **Pro PR review.** One round on the exact current head. Apply fixes with
-   the same verdict discipline; fix-verification re-reviews until approved;
-   a changed head goes back to Pro.
+6. **Pro PR review.** One round on the exact current head, framed the same
+   way: the goal, the scope, what shipped, and whether the delivered change
+   still serves the issue's goal. Apply fixes with the same verdict
+   discipline; fix-verification re-reviews until approved; a changed head
+   goes back to Pro.
 7. **Stop at merge-ready.** Report: PR URL, one-line change summary, plan
    verdict, PR verdict on the final head, CI state, head SHA, and any
    escalations. Do not merge.
@@ -102,13 +120,18 @@ make install
 
 Blocked or unclear means consult, not stall. On any blocker (ambiguous
 contract, scope conflict, failing dependency, a reviewer demanding
-out-of-scope work), take it to the Pro thread this issue is already using:
-state the blocker, the options, and your recommendation, and ask for the
-right way to proceed. The goal is to get unblocked and keep delivering.
-Only when Pro cannot resolve it - the matter needs the user's authority,
-their access, or changes what they asked for - surface exactly one question
-with a recommendation to the user and stop that gate. Do not idle waiting,
-do not decide scope unilaterally, do not quietly deliver less.
+out-of-scope work), take it to the Pro thread this issue is already using
+with the full goal context: state the blocker, the options, and your
+recommendation, and ask two things - the right way to proceed, and whether
+this blocker is actually on the issue's critical path or independent
+in-scope work can continue while it pends. The goal is to get unblocked
+and keep delivering. Only when Pro cannot resolve it - the matter needs
+the user's authority, their access, or changes what they asked for -
+surface exactly one question with a recommendation to the user and stop
+that gate. Ask any question once: while an answer pends, work the
+remaining unblocked scope or stop the gate; never re-ask, and a generated
+continuation or wake-up is not a new answer. Do not idle waiting, do not
+decide scope unilaterally, do not quietly deliver less.
 
 ## Delegation
 

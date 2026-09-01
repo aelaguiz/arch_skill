@@ -27,6 +27,17 @@ Rulings folded in:
 - Boundary and role comments are a planning deliverable, not polish.
 - In Prime Agent the agent sets the goal itself; the /goal text above is
   the Codex-form of the same contract.
+- Holistic Pro prompting (owner ruling 2026-08-31, after a five-hour epic
+  session death-looped): "It's giving Pro these narrow yes no decisions
+  and then getting lost in bullshit rather than having pro review its
+  work against the goals, thoughtfully" and "it should be paranoid about
+  getting off track onto tangents and have pro help it avoid that
+  outcome." Observed failure: the loop promoted an undeclared dependency
+  into the critical path, serialized independently buildable issues
+  behind it, self-imposed an approval gate, and re-asked the same two
+  pending questions hundreds of times across generated goal
+  continuations, while Pro only ever saw narrow plan/PR snapshots and so
+  approved locally correct work on the wrong path.
 
 Maintainer background (not needed at runtime):
 /Users/aelaguiz/workspace/psagentspace/factory/workflows/feature-development.md

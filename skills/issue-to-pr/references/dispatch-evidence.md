@@ -33,6 +33,14 @@ anchored to this observed practice.
 - Close-out vocabulary: merge-ready is the terminal state; merging and
   reaping stay with the owner ("merge it down and reap it" is his call, not
   the skill's).
+- Holistic Pro prompting (2026-08-31): "It's giving Pro these narrow yes
+  no decisions and then getting lost in bullshit rather than having pro
+  review its work against the goals, thoughtfully" and "it should be
+  paranoid about getting off track onto tangents and have pro help it
+  avoid that outcome." Every Pro consult carries the goal, state, and
+  believed critical path; Pro is asked to catch tangents and lost
+  threads; pending questions are asked once and never re-asked on
+  generated wake-ups.
 
 ## Deeper evidence
 

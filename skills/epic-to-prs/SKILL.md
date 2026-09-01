@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only when the user invokes it by name or directly commands this exact job (\"epic-to-prs on epic 4700\", \"put a goal loop over the milestone epic and work it down\"); never self-select it because work involves an epic. Puts a persistent goal over one GitHub epic or milestone and works its open issues most-important-first, each through the issue-to-pr skill to a Pro-reviewed merge-ready PR. Owns only the queue policy, goal persistence (sets its own goal in Prime Agent; authors the /goal prompt in Codex or Claude), one ChatGPT Pro thread per epic carrying every review, epic-level standing rules (boundary comments, advisory-only PR bots, no reviewer scope expansion), and Pro-first unblocking (blockers consult the epic's Pro thread; the user gets one question only when Pro cannot resolve it). Ends only when the queue is empty or the user stops it. Never merges or releases. Not for epic status reads, epic decomposition (arch-epic), or open-ended optimization (goal-loop)."
+description: "Explicit-invocation epic loop, fired only when the user invokes it by name or directly commands it (\"epic-to-prs on epic 4700\"); never self-select it. Puts a persistent goal over one epic or milestone, working its open issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence (own goal in Prime Agent; authored /goal prompt in Codex or Claude), one ChatGPT Pro thread per epic as standing goal advisor (every review plus holistic on-track checks catching tangents, undeclared dependencies, wrong critical paths, and lost threads), epic-level standing rules (boundary comments, advisory-only PR bots, no reviewer scope expansion), and Pro-first unblocking (full-context consults asked once, never serializing independent issues behind an unrelated blocker). Ends only when the queue is empty or the user stops it. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization (goal-loop)."
 metadata:
   short-description: "Goal loop working an epic's issues to merge-ready PRs"
 ---
@@ -50,6 +50,19 @@ make install
   reuse it for every plan and PR review in the epic, so Pro accumulates
   epic-wide context. All Pro interaction goes through `$chatgpt-web` and
   honors that skill's rules, including the literal Pro (5/5) picker entry.
+- Pro is the epic's standing advisor, never an approval buzzer. Author
+  every consult with `$prompt-authoring` - required, not optional - and
+  give Pro the epic's goal, the live queue state, what is done, and what
+  the loop proposes next, then ask it to review the work against the
+  epic's goal rather than answer a context-free yes/no.
+- Be paranoid about losing the thread. At every issue boundary, and
+  whenever the plan, dependencies, or critical path change, ask the Pro
+  thread the holistic question: is the loop still delivering this epic, is
+  the next item the right critical path, has it promoted a dependency the
+  epic never declared, is it doing work another lane owns? Work the epic
+  does not name is presumed a tangent until Pro, shown the full context,
+  confirms otherwise; when Pro says the loop has drifted, drop the tangent
+  and return to the queue.
 - Live GitHub state is the queue. Re-read the epic's open issues between
   items; new, closed, and re-prioritized issues supersede any snapshot.
 - Most important first. Use the epic's stated priorities; when unstated,
@@ -58,12 +71,17 @@ make install
   verdict on the exact final head, green CI, PR URL). Never merge, never
   release, never apply approval labels.
 - Blocked means consult, not stall. A blocked or unclear issue goes to the
-  epic's Pro thread first: state the blocker, the options, and a
-  recommendation, and work it with Pro until there is a way to proceed.
-  Only a matter Pro cannot resolve because it genuinely needs the user
-  (their authority, their access, or a change to what they asked for) gets
-  one escalation - one question, one recommendation - and then the loop
-  moves to the next issue rather than stalling the epic.
+  epic's Pro thread first with full goal context: state the blocker, the
+  options, and a recommendation, ask whether the blocker actually gates
+  the remaining queue or independently buildable issues can proceed, and
+  work it with Pro until there is a way forward. Never serialize
+  independent issues behind an unrelated blocker. Only a matter Pro cannot
+  resolve because it genuinely needs the user (their authority, their
+  access, or a change to what they asked for) gets one escalation - one
+  question, one recommendation - and then the loop moves to the next issue
+  rather than stalling the epic. Ask any question once; while an answer
+  pends, work other queue items, and a generated goal continuation or
+  wake-up is never license to re-ask.
 - Reviewer discipline everywhere: fix-verification re-reviews with Pro until
   it approves the fixes, no scope expansion accepted from any reviewer, and
   PR Agent and other bots stay advisory ("PR agent is not your boss").
@@ -86,9 +104,10 @@ make install
    2. Run the full `issue-to-pr` pipeline for the issue, with this epic's
       Pro thread and the epic-level standing rules carried into the
       dispatch.
-   3. On merge-ready, record the receipts on the issue, mark it off, and
-      move on. On a block, take it to the epic's Pro thread and get
-      unblocked; only if it still needs the user, escalate once and move on.
+   3. On merge-ready, record the receipts on the issue, mark it off, run
+      the issue-boundary on-track check in the Pro thread, and move on. On
+      a block, take it to the epic's Pro thread and get unblocked; only if
+      it still needs the user, escalate once and move on.
 4. **Finish.** When the queue is empty, mark the goal complete and report:
    issues delivered with PR URLs and receipts, blockers Pro resolved and
    how, any issues escalated with their one question, and anything observed
