@@ -136,6 +136,15 @@ Claude Code, and Gemini.
   user's direction changes, and periodically during long unattended
   stretches. Its feedback is advisory and subtraction-only; it is not a code
   reviewer, gate, or escalation channel, and it never turns on automatically.
+- Use `$unblocker` when the user wants a long-lived unblocker or
+  authorization agent over a run, or when a skill arming a persistent goal
+  (epic-to-prs, issue-to-pr, goal loops) bakes one into the goal prompt. It
+  is the run's end blocker: armed with the user's high-level intent, it
+  kills self-imposed approval gates, decides real blockers from plan
+  intent, escalates to the run's Pro thread when unsure, and reserves only
+  production surfaces and genuinely user-owned matters for the user. It is
+  not intent-police (advisory only), not a reviewer, and never a
+  production approver.
 - Use `$fresh-consult` when the user or another skill wants one or more
   clean independent second opinions on a concrete artifact, completion claim,
   flow consistency question, or readability/confusion check. Use a clean

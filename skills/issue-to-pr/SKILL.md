@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation delivery lane, fired only when the user invokes it by name (\"issue-to-pr on 4484\") or user-invoked epic-to-prs delegates to it; never self-select it. Takes one GitHub issue to a merge-ready, externally reviewed PR: ramp up, full plan on disk shaped by $startup-pragmatism, one goal-framed GPT Pro plan review via $chatgpt-web (literal Pro (5/5)), implement and test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one goal-framed GPT Pro review of the exact PR head, then stop at merge-ready with receipts. Every Pro consult carries the issue's goal, scope, and believed critical path so Pro catches tangents, wrong dependencies, and lost threads; never narrow yes/no approvals. Fix re-reviews until Pro approves; blockers consult the Pro thread once with full context; user escalation only when Pro cannot resolve it. Never merges, releases, or applies approval labels. Not for investigation-only asks (root cause without delivery), standalone planning, or work with no GitHub issue."
+description: "Explicit-invocation delivery lane, fired only by name (\"issue-to-pr on 4484\") or by user-invoked epic-to-prs; never self-select it. Takes one GitHub issue to a merge-ready, externally reviewed PR: ramp up, plan on disk shaped by $startup-pragmatism, one goal-framed GPT Pro plan review via $chatgpt-web (literal Pro (5/5)), implement/test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one goal-framed Pro review of the exact PR head, then stop at merge-ready with receipts. Every Pro consult carries the issue's goal, scope, and believed critical path so Pro catches tangents and lost threads; never narrow yes/no approvals. Fix re-reviews until Pro approves. Run starts authorized: invented approval gates and blockers go once, with full context, to the run's unblocker ($unblocker) or Pro, never parked in waiting-for-user; user escalation only for user-owned matters. Never merges or releases. Not for investigation-only asks, standalone planning, or work with no GitHub issue."
 metadata:
   short-description: "One issue to a Pro-reviewed merge-ready PR"
 ---
@@ -74,6 +74,12 @@ make install
   detour - is presumed drift until Pro, shown the full goal context,
   confirms it belongs on the critical path. When Pro says the thread is
   lost, that is a verdict: drop the tangent and return to the issue.
+- The run starts authorized. If the issue's accepted scope names the work
+  and it touches no production surface, permission already exists;
+  inventing a mid-run approval gate is the failure, not caution. An "I
+  need authorization" moment goes to the run's unblocker (per
+  `$unblocker`) when one is armed, else the Pro thread, and gets decided
+  from the issue's intent. Waiting-for-user is never a resting state.
 - The PR review round binds to the exact current head; a changed head
   invalidates the verdict.
 - PR Agent and other repo bots are advisory. Handle their threads with
@@ -120,8 +126,9 @@ make install
 
 Blocked or unclear means consult, not stall. On any blocker (ambiguous
 contract, scope conflict, failing dependency, a reviewer demanding
-out-of-scope work), take it to the Pro thread this issue is already using
-with the full goal context: state the blocker, the options, and your
+out-of-scope work), take it to the run's unblocker when one is armed,
+else the Pro thread this issue is already using, with the full goal
+context: state the blocker, the options, and your
 recommendation, and ask two things - the right way to proceed, and whether
 this blocker is actually on the issue's critical path or independent
 in-scope work can continue while it pends. The goal is to get unblocked
@@ -132,6 +139,16 @@ that gate. Ask any question once: while an answer pends, work the
 remaining unblocked scope or stop the gate; never re-ask, and a generated
 continuation or wake-up is not a new answer. Do not idle waiting, do not
 decide scope unilaterally, do not quietly deliver less.
+
+## Running as a persistent goal
+
+When this lane runs under a persistent goal (a long or overnight run),
+author the goal prompt yourself via `$prompt-authoring`: it names the Pro
+thread, the unblocker per `$unblocker` and how to reach it, and the rule
+that blocked or needing authorization means consult the unblocker, never
+park in waiting-for-user. In Prime Agent, arm the goal and spawn the
+unblocker yourself; otherwise present the exact /goal text and unblocker
+spawn instruction for the user to arm.
 
 ## Delegation
 

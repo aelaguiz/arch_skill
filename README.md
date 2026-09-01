@@ -58,6 +58,7 @@ Other shipped skills are:
 - `codex-babysit` — optional source-retained skill for watching an already-running Codex goal-mode tmux pane; it is not installed by default
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs and strict `approve | not-approved | inconclusive` verdicts
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
+- `unblocker` — long-lived end blocker and authorizer for a run: armed with the user's high-level intent and plan, it kills self-imposed approval gates (the run starts authorized), decides real blockers from plan intent with Pro escalation when unsure, keeps a decision log, and reserves only production surfaces and genuinely user-owned matters for the user
 - `intent-police` — long-lived read-only advocate that derives the user's intent from their verbatim words, keeps an on-disk intent ledger, classifies direction changes as micro-adjustment versus fundamental shift, filters other agents' review findings for scope creep, and gives blunt subtraction-only alignment feedback at decisions, post-review, and done-claims
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-approval minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
@@ -165,6 +166,7 @@ Installed skills:
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/fresh-consult/`
   - `~/.agents/skills/intent-police/`
+  - `~/.agents/skills/unblocker/`
   - `~/.agents/skills/agent-delegate/`
   - `~/.agents/skills/plan-audit/`
   - `~/.agents/skills/plan-implement/`
@@ -218,6 +220,7 @@ Installed skills:
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/fresh-consult/`
   - `~/.claude/skills/intent-police/`
+  - `~/.claude/skills/unblocker/`
   - `~/.claude/skills/agent-delegate/`
   - `~/.claude/skills/plan-audit/`
   - `~/.claude/skills/plan-implement/`
@@ -270,6 +273,7 @@ Installed skills:
   - `~/.gemini/skills/codex-review-yolo/`
   - `~/.gemini/skills/fresh-consult/`
   - `~/.gemini/skills/intent-police/`
+  - `~/.gemini/skills/unblocker/`
   - `~/.gemini/skills/agent-delegate/`
   - `~/.gemini/skills/plan-audit/`
   - `~/.gemini/skills/plan-implement/`

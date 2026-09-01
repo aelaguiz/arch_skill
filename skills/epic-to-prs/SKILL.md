@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only when the user invokes it by name or directly commands it (\"epic-to-prs on epic 4700\"); never self-select it. Puts a persistent goal over one epic or milestone, working its open issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence (own goal in Prime Agent; authored /goal prompt in Codex or Claude), one ChatGPT Pro thread per epic as standing goal advisor (every review plus holistic on-track checks catching tangents, undeclared dependencies, wrong critical paths, and lost threads), epic-level standing rules (boundary comments, advisory-only PR bots, no reviewer scope expansion), and Pro-first unblocking (full-context consults asked once, never serializing independent issues behind an unrelated blocker). Ends only when the queue is empty or the user stops it. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization (goal-loop)."
+description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works one epic or milestone under a persistent goal, its open issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence with an armed run unblocker ($unblocker) baked into the goal prompt (self-armed in Prime Agent; exact /goal text handed over otherwise), one Pro thread per epic as standing goal advisor (every review plus on-track checks catching tangents, undeclared dependencies, wrong critical paths, lost threads), epic standing rules (boundary comments, advisory-only bots, no reviewer scope expansion), and unblocker-first consults (self-imposed approval gates get decided, not parked; questions asked once; independent issues never serialized behind an unrelated blocker). Ends only on empty queue or user stop. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization (goal-loop)."
 metadata:
   short-description: "Goal loop working an epic's issues to merge-ready PRs"
 ---
@@ -63,6 +63,12 @@ make install
   does not name is presumed a tangent until Pro, shown the full context,
   confirms otherwise; when Pro says the loop has drifted, drop the tangent
   and return to the queue.
+- The run starts authorized. Authorization gates come from the user's ask,
+  the epic, or the production boundary - never from mid-run anxiety.
+  Deciding partway in that you need the user's approval is presumed a
+  self-imposed gate: take it to the epic's unblocker (per `$unblocker`),
+  or to the Pro thread when none is armed, and get a decision from the
+  plan's intent. Waiting-for-user is never a resting state.
 - Live GitHub state is the queue. Re-read the epic's open issues between
   items; new, closed, and re-prioritized issues supersede any snapshot.
 - Most important first. Use the epic's stated priorities; when unstated,
@@ -71,7 +77,8 @@ make install
   verdict on the exact final head, green CI, PR URL). Never merge, never
   release, never apply approval labels.
 - Blocked means consult, not stall. A blocked or unclear issue goes to the
-  epic's Pro thread first with full goal context: state the blocker, the
+  epic's unblocker first when one is armed, else the epic's Pro thread,
+  with full goal context: state the blocker, the
   options, and a recommendation, ask whether the blocker actually gates
   the remaining queue or independently buildable issues can proceed, and
   work it with Pro until there is a way forward. Never serialize
@@ -94,10 +101,16 @@ make install
 1. **Adopt the epic.** Read the epic or milestone, its open issues, and any
    supplied ChatGPT thread or planning source. Establish (or create) the
    epic's single Pro thread.
-2. **Persist the goal.** In Prime Agent, set the goal yourself with the goal
-   skill; in Codex or Claude, author the /goal prompt (via
-   `$prompt-authoring`). The goal's completion condition: every issue on the
-   epic is merge-ready with receipts or explicitly escalated, and no open
+2. **Arm the run.** Stand up the epic's unblocker per `$unblocker`,
+   charged with the user's verbatim ask, the epic, and the production
+   boundary. Then author the goal prompt via `$prompt-authoring` so it
+   names the Pro thread, the unblocker and how to reach it, and the rule
+   that blocked or needing authorization means consult the unblocker -
+   never park in waiting-for-user. In Prime Agent, set the goal yourself
+   with the goal skill and spawn the unblocker; in Codex or Claude,
+   present the exact /goal text and unblocker spawn instruction for the
+   user to arm. The goal's completion condition: every issue on the epic
+   is merge-ready with receipts or explicitly escalated, and no open
    issues remain in the queue.
 3. **Loop.** For each issue, most important first:
    1. Re-read live GitHub state; skip issues that closed or changed owner.
