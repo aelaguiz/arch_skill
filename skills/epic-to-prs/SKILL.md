@@ -49,7 +49,9 @@ make install
   otherwise start one thread in the most applicable ChatGPT project and
   reuse it for every plan and PR review in the epic, so Pro accumulates
   epic-wide context. All Pro interaction goes through `$chatgpt-web` and
-  honors that skill's rules, including the literal Pro (5/5) picker entry.
+  honors that skill's rules, including its model rule: the absolute newest
+  model generation at its absolute maximum reasoning power, resolved from
+  the live picker, never from a remembered label.
 - Pro is the epic's standing advisor, never an approval buzzer. Author
   every consult with `$prompt-authoring` - required, not optional - and
   give Pro the epic's goal, the live queue state, what is done, and what

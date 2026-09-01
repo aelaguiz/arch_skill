@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after applying the canonical $browseros operating contract and shaping the prompt with $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Defaults to Pro with Extended thinking on the latest GPT Pro model (currently GPT-5.6 Pro), places chats in the most applicable ChatGPT project rather than context-free root chats, reuses a same-workstream Pro thread from the last 24-48 hours unless it is already ~6+ turns deep, keeps a cleared-on-response heartbeat during long Pro waits, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
+description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after applying the canonical $browseros operating contract and shaping the prompt with $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Defaults to the newest model generation at its maximum reasoning power (the Pro / 5/5 tier, whatever the live picker calls it) with Extended thinking, places chats in the most applicable ChatGPT project rather than context-free root chats, reuses a same-workstream Pro thread from the last 24-48 hours unless it is already ~6+ turns deep, keeps a cleared-on-response heartbeat during long Pro waits, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -79,11 +79,13 @@ happens to be open without deciding which one the user wants.
   methodologies, output schemas, repeated constraints, motivational framing, or
   restated context the thread already has. When in doubt, cut; a short faithful
   prompt beats an engineered one.
-- Default to ChatGPT `Pro` with `Extended` thinking when the user does not name
-  a mode or effort. Default the model to the latest GPT Pro model, currently
-  `GPT-5.6 Pro`; if that exact name is missing from the picker, choose the
-  newest GPT Pro entry instead. Only deviate when the user explicitly names a
-  different model.
+- Default to the absolute latest, absolute most powerful configuration the
+  picker offers: the newest model generation, at its maximum reasoning
+  power (`Pro`, `5/5`, or whatever the UI calls the top), with `Extended`
+  thinking when effort is a separate control. Model names written in this
+  skill are examples that go stale, never requirements: enumerate the live
+  picker fresh and let it win over any remembered name. Only deviate when
+  the user explicitly names a different model or mode.
 - Respect explicit user choices for `Instant`, `Thinking`, `Pro`, `Light`,
   `Standard`, `Extended`, or `Heavy`.
 - Do not downgrade or upgrade the requested mode silently.
@@ -247,9 +249,9 @@ composer:
 Default when the user does not specify:
 
 ```text
-mode = Pro
+mode = maximum reasoning power offered (historically `Pro` / `5/5`)
 effort = Extended
-model = latest GPT Pro model (currently GPT-5.6 Pro)
+model = newest generation in the live picker, at its most powerful tier
 ```
 
 Use the ChatGPT model pill beside the composer. Prefer `Configure...` when
@@ -260,18 +262,25 @@ Observed controls to select from:
 
 - mode: `Instant`, `Thinking`, `Pro`
 - effort: `Light`, `Standard`, `Extended`, `Heavy`
-- model: select `GPT-5.6 Pro`, or the newest GPT Pro entry when that exact
-  name is missing, unless the user explicitly names another model
+- model: the newest generation the picker offers, configured to its most
+  powerful tier, unless the user explicitly names another model
 
-`Pro` means the literal `Pro` picker entry - the maximum option, shown as
-`5/5` when the UI renders levels as a scale. Never substitute a lower level or
-a different model and call it the closest equivalent: `Extra High (4/5)`, a
-Sol/fast variant, or any non-Pro entry is not Pro. If you cannot find the
-literal `Pro` option, re-open the picker and the `Intelligence` dialog and
-enumerate every entry before concluding anything; if it is genuinely absent,
-fail loudly and tell the user instead of silently approximating. Before
-sending, confirm the picker displays the literal selection you resolved, not
-a stand-in.
+`Pro` is shorthand for the maximum reasoning option on the newest model -
+shown as `Pro` or `5/5` when the UI renders levels as a scale - not a
+frozen label. The ban runs one direction only: never select less power
+than the maximum available, and never select an older generation because
+its label matches a remembered name. `Extra High (4/5)` instead of the top
+level is a downgrade; so is an older model labeled `Pro` chosen over a
+newer generation whose own top tier carries a different name (an agent
+once stuck with `GPT-5.5 Pro` and ignored the newer Sol generation's top
+tier because doctrine said Sol was not Pro - that is exactly wrong). The
+picker changes between sessions: re-open the model pill and the
+`Intelligence` dialog, enumerate every model and every power level -
+including tiers nested inside a newer entry - and select the newest
+generation at its top power before concluding anything is missing. If you
+genuinely cannot reach a maximum-power configuration, fail loudly and tell
+the user instead of silently approximating. Before sending, confirm the
+picker displays the selection you resolved, not a stand-in.
 
 Do not run a Pro prompt merely to test the skill. Only use Pro when the user's
 actual request needs the default or explicitly asks for it.

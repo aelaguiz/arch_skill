@@ -22,8 +22,15 @@ anchored to this observed practice.
 
 ## Standing corrections encoded as non-negotiables
 
-- Literal Pro: "Pro means the literal Pro (5/5) picker entry; never
-  substitute a 'closest equivalent'."
+- Model choice (superseded 2026-09-01): the old rule "Pro means the
+  literal Pro (5/5) picker entry; never substitute a 'closest equivalent'"
+  was anti-downgrade intent, but an agent obeyed the label and stuck with
+  GPT-5.5 Pro over the newer generation's top tier. Owner ruling, verbatim:
+  "yeah you fucking idiot 5.6 sol pro / it should always use the absolute
+  latest and absolute most powerful model." The rule is now: newest
+  generation at maximum reasoning power, resolved from the live picker;
+  the ban runs one direction only - never less power, never an older
+  generation.
 - Fix loops versus fix verification: "They have to fix the issue however
   many times it takes but I don't want them getting in a feedback loop with
   external reviewers."
