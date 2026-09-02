@@ -627,7 +627,9 @@ prose-only: no scripts, runners, harnesses, API calls, or automated login.
 It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
 `Work` (same projects in both), proves which one it is in, and fails over to
 the other when Pro is rate limited; when both are rate limited it stops and
-waits for the user, because nothing substitutes for Pro.
+waits for the user, because nothing substitutes for Pro. Inside ChatGPT it
+always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
+Work's `Sol Ultra` ceiling is not Pro.
 
 Examples:
 

@@ -58,8 +58,10 @@ make install
 - External review means GPT Pro through `$chatgpt-web`: the absolute
   newest model generation at its absolute maximum reasoning power (that
   skill's model rule; resolved from the live picker, never a remembered
-  label), in the most applicable ChatGPT project, honoring every rule in
-  that skill. One review round per gate for the artifact; after applying
+  label), in ChatGPT's `Chat` surface - never `Work`, whose top tier `Sol
+  Ultra` is not Pro - in the most applicable ChatGPT project, honoring
+  every rule in that skill. A review sent from `Work` is not a Pro verdict;
+  redo it in `Chat`. One review round per gate for the artifact; after applying
   fixes, fix-verification re-reviews are allowed until Pro approves the
   fixes. What is banned is the open-ended feedback loop and scope growth in
   any round.

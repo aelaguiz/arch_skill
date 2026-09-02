@@ -51,7 +51,9 @@ make install
   epic-wide context. All Pro interaction goes through `$chatgpt-web` and
   honors that skill's rules, including its model rule: the absolute newest
   model generation at its absolute maximum reasoning power, resolved from
-  the live picker, never from a remembered label. Threads live in one
+  the live picker, never from a remembered label, always in ChatGPT's
+  `Chat` surface - never `Work`, whose `Sol Ultra` ceiling is not Pro, so a
+  review sent from `Work` is redone in `Chat`. Threads live in one
   ChatGPT account, so the one sanctioned exception is a rate-limit failover
   per `$chatgpt-web`: when the thread's BrowserOS profile window (`Pro One`
   or `Work`) is rate limited, start a continuation thread in the same-named

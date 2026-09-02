@@ -51,6 +51,16 @@ Rulings folded in:
   limited means pause the goal and wait for
   the owner, never a lesser tier, effort, model, or reviewer.
 
+- Chat surface, not Work (2026-09-02): an agent ran a "max power" review
+  as `5.6 Sol Ultra` in ChatGPT's `Work` surface and reported it as Pro.
+  Owner, verbatim: "So you're running it in work mode. You need to run it
+  in chat mode and Sol Ultra is not the same as Pro. You have to re-do
+  this." and "There is 'chat' and 'work' tabs in chatgpt. if it starts it
+  in work it doesn't get pro. Ultra != Pro." Encoded as: `$chatgpt-web`
+  checks the `Select chat surface` radio is `Chat` before the model pill
+  and before every send; Pro exists only in `Chat`; a `Work` send is not
+  a Pro verdict and is redone.
+
 Maintainer background (not needed at runtime):
 /Users/aelaguiz/workspace/psagentspace/factory/workflows/feature-development.md
 and factory/plans/drafts/2026-08-30-issue-to-pr-and-check-my-agents-skills.md.
