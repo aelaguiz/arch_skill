@@ -51,7 +51,19 @@ make install
   epic-wide context. All Pro interaction goes through `$chatgpt-web` and
   honors that skill's rules, including its model rule: the absolute newest
   model generation at its absolute maximum reasoning power, resolved from
-  the live picker, never from a remembered label.
+  the live picker, never from a remembered label. Threads live in one
+  ChatGPT account, so the one sanctioned exception is a rate-limit failover
+  per `$chatgpt-web`: when the thread's BrowserOS profile window (`Pro One`
+  or `Work`) is rate limited, start a continuation thread in the same-named
+  project in the other window, restate the epic context there, record both
+  URLs in the goal prompt and worklog, and return to the epic's original
+  thread once its account is available.
+- There is no substitute for Pro. If both profile windows are rate limited
+  (`You've hit your rate limit. Please try again later` in each), do not
+  review with a lower tier, a lower effort, an older model, another
+  provider, or a different reviewer, and do not mark an issue complete
+  without its Pro verdicts. Clear or pause the goal for now, report the rate
+  limit, and wait for the user to say Pro is back.
 - Pro is the epic's standing advisor, never an approval buzzer. Author
   every consult with `$prompt-authoring` - required, not optional - and
   give Pro the epic's goal, the live queue state, what is done, and what

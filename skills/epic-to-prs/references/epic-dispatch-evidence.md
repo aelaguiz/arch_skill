@@ -38,6 +38,18 @@ Rulings folded in:
   pending questions hundreds of times across generated goal
   continuations, while Pro only ever saw narrow plan/PR snapshots and so
   approved locally correct work on the wrong path.
+- Pro rate limits (2026-09-01): the standing instruction the owner sent
+  to running agents, verbatim: "if you get rate limited 'You've hit your
+  rate limit. Please try again later' by pro clear the goal for now until
+  pro un rate limits i'll let you know when." Since then a second BrowserOS
+  profile, `Pro One`, sits beside `Work`, with the same ChatGPT projects in
+  both: "If one is limited they should use the other one." And: "there is
+  no substitute for Pro. If they can't get Pro, they can't use xhigh.
+  There's no substituting." Encoded as: failover to the other profile
+  window per `$chatgpt-web` (the one exception to one thread per epic:
+  a continuation thread in the other account, both URLs recorded); both
+  limited means pause the goal and wait for
+  the owner, never a lesser tier, effort, model, or reviewer.
 
 Maintainer background (not needed at runtime):
 /Users/aelaguiz/workspace/psagentspace/factory/workflows/feature-development.md

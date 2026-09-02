@@ -525,6 +525,10 @@ continue an identifiable conversation. Independent asks remain serial but
 start clean, while explicit follow-ups preserve the intended thread. It
 defaults to Pro with Extended thinking when mode or effort is omitted and is
 prose-only: no scripts, runners, harnesses, API calls, or automated login.
+It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
+`Work` (same projects in both), proves which one it is in, and fails over to
+the other when Pro is rate limited; when both are rate limited it stops and
+waits for the user, because nothing substitutes for Pro.
 
 ### `skill-authoring`
 

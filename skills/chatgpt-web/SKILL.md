@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab after applying the canonical $browseros operating contract and shaping the prompt with $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Defaults to the newest model generation at its maximum reasoning power (the Pro / 5/5 tier, whatever the live picker calls it) with Extended thinking, places chats in the most applicable ChatGPT project rather than context-free root chats, reuses a same-workstream Pro thread from the last 24-48 hours unless it is already ~6+ turns deep, keeps a cleared-on-response heartbeat during long Pro waits, runs serially, and waits patiently. Not for OpenAI API work, generic browser automation, automated login, scripts, runners, or hidden harnesses."
+description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab in a deliberately chosen profile window (`Pro One` or `Work`, same projects in both) after applying the canonical $browseros contract and $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Defaults to the newest model generation at its maximum reasoning power (the Pro / 5/5 tier, whatever the live picker calls it) with Extended thinking, places chats in the most applicable ChatGPT project, reuses a same-workstream Pro thread from the last 24-48 hours unless ~6+ turns deep, keeps a heartbeat during long Pro waits, runs serially, and fails over to the other profile window when Pro is rate limited. No substitute for Pro: when both windows are rate limited it stops and waits for the user. Not for OpenAI API work, generic browser automation, automated login, scripts, or runners."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -14,8 +14,10 @@ This is a prose-only helper skill. It uses BrowserOS MCP directly. It ships no
 scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
 
 Read and apply `../browseros/SKILL.md` before the first BrowserOS call. The
-canonical BrowserOS skill owns page provenance, lifecycle, proof, recovery,
-secrets, and cleanup; this skill owns the ChatGPT-specific workflow.
+canonical BrowserOS skill owns page provenance, window and profile identity,
+lifecycle, proof, recovery, secrets, and cleanup; this skill owns the
+ChatGPT-specific workflow, including which of the two ChatGPT profile windows
+(`Pro One` or `Work`) a run uses and what to do when Pro is rate limited.
 
 Read `../_shared/agent-orchestration-policy.md` before the query. ChatGPT Web is
 an intentional provider/browser-capability lane rather than a generic local
@@ -50,17 +52,28 @@ happens to be open without deciding which one the user wants.
   reading it does not count.
 - Use BrowserOS MCP, not `web.run`, OpenAI API calls, shell browser scripts, or
   direct cookie/session handling.
-- Use one BrowserOS `https://chatgpt.com/` tab for the whole run. Reuse an
-  eligible current-agent-controlled ChatGPT page when one can be safely
-  task-adopted under `$browseros`; otherwise open exactly one ChatGPT page.
-- Never open a new BrowserOS window when a BrowserOS window is already open.
-  Open the ChatGPT page as a new tab in the existing window; a new window is
-  allowed only when BrowserOS has no window at all.
+- BrowserOS runs two profile windows for ChatGPT: `Pro One` and `Work`. Each
+  is its own ChatGPT login, and both have the same projects set up. Be
+  careful which window you are in. Choose one window deliberately for the
+  run, prove it under `$browseros` (the page's window or browser-context
+  evidence plus a safe in-app account or workspace marker, never an email,
+  token, or session payload), and name it in the receipt. If you cannot
+  prove which profile a page belongs to, stop and ask instead of guessing.
+- Use one BrowserOS `https://chatgpt.com/` tab in the chosen window for the
+  whole run. Reuse an eligible current-agent-controlled ChatGPT page in that
+  window when one can be safely task-adopted under `$browseros`; otherwise
+  open exactly one ChatGPT page as a tab in that window, landing and
+  verifying it the way `$browseros` prescribes.
+- Never create a new BrowserOS window. The two profile windows already exist;
+  a run works inside one of them. Do not open pages hoping one lands in the
+  right profile.
 - Reusing the page does not mean reusing its conversation. Do login check,
   conversation selection, mode selection, attachment upload, submission,
   waiting, and response reading in that same page.
 - Do not open extra ChatGPT tabs for polling, attachment handling, retries,
-  separate prompts, or readback.
+  separate prompts, or readback. The only second page a run may open is the
+  one in the other profile window during a rate-limit failover, and the run
+  then continues in that page alone.
 - Run ChatGPT Web prompts serially. If the user gives multiple ChatGPT asks,
   process them one at a time in the same ChatGPT tab. Keep them in one
   conversation only when they are explicit follow-ups; otherwise start a new
@@ -117,11 +130,19 @@ happens to be open without deciding which one the user wants.
   imagining repo contents it could not open - discard the response, fix the
   delivery of the missing input, and resubmit. Never relay or build on an
   answer Pro invented around a missing input.
-- Dismiss rate-limit dialogs and similar transient blocker popups immediately.
-  They are UI noise, not part of the response; closing one never counts as
-  altering the run. If a submission is rate-limited or does not go through,
-  wait about 5 minutes, dismiss any blocker, and resubmit the same prompt in
-  the same tab. Repeat until it sends or a hard non-transient error appears.
+- Dismiss transient blocker popups immediately. They are UI noise, not part
+  of the response; closing one never counts as altering the run. If a
+  submission does not go through for a transient reason, wait about 5
+  minutes, dismiss any blocker, and resubmit the same prompt in the same tab.
+- A Pro rate limit is not transient. `You've hit your rate limit. Please try
+  again later`, or an equivalent usage-cap message, means that window's
+  account is capped for Pro. Do not sit and retry it, and do not substitute:
+  never drop to `Extra High (4/5)`, `Thinking`, a lower effort, an older
+  generation, or the API to keep moving. Switch to the other profile window
+  and continue there per the profile-window section below. If both `Pro One`
+  and `Work` are rate limited, stop the Pro-dependent work: report the rate
+  limit, clear or pause any goal that depends on Pro, and wait for the user
+  to say Pro is available again.
 - Do not print, save, summarize, or inspect account details, cookies, tokens,
   raw session payloads, or other secrets.
 - Enforce a maximum of 10 attachments. Do not silently drop files.
@@ -170,15 +191,50 @@ happens to be open without deciding which one the user wants.
    workstream with a Pro thread from the last 24-48 hours in that project and
    the thread is under about 6 turns. Otherwise use `new-in-project`, or
    `new-root` only when no project fits.
-4. Under `$browseros`, select the single current-agent-controlled ChatGPT page
-   for the run: safely task-adopt an eligible `https://chatgpt.com/` page, or
-   open exactly one new page as a tab in the already-open BrowserOS window.
-   Never create a new window when one exists.
-5. Verify that page is logged in before doing anything else.
-6. In that page, open the resolved conversation: a new chat inside the chosen
+4. Choose the profile window, `Pro One` or `Work`. An explicit user choice
+   wins. Otherwise prefer the window whose account already holds this
+   workstream's live Pro thread; with no live thread, either window is fine.
+   A window known to be rate limited for Pro is not a choice.
+5. Under `$browseros`, select the single current-agent-controlled ChatGPT page
+   for the run inside that window: safely task-adopt an eligible
+   `https://chatgpt.com/` page there, or open exactly one new page as a tab
+   in that window. Prove the page is in the chosen window before using it.
+   Never create a new window.
+6. Verify that page is logged in before doing anything else.
+7. In that page, open the resolved conversation: a new chat inside the chosen
    project, the recent Pro thread, or the exact requested conversation. Verify
    the thread before submitting into it. Do not submit while the page is merely
    showing an arbitrary prior thread.
+
+## Profile Windows And Rate Limits
+
+Two BrowserOS profile windows exist for ChatGPT, `Pro One` and `Work`. They
+are separate ChatGPT logins with the same projects set up, so either can host
+any run, but conversations do not carry across them: a thread that lives in
+`Work` cannot be continued from `Pro One`. Rate limits are per account, so
+the two windows are each other's fallback. Under `$browseros`, list windows
+and tabs before choosing, prove which profile the selected page is in, and
+work only in that page.
+
+When a Pro submission in the current window is refused with `You've hit your
+rate limit. Please try again later` or an equivalent usage-cap message:
+
+1. Record that window as rate limited for this run.
+2. Switch to the other profile window: select or open one ChatGPT page there
+   under `$browseros`, prove the profile, and verify login.
+3. Open the same-named project in that window and start a new conversation.
+   Restate the goal context the original thread had, and re-attach the files
+   or re-tag `@GitHub` with the PR URL; the new account has none of that.
+4. Submit the same prompt and continue the run there. Close the
+   rate-limited page if this run created it, per `$browseros` cleanup, and
+   name the failover and both windows in the receipt.
+
+If the other window is also rate limited, the run cannot get Pro right now.
+There is no substitute for Pro: do not use `Extra High (4/5)`, `Thinking`, a
+lower effort, an older generation, another provider, or the API in its place.
+Stop the Pro-dependent work, report the rate limit and both windows, clear or
+pause any goal that depends on Pro, and wait for the user to say Pro is
+available again. Do not poll for the limit to lift on your own.
 
 ## Login Check
 
@@ -213,7 +269,9 @@ the conversation lives before composing anything:
 2. If the ask continues work that recently went through Pro, open that
    project's thread list and look for a Pro thread from the last 24-48 hours on
    this same work. Open the candidate and skim enough of it to confirm it is
-   the same workstream, not just a similar title.
+   the same workstream, not just a similar title. Threads are per account:
+   if the live thread is in the other profile window, that window is the one
+   to use unless it is rate limited.
 3. Continue that thread when it matches and is under about 6 prompt/response
    turns. Around 6 or more turns, treat it as saturated and start a new
    conversation in the same project instead.
@@ -341,10 +399,11 @@ submitting.
    such as a missing attachment or an unreachable repo, act on it then rather
    than waiting out the full generation.
 7. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
-   while a response is still generating. Dismissing a rate-limit or other
-   transient blocker dialog is always allowed. If the submission itself was
-   rejected by a rate limit, wait about 5 minutes and resubmit the same prompt
-   in the same tab.
+   while a response is still generating. Dismissing a transient blocker
+   dialog is always allowed. If the submission did not go through for a
+   transient reason, wait about 5 minutes and resubmit the same prompt in the
+   same tab. If it was refused with the rate-limit message, follow the
+   profile-window failover instead of retrying here.
 8. Treat failure as concrete, not time-based: visible ChatGPT error, lost
    login/session, required manual user action, missing attachment before send,
    or a clearly inactive page with no generation indicator and no response
@@ -369,6 +428,8 @@ Return:
 
 - ChatGPT's answer
 - model, mode, and effort used
+- profile window used, `Pro One` or `Work`, plus any rate-limit failover
+  between them
 - conversation placement used: the project name plus `continue-exact`,
   `continue-recent-pro`, `new-in-project`, or `new-root` with a one-line reason
   when the choice was `new-root`
@@ -379,3 +440,5 @@ Return:
   heartbeat was set and cleared
 
 If the run fails, name the exact failed condition and the next manual repair.
+When both profile windows are rate limited, say so plainly, name the goal or
+work that is paused on Pro, and wait for the user to say Pro is back.

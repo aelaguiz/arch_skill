@@ -79,6 +79,12 @@ overrides a terminal state such as `issue-to-pr` never merging.
 - When unsure, consult the run's Pro thread with the full goal context -
   the intent, the plan, the disputed step, options, and a recommendation -
   rather than guessing or bouncing "ask the user" back to the worker.
+- A Pro rate limit is not a blocker to decide around. `$chatgpt-web` fails
+  over between the two BrowserOS profile windows, `Pro One` and `Work`; when
+  both are rate limited there is no substitute for Pro - never authorize a
+  lower tier, lower effort, older model, other provider, or other reviewer
+  in its place. The run pauses its Pro-dependent work, reports the rate
+  limit, and waits for the user to say Pro is back.
 - One decision per matter. Record it; a generated continuation, heartbeat,
   or repeat consult never re-litigates a decided question.
 - The production boundary is absolute. The unblocker refuses those and

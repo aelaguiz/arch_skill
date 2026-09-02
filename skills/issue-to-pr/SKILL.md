@@ -63,6 +63,16 @@ make install
   fixes, fix-verification re-reviews are allowed until Pro approves the
   fixes. What is banned is the open-ended feedback loop and scope growth in
   any round.
+- There is no substitute for Pro. `$chatgpt-web` owns the mechanics: two
+  BrowserOS profile windows, `Pro One` and `Work`, with the same projects in
+  each; the run picks one deliberately, proves it under `$browseros`, and
+  fails over to the other window when Pro answers `You've hit your rate
+  limit. Please try again later`. If both windows are rate limited, do not
+  review with a lower tier, a lower effort, an older model, another
+  provider, or a different reviewer, and do not call the gate passed. Clear
+  or pause the goal for now, report the rate limit, and wait for the user to
+  say Pro is back. A Pro rate limit is a user-owned wait, not a blocker for
+  the unblocker to decide around.
 - Pro is a thinking partner reviewing work against the goal, never an
   approval buzzer. Author every Pro prompt with `$prompt-authoring` - this
   is required, not optional - and give Pro the whole picture: the issue's

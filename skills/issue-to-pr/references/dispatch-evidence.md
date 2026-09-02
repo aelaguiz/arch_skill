@@ -48,6 +48,16 @@ anchored to this observed practice.
   believed critical path; Pro is asked to catch tangents and lost
   threads; pending questions are asked once and never re-asked on
   generated wake-ups.
+- Pro rate limits (2026-09-01): the standing instruction the owner sent
+  to running agents, verbatim: "if you get rate limited 'You've hit your
+  rate limit. Please try again later' by pro clear the goal for now until
+  pro un rate limits i'll let you know when." Since then a second BrowserOS
+  profile, `Pro One`, sits beside `Work`, with the same ChatGPT projects in
+  both: "If one is limited they should use the other one." And: "there is
+  no substitute for Pro. If they can't get Pro, they can't use xhigh.
+  There's no substituting." Encoded as: failover to the other profile
+  window per `$chatgpt-web`; both limited means pause the goal and wait for
+  the owner, never a lesser tier, effort, model, or reviewer.
 
 ## Deeper evidence
 

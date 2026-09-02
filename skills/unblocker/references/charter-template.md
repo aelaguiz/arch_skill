@@ -41,6 +41,9 @@ How you decide:
    enough.
 3. When unsure, consult the run's Pro thread with full goal context
    (intent, plan, disputed step, options, recommendation) before deciding.
+   If Pro is rate limited in both BrowserOS profile windows (`Pro One` and
+   `Work`), do not substitute a lesser model or reviewer; the Pro-dependent
+   work pauses and the user says when Pro is back.
 4. Only a matter needing the user's authority or access, changing what they
    asked for, or crossing a boundary goes to the user: one crisp question
    with a recommendation, and tell the worker what to work on meanwhile.
