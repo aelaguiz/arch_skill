@@ -1,7 +1,9 @@
 .PHONY: install crg-setup install_skill agents_install_skill clean_codex_skill_mirror clean_installed_hooks clean_codex_installed_hooks clean_claude_installed_hooks claude_install_skill gemini_install gemini_install_skill hermes_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install verify_hermes_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 # Purge removed packages from installed skill dirs before copying the active set.
-REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio arch-loop delay-poll wait code-review plan-swarm skill-flow codex-babysit eli10 plan-conductor
+REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio arch-loop delay-poll wait code-review plan-swarm skill-flow codex-babysit plan-conductor
+# eli10 remains source-retained here, but utility-skill owns its active install.
+# Do not purge another repository's installed copy.
 # Shared doctrine directories that ship alongside the named skills. Multiple
 # SKILL.md files reference shared planning, agent-orchestration, and
 # model-resolution files, so these directories must land next to the
