@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works one epic or milestone under a persistent goal, its open issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence with an armed run unblocker ($unblocker) baked into the goal prompt (self-armed in Prime Agent; exact /goal text handed over otherwise), one Pro thread per epic as standing goal advisor (every review plus on-track checks catching tangents, undeclared dependencies, wrong critical paths, lost threads), epic standing rules (boundary comments, advisory-only bots, no reviewer scope expansion), and unblocker-first consults (self-imposed approval gates get decided, not parked; questions asked once; independent issues never serialized behind an unrelated blocker). Ends only on empty queue or user stop. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization (goal-loop)."
+description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works one epic or milestone under a persistent goal, its issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence with an armed run unblocker ($unblocker) baked into the goal prompt (self-armed in Prime Agent; exact /goal text handed over otherwise), one GPT-6 Pro thread per epic as standing goal advisor (every review plus on-track checks catching tangents, undeclared dependencies, wrong critical paths, lost threads), epic standing rules (boundary comments, advisory-only bots, no reviewer scope expansion), and unblocker-first consults (self-imposed approval gates get decided, not parked; questions asked once; independent issues never serialized behind an unrelated blocker). Ends only on empty queue or user stop. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization (goal-loop)."
 metadata:
   short-description: "Goal loop working an epic's issues to merge-ready PRs"
 ---
@@ -45,15 +45,14 @@ make install
 
 ## Non-negotiables
 
-- One ChatGPT Pro thread per epic, always. Use the thread the user supplies;
+- One GPT-6 Pro thread per epic, always. Use the thread the user supplies;
   otherwise start one thread in the most applicable ChatGPT project and
   reuse it for every plan and PR review in the epic, so Pro accumulates
   epic-wide context. All Pro interaction goes through `$chatgpt-web` and
-  honors that skill's rules, including its model rule: the absolute newest
-  model generation at its absolute maximum reasoning power, resolved from
-  the live picker, never from a remembered label, always in ChatGPT's
-  `Chat` surface - never `Work`, whose `Sol Ultra` ceiling is not Pro, so a
-  review sent from `Work` is redone in `Chat`. Threads live in one
+  honors that skill's model rule: GPT-6 Pro with Extended thinking, the
+  newest generation at maximum reasoning power verified in the live picker,
+  always in ChatGPT's `Chat` surface. Work's reasoning slider does not select
+  Chat Pro; redo any review sent from `Work` in `Chat`. Threads live in one
   ChatGPT account, so the one sanctioned exception is a rate-limit failover
   per `$chatgpt-web`: when the thread's BrowserOS profile window (`Pro One`
   or `Work`) is rate limited, start a continuation thread in the same-named

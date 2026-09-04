@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation delivery lane, fired only by name (\"issue-to-pr on 4484\") or by user-invoked epic-to-prs; never self-select it. Takes one GitHub issue to a merge-ready, externally reviewed PR: ramp up, plan on disk shaped by $startup-pragmatism, one goal-framed GPT Pro plan review via $chatgpt-web (newest model, max reasoning power), implement/test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one goal-framed Pro review of the exact PR head, then stop at merge-ready with receipts. Every Pro consult carries the issue's goal, scope, and believed critical path so Pro catches tangents and lost threads; never narrow yes/no approvals. Fix re-reviews until Pro approves. Run starts authorized: invented approval gates and blockers go once, with full context, to the run's unblocker ($unblocker) or Pro, never parked in waiting-for-user; user escalation only for user-owned matters. Never merges or releases. Not for investigation-only asks, standalone planning, or work with no GitHub issue."
+description: "Explicit-invocation delivery lane, fired only by name (\"issue-to-pr on 4484\") or by user-invoked epic-to-prs; never self-select it. Takes one GitHub issue to a merge-ready, externally reviewed PR: ramp up, plan on disk shaped by $startup-pragmatism, one goal-framed GPT-6 Pro plan review via $chatgpt-web (newest model, max reasoning power), implement/test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one goal-framed Pro review of the exact PR head, then stop at merge-ready with receipts. Every Pro consult carries the issue's goal, scope, and believed critical path so Pro catches tangents and lost threads; never narrow yes/no approvals. Fix re-reviews until Pro approves. Run starts authorized: invented approval gates and blockers go once, with full context, to the run's unblocker ($unblocker) or Pro, never parked in waiting-for-user; user escalation only for user-owned matters. Never merges or releases. Not for investigation-only asks, standalone planning, or work with no GitHub issue."
 metadata:
   short-description: "One issue to a Pro-reviewed merge-ready PR"
 ---
@@ -14,7 +14,7 @@ only valid triggers. Never fire it because a task merely resembles delivery
 work: the user owns the decision to run this lane.
 
 The job: take one GitHub issue from cold start to a merge-ready pull request
-whose plan and final head were both reviewed by GPT Pro, with the smallest
+whose plan and final head were both reviewed by GPT-6 Pro, with the smallest
 change that delivers the issue's accepted scope, then stop.
 
 ## Install
@@ -55,11 +55,10 @@ make install
   recommendation. Never silently shrink scope either.
 - The implementation plan lives on disk before implementation starts, shaped
   by `$startup-pragmatism` (the overbuild cut happens at plan time).
-- External review means GPT Pro through `$chatgpt-web`: the absolute
-  newest model generation at its absolute maximum reasoning power (that
-  skill's model rule; resolved from the live picker, never a remembered
-  label), in ChatGPT's `Chat` surface - never `Work`, whose top tier `Sol
-  Ultra` is not Pro - in the most applicable ChatGPT project, honoring
+- External review means GPT-6 Pro with Extended thinking through
+  `$chatgpt-web`: the newest generation at maximum reasoning power verified
+  in the live picker, in ChatGPT's `Chat` surface and the most applicable
+  project. Work's reasoning slider does not select Chat Pro. Honor
   every rule in that skill. A review sent from `Work` is not a Pro verdict;
   redo it in `Chat`. One review round per gate for the artifact; after applying
   fixes, fix-verification re-reviews are allowed until Pro approves the

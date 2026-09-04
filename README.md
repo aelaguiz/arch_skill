@@ -523,14 +523,14 @@ silently inheriting its arbitrary conversation.
 `new-clean` is the default; `continue-exact` is used only when the user asks to
 continue an identifiable conversation. Independent asks remain serial but
 start clean, while explicit follow-ups preserve the intended thread. It
-defaults to Pro with Extended thinking when mode or effort is omitted and is
+defaults to GPT-6 Pro with Extended thinking when mode or effort is omitted and is
 prose-only: no scripts, runners, harnesses, API calls, or automated login.
 It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
 `Work` (same projects in both), proves which one it is in, and fails over to
 the other when Pro is rate limited; when both are rate limited it stops and
 waits for the user, because nothing substitutes for Pro. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
-Work's `Sol Ultra` ceiling is not Pro.
+Work's reasoning slider does not select GPT-6 Pro in Chat.
 
 ### `skill-authoring`
 

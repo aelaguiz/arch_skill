@@ -1,5 +1,9 @@
 # Dispatch evidence: the golden-path template this skill encodes
 
+Current model selection: GPT-6 Pro with Extended thinking in ChatGPT's `Chat`
+surface, per `$chatgpt-web`. The dated model names in the verbatim evidence
+below describe past runs; they do not select the current review model.
+
 `issue-to-pr` is a transcription of a dispatch template its owner typed
 near-identically ~30 times during 2026-08-24..30, plus the standing
 corrections he issued while running it. Edits to the skill should stay

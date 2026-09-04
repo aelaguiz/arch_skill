@@ -1,5 +1,9 @@
 # Epic dispatch evidence
 
+Current model selection: GPT-6 Pro with Extended thinking in ChatGPT's `Chat`
+surface, per `$chatgpt-web`. The dated model names in the verbatim evidence
+below describe past runs; they do not select the current review model.
+
 `epic-to-prs` transcribes the owner's live epic goal prompts (2026-08-30,
 multiple running concurrently). The canonical verbatim example:
 

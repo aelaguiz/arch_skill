@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab in a deliberately chosen profile window (`Pro One` or `Work`, same projects in both) after applying the canonical $browseros contract and $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Always uses ChatGPT's Chat surface, never Work (Work tops out at Ultra; Ultra is not Pro); defaults to the newest model generation at maximum reasoning power (Pro / 5/5) with Extended thinking, places chats in the most applicable project, reuses a same-workstream Pro thread from the last 24-48 hours unless ~6+ turns deep, keeps a heartbeat during long Pro waits, runs serially, and fails over to the other profile window when Pro is rate limited. No substitute for Pro: when both windows are rate limited it stops and waits for the user. Not for OpenAI API work, automated login, or scripts."
+description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab in a deliberately chosen profile window (`Pro One` or `Work`, same projects in both) after applying the canonical $browseros contract and $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Always uses ChatGPT's Chat surface, never Work (Work tops out at Ultra; Ultra is not Pro); defaults to GPT-6 Pro at maximum reasoning power (Pro / 5/5) with Extended thinking, places chats in the most applicable project, reuses a same-workstream Pro thread from the last 24-48 hours unless ~6+ turns deep, keeps a heartbeat during long Pro waits, runs serially, and fails over to the other profile window when Pro is rate limited. No substitute for Pro: when both windows are rate limited it stops and waits for the user. Not for OpenAI API work, automated login, or scripts."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -97,9 +97,8 @@ happens to be open without deciding which one the user wants.
   in `Chat`. `Work` tops out at `Ultra`, and `Ultra` is not Pro. Check the
   radio before touching the model pill and again before every send. A
   prompt sent from `Work` was not a Pro run: redo it in `Chat`.
-- Default to the absolute latest, absolute most powerful configuration the
-  `Chat` picker offers: the newest model generation, at its maximum
-  reasoning power (`Pro`, `5/5`, or whatever the UI calls the top), with
+- Default to GPT-6 Pro in the `Chat` picker: the newest model generation
+  at its maximum reasoning power (`Pro`, `5/5`, or whatever the UI calls the top), with
   `Extended` thinking when effort is a separate control. Model names written
   in this skill are examples that go stale, never requirements: enumerate
   the live Chat picker fresh and let it win over any remembered name. Only
@@ -313,22 +312,18 @@ composer:
 ## Chat Surface: Chat, Never Work
 
 The ChatGPT composer has a `Select chat surface` radio group with two
-surfaces, `Chat` and `Work`. Pro exists only in `Chat`. The `Work` surface
-has its own picker - a six-level power slider (`Max`, `Ultra`) over `5.6 Sol`,
-`5.6 Terra`, `5.6 Luna`, and `5.5`, plus a fast mode - and nothing in it is
-Pro. `Ultra` is Work's ceiling, not Pro. `Sol Ultra` is not Pro. A run that
-sends from `Work` did not get Pro no matter how high its slider sat, and its
-verdict does not count: redo it in `Chat`.
+surfaces, `Chat` and `Work`. Select GPT-6 Pro in `Chat`. Work's model picker
+and reasoning slider do not select Chat's Pro mode. A review sent from
+`Work` does not count as a Pro verdict; redo it in `Chat`.
 
 Before touching the model pill, and again before every send:
 
 1. Read the surface radio group and make sure `Chat` is the checked radio.
    If `Work` is checked, select `Chat` and re-read the composer; the pill
    changes with the surface.
-2. Confirm the model pill reads `Pro` and its picker says `Pro, 5 of 5` (or
-   whatever the Chat picker calls its top level). A pill reading `5.6 Sol
-   Max`, `Ultra`, or a power slider with six levels means you are in `Work`;
-   go back to step 1.
+2. Confirm the selected model is GPT-6 Pro, with `Pro` / `5/5` as the
+   maximum reasoning tier and `Extended` thinking where offered. Read the
+   checked surface directly; a high setting in Work is not a Pro selection.
 3. When continuing a thread, confirm it is a Chat-surface thread. The
    sidebar labels Work-surface chats with `Work`; a Work thread cannot carry
    a Pro conversation, so start a new `Chat` conversation in the project
@@ -346,7 +341,7 @@ Default when the user does not specify:
 surface = Chat (never Work)
 mode = maximum reasoning power the Chat picker offers (`Pro` / `5/5`)
 effort = Extended
-model = newest generation in the Chat picker, at its most powerful tier
+model = GPT-6 Pro (newest generation in Chat, at its most powerful tier)
 ```
 
 Use the ChatGPT model pill beside the composer, in the `Chat` surface.
@@ -358,8 +353,8 @@ Observed controls to select from:
 - surface: `Chat`, `Work` - always `Chat`
 - mode: `Instant`, `Thinking`, `Pro`
 - effort: `Light`, `Standard`, `Extended`, `Heavy`
-- model: the newest generation the Chat picker offers, configured to its
-  most powerful tier, unless the user explicitly names another model
+- model: GPT-6 Pro, verified in the live Chat picker; select the newest
+  generation at its most powerful tier unless the user names another model
 
 `Pro` is shorthand for the maximum reasoning option on the newest model in
 the `Chat` surface - shown as `Pro` or `5/5` when the UI renders levels as
@@ -368,14 +363,9 @@ select less power than the maximum available in `Chat`, and never select
 an older generation because its label matches a remembered name. `Extra
 High (4/5)` instead of the top level is a downgrade; so is an older model
 labeled `Pro` chosen over a newer generation whose own top tier carries a
-different name (an agent once stuck with `GPT-5.5 Pro` and ignored the
-newer Sol generation's top tier because doctrine said Sol was not Pro -
-that is exactly wrong). The rule is scoped to the Chat surface: the top of
-the `Work` picker (`Ultra`) is not "maximum power" for this purpose, and
-selecting it is the same failure as a downgrade (an agent once ran a
-review as `5.6 Sol Ultra` in `Work` and called it max power - that review
-had to be redone in `Chat` on Pro). The picker changes between sessions:
-in `Chat`, re-open the model pill and the `Intelligence` dialog, enumerate
+different name. GPT-6 Pro is the current selection. The rule is scoped to
+Chat: Work's maximum reasoning setting is not Chat Pro. The picker changes
+between sessions: in `Chat`, re-open the model pill and the `Intelligence` dialog, enumerate
 every model and every power level - including tiers nested inside a newer
 entry - and select the newest generation at its top power before
 concluding anything is missing. If you genuinely cannot reach a
@@ -427,8 +417,8 @@ submitting.
    or any multi-paragraph body, that body must already be an attached file and
    the composer text must be a short single-paragraph ask referencing it.
 3. Confirm the surface radio is `Chat` and the selected mode and effort
-   match the request or default. A pill reading `5.6 Sol Max` or `Ultra`
-   means `Work`: switch to `Chat` and reselect before sending.
+   match the request or default, GPT-6 Pro with Extended thinking. If the
+   checked surface is `Work`, switch to `Chat` and reselect before sending.
 4. Confirm every attachment chip is present.
 5. Click `Send prompt`, then read back the just-submitted user message and
    confirm it contains the full intended text and attachments. If it was
