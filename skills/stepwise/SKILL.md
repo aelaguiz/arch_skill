@@ -1,6 +1,6 @@
 ---
 name: stepwise
-description: "Run an ordered multi-step process inside a target repo with one clean worker per independent step, a new clean observational critic, and a Stepwise-owned diagnose-and-repair loop that resumes the exact worker, walks upstream when inputs are suspect, and repairs at root cause. Same-host roles prefer native children; external Claude, Codex, Grok, or Kimi sessions remain available when their provider, model, lifecycle, isolation, automation, or structured receipt provides a deliberate benefit. Use for named process execution with strict step ordering and evidence. Do NOT use for plan-doc implementation (arch-step), bet-and-learn optimization (goal-loop), one-shot reviews, or single-turn work."
+description: "Run an ordered multi-step process inside a target repo with one clean worker per independent step, a new clean observational critic, and a Stepwise-owned diagnose-and-repair loop that resumes the exact worker, walks upstream when inputs are suspect, and repairs at root cause. Same-host roles prefer native children; external Claude, Codex, Grok, or Kimi sessions remain available when their provider, model, lifecycle, isolation, automation, or structured receipt provides a deliberate benefit. Use for named process execution with strict step ordering and evidence. Do NOT use for plan-doc implementation (arch-step), bet-and-learn optimization, one-shot reviews, or single-turn work."
 metadata:
   short-description: "Diagnostic multi-step orchestrator with critics"
 ---
@@ -35,7 +35,7 @@ break.
 - Free-form requirement loops with no step manifest -> native `/goal`.
 - Plan-doc-backed implementation of a fixed architecture plan -> `$arch-step`.
 - Bet-and-learn optimization, one bet per iteration with worklog ->
-  `$goal-loop`.
+  native goal mode.
 - One-shot review of a diff or branch -> the host agent's normal review
   response. Use `$codex-review-yolo` only when the exact external `yolo`
   profile and its receipts are the requested benefit.

@@ -25,5 +25,5 @@
 ## Boundary rules
 
 - If the issue is now a normal bug with a concrete failure mode, move to `bugs-flow`.
-- If the work becomes a broad open-ended loop without heavy quant reasoning, move to `goal-loop`.
+- If the work becomes a broad open-ended loop without heavy quant reasoning, use native goal mode.
 - If the outcome is now fixed-scope delivery, move to `arch-step` or `lilarch`.

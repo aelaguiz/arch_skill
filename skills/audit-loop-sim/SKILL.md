@@ -21,7 +21,7 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 - The task is a concrete known bug, crash, regression, or Sentry issue. Use `bugs-flow`.
 - The work is a general repo bug hunt, dead-code sweep, or duplication cleanup rather than a real-app automation audit. Use `audit-loop`.
 - The work is fixed-scope feature delivery or architecture planning. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
-- The task is manual QA only, a release checklist, or an open-ended optimization loop where the main job is not closing real-app automation risk. Use `goal-loop` or `north-star-investigation`.
+- The task is manual QA only, a release checklist, or an open-ended optimization loop where the main job is not closing real-app automation risk. Use native goal mode or `north-star-investigation`.
 
 ## Non-negotiables
 

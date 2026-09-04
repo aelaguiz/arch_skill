@@ -19,7 +19,7 @@ Use this skill for the investigation workflow where quantitative reasoning and f
 
 - The task is a straightforward bug fix with a normal bug doc. Use `bugs-flow`.
 - The task is planned feature or architecture delivery. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
-- The user wants a generic open-ended goal loop without the quant-heavy investigation frame. Use `goal-loop`.
+- The user wants a generic open-ended goal loop without the quant-heavy investigation frame. Use native goal mode.
 
 ## Non-negotiables
 

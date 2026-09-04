@@ -19,7 +19,7 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 
 - The user wants a repo-wide audit pass or leave-it-running defect hunt rather than one known bug. Use `audit-loop`.
 - The work is planned feature delivery or architecture planning. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
-- The task is open-ended optimization or a broad investigation loop rather than a concrete bug. Use `goal-loop` or `north-star-investigation`.
+- The task is open-ended optimization or a broad investigation loop rather than a concrete bug. Use native goal mode or `north-star-investigation`.
 
 ## Non-negotiables
 

@@ -23,7 +23,7 @@ Start with the strongest discriminator first:
 8. Is it a bug, regression, crash, incident, or Sentry/log investigation?
    - use `bugs-flow`
 9. Is the path unknown and the work open-ended?
-   - use `goal-loop`
+   - use native goal mode
 10. Is it a quant-heavy optimization or root-cause hunt with ranked hypotheses and brutal tests?
    - use `north-star-investigation`
 11. Is it a small feature or improvement that should fit in 1-3 phases?
@@ -50,7 +50,6 @@ approval expands it. Reviewer findings never create scope.
 | `comment-loop` | the user wants a repo-wide code comment pass, wants the agent to deeply understand the repo before explaining it, or wants shared contracts, conventions, gotchas, and subtle behavior documented in code | the job is docs cleanup, one local comment tweak, or bug fixing | "Map this repo and add the comments that actually matter", "deeply understand the codebase before commenting conventions", "keep hardening the high-value code comments until the real gaps are gone" |
 | `audit-loop` | the user wants a repo-wide audit pass, the next worthwhile defect fixed, or a bounded cleanup loop that keeps going until review says stop | there is already one concrete known bug or the main job is docs cleanup | "Scan this repo for bugs and fix what matters", "do one audit pass", "keep cleaning this codebase until no worthwhile audit work remains" |
 | `audit-loop-sim` | the user wants a repo-wide real-app automation pass with a simulator ledger and a consequence-first ranking | the real job is one concrete regression, docs cleanup, or non-automation audit | "Find the biggest automation blind spots in the real app", "keep running the simulator audit loop" |
-| `goal-loop` | the goal is clear but the path is unknown; repeated bets matter | the task already has a fixed implementation plan | "We need to improve this metric but don't know the path" |
 | `north-star-investigation` | the user wants a quantified investigation with ranked hypotheses and brutal tests | the task is just a normal bug fix or plain goal loop | "Run a deep investigation on this performance issue" |
 | `arch-flow` | the user already has a plan doc and wants a read-only checklist or next-step routing | they actually want the work performed | "What's next on this doc?", "give me the checklist before we run anything" |
 
@@ -89,9 +88,9 @@ approval expands it. Reviewer findings never create scope.
 - `arch-mini-plan` vs `lilarch`:
   - use `lilarch` for true small-feature delivery with start/plan/finish
   - use `arch-mini-plan` when the user still wants canonical arch blocks
-- `goal-loop` vs `north-star-investigation`:
+- Native goal mode vs `north-star-investigation`:
   - use `north-star-investigation` when the investigation itself is the main product and math/hypothesis ranking matters
-  - use `goal-loop` for broader iterative work where the path is unknown
+  - use native goal mode for broader iterative work where the path is unknown
 - `bugs-flow` vs `north-star-investigation`:
   - use `bugs-flow` for concrete incident or regression handling
   - use `north-star-investigation` when the problem is a harder optimization/root-cause hunt with explicit quantified bets
@@ -117,7 +116,6 @@ When the user wants a tour:
   - `audit-loop`
   - `audit-loop-sim`
   - `bugs-flow`
-  - `goal-loop`
   - `north-star-investigation`
   - `lilarch`
   - `arch-mini-plan`

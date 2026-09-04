@@ -27,7 +27,7 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
 - The task is a tiny 1-3 phase feature flow. Use `lilarch`.
 - The task is ambiguity-heavy, migration-heavy, broad, or likely to need external research or extra hardening helpers. Use `arch-step`.
 - The remaining job is docs cleanup or consolidation after code work is clean. Use `arch-docs`.
-- The problem is primarily a bug or open-ended loop. Use `bugs-flow`, `goal-loop`, or `north-star-investigation`.
+- The problem is primarily a bug or open-ended loop. Use `bugs-flow`, native goal mode, or `north-star-investigation`.
 
 ## Non-negotiables
 

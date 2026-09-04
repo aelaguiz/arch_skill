@@ -96,7 +96,7 @@ change requires the user.
   implementation: use `$arch-step full-auto` or `$miniarch-step full-auto`.
 - One-pass mini plan that hands off to implement: use `$arch-mini-plan`.
 - 1–3 phase feature flow: use `$lilarch`.
-- Open-ended optimization with bet-and-learn iteration: use `$goal-loop`.
+- Open-ended optimization with bet-and-learn iteration: use native goal mode.
 - Read-only routing across arch artifacts: use `$arch-flow`.
 - Stepped orchestration in a foreign repo with a per-step critic: use
   `$stepwise`.

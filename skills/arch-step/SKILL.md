@@ -27,7 +27,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 
 - The user wants a read-only router or "what's next?" answer. Use `arch-flow`.
 - The remaining job is docs cleanup or consolidation after full-arch code work is clean. Use `arch-docs`; it can use the current plan/worklog as context.
-- The task is a one-pass mini plan, a 1-3 phase small-feature flow, a bug flow, or an open-ended loop. Use `arch-mini-plan`, `lilarch`, `bugs-flow`, `goal-loop`, or `north-star-investigation`.
+- The task is a one-pass mini plan, a 1-3 phase small-feature flow, a bug flow, or an open-ended loop. Use `arch-mini-plan`, `lilarch`, `bugs-flow`, native goal mode, or `north-star-investigation`.
 - The user is asking which arch skill to use. Use `arch-skills-guide`.
 
 ## Non-negotiables

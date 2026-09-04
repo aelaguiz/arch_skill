@@ -20,7 +20,7 @@ Use this skill when the job is to exhaustively map a codebase and its current pr
 
 - The task is a concrete known bug, crash, regression, or Sentry issue. Use `bugs-flow`.
 - The work is fixed-scope feature delivery or architecture planning. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
-- The task is an open-ended optimization or investigation loop where the path is unknown and the job is not primarily bug finding. Use `goal-loop` or `north-star-investigation`.
+- The task is an open-ended optimization or investigation loop where the path is unknown and the job is not primarily bug finding. Use native goal mode or `north-star-investigation`.
 
 ## Non-negotiables
 

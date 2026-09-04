@@ -33,7 +33,7 @@ path in the initial architecture window.
 - Escalate to `miniarch-step` when the work now needs faster full-arch execution against the same canonical doc.
 - Escalate to `arch-step reformat <DOC_PATH>` when the work is now broader or more ambiguous real full-arch work.
 - Escalate to `bugs-flow` when investigation dominates.
-- Escalate to `goal-loop` or `north-star-investigation` when the path is intentionally open-ended.
+- Escalate to native goal mode or `north-star-investigation` when the path is intentionally open-ended.
 
 ## Boundary examples
 

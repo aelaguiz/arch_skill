@@ -75,7 +75,7 @@
 - "We need to explain a metric drop and test ranked hypotheses":
   - `north-star-investigation`
 - "We know the goal but not the path, keep iterating bets":
-  - `goal-loop`
+  - native goal mode
 
 ## Specialized loops vs native goal mode
 

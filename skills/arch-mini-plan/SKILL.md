@@ -21,7 +21,7 @@ Use this skill for the one-pass mini-plan version of arch: enough rigor to produ
 - The task is a tiny feature or improvement that should run through `lilarch`.
 - The task clearly needs staged full-arch execution, long-running plan shaping, or full-arch implementation/audit work. Use `arch-step`.
 - The problem is primarily a bug/regression investigation. Use `bugs-flow`.
-- The path is intentionally open-ended or hypothesis-driven. Use `goal-loop` or `north-star-investigation`.
+- The path is intentionally open-ended or hypothesis-driven. Use native goal mode or `north-star-investigation`.
 
 ## Non-negotiables
 

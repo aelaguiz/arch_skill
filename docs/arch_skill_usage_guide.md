@@ -32,7 +32,6 @@ The current skill suite is:
 - `audit-loop`
 - `comment-loop`
 - `audit-loop-sim`
-- `goal-loop`
 - `north-star-investigation`
 - `arch-flow`
 - `arch-skills-guide`
@@ -104,7 +103,6 @@ Default local path:
 - `~/.agents/skills/audit-loop/`
 - `~/.agents/skills/comment-loop/`
 - `~/.agents/skills/audit-loop-sim/`
-- `~/.agents/skills/goal-loop/`
 - `~/.agents/skills/north-star-investigation/`
 - `~/.agents/skills/arch-flow/`
 - `~/.agents/skills/arch-skills-guide/`
@@ -156,7 +154,6 @@ Installed skills:
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
-  - `goal-loop`
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
@@ -201,7 +198,6 @@ Installed skills:
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
-  - `goal-loop`
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
@@ -246,7 +242,6 @@ Installed skills:
   - `audit-loop`
   - `comment-loop`
   - `audit-loop-sim`
-  - `goal-loop`
   - `north-star-investigation`
   - `arch-flow`
   - `arch-skills-guide`
@@ -566,9 +561,12 @@ Examples:
 - `Use $audit-loop-sim review`
 - `Use $audit-loop-sim auto`
 
-### `goal-loop`
+### `goal-loop` — optional source only
 
-Use when the goal is clear but the path is unknown and you want a controller doc plus append-only iteration log.
+The source remains at `skills/goal-loop/`. It is not installed by default;
+`make install` and `make remote_install` remove installed copies. Use native
+goal mode for free-form goal work, or `north-star-investigation` for a
+quantified investigation.
 
 ### `north-star-investigation`
 

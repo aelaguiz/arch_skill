@@ -80,7 +80,7 @@ log beside the plan is its durable memory.
   any execution. Use `$arch-step`, `$arch-mini-plan`, or `$lilarch`, then
   hand the finished plan back here.
 - The goal is clear but no definable done-state exists even in principle —
-  open-ended optimization or metric improvement. Use `$goal-loop`; the
+  open-ended optimization or metric improvement. Use native goal mode; the
   conductor requires observable done-ness before dispatch.
 - The user wants the parent to implement the plan itself rather than remain a
   non-implementing architect. Use `$plan-implement`.

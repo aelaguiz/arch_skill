@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works one epic or milestone under a persistent goal, its issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence with an armed run unblocker ($unblocker) baked into the goal prompt (self-armed in Prime Agent; exact /goal text handed over otherwise), one GPT-6 Pro thread per epic as standing goal advisor (every review plus on-track checks catching tangents, undeclared dependencies, wrong critical paths, lost threads), epic standing rules (boundary comments, advisory-only bots, no reviewer scope expansion), and unblocker-first consults (self-imposed approval gates get decided, not parked; questions asked once; independent issues never serialized behind an unrelated blocker). Ends only on empty queue or user stop. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization (goal-loop)."
+description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works one epic or milestone under a persistent goal, its issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence with an armed run unblocker ($unblocker) baked into the goal prompt (self-armed in Prime Agent; exact /goal text handed over otherwise), one GPT-6 Pro thread per epic as standing goal advisor (every review plus on-track checks catching tangents, undeclared dependencies, wrong critical paths, lost threads), epic standing rules (boundary comments, advisory-only bots, no reviewer scope expansion), and unblocker-first consults (self-imposed approval gates get decided, not parked; questions asked once; independent issues never serialized behind an unrelated blocker). Ends only on empty queue or user stop. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization."
 metadata:
   short-description: "Goal loop working an epic's issues to merge-ready PRs"
 ---
@@ -41,7 +41,7 @@ make install
   stand").
 - The epic's issues do not exist yet; decomposition belongs to `arch-epic`
   or ordinary planning with the user.
-- Open-ended optimization with no issue queue; that is `goal-loop`.
+- Open-ended optimization with no issue queue; use native goal mode.
 
 ## Non-negotiables
 
