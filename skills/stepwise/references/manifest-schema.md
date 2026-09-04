@@ -203,7 +203,7 @@ The manifest is a read-then-think product, not a template.
 
 The user said: "Work in ../lessons_studio. Ramp up on track 3 section 3 and
 implement lesson 2 strictly according to the skill order, no fabrication.
-Default steps on Codex gpt-5.6-sol high, critic on Codex gpt-5.6-sol ultra. Use
+Default steps on Codex gpt-6-astra high, critic on Codex gpt-6-astra xhigh. Use
 Claude Fable 5.1 for copywriting steps."
 
 Assume the active host cannot confirm those exact model/effort choices; the
@@ -225,7 +225,7 @@ doctrine, Stepwise drafts an abbreviated manifest:
       "starting_context": "clean",
       "continuation": "new-then-exact-resume",
       "runtime": "codex",
-      "model": "gpt-5.6-sol",
+      "model": "gpt-6-astra",
       "effort": "high",
       "source": "user prompt"
     },
@@ -234,8 +234,8 @@ doctrine, Stepwise drafts an abbreviated manifest:
       "starting_context": "clean",
       "continuation": "new-each-verdict",
       "runtime": "codex",
-      "model": "gpt-5.6-sol",
-      "effort": "ultra",
+      "model": "gpt-6-astra",
+      "effort": "xhigh",
       "source": "user prompt"
     }
   },
@@ -271,7 +271,7 @@ doctrine, Stepwise drafts an abbreviated manifest:
         "starting_context": "clean",
         "continuation": "new-then-exact-resume",
         "runtime": "codex",
-        "model": "gpt-5.6-sol",
+        "model": "gpt-6-astra",
         "effort": "high",
         "source": "execution_defaults.step",
         "reason": "Ramp-up is context gathering, not learner-facing copy."
@@ -281,8 +281,8 @@ doctrine, Stepwise drafts an abbreviated manifest:
         "starting_context": "clean",
         "continuation": "new-each-verdict",
         "runtime": "codex",
-        "model": "gpt-5.6-sol",
-        "effort": "ultra",
+        "model": "gpt-6-astra",
+        "effort": "xhigh",
         "source": "execution_defaults.critic",
         "reason": "No critic override was provided."
       },

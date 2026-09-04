@@ -5,7 +5,7 @@
 User:
 
 ```text
-Use $model-consensus with Claude Opus 4.7 xhigh and Codex gpt-5.6-sol ultra to
+Use $model-consensus with Claude Opus 4.7 xhigh and Codex gpt-6-astra xhigh to
 find the simplest architecture for making this repo's planner resumable.
 ```
 
@@ -30,7 +30,7 @@ Parent behavior:
 User:
 
 ```text
-Use $model-consensus. Put Codex gpt-5.6-sol ultra in adversarial mode against
+Use $model-consensus. Put Codex gpt-6-astra xhigh in adversarial mode against
 Claude Fable 5.1 high. The goal is the most elegant plan for removing the
 duplicate install path without breaking existing users.
 ```
@@ -53,7 +53,7 @@ Parent behavior:
 User:
 
 ```text
-Have $model-consensus gpt-5.6-sol ultra and Opus 4.7 max review everything we did
+Have $model-consensus gpt-6-astra xhigh and Opus 4.7 max review everything we did
 for docs/FAILURE_PLAN.md and start a new doc with every theory for why this
 path is producing uniform results. I want them to read everything, including
 the research, and build fast traps to prove where the bug starts.

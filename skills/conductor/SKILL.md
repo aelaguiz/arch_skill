@@ -1,8 +1,8 @@
 ---
 name: conductor
-description: "Conduct work to verified completion from a finished plan, partial plan, or described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake runs an executive shaping stage — worker research, a parent trim to the smallest sufficient solution, an outcome map, one scope approval — and workers never dispatch before observable done-ness and an approved boundary exist. Execution runs a cheap parallel worker fleet on a pinned model and thinking level (Codex gpt-5.6-sol at ultra; swap to Kimi, Grok, Cursor, Claude): native children when the host can pin that profile, external agent-delegate sessions when it cannot or when cross-provider reach, aim rotation, or durable sessions matter. The `conductor terra` preset keeps its worktree, Terra xhigh, three-review, and PR follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
+description: "Conduct work to verified completion from a finished plan, partial plan, or described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake runs an executive shaping stage — worker research, a parent trim to the smallest sufficient solution, an outcome map, one scope approval — and workers never dispatch before observable done-ness and an approved boundary exist. Execution runs a parallel worker fleet on a pinned model and thinking level (Codex gpt-6-astra at xhigh; swap to Kimi, Grok, Cursor, Claude): native children when the host can pin that profile, external agent-delegate sessions when it cannot or when cross-provider reach, aim rotation, or durable sessions matter. The `conductor terra` preset keeps its worktree, Terra xhigh, three-review, and PR follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
 metadata:
-  short-description: "Plan-or-outcome conductor with executive shaping and a cheap pinned worker fleet"
+  short-description: "Plan-or-outcome conductor with executive shaping and a pinned worker fleet"
 ---
 
 # Conductor
@@ -33,12 +33,12 @@ log beside the plan is its durable memory.
 - Parent tokens go to plan understanding, slice design, cynical audit
   judgment, and first-hand verification of finished work products. Fleet
   tokens go to investigation, implementation, repair, proof runs, and heavy
-  review reading — on a cheap worker profile, whichever lane carries it. A
-  native child inherits the parent's expensive model unless the dispatch pins
+  review reading — on a selected worker profile, whichever lane carries it. A
+  native child inherits the parent's model unless the dispatch pins
   its model and thinking level; a pinned child bills its own. Pin the profile
   or take the external lane, and never route bulk work to an unpinned native
   child.
-- The parent is the scope judge. Fast cheap workers are genuinely smart but
+- The parent is the scope judge. Workers are genuinely smart but
   over-scope and over-iterate; the parent trims every proposal to the
   smallest sufficient solution and holds the approved boundary against
   expansion pressure from any direction.
@@ -105,7 +105,7 @@ log beside the plan is its durable memory.
   reviewer dispatch, and apply `$prompt-authoring` to every actual populated
   first brief or materially reframed follow-up. Resolve the worker profile
   before the lane: model, thinking level, durability, isolation, receipts.
-  The fleet is that profile — fast, capable, cheap — and it applies to every
+  The fleet is that profile — explicitly selected — and it applies to every
   role: phase workers, research workers, verification workers, any cynical
   review the user asked for, and the cold verifier. Take the native lane when
   the profile is reachable in this host's child catalog, pinnable in both
@@ -115,14 +115,13 @@ log beside the plan is its durable memory.
   usage-limit rotation, a session that must outlive the parent process,
   required run receipts, concurrency past the native cap, or isolation the
   host cannot enforce. An unpinned native child runs the conductor's own
-  expensive model, so it is never the cheap lane and never carries bulk
-  reading. Honor explicit user choices in both directions.
+  profile, so pin the selected model and effort before assigning bulk reading. Honor explicit user choices in both directions.
 - Model and thinking level are first-class worker values on both lanes, drawn
   from one vocabulary, and the user normally supplies them. A Codex worker
-  with no named model defaults to `gpt-5.6-sol`, and an omitted level on that
-  Sol worker defaults to `ultra`; a Kimi worker with omitted model and level
-  defaults to `kimi-code/k3` at `max`. Accept `sol`, `luna`, and `terra` as
-  `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated
+  with no named model defaults to `gpt-6-astra`, and an omitted level on that
+  Astra worker defaults to `xhigh`; a Kimi worker with omitted model and level
+  defaults to `kimi-code/k3` at `max`. Accept `astra`, `luna`, and `terra` as
+  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated
   question only for load-bearing missing values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording
@@ -167,7 +166,7 @@ log beside the plan is its durable memory.
 - Initial workers are new clean children on the selected lane. Repairs resume
   the exact captured handle through its original transport. Never resume
   "latest" or reuse an unrelated handle. The optional cold verifier and every
-  independent review gate start as new clean children on the cheap worker
+  independent review gate start as new clean children on the selected worker
   profile, never on an unpinned native child, because review reading is the
   largest block of bulk tokens in the run.
 - Native model, thinking level, and starting context are all explicit at
@@ -299,7 +298,7 @@ log beside the plan is its durable memory.
 6. Resolve the artifact path, boundary (whole plan unless the user named a
    phase range), the worker profile, per-role lane and starting context, max
    parallelism, wave cap, and cold-verifier toggle. The fleet profile defaults
-   to Codex `gpt-5.6-sol` at `ultra`; a user-named provider swaps the whole
+   to Codex `gpt-6-astra` at `xhigh`; a user-named provider swaps the whole
    fleet — Kimi to `kimi-code/k3` at `max`, Grok to `grok-4.6`, Cursor to
    `composer-2.5-fast`, Claude to a supported Claude model. Then pick the lane
    per `references/delegation-and-monitoring.md`: a native child when this host

@@ -21,7 +21,7 @@ fully external worker-and-critic policy has six values:
 
 External runtime and normally effort come from the user or target doctrine.
 Models do too, except that an external Codex worker or critic with no named
-model uses `gpt-5.6-sol`; that Sol lane uses `ultra` when effort is omitted. An
+model uses `gpt-6-astra`; that Astra lane uses `xhigh` when effort is omitted. An
 external Kimi lane uses `kimi-code/k3` and defaults an omitted effort to `max`.
 When an external Codex lane uses Fugu, its execution block also stores
 `codex_profile` as `fugu` or `fugu-ultra`.
@@ -36,8 +36,8 @@ Different external work deserves different price points. A lesson-authoring
 run may want strong worker steps and a strong critic. A many-step drill may want
 cheap workers and a stronger critic. The right runtime and effort baseline is a
 user judgment. The narrow preference exceptions are the established Codex
-fallback and its Sol effort default: omitted model means `gpt-5.6-sol`, and
-omitted effort on that Sol lane means `ultra`.
+fallback and its Astra effort default: omitted model means `gpt-6-astra`, and
+omitted effort on that Astra lane means `xhigh`.
 
 Ask only after the orchestrator has selected an external lane. Guessing wrong
 is expensive: wrong runtime or model wastes money or quality; wrong effort
@@ -50,15 +50,15 @@ provider/model choice load-bearing. Honor it natively only when the active host
 exposes and confirms that choice; otherwise the external adapter supplies the
 requested capability. Any of these is clear:
 
-- "use Claude Fable 5.1 high for steps and Codex gpt-5.6-sol ultra for critic"
+- "use Claude Fable 5.1 high for steps and Codex gpt-6-astra xhigh for critic"
 - "use Codex Fugu high for steps and Codex Fugu Ultra xhigh for critic"
-- "Codex gpt-5.6-sol high everywhere" (one value reused for all defaults)
+- "Codex gpt-6-astra high everywhere" (one value reused for all defaults)
 - "Codex luna high for steps and terra xhigh for critic"
-- "Codex high everywhere" (`gpt-5.6-sol` is the omitted model default)
-- "Grok Build high for steps and Codex gpt-5.6-sol ultra for critic"
+- "Codex high everywhere" (`gpt-6-astra` is the omitted model default)
+- "Grok Build high for steps and Codex gpt-6-astra xhigh for critic"
 - "Kimi K3 high for steps and Kimi max for critic"
-- "steps on gpt-5.6-sol high, critic on gpt-5.6-sol ultra"
-- "default to Codex gpt-5.6-sol high, but use Claude Fable 5.1 for copywriting"
+- "steps on gpt-6-astra high, critic on gpt-6-astra xhigh"
+- "default to Codex gpt-6-astra high, but use Claude Fable 5.1 for copywriting"
 
 None of these is magic. The intake reads the phrase, maps the baseline into
 execution defaults, records routing preferences separately, and prints back
@@ -83,15 +83,15 @@ This is reasoning, not a lookup table:
   `claude-fable-5-1`; "opus 4.7" resolves to `claude-opus-4-7`. Family-only
   aliases such as `fable` or `opus` are acceptable only when the user did not
   pin a version.
-- For ordinary Codex model ids, accept `sol`, `luna`, and `terra` as
-  `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Compact forms such as
+- For ordinary Codex model ids, accept `astra`, `luna`, and `terra` as
+  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Compact forms such as
   `GPT56LUNAXI` and `GPT56TERRAXI` preserve the variant and imply `xhigh`.
-  When a Codex lane names no model or profile, use `gpt-5.6-sol` and report
-  `model_source=default`. When that Sol lane names no effort, use `ultra` and
+  When a Codex lane names no model or profile, use `gpt-6-astra` and report
+  `model_source=default`. When that Astra lane names no effort, use `xhigh` and
   report `effort_source=preference_default`. Inspect the installed CLI's model
   list when needed (`codex debug models`) and choose the available identifier
-  with the same family and exact version. For example, "gpt-5.6-sol" resolves
-  to `gpt-5.6-sol` if that exact model appears, and "gpt 5.3 codex" resolves
+  with the same family and exact version. For example, "gpt-6-astra" resolves
+  to `gpt-6-astra` if that exact model appears, and "gpt 5.3 codex" resolves
   to `gpt-5.3-codex`. Fugu is different: resolve `fugu` and `fugu-ultra` as
   Codex profiles, preserve those profile names exactly, and launch them with
   `-p`.
@@ -109,7 +109,7 @@ This is reasoning, not a lookup table:
   explicitly names Cursor Agent or Grok in the same execution choice.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-5.6-sol`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6-astra`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - If the runtime is unavailable, model discovery is unavailable, the exact
   version is not present, or the phrase could map to multiple runnable
@@ -122,8 +122,8 @@ Always announce the raw-to-resolved mapping before execution, for example:
 effort=high` or `Grok Build high -> runtime=grok, model=grok-4.6,
 effort=high`. `Kimi -> runtime=kimi, model=kimi-code/k3, effort=max,
 effort_source=model_default` records the K3 default explicitly.
-`Codex -> runtime=codex, model=gpt-5.6-sol, effort=ultra,
-model_source=default, effort_source=preference_default` records the Sol
+`Codex -> runtime=codex, model=gpt-6-astra, effort=xhigh,
+model_source=default, effort_source=preference_default` records the Astra
 preference defaults.
 `Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra,
 codex_profile=fugu-ultra, effort=xhigh` is the same kind of exact Codex
@@ -151,7 +151,7 @@ exact-version preservation and fail-loud behavior.
 
 Do not ask for runtime/model/effort merely to run a capable same-host native
 child. After an external lane has been selected, apply the Codex
-`gpt-5.6-sol`/`ultra` preference defaults and Kimi's
+`gpt-6-astra`/`xhigh` preference defaults and Kimi's
 `kimi-code/k3`/`max` defaults; if a load-bearing external value is still
 unspecified and cannot be inferred unambiguously, ask ONE consolidated
 question listing what is missing and what it controls:
@@ -171,11 +171,11 @@ What should I use?
 ```
 
 Do not ask six separate questions. Do not invent runtime, model, or effort
-defaults beyond the documented Sol and Kimi exceptions. Ask and wait. If
+defaults beyond the documented Astra and Kimi exceptions. Ask and wait. If
 native children can do the job and no external benefit was requested or
 discovered, proceed natively instead of manufacturing this question.
 
-If the user answers with one complete value ("Codex gpt-5.6-sol medium
+If the user answers with one complete value ("Codex gpt-6-astra medium
 everywhere"), apply it to both worker and critic defaults and announce that
 before executing. If they answer with a worker-only override ("copywriting on
 Claude Fable 5.1"), resolve only the affected steps externally and leave other
@@ -191,7 +191,7 @@ External runtime is separate from model and effort.
 Infer runtime only when the evidence is unambiguous:
 
 - a target repo says "run with Codex"
-- the user says "Claude Fable 5.1", "Codex gpt-5.6-sol", "Luna", "Terra",
+- the user says "Claude Fable 5.1", "Codex gpt-6-astra", "Luna", "Terra",
   "Grok Build", "Kimi", or "K3"
 - the user says "Codex Fugu", "Fugu high", or "Fugu Ultra xhigh"
 - an installed CLI supports only the named model family and the user clearly
@@ -228,3 +228,5 @@ unrecoverable; never reuse the input id, select the latest session, or fall back
 to another runtime, model, or effort. Kimi critics receive the verdict schema
 inline and are new clean sessions that are never resumed, although Kimi still
 persists them on disk.
+
+Apply the Codex preference in `../../_shared/agent-orchestration-policy.md` before resolving a Sol request: recommend Astra, use it for an accidental reference, and retain Sol only for a deliberate selection. The resolver preserves explicit Sol ids and reports the recommendation; it does not infer intent.

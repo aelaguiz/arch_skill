@@ -4,14 +4,12 @@ The conductor chooses transport under
 `../../_shared/agent-orchestration-policy.md`; transport does not choose the
 workflow. Resolve the **worker profile** first — provider and model, thinking
 level, durability, isolation, receipts — then take the cheapest lane that can
-actually deliver that profile. The fleet is a profile, not a runtime: fast,
-capable, cheap workers doing bulk investigation, implementation, proof, and
-review reading while the conductor stays on the expensive model.
+actually deliver that profile. The fleet is a profile, not a runtime: workers handle investigation,
+implementation, proof, and review reading on the selected model and effort.
 
 The cost rule is about pinning, not about transport. A native child inherits
 the parent's model and thinking level unless the dispatch pins them, so an
-unpinned native worker spends premium tokens on exactly the bulk reading the
-fleet exists to absorb. A pinned one bills its own model. Pin the profile or
+unpinned native worker may not use the selected fleet profile. A pinned one bills its own model. Pin the profile or
 take the external lane; never route bulk work to an unpinned native child.
 
 Take the native lane when all four hold:
@@ -62,7 +60,7 @@ promising it.
 - **Cold verifier → new clean one-shot on the fleet profile**, final gate only.
   Independence is the feature: no conductor narrative, no resume, just
   refutation from plan, code, and the artifacts it loads itself. A whole-plan
-  cold read is bulk reading, so it runs on the cheap profile on whichever lane
+  cold read is bulk reading, so it runs on the selected profile on whichever lane
   carries it — and a one-shot with no resume is the easiest role to pin
   natively, because no eviction can quietly re-price it. Give it the plan path,
   human baseline anchors, approved initial closure, approval anchor, and explicit
@@ -83,7 +81,7 @@ load-bearing. Omitting it is not the same as `"none"` — the current default is
 full inheritance, which is the wrong context and the wrong bill for a phase
 worker. In Claude, a clean named subagent is distinct from an explicit full
 conversation fork, and that fork also forces the parent's model, so it is never
-the way to reach a cheap worker; a skill declared with `context: fork` is an
+the way to pin a different worker profile; a skill declared with `context: fork` is an
 isolated clean subagent context, not full inheritance. In Prime Agent every
 child is clean and no fork exists, so a load-bearing recent decision must be
 written into the brief.
@@ -103,13 +101,12 @@ choose — the fleet is defined by that profile, not by the runtime that hosts i
 
 The user supplies the runtime and normally the thinking level plus a
 model/profile outside the defaults. When the fleet is Codex and the model is
-omitted, use `gpt-5.6-sol`; when that Sol lane also omits the level, use
-`ultra`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
-`max`. For Codex, accept explicit `sol`, `luna`, and `terra` as `gpt-5.6-sol`,
+omitted, use `gpt-6-astra`; when that Astra lane also omits the level, use
+`xhigh`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
+`max`. For Codex, accept explicit `astra`, `luna`, and `terra` as `gpt-6-astra`,
 `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
-missing execution values. The intended fleet is "smart but not the smartest" —
-fast, cheap implementation models — while the conductor runs on the expensive
-model. Announce the raw-to-resolved model mapping and the selected lane before
+missing execution values. The default fleet is Astra at xhigh; do not assume it is cheaper than the
+parent. Announce the raw-to-resolved model mapping and the selected lane before
 the first launch, per agent-delegate's resolution doctrine. Do not silently
 change runtime, model, or thinking level mid-run; if a worker model is clearly
 failing the work, that is a user decision, not a silent substitution.
@@ -159,8 +156,7 @@ while you wait or work; where it does not, poll at the scoped interval.
   plus `git diff --stat` shape, changed-file mtimes, and external `stderr.log`
   growth when available. Native lanes may not report a child's token spend back
   to the parent, so do not treat a quiet parent-side cost total as proof the
-  run is cheap — the pinned profile is what makes it cheap, and the log records
-  it.
+  run is cheap. Record the pinned profile; cost depends on that model and usage.
   Relay it to the user as a brief "still moving, N files touched" check-in.
   **Never stream an external lane's `events.jsonl` into conductor context
   during normal operation** — it is a diagnostic artifact for post-mortems on
@@ -199,7 +195,7 @@ something works, reconstructing what a worker did from raw output,
 implementing anything, and the heavy review reading: requested cynical
 reviews, cold verification, re-reviews, and delegated artifact inspections. That work
 routes to fleet workers, who read the files so the conductor does not — on the
-cheap pinned profile, on whichever lane carries it.
+selected pinned profile, on whichever lane carries it.
 
 Operating rules:
 

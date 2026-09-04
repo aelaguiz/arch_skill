@@ -272,7 +272,7 @@ Use `$skill-authoring` and `$prompt-authoring` for reusable skill/prompt edits. 
 
 Do not hardcode Track 4, hand-write final learner copy as proof, bypass PokerKB/owner skills, add keyword detectors, lead reviewers toward the desired verdict, or treat reviewer rejection as a finish line.
 
-Done means generated outputs are refreshed through repo commands, validation runs, bad examples and thought exercises are tested without answer leakage, gpt-5.6-sol Ultra and `$agent-delegate` Opus 4.7 xhigh independently sign off that the goal is satisfied, and the final report lists changed files, commands, artifacts, signoff results, and risks. If review rejects the result, use the objection to keep fixing and rerun validation.
+Done means generated outputs are refreshed through repo commands, validation runs, bad examples and thought exercises are tested without answer leakage, gpt-6-astra xhigh and `$agent-delegate` Opus 4.7 xhigh independently sign off that the goal is satisfied, and the final report lists changed files, commands, artifacts, signoff results, and risks. If review rejects the result, use the objection to keep fixing and rerun validation.
 ```
 
 Why this works: one path carries the full doctrine. The goal carries mission,
@@ -303,7 +303,7 @@ bar without listing every possible repair branch.
 
 Use `docs/PACKS/post_game_analysis_2026-05/README.md`, `docs/PACKS/mock_post_game/`, current repo code, owner paths, and existing research as source truth.
 
-Use `$model-consensus` with `opus 4.7 max` and `gpt-5.6-sol ultra` to decide the plan shape. The plan should be depth-first: know the final destination, prove the architecture with the smallest real working slice, then expand.
+Use `$model-consensus` with `opus 4.7 max` and `gpt-6-astra xhigh` to decide the plan shape. The plan should be depth-first: know the final destination, prove the architecture with the smallest real working slice, then expand.
 
 Do not substitute a manual phase design when models disagree, hide final scope as "later," force a preset phase count, or write a breadth-first Phase 1 that touches everything without proving the risky path.
 

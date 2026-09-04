@@ -38,17 +38,17 @@ are never re-interviewed.
 
 | Role | Default |
 |---|---|
-| Implementation | Codex `gpt-5.6-sol` at `ultra`, conducted via `$conductor` |
+| Implementation | Codex `gpt-6-astra` at `xhigh`, conducted via `$conductor` |
 | Three cynical reviews | Terra (`gpt-5.6-terra`) xhigh, new clean sessions |
 | Adversarial implementation reviewer (post-build) | Fable 5.1 xhigh, at most 2 rounds |
 | Optional extra cheap reviewer | Luna Max |
-| PR authoring + follow-through | Sol Ultra delivery worker, never the parent |
+| PR authoring + follow-through | Astra xhigh delivery worker, never the parent |
 | Secrets, keys, credentials | An Opus 5 sub-agent scoped to that step only |
 | Usage limits | `aim codex use` rotation + exact-session resume, never a model swap |
 | Worktree | Cut off origin/main; path pinned in the plan document |
 | Simulator (mobile work) | A new, renamed, dedicated sim pinned in the document — never a booted one taken over |
 | Branching | One branch, one PR; the PR happens when the work is fully done |
-| Plan review before dispatch | Sol Ultra and/or Fable 5.1 xhigh, 1–3 rounds hard cap |
+| Plan review before dispatch | Astra xhigh and/or Fable 5.1 xhigh, 1–3 rounds hard cap |
 
 ## Autonomy defaults (attendance + one question)
 

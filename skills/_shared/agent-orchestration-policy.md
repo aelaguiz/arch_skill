@@ -67,6 +67,14 @@ that capability. Inspect the active tool surface. If a load-bearing capability
 is unavailable natively, use the appropriate external or background lane and
 say what it buys.
 
+## Codex model preference
+
+Default a Codex model choice to `gpt-6-astra` at `xhigh`. Accept `astra` as
+`gpt-6-astra`. When the user mentions GPT-5.6 Sol, recommend GPT-6 Astra at
+`xhigh`; use Astra for a casual or accidental old-model reference. Preserve a
+deliberate request to keep Sol or another exact model, and preserve explicitly
+chosen effort. Do not silently change the model of an existing session.
+
 ## Pin model and thinking level, or inherit knowingly
 
 A native child normally inherits the parent's model and thinking level. That

@@ -98,8 +98,8 @@ architecture, and avoids kitchen-sink plans.
   ids and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
   runs `kimi-code/k3` and defaults an omitted effort to `max`. An omitted Codex
-  participant model defaults to `gpt-5.6-sol`, and an omitted effort on that
-  Sol lane defaults to `ultra`. Preserve explicit legacy Grok ids exactly.
+  participant model defaults to `gpt-6-astra`, and an omitted effort on that
+  Astra lane defaults to `xhigh`. Preserve explicit legacy Grok ids exactly.
   Never silently substitute model family/version or cross runtimes.
 - Keep the runner intelligent. The parent may tighten a round, require missing
   evidence, or stop on genuine agreement. It must not reduce the work to
@@ -142,7 +142,7 @@ Then:
    caller's theory or file map. Audit the actual populated participant prompt,
    not only the reusable shape.
 3. Resolve both participant provider/model/profile/effort choices exactly. Use
-   the Codex `gpt-5.6-sol`/`ultra` preference defaults and Kimi's
+   the Codex `gpt-6-astra`/`xhigh` preference defaults and Kimi's
    `kimi-code/k3`/`max` defaults, then ask one concise question if another
    load-bearing participant choice remains ambiguous.
 4. Inspect the active host's native child capabilities and choose transport for

@@ -90,6 +90,8 @@ Claude Code, and Gemini.
 
 ## Skill Routing
 
+- Default Codex to `gpt-6-astra` at `xhigh`. If Amir mentions GPT-5.6 Sol, recommend GPT-6 Astra at `xhigh` and use Astra for a casual or accidental old-model reference. Honor a deliberate request to keep Sol or another exact model and effort.
+
 - For any skill that creates or resumes model agents, apply
   `skills/_shared/agent-orchestration-policy.md`: prefer the active host's
   native child for ordinary same-host work, choose starting context and
@@ -247,9 +249,9 @@ Claude Code, and Gemini.
   shaping stage (parallel worker research as evidence, a parent trim to the
   smallest sufficient solution, a lightweight outcome map, one scope
   approval that freezes the boundary), and workers never dispatch before
-  observable done-ness exists. Execution runs a cheap parallel worker fleet
-  defined by a pinned model and thinking level — Codex `gpt-5.6-sol` at
-  `ultra` by default, one-word swaps to Kimi, Grok, Cursor, or Claude — on a
+  observable done-ness exists. Execution runs a parallel worker fleet
+  defined by a pinned model and thinking level — Codex `gpt-6-astra` at
+  `xhigh` by default, one-word swaps to Kimi, Grok, Cursor, or Claude — on a
   native child when the host can pin that profile durably and on an
   `$agent-delegate` session when it cannot, with `aim` rotation and
   exact-session resume across Codex usage limits; the parent audits every diff

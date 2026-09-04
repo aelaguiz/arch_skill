@@ -64,7 +64,7 @@ Other shipped skills are:
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-approval minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
 - `plan-implement` — prompt-first plan-backed implementation loop that advances only through the approved frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
 - `plan-interview` — evidence-grounded intent interview that educates itself first (facts and a blank template, never a pre-drafted plan), then interviews breadth-first in plain non-jargon English with investigate-and-return cycles to produce an approved Intent Pack — journey maps, UX delta with visual references, numbered plain-language requirements, non-goals, an in-interview-approved test grid, definition of done, execution policy, autonomy contract — closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`
-- `conductor` — prompt-first plan-or-outcome conductor with an executive shaping stage, parent-owned scope judgment and cynical review, and a cheap parallel worker fleet defined by a pinned model and thinking level: native children when the host can pin that profile, external `agent-delegate` sessions when it cannot; its explicit Terra shortcut remains the deliberate external exact-model/worktree/PR lane
+- `conductor` — prompt-first plan-or-outcome conductor with an executive shaping stage, parent-owned scope judgment and cynical review, and a parallel worker fleet defined by a pinned model and thinking level: native children when the host can pin that profile, external `agent-delegate` sessions when it cannot; its explicit Terra shortcut remains the deliberate external exact-model/worktree/PR lane
 - `agent-history` — searches local Codex, Claude Code, Pi, or Prime Agent session history for prior prompts, goals, commands, corrections, tool use, child-agent work, and timelines from natural-language asks, using bundled read-only JSONL/SQLite helpers and concise evidence summaries
 - `model-consensus` — prompt-only parent-relayed dialogue between two exact participants, resolving native or external transport separately for each, resuming each exact handle across rounds, and converging or exposing the smallest unresolved decision
 - `contact-sheet-builder` — builds quick local contact sheet PNGs from existing images, folders, globs, or attached local image paths using a lean prompt contract plus one Pillow renderer; defaults to dense labeled sheets, dynamic near-native edge-to-edge canvas sizing, safe temp output, Preview opening on macOS, and concise receipts
@@ -609,8 +609,8 @@ integrates the verdict.
 
 For an external consult, the user supplies enough information to resolve the
 runtime, model/profile, and effort, or the skill asks once. Codex aliases remain
-exact (`sol`, `luna`, `terra`), and an omitted external Codex model defaults to
-`gpt-5.6-sol`; an omitted effort on that Sol lane defaults to `ultra`. Bare
+exact (`astra`, `luna`, `terra`), and an omitted external Codex model defaults to
+`gpt-6-astra`; an omitted effort on that Astra lane defaults to `xhigh`. Bare
 Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.6`
 and still require an explicit effort. Exact model versions and profiles are
 preserved without silent downgrade or provider switch.
@@ -646,7 +646,7 @@ resume.
 
 Fresh-resumable is the default. When the caller explicitly requests parallel workers, `agent-delegate` creates a group directory and launches ordinary fresh-resumable child workers, then inspects repo state before reporting the combined result. Stateless one-shot is available only when explicitly requested and the selected CLI can honor it; Kimi always persists a session, even when its receipt is ignored. Explicit resume uses a same-runtime session id or prior run directory. Claude and Kimi resume use `-r <session_id>` from the original work root; Codex resume uses `codex exec resume <thread_id>` and never `--last`; Cursor Agent and Grok resume use `--resume <session_id>` and never latest-session selection. The skill does not resume "latest" sessions, cross runtimes, or use external continuation controllers as a strategy.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `luna`, and `terra` as the exact `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-5.6-sol`, and an omitted effort on that Sol lane defaults to `ultra`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `astra`, `luna`, and `terra` as the exact `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-6-astra`, and an omitted effort on that Astra lane defaults to `xhigh`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -696,7 +696,7 @@ artifact has no observable done-state or defensible approved scope; the
 readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is
-Codex `gpt-5.6-sol` at `ultra`, with one-word swaps to Kimi (`kimi-code/k3`
+Codex `gpt-6-astra` at `xhigh`, with one-word swaps to Kimi (`kimi-code/k3`
 at `max`), Grok (`grok-4.6`), Cursor (`composer-2.5-fast`), or Claude, and it
 covers every heavy role — implementation, research, verification, any
 requested cynical review, and the cold verifier. That profile runs on a native
@@ -756,7 +756,7 @@ The user names the two participant identities. Native roles use only model
 capabilities the active host can confirm; an unavailable load-bearing exact
 identity selects the external lane. External shorthand follows the shared
 model resolver, preserves exact versions/profiles, and defaults an omitted
-external Codex model to `gpt-5.6-sol` and its omitted Sol effort to `ultra`.
+external Codex model to `gpt-6-astra` and its omitted Astra effort to `xhigh`.
 Bare Kimi selects `kimi-code/k3` at `max`; natural Grok wording selects
 `grok-4.6` and keeps the explicit-effort requirement.
 
@@ -907,3 +907,7 @@ Examples:
 - `Use $cynical-cruft-removal to find low-value code, tests, docs, configs, and generated artifacts that should go away`
 - `Use $exhaustive-code-review on this full branch`
 - `Use $thermo-nuclear-code-quality-review on this diff`
+
+### Codex model preference
+
+Default Codex to `gpt-6-astra` at `xhigh`. If Amir mentions GPT-5.6 Sol, recommend GPT-6 Astra at `xhigh` and use Astra for a casual or accidental old-model reference. Honor a deliberate request to keep Sol or another exact model and effort. The shared orchestration policy owns this preference; the deterministic resolver preserves explicit model selections and includes an Astra recommendation for Sol.

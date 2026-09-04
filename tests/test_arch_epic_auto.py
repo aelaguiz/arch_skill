@@ -87,28 +87,34 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         self.assertEqual(resolved.model, "gpt-5.6-sol")
         self.assertEqual(resolved.effort, "xhigh")
 
-    def test_codex_sol_defaults_to_ultra_when_effort_is_omitted(self):
-        cases = [
-            ("codex", "default"),
-            ("sol", "explicit"),
-            ("gpt-5.6-sol", "explicit"),
-        ]
-
-        for phrase, model_source in cases:
+    def test_codex_defaults_to_astra_xhigh_and_accepts_natural_names(self):
+        for phrase, source in [("codex", "default"), ("astra", "explicit"),
+                               ("gpt 6 astra", "explicit"), ("gpt-6-astra", "explicit")]:
             with self.subTest(phrase=phrase):
-                resolved = self.model_resolution.resolve_execution_phrase(
-                    phrase,
-                    codex_models=["gpt-5.6-sol"],
-                )
+                result = self.model_resolution.resolve_execution_phrase(
+                    phrase, codex_models=["gpt-6-astra", "gpt-5.6-sol"])
+                self.assertEqual((result.runtime, result.model, result.effort),
+                                 ("codex", "gpt-6-astra", "xhigh"))
+                self.assertEqual(result.model_source, source)
+                self.assertEqual(result.effort_source, "preference_default")
 
-                self.assertEqual(resolved.runtime, "codex")
-                self.assertEqual(resolved.model, "gpt-5.6-sol")
-                self.assertEqual(resolved.model_source, model_source)
-                self.assertEqual(resolved.effort, "ultra")
-                self.assertEqual(
-                    resolved.effort_source,
-                    "preference_default",
-                )
+    def test_astra_preserves_explicit_effort_and_requires_exact_availability(self):
+        for effort in ("high", "max", "ultra"):
+            result = self.model_resolution.resolve_execution_phrase(
+                f"astra {effort}", codex_models=["gpt-6-astra"])
+            self.assertEqual(result.effort, effort)
+            self.assertEqual(result.effort_source, "explicit")
+        with self.assertRaises(self.model_resolution.ModelResolutionError):
+            self.model_resolution.resolve_execution_phrase(
+                "codex", codex_models=["gpt-5.6-sol"])
+
+    def test_explicit_sol_is_preserved_with_astra_recommendation(self):
+        for phrase in ("sol", "gpt-5.6-sol", "GPT56SOLXI"):
+            result = self.model_resolution.resolve_execution_phrase(
+                phrase, codex_models=["gpt-5.6-sol", "gpt-6-astra"])
+            self.assertEqual(result.model, "gpt-5.6-sol")
+            self.assertEqual(result.effort, "xhigh")
+            self.assertIn("Recommend gpt-6-astra", result.resolution_reason)
 
     def test_codex_sol_preserves_explicit_xhigh_override(self):
         resolved = self.model_resolution.resolve_execution_phrase(

@@ -1,6 +1,6 @@
 ---
 name: codex-review-yolo
-description: "Invoke the local Codex CLI with the exact external `yolo` profile (gpt-5.6-sol ultra, fast tier) and captured receipts for an independent review of a substantial artifact or completion state. Use when the user explicitly asks for `codex -p yolo`, an external Codex review, or the profile's exact model/effort/receipt contract. Ordinary same-host Codex reviews should use a clean native child instead. Review-only; requires a concrete artifact or completion target."
+description: "Invoke the local Codex CLI with the exact external `yolo` profile (gpt-6-astra xhigh, fast tier) and captured receipts for an independent review of a substantial artifact or completion state. Use when the user explicitly asks for `codex -p yolo`, an external Codex review, or the profile's exact model/effort/receipt contract. Ordinary same-host Codex reviews should use a clean native child instead. Review-only; requires a concrete artifact or completion target."
 metadata:
   short-description: "Request an independent review from codex -p yolo"
 ---
@@ -43,7 +43,7 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
 
 ## Non-negotiables
 
-- **Run codex with `-p yolo` explicitly.** The profile carries gpt-5.6-sol + ultra reasoning + fast service tier + `danger-full-access` sandbox. Any other profile changes the contract.
+- **Run codex with `-p yolo` explicitly.** The profile carries gpt-6-astra + xhigh reasoning + fast service tier + `danger-full-access` sandbox. Any other profile changes the contract.
 - **Use `codex exec` (non-interactive), not `codex` (interactive TUI).** You are orchestrating, not babysitting a session.
 - **Brief codex like a colleague who just walked in.** It has no memory of your session. Name the review goal, work root, exact user-named artifacts or target paths, hard constraints, and the verdict contract.
 - **Apply `$prompt-authoring` to the actual populated review brief.** Preserve
@@ -53,8 +53,8 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
 - **Require a structured verdict block at the end.** Without it, codex drifts into narrative and you cannot act on the result.
 - **Treat the prompt examples as examples.** Adapt the sections to the actual review objective instead of cargo-culting one review mode.
 - **Never pass secrets in the prompt.** If codex needs `FIGMA_ACCESS_TOKEN` or similar, source `.env` into the codex env and instruct codex to read it from the environment.
-- **Run in the background for non-trivial audits.** Codex at ultra takes
-  minutes. Normal audits often take 5+ minutes, and broad `ultra` audits can
+- **Run in the background for non-trivial audits.** Codex at xhigh takes
+  minutes. Normal audits often take 5+ minutes, and broad `xhigh` audits can
   reasonably take 20-40 minutes. Kick it off with background execution so you
   can keep working.
 - **Namespace every run's files.** Derive one run-specific directory or prefix and keep the prompt, final output, and stream log inside it so concurrent runs on the same machine never clobber each other.
@@ -78,7 +78,7 @@ This skill is intentionally narrow in mechanism, not in review subject. It teach
 
 1. Confirm `codex` exists and inspect the standalone V2 `yolo` profile:
    `YOLO_PROFILE="${CODEX_HOME:-$HOME/.codex}/yolo.config.toml"; which codex && test -f "$YOLO_PROFILE" && rg -n '^(model|model_reasoning_effort|service_tier|sandbox_mode)[[:space:]]*=' "$YOLO_PROFILE"`.
-   Require `gpt-5.6-sol`, `ultra`, `fast`, and `danger-full-access`.
+   Require `gpt-6-astra`, `xhigh`, `fast`, and `danger-full-access`.
 2. Identify the exact review objective and user-named artifacts or target paths:
    commit SHA(s), branch, file paths, doc paths, commands to inspect current
    state, or plan phases. Write them down in the prompt.

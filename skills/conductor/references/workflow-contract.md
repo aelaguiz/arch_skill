@@ -26,7 +26,7 @@ quality bar to finish faster.
 1. Intake: plan path, boundary (whole plan default), per-role transport and
    starting context, any external runtime/model/effort, max parallelism, wave
    cap, and cold-verifier toggle. An external Codex worker with no named model
-   uses `gpt-5.6-sol`; that Sol worker uses `ultra` when effort is omitted.
+   uses `gpt-6-astra`; that Astra worker uses `xhigh` when effort is omitted.
 2. Plan read and extraction in context; capture the start commit and inherited
    worktree state before writing the conductor log.
 3. Write the log, recording the start commit, then apply and record the
@@ -61,11 +61,11 @@ wave or plan obligation.
 
 The strongest failure mode of this workflow is quiet role decay: the parent
 starts "just fixing" a small finding itself, then runs the tests itself, and
-an hour later the expensive model is doing all the work the loop exists to
+an hour later the parent is doing all the work the loop exists to
 delegate. The line is hard:
 
 - Source edits, repairs, and proof runs go to workers — even trivial ones.
-  One more resume round is cheap; parent role decay is not.
+  Resume the worker instead of taking over its role.
 - The conductor may read files, inspect diffs, and run cheap read-only
   commands (`git status`, `git diff`, searches) as audit work.
 - A materially useful parent diagnosis may travel only as a challengeable lead

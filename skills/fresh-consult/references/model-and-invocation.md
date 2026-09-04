@@ -8,7 +8,7 @@ isolation, automation, or receipt benefit justifies the added process.
 
 For the external lane, use this reference to resolve what the user meant by
 "Claude", "Codex", "Cursor Agent", "Grok", "Kimi", "fable 5.1 high", "opus high",
-"gpt-5.6-sol ultra", "luna xhigh", "terra high", "GPT56SOLXI", "fugu high",
+"gpt-6-astra xhigh", "luna xhigh", "terra high", "GPT56SOLXI", "fugu high",
 "fugu-ultra xhigh", "composer-2.5-fast", "grok-4.6", "kimi k3", or similar phrasing,
 and to run the selected read-only consult subprocess.
 
@@ -65,10 +65,10 @@ Every external consult child needs three execution values:
 
 - `runtime` - `claude`, `codex`, `agent`, `grok`, or `kimi`
 - `model` - the runnable CLI model identifier, or the Codex profile name for
-  Fugu. An omitted model on a Codex lane resolves to `gpt-5.6-sol`; an omitted
+  Fugu. An omitted model on a Codex lane resolves to `gpt-6-astra`; an omitted
   Kimi model resolves to `kimi-code/k3`.
 - `effort` - the reasoning effort level, `encoded-in-model` for Cursor Agent,
-  GPT-5.6 Sol's `ultra` preference default when omitted, or Kimi K3's `max`
+  GPT-6 Astra's `xhigh` preference default when omitted, or Kimi K3's `max`
   model default when omitted
 
 If external transport has been selected and a required value is missing or
@@ -90,8 +90,8 @@ Add only the missing facts to the question when some values are already known.
 
 Infer runtime only when the user's wording makes it unambiguous:
 
-- `codex`, `openai`, `gpt`, `gbt`, `sol`, `luna`, `terra`,
-  `gpt-5.6-sol`, `gpt-5.6-luna`, `gpt-5.6-terra`, `GPT56SOLXI`,
+- `codex`, `openai`, `gpt`, `gbt`, `astra`, `luna`, `terra`,
+  `gpt-6-astra`, `gpt-5.6-luna`, `gpt-5.6-terra`, `GPT56SOLXI`,
   `GPT56LUNAXI`, `GPT56TERRAXI`, `gpt-5.3-codex`, `fugu high`, or
   `fugu-ultra xhigh` implies `runtime=codex`.
 - `claude fable`, `fable`, `claude opus`, or `opus` implies
@@ -113,7 +113,7 @@ Infer runtime only when the user's wording makes it unambiguous:
 - If a phrase mixes Grok or Kimi with GPT/GBT model ids, Fugu profiles, Claude, or
   Cursor Agent, fail loud instead of choosing a side.
 - If the user names only an effort level, such as "xhigh", ask for runtime.
-  If the answer is Codex and still omits a model, use `gpt-5.6-sol`.
+  If the answer is Codex and still omits a model, use `gpt-6-astra`.
 - If the user says only "run a fresh consult" or "get a second opinion", use a
   clean native child of the active host when it can satisfy the role. Ask for
   runtime, any non-default effort, and a model/profile outside the Codex and
@@ -121,7 +121,7 @@ Infer runtime only when the user's wording makes it unambiguous:
   selected and those values are load-bearing.
 
 The defaults are deliberately narrow: when the lane is Codex and no model or
-profile is named, use `gpt-5.6-sol`; when a Sol lane omits effort, use `ultra`
+profile is named, use `gpt-6-astra`; when an Astra lane omits effort, use `xhigh`
 with `effort_source=preference_default`; when the lane is Kimi, use
 `kimi-code/k3` and default an omitted effort to `max`. Do not default the
 runtime itself, and do not invent defaults for Claude, Cursor Agent, Grok,
@@ -131,20 +131,20 @@ other Codex models, or Fugu profiles.
 
 Treat model text as intent, not a loose alias:
 
-- Accept `sol`, `luna`, and `terra` as the Codex 5.6 choices. They resolve to
-  `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra`; compact forms such as
+- Accept `astra`, `luna`, and `terra` as Codex choices. They resolve to
+  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`; compact forms such as
   `GPT56LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
   `xhigh`. If a Codex lane names no model or profile, resolve it to
-  `gpt-5.6-sol` and report that the model came from the default. If the
-  resulting Sol lane names no effort, resolve it to `ultra` and report
+  `gpt-6-astra` and report that the model came from the default. If the
+  resulting Astra lane names no effort, resolve it to `xhigh` and report
   `effort_source=preference_default`.
 - Preserve model family and numeric version exactly. `gpt-5.6-terra` may normalize to
-  `gpt-5.6-terra`; it must not become `gpt-5.6-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
+  `gpt-5.6-terra`; it must not become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
   `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-5.6-sol`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6-astra`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - For ordinary Codex model ids, inspect `codex debug models` when needed and
   choose an available identifier with the same family and exact version. For
@@ -178,8 +178,8 @@ Always announce the raw-to-resolved mapping before execution:
 ```text
 Claude Fable 5.1 high -> runtime=claude, model=claude-fable-5-1, effort=high
 Claude Opus 4.7 xhigh -> runtime=claude, model=claude-opus-4-7, effort=xhigh
-Codex -> runtime=codex, model=gpt-5.6-sol, effort=ultra, model_source=default, effort_source=preference_default
-Codex high -> runtime=codex, model=gpt-5.6-sol, effort=high, model_source=default
+Codex -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
+Codex high -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
 Luna xhigh -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
 Terra high -> runtime=codex, model=gpt-5.6-terra, effort=high
 Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
@@ -204,7 +204,7 @@ visible output contract to verdict, evidence, session metadata, and directories.
 
 - Claude accepts `low`, `medium`, `high`, `xhigh`, and `max` via `--effort`.
 - For ordinary Codex model ids, pass effort as
-  `-c model_reasoning_effort='"<level>"'`. GPT-5.6 Sol uses `ultra` when the
+  `-c model_reasoning_effort='"<level>"'`. GPT-6 Astra uses `xhigh` when the
   effort is omitted; preserve any explicit supported effort instead.
 - For Fugu profiles, use `-p fugu` or `-p fugu-ultra`. Omit `-c` when using
   the profile default (`fugu` defaults to `high`; `fugu-ultra` defaults to
@@ -222,9 +222,9 @@ visible output contract to verdict, evidence, session metadata, and directories.
 - For ordinary Codex model ids, confirm the selected model supports the
   requested effort when `codex debug models` is needed for model resolution.
   `codex debug models` does not prove whether local Fugu profiles exist.
-- Outside the Sol and Kimi defaults, if a required effort is missing or the
-  selected model does not support the requested effort, ask. Sol defaults an
-  omitted effort to `ultra`; Kimi defaults one to `max`.
+- Outside the Astra and Kimi defaults, if a required effort is missing or the
+  selected model does not support the requested effort, ask. Astra defaults an
+  omitted effort to `xhigh`; Kimi defaults one to `max`.
 
 ## Transport-Neutral Consult Continuity
 
@@ -786,3 +786,5 @@ When the prior same-line chain is already at three turns, start a new
 
 Do not silently fall back between Claude, Codex, Cursor Agent, Grok, and Kimi, one
 model to another model, one effort level to another, or one session to another.
+
+Apply the Codex preference in `../../_shared/agent-orchestration-policy.md` before resolving a Sol request: recommend Astra, use it for an accidental reference, and retain Sol only for a deliberate selection. The resolver preserves explicit Sol ids and reports the recommendation; it does not infer intent.

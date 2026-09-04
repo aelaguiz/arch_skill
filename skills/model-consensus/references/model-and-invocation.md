@@ -52,10 +52,10 @@ Each participant needs a requested identity and role:
 
 - `runtime`: `claude`, `codex`, `agent`, `grok`, or `kimi`
 - `model`: runnable model id, Codex profile name, or exact model phrase. An
-  omitted model on a Codex lane resolves to `gpt-5.6-sol`; an omitted model on
+  omitted model on a Codex lane resolves to `gpt-6-astra`; an omitted model on
   a Kimi lane resolves to `kimi-code/k3`.
 - `effort`: `low`, `medium`, `high`, `xhigh`, `max`, or `ultra` when supported
-  by the selected runtime/model; omitted Sol effort resolves to the `ultra`
+  by the selected runtime/model; omitted Astra effort resolves to the `xhigh`
   preference default, and omitted Kimi effort resolves to the K3 model default,
   `max`
 - `role`: `collaborator` or `adversary`
@@ -72,7 +72,7 @@ participants resolved to the external lane create external model sessions:
 Before I run model-consensus, I need the two participant choices. Please give
 provider and any non-default effort for Model A and Model B, plus a
 model/profile for participants outside the Codex and Kimi defaults, and say
-whether either should be adversarial. Codex defaults to gpt-5.6-sol at ultra
+whether either should be adversarial. Codex defaults to gpt-6-astra at xhigh
 when its model and effort are omitted; Kimi defaults to kimi-code/k3 at max. I
 will use native children where the active host can honor the requested
 capability and external sessions for the remaining participants; external
@@ -84,20 +84,20 @@ Grok wording resolves to grok-4.6.
 
 Follow the shared model-resolution doctrine:
 
-- Accept `sol`, `luna`, and `terra` as the Codex 5.6 choices. They resolve to
-  `gpt-5.6-sol`, `gpt-5.6-luna`, and `gpt-5.6-terra`; compact forms such as
+- Accept `astra`, `luna`, and `terra` as Codex choices. They resolve to
+  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`; compact forms such as
   `GPT56LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
   `xhigh`. If a Codex lane names no model or profile, resolve it to
-  `gpt-5.6-sol` and report that the model came from the default. If the
-  resulting Sol lane names no effort, resolve it to `ultra` and report
+  `gpt-6-astra` and report that the model came from the default. If the
+  resulting Astra lane names no effort, resolve it to `xhigh` and report
   `effort_source=preference_default`.
 - Preserve family and numeric version exactly. `gpt-5.6-luna` may normalize to
-  `gpt-5.6-luna`; it must not become `gpt-5.6-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
+  `gpt-5.6-luna`; it must not become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
   `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-5.6-sol`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6-astra`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - Infer runtime only from unambiguous family evidence: `gpt`/`gbt`/`fugu`/
   `fugu-ultra`/`codex`/`sol`/`luna`/`terra` implies Codex; `claude fable`, `fable`,
@@ -149,8 +149,8 @@ Always announce the mapping before execution:
 ```text
 Model A: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high
 Model B: "Claude Opus 4.7 xhigh" -> runtime=claude, model=claude-opus-4-7, effort=xhigh
-Model C: "codex" -> runtime=codex, model=gpt-5.6-sol, effort=ultra, model_source=default, effort_source=preference_default
-Model D: "codex high" -> runtime=codex, model=gpt-5.6-sol, effort=high, model_source=default
+Model C: "codex" -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
+Model D: "codex high" -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
 Model E: "luna xhigh" -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
 Model F: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
 Model G: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
@@ -482,3 +482,5 @@ select the external lane deliberately rather than pretending the native child
 honors it. Do not silently switch among Claude, Codex, Cursor Agent, Grok, and
 Kimi, downgrade models, reduce effort,
 or replace a long-running participant with the parent agent's own answer.
+
+Apply the Codex preference in `../../_shared/agent-orchestration-policy.md` before resolving a Sol request: recommend Astra, use it for an accidental reference, and retain Sol only for a deliberate selection. The resolver preserves explicit Sol ids and reports the recommendation; it does not infer intent.

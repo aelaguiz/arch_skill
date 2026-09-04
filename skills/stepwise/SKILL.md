@@ -103,7 +103,7 @@ break.
   external lane, base runtime and normally effort are supplied by the user or target
   doctrine for worker and critic independently. Models are also supplied
   except that an external Codex lane with no named model defaults to
-  `gpt-5.6-sol`, and that Sol lane defaults an omitted effort to `ultra`; Kimi
+  `gpt-6-astra`, and that Astra lane defaults an omitted effort to `xhigh`; Kimi
   defaults to `kimi-code/k3` and an omitted effort to `max`. Natural Grok
   wording resolves to `grok-4.6`, while explicit legacy Grok ids stay exact.
   Ask once only for missing load-bearing external values.

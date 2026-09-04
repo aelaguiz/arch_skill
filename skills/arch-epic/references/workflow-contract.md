@@ -319,7 +319,7 @@ the next routing decision.
   through `$arch-step auto-implement <DOC_PATH>` unless evidence is unreadable
   or contradictory. Never advance to the next sub-plan.
 - If an external Codex critic was selected and its model is missing, use
-  `gpt-5.6-sol`; if that Sol critic also omits effort, use `ultra`. If an
+  `gpt-6-astra`; if that Astra critic also omits effort, use `xhigh`. If an
   external Kimi critic was selected, default an omitted model to `kimi-code/k3`
   and an omitted effort to `max`. If another required external critic value is
   missing, ask the same consolidated policy question used by interactive mode.
@@ -361,7 +361,7 @@ the next routing decision.
 3. If the external harness was deliberately selected, present and resolve the
    `epic_planner`, `implementation_worker`, and `critic` role table via
    `../../_shared/model_resolution.py`; default an omitted external Codex role
-   model to `gpt-5.6-sol` and its omitted Sol effort to `ultra`, default an
+   model to `gpt-6-astra` and its omitted Astra effort to `xhigh`, default an
    omitted external Kimi role to `kimi-code/k3` at `max`, ask once for other
    missing values, then initialize the run directory with
    `scripts/run_arch_epic.py auto-init`.
