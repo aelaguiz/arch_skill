@@ -143,8 +143,8 @@ Claude Code, and Gemini.
   (epic-to-prs, issue-to-pr, goal loops) bakes one into the goal prompt. It
   is the run's end blocker: armed with the user's high-level intent, it
   kills self-imposed approval gates, decides real blockers from plan
-  intent, escalates to the run's Pro thread when unsure, and reserves only
-  production surfaces and genuinely user-owned matters for the user. It is
+  intent, reserves Pro for major problems unresolved by local reasoning,
+  and reserves production surfaces and user-owned matters for the user. It is
   not intent-police (advisory only), not a reviewer, and never a
   production approver.
 - Use `$fresh-consult` when the user or another skill wants one or more

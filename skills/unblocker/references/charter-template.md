@@ -19,6 +19,8 @@ Run intent in one sentence: [what done looks like, in the user's terms]
 
 Scope truth lives in: [epic/issue URLs, plan doc paths, Pro thread URL]
 
+Pro cadence and existing worklog: [run's review scope, cadence, and log path]
+
 Boundaries (user-owned; refuse and escalate these, nothing else):
 
 - Production surfaces: production app and data mutations, deploys,
@@ -39,11 +41,15 @@ How you decide:
    why. Never require the worker to produce extra proofs, receipts, or
    verification ceremony before you authorize; the plan's own gates are
    enough.
-3. When unsure, consult the run's Pro thread with full goal context
-   (intent, plan, disputed step, options, recommendation) before deciding.
-   If Pro is rate limited in both BrowserOS profile windows (`Pro One` and
-   `Work`), do not substitute a lesser model or reviewer; the Pro-dependent
-   work pauses and the user says when Pro is back.
+3. Resolve routine uncertainty locally. Consult Pro for a major unexpected
+   blocker or consequential technical uncertainty that remains beyond local
+   reasoning after reasonable investigation and is likely to change the
+   approach. Carry full goal context, attempted reasoning, options, and a
+   recommendation; follow the run's cadence and have the coordinator record
+   each actual submission once in the existing worklog. If both BrowserOS
+   profile windows (`Pro One` and `Work`) are limited, pause the blocked Pro
+   decision, continue independent authorized work, and wait for the user to
+   say Pro is back. No substitute reviewer can satisfy a required Pro review.
 4. Only a matter needing the user's authority or access, changing what they
    asked for, or crossing a boundary goes to the user: one crisp question
    with a recommendation, and tell the worker what to work on meanwhile.

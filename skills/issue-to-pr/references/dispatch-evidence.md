@@ -1,13 +1,21 @@
-# Dispatch evidence: the golden-path template this skill encodes
+# Historical issue dispatch evidence
+
+Current cadence (owner direction, 2026-09-04): use Pro for initial planning,
+meaningful batch checkpoints, major problems unresolved by local reasoning,
+and final review. Related issues share planning and reviews; ordinary fixes
+are verified locally. If both accounts are limited, pause the blocked Pro
+decision while independent authorized work continues. `../SKILL.md` owns
+this runtime contract. The historical prompts below do not reinstate
+per-child reviews, automatic reapproval loops, or blanket whole-goal pauses.
 
 Current model selection: GPT-6 Pro with Extended thinking in ChatGPT's `Chat`
 surface, per `$chatgpt-web`. The dated model names in the verbatim evidence
 below describe past runs; they do not select the current review model.
 
-`issue-to-pr` is a transcription of a dispatch template its owner typed
+`issue-to-pr` originated from a dispatch template its owner typed
 near-identically ~30 times during 2026-08-24..30, plus the standing
-corrections he issued while running it. Edits to the skill should stay
-anchored to this observed practice.
+corrections he issued while running it. These are historical evidence; the
+current cadence above supersedes them where they differ.
 
 ## Verbatim dispatch templates (session-mined, 2026-08-28)
 
@@ -24,7 +32,7 @@ anchored to this observed practice.
 > [...] put together a plan on disk, implement fix and test and use 2 pr
 > skills to get it live"
 
-## Standing corrections encoded as non-negotiables
+## Historical corrections (cadence superseded above)
 
 - Model choice (superseded 2026-09-01): the old rule "Pro means the
   literal Pro (5/5) picker entry; never substitute a 'closest equivalent'"

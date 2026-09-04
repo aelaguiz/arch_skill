@@ -1,10 +1,18 @@
 # Epic dispatch evidence
 
+Current cadence (owner direction, 2026-09-04): use Pro for initial planning,
+meaningful batch checkpoints, major problems unresolved by local reasoning,
+and final review. Related issues share planning and reviews; ordinary fixes
+are verified locally. If both accounts are limited, pause the blocked Pro
+decision while independent authorized work continues. `../SKILL.md` owns
+this runtime contract. The historical prompts below do not reinstate
+per-child reviews, automatic reapproval loops, or blanket whole-goal pauses.
+
 Current model selection: GPT-6 Pro with Extended thinking in ChatGPT's `Chat`
 surface, per `$chatgpt-web`. The dated model names in the verbatim evidence
 below describe past runs; they do not select the current review model.
 
-`epic-to-prs` transcribes the owner's live epic goal prompts (2026-08-30,
+`epic-to-prs` originated from the owner's epic goal prompts (2026-08-30,
 multiple running concurrently). The canonical verbatim example:
 
 > "/goal your job is to review
@@ -22,7 +30,7 @@ multiple running concurrently). The canonical verbatim example:
 > in a feedback loop especially when getting PR agent reviews on the PR. PR
 > agent is not your boss, stay focused on our scope."
 
-Rulings folded in:
+Historical rulings (cadence superseded above):
 
 - One thread per epic, always (owner ruling 2026-08-30); the thread may be
   supplied or created, and it carries every review for the epic.

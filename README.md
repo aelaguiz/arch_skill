@@ -51,13 +51,15 @@ Other shipped skills are:
 - `eli10` — optional source-retained response-style skill; it is not installed by default
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based approved-scope receipt for plan-backed work
 - `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the approved plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
+- `issue-to-pr` — explicit issue delivery with Pro initial planning and final review; routine decisions and repairs stay with Astra, and related issues can share reviews
+- `epic-to-prs` — explicit epic delivery with shared Pro planning, meaningful batch checkpoints, help for major unresolved blockers, and final stack review; no automatic per-child review pair
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
 - `codex-babysit` — optional source-retained skill for watching an already-running Codex goal-mode tmux pane; it is not installed by default
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs and strict `approve | not-approved | inconclusive` verdicts
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
-- `unblocker` — long-lived end blocker and authorizer for a run: armed with the user's high-level intent and plan, it kills self-imposed approval gates (the run starts authorized), decides real blockers from plan intent with Pro escalation when unsure, keeps a decision log, and reserves only production surfaces and genuinely user-owned matters for the user
+- `unblocker` — long-lived end blocker and authorizer for a run: armed with the user's high-level intent and plan, it kills self-imposed approval gates (the run starts authorized), decides real blockers from plan intent with Pro escalation for major problems unresolved by local reasoning, keeps a decision log, and reserves only production surfaces and genuinely user-owned matters for the user
 - `intent-police` — long-lived read-only advocate that derives the user's intent from their verbatim words, keeps an on-disk intent ledger, classifies direction changes as micro-adjustment versus fundamental shift, filters other agents' review findings for scope creep, and gives blunt subtraction-only alignment feedback at decisions, post-review, and done-claims
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-approval minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
@@ -526,8 +528,9 @@ defaults to GPT-6 Pro with Extended thinking when mode or effort is omitted and 
 prose-only: no scripts, runners, harnesses, API calls, or automated login.
 It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
 `Work` (same projects in both), proves which one it is in, and fails over to
-the other when Pro is rate limited; when both are rate limited it stops and
-waits for the user, because nothing substitutes for Pro. Inside ChatGPT it
+the other when Pro is rate limited. If both are limited, pause the blocked
+Pro consultation while independent authorized work continues; no substitute
+reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
 Work's reasoning slider does not select GPT-6 Pro in Chat.
 

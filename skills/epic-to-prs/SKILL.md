@@ -1,22 +1,21 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works one epic or milestone under a persistent goal, its issues most-important-first through issue-to-pr to Pro-reviewed merge-ready PRs. Owns queue policy, goal persistence with an armed run unblocker ($unblocker) baked into the goal prompt (self-armed in Prime Agent; exact /goal text handed over otherwise), one GPT-6 Pro thread per epic as standing goal advisor (every review plus on-track checks catching tangents, undeclared dependencies, wrong critical paths, lost threads), epic standing rules (boundary comments, advisory-only bots, no reviewer scope expansion), and unblocker-first consults (self-imposed approval gates get decided, not parked; questions asked once; independent issues never serialized behind an unrelated blocker). Ends only on empty queue or user stop. Never merges or releases. Not for epic status reads, decomposition (arch-epic), or open-ended optimization."
+description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, armed $unblocker, and shared GPT-6 Pro thread. Use Pro for initial epic planning, meaningful batch checkpoints, major blockers the agent cannot resolve locally, and final review of the completed PR stack; do not duplicate plan/final consultations for every child or check in at every issue boundary. Astra owns routine decisions and verifies ordinary repairs locally. Keeps accepted scope, advisory bots, and honest review receipts; continues independent work around blockers. Never merges or releases. Not for status reads, decomposition (arch-epic), or open-ended optimization."
 metadata:
-  short-description: "Goal loop working an epic's issues to merge-ready PRs"
+  short-description: "Epic delivery with shared Pro planning and batch reviews"
 ---
 
 # Epic To PRs
 
-Use this skill only when the user explicitly invokes it: by name, or by
-directly commanding this exact job (a goal loop over a named epic or
-milestone that works each issue to a Pro-reviewed merge-ready PR). Never
-fire it on inference; touching an epic's issues inside other work does not
-authorize the loop. The user owns the decision to start it, and the user or
-an empty queue are the only things that end it.
+Use only when the user explicitly invokes this lane by name or directly
+commands this exact job: work a named epic or milestone through its issues
+to Pro-reviewed, merge-ready PRs. Touching an epic during other work does
+not authorize this loop.
 
-The job: consume one epic's open issues, most important first, one issue at a
-time, each through the full `issue-to-pr` pipeline, marking an issue complete
-only at merge-ready with receipts, until the epic's queue is empty.
+Deliver the epic's accepted scope most important first. Use `issue-to-pr`
+for implementation and PR delivery, with shared Pro planning and review
+across related issues. Keep delivering until the queue and required reviews
+are complete, the user stops the run, or no useful unblocked work remains.
 
 ## Install
 
@@ -28,137 +27,146 @@ make install
 
 ## When to use
 
-- "epic-to-prs on <epic issue or milestone>", with or without a supplied
-  ChatGPT Pro thread URL.
-- A /goal ask that directly states this job ("work the milestone epic most
-  important first, plan and PR each issue through Pro").
+- "epic-to-prs on <epic issue or milestone>", optionally with a Pro thread.
+- A /goal ask that directly commands this delivery loop over a named epic.
 - "Put a goal loop over epic <N> and work it down."
 
-## When not to use
+Status reads do not trigger execution. If child issues do not exist,
+decomposition belongs to `arch-epic` or ordinary planning. Open-ended work
+without an issue queue belongs to native goal mode.
 
-- Nobody explicitly invoked it. An epic appearing in scope is not a trigger.
-- Status reading ("ramp up on the epic and tell me where its children
-  stand").
-- The epic's issues do not exist yet; decomposition belongs to `arch-epic`
-  or ordinary planning with the user.
-- Open-ended optimization with no issue queue; use native goal mode.
+## Queue and delivery contract
 
-## Non-negotiables
+- Use live GitHub state. Re-read the epic between issues; skip work that
+  closed or changed owner. Follow stated priorities, otherwise use user
+  impact and unblocking value and record the reasoning briefly.
+- Preserve the user's accepted scope. Agents, reviewers, and bots cannot
+  expand it or quietly deliver less. Decide routine ordering, dependencies,
+  and scope interpretation locally with `$startup-pragmatism`.
+- The run starts authorized for in-scope work. The armed `$unblocker`
+  resolves self-imposed approval gates and real blockers from intent. Pro
+  consultation follows the cadence below; user authority, access, or a
+  change to the ask goes to the user once with a recommendation.
+- Run each issue through `issue-to-pr`, carrying the shared review scope.
+  Code must be self-documenting with clear comments at boundaries and role
+  seams. Handle bots with judgment; they are advisory. Never merge,
+  release, apply approval labels, or touch production surfaces.
+- Track locally ready PRs separately from merge-ready PRs awaiting only the
+  user's merge. A locally ready child may wait for a shared final review
+  while the next independent issue proceeds. Do not close issues or imply
+  they are merged merely because their PRs are ready.
 
-- One GPT-6 Pro thread per epic, always. Use the thread the user supplies;
-  otherwise start one thread in the most applicable ChatGPT project and
-  reuse it for every plan and PR review in the epic, so Pro accumulates
-  epic-wide context. All Pro interaction goes through `$chatgpt-web` and
-  honors that skill's model rule: GPT-6 Pro with Extended thinking, the
-  newest generation at maximum reasoning power verified in the live picker,
-  always in ChatGPT's `Chat` surface. Work's reasoning slider does not select
-  Chat Pro; redo any review sent from `Work` in `Chat`. Threads live in one
-  ChatGPT account, so the one sanctioned exception is a rate-limit failover
-  per `$chatgpt-web`: when the thread's BrowserOS profile window (`Pro One`
-  or `Work`) is rate limited, start a continuation thread in the same-named
-  project in the other window, restate the epic context there, record both
-  URLs in the goal prompt and worklog, and return to the epic's original
-  thread once its account is available.
-- There is no substitute for Pro. If both profile windows are rate limited
-  (`You've hit your rate limit. Please try again later` in each), do not
-  review with a lower tier, a lower effort, an older model, another
-  provider, or a different reviewer, and do not mark an issue complete
-  without its Pro verdicts. Clear or pause the goal for now, report the rate
-  limit, and wait for the user to say Pro is back.
-- Pro is the epic's standing advisor, never an approval buzzer. Author
-  every consult with `$prompt-authoring` - required, not optional - and
-  give Pro the epic's goal, the live queue state, what is done, and what
-  the loop proposes next, then ask it to review the work against the
-  epic's goal rather than answer a context-free yes/no.
-- Be paranoid about losing the thread. At every issue boundary, and
-  whenever the plan, dependencies, or critical path change, ask the Pro
-  thread the holistic question: is the loop still delivering this epic, is
-  the next item the right critical path, has it promoted a dependency the
-  epic never declared, is it doing work another lane owns? Work the epic
-  does not name is presumed a tangent until Pro, shown the full context,
-  confirms otherwise; when Pro says the loop has drifted, drop the tangent
-  and return to the queue.
-- The run starts authorized. Authorization gates come from the user's ask,
-  the epic, or the production boundary - never from mid-run anxiety.
-  Deciding partway in that you need the user's approval is presumed a
-  self-imposed gate: take it to the epic's unblocker (per `$unblocker`),
-  or to the Pro thread when none is armed, and get a decision from the
-  plan's intent. Waiting-for-user is never a resting state.
-- Decide like a startup. Apply `$startup-pragmatism` to every judgment
-  call in the loop - ordering, blockers, when to move on - and decide at
-  current information instead of building certainty. The pipeline's named
-  receipts are the complete proof set: never invent extra limits,
-  thresholds, proof harnesses, evidence bundles, or verification ceremony
-  the epic did not ask for.
-- Live GitHub state is the queue. Re-read the epic's open issues between
-  items; new, closed, and re-prioritized issues supersede any snapshot.
-- Most important first. Use the epic's stated priorities; when unstated,
-  order by user impact and unblocking value, and say so in the worklog.
-- An issue is complete only at merge-ready with receipts (plan verdict, PR
-  verdict on the exact final head, green CI, PR URL). Never merge, never
-  release, never apply approval labels.
-- Blocked means consult, not stall. A blocked or unclear issue goes to the
-  epic's unblocker first when one is armed, else the epic's Pro thread,
-  with full goal context: state the blocker, the
-  options, and a recommendation, ask whether the blocker actually gates
-  the remaining queue or independently buildable issues can proceed, and
-  work it with Pro until there is a way forward. Never serialize
-  independent issues behind an unrelated blocker. Only a matter Pro cannot
-  resolve because it genuinely needs the user (their authority, their
-  access, or a change to what they asked for) gets one escalation - one
-  question, one recommendation - and then the loop moves to the next issue
-  rather than stalling the epic. Ask any question once; while an answer
-  pends, work other queue items, and a generated goal continuation or
-  wake-up is never license to re-ask.
-- Reviewer discipline everywhere: fix-verification re-reviews with Pro until
-  it approves the fixes, no scope expansion accepted from any reviewer, and
-  PR Agent and other bots stay advisory ("PR agent is not your boss").
-- Code quality is a deliverable: self-documenting code with clear comments
-  at boundaries and role seams, identified during planning, carried into
-  every child dispatch.
+## Shared Pro cadence
+
+Begin with one epic planning consultation covering the goal, queue,
+implementation approach, dependencies, and verification. Reuse relevant
+existing Pro planning when it still covers the accepted scope. Child plans
+remain on disk but do not each require another planning consultation.
+
+Use Pro again for final review of the completed PR stack against the epic's
+goal, including interactions between PRs. A small coherent epic may need
+only initial planning and final review. For larger work, choose meaningful
+batches or milestones that Pro can credibly assess. A checkpoint after two
+related issues can be useful when their combined result exposes integration
+or direction worth reviewing; there is no fixed issue count or mandatory
+boundary check. Explain briefly what this checkpoint will resolve.
+
+A batch checkpoint that reviews finished PRs can satisfy their final review;
+a planning or status-only checkpoint cannot. Final epic review should focus
+on the remaining changes and overall integration, using prior batch reviews
+as context instead of repeating every completed child review. Review early
+when a batch needs to be merge-ready before the rest of the epic.
+
+Between these consultations, Astra reasons through routine implementation,
+plan refinements, ordering, and repairs. Consult Pro for a major unexpected
+blocker or consequential technical uncertainty that remains beyond the
+agent's reasoning after reasonable local investigation and is likely to
+change the approach. An issue boundary, dependency discovery, or ordinary
+uncertainty alone does not justify a check-in. Never serialize independently
+buildable issues behind an unrelated blocker.
+
+Batch accepted Pro findings and verify ordinary corrections locally. Do
+not run an automatic resubmission loop to obtain Pro approval of every edit.
+Seek another consultation for substantial redesign, unresolved consequential
+disagreement, or a repair
+that changes the basis of the review and needs independent judgment. The
+normal cadence is a baseline, not a hard cap.
+
+Have expected edits and relevant checks finished before final review where
+practical; honor an explicit request for Pro and CI in parallel. Assess
+post-review changes by their effect on behavior, integration, and review
+conclusions. A new SHA alone does not invalidate useful review. Consolidate
+any warranted recheck, and record which revisions Pro actually saw plus
+later local repairs and verification.
+
+## Pro thread and receipts
+
+Use one GPT-6 Pro thread for the epic, supplied by the user or created in
+the applicable ChatGPT project. Keep the epic's consultations in that
+thread. `$chatgpt-web` owns browser mechanics: GPT-6 Pro with Extended
+thinking at the newest generation's maximum reasoning power, verified in
+ChatGPT's `Chat` surface. `Work` and Ultra are not Pro.
+
+Apply `$prompt-authoring` to every submission. Give Pro the user's intent,
+accepted scope, relevant artifacts, queue and progress, believed critical
+path, and the consequential questions. It should judge progress and work
+against the goal, with enough context to catch drift and integration
+problems. Keep one short existing-worklog entry per actual submission:
+purpose, artifacts/revisions and thread, and running count. Count retries
+and failover submissions; response polling is not another consultation.
+
+If the current account is limited, follow `$chatgpt-web` to continue in the
+same-named project in the other profile window with the epic context
+restated. Record both thread URLs and reuse the original when available.
+If both accounts are limited, report the blocked Pro decision and continue
+independent authorized work. Pause the whole run only when no useful
+independent work remains, and wait for the user to say Pro is back. Never
+substitute another model for a required Pro review or count it as passed.
 
 ## Workflow
 
-1. **Adopt the epic.** Read the epic or milestone, its open issues, and any
-   supplied ChatGPT thread or planning source. Establish (or create) the
-   epic's single Pro thread.
-2. **Arm the run.** Stand up the epic's unblocker per `$unblocker`,
-   charged with the user's verbatim ask, the epic, and the production
-   boundary. Then author the goal prompt via `$prompt-authoring`, shaped
-   by `$startup-pragmatism` so it drives delivery rather than ceremony: it
-   names the Pro thread, the unblocker and how to reach it, the rule that
-   blocked or needing authorization means consult the unblocker - never
-   park in waiting-for-user - and no proof or receipt demands beyond the
-   pipeline's own. In Prime Agent, set the goal yourself
-   with the goal skill and spawn the unblocker; in Codex or Claude,
-   present the exact /goal text and unblocker spawn instruction for the
-   user to arm. The goal's completion condition: every issue on the epic
-   is merge-ready with receipts or explicitly escalated, and no open
-   issues remain in the queue.
-3. **Loop.** For each issue, most important first:
-   1. Re-read live GitHub state; skip issues that closed or changed owner.
-   2. Run the full `issue-to-pr` pipeline for the issue, with this epic's
-      Pro thread and the epic-level standing rules carried into the
-      dispatch.
-   3. On merge-ready, record the receipts on the issue, mark it off, run
-      the issue-boundary on-track check in the Pro thread, and move on. On
-      a block, take it to the epic's Pro thread and get unblocked; only if
-      it still needs the user, escalate once and move on.
-4. **Finish.** When the queue is empty, mark the goal complete and report:
-   issues delivered with PR URLs and receipts, blockers Pro resolved and
-   how, any issues escalated with their one question, and anything observed
-   that the user should know about the epic as a whole.
+1. **Adopt and plan.** Read the epic, live issues, supplied Pro thread, and
+   existing plans. Establish acceptance and the initial order. Write the
+   plan, apply `$startup-pragmatism`, and obtain or reuse shared Pro planning.
+   Identify useful reviewable batches where the work calls for them.
+2. **Arm the run.** Stand up `$unblocker` with the user's ask, scope,
+   production boundary, and this Pro cadence. Author the goal prompt with
+   `$prompt-authoring`, including the thread, unblocker contact, queue,
+   shared review scope, and completion condition. In Prime Agent, arm the
+   goal and spawn the unblocker; otherwise provide the exact /goal text and
+   spawn instruction. Carry user-directed cadence changes into the goal,
+   charter, and active dispatch briefs during a run.
+3. **Deliver issues.** Refresh the queue and run the next `issue-to-pr`
+   with inherited planning and review coverage. Collect locally ready PRs
+   without duplicate child Pro submissions. Resolve routine decisions
+   locally or through the unblocker, use meaningful batch checkpoints and
+   major-blocker consultations when warranted, and continue independent
+   scope while any real user question pends. Ask once; continuations do not
+   supply an answer or justify repeated questions.
+4. **Review and finish.** Obtain final Pro review of the completed stack,
+   using batch reviews as coverage where applicable. Resolve material
+   findings and verify fixes. Every delivered issue needs Pro planning and
+   final review coverage plus passing required checks before merge-ready.
+   Do not mark the goal complete merely because all issues were dispatched;
+   pending reviews and unresolved scope remain unfinished work.
+5. **Report.** List delivered issues and PRs, current heads and CI, Pro
+   review coverage and reviewed revisions, later local repairs, and the
+   submission count. Name any unresolved blocker or user escalation and
+   preserve the remaining queue for continuation. Complete the goal only
+   when its accepted work is merge-ready or the user explicitly removed it
+   from scope; otherwise report the precise incomplete state.
 
 ## Delegation
 
-Each issue may run in-session or as a child agent per the harness. Before
-any child dispatch, read the installed
+Issues may run in-session or as children. Before dispatch, read the installed
 `../_shared/agent-orchestration-policy.md` and apply `$prompt-authoring` to
-the populated brief. The brief always carries: the epic's Pro thread, the
-scope-freeze rule, the boundary-comment requirement, and the merge-ready
-terminal state.
+the populated brief. Include accepted scope, boundary comments, unblocker
+contact, shared planning and review coverage, and the merge-ready terminal
+state. The coordinator owns Pro submissions and the submission count;
+children return artifacts and consequential questions without launching
+duplicate consultations.
 
 ## References
 
 - [references/epic-dispatch-evidence.md](references/epic-dispatch-evidence.md):
-  the verbatim epic goal prompt and corrections this skill encodes.
+  historical epic prompts and owner corrections for maintainers.

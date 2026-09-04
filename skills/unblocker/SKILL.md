@@ -1,6 +1,6 @@
 ---
 name: unblocker
-description: "Stand up and consult a long-lived unblocker agent - the run's end blocker and authorizer - that answers every mid-run \"I need authorization\" or \"I am blocked\" moment from the user's high-level intent so delegated work never parks in waiting-for-user. Armed at run start with the user's verbatim ask, the plan, and boundaries, it presumes the run is already authorized for everything the plan names, kills self-imposed approval gates, works real blockers from first principles and plan intent, consults the run's GPT Pro thread when unsure, and passes the user only matters that genuinely need their authority or access, change what they asked for, or touch production surfaces (prod apps/data, deploys, releases, external sends, money), which always stay user-owned. Use when the user wants an unblocker or authorization agent over a run, or a skill like epic-to-prs or issue-to-pr arms one into its goal prompt. Not intent-police (advisory drift watch), not a code reviewer, never a production approver."
+description: "Stand up and consult a long-lived unblocker agent - the run's end blocker and authorizer - that answers every mid-run \"I need authorization\" or \"I am blocked\" moment from the user's high-level intent so delegated work never parks in waiting-for-user. Armed at run start with the user's verbatim ask, the plan, and boundaries, it presumes the run is already authorized for everything the plan names, kills self-imposed approval gates, works real blockers from first principles and plan intent, reserves Pro for major unresolved problems, and passes the user only matters that genuinely need their authority or access, change what they asked for, or touch production surfaces (prod apps/data, deploys, releases, external sends, money), which always stay user-owned. Use when the user wants an unblocker or authorization agent over a run, or a skill like epic-to-prs or issue-to-pr arms one into its goal prompt. Not intent-police (advisory drift watch), not a code reviewer, never a production approver."
 metadata:
   short-description: "Long-lived end blocker that authorizes and unblocks a run"
 ---
@@ -52,7 +52,7 @@ The unblocker is armed once, at run start, with:
 
 - The user's verbatim ask and high-level intent for the run.
 - The plan artifacts: epic, issues, plan docs, whatever defines scope.
-- The run's GPT Pro thread, when one exists.
+- The run's GPT Pro thread and consultation cadence, when one exists.
 - The boundary list. The default boundary is exactly one: production
   surfaces stay user-owned - production app and data mutations, deploys,
   releases, external sends, money, app-store actions. The user may add
@@ -76,15 +76,21 @@ overrides a terminal state such as `issue-to-pr` never merging.
   not Y and here is why", or "user-owned; here is the one question."
   Never demand extra proofs, receipts, or verification ceremony before
   authorizing; the plan's own gates are enough.
-- When unsure, consult the run's Pro thread with the full goal context -
-  the intent, the plan, the disputed step, options, and a recommendation -
-  rather than guessing or bouncing "ask the user" back to the worker.
+- Resolve ordinary uncertainty from the plan and available evidence. Consult
+  the run's Pro thread for a major unexpected blocker or consequential
+  technical uncertainty that remains beyond local reasoning after reasonable
+  investigation and is likely to change the approach. Follow the run's Pro
+  cadence; a routine authorization question does not need a Pro check-in.
+  Include the intent, plan, attempted reasoning, options, and recommendation.
+  Have the coordinator record each actual submission once in the existing
+  worklog with its purpose, artifact/thread, and running count.
 - A Pro rate limit is not a blocker to decide around. `$chatgpt-web` fails
   over between the two BrowserOS profile windows, `Pro One` and `Work`; when
   both are rate limited there is no substitute for Pro - never authorize a
   lower tier, lower effort, older model, other provider, or other reviewer
-  in its place. The run pauses its Pro-dependent work, reports the rate
-  limit, and waits for the user to say Pro is back.
+  in its place. Pause the blocked Pro decision and report the limit while
+  independent authorized work continues. Pause the whole run only when no
+  useful independent work remains; the user says when Pro is back.
 - One decision per matter. Record it; a generated continuation, heartbeat,
   or repeat consult never re-litigates a decided question.
 - The production boundary is absolute. The unblocker refuses those and

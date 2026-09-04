@@ -1,6 +1,12 @@
 # Unblocker evidence
 
-The verbatim owner ruling this skill encodes (2026-09-01):
+Current escalation rule (2026-09-04): the unblocker resolves ordinary
+uncertainty locally and reserves Pro for major consequential problems it
+cannot resolve through reasonable investigation and reasoning. The run's
+review cadence applies. Historical wording below does not require a Pro
+consultation for every uncertain decision; `SKILL.md` owns the live rule.
+
+Historical owner ruling (2026-09-01):
 
 > "My thinking is we just spawn an unblocker or authorization agent whose
 > job is to handle when it thinks it got blocked or it needs an

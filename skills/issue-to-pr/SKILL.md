@@ -1,21 +1,19 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation delivery lane, fired only by name (\"issue-to-pr on 4484\") or by user-invoked epic-to-prs; never self-select it. Takes one GitHub issue to a merge-ready, externally reviewed PR: ramp up, plan on disk shaped by $startup-pragmatism, one goal-framed GPT-6 Pro plan review via $chatgpt-web (newest model, max reasoning power), implement/test in a worktree, PR via $pr-authoring and $pr-review-followthrough, one goal-framed Pro review of the exact PR head, then stop at merge-ready with receipts. Every Pro consult carries the issue's goal, scope, and believed critical path so Pro catches tangents and lost threads; never narrow yes/no approvals. Fix re-reviews until Pro approves. Run starts authorized: invented approval gates and blockers go once, with full context, to the run's unblocker ($unblocker) or Pro, never parked in waiting-for-user; user escalation only for user-owned matters. Never merges or releases. Not for investigation-only asks, standalone planning, or work with no GitHub issue."
+description: "Explicit-invocation delivery lane, fired only by name (\"issue-to-pr on 4484\") or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR: plan on disk with $startup-pragmatism, GPT-6 Pro initial planning and final review via $chatgpt-web, implement/test in a worktree, and use $pr-authoring plus $pr-review-followthrough. Shares planning and final review across a coherent epic or related batch instead of duplicating them per child. Astra owns routine decisions and verifies ordinary fixes locally; extra Pro consultations serve meaningful batch checkpoints or major unresolved blockers. Preserve accepted scope, keep concise review receipts, and stop at merge-ready. Never merges or releases. Not for investigation-only asks, standalone planning, or work with no GitHub issue."
 metadata:
-  short-description: "One issue to a Pro-reviewed merge-ready PR"
+  short-description: "Issue delivery with focused Pro planning and final review"
 ---
 
 # Issue To PR
 
-Use this skill only when the user explicitly invokes it. The user saying
-"issue-to-pr on <issue>" (or an equivalent direct command naming this exact
-job), or the user-invoked `epic-to-prs` skill delegating one issue, are the
-only valid triggers. Never fire it because a task merely resembles delivery
-work: the user owns the decision to run this lane.
+Use only when the user explicitly invokes this lane by name or directly
+commands this exact pipeline, or when user-invoked `epic-to-prs` delegates an
+issue. Ordinary issue work does not trigger it.
 
-The job: take one GitHub issue from cold start to a merge-ready pull request
-whose plan and final head were both reviewed by GPT-6 Pro, with the smallest
-change that delivers the issue's accepted scope, then stop.
+Take the issue to a merge-ready PR with the smallest change that delivers
+its accepted scope. Use Pro for initial planning and final review; use the
+working agent's judgment to carry the work between them.
 
 ## Install
 
@@ -27,160 +25,150 @@ make install
 
 ## When to use
 
-- The user says "issue-to-pr on <number or issue URL>", singly or as a list
-  (a list is independent sequential or parallel invocations, not a batch
-  manager).
-- The user gives a direct command that names this exact pipeline: plan the
-  issue, one Pro review of the plan, implement, PR, one Pro review of the PR,
-  stop at merge-ready.
-- The user-invoked `epic-to-prs` loop hands over one issue.
+- "issue-to-pr on <number or issue URL>", singly or as a list.
+- A direct command to plan an issue, consult Pro, implement, test, publish a
+  PR, get Pro's final review, and stop at merge-ready.
+- An issue handed over by user-invoked `epic-to-prs`.
 
-## When not to use
+For investigation-only work, standalone planning or review, or work without
+a GitHub issue, use the requested workflow instead.
 
-- Nobody explicitly invoked it. Working an issue, fixing a bug, or opening a
-  PR inside other work does not authorize this skill; do what the user
-  actually asked instead.
-- The ask is investigation or root cause without delivery ("ramp up on 4408
-  and root cause it").
-- The ask is a standalone plan, review, or PR step; use the owning skill
-  directly.
-- There is no GitHub issue. Ask for one or work outside this skill.
+## Delivery contract
 
-## Non-negotiables
+- Freeze acceptance and non-goals from the issue and the user's direction.
+  Reviewers and bots cannot expand or silently shrink that scope. Resolve
+  routine scope interpretation from the contract; a change to what the user
+  asked for belongs to the user.
+- Write the implementation plan on disk before implementation and apply
+  `$startup-pragmatism`. Keep the same judgment during delivery: enough
+  investigation and verification for the actual change, without invented
+  approval gates or proof machinery.
+- The run starts authorized for accepted in-scope work. Work in a dedicated
+  worktree under the target repo's AGENTS.md. Write self-documenting code
+  with clear comments at boundaries and role seams, and run relevant tests
+  and required repo checks.
+- Use `$pr-authoring` and `$pr-review-followthrough`. PR Agent and other bots
+  are advisory; assess findings against the issue and code rather than
+  treating them as orders to expand scope.
+- Stop at merge-ready with receipts. Never merge, release, apply approval
+  labels such as `ufc-approved`, or touch production surfaces.
 
-- Scope is the issue's accepted scope, frozen at contract time. No reviewer,
-  bot, or agent may expand it; a genuine scope conflict goes to the Pro
-  thread to arbitrate against the frozen contract, and only a real change to
-  what the user asked for goes to the user as one question with a
-  recommendation. Never silently shrink scope either.
-- The implementation plan lives on disk before implementation starts, shaped
-  by `$startup-pragmatism` (the overbuild cut happens at plan time).
-- External review means GPT-6 Pro with Extended thinking through
-  `$chatgpt-web`: the newest generation at maximum reasoning power verified
-  in the live picker, in ChatGPT's `Chat` surface and the most applicable
-  project. Work's reasoning slider does not select Chat Pro. Honor
-  every rule in that skill. A review sent from `Work` is not a Pro verdict;
-  redo it in `Chat`. One review round per gate for the artifact; after applying
-  fixes, fix-verification re-reviews are allowed until Pro approves the
-  fixes. What is banned is the open-ended feedback loop and scope growth in
-  any round.
-- There is no substitute for Pro. `$chatgpt-web` owns the mechanics: two
-  BrowserOS profile windows, `Pro One` and `Work`, with the same projects in
-  each; the run picks one deliberately, proves it under `$browseros`, and
-  fails over to the other window when Pro answers `You've hit your rate
-  limit. Please try again later`. If both windows are rate limited, do not
-  review with a lower tier, a lower effort, an older model, another
-  provider, or a different reviewer, and do not call the gate passed. Clear
-  or pause the goal for now, report the rate limit, and wait for the user to
-  say Pro is back. A Pro rate limit is a user-owned wait, not a blocker for
-  the unblocker to decide around.
-- Pro is a thinking partner reviewing work against the goal, never an
-  approval buzzer. Author every Pro prompt with `$prompt-authoring` - this
-  is required, not optional - and give Pro the whole picture: the issue's
-  intent in the user's words, the frozen scope, what has happened so far,
-  and what you believe the critical path is, alongside the artifact. Ask
-  Pro to judge the work against the goal - is this on track, is the next
-  step the right critical path, has the thread been lost - never a narrow
-  yes/no on a context-free snapshot.
-- Be paranoid about tangents. Any work the issue does not name - a new
-  dependency, a recovery task, a production operation, an infrastructure
-  detour - is presumed drift until Pro, shown the full goal context,
-  confirms it belongs on the critical path. When Pro says the thread is
-  lost, that is a verdict: drop the tangent and return to the issue.
-- The run starts authorized. If the issue's accepted scope names the work
-  and it touches no production surface, permission already exists;
-  inventing a mid-run approval gate is the failure, not caution. An "I
-  need authorization" moment goes to the run's unblocker (per
-  `$unblocker`) when one is armed, else the Pro thread, and gets decided
-  from the issue's intent. Waiting-for-user is never a resting state.
-- Decide like a startup everywhere, not just at plan time. Apply
-  `$startup-pragmatism` to in-flight judgment calls - blockers, ordering,
-  how much testing is enough - and decide at current information. The
-  receipts this pipeline names (plan verdict, PR verdict on the final
-  head, green CI, PR URL) are the complete proof set: never invent extra
-  limits, proof harnesses, evidence bundles, or verification ceremony the
-  issue did not ask for.
-- The PR review round binds to the exact current head; a changed head
-  invalidates the verdict.
-- PR Agent and other repo bots are advisory. Handle their threads with
-  judgment per `$pr-review-followthrough`; they are not the boss and never a
-  reason to expand scope.
-- Terminal state is merge-ready with receipts. This skill never merges, never
-  releases, never applies `ufc-approved` or any approval label, and never
-  touches production surfaces.
-- Implementation happens in a dedicated worktree per the target repo's own
-  conventions (read its AGENTS.md; repo law outranks this skill on local
-  mechanics).
+## Pro cadence
+
+For a standalone issue, the normal cadence is one initial planning
+consultation and one final PR review. Existing Pro planning that still
+covers the accepted scope satisfies the first consultation; do not repeat
+it just because this skill was invoked or a session resumed.
+
+For an issue inside a coherent epic or related batch, inherit the
+coordinator's shared planning and review scope. Do not add a plan review
+and final review for every child. The coordinator can collect locally
+finished PRs for a meaningful batch checkpoint or final stack review. A
+child awaiting that review is locally ready, not yet merge-ready.
+
+Astra owns routine implementation choices, plan refinements, dependency
+ordering, scope checks, and ordinary repairs. Extra Pro consultations are
+appropriate when a meaningful batch of related work is ready to assess, or
+a major unexpected blocker or consequential technical uncertainty remains
+beyond the agent's reasoning after reasonable local investigation. State
+what the consultation can resolve and why it matters to the goal. Neither
+an issue boundary, a changed plan, a newly discovered dependency, nor vague
+uncertainty alone requires a Pro message. A useful checkpoint after two
+related issues is welcome; an every-two-issues rule is not.
+
+Apply Pro's findings with judgment, batch the warranted fixes, and verify
+ordinary corrections locally. Do not automatically resubmit plans or PRs
+until Pro approves every edit. Consult again when a substantial redesign,
+unresolved consequential disagreement, or a repair that changes the basis
+of the review needs independent judgment. The normal planning/final pair
+is a baseline, not a hard cap on useful consultation.
+
+Finish expected edits and relevant checks before final review where
+practical, including known CI and review-thread repairs. Honor an explicit
+request to run Pro and CI concurrently. After review, assess any change to
+the reviewed revision: formatting or a rebase with unchanged behavior does
+not by itself require another Pro run. Changes that materially affect
+behavior, integration, or the conclusions of the review may need a
+consolidated recheck; decide from their impact, not the SHA changing.
+
+## Consulting Pro
+
+Use GPT-6 Pro with Extended thinking through `$chatgpt-web`, at the newest
+generation's maximum reasoning power verified in the live picker. Use
+ChatGPT's `Chat` surface; `Work` and Ultra are not Pro. Follow that skill's
+browser, input-delivery, and rate-limit mechanics.
+
+Use the run's existing Pro thread, inheriting the epic's thread when
+applicable. Apply `$prompt-authoring` to every submission. Include the
+user's intent, accepted scope, relevant plan or PR artifacts, progress,
+important findings, and the believed critical path. Ask Pro to assess the
+work against the goal and the consequential decisions; provide enough
+context to reason instead of requesting a context-free approval.
+
+Record each actual Pro submission once in the existing worklog: purpose,
+artifact/revision and thread, plus the running submission count. Include
+retries and failover submissions; polling an existing response is not a new
+consultation. Keep this a short entry, not a separate tracking system.
+
+If both profile windows are rate limited, report it and pause the blocked
+Pro consultation or decision. Continue independent authorized work; pause
+the whole run only when no useful independent work remains. Wait for the
+user to say Pro is available again. Do not substitute another model for a
+required Pro review or claim a pending review passed.
 
 ## Workflow
 
-1. **Ramp up.** Read the issue, its parent epic, linked PRs, and recent
-   discussion. Live GitHub state is authority. Confirm the issue is still
-   open, unclaimed, and not already fixed; for bug-typed issues, confirm the
-   defect still reproduces (repro-first) before planning a fix.
-2. **Plan on disk.** Write a full implementation plan to a file, apply
-   `$startup-pragmatism` to it, and record acceptance, non-goals, and the
-   verification the change needs.
-3. **Pro plan review.** One round via `$chatgpt-web` with the plan file
-   attached, framed per the Pro-prompting rule: the issue's goal, the
-   frozen scope, and the question of whether this plan delivers that goal
-   on the shortest sound path. Apply the verdict with judgment: take what
-   is agreed with, arbitrate genuine scope disputes in the Pro thread,
-   never scope creep. Re-verify fixes with Pro until approved when the
-   verdict demanded changes.
-4. **Implement and test.** Dedicated worktree, smallest coherent change,
-   self-documenting code with clear comments at boundaries and role seams.
-   Run the relevant tests and the repo's required checks.
-5. **PR.** `$pr-authoring` for the PR, then `$pr-review-followthrough` to
-   drive review threads and CI to clean.
-6. **Pro PR review.** One round on the exact current head, framed the same
-   way: the goal, the scope, what shipped, and whether the delivered change
-   still serves the issue's goal. Apply fixes with the same verdict
-   discipline; fix-verification re-reviews until approved; a changed head
-   goes back to Pro.
-7. **Stop at merge-ready.** Report: PR URL, one-line change summary, plan
-   verdict, PR verdict on the final head, CI state, head SHA, and any
-   escalations. Do not merge.
+1. **Ramp up and plan.** Read live issue, parent, linked PRs, and discussion.
+   Confirm the issue is open, available, and not already fixed; reproduce a
+   bug before planning its fix. Write acceptance, non-goals, implementation,
+   and appropriate verification on disk. Obtain or inherit the initial Pro
+   planning consultation and incorporate warranted findings locally.
+2. **Implement and verify.** Make the smallest coherent change in the
+   worktree. Resolve ordinary decisions and repairs locally, consult the
+   run's unblocker when needed, and use Pro at the cadence above.
+3. **Publish and stabilize.** Use both PR skills to publish the PR and
+   handle review threads and CI. For shared reviews, hand the coordinator
+   the PR, revision, verification, and unresolved findings without launching
+   duplicate child reviews. Independent issues can proceed meanwhile.
+4. **Final review and repair.** Submit the stable PR, or have it included
+   in the coordinator's batch/stack review. Address accepted findings,
+   verify repairs, and decide whether their impact warrants a Pro recheck.
+5. **Report merge-ready.** Require completed Pro planning and final review
+   coverage, resolved material findings, and passing required checks.
+   Report PR URL, change summary, current head and CI, the revision Pro
+   actually reviewed, and any later changes with their local verification.
+   Include the Pro thread/verdict and submission count. Never imply Pro
+   reviewed a newer revision it did not see.
 
-## Unblocking contract
+## Unblocking and persistent goals
 
-Blocked or unclear means consult, not stall. On any blocker (ambiguous
-contract, scope conflict, failing dependency, a reviewer demanding
-out-of-scope work), take it to the run's unblocker when one is armed,
-else the Pro thread this issue is already using, with the full goal
-context: state the blocker, the options, and your
-recommendation, and ask two things - the right way to proceed, and whether
-this blocker is actually on the issue's critical path or independent
-in-scope work can continue while it pends. The goal is to get unblocked
-and keep delivering. Only when Pro cannot resolve it - the matter needs
-the user's authority, their access, or changes what they asked for -
-surface exactly one question with a recommendation to the user and stop
-that gate. Ask any question once: while an answer pends, work the
-remaining unblocked scope or stop the gate; never re-ask, and a generated
-continuation or wake-up is not a new answer. Do not idle waiting, do not
-decide scope unilaterally, do not quietly deliver less.
+Investigate blockers from the accepted scope and current evidence. If an
+unblocker is armed, take it the intent, blocker, attempted reasoning,
+options, and recommendation. It should settle routine authorization and
+engineering decisions; escalate to Pro only for the consequential unresolved
+problems described above. Without an unblocker, make those decisions
+locally under the same standard. A matter needing the user's authority,
+access, or a change to their ask gets one concise question with a
+recommendation. Continue independent scope while the answer pends; a
+continuation or wake-up is not an answer or a reason to ask again.
 
-## Running as a persistent goal
-
-When this lane runs under a persistent goal (a long or overnight run),
-author the goal prompt yourself via `$prompt-authoring`, shaped by
-`$startup-pragmatism` so it drives delivery rather than ceremony: it
-names the Pro thread, the unblocker per `$unblocker` and how to reach it,
-the rule that blocked or needing authorization means consult the
-unblocker, never park in waiting-for-user, and no proof or receipt
-demands beyond the pipeline's own. In Prime Agent, arm the goal and spawn the
-unblocker yourself; otherwise present the exact /goal text and unblocker
-spawn instruction for the user to arm.
+For a persistent run, author its goal prompt with `$prompt-authoring` and
+`$startup-pragmatism`, naming the Pro thread, review scope and cadence,
+unblocker per `$unblocker`, accepted scope, and merge-ready completion
+condition. In Prime Agent, arm the goal and spawn the unblocker yourself;
+otherwise provide the exact /goal text and unblocker spawn instruction.
+When adopting a user-directed cadence change during a run, update the goal,
+unblocker charter, and active dispatch briefs so they carry the same rule.
 
 ## Delegation
 
-When this skill runs in a harness with child agents and the work is
-delegated, read the installed `../_shared/agent-orchestration-policy.md`
-before dispatch and apply `$prompt-authoring` to the populated child brief.
-The pipeline order, verdict discipline, and receipts contract in this skill
-travel into every brief unchanged.
+Before dispatch, read the installed
+`../_shared/agent-orchestration-policy.md` and apply `$prompt-authoring` to
+the populated brief. Carry the scope, inherited review coverage and cadence,
+unblocker contact, and merge-ready contract into each brief. The coordinator
+owns shared Pro submissions so children do not independently duplicate them.
 
 ## References
 
-- [references/dispatch-evidence.md](references/dispatch-evidence.md): the
-  verbatim dispatch templates and correction history this skill encodes.
+- [references/dispatch-evidence.md](references/dispatch-evidence.md):
+  historical dispatches and owner corrections for maintainers.

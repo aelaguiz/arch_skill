@@ -624,14 +624,32 @@ defaults to GPT-6 Pro with Extended thinking when mode or effort is omitted and 
 prose-only: no scripts, runners, harnesses, API calls, or automated login.
 It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
 `Work` (same projects in both), proves which one it is in, and fails over to
-the other when Pro is rate limited; when both are rate limited it stops and
-waits for the user, because nothing substitutes for Pro. Inside ChatGPT it
+the other when Pro is rate limited. If both are limited, pause the blocked
+Pro consultation while independent authorized work continues; no substitute
+reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
 Work's reasoning slider does not select GPT-6 Pro in Chat.
 
 Examples:
 
 - `Use $chatgpt-web to ask ChatGPT for a Pro Extended second opinion on this plan`
+
+### `issue-to-pr` and `epic-to-prs`
+
+Invoke these delivery workflows explicitly. A standalone issue normally gets
+Pro initial planning and final PR review. An epic shares planning and review
+across related issues, with useful batch checkpoints and final stack review
+instead of a separate review pair for every child. A checkpoint after two
+related issues can make sense when there is a meaningful combined result to
+assess; the count alone does not trigger it. Pro is also available for a
+major unexpected blocker the agent cannot resolve through local reasoning
+and investigation. Astra handles routine decisions and verifies ordinary
+repairs locally. Neither skill merges PRs.
+
+Examples:
+
+- `Use $issue-to-pr on issue 4484`
+- `Use $epic-to-prs on epic 4700; review meaningful batches together`
 
 ### `skill-authoring`
 

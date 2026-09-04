@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab in a deliberately chosen profile window (`Pro One` or `Work`, same projects in both) after applying the canonical $browseros contract and $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Always uses ChatGPT's Chat surface, never Work (Work tops out at Ultra; Ultra is not Pro); defaults to GPT-6 Pro at maximum reasoning power (Pro / 5/5) with Extended thinking, places chats in the most applicable project, reuses a same-workstream Pro thread from the last 24-48 hours unless ~6+ turns deep, keeps a heartbeat during long Pro waits, runs serially, and fails over to the other profile window when Pro is rate limited. No substitute for Pro: when both windows are rate limited it stops and waits for the user. Not for OpenAI API work, automated login, or scripts."
+description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab in a deliberately chosen profile window (`Pro One` or `Work`, same projects in both) after applying the canonical $browseros contract and $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Always uses ChatGPT's Chat surface, never Work (Work tops out at Ultra; Ultra is not Pro); defaults to GPT-6 Pro at maximum reasoning power (Pro / 5/5) with Extended thinking, places chats in the most applicable project, reuses a same-workstream Pro thread from the last 24-48 hours unless ~6+ turns deep, keeps a heartbeat during long Pro waits, runs serially, and fails over to the other profile window when Pro is rate limited. No substitute for Pro: pause the capped consultation; continue independent work. Not for OpenAI API work, automated login, or scripts."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -144,9 +144,10 @@ happens to be open without deciding which one the user wants.
   never drop to `Extra High (4/5)`, `Thinking`, a lower effort, an older
   generation, or the API to keep moving. Switch to the other profile window
   and continue there per the profile-window section below. If both `Pro One`
-  and `Work` are rate limited, stop the Pro-dependent work: report the rate
-  limit, clear or pause any goal that depends on Pro, and wait for the user
-  to say Pro is available again.
+  and `Work` are rate limited, report the limit and pause the blocked Pro
+  consultation or decision. Continue independent authorized work; pause the
+  whole run only when no useful independent work remains. Wait for the user
+  to say Pro is available again; never count a pending review as passed.
 - Do not print, save, summarize, or inspect account details, cookies, tokens,
   raw session payloads, or other secrets.
 - Enforce a maximum of 10 attachments. Do not silently drop files.
@@ -238,9 +239,11 @@ rate limit. Please try again later` or an equivalent usage-cap message:
 If the other window is also rate limited, the run cannot get Pro right now.
 There is no substitute for Pro: do not use `Extra High (4/5)`, `Thinking`, a
 lower effort, an older generation, another provider, or the API in its place.
-Stop the Pro-dependent work, report the rate limit and both windows, clear or
-pause any goal that depends on Pro, and wait for the user to say Pro is
-available again. Do not poll for the limit to lift on your own.
+Report the rate limit and both windows, pause the blocked Pro consultation
+or decision, and continue independent authorized work. Pause the whole run
+only when no useful independent work remains. Wait for the user to say Pro
+is available again; do not poll for the limit to lift or count a pending
+review as passed.
 
 ## Login Check
 
@@ -475,5 +478,6 @@ Return:
   heartbeat was set and cleared
 
 If the run fails, name the exact failed condition and the next manual repair.
-When both profile windows are rate limited, say so plainly, name the goal or
-work that is paused on Pro, and wait for the user to say Pro is back.
+When both profile windows are rate limited, say so plainly, name the Pro
+consultation or decision that is paused and any independent work continuing,
+and wait for the user to say Pro is back.
