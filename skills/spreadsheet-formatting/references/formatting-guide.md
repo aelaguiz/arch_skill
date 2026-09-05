@@ -24,7 +24,7 @@ verified live in 2026-09).
 1. The ten laws
 2. Screen budget: freeze panes and the title block
 3. Workbook architecture: tabs, order, names, Read Me
-4. Inputs and levers versus formulas
+4. Who owns each number: observations, assumptions, formulas
 5. Text in cells
 6. Tables: alignment, headers, rules, totals, widths
 7. Numbers, dates and missing values
@@ -65,17 +65,26 @@ grid. When a situation is not covered by a rule, reason from these.
   a state once, where the eye lands, with a word; let everything else stay
   quiet. Colour that encodes role (input, link) is a legend, not an alarm,
   and must be light enough to read through.
-- **Repetition is noise.** A value, a label, a caveat or a source belongs
-  where it is owned, once. Eighteen cells reading "No current restoration"
-  say what one status cell says, and hide the eighteen values that would
-  otherwise be there.
+- **Repetition is noise when it restates one fact.** A value, a label, a
+  caveat or a source belongs where it is owned, once. Eighteen cells
+  reading "No current restoration" for one campaign say what one status
+  cell says, and hide the eighteen values that would otherwise be there.
+  The same status word across many records in a tracker is data: one fact
+  per record.
 - **Whitespace is reading room.** Default row heights and padding are tuned
   for typing into a grid, not reading one. A tab a person is meant to read
   gets taller rows, wider gutters and a blank row between blocks; density
   is not rigour, it is fatigue.
-- **A hard-coded number is a hidden decision.** The reader cannot see it,
-  test it, or change it. Every number that is not an input or a lever is a
-  formula, so the sheet stays true when the inputs move.
+- **Every number has an owner.** An observation comes from outside and may
+  be a literal shown as data; an assumption is a choice someone is entitled
+  to make and is a literal in the input style; everything derived is a
+  formula, so the sheet stays true when the inputs move. A constant hidden
+  inside a formula is an assumption the reader cannot see, test or change.
+- **Summaries, templates and checks inherit the conditions of the
+  principle they illustrate.** A law, a house-style row, a recipe or a
+  readback item is a compressed reminder of a principle, not a new
+  unconditional command; when a summary and its principle disagree, the
+  principle wins and the summary is wrong.
 - **The API is not the reader.** A successful batchUpdate proves nothing
   about what a person sees. Formatting is finished only after looking at
   the rendered tab at laptop width and reading it as a stranger would.
@@ -85,34 +94,69 @@ grid. When a situation is not covered by a rule, reason from these.
 These are the rules a reader complains about first. Break one of these and
 nothing else in the guide will rescue the sheet.
 
-1. **Freeze only what identifies columns.** One header row (two at most) plus
-   at most one label column. Never a title block, never a notes row, never
-   five rows. On a 13-inch laptop about 33 default rows are visible; each
-   frozen default row costs about 3 percent of every screen the reader will
-   ever see, and each frozen 40 px header row costs about 6 percent
-   (`NN/g`, `FAST` 2.03, laptop arithmetic verified against Sheets' 21 px
-   default row). A summary tab that fits on one screen freezes nothing.
-2. **Hard-code only inputs and levers.** Every other number is a formula or a
-   link. A constant typed inside a formula (`=B5*70%/20%`, `=C8*2`) is a
-   hidden input the reader cannot see, test or change. The only tolerated
-   embedded constants are universal ones whose meaning is obvious in place
-   (12 months, 24 hours, 1000 for scaling, 1 and 0, a ROUND precision digit) (`FAST` 3.03, `ICAEW`
-   P10, `Macabacus` partial-input rule).
-3. **Inputs look like inputs.** Every hard-coded input has a fill or border
-   and a distinct font colour, appears exactly once, carries a unit, and sits
-   in an inputs block or inputs tab that the reader can find without
-   scrolling through calculations. Font colour alone is not enough (`ICAEW`
-   FMC: fill and/or border; `WSP`: blue inputs, black formulas, green
-   cross-sheet links).
+1. **Freeze only what identifies columns, and build that area from row 1.**
+   Frozen rows are a contiguous prefix: Sheets cannot freeze row 3 without
+   rows 1 and 2. So on a scrolling table the identification area starts at
+   row 1 and every row in it earns its place: a spanner row (when columns
+   come in groups) and the column-header row, with the tab identity in the
+   corner cell of that area rather than in a separate title row above it.
+   Never a title block, never a notes row, never five rows. On a 13-inch
+   laptop about 33 default rows are visible; each frozen default row costs
+   about 3 percent of every screen the reader will ever see, and each frozen
+   40 px header row costs about 6 percent (`NN/g`, `FAST` 2.03, laptop
+   arithmetic verified against Sheets' 21 px default row). Freeze an axis, not a
+   document category: stacked sections that share one column axis share one
+   frozen prefix; unrelated tables on one tab get local header rows and no
+   frozen rows; a tab that fits one screen freezes nothing.
+2. **Every number has an owner, and the owner decides how it is shown.**
+   An *observation* is a fact from outside the workbook: synced data, a
+   pulled total, a reported rate with its evidence. It may be a literal, it
+   is shown as data (plain ink), and its source is named once in the header
+   or key. An *assumption* is a value the reader is invited to change: a
+   growth rate, a mix, a threshold. It is a literal with the input style.
+   Everything *derived* is a formula. A constant typed inside a formula
+   (`=B5*70%/20%`, `=C8*2`) is a hidden assumption the reader cannot see,
+   test or change; extract it. Replace a literal with a formula only when the
+   workbook holds the authoritative ingredients and the same definition:
+   linking a reported total to a source table proves nothing about its
+   derivation, and re-deriving a reported rate from rounded evidence changes
+   it. Structural numerals (12 months, 1000 for scaling, 0 and 1, a ROUND
+   precision, a `#gid` in a link) are syntax, not decisions
+   (`FAST` 3.03, `ICAEW` P10, `Macabacus` partial-input rule).
+3. **Assumptions look like assumptions, everywhere.** Every lever has a fill
+   or border and a distinct font colour, appears exactly once, carries a
+   unit, and sits in an inputs block or inputs tab the reader can find
+   without scrolling through calculations. Observations do not get that
+   treatment; painting three thousand synced facts as levers tells the reader
+   to edit them. Font colour alone is not enough (`ICAEW` FMC: fill and/or
+   border; `WSP`: blue inputs, black formulas, green cross-sheet links).
 4. **One line per cell.** A cell holds a label, a value, or one short phrase
    (about 45-90 characters, 50-70 ideal). Anything longer is split into
    label + value, one point per row, a Notes column, a cell note, or the
    Read Me tab. No paragraphs, no bullet lists with line breaks inside a
    cell (`Butterick` line length, `MS` style, `Broman&Woo`, `FAST` 3.05).
-5. **Never merge cells.** A title lives in the first cell of its row and
-   overflows into empty neighbours. Merges break sorting, selection, screen
-   readers and audit tools; Sheets has no "center across selection"
-   (`FAST` 4.02-02, `MS` accessibility, `UKGAF`).
+2. **Every number has an owner, and the owner decides how it is shown.**
+   An *observation* is a fact from outside the workbook: synced data, a
+   pulled total, a reported rate with its evidence. It may be a literal, it
+   is shown as data (plain ink), and its source is named once in the header
+   or key. An *assumption* is a value the reader is invited to change: a
+   growth rate, a mix, a threshold. It is a literal with the input style.
+   Everything *derived* is a formula. A constant typed inside a formula
+   (`=B5*70%/20%`, `=C8*2`) is a hidden assumption the reader cannot see,
+   test or change; extract it. Replace a literal with a formula only when the
+   workbook holds the authoritative ingredients and the same definition:
+   linking a reported total to a source table proves nothing about its
+   derivation, and re-deriving a reported rate from rounded evidence changes
+   it. Structural numerals (12 months, 1000 for scaling, 0 and 1, a ROUND
+   precision, a `#gid` in a link) are syntax, not decisions
+   (`FAST` 3.03, `ICAEW` P10, `Macabacus` partial-input rule).
+3. **Assumptions look like assumptions, everywhere.** Every lever has a fill
+   or border and a distinct font colour, appears exactly once, carries a
+   unit, and sits in an inputs block or inputs tab the reader can find
+   without scrolling through calculations. Observations do not get that
+   treatment; painting three thousand synced facts as levers tells the reader
+   to edit them. Font colour alone is not enough (`ICAEW` FMC: fill and/or
+   border; `WSP`: blue inputs, black formulas, green cross-sheet links).
 6. **Numbers right, text left, headers match the column.** Never centre a
    numeric column. Same decimals for every value of a type in a column.
    Units and scale in the header, not in the cells (`Schwabish` G2-G4,
@@ -148,28 +192,38 @@ columns of 100 px. Everything frozen is subtracted from every screenful.
   `Adobe` table study: frozen headers speed tasks; `NN/g`: keep sticky chrome
   small and ask whether it is needed at all).
 - Do not freeze title rows, subtitle rows, refresh-date rows, link rows,
-  spacer rows or notes rows. If the table starts at row 4 because rows 1-3
-  are a banner, either move the banner into one compact title row and freeze
-  two rows total, or drop the banner into the tab name and Read Me.
+  spacer rows or notes rows. Because frozen rows are a contiguous prefix,
+  a table that needs its header kept must put the header (and its spanner
+  row, if any) at the very top. The tab identity then lives in the corner
+  cell (A1 of the spanner row, or of the header row when there is no
+  spanner), styled as the title; the banner's other contents (refresh date,
+  source, links) go to the Read Me, a note on the corner cell, or a muted
+  cell at the right end of the header area. A separate title row is for
+  tabs that do not scroll.
 - Summary or dashboard tabs that fit on one screen freeze nothing
-  (`Few` IDD: single screen, no scrolling). Multi-table tabs (several small
-  tables stacked) freeze nothing or only the title row, because no single
+  (`Few` IDD: single screen, no scrolling). Stacked tables that share one
+  column axis (the same periods, versions or scenarios in the same letters)
+  share one frozen identification prefix; stacked tables with unrelated
+  columns get a local header row each and nothing frozen, because no single
   header row identifies every column below it.
 - A model with checks may keep exactly one master check cell in the frozen
   area; nothing else earns a frozen row (`FAST` 2.03-05).
-- Title block: one row. Left: sheet title (what, where, when, unit if
-  uniform). Right, muted: data-as-of date and source, driven by a cell, not
-  typed into the title. Never a second title row for a subtitle; put the
-  subtitle in the Read Me or as a short muted line under the title only when
-  the tab is a one-screen dashboard (`Few`, `Schwabish` G7, `L1`).
+- Title block on a non-scrolling tab: one row. Left: sheet title (what,
+  where, when, unit if uniform). Right, muted: data-as-of date and source,
+  driven by a cell, not typed into the title. Never a second title row for a
+  subtitle; put the subtitle in the Read Me or as a short muted line under
+  the title only when the tab is a one-screen dashboard (`Few`,
+  `Schwabish` G7, `L1`).
 - Put text in A1 on every tab. Screen readers start there; sort, filter,
   QUERY header detection and "select all" assume a rectangle that starts at
   A1 (`MS`, `Google`, `Broman&Woo`).
 - Frozen rows double as the repeated print header in Sheets; that is a
   reason to freeze the header row, not a reason to freeze the banner.
-- Row heights stay at the default (21 px in Sheets) except the title row
-  (about 28-32 px). Tall rows push data below the fold and make the reader
-  read downward instead of across (`Raffensperger`).
+- Row height is a reading decision, not a default: taller than the typing
+  default so the tab breathes (section 6), but uniform, and never so tall
+  that data drops below the fold or the eye reads downward instead of
+  across (`Raffensperger`). Frozen rows count double: every pixel there is
+  paid on every screen.
 
 ## 3. Workbook architecture: tabs, order, names, Read Me
 
@@ -185,9 +239,12 @@ columns of 100 px. Everything frozen is subtracted from every screenful.
   never `Sheet1`. Avoid characters that complicate references. Use tab colour
   by role (inputs one colour, outputs another, raw data grey) and keep the
   mapping in the Read Me key (`FAST` 1.02, `ICAEW` P9).
-- Never hide tabs or rows to tidy up; group rows instead, and delete relics
+- Never hide tabs or rows to tidy up; group rows instead. Remove relics
   (unused inputs, dangling calculations, empty tabs, formatting beyond the
-  used range) (`FAST` 1.03, `ICAEW` P16, `Raffensperger`).
+  used range) only once their absence is understood: who reads that
+  address, whether a sync script writes there, whether a blank is a future
+  data destination. "Looks unused" is not evidence (`FAST` 1.03, `ICAEW`
+  P16, `Raffensperger`).
 - Read Me tab, always, inside the workbook: purpose in one sentence, owner,
   version and date, what changed, tab map with hyperlinks, the format key
   (every font colour, fill, border and tab colour with its meaning), units
@@ -198,29 +255,72 @@ columns of 100 px. Everything frozen is subtracted from every screenful.
 - Version and data-as-of live in the Read Me and in a cell; the file title
   carries the version only when copies are distributed (`ICAEW` P18).
 
-## 4. Inputs and levers versus formulas
+## 4. Who owns each number: observations, assumptions, formulas
 
-**Definition.** An *input* is a fact the model takes from outside (a baseline,
-a price, a date, a count from a source). A *lever* is an assumption the reader
-is invited to change (a growth rate, a mix, a capture rate, a threshold).
-Everything else is a *formula*: derived from inputs, levers, and other
-formulas. Outputs are formulas with presentation formatting.
+**Classify by ownership before touching a number.** Three owners exist:
 
-- **Hard-code only inputs and levers.** A number typed anywhere else is a
-  defect. Recognition test: if the reader changed this number, would they
-  expect the sheet to recalculate? If yes and it is typed, it is a hidden
-  input. If the number is a total, a share, a multiple, a date in a series,
-  a "reading" sentence derived from a threshold, or a count of rows, it must
-  be a formula (`FAST` 3.03-01, `ICAEW` P10, `WSP`, `Few` D10, K3).
-- **No constants inside formulas.** `=B8*2` becomes `=B8*$B$4` with `B4`
+- An *observation* is a fact from outside the workbook: a synced metric, a
+  pulled count, a reported rate, a published estimate with its sample size.
+  The workbook does not own its derivation, so it may be a literal. Show it
+  as data: plain ink, its source named once in the header, key or Read Me,
+  and (when a script writes it) the range protected and marked as synced.
+- An *assumption* (a lever) is a value the reader is invited to change: a
+  growth rate, a mix, a capture rate, a threshold, a price. It is a literal
+  with the input style, once, with a unit and validation.
+- A *derived* value is computed from observations, assumptions and other
+  derived values. It is always a formula. Outputs are derived values with
+  presentation formatting.
+
+Ownership is not dependency. "Would the sheet recalculate if this changed?"
+is true of an observed CPI as much as of a growth assumption; it tells you
+what depends on the cell, not who is entitled to choose its value. Ask
+instead: who is authorised to set this value for this use? A person making
+a modelling choice owns an assumption; a system, a measurement or a
+published source owns an observation; a formula owns a derived value. An
+editable choice may be a number, a date or a category (a scenario name, a
+policy); an authored status (`Shipped`, `Folded into N106`) in a tracker is
+an observation about work unless an existing rule computes it.
+
+Recognition tests: is someone invited to change this as a choice? Then it
+is an assumption. Could the
+workbook recompute it from ingredients it actually holds, with the same
+definition? Then it is derived and must be a formula. Does it come from
+somewhere the workbook cannot see? Then it is an observation; leave it a
+literal and say where it came from. Test the label, not the word: a
+"total" is derived only if its components are here; a reported total whose
+components live in a warehouse is an observation.
+
+- **Trackers and other authored records.** A tracker row is one
+  independently sortable work item: identity, state, target, next required
+  action, each in its own cell, with longer requirements in keyed details
+  (a note on the identity cell, a details tab keyed by the ID). The same
+  status word repeated down a column is data here, one fact per record;
+  the repetition to avoid is decoration duplicated inside one record.
+- **Do not manufacture inputs.** Moving thousands of observations into an
+  "inputs" table and linking every presentation cell to them satisfies a
+  rule and helps no one: it doubles the workbook, hides nothing that was
+  hidden, and invites edits to facts. Style observations as data where they
+  are. The one reason to relocate observations is a genuine raw-data tab
+  that other tabs derive from.
+- **Do not re-derive a reported value.** `0.9% (6/677)` is a reported rate
+  and its evidence; `6/677` is 0.89 percent and rounds differently. Keep the
+  reported measure as the observation and keep the evidence traceable
+  beside it or in a note; do not replace the measure with a formula over
+  rounded evidence.
+- **A hidden decision is defined by meaning, not by its numeral.** Extract a
+  constant from a formula when it is an assumption the reader may need to
+  inspect or vary. Leave structural arguments in place: unit conversions
+  (12, 7, 24, 1000), 0 and 1, a ROUND precision, an offset in a lookup, a
+  `#gid` in a link, a format string. A lexical search finds candidates; the
+  formula's purpose decides (`FAST` 3.03-01, `ICAEW` P10, `WSP`, `Few` D10,
+  K3).
+- **Assumptions leave the formula.** `=B8*2` becomes `=B8*$B$4` with `B4`
   labelled `Growth multiplier per month` and formatted as an input.
   `=$B$5*70%/20%` becomes `=$B$5*C$12/$B$8` with the mix and capture rate as
-  labelled inputs. Tolerated in place: 12, 24, 7, 1000, 1, 0, 100 when they
-  are unit conversions whose meaning is obvious (`FAST` 3.03, `Macabacus`
-  ignore-list 0/1/100/1000/1000000).
-- **Levers are numbers, not strings.** `"70% / 20% / 10%"` in one cell is a
-  label pretending to be three inputs. Store each lever in its own numeric
-  cell with its own format; if the reader wants to see the trio, a formula
+  labelled inputs (`FAST` 3.03, `Macabacus` ignore-list 0/1/100/1000).
+- **One choice per cell.** `"70% / 20% / 10%"` in one cell is a label
+  pretending to be three inputs. Store each lever in its own cell with its
+  own format and its real domain (a number, a date or a category); if the reader wants to see the trio, a formula
   can compose the display string next to them.
 - **Each input appears once** and is referenced everywhere else; never
   re-type a date, a name, a rate or a subtotal (`FAST` 3.03-03, `ICAEW` P10,
@@ -233,9 +333,10 @@ formulas. Outputs are formulas with presentation formatting.
   averaged 4 errors versus 24). **Contested** (Raffensperger/Bewig prefer
   inputs adjacent to their formulas); the segmented layout wins on the
   evidence and on the reader's ability to find the levers.
-- **Input cell style.** Distinct font colour **and** a light fill or border,
-  applied identically to every input in the workbook, with the key on the
-  Read Me. Banking convention: blue font hard-codes, black formulas, green
+- **Input cell style** (assumptions only). Distinct font colour **and** a
+  light fill or border, applied identically to every lever in the workbook,
+  with the key on the Read Me. Observations stay plain; the reader must be
+  able to tell "you may change this" from "this was measured" at a glance. Banking convention: blue font hard-codes, black formulas, green
   links from other tabs, red links to other files. Fill is what makes the
   scheme survive greyscale and colour-blindness (`ICAEW` FMC, `WSP`, `TTS`,
   `BIWS`, `Few` D11). **Contested**: FAST uses blue for imports and red for
@@ -291,8 +392,8 @@ formulas. Outputs are formulas with presentation formatting.
   the empty cells to its right; that is how a string "spans multiple cells"
   without a merge. Overflow is not a way to fit a sentence that is longer
   than the table is wide, and it never runs into a column that holds values
-  elsewhere on the tab. Use `WRAP` only in a dedicated wide Notes column,
-  with strings short enough for two lines; row height follows the tallest
+  elsewhere on the tab. Use `WRAP` where a header or a wide Notes column
+  needs two lines, with strings short enough for two lines; row height follows the tallest
   cell, so one long wrapped cell makes the whole row tall
   (`Google` WrapStrategy, `Few` E5, `MS` wrap docs).
 - **Labels are names, not definitions.** `Revenue to date, net store
@@ -306,6 +407,20 @@ formulas. Outputs are formulas with presentation formatting.
   not a section heading. It goes to the Notes column, a note on the heading
   cell, or the Read Me. A description paragraph under the title row is the
   same mistake at tab level: one title row, then the inputs or the table.
+- **Shortening must preserve the reading task.** Every original string can
+  survive in a note and the table can still mislead: if a caveat changes
+  comparability, completeness or confidence (this cohort is provisional,
+  this rate is over 6 users, this window is to-date), it stays beside the
+  value or the group it qualifies, in the lightest form that works: a
+  status word in a row, a `Provisional` mark on the spanner, a footnote row
+  under the block, a compact evidence column. Definitions and provenance
+  may be deferred, but only to a place the reader can discover from where
+  they are: a `Details →` link, a note on the label, the Read Me. A Notes
+  column at the far right of a 50-column table is not discoverable.
+- **Notes are not a dumping ground.** A note on every cell puts a marker
+  on every cell; the reader sees texture, not information. Put provenance
+  once, on the header or label that owns it, and reserve per-cell notes
+  for the few cells whose story differs from their row.
 - **IDs and codes are text.** Campaign IDs, SKUs and hashes are identifiers:
   left-aligned, stored as text so leading zeros survive, and shortened for
   display (last 6 characters, a prefix, or the human name) with the full
@@ -320,7 +435,8 @@ formulas. Outputs are formulas with presentation formatting.
   sentence. Cell *comments* are for live discussion only (`FAST` 3.05-12,
   `TTS`, `Few` E4-E6, `Google` notes vs comments). **Contested**: FAST says
   never use cell notes; WSP says over-comment. Resolution: a Notes column
-  for anything a reader must see, cell notes for provenance only.
+  for anything a reader must see; cell notes for provenance and for a
+  definition on the label that owns it.
 - **"So-what" lines.** If a takeaway must appear on the tab, it is one line
   of at most about 75 characters directly above or below the block it
   explains, generated by a formula from the numbers when possible, never a
@@ -351,13 +467,17 @@ formulas. Outputs are formulas with presentation formatting.
   or a section row (`UKGAF`, `Broman&Woo`).
 
 **Header row**
-- Exactly one header row per table. Bold, sentence case, one to two words
-  plus the unit in round brackets, wrap allowed to two lines. A thin light
-  rule under it. A light neutral fill is acceptable; a dark fill with white
+- Exactly one header row per table (plus a spanner row when columns come in
+  groups). Bold, sentence case, one to two words plus the unit in round
+  brackets, wrap allowed to two lines, with the row tall enough to show
+  both. A thin light rule under it. A light neutral fill is acceptable; a dark fill with white
   text is not the default for data headers (`Schwabish` G7, `Few`, `UKGAF`).
 - **Group labels ("spanners") say "these columns belong together", and a
   label sitting in the first column of the group does not say that.**
-  Centre the spanner over its columns. The reason merges are banned is
+  Centre the spanner over its columns; when a group is wider than a
+  screen, a centred label sits off-screen at the first view, so place it at
+  the group's left edge and name the group in the frozen corner as well.
+  The reason merges are banned is
   that they break the data rectangle (sort, filter, select, screen readers);
   a spanner row above the column-header row is not data and no one sorts it,
   so a horizontal merge in that one row is the correct tool in Sheets, which
@@ -366,6 +486,16 @@ formulas. Outputs are formulas with presentation formatting.
   narrow spacer column or a left rule on the first column of each group). In
   raw data tables prefix the header instead and keep one header row
   (`Schwabish` G8, `Few` J3, `FAST` 4.02-02 rationale).
+- **Choose the comparison unit before widths, aliases or evidence
+  placement.** Name what the reader compares: which entity, over which
+  period or horizon, on which measure, for which population. Then keep that
+  association intact while the reader moves: size comparable columns as a
+  pair, shorten labels around the distinction being compared (two unequal
+  values must not look equal because their aliases match), put evidence on
+  the axis that keeps it with its measure and population with the least eye
+  movement (a sub-row under the measure in a version table, a paired column
+  in a two-entity comparison, a note only when it is rarely consulted), and
+  add totals only when the definition makes an additive whole.
 - **Transposed tables.** When attributes run down and entities run across
   (a settings comparison, a cohort matrix), the type lives in the row: text
   rows left-aligned, numeric rows right-aligned with one format per row, a
@@ -373,9 +503,18 @@ formulas. Outputs are formulas with presentation formatting.
   format per type axis"; apply it to whichever axis carries the type.
 - **Repeated column groups** (channel × cohort, region × quarter) keep the
   same column order and widths in every group, a spanner per group, and a
-  visible seam between groups. Beyond the first few groups, the reader
-  needs the label column frozen and the newest or most important group
-  first (`FAST` 2.02, `Schwabish` G10).
+  visible seam between groups: a narrow spacer column or a single light
+  left rule on the group's first column. That seam is the one vertical mark
+  a table may carry (`FAST` 2.02, `Schwabish` G10).
+- **Wide tables are read by scrolling, and that is fine.** "Laptop width"
+  means every viewport the reader lands on supports a coherent reading
+  task, not that the whole dataset fits at once. Keep identity recoverable
+  at every position: label column frozen, spanner naming the group above
+  every column, units in the header, the newest or most important group
+  first. Split a wide table only at a boundary that means something to the
+  reader (a different entity, a different grain); splitting a time axis
+  across tabs breaks comparison. Then look at the first view and at
+  representative views across the full extent, not only the top-left.
 - Never rotate or stack header text; abbreviate, wrap to two lines or
   transpose (`Schwabish`, `UKGAF`).
 
@@ -383,7 +522,8 @@ formulas. Outputs are formulas with presentation formatting.
 - Start with no borders. Add back only horizontal rules that carry
   structure: under the header, above totals, optionally at the table foot,
   optionally every 3-5 rows in long tables. Thin (1 px), light grey, solid.
-  Never vertical rules, never full grids, never thick or double lines except
+  No vertical rules except the light seam between column groups, never
+  full grids, never thick or double lines except
   the finance double rule under a grand total (`Schwabish` G3, `Few`,
   `Tufte` data-ink, `ACAPS`).
 - Delineate rows by white space first, then a near-white band, then a thin
@@ -403,7 +543,9 @@ formulas. Outputs are formulas with presentation formatting.
   summary the headline total goes top-left as a KPI with the breakdown
   below. Totals are formulas over the whole range, never typed, and never
   feed downstream logic (`Schwabish` G6, `Few` K1-K3, `FAST` display totals).
-- Show the total row whenever percentages of a total appear.
+- When shares of an additive whole appear, show the whole; do not total
+  columns that are separate populations (versions, cohorts) just because
+  they sit side by side.
 
 **Widths, heights, density**
 - Set widths explicitly by column type after writing values: label column
@@ -416,23 +558,29 @@ formulas. Outputs are formulas with presentation formatting.
   padding, 100 px columns) are typing defaults. A tab meant to be read gets
   taller rows (roughly 26-30 px), more side padding, columns with a real
   gutter beyond the widest value, a blank row between blocks, and a title
-  row taller than the body. Uniform row height throughout the body; the
-  header row the same height as data. If a tab feels tight, it is: fix the
+  row taller than the body. Uniform row height throughout the body; header
+  and spanner rows as tall as their wrapped content needs, no taller. If a tab feels tight, it is: fix the
   room before adding rules or fills (`Butterick`, `Material`/`Carbon`
   density guidance, `Adobe` table study on padding).
-- Keep tables to about 7-10 data columns; split, transpose or move detail to
-  another tab beyond that (`Schwabish`, `Few`).
+- A comparison table that a person reads whole holds about 7-10 data
+  columns; beyond that, ask whether the reader compares across all of them
+  (a time axis, a version series: keep it wide and scroll) or only within
+  a few (split, transpose, or move detail to another tab) (`Schwabish`,
+  `Few`).
 - Derived columns sit immediately right of the columns they come from;
   compared columns sit adjacent; order left to right: identifier, primary
   measure, comparison or delta, supporting measures, notes (`Few` J2).
-- No blank spacer rows or columns inside a table; separate stacked tables
-  with one blank row and a section heading (`UKGAF`, `FAST` 4.02, `Few` I5).
+- No blank spacer rows inside a table and no blank columns inside a group;
+  separate stacked tables with one blank row and a section heading, and
+  column groups with the narrow seam above (`UKGAF`, `FAST` 4.02,
+  `Few` I5). Spacer rows inherited from an old layout are relics: remove
+  them once you know nothing reads their addresses.
 - Order rows by meaning (rank, size, time, tier), not alphabetically by
   default; most important row first (`Few` J1, `Schwabish`).
 
 ## 7. Numbers, dates and missing values
 
-- **One number format per column** (or per block in a label/value table).
+- **One number format per type axis**: per column in an ordinary table, per row in a transposed one, per block in a label/value table.
   Same decimals for every value of a type. Default precision: counts and
   money at scale 0 decimals; percentages, multiples and indices 1 decimal;
   per-share or unit prices 2; factors 4. Too many decimals is ICAEW's "most
@@ -451,10 +599,30 @@ formulas. Outputs are formulas with presentation formatting.
   format so signs and zero display are deliberate (`Schwabish`, `WSP`,
   `Few` D7). Show zero as `0` (or the finance dash `–` in a financial
   schedule); never show `0` for unknown.
-- **Missing values**: decide one code and use it everywhere; `n/a` or `—`
-  for not measured, `0` only for a true zero, a visible empty-state line for
-  a block with no data yet, never a blank data cell that means "unknown",
-  never sentinel numbers (`Few` I1-I4, `UKGAF` shorthand convention).
+- **Missing values**: unknown, not applicable, not yet mature and true zero
+  are different facts. Decide one display mark for "no value" (`—` or
+  `n/a`) and apply it through number formats or the presentation formula,
+  so the underlying cell keeps its meaning: a blank that a formula tests, a
+  future destination a sync script will fill, or an inapplicable
+  intersection must not be overwritten with text that breaks arithmetic or
+  the writer. `0` only for a true zero; never sentinel numbers; a visible
+  empty-state line for a block with no data yet (`Few` I1-I4, `UKGAF`).
+- **Composite evidence strings** (`0.9% (6/677)`, `2.1 (59/28)`) hold two
+  facts: the reported measure and its evidence. Separate them so the
+  measure gets a numeric format and the evidence stays visible on the axis
+  that keeps it with its measure (a muted evidence sub-row under each
+  measure row in a wide version table; a paired column in a narrow one; a
+  note only when it is rarely consulted). Keep qualifiers such as to-date,
+  lower-bound or excluded beside the evidence. Keep the reported measure as
+  the observation; do not recompute it from the rounded evidence.
+- **Source-owned blanks.** Separate the missing state from its display.
+  Where a presentation formula or format already owns the cell, render the
+  workbook's mark there. Where a synced observation is genuinely blank and
+  no such layer exists, leave the blank and explain its meaning once (a
+  header note, a maturity row, a key); do not invent a source table solely
+  to draw a dash, and do not let an alert replace a value that exists. Keep
+  zero, undefined (n = 0), unavailable and immature recoverable beside the
+  measure.
 - **Dates**: store real dates, display ISO `yyyy-mm-dd` on data tabs and a
   short unambiguous form (`Sep 2026`, `2026-09`, `Q3 2026`) on summaries;
   four-digit years, never locale slash dates. Generate period headers with
@@ -463,8 +631,9 @@ formulas. Outputs are formulas with presentation formatting.
 - **Percentages** stored as fractions and displayed with `%`; 0-1 decimals;
   share-of-total columns sum to 100 percent with the total shown (`Few` D9).
 - **Multiples** carry `x` via format (`0.0"x"`), never typed text.
-- **Currency symbol** on the first row of a schedule or in the header only,
-  not every cell (`BIWS`, `Schwabish`).
+- **Currency symbol** in a financial schedule: first row or header only,
+  not every cell (`BIWS`, `Schwabish`); in a mixed-measure table, a money
+  format on the money rows is what tells them apart.
 - **Sign convention** chosen once, written in the key, applied everywhere;
   label rows where direction could be misread (`ICAEW`, `WSP`, `FAST`).
 
@@ -569,8 +738,9 @@ formulas. Outputs are formulas with presentation formatting.
   `IF` from a threshold input keeps the words true when the numbers move;
   keep the sentence under about 75 characters.
 - **Hyperlinks** to other tabs use `=HYPERLINK("#gid=<sheetId>","Label")`
-  with a short label; navigation links live in the Read Me tab map or a
-  muted link cell in the title row, not in data rows.
+  with a short label; workbook navigation lives in the Read Me tab map or a
+  muted link cell in the header area; a `Details →` link on a record or
+  metric row is not navigation, it is that row's keyed detail.
 
 ## 10. Consistency across tabs
 
@@ -597,22 +767,60 @@ Assume the sheet contains errors until tested: lab cell error rates average
 least one error (`Panko` 2015). Formatting conventions raise detection, they
 do not prevent errors. So verify twice: the format, and the logic.
 
-**Look at it first.** Export the tab to PDF (or screenshot it) and read
+**Preserve the reference contract while you rebuild.** A tab is read by
+other tabs, by hyperlinks, by cell notes and often by a sync script that
+writes to fixed addresses. Before moving or replacing cells: keep a baseline
+(the copy you are working on, plus a saved grid dump that includes the
+state controlling visibility and addressing: hidden or grouped rows and
+columns, filters, merges, named ranges, protected ranges), find out who
+reads and writes the addresses you will move, prefer native row and column moves
+(`moveDimension`) over clear-and-rewrite so references follow, and expand
+the grid before writing formulas that point beyond it (a reference written
+past `rowCount` and then shifted by the expansion silently points at the
+wrong row). Verify the dependency surface: every formula on the tab and on
+tabs that reference it evaluates without error, and every original output
+still matches, not just two or three attractive ones. Separate pre-existing
+errors and deliberate presentation changes from introduced changes.
+Formatting success and calculation success need different evidence, and a
+value present in the API is not yet evidence that a reader can find it: a
+column that inherited `hiddenByUser`, a collapsed group or a filter hides a
+perfectly formatted, perfectly preserved field.
+
+**Look at it first.** Open the tab in the browser (BrowserOS: one
+background tab on the sheet URL with its `gid`, then `screenshot`) and read
 it as a stranger at laptop width: is anything cut off, spilling, repeated,
 loud, or cramped? Does the first screen show the title, the inputs and a
 table with a header? Could you say what each column is without the label
 column? A sheet that has not been looked at has not been formatted; the
 API cannot see clipping, collisions between overflowing strings, or a row
-that reads as a paragraph.
+that reads as a paragraph. Know what you captured: BrowserOS's screenshot
+size option scales the image, it does not narrow the viewport, so measure
+the real viewport (`evaluate` `window.innerWidth`) and say what width the
+proof represents; typing an address in the name box selects but does not
+scroll frozen panes; a selected cell with a note shows a tooltip over the
+grid. Scroll to representative positions on wide or tall tabs and inspect
+each image yourself. Bind every proof to the state actually captured:
+record the measured layout viewport for each final view, distinguish image
+pixels from CSS pixels, and confirm the capture includes the intended
+extent. After a navigation or scroll, judge the identity and content
+visible in the image rather than trusting the range you requested; Sheets
+sometimes re-scrolls to the selection, and a shared browser's zoom can
+change under you. These are tool-agnostic duties; the BrowserOS mechanics
+live in the recipes.
 
 **Format readback (after every batch of changes)**
-- Read the grid back with the API (`includeGridData`) and check, per tab:
-  frozen rows ≤ 2 and frozen columns ≤ 1; no merges; A1 non-empty; one
-  header row; every numeric column right-aligned with one number format;
+- Read the grid back with the API (`includeGridData`, including
+  `effectiveValue` so error values and numeric results are visible) and
+  check, per tab: frozen rows cover only the identification area (spanner
+  plus header at most) and frozen columns ≤ 1; merges only in a spanner
+  row; A1 non-empty; one header row;
+  every numeric cell right-aligned, one number format per type axis
+  (the column, or the row in a transposed table);
   every text cell ≤ ~90 characters or in a Notes column; no cell with
-  `wrapStrategy: CLIP`; no row taller than the title row except a two-line
-  wrapped Notes cell; every hard-coded numeric cell outside the inputs block
-  flagged; every input cell carrying the input style; colour pairs at 4.5:1.
+  `wrapStrategy: CLIP`; body rows uniform within a table, header and
+  spanner rows as tall as their wrapped content needs and no taller; every literal number classified (observation shown as
+  data, assumption in the input style, nothing derived left typed); colour
+  pairs at 4.5:1.
 - Fit: for every text cell whose right neighbour is non-empty, compare the
   string's rendered width with the column width (about 6-7 px per character
   at 10 pt for Inter or Arial; use it to find suspects, then look). Flag
@@ -620,21 +828,27 @@ that reads as a paragraph.
   column, and any `formattedValue` over about 90 characters outside a
   Notes column.
 - Signal budget: count filled and bold cells; if a whole column, row or
-  block carries a state fill, or the same text repeats down a column, the
-  signal has become wallpaper.
-- Search formulas for embedded constants: any digit sequence in a formula
-  that is not a row/column reference, 0, 1, 12, 24, 100 or 1000 is a
-  finding.
-- Screenshot or PDF-export the tab and look at it at laptop width: does the
-  first screen show the title, the inputs and the first table? Is anything
-  clipped? Are the fonts rendering (a bogus font name is stored silently and
-  renders as a fallback)?
+  block carries a state fill, or the same caveat or decoration is restated
+  in every row of one record's block, the signal has become wallpaper. The
+  same status value across many records is data, not wallpaper.
+- Search formulas for embedded constants: a digit sequence that is not a
+  reference is a candidate; read the formula and decide whether it is an
+  assumption (extract it) or syntax (leave it). Do not turn precision
+  arguments, offsets, unit conversions or link ids into "inputs".
+- The browser screenshot is the artifact: does the first screen show the
+  title, the inputs and the first table? Is anything clipped? Are the fonts
+  rendering (a bogus font name is stored silently and renders as a
+  fallback)? Export to PDF only when the sheet will be printed or shared as
+  a PDF.
 
 **Logic tests (before calling the numbers right)**
-- Predict, change one input, compare. Set all inputs to zero and confirm
-  outputs go to zero. Push a lever to its validation bounds. Extreme and
-  impossible inputs should produce visible check failures, not silent
-  numbers (`Panko`, `ICAEW` P17-P19).
+- Predict, change one assumption, compare against the result you
+  predicted for this model; push a lever to its validation bounds; extreme
+  and impossible inputs should produce visible check failures, not silent
+  numbers. These are model tests for the model's owner; a formatting pass
+  proves preservation (every original output unchanged), not model
+  behaviour, and never alters live assumptions to run a test
+  (`Panko`, `ICAEW` P17-P19).
 - Every check row reads `OK`; the master check reads `OK`.
 - Cell-by-cell inspection of every unique formula; for anything important,
   a second independent reader. Self-review catches about half of errors;
@@ -643,8 +857,10 @@ that reads as a paragraph.
   requirement, not only against itself.
 
 **Defect severity for audit reports**
-- P0: hidden inputs (constants in formulas, typed totals, levers as text);
-  merged cells in a data range; clipped text; colour-only meaning.
+- P0: hidden assumptions (constants in formulas, typed derived totals,
+  several levers packed into one string); observations painted as levers or relocated to fake
+  inputs; merged cells in a data range; clipped text; colour-only meaning;
+  a broken reference or changed output after the restyle.
 - P1: frozen title block; paragraphs in cells; inconsistent number formats
   or alignment within a column; no inputs style or key; missing header rule;
   cross-sheet arithmetic.
@@ -751,5 +967,33 @@ across).**
   was styled as a header. Lesson: one title row; header styling belongs to
   the row that names the columns and nowhere else.
 
-What would have caught all of it: exporting the tab and reading it once as
-a stranger before reporting done.
+What would have caught all of it: opening the tab in the browser and
+reading it once as a stranger before reporting done.
+
+**Case C: the first lab round (four tabs by a careful agent).** The
+results were far better, and the agent's critique exposed contradictions
+in the skill itself, all fixed above: the matrix template froze three rows
+while the law allowed two (frozen rows are a prefix, so identity goes in
+the corner cell); "hard-code only inputs" gave imported observations no
+home, so 3,914 synced facts were relocated to a fake inputs table and
+linked back (ownership now decides); evidence strings such as `0.9%
+(6/677)` had no recipe (separate measure from evidence, never recompute
+the measure); every cell got a provenance note, which reads as texture
+(provenance once, on the owner); old spacer rows were preserved as if they
+were data (relics leave once their absence is understood); and a group
+column was dropped from a scorecard to make room (a group is information:
+make it a section row, not a casualty).
+
+**Case D: the second lab round (eight tabs, revised skill).** Results now
+read cleanly at 1366 px: centred two-level headings on the transposed
+comparison, one `Current · absent` status instead of eighteen red cells,
+group section rows and a muted evidence sub-row per measure on the
+scorecard, an inputs tab whose `Basis · caveat` column tells observed from
+policy from modelled, a tracker with one item per row and hidden columns
+brought back. The agent's remaining findings were about the skill's
+consistency and its blind spots, all folded in above: keep one layout
+contract across laws, templates, recipes and readback; ownership is not
+dependency, and trackers are authored records; choose the comparison unit
+before widths or evidence placement; inspect visibility state, not just
+values; give source-owned blanks a presentation contract instead of a
+rule; bind visual proof to the captured viewport.

@@ -42,11 +42,16 @@ Gotchas that cost time:
 
 ```json
 {"spreadsheetId": "ID", "ranges": ["'Tab'!A1:N60"], "includeGridData": true,
- "fields": "sheets(properties,merges,bandedRanges,conditionalFormats,protectedRanges,data(rowData(values(userEnteredValue,formattedValue,effectiveFormat,note,hyperlink)),rowMetadata,columnMetadata))"}
+ "fields": "namedRanges,sheets(properties,merges,bandedRanges,conditionalFormats,protectedRanges,basicFilter,filterViews,rowGroups,columnGroups,data(rowData(values(userEnteredValue,effectiveValue,formattedValue,effectiveFormat,note,hyperlink)),rowMetadata(pixelSize,hiddenByUser,hiddenByFilter),columnMetadata(pixelSize,hiddenByUser,hiddenByFilter)))"}
 ```
-Then list: frozen rows/cols, merges, per-cell `formulaValue` (search for
-digits not in references), `formattedValue` length, `effectiveFormat`
-(alignment, wrap, numberFormat, fonts, fills), column `pixelSize`.
+Then list: frozen rows/cols, merges, hidden or grouped rows and columns,
+filters, per-cell `formulaValue` (search for digits not in references),
+`formattedValue` length, `effectiveFormat` (alignment, wrap, numberFormat,
+fonts, fills), column `pixelSize`. Hidden dimensions are part of the
+reading surface: a preserved, formatted column the reader cannot see is a
+failed deliverable. Unhide with `updateDimensionProperties`
+`{"hiddenByUser": false}` and `fields: "hiddenByUser"` when the field is
+meant to be read.
 
 ## Sheet properties: freeze, gridlines, tab colour (verified)
 
@@ -56,6 +61,18 @@ digits not in references), `formattedValue` length, `effectiveFormat`
    "tabColorStyle": {"rgbColor": {"red": 0.094, "green": 0.11, "blue": 0.145}}},
   "fields": "gridProperties(frozenRowCount,frozenColumnCount,hideGridlines),tabColorStyle"}}
 ```
+
+## Move rows or columns so references follow
+
+```json
+{"moveDimension": {"source": {"sheetId": SHEET_ID, "dimension": "ROWS", "startIndex": 5, "endIndex": 6}, "destinationIndex": 0}}
+{"updateSheetProperties": {"properties": {"sheetId": SHEET_ID, "gridProperties": {"rowCount": 120, "columnCount": 60}}, "fields": "gridProperties(rowCount,columnCount)"}}
+```
+`moveDimension` keeps every formula, note and hyperlink pointing at the
+moved cells; clear-and-rewrite does not. Set `rowCount`/`columnCount`
+before writing anything that references cells beyond the current grid: a
+reference written past the edge and then shifted by the expansion points
+at the wrong row.
 
 ## Unmerge and clear a range before rebuilding
 
@@ -77,7 +94,26 @@ Clear values with `values.clear` or an `updateCells` with `fields: "userEnteredV
   "fields": "userEnteredFormat(textFormat,verticalAlignment,wrapStrategy,backgroundColorStyle)"}}
 ```
 
-## Title row (row 1): band, font, height, cyan rule
+## Scrolling table: the identification prefix (spanner + header from row 1)
+
+```json
+{"updateCells": {"range": {"sheetId": SHEET_ID, "startRowIndex": 0, "endRowIndex": 1, "startColumnIndex": 0, "endColumnIndex": 1},
+  "rows": [{"values": [{"userEnteredValue": {"stringValue": "Channel performance · tier-1"}, "userEnteredFormat": {"textFormat": {"bold": true}}}]}],
+  "fields": "userEnteredValue,userEnteredFormat.textFormat.bold"}}
+{"mergeCells": {"range": {"sheetId": SHEET_ID, "startRowIndex": 0, "endRowIndex": 1, "startColumnIndex": 1, "endColumnIndex": 7}, "mergeType": "MERGE_ALL"}}
+{"repeatCell": {"range": {"sheetId": SHEET_ID, "startRowIndex": 0, "endRowIndex": 1, "startColumnIndex": 1, "endColumnIndex": 7},
+  "cell": {"userEnteredFormat": {"horizontalAlignment": "CENTER", "textFormat": {"bold": true}}}, "fields": "userEnteredFormat(horizontalAlignment,textFormat.bold)"}}
+{"updateSheetProperties": {"properties": {"sheetId": SHEET_ID, "gridProperties": {"frozenRowCount": 2, "frozenColumnCount": 1}}, "fields": "gridProperties(frozenRowCount,frozenColumnCount)"}}
+```
+Row 1 is the spanner row with the tab identity in A1 and one merged
+label per group (centred when the group fits the screen, at its leading
+edge when it does not); row 2 is the column-header row (style it with the
+header recipe below at `startRowIndex: 1`); freeze through row 2. A table
+without groups puts the identity in A1 of the header row and freezes one
+row. Nothing else goes above the header: refresh date, source and links go
+to the Read Me or a note on A1.
+
+## Title row (row 1) on a non-scrolling tab: band, font, height, cyan rule
 
 ```json
 {"repeatCell": {"range": {"sheetId": SHEET_ID, "startRowIndex": 0, "endRowIndex": 1, "startColumnIndex": 0, "endColumnIndex": 14},
@@ -95,20 +131,26 @@ The muted "as of" cell at the right end of row 1 gets a smaller size (9 pt),
 
 ## Spanner (group header) row: the one sanctioned merge
 
+The scrolling-table recipe above already shows the spanner at row 1 with
+the identity in A1 and the freeze through the header. The same merge
+serves a local, unfrozen block inside a stacked dashboard: put the spanner
+directly above that block's own header row and freeze nothing.
+
 ```json
-{"mergeCells": {"range": {"sheetId": SHEET_ID, "startRowIndex": 1, "endRowIndex": 2, "startColumnIndex": 1, "endColumnIndex": 7}, "mergeType": "MERGE_ALL"}}
-{"repeatCell": {"range": {"sheetId": SHEET_ID, "startRowIndex": 1, "endRowIndex": 2, "startColumnIndex": 1, "endColumnIndex": 7},
+{"mergeCells": {"range": {"sheetId": SHEET_ID, "startRowIndex": 18, "endRowIndex": 19, "startColumnIndex": 2, "endColumnIndex": 4}, "mergeType": "MERGE_ALL"}}
+{"repeatCell": {"range": {"sheetId": SHEET_ID, "startRowIndex": 18, "endRowIndex": 19, "startColumnIndex": 2, "endColumnIndex": 6},
   "cell": {"userEnteredFormat": {"horizontalAlignment": "CENTER", "textFormat": {"bold": true}}},
   "fields": "userEnteredFormat(horizontalAlignment,textFormat.bold)"}}
-{"updateBorders": {"range": {"sheetId": SHEET_ID, "startRowIndex": 1, "endRowIndex": 2, "startColumnIndex": 1, "endColumnIndex": 7},
+{"updateBorders": {"range": {"sheetId": SHEET_ID, "startRowIndex": 18, "endRowIndex": 19, "startColumnIndex": 2, "endColumnIndex": 4},
   "bottom": {"style": "SOLID", "colorStyle": {"rgbColor": {"red": 0.467, "green": 0.522, "blue": 0.651}}}}}
 {"updateDimensionProperties": {"range": {"sheetId": SHEET_ID, "dimension": "COLUMNS", "startIndex": 7, "endIndex": 8}, "properties": {"pixelSize": 12}, "fields": "pixelSize"}}
 ```
-One merge per group, in the spanner row only, directly above the column
-header row; the column header row itself stays unmerged. The last request
-is the 12 px seam column between groups (alternative: a `left` border on
-the first column of each group). Freeze through the column header row
-(`frozenRowCount` = spanner row index + 2 when the title is row 1).
+One merge per group, in a spanner row only; the column header row stays
+unmerged. Centre the label when the group fits the screen; for a group
+wider than the viewport use `"horizontalAlignment": "LEFT"` so the label
+sits at the group's leading edge, and name the group in the frozen corner
+cell too. The last request is the 12 px seam column between groups
+(alternative: a `left` border on the first column of each group).
 
 ## Section heading row
 
@@ -120,7 +162,7 @@ the first column of each group). Freeze through the column header row
   "bottom": {"style": "SOLID", "colorStyle": {"rgbColor": {"red": 0.804, "green": 0.831, "blue": 0.878}}}}}
 ```
 
-## Column header row (verified shape)
+## Column header row (verified shape; `startRowIndex` is wherever the header row is)
 
 ```json
 {"repeatCell": {"range": {"sheetId": SHEET_ID, "startRowIndex": 5, "endRowIndex": 6, "startColumnIndex": 0, "endColumnIndex": 7},
@@ -256,12 +298,25 @@ Rules evaluate in index order; first true wins. Keep ranges bounded.
 
 ## Look, then read back
 
-First export the file to PDF (`gws drive files export` with
-`mimeType: application/pdf`, `--output` inside the current directory), find
-the tab's page with `pdftotext`, render it with `pdftoppm -r 170` and look
-at the image. That is the only step that sees clipping, collisions between
-overflowing strings, wallpaper colour, and cramped rows. Then fetch the
-grid and check:
+Look the way the reader looks: in the browser. Apply the installed
+`$browseros` skill contract, then open one background tab on
+`https://docs.google.com/spreadsheets/d/<id>/edit?gid=<sheetId>#gid=<sheetId>`
+(`tabs` action `new`, `hidden=false`, `background=true`), `wait` for the
+title text, `screenshot` the page, save the image, and `close` the tab when
+the round is over. Scroll (`act` or `evaluate`) and screenshot again for
+tabs taller or wider than a screen. The screenshot `size` option scales
+the image; it does not change the viewport. Measure the viewport with
+`evaluate` (`window.innerWidth`) and state what width the proof
+represents. Typing an address in the name box selects a cell but does not
+scroll frozen panes; a selected cell with a note shows its tooltip over the
+grid, so select a plain cell before capturing. That is the only view that shows
+clipping, collisions between overflowing strings, wallpaper colour, real
+fonts and cramped rows the way a person sees them. PDF export
+(`gws drive files export`, `mimeType: application/pdf`) is a print check;
+large workbooks refuse it (`This file is too large to be exported`) and it
+does not show frozen panes or on-screen widths.
+
+Then fetch the grid and check:
 
 - `frozenRowCount` covers only header rows (spanner + header at most),
   `frozenColumnCount <= 1`; `merges` only in a spanner row; A1 non-empty.
@@ -272,14 +327,24 @@ grid and check:
   `formattedValue` over about 90 characters outside a Notes column are
   findings.
 - Every cell with an `effectiveValue.numberValue` is right-aligned with a
-  `numberFormat`; one format per type axis; no `wrapStrategy: CLIP`.
+  `numberFormat`; one format per type axis (column, or row in a transposed
+  table); no `wrapStrategy: CLIP`.
 - Signal budget: count cells with a non-white fill and cells with bold; a
-  filled or bold column, row or block, or the same text repeated down a
-  column, means the state is wallpaper.
-- Every formula free of embedded constants except 0/1/12/24/100/1000 and a
-  ROUND precision digit; every typed number outside raw-data tabs carries
-  the input style.
-- Empty cells inside a numeric block: none (they show `—` or `n/a`).
+  filled or bold column, row or block, or one record's caveat restated in
+  every row, means the state is wallpaper. The same status across many
+  records in a tracker is data.
+- Every formula read for hidden assumptions: a digit that is not a
+  reference is a candidate, its purpose decides (unit conversion, 0/1,
+  precision, offset and link ids are syntax). Every literal number has an
+  owner: observations plain with a named source, assumptions in the input
+  style, nothing derived left typed.
+- Every original output matches the saved dump and no formula on or around
+  the tab has acquired a new error (`effectiveValue.errorValue`);
+  pre-existing errors are reported separately, not repaired by a
+  formatting pass.
+- Blanks inside a numeric block show the workbook's "no value" mark through
+  a format or presentation formula; source-owned blanks that formulas test
+  or a sync writer fills are left as they are.
 - Fonts and colours as intended (the API does not validate font names).
 
-Fix, re-export, look again.
+Fix, screenshot again, look again.
