@@ -93,6 +93,23 @@ The muted "as of" cell at the right end of row 1 gets a smaller size (9 pt),
 `horizontalAlignment: RIGHT`, and a formula such as
 `="Refreshed "&TEXT(Inputs!B3,"yyyy-mm-dd")&" · source "&Inputs!B4`.
 
+## Spanner (group header) row: the one sanctioned merge
+
+```json
+{"mergeCells": {"range": {"sheetId": SHEET_ID, "startRowIndex": 1, "endRowIndex": 2, "startColumnIndex": 1, "endColumnIndex": 7}, "mergeType": "MERGE_ALL"}}
+{"repeatCell": {"range": {"sheetId": SHEET_ID, "startRowIndex": 1, "endRowIndex": 2, "startColumnIndex": 1, "endColumnIndex": 7},
+  "cell": {"userEnteredFormat": {"horizontalAlignment": "CENTER", "textFormat": {"bold": true}}},
+  "fields": "userEnteredFormat(horizontalAlignment,textFormat.bold)"}}
+{"updateBorders": {"range": {"sheetId": SHEET_ID, "startRowIndex": 1, "endRowIndex": 2, "startColumnIndex": 1, "endColumnIndex": 7},
+  "bottom": {"style": "SOLID", "colorStyle": {"rgbColor": {"red": 0.467, "green": 0.522, "blue": 0.651}}}}}
+{"updateDimensionProperties": {"range": {"sheetId": SHEET_ID, "dimension": "COLUMNS", "startIndex": 7, "endIndex": 8}, "properties": {"pixelSize": 12}, "fields": "pixelSize"}}
+```
+One merge per group, in the spanner row only, directly above the column
+header row; the column header row itself stays unmerged. The last request
+is the 12 px seam column between groups (alternative: a `left` border on
+the first column of each group). Freeze through the column header row
+(`frozenRowCount` = spanner row index + 2 when the title is row 1).
+
 ## Section heading row
 
 ```json
@@ -228,12 +245,41 @@ Rules evaluate in index order; first true wins. Keep ranges bounded.
   "range": {"sheetId": SHEET_ID, "startRowIndex": 4, "endRowIndex": 5, "startColumnIndex": 1, "endColumnIndex": 2}}}}
 ```
 
-## Readback checklist after applying
+## Room: row height and padding for a tab that is read
 
-Fetch the grid again and assert: `frozenRowCount <= 2`, `frozenColumnCount
-<= 1`, `merges` empty, A1 non-empty, every numeric cell
-`horizontalAlignment: RIGHT` with a `numberFormat`, no `wrapStrategy: CLIP`,
-no `formattedValue` over 90 characters outside a Notes column, every
-formula free of embedded constants except 0/1/12/24/100/1000, every input
-cell carrying the input fill, column widths within the house ranges, fonts
-as intended. Then export or screenshot one tab at laptop width.
+```json
+{"updateDimensionProperties": {"range": {"sheetId": SHEET_ID, "dimension": "ROWS", "startIndex": 1, "endIndex": 60}, "properties": {"pixelSize": 28}, "fields": "pixelSize"}}
+{"repeatCell": {"range": {"sheetId": SHEET_ID, "startRowIndex": 0, "endRowIndex": 60, "startColumnIndex": 0, "endColumnIndex": 14},
+  "cell": {"userEnteredFormat": {"padding": {"top": 4, "right": 8, "bottom": 4, "left": 8}, "verticalAlignment": "MIDDLE"}},
+  "fields": "userEnteredFormat(padding,verticalAlignment)"}}
+```
+
+## Look, then read back
+
+First export the file to PDF (`gws drive files export` with
+`mimeType: application/pdf`, `--output` inside the current directory), find
+the tab's page with `pdftotext`, render it with `pdftoppm -r 170` and look
+at the image. That is the only step that sees clipping, collisions between
+overflowing strings, wallpaper colour, and cramped rows. Then fetch the
+grid and check:
+
+- `frozenRowCount` covers only header rows (spanner + header at most),
+  `frozenColumnCount <= 1`; `merges` only in a spanner row; A1 non-empty.
+- Fit: for each text cell whose right neighbour is non-empty, estimate the
+  rendered width (roughly 6-7 px per character at 10 pt Inter/Arial, plus
+  padding) against `columnMetadata[].pixelSize`; every hit is a cell to
+  look at on the render. Labels running past the label column and any
+  `formattedValue` over about 90 characters outside a Notes column are
+  findings.
+- Every cell with an `effectiveValue.numberValue` is right-aligned with a
+  `numberFormat`; one format per type axis; no `wrapStrategy: CLIP`.
+- Signal budget: count cells with a non-white fill and cells with bold; a
+  filled or bold column, row or block, or the same text repeated down a
+  column, means the state is wallpaper.
+- Every formula free of embedded constants except 0/1/12/24/100/1000 and a
+  ROUND precision digit; every typed number outside raw-data tabs carries
+  the input style.
+- Empty cells inside a numeric block: none (they show `—` or `n/a`).
+- Fonts and colours as intended (the API does not validate font names).
+
+Fix, re-export, look again.

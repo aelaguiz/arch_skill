@@ -2,7 +2,10 @@
 
 This is the one style an agent applies unless the user names another. It
 implements `formatting-guide.md`; when the two disagree, the guide wins.
-Numbers are Google Sheets pixels and points. Apply every value by range with
+Numbers are Google Sheets pixels and points; they are starting points that
+looked right on a laptop, not gates. Adjust them to the content in front of
+you (widths to the longest real label or value, row height to how dense the
+tab is), then look at the render. Apply every value by range with
 `repeatCell`, never cell by cell by hand.
 
 ## Neutral default (any workbook)
@@ -11,21 +14,23 @@ Numbers are Google Sheets pixels and points. Apply every value by range with
 |---|---|
 | Font | One family for the workbook: Arial or Inter (both have tabular figures). Body 10 pt. Title 14 pt bold. Section heading 10 pt bold. |
 | Ink | Near-black `#202124` on white. Muted metadata `#5F6368`. |
-| Title row (row 1) | Tab title in A1, bold 14 pt, height 30 px, left-aligned, `OVERFLOW_CELL`, no merge. Data-as-of and source in a muted cell at the right end of row 1, driven by a formula. |
-| Column header row | Bold, sentence case, unit in brackets, fill `#F1F3F4`, bottom border `SOLID` `#9AA0A6`, `WRAP`, `verticalAlignment: MIDDLE`, height = body height. Text headers left, numeric headers right. |
+| Title row (row 1) | Tab title in A1, bold 14 pt, height about 36 px, left-aligned, `OVERFLOW_CELL`, no merge. Data-as-of and source in a muted cell at the right end of row 1, driven by a formula. No description rows under it; that text is Read Me or a note on A1. |
+| Column header row | Bold, sentence case, unit in brackets, fill `#F1F3F4`, bottom border `SOLID` `#9AA0A6`, `WRAP`, `verticalAlignment: MIDDLE`, height = body height. Text headers left, numeric headers right. Header styling goes on this row only, never on a data row. |
+| Spanner (group header) row | Only when columns come in groups. Its own row directly above the column headers; each group label horizontally merged across its group and centred, bold, bottom rule spanning exactly the group. A seam between groups: a 12 px spacer column or a left rule on the first column of each group. |
 | Section heading | Bold 10 pt ink, one blank row above, bottom border `SOLID` `#DADCE0`, nothing else on the row. |
-| Body rows | Height 21-24 px, `verticalAlignment: TOP` where any wrap exists else default, padding default. No fills. |
+| Body rows | Height about 26-30 px on a tab meant to be read (Sheets' 21 px default is a typing height), uniform; padding `{4, 8, 4, 8}`; `verticalAlignment: MIDDLE` (`TOP` where a Notes column wraps). No fills. One blank row between blocks. |
 | Row rules | Horizontal hairline `SOLID` `#DADCE0` under each body row in tables of 6+ rows; none in short label/value blocks. No vertical borders, ever. |
 | Banding | Only tables wider than 7 columns or longer than a screen: second band `#F8F9FA`. Never together with per-cell fills. |
 | Totals | Bold, top border `SOLID` `#5F6368`, label `Total`. |
 | Inputs and levers | Font `#0000FF`, fill `#FFF2CC`, border `SOLID` `#DADCE0`, number format by type, data validation with a help message. |
 | Cross-tab links | Font `#326405`. |
+| Synced / machine-written data | Plain ink, no fill; the header or key says `Synced from <system>, refreshed <cell>`; protect the range if editors might type over it. Never yellow or red. |
 | Formulas | Ink, no fill. |
 | Check / status OK | Text `OK` in `#0F4316` on `#DEF7E1`; shown only for check rows. |
-| Check / status alert | Text (`CHECK`, `Far below need`) in `#691811` on `#F9DEDC` via conditional format; one alert level unless two are truly needed (`#863F09` on `#FBDDC5` for warning). |
+| Check / status alert | Text (`CHECK`, `Far below need`) in `#691811` on `#F9DEDC` via conditional format; one alert level unless two are truly needed (`#863F09` on `#FBDDC5` for warning). Shown once per entity in a status row or column; the cells it explains show `—`. |
 | Numbers | Right-aligned. `#,##0` counts; `#,##0;(#,##0);"–"` finance schedules; `0.0%` percentages; `0.00"x"` multiples; `#,##0.0` one-decimal quantities; `$#,##0` money; `yyyy-mm-dd` dates on data tabs, `mmm yyyy` month headers on summaries. |
-| Text | Left-aligned, sentence case, ≤ 90 characters, `OVERFLOW_CELL` beside values (neighbours empty), `WRAP` only in a Notes column. Never `CLIP`. |
-| Column widths | Label 240-300 px; numeric 100-130 px, all period columns equal; date 100 px; short code 70 px; Notes 360-480 px. |
+| Text | Left-aligned, sentence case, fits its column; short notes (under about 90 characters) may `OVERFLOW_CELL` into empty neighbours; `WRAP` only in a Notes column. IDs and codes are text, left, shortened for display with the full value in a note. Never `CLIP`. |
+| Column widths | Decided against the longest real content plus a gutter: label 240-320 px (shorten the label before going wider); numeric 100-140 px, all period columns equal; date 100 px; short code 70 px; text-value columns in comparison tables as wide as their longest kept value; Notes 360-480 px. |
 | Freeze | Header row only (2 if a group header exists) plus the label column on wide tables; nothing on one-screen or multi-table tabs. |
 | Gridlines | Hidden on presentation tabs; shown on raw data tabs. |
 | Tab colours | Read Me grey; Inputs blue; Summary/Output dark; raw data light grey; calculation tabs uncoloured. |
@@ -40,6 +45,13 @@ Contrast on white (WCAG AA needs 4.5:1 text, 3:1 bold 14 pt+ and marks):
 **Single-table detail tab** (rows scroll):
 row 1 title; row 2 column headers (frozen, with column A frozen when wide);
 rows 3+ data; blank row; `Total` row; blank row; source line, muted.
+
+**Comparison or matrix tab** (attributes down, entities across; or repeated
+column groups such as channel × cohort): row 1 title; row 2 spanner row
+(merged, centred group labels) when columns are grouped; row 3 column
+headers; frozen through the header row plus the label column; type and
+format by row for attribute tables; a status row shown once; seams between
+groups; the newest or most important group first.
 
 **Small model or dashboard tab** (fits one to two screens, stacked blocks):
 row 1 title; blank; `Inputs and levers` heading and block (label | value |

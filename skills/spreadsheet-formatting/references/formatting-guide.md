@@ -20,6 +20,7 @@ verified live in 2026-09).
 
 ## Table of contents
 
+0. How to think about a sheet (read this first)
 1. The ten laws
 2. Screen budget: freeze panes and the title block
 3. Workbook architecture: tabs, order, names, Read Me
@@ -32,6 +33,52 @@ verified live in 2026-09).
 10. Consistency across tabs
 11. Verification: how to prove the sheet is right
 12. Evidence and resolved disagreements
+13. Field lessons: what went wrong the first time agents used this
+
+## 0. How to think about a sheet
+
+Rules below are consequences of a few facts about how a person reads a
+grid. When a situation is not covered by a rule, reason from these.
+
+- **A cell is a window, not a container.** The reader sees only what fits
+  in the column at the current width. Text that does not fit is either cut
+  off (clip) or spilled across the row (overflow); both break the reader's
+  model that one cell holds one thing. So either the content fits the
+  window, or it is not cell content: it belongs in a wider column, a Notes
+  column, a cell note, or the Read Me. Widths, lengths and wrap are one
+  decision, made together, and confirmed by looking at the rendered sheet.
+- **A row is a record, a column is a type.** The eye scans down a column
+  expecting the same kind of thing at the same alignment and precision, and
+  across a row expecting the same entity. Anything that violates that
+  (numbers in a text column, prose in a data row, a label spilling into the
+  first value column, a section explanation sitting where values sit) costs
+  the reader a re-read. When a table is transposed (attributes down,
+  entities across), the type lives in the row; align and format by row.
+- **Structure is shown by position and space before ink.** Headers, groups
+  and sections are understood from where they sit and the room around them;
+  rules, fills and bold are second-order cues. Add ink only when space and
+  position have failed. This is why full grids, vertical rules, dark
+  header fills and bold data cells make a sheet feel loud and cramped.
+- **Colour is a signal with a budget.** Every coloured cell asks for
+  attention. If a state is painted on a whole column or repeated on every
+  row, the reader stops hearing it and the real exception disappears. Show
+  a state once, where the eye lands, with a word; let everything else stay
+  quiet. Colour that encodes role (input, link) is a legend, not an alarm,
+  and must be light enough to read through.
+- **Repetition is noise.** A value, a label, a caveat or a source belongs
+  where it is owned, once. Eighteen cells reading "No current restoration"
+  say what one status cell says, and hide the eighteen values that would
+  otherwise be there.
+- **Whitespace is reading room.** Default row heights and padding are tuned
+  for typing into a grid, not reading one. A tab a person is meant to read
+  gets taller rows, wider gutters and a blank row between blocks; density
+  is not rigour, it is fatigue.
+- **A hard-coded number is a hidden decision.** The reader cannot see it,
+  test it, or change it. Every number that is not an input or a lever is a
+  formula, so the sheet stays true when the inputs move.
+- **The API is not the reader.** A successful batchUpdate proves nothing
+  about what a person sees. Formatting is finished only after looking at
+  the rendered tab at laptop width and reading it as a stranger would.
 
 ## 1. The ten laws
 
@@ -231,13 +278,38 @@ formulas. Outputs are formulas with presentation formatting.
 - **Lists: one point per row.** A bullet list goes in one column, one bullet
   per row, optionally prefixed with `•` or `–`; never line breaks inside a
   cell (`Few` E3, `Broman&Woo`).
-- **Overflow, do not merge, do not wrap by default.** For a short note next
-  to a value, keep `wrapStrategy: OVERFLOW_CELL` and leave the cells to the
-  right empty so the text spans them. That is how a string "spans multiple
-  cells" without a merge. Use `WRAP` only in a dedicated wide Notes column,
-  and keep strings short enough for at most two lines; row height follows
-  the tallest cell, so one long wrapped cell makes the whole row tall
+- **Fit is the test, not length.** A cell either fits its window at the
+  chosen width or it is not cell content. Decide width, text and wrap
+  together for each column: a label column is as wide as its longest label
+  on one line; a value column is as wide as its widest formatted value plus
+  a gutter; if that width is absurd, the content is too long for a cell and
+  the qualifier moves to a Notes column or a cell note. Never leave the
+  outcome to chance: read the rendered tab and look for cut-off strings
+  (`Butterick`, `Schwabish`, `UKGAF`).
+- **Overflow is for short notes beside a value, not for prose.** A note
+  under about 90 characters may keep `wrapStrategy: OVERFLOW_CELL` and span
+  the empty cells to its right; that is how a string "spans multiple cells"
+  without a merge. Overflow is not a way to fit a sentence that is longer
+  than the table is wide, and it never runs into a column that holds values
+  elsewhere on the tab. Use `WRAP` only in a dedicated wide Notes column,
+  with strings short enough for two lines; row height follows the tallest
+  cell, so one long wrapped cell makes the whole row tall
   (`Google` WrapStrategy, `Few` E5, `MS` wrap docs).
+- **Labels are names, not definitions.** `Revenue to date, net store
+  proceeds ($, App Store payouts after commission, tier-1)` is a definition
+  wearing a label's clothes; it cannot fit any label column and it spills
+  into the first value column, where it reads as data. The label is
+  `Revenue to date ($)`; the definition goes to the Notes column or a cell
+  note on the label. The same applies to headers.
+- **Section rows carry the heading only.** An explanation of the block
+  (what the metric means, where it comes from, which cohorts are mature) is
+  not a section heading. It goes to the Notes column, a note on the heading
+  cell, or the Read Me. A description paragraph under the title row is the
+  same mistake at tab level: one title row, then the inputs or the table.
+- **IDs and codes are text.** Campaign IDs, SKUs and hashes are identifiers:
+  left-aligned, stored as text so leading zeros survive, and shortened for
+  display (last 6 characters, a prefix, or the human name) with the full
+  value in a cell note or the raw tab.
 - **Never `CLIP`** on a presentation tab: a clipped string hides information
   with no hover to recover it. Shorten it or move it (`Schwabish`,
   `Material`/`Carbon` truncation applies to UI tables with tooltips only).
@@ -283,9 +355,27 @@ formulas. Outputs are formulas with presentation formatting.
   plus the unit in round brackets, wrap allowed to two lines. A thin light
   rule under it. A light neutral fill is acceptable; a dark fill with white
   text is not the default for data headers (`Schwabish` G7, `Few`, `UKGAF`).
-- Group labels ("spanners") only in presentation tables, in their own
-  unmerged row, with white space rather than lines separating groups; in
-  data tables prefix the header instead (`Schwabish` G8, `Few` J3).
+- **Group labels ("spanners") say "these columns belong together", and a
+  label sitting in the first column of the group does not say that.**
+  Centre the spanner over its columns. The reason merges are banned is
+  that they break the data rectangle (sort, filter, select, screen readers);
+  a spanner row above the column-header row is not data and no one sorts it,
+  so a horizontal merge in that one row is the correct tool in Sheets, which
+  has no "center across selection". Bold it, put a light rule under it that
+  spans exactly the group, and leave a little space between groups (a
+  narrow spacer column or a left rule on the first column of each group). In
+  raw data tables prefix the header instead and keep one header row
+  (`Schwabish` G8, `Few` J3, `FAST` 4.02-02 rationale).
+- **Transposed tables.** When attributes run down and entities run across
+  (a settings comparison, a cohort matrix), the type lives in the row: text
+  rows left-aligned, numeric rows right-aligned with one format per row, a
+  status row shown once. The "one format per column" rule is really "one
+  format per type axis"; apply it to whichever axis carries the type.
+- **Repeated column groups** (channel × cohort, region × quarter) keep the
+  same column order and widths in every group, a spanner per group, and a
+  visible seam between groups. Beyond the first few groups, the reader
+  needs the label column frozen and the newest or most important group
+  first (`FAST` 2.02, `Schwabish` G10).
 - Never rotate or stack header text; abbreviate, wrap to two lines or
   transpose (`Schwabish`, `UKGAF`).
 
@@ -322,8 +412,14 @@ formulas. Outputs are formulas with presentation formatting.
   all time-period columns the same width, Notes column 300-480 px. Never
   stretch a table to the page; never leave numeric columns wide
   (`Schwabish`, `Butterick`, `FAST` 4.02).
-- Uniform row height throughout, header the same height as data. Sheets'
-  default 21 px is tight but fine; 24-26 px reads better for dense tables.
+- **Give the tab room to breathe.** Sheets' defaults (21 px rows, 2-3 px
+  padding, 100 px columns) are typing defaults. A tab meant to be read gets
+  taller rows (roughly 26-30 px), more side padding, columns with a real
+  gutter beyond the widest value, a blank row between blocks, and a title
+  row taller than the body. Uniform row height throughout the body; the
+  header row the same height as data. If a tab feels tight, it is: fix the
+  room before adding rules or fills (`Butterick`, `Material`/`Carbon`
+  density guidance, `Adobe` table study on padding).
 - Keep tables to about 7-10 data columns; split, transpose or move detail to
   another tab beyond that (`Schwabish`, `Few`).
 - Derived columns sit immediately right of the columns they come from;
@@ -416,6 +512,22 @@ formulas. Outputs are formulas with presentation formatting.
   at most two alert levels; show the alert only when something needs
   attention, nothing (not a green tick) when all is well (`Few` H1-H2,
   `WCAG` 1.4.1).
+- **A state is shown once.** If a campaign has no current counterpart, one
+  status cell says `No current restoration` and the cells below show `—`.
+  Filling a whole column red and repeating the sentence in every row turns
+  the signal into wallpaper, hides the values that could have been there,
+  and leaves nothing for a real exception to stand out against. The same
+  applies to a whole row or block: mark the row label or a status column,
+  not every cell (`Few` H2, `Tufte` data-ink).
+- **Bold is not a state.** Bold data cells read as "important" but say
+  nothing; a reader cannot tell emphasis from an error. Reserve weight for
+  headers, totals and section headings; carry state with a word plus, at
+  most, a light fill.
+- **Machine-written cells are a role, not an alert.** Values pushed by a
+  sync script are imported data: plain ink, named in the header or key
+  (`Synced from BigQuery, refreshed <cell>`), never yellow or red, which the
+  reader has learned to read as warning. If the reader must know which
+  cells a script owns, protect them and say so in the key.
 - Direction of change with `▲`/`▼` or `+`/`−` glyphs beside the number; a
   custom format such as `[color50]0.0% ▲;[color3]-0.0% ▼;0.0%` keeps the
   cell numeric.
@@ -485,6 +597,14 @@ Assume the sheet contains errors until tested: lab cell error rates average
 least one error (`Panko` 2015). Formatting conventions raise detection, they
 do not prevent errors. So verify twice: the format, and the logic.
 
+**Look at it first.** Export the tab to PDF (or screenshot it) and read
+it as a stranger at laptop width: is anything cut off, spilling, repeated,
+loud, or cramped? Does the first screen show the title, the inputs and a
+table with a header? Could you say what each column is without the label
+column? A sheet that has not been looked at has not been formatted; the
+API cannot see clipping, collisions between overflowing strings, or a row
+that reads as a paragraph.
+
 **Format readback (after every batch of changes)**
 - Read the grid back with the API (`includeGridData`) and check, per tab:
   frozen rows ≤ 2 and frozen columns ≤ 1; no merges; A1 non-empty; one
@@ -493,6 +613,15 @@ do not prevent errors. So verify twice: the format, and the logic.
   `wrapStrategy: CLIP`; no row taller than the title row except a two-line
   wrapped Notes cell; every hard-coded numeric cell outside the inputs block
   flagged; every input cell carrying the input style; colour pairs at 4.5:1.
+- Fit: for every text cell whose right neighbour is non-empty, compare the
+  string's rendered width with the column width (about 6-7 px per character
+  at 10 pt for Inter or Arial; use it to find suspects, then look). Flag
+  labels that run past the label column, values that run past their
+  column, and any `formattedValue` over about 90 characters outside a
+  Notes column.
+- Signal budget: count filled and bold cells; if a whole column, row or
+  block carries a state fill, or the same text repeats down a column, the
+  signal has become wallpaper.
 - Search formulas for embedded constants: any digit sequence in a formula
   that is not a row/column reference, 0, 1, 12, 24, 100 or 1000 is a
   finding.
@@ -571,3 +700,56 @@ Verbatim anchors worth remembering:
 - "Get it right in black and white." (Maureen Stone)
 - "Maximize the content-to-chrome ratio by keeping it small." (NN/g on sticky
   headers)
+
+## 13. Field lessons: what went wrong the first time agents used this
+
+Two tabs built by another agent with this skill in hand, and what the
+reader saw. Each is a judgment failure, not a missing rule; the fix is to
+reason from section 0.
+
+**Case A: a channel × cohort matrix (51 columns, 1,000 rows).**
+- Ten cells held 160-345-character sentences: a two-row description under
+  the title, an explanation in every section-heading row, and a maturity
+  note per cohort. They overflowed across the whole width and, where two
+  met, collided into unreadable text. The agent read "overflow into empty
+  neighbours" as permission for prose. Lesson: overflow is for a short note
+  beside a value; a sentence longer than the table is wide is Read Me or
+  Notes content, and a section row holds a heading only.
+- Labels up to 85 characters in a 240 px column spilled into the first
+  value column, so rows read `Revenue by D30, net store proceeds (` then
+  `$)` then numbers. Lesson: labels are names; definitions go to notes.
+- The first value column doubled as the text column, so its 17 numbers were
+  left-aligned while every other column was right-aligned. Lesson: a column
+  has one role on a tab; text never lives in a column that holds numbers.
+- Two parameters (`Modeled LTV per payer`, `First-open cohort`) were plain
+  black cells. Lesson: a lever on a dashboard is still a lever; it is only
+  one if the reader can see it.
+- Group headers (`August 2026 cohort`) sat left-aligned in the first column
+  of six. Lesson: a spanner has to sit over its group; centre it (see
+  section 6).
+- Title in B1, A1 empty, no frozen header, 110 px columns, 22 px rows,
+  3 px padding. Lesson: the reader needs A1, a header they can keep, and
+  room.
+
+**Case B: a campaign settings comparison (attributes down, campaigns
+across).**
+- 65 of 278 cells were wider than their 120 px column and were cut off:
+  campaign names, IDs, audiences, placements, markets. The agent set
+  widths once and never looked. Lesson: fit is decided per column with the
+  content in front of you, then confirmed on the render; IDs and long
+  names are shortened with the full value in a note.
+- 54 cells were filled red and `No current restoration` was written 18
+  times down one column; the March column of the first campaign was bold
+  throughout. Lesson: show a state once with a word; bold is not a state;
+  when everything is highlighted nothing is.
+- 274 cells carried vertical borders (a full grid) on 22 px rows with 3 px
+  padding. Lesson: structure by position and space; ink last; give the tab
+  room.
+- Missing values appeared as `N/A` in some rows and blank in others.
+  Lesson: one missing-value code, everywhere.
+- A description paragraph occupied rows 2-3; a data row (`Campaign name`)
+  was styled as a header. Lesson: one title row; header styling belongs to
+  the row that names the columns and nowhere else.
+
+What would have caught all of it: exporting the tab and reading it once as
+a stranger before reporting done.

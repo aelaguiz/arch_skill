@@ -41,38 +41,63 @@ API request shapes; it ships no scripts or runners.
   reader-facing layout.
 - The user wants Excel VBA or Apps Script automation as the product.
 
+## How to think
+
+The rules are consequences of how a person reads a grid; when a case is not
+covered, reason from these (section 0 of the guide expands each one):
+
+- A cell is a window: content fits it or is not cell content.
+- A row is a record and a column is a type; in a transposed table the row
+  carries the type. Align and format by whichever axis carries the type.
+- Structure comes from position and space; rules, fills and bold are last
+  resorts.
+- Colour is a signal with a budget: show a state once, with a word.
+- Repetition is noise; say a thing where it is owned, once.
+- Whitespace is reading room; typing defaults are too tight for reading.
+- A hard-coded number is a hidden decision.
+- The API is not the reader; only the rendered tab is.
+
 ## Non-negotiables
 
-- Freeze only the row(s) that identify columns (one, at most two) and at
-  most one label column. Never freeze a title block. A one-screen summary
-  or a multi-table tab freezes nothing.
+- Freeze only the row(s) that identify columns (one, or a spanner plus a
+  header) and at most one label column. Never freeze a title block. A
+  one-screen summary or a multi-table tab freezes nothing.
 - Hard-code only inputs and levers. Every other number, date in a series,
   total, share, multiple, and status sentence is a formula. No constants
   inside formulas except obvious unit conversions (12, 24, 1000, 1, 0).
 - Levers are numeric cells, one per lever, with a label, unit, validation
-  and the input style; never a string like `70% / 20% / 10%`.
+  and the input style; never a string like `70% / 20% / 10%`. A parameter
+  on a dashboard is still a lever and looks like one.
 - Inputs look like inputs everywhere: distinct font colour plus a light fill
   or border, identical on every tab, documented in a key.
-- One line per cell, about 45-90 characters. Longer text becomes label +
-  value, one point per row, a Notes column, a cell note, or a Read Me line.
-  Text beside a value overflows into empty neighbours; it does not wrap or
-  merge.
-- Never merge cells. Never clip text on a presentation tab.
-- Numbers right, text left, headers aligned like their column. One number
-  format and one decimal count per column. Units in the header.
+- One idea per cell, and the cell fits its window. Labels are names, not
+  definitions; definitions, provenance and caveats go to a Notes column, a
+  cell note, or the Read Me. Section rows hold a heading only. Overflow is
+  for a short note beside a value, never for prose. Never clip on a
+  presentation tab.
+- Never merge cells in a data range or in the column-header row. The one
+  sanctioned merge is a centred group header (spanner) in its own row above
+  the column headers.
+- Numbers right, text left, headers aligned like their column; IDs are
+  text. One format and one decimal count per type axis. Units in the
+  header. One missing-value code everywhere.
 - One header row per table, bold with a thin rule; totals bold with a rule
-  above; no dark fills on data headers. One dark brand band is allowed for
-  the tab title row only.
+  above; no vertical borders, no full grids, no dark fills on data headers.
+  One dark brand band is allowed for the tab title row only. A1 holds the
+  title.
 - Colour is monochrome plus meaning: inputs, cross-tab links, one alert,
-  one highlight. Every text/fill pair at 4.5:1. A word or glyph always
-  accompanies a colour.
+  one highlight. A state is shown once with a word; never a whole column,
+  row or block painted, never bold as a state. Every text/fill pair at
+  4.5:1.
 - Same look for the same thing on every tab: fonts, sizes, formats, column
-  purposes, header row, key, tab colours.
+  roles, header row, key, tab colours.
 - Short formulas, one per row or column, cross-tab ingredients linked into a
   local labelled row first.
 - Change the sheet the user named. If they did not authorise edits to a live
-  file, work on a copy and say so. Read the grid back after applying and
-  look at the result before reporting.
+  file, work on a copy and say so.
+- Nothing is done until you have looked at the rendered tab (PDF export or
+  screenshot at laptop width) and read it as a stranger. Formatting that has
+  not been looked at has not been formatted.
 
 ## First move
 
@@ -92,7 +117,10 @@ API request shapes; it ships no scripts or runners.
 ## Workflow
 
 1. **Plan the tab** on paper before writing: title row, inputs block, one
-   header row per table, notes area, column purposes by letter, freeze rule.
+   header row per table (plus a centred spanner row for grouped columns),
+   notes area, one role per column letter, widths decided against the
+   longest real content, freeze rule, and the room the tab needs (row
+   height, padding, blank rows between blocks).
 2. **Extract hidden inputs**: every constant in a formula, every typed total,
    every lever-as-text, every typed date series becomes a labelled input
    cell or a formula. Keep the numbers identical; verify the outputs match
@@ -104,10 +132,12 @@ API request shapes; it ships no scripts or runners.
 5. **Apply the house style by range** in the order given in
    `references/house-style.md`: baseline, roles, borders, dimensions, sheet
    properties, validation, conditional formats, protection, notes.
-6. **Verify**: read the grid back and run the readback checklist; recompute
-   or eyeball two or three outputs against the original; export or
-   screenshot at laptop width; fix anything clipped, tall, mis-aligned or
-   still hard-coded.
+6. **Look, then verify**: export or screenshot the tab and read it at
+   laptop width for anything cut off, spilling, colliding, repeated, loud
+   or cramped; then read the grid back and run the readback checklist
+   (fit, alignment, formats, constants, input style, signal budget);
+   recompute or eyeball two or three outputs against the original. Fix and
+   look again. Do not report done on the strength of a successful API call.
 7. **Report** what changed per tab in the user's terms (frozen rows before
    and after, inputs extracted, cells shortened, formats unified), the file
    and tab links, and any judgment calls.
