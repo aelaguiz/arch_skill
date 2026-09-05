@@ -1,0 +1,7 @@
+interface:
+  display_name: "Spreadsheet Formatting"
+  short_description: "Make spreadsheets readable, consistent and formula-driven"
+  default_prompt: "Use $spreadsheet-formatting to build, restyle, or audit this spreadsheet for a human reader: one-row frozen headers, one line per cell, no merged cells, numbers right and text left, one number format per column, a documented colour key, and hard-coded values only for inputs and levers with everything else as formulas. Apply the house style from references/house-style.md through the Sheets API or gws, read the result back, and report the changes per tab."
+
+policy:
+  allow_implicit_invocation: true
