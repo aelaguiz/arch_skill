@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delegated Implementation"
+  short_description: "Parent reviews; workers implement and test"
+  default_prompt: "Use $delegated-implementation to keep requirements, architecture, integration, and direct review with the parent while workers implement, test, and repair. Use Astra to GPT-5.6 Sol high or Fable to Opus 5, honoring explicit user choices and the active harness's agent mechanics. Personally inspect every deliverable and every changed code line. Keep all skill authorship and prose repairs with the parent using $skill-authoring; workers may run validation. Preserve the calling workflow's delivery and review obligations."

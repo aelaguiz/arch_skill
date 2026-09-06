@@ -1,8 +1,8 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command (\"epic-to-prs on epic 4700\"); never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, armed $unblocker, and shared GPT-6 Pro thread. Use Pro for initial epic planning, meaningful batch checkpoints, major blockers the agent cannot resolve locally, and final review of the completed PR stack; do not duplicate plan/final consultations for every child or check in at every issue boundary. Astra owns routine decisions and verifies ordinary repairs locally. Keeps accepted scope, advisory bots, and honest review receipts; continues independent work around blockers. Never merges or releases. Not for status reads, decomposition (arch-epic), or open-ended optimization."
+description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared GPT-6 Pro planning, meaningful batch checkpoints, major-blocker consultations, and final stack review. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, or open-ended optimization."
 metadata:
-  short-description: "Epic delivery with shared Pro planning and batch reviews"
+  short-description: "Epic delivery with delegated code and shared Pro reviews"
 ---
 
 # Epic To PRs
@@ -16,6 +16,11 @@ Deliver the epic's accepted scope most important first. Use `issue-to-pr`
 for implementation and PR delivery, with shared Pro planning and review
 across related issues. Keep delivering until the queue and required reviews
 are complete, the user stops the run, or no useful unblocked work remains.
+
+For an Astra or Fable coordinator, apply `$delegated-implementation` across the
+epic. Workers implement, test, and repair; the parent owns decisions, integration,
+and direct review of every deliverable and changed code line. All skill
+authorship stays with the parent, including skill work inside a child issue.
 
 ## Install
 
@@ -77,16 +82,19 @@ on the remaining changes and overall integration, using prior batch reviews
 as context instead of repeating every completed child review. Review early
 when a batch needs to be merge-ready before the rest of the epic.
 
-Between these consultations, Astra reasons through routine implementation,
-plan refinements, ordering, and repairs. Consult Pro for a major unexpected
-blocker or consequential technical uncertainty that remains beyond the
+Between these consultations, the coordinator reasons through architecture,
+plan refinements, ordering, and scope; workers implement and repair code under
+the execution contract. Consult Pro for a major unexpected blocker or
+consequential technical uncertainty that remains beyond the
 agent's reasoning after reasonable local investigation and is likely to
 change the approach. An issue boundary, dependency discovery, or ordinary
 uncertainty alone does not justify a check-in. Never serialize independently
 buildable issues behind an unrelated blocker.
 
-Batch accepted Pro findings and verify ordinary corrections locally. Do
-not run an automatic resubmission loop to obtain Pro approval of every edit.
+Batch accepted Pro findings. Workers repair code and run affected checks;
+the coordinator personally reviews the changes and evidence and repairs skill
+content itself. Do not run an automatic resubmission loop to obtain Pro
+approval of every edit.
 Seek another consultation for substantial redesign, unresolved consequential
 disagreement, or a repair
 that changes the basis of the review and needs independent judgment. The
@@ -132,21 +140,26 @@ substitute another model for a required Pro review or count it as passed.
 2. **Arm the run.** Stand up `$unblocker` with the user's ask, scope,
    production boundary, and this Pro cadence. Author the goal prompt with
    `$prompt-authoring`, including the thread, unblocker contact, queue,
-   shared review scope, and completion condition. In Prime Agent, arm the
-   goal and spawn the unblocker; otherwise provide the exact /goal text and
-   spawn instruction. Carry user-directed cadence changes into the goal,
+   shared review scope, execution responsibilities including parent-owned
+   skill authorship, and completion condition. Arm the goal and unblocker
+   using the active harness's supported mechanisms. Carry user-directed
+   cadence changes into the goal,
    charter, and active dispatch briefs during a run.
-3. **Deliver issues.** Refresh the queue and run the next `issue-to-pr`
-   with inherited planning and review coverage. Collect locally ready PRs
-   without duplicate child Pro submissions. Resolve routine decisions
+3. **Deliver issues.** Refresh the queue and run dependency-ready `issue-to-pr`
+   work with inherited planning, review coverage, and execution responsibilities.
+   Parallelize independent scopes when useful; keep shared design decisions
+   and overlapping work coordinated. Personally review every deliverable and
+   changed code line, including worker-delivered issues. Collect locally ready
+   PRs without duplicate child Pro submissions. Resolve routine decisions
    locally or through the unblocker, use meaningful batch checkpoints and
    major-blocker consultations when warranted, and continue independent
    scope while any real user question pends. Ask once; continuations do not
    supply an answer or justify repeated questions.
 4. **Review and finish.** Obtain final Pro review of the completed stack,
    using batch reviews as coverage where applicable. Resolve material
-   findings and verify fixes. Every delivered issue needs Pro planning and
-   final review coverage plus passing required checks before merge-ready.
+   findings through the same execution contract and personally review fixes.
+   Every delivered issue needs the coordinator's direct review, Pro planning
+   and final review coverage, and passing required checks before merge-ready.
    Do not mark the goal complete merely because all issues were dispatched;
    pending reviews and unresolved scope remain unfinished work.
 5. **Report.** List delivered issues and PRs, current heads and CI, Pro
@@ -158,13 +171,17 @@ substitute another model for a required Pro review or count it as passed.
 
 ## Delegation
 
-Issues may run in-session or as children. Before dispatch, read the installed
-`../_shared/agent-orchestration-policy.md` and apply `$prompt-authoring` to
-the populated brief. Include accepted scope, boundary comments, unblocker
-contact, shared planning and review coverage, and the merge-ready terminal
-state. The coordinator owns Pro submissions and the submission count;
-children return artifacts and consequential questions without launching
-duplicate consultations.
+For Astra and Fable coordinators, `$delegated-implementation` owns worker
+selection, requirements briefs, direct review, and code repair. The originating
+coordinator retains every deliverable's acceptance and all skill authorship
+when assigning issues to workers; an issue handoff does not replace it with
+another executive. For other dispatches, read the installed
+`../_shared/agent-orchestration-policy.md` and apply `$prompt-authoring` to the
+populated brief. Leave spawning mechanics to the active harness. Include
+accepted scope, boundary comments, unblocker contact, shared planning and review
+coverage, and the expected handoff. The coordinator owns Pro submissions and
+the submission count; children return artifacts and consequential questions
+without launching duplicate consultations.
 
 ## References
 

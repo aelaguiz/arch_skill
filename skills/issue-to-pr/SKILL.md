@@ -1,8 +1,8 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation delivery lane, fired only by name (\"issue-to-pr on 4484\") or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR: plan on disk with $startup-pragmatism, GPT-6 Pro initial planning and final review via $chatgpt-web, implement/test in a worktree, and use $pr-authoring plus $pr-review-followthrough. Shares planning and final review across a coherent epic or related batch instead of duplicating them per child. Astra owns routine decisions and verifies ordinary fixes locally; extra Pro consultations serve meaningful batch checkpoints or major unresolved blockers. Preserve accepted scope, keep concise review receipts, and stop at merge-ready. Never merges or releases. Not for investigation-only asks, standalone planning, or work with no GitHub issue."
+description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR with a plan on disk, startup-pragmatism, GPT-6 Pro planning/final review, and PR authoring/follow-through. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
 metadata:
-  short-description: "Issue delivery with focused Pro planning and final review"
+  short-description: "Issue delivery with delegated code and parent review"
 ---
 
 # Issue To PR
@@ -14,6 +14,12 @@ issue. Ordinary issue work does not trigger it.
 Take the issue to a merge-ready PR with the smallest change that delivers
 its accepted scope. Use Pro for initial planning and final review; use the
 working agent's judgment to carry the work between them.
+
+For an Astra or Fable coordinator, apply `$delegated-implementation` throughout
+the work: delegate code, reproduction, tests, and repairs; personally review
+every deliverable and changed code line. All skill authorship stays with the
+parent. An assigned implementation worker keeps its bounded role and reports
+to the originating coordinator under that contract.
 
 ## Install
 
@@ -44,9 +50,10 @@ a GitHub issue, use the requested workflow instead.
   investigation and verification for the actual change, without invented
   approval gates or proof machinery.
 - The run starts authorized for accepted in-scope work. Work in a dedicated
-  worktree under the target repo's AGENTS.md. Write self-documenting code
-  with clear comments at boundaries and role seams, and run relevant tests
-  and required repo checks.
+  worktree under the target repo's AGENTS.md. Require self-documenting code
+  with clear comments at boundaries and role seams, relevant tests, and
+  required repo checks. The execution contract above determines who authors
+  each deliverable and who runs verification.
 - Use `$pr-authoring` and `$pr-review-followthrough`. PR Agent and other bots
   are advisory; assess findings against the issue and code rather than
   treating them as orders to expand scope.
@@ -66,9 +73,10 @@ and final review for every child. The coordinator can collect locally
 finished PRs for a meaningful batch checkpoint or final stack review. A
 child awaiting that review is locally ready, not yet merge-ready.
 
-Astra owns routine implementation choices, plan refinements, dependency
-ordering, scope checks, and ordinary repairs. Extra Pro consultations are
-appropriate when a meaningful batch of related work is ready to assess, or
+The coordinator owns routine decisions, plan refinements, dependency ordering,
+and scope checks. Workers own implementation details and code repairs under
+the execution contract. Extra Pro consultations are appropriate when a
+meaningful batch of related work is ready to assess, or
 a major unexpected blocker or consequential technical uncertainty remains
 beyond the agent's reasoning after reasonable local investigation. State
 what the consultation can resolve and why it matters to the goal. Neither
@@ -76,9 +84,10 @@ an issue boundary, a changed plan, a newly discovered dependency, nor vague
 uncertainty alone requires a Pro message. A useful checkpoint after two
 related issues is welcome; an every-two-issues rule is not.
 
-Apply Pro's findings with judgment, batch the warranted fixes, and verify
-ordinary corrections locally. Do not automatically resubmit plans or PRs
-until Pro approves every edit. Consult again when a substantial redesign,
+Assess Pro's findings with judgment and batch the warranted fixes. Have workers
+repair code and run affected checks, then review the changes and evidence
+directly; the parent repairs skill content. Do not automatically resubmit plans
+or PRs until Pro approves every edit. Consult again when a substantial redesign,
 unresolved consequential disagreement, or a repair that changes the basis
 of the review needs independent judgment. The normal planning/final pair
 is a baseline, not a hard cap on useful consultation.
@@ -120,21 +129,30 @@ required Pro review or claim a pending review passed.
 
 1. **Ramp up and plan.** Read live issue, parent, linked PRs, and discussion.
    Confirm the issue is open, available, and not already fixed; reproduce a
-   bug before planning its fix. Write acceptance, non-goals, implementation,
-   and appropriate verification on disk. Obtain or inherit the initial Pro
+   bug before planning its fix, delegating reproduction under the execution
+   contract. Write acceptance, non-goals, implementation, and appropriate
+   verification on disk. Obtain or inherit the initial Pro
    planning consultation and incorporate warranted findings locally.
-2. **Implement and verify.** Make the smallest coherent change in the
-   worktree. Resolve ordinary decisions and repairs locally, consult the
-   run's unblocker when needed, and use Pro at the cadence above.
+2. **Implement and verify.** Deliver the smallest coherent change in the
+   worktree under the execution contract. Give workers tight requirements and
+   appropriate checks, review every deliverable and changed code line, and
+   return code findings for repair. Author skill content directly. Resolve
+   ordinary decisions locally, consult the run's unblocker when needed, and
+   use Pro at the cadence above.
 3. **Publish and stabilize.** Use both PR skills to publish the PR and
-   handle review threads and CI. For shared reviews, hand the coordinator
-   the PR, revision, verification, and unresolved findings without launching
-   duplicate child reviews. Independent issues can proceed meanwhile.
+   handle review threads and CI, retaining the same authorship, test, and
+   direct-review responsibilities during follow-through. For shared reviews,
+   hand the coordinator the PR, revision, verification, and unresolved findings
+   without launching duplicate child reviews. Independent issues can proceed
+   meanwhile.
 4. **Final review and repair.** Submit the stable PR, or have it included
-   in the coordinator's batch/stack review. Address accepted findings,
-   verify repairs, and decide whether their impact warrants a Pro recheck.
+   in the coordinator's batch/stack review. Route accepted findings through
+   the same execution contract, personally review repairs, and decide whether
+   their impact warrants a Pro recheck.
 5. **Report merge-ready.** Require completed Pro planning and final review
-   coverage, resolved material findings, and passing required checks.
+   coverage, the originating coordinator's direct review of every deliverable
+   and changed code line, resolved material findings, and passing required
+   checks.
    Report PR URL, change summary, current head and CI, the revision Pro
    actually reviewed, and any later changes with their local verification.
    Include the Pro thread/verdict and submission count. Never imply Pro
@@ -154,19 +172,22 @@ continuation or wake-up is not an answer or a reason to ask again.
 
 For a persistent run, author its goal prompt with `$prompt-authoring` and
 `$startup-pragmatism`, naming the Pro thread, review scope and cadence,
-unblocker per `$unblocker`, accepted scope, and merge-ready completion
-condition. In Prime Agent, arm the goal and spawn the unblocker yourself;
-otherwise provide the exact /goal text and unblocker spawn instruction.
+unblocker per `$unblocker`, accepted scope, execution responsibilities including
+parent-owned skill authorship, and merge-ready completion condition. Arm the
+goal and unblocker using the active harness's supported mechanisms.
 When adopting a user-directed cadence change during a run, update the goal,
 unblocker charter, and active dispatch briefs so they carry the same rule.
 
 ## Delegation
 
-Before dispatch, read the installed
-`../_shared/agent-orchestration-policy.md` and apply `$prompt-authoring` to
-the populated brief. Carry the scope, inherited review coverage and cadence,
-unblocker contact, and merge-ready contract into each brief. The coordinator
-owns shared Pro submissions so children do not independently duplicate them.
+For Astra and Fable coordinators, `$delegated-implementation` owns the worker
+selection, brief, direct review, and repair contract, including parent-owned
+skill authorship. For other dispatches, read the installed
+`../_shared/agent-orchestration-policy.md` and apply `$prompt-authoring` to the
+populated brief. Leave spawning mechanics to the active harness. Carry the
+scope, inherited review coverage and cadence, unblocker contact, and handoff
+into each brief. The originating coordinator owns shared Pro submissions and
+final acceptance; children return artifacts without duplicating consultations.
 
 ## References
 

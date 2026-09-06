@@ -51,8 +51,8 @@ Other shipped skills are:
 - `eli10` — optional source-retained response-style skill; it is not installed by default
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based approved-scope receipt for plan-backed work
 - `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the approved plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
-- `issue-to-pr` — explicit issue delivery with Pro initial planning and final review; routine decisions and repairs stay with Astra, and related issues can share reviews
-- `epic-to-prs` — explicit epic delivery with shared Pro planning, meaningful batch checkpoints, help for major unresolved blockers, and final stack review; no automatic per-child review pair
+- `issue-to-pr` — explicit issue delivery with Pro planning/final review and delegated implementation for Astra/Fable; the parent reviews every deliverable and retains all skill authorship
+- `epic-to-prs` — explicit epic delivery with shared Pro planning and stack review, independent issue delegation, and parent-owned integration, direct review, and skill authorship
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
@@ -61,6 +61,7 @@ Other shipped skills are:
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
 - `unblocker` — long-lived end blocker and authorizer for a run: armed with the user's high-level intent and plan, it kills self-imposed approval gates (the run starts authorized), decides real blockers from plan intent with Pro escalation for major problems unresolved by local reasoning, keeps a decision log, and reserves only production surfaces and genuinely user-owned matters for the user
 - `intent-police` — long-lived read-only advocate that derives the user's intent from their verbatim words, keeps an on-disk intent ledger, classifies direction changes as micro-adjustment versus fundamental shift, filters other agents' review findings for scope creep, and gives blunt subtraction-only alignment feedback at decisions, post-review, and done-claims
+- `delegated-implementation` — reusable execution contract: Astra delegates code and tests to GPT-5.6 Sol high, Fable to Opus 5; the parent owns requirements, every deliverable's direct review, and all skill authorship
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-approval minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
 - `plan-implement` — prompt-first plan-backed implementation loop that advances only through the approved frontier, dispositions warm-review findings before repair, subtracts unauthorized work, and keeps plan/audit/implementation logs and proof freshness aligned
@@ -172,6 +173,7 @@ Installed skills:
   - `~/.agents/skills/plan-implement/`
   - `~/.agents/skills/plan-interview/`
   - `~/.agents/skills/conductor/`
+  - `~/.agents/skills/delegated-implementation/`
   - `~/.agents/skills/agent-history/`
   - `~/.agents/skills/model-consensus/`
   - `~/.agents/skills/contact-sheet-builder/`
@@ -225,6 +227,7 @@ Installed skills:
   - `~/.claude/skills/plan-implement/`
   - `~/.claude/skills/plan-interview/`
   - `~/.claude/skills/conductor/`
+  - `~/.claude/skills/delegated-implementation/`
   - `~/.claude/skills/agent-history/`
   - `~/.claude/skills/model-consensus/`
   - `~/.claude/skills/contact-sheet-builder/`
@@ -277,6 +280,7 @@ Installed skills:
   - `~/.gemini/skills/plan-implement/`
   - `~/.gemini/skills/plan-interview/`
   - `~/.gemini/skills/conductor/`
+  - `~/.gemini/skills/delegated-implementation/`
   - `~/.gemini/skills/model-consensus/`
   - `~/.gemini/skills/contact-sheet-builder/`
   - `~/.gemini/skills/fc-branded-pdf/`
@@ -634,6 +638,18 @@ Use `agent-delegate` only when an editful **external** worker/session is the
 deliberate lane; dispatch ordinary same-host editful work natively. Use
 `codex-review-yolo` for the exact external `-p yolo` profile/receipt pattern,
 and `stepwise` or `arch-epic` for ordered role lifecycles.
+
+### `delegated-implementation`
+
+Use this execution contract when an Astra or Fable coordinator runs
+`issue-to-pr` or `epic-to-prs`, or the user asks the parent to keep requirements
+and review while workers implement accepted work. Astra uses GPT-5.6 Sol at
+high; Fable uses Opus 5. The active harness supplies agent mechanics. Workers
+implement, test, and repair code; the parent personally reviews every
+deliverable and changed code line, including later fixes. All skill authorship
+stays with the parent using `skill-authoring`; workers may run validation.
+The calling workflow keeps its Pro cadence, delivery obligations, and completion
+boundary. This helper does not invoke conductor's full workflow.
 
 ### `agent-delegate`
 

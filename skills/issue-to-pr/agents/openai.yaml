@@ -1,0 +1,6 @@
+interface:
+  display_name: "Issue To PR"
+  short_description: "Issue delivery with delegated code and parent review"
+  default_prompt: "Use $issue-to-pr for the named GitHub issue through a plan on disk, GPT-6 Pro planning and final review, and a merge-ready PR. Astra and Fable coordinators apply $delegated-implementation, personally review every deliverable and changed code line, and retain all skill authorship; workers implement, test, and repair code. Inherit shared epic review coverage and preserve the originating coordinator's ownership. Stop at merge-ready."
+policy:
+  allow_implicit_invocation: false

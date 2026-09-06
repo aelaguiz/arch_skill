@@ -62,6 +62,7 @@ Other shipped skills:
 - `plan-implement`
 - `plan-interview`
 - `conductor`
+- `delegated-implementation`
 - `agent-history`
 - `model-consensus`
 - `contact-sheet-builder`
@@ -125,6 +126,7 @@ Default local path:
 - `~/.agents/skills/plan-implement/`
 - `~/.agents/skills/plan-interview/`
 - `~/.agents/skills/conductor/`
+- `~/.agents/skills/delegated-implementation/`
 - `~/.agents/skills/agent-history/`
 - `~/.agents/skills/model-consensus/`
 - `~/.agents/skills/contact-sheet-builder/`
@@ -176,6 +178,7 @@ Installed skills:
   - `plan-implement`
   - `plan-interview`
   - `conductor`
+  - `delegated-implementation`
   - `agent-history`
   - `model-consensus`
   - `contact-sheet-builder`
@@ -220,6 +223,7 @@ Installed skills:
   - `plan-implement`
   - `plan-interview`
   - `conductor`
+  - `delegated-implementation`
   - `agent-history`
   - `model-consensus`
   - `contact-sheet-builder`
@@ -264,6 +268,7 @@ Installed skills:
   - `plan-implement`
   - `plan-interview`
   - `conductor`
+  - `delegated-implementation`
   - `model-consensus`
   - `contact-sheet-builder`
   - `cynical-code-review`
@@ -643,13 +648,29 @@ instead of a separate review pair for every child. A checkpoint after two
 related issues can make sense when there is a meaningful combined result to
 assess; the count alone does not trigger it. Pro is also available for a
 major unexpected blocker the agent cannot resolve through local reasoning
-and investigation. Astra handles routine decisions and verifies ordinary
-repairs locally. Neither skill merges PRs.
+and investigation. Astra and Fable coordinators use `delegated-implementation`:
+Astra assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5.
+The parent owns architecture, scope, integration, and direct review of every
+deliverable and changed code line. Workers handle implementation, tests, CI
+repairs, and post-review code fixes. All skill authorship stays with the parent,
+including skill work inside child issues; workers may run validation. Independent
+issue work can run in parallel under the same originating coordinator. The
+active harness owns agent mechanics. Neither skill merges PRs.
 
 Examples:
 
 - `Use $issue-to-pr on issue 4484`
 - `Use $epic-to-prs on epic 4700; review meaningful batches together`
+
+### `delegated-implementation`
+
+Use when the parent should keep requirements, architecture, and direct review
+while workers implement accepted work. `issue-to-pr` and `epic-to-prs` apply
+this contract for Astra/Fable coordinators. It can also be requested directly:
+`Use $delegated-implementation on this accepted plan; keep the design and review
+with you.` Skill authorship remains the parent's work. Use `conductor` when the
+user wants its full plan-or-outcome lifecycle; this helper adds only execution
+responsibilities to the calling workflow.
 
 ### `skill-authoring`
 
