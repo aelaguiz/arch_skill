@@ -1,14 +1,14 @@
 ---
 name: cynical-code-review
-description: "Run a prompt-only cynical code review over implemented code, a diff, branch, path set, completion claim, or optional plan-backed implementation by assuming the completion story may be misleading and hunting for code reality gaps: name-only completion, split-brain owners, side doors, partial unification, stale authority paths, stopped-short user workflows, overbuilt machinery, scope contamination, fake proof receipts, and docs/status/tests that mask broken code. Use when the user asks for a skeptical, adversarial, cynical, or implementation-integrity audit of code that may look done but be subtly wrong. Not for normal review, coverage-ledger exhaustive review, plan-readiness audit, maintainability-only thermonuclear review, implementation, repair, PR shipping, or external subprocess review."
+description: "Explicitly selected skeptical review of implementation claims against current code: trace incomplete behavior, competing owners, side doors, and scope drift. Use when the user chooses $cynical-code-review or binding task instructions require it. Ordinary code review or a cold second opinion does not select this specialist workflow."
 metadata:
   short-description: "Skeptical implementation-integrity code review"
 ---
 
 # Cynical Code Review
 
-Use this skill when the user wants a skeptical implementation-integrity review
-of code that may look complete while still being wrong underneath.
+Use this workflow only after explicit selection as `$cynical-code-review` or a
+binding task instruction requiring it.
 
 The job is to treat the implementation story as unproven, read current code
 until the real authority paths are visible, find the places the work lied by
@@ -68,7 +68,7 @@ waves, run external review subprocesses, or decide the user's broader workflow.
 - Use the strongest read-only capability the host exposes, also tell every
   review child not to edit or write, and have the parent compare repository
   status and diffs with the pre-dispatch state before accepting child evidence.
-- Children may use their own native sub-agents on their own host at will; they
+- Children may use native sub-agents within authorized scope and host limits; they
   may not start external agents.
 - The parent owns child accounting, deduplication, integration, scope
   disposition, the saved artifact, and the final verdict.

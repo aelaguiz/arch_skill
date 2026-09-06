@@ -1,13 +1,14 @@
 ---
 name: comment-loop
-description: "Run the standalone repo comment-hardening workflow with a root comment ledger: exhaustively map the repo, current proof surface, and current explanatory coverage before any edits, then add or repair only high-leverage code comments, docstrings, and doc comments for shared contracts, conventions, gotchas, and subtle behavior without changing contracts or spamming obvious narration. Use when the user wants a repo-wide code-comment pass, wants the agent to deeply understand the codebase before explaining it, or wants to leave the comment audit running in Codex or Claude Code until no credible high-impact explanation gaps remain. Not for generic docs cleanup, a one-off local comment tweak, or bug fixing."
+description: "Explicitly selected repo-wide comment-hardening loop: map explanatory gaps and improve high-value code comments without changing behavior. Use when the user chooses $comment-loop or binding task instructions require it. Ordinary documentation edits or local comment changes do not select this loop."
 metadata:
   short-description: "Exhaustive map-first repo comment hardening loop"
 ---
 
 # Comment Loop
 
-Use this skill when the job is to exhaustively map a repo, its proof surface, and its current explanatory coverage before adding or repairing only the comments that matter most.
+Use this workflow only after explicit selection as `$comment-loop` or a
+binding task instruction requiring it.
 
 ## When to use
 

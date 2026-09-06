@@ -33,6 +33,8 @@ expected output shape does not appear. It never swallows errors.
 from __future__ import annotations
 
 import argparse
+import codecs
+import contextlib
 import json
 import os
 import selectors
@@ -154,6 +156,7 @@ def _run_subprocess(
     cwd: str | None = None,
     *,
     detached: bool = False,
+    _detached_runner: bool = False,
 ) -> tuple[int, str]:
     """Run a child with stdin closed and durable live output artifacts."""
     if detached:
@@ -167,19 +170,13 @@ def _run_subprocess(
     stderr_path.write_text("", encoding="utf-8")
 
     stdout_parts: list[str] = []
-    with open(os.devnull, "rb") as devnull:
-        proc = subprocess.Popen(
-            argv,
-            stdin=devnull,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            cwd=cwd,
-            text=True,
-            bufsize=1,
-        )
-        _write_text(out_dir / "child.pid", str(proc.pid) + "\n")
+    with _owned_subprocess(argv, cwd) as proc:
+        owner_pid = os.getpid() if _detached_runner else proc.pid
+        _write_text(out_dir / "child.pid", str(owner_pid) + "\n")
         heartbeat = {
-            "pid": proc.pid,
+            "pid": owner_pid,
+            "pgid": proc.pid,
+            "process_started_at": _process_started_at(owner_pid),
             "status": "running",
             "started_at": _utc_now_iso(),
             "last_output_at": None,
@@ -187,19 +184,23 @@ def _run_subprocess(
             "last_event_kind": None,
             "event_count": 0,
             "output_bytes": 0,
-            "mode": "foreground",
+            "mode": "detached" if _detached_runner else "foreground",
         }
         _write_json(out_dir / "heartbeat.json", heartbeat)
+        if heartbeat["process_started_at"] is not None:
+            _write_text(out_dir / "child.started_at", heartbeat["process_started_at"] + "\n")
 
         sel = selectors.DefaultSelector()
         if proc.stdout is not None:
+            os.set_blocking(proc.stdout.fileno(), False)
             sel.register(proc.stdout, selectors.EVENT_READ, "stdout")
         if proc.stderr is not None:
+            os.set_blocking(proc.stderr.fileno(), False)
             sel.register(proc.stderr, selectors.EVENT_READ, "stderr")
 
         with open(stdout_stream_path, "a", encoding="utf-8") as stream, open(
             events_path, "a", encoding="utf-8"
-        ) as events, open(stderr_path, "a", encoding="utf-8") as stderr_file:
+        ) as events, open(stderr_path, "a", encoding="utf-8") as stderr_file, sel:
 
             def handle_line(source: str, line: str) -> None:
                 now = _utc_now_iso()
@@ -208,7 +209,8 @@ def _run_subprocess(
                     line.encode("utf-8", errors="replace")
                 )
                 if source == "stdout":
-                    stdout_parts.append(line)
+                    if not _detached_runner:
+                        stdout_parts.append(line)
                     events.write(line)
                     events.flush()
                     stream.write(line)
@@ -223,34 +225,37 @@ def _run_subprocess(
                     stream.flush()
                 _write_json(out_dir / "heartbeat.json", heartbeat)
 
-            while True:
+            pending = {"stdout": "", "stderr": ""}
+            decoders = {
+                source: codecs.getincrementaldecoder("utf-8")()
+                for source in pending
+            }
+            stopped = False
+            while sel.get_map():
                 selected = sel.select(timeout=0.25)
                 for key, _ in selected:
-                    line = key.fileobj.readline()
-                    if not line:
-                        try:
-                            sel.unregister(key.fileobj)
-                        except Exception:
-                            pass
-                        continue
-                    handle_line(key.data, line)
+                    data = os.read(key.fileobj.fileno(), 65536)
+                    source = key.data
+                    pending[source] += decoders[source].decode(data, final=not data)
+                    while "\n" in pending[source]:
+                        line, pending[source] = pending[source].split("\n", 1)
+                        handle_line(source, line + "\n")
+                    if not data:
+                        if pending[source]:
+                            handle_line(source, pending[source])
+                            pending[source] = ""
+                        sel.unregister(key.fileobj)
 
-                if proc.poll() is not None:
-                    for key in list(sel.get_map().values()):
-                        for line in key.fileobj.readlines():
-                            handle_line(key.data, line)
-                        try:
-                            sel.unregister(key.fileobj)
-                        except Exception:
-                            pass
-                    break
+                if not stopped and proc.poll() is not None:
+                    # Descendants can inherit the pipes after their parent exits.
+                    # Stop them before draining output, which otherwise never ends.
+                    _stop_process_group(proc.pid, proc)
+                    stopped = True
 
         code = proc.wait()
-        if proc.stdout is not None:
-            proc.stdout.close()
-        if proc.stderr is not None:
-            proc.stderr.close()
 
+    if _detached_runner and code < 0:
+        code = 128 - code
     _write_text(out_dir / "end_ts", _utc_now_iso())
     _write_text(out_dir / "exit_code", str(code) + "\n")
     heartbeat["status"] = "completed" if code == 0 else "failed"
@@ -261,94 +266,168 @@ def _run_subprocess(
     return code, "".join(stdout_parts)
 
 
+def _process_started_at(pid: int) -> str | None:
+    result = subprocess.run(
+        ["ps", "-p", str(pid), "-o", "lstart="],
+        capture_output=True, text=True, check=False,
+    )
+    return result.stdout.strip() or None
+
+
+def _group_running(pgid: int) -> bool:
+    result = subprocess.run(
+        ["ps", "-A", "-o", "pgid=,stat="],
+        capture_output=True, text=True, check=True,
+    )
+    return any(
+        fields[0] == str(pgid) and not fields[1].startswith("Z")
+        for line in result.stdout.splitlines()
+        if len(fields := line.split()) == 2
+    )
+
+
+def _stop_process_group(pgid: int, proc: subprocess.Popen | None = None) -> None:
+    """Stop only a group created for this child; give TERM two seconds first."""
+    if proc is not None:
+        proc.poll()
+    try:
+        os.killpg(pgid, signal.SIGTERM)
+    except ProcessLookupError:
+        return
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline:
+        if proc is not None:
+            proc.poll()
+        if not _group_running(pgid):
+            return
+        time.sleep(0.05)
+    try:
+        os.killpg(pgid, signal.SIGKILL)
+    except ProcessLookupError:
+        return
+    deadline = time.monotonic() + 2
+    while _group_running(pgid):
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f"owned process group {pgid} did not stop after SIGKILL")
+        time.sleep(0.05)
+
+
+class _ChildCancelled(BaseException):
+    def __init__(self, signum: int):
+        self.signum = signum
+
+
+@contextlib.contextmanager
+def _cancellation_signals():
+    """Unwind cleanup on cancellation, then preserve the caller's signal exit."""
+    previous = {}
+    cancelled = None
+
+    def cancel(signum, _frame):
+        for owned_signal in previous:
+            signal.signal(owned_signal, signal.SIG_IGN)
+        raise _ChildCancelled(signum)
+
+    try:
+        for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+            previous[signum] = signal.getsignal(signum)
+            if previous[signum] != signal.SIG_IGN:
+                signal.signal(signum, cancel)
+        yield
+    except _ChildCancelled as exc:
+        cancelled = exc.signum
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+        if cancelled is not None:
+            os.kill(os.getpid(), cancelled)
+
+
+@contextlib.contextmanager
+def _owned_subprocess(argv: list[str], cwd: str | None):
+    """Retain ownership through errors and signals, including pipe cleanup."""
+    with _cancellation_signals():
+        proc = subprocess.Popen(
+            argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE, cwd=cwd, start_new_session=True,
+        )
+        try:
+            yield proc
+        finally:
+            for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+                signal.signal(signum, signal.SIG_IGN)
+            try:
+                _stop_process_group(proc.pid, proc)
+                proc.wait(timeout=2)
+            finally:
+                proc.stdout.close()
+                proc.stderr.close()
+
+
 def _spawn_detached_subprocess(
     argv: list[str],
     stdout_stream_path: Path,
     out_dir: Path,
     cwd: str | None = None,
 ) -> tuple[int, str]:
-    """Start a long-running child without keeping this orchestrator blocked.
-
-    The wrapper owns stdout/stderr redirection, so `events.jsonl`,
-    `stderr.log`, and `stream.log` keep growing after this Python process exits.
-    `child-status` reads those artifacts later instead of guessing from a
-    missing final file.
-    """
-
-    events_path = out_dir / "events.jsonl"
-    stderr_path = out_dir / "stderr.log"
+    """Hand off to the same runner so detached jobs retain signal cleanup."""
+    out_dir = out_dir.resolve()
+    stdout_stream_path = stdout_stream_path.resolve()
     runner_path = out_dir / "detached-runner.sh"
-    for path in [stdout_stream_path, events_path, stderr_path]:
-        path.write_text("", encoding="utf-8")
-    _write_text(out_dir / "start_ts", _utc_now_iso())
-
-    command = " ".join(_shell_quote(a) for a in argv)
-    lines = [
-        "#!/bin/bash",
-        "set +e",
+    runner_argv = [
+        sys.executable, str(Path(__file__).resolve()), "_run-detached",
+        "--try-dir", str(out_dir), "--stream-path", str(stdout_stream_path),
     ]
     if cwd:
-        lines.extend(
-            [
-                f"if ! cd {_shell_quote(cwd)}; then",
-                "  code=127",
-                "  date -u '+%Y-%m-%dT%H:%M:%SZ' > "
-                + _shell_quote(str(out_dir / "end_ts")),
-                "  printf '%s\\n' \"$code\" > "
-                + _shell_quote(str(out_dir / "exit_code")),
-                "  exit \"$code\"",
-                "fi",
-            ]
-        )
-    lines.extend(
-        [
-            "date -u '+%Y-%m-%dT%H:%M:%SZ' > "
-            + _shell_quote(str(out_dir / "start_ts")),
-            f": > {_shell_quote(str(stdout_stream_path))}",
-            f": > {_shell_quote(str(events_path))}",
-            f": > {_shell_quote(str(stderr_path))}",
-            "(",
-            "  "
-            + command
-            + " < /dev/null "
-            + f"> >(tee -a {_shell_quote(str(events_path))} >> {_shell_quote(str(stdout_stream_path))}) "
-            + f"2> >(tee -a {_shell_quote(str(stderr_path))} | sed 's/^/[stderr] /' >> {_shell_quote(str(stdout_stream_path))})",
-            ")",
-            "code=$?",
-            "date -u '+%Y-%m-%dT%H:%M:%SZ' > "
-            + _shell_quote(str(out_dir / "end_ts")),
-            "printf '%s\\n' \"$code\" > " + _shell_quote(str(out_dir / "exit_code")),
-            "exit \"$code\"",
-            "",
-        ]
-    )
-    _write_text(runner_path, "\n".join(lines))
-    runner_path.chmod(0o755)
+        runner_argv.extend(["--cwd", str(Path(cwd).resolve())])
+    runner_argv.extend(["--", *argv])
+    _write_invocation_sh(runner_path, runner_argv, None)
 
-    with open(os.devnull, "rb") as devnull, open(os.devnull, "wb") as devnull_out:
+    with _cancellation_signals(), open(
+        out_dir / "runner.log", "a", encoding="utf-8"
+    ) as runner_log:
         proc = subprocess.Popen(
-            ["/bin/bash", str(runner_path)],
-            stdin=devnull,
-            stdout=devnull_out,
-            stderr=devnull_out,
+            ["/bin/sh", str(runner_path)],
+            stdin=subprocess.DEVNULL,
+            stdout=runner_log,
+            stderr=runner_log,
             start_new_session=True,
         )
-
-    _write_text(out_dir / "child.pid", str(proc.pid) + "\n")
-    heartbeat = {
-        "pid": proc.pid,
-        "status": "running",
-        "started_at": _utc_now_iso(),
-        "last_output_at": None,
-        "last_event_at": None,
-        "last_event_kind": None,
-        "event_count": 0,
-        "output_bytes": 0,
-        "mode": "detached",
-    }
-    _write_json(out_dir / "heartbeat.json", heartbeat)
-    _write_json(out_dir / "monitor.json", _child_status(out_dir))
+        try:
+            deadline = time.monotonic() + 5
+            while not (out_dir / "child.started_at").exists():
+                if (out_dir / "exit_code").exists():
+                    proc.wait(timeout=5)
+                    break
+                if proc.poll() is not None or time.monotonic() >= deadline:
+                    raise RuntimeError(f"detached child did not start; see {out_dir / 'runner.log'}")
+                time.sleep(0.01)
+        except BaseException:
+            for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+                signal.signal(signum, signal.SIG_IGN)
+            if proc.poll() is None:
+                proc.terminate()
+            proc.wait(timeout=5)
+            raise
     return 0, ""
+
+
+def _cmd_run_detached(args: argparse.Namespace) -> int:
+    command = args.command[1:] if args.command[:1] == ["--"] else args.command
+    out_dir = Path(args.try_dir)
+    try:
+        code, _ = _run_subprocess(
+            command, Path(args.stream_path), out_dir, cwd=args.cwd,
+            _detached_runner=True,
+        )
+    except (FileNotFoundError, PermissionError) as exc:
+        # Preserve the former shell runner's command-not-found / cannot-exec codes.
+        code = 127 if isinstance(exc, FileNotFoundError) else 126
+        print(f"run_arch_epic: {exc}", file=sys.stderr)
+        _write_text(out_dir / "child.pid", str(os.getpid()) + "\n")
+        _write_text(out_dir / "end_ts", _utc_now_iso())
+        _write_text(out_dir / "exit_code", str(code) + "\n")
+    return code
 
 
 def _classify_event_line(line: str) -> str:
@@ -1705,12 +1784,27 @@ def cmd_child_finalize(args: argparse.Namespace) -> int:
 def cmd_child_terminate(args: argparse.Namespace) -> int:
     child_dir = Path(args.try_dir).resolve()
     pid = _read_optional_int(child_dir / "child.pid")
-    if pid is None:
+    if pid is None or pid <= 0:
         _die(f"child.pid not found or invalid under {child_dir}")
-    try:
-        os.kill(pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
+    started_at = _read_optional_text(child_dir / "child.started_at")
+    current_start = _process_started_at(pid)
+    if current_start is not None:
+        if not started_at or current_start != started_at:
+            _die(f"refusing to terminate PID {pid}: saved process identity does not match")
+        heartbeat = _load_json(child_dir / "heartbeat.json")
+        if heartbeat["mode"] == "foreground":
+            if os.getpgid(pid) != pid:
+                _die(f"refusing to terminate PID {pid}: it does not own its process group")
+            _stop_process_group(pid)
+        else:
+            os.kill(pid, signal.SIGTERM)
+            deadline = time.monotonic() + 5
+            while (
+                _group_running(pid) or _group_running(heartbeat["pgid"])
+            ) and time.monotonic() < deadline:
+                time.sleep(0.05)
+            if _group_running(pid) or _group_running(heartbeat["pgid"]):
+                _die(f"child PID {pid} did not stop after SIGTERM")
     _write_text(child_dir / "terminated_at", _utc_now_iso())
     _write_text(child_dir / "terminate_reason", args.reason.strip() + "\n")
     status = _child_status(child_dir)
@@ -1943,6 +2037,13 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="run_arch_epic")
     sub = p.add_subparsers(dest="cmd", required=True)
+
+    runner = sub.add_parser("_run-detached", help=argparse.SUPPRESS)
+    runner.add_argument("--try-dir", required=True)
+    runner.add_argument("--stream-path", required=True)
+    runner.add_argument("--cwd")
+    runner.add_argument("command", nargs=argparse.REMAINDER)
+    runner.set_defaults(func=_cmd_run_detached)
 
     def add_child_run_args(parser: argparse.ArgumentParser) -> None:
         parser.add_argument(

@@ -80,8 +80,18 @@ Other shipped skills are:
 - `thermo-nuclear-code-quality-review` — vendored Cursor Team Kit rubric for unusually strict maintainability reviews focused on code-judo simplification, 1k-line file growth, spaghetti branching, abstraction boundaries, and structural quality
 - `startup-pragmatism` — invokable early-stage startup reality check that snaps an agent out of proof/receipt/perfection-maximizing behavior and into 3-person seed-stage operating mode: self-check against eight trace-mined anti-patterns, run the four-question rigor budget (reversibility, cost of wrong vs slow, information available, learning per unit time), and reply with a cut list, a forced decision at current information, and where rigor is still owed
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; uses a new clean same-host native worker and critic when capable, resumes the exact worker for repair, and retains its subprocess machinery as the deliberate external lane
+- `spreadsheet-formatting` — makes Google Sheets and Excel workbooks readable, consistent, and formula-driven for a human reader
+- `readable-reports` — writes, rewrites, or audits reports, status updates, decks, sheet notes, and status answers so a smart, busy expert can parse them in one pass: full sentences, every thing named with its code after it, every PR or issue a labeled link, every status with its cause and next step, numbers with their comparison, answer first, no report-about-itself
 
 Examples in this repo use Codex `$skill` notation. In Claude Code, invoke the same skill as `/skill`.
+
+## Invocation
+
+Codex's elective workflows are chosen explicitly with `$skill-name`.
+Ordinary work does not activate a planning lifecycle, persistent loop, or
+specialist review. Required task helpers remain available; see the
+[usage guide](docs/arch_skill_usage_guide.md) for boundaries and the package's
+`agents/openai.yaml` for its Codex invocation policy.
 
 ## Install
 
@@ -106,7 +116,10 @@ pruned from installed skill packages. The
 `thermo-nuclear-code-quality-review` package is sourced unchanged from the
 vendored Cursor Team Kit plugin at
 `vendor/cursor/plugins/cursor-team-kit/skills/`; the installer copies only that
-skill package, not Cursor Team Kit agents or rules.
+skill package, not Cursor Team Kit agents or rules. Codex additionally receives
+the local invocation metadata at
+`skills/thermo-nuclear-code-quality-review/agents/openai.yaml`; vendor content
+and Claude/Gemini invocation remain unchanged.
 
 Agent-using skills share one runtime contract, installed at
 `~/.agents/skills/_shared/agent-orchestration-policy.md`,
@@ -120,6 +133,17 @@ reasoning policy, not an external-process ban or fixed concurrency rule.
 
 Automatic skill modes now rely on the host's native goal-mode continuation. Use Codex `/goal` or Claude Code `/goal` when you want a skill to keep moving across turns until its proof bar is met. This package no longer installs `Stop` or `SessionStart` hooks.
 
+For reviewed Codex-only changes, copy exact files through the existing installer:
+
+```bash
+make agents_install_files FILES="bottom-up-diagnostic/SKILL.md bottom-up-diagnostic/agents/openai.yaml"
+```
+
+Paths are relative to `skills/`. This target preserves replaced versions in
+`~/.agents/skill-backups/`, copies only named files, and leaves other packages,
+hooks, and runtimes untouched. Restart Codex to reload the changed catalog;
+file parity alone does not demonstrate host selection behavior.
+
 To skip Gemini:
 
 ```bash
@@ -132,171 +156,9 @@ To skip Hermes Agent propagation:
 make install NO_HERMES=1
 ```
 
-Installed skills:
-
-- Default local path:
-  - `~/.agents/skills/arch-step/`
-  - `~/.agents/skills/arch-step-goal-prompt/`
-  - `~/.agents/skills/miniarch-step/`
-  - `~/.agents/skills/arch-docs/`
-  - `~/.agents/skills/arch-mini-plan/`
-  - `~/.agents/skills/lilarch/`
-  - `~/.agents/skills/bugs-flow/`
-  - `~/.agents/skills/bottom-up-diagnostic/`
-  - `~/.agents/skills/audit-loop/`
-  - `~/.agents/skills/comment-loop/`
-  - `~/.agents/skills/audit-loop-sim/`
-  - `~/.agents/skills/north-star-investigation/`
-  - `~/.agents/skills/arch-flow/`
-  - `~/.agents/skills/arch-skills-guide/`
-  - `~/.agents/skills/agent-definition-auditor/`
-  - `~/.agents/skills/agents-md-authoring/`
-  - `~/.agents/skills/prompt-authoring/`
-  - `~/.agents/skills/browseros/`
-  - `~/.agents/skills/chatgpt-web/`
-  - `~/.agents/skills/skill-authoring/`
-  - `~/.agents/skills/herdr-helper/`
-  - `~/.agents/skills/figma-best-practices/`
-  - `~/.agents/skills/fal-ai-tools/`
-  - `~/.agents/skills/transcribe-audio/`
-  - `~/.agents/skills/flutter-reference/`
-  - `~/.agents/skills/pr-authoring/`
-  - `~/.agents/skills/pr-review-followthrough/`
-  - `~/.agents/skills/commit-history-authoring/`
-  - `~/.agents/skills/amir-publish/`
-  - `~/.agents/skills/codex-cleanup/`
-  - `~/.agents/skills/disk-cleanup/`
-  - `~/.agents/skills/codex-review-yolo/`
-  - `~/.agents/skills/fresh-consult/`
-  - `~/.agents/skills/intent-police/`
-  - `~/.agents/skills/unblocker/`
-  - `~/.agents/skills/agent-delegate/`
-  - `~/.agents/skills/plan-audit/`
-  - `~/.agents/skills/plan-implement/`
-  - `~/.agents/skills/plan-interview/`
-  - `~/.agents/skills/conductor/`
-  - `~/.agents/skills/delegated-implementation/`
-  - `~/.agents/skills/agent-history/`
-  - `~/.agents/skills/model-consensus/`
-  - `~/.agents/skills/contact-sheet-builder/`
-  - `~/.agents/skills/fc-branded-pdf/`
-  - `~/.agents/skills/cf-share/`
-  - `~/.agents/skills/cynical-code-review/`
-  - `~/.agents/skills/cynical-architecture-review/`
-  - `~/.agents/skills/cynical-cruft-removal/`
-  - `~/.agents/skills/exhaustive-code-review/`
-  - `~/.agents/skills/thermo-nuclear-code-quality-review/`
-  - `~/.agents/skills/startup-pragmatism/`
-  - `~/.agents/skills/stepwise/`
-  - `~/.agents/skills/arch-epic/`
-- Claude Code:
-  - `~/.claude/skills/arch-step/`
-  - `~/.claude/skills/arch-step-goal-prompt/`
-  - `~/.claude/skills/miniarch-step/`
-  - `~/.claude/skills/arch-docs/`
-  - `~/.claude/skills/arch-mini-plan/`
-  - `~/.claude/skills/lilarch/`
-  - `~/.claude/skills/bugs-flow/`
-  - `~/.claude/skills/bottom-up-diagnostic/`
-  - `~/.claude/skills/audit-loop/`
-  - `~/.claude/skills/comment-loop/`
-  - `~/.claude/skills/audit-loop-sim/`
-  - `~/.claude/skills/north-star-investigation/`
-  - `~/.claude/skills/arch-flow/`
-  - `~/.claude/skills/arch-skills-guide/`
-  - `~/.claude/skills/agent-definition-auditor/`
-  - `~/.claude/skills/agents-md-authoring/`
-  - `~/.claude/skills/prompt-authoring/`
-  - `~/.claude/skills/browseros/`
-  - `~/.claude/skills/chatgpt-web/`
-  - `~/.claude/skills/skill-authoring/`
-  - `~/.claude/skills/herdr-helper/`
-  - `~/.claude/skills/figma-best-practices/`
-  - `~/.claude/skills/fal-ai-tools/`
-  - `~/.claude/skills/transcribe-audio/`
-  - `~/.claude/skills/flutter-reference/`
-  - `~/.claude/skills/pr-authoring/`
-  - `~/.claude/skills/pr-review-followthrough/`
-  - `~/.claude/skills/commit-history-authoring/`
-  - `~/.claude/skills/amir-publish/`
-  - `~/.claude/skills/codex-cleanup/`
-  - `~/.claude/skills/disk-cleanup/`
-  - `~/.claude/skills/codex-review-yolo/`
-  - `~/.claude/skills/fresh-consult/`
-  - `~/.claude/skills/intent-police/`
-  - `~/.claude/skills/unblocker/`
-  - `~/.claude/skills/agent-delegate/`
-  - `~/.claude/skills/plan-audit/`
-  - `~/.claude/skills/plan-implement/`
-  - `~/.claude/skills/plan-interview/`
-  - `~/.claude/skills/conductor/`
-  - `~/.claude/skills/delegated-implementation/`
-  - `~/.claude/skills/agent-history/`
-  - `~/.claude/skills/model-consensus/`
-  - `~/.claude/skills/contact-sheet-builder/`
-  - `~/.claude/skills/fc-branded-pdf/`
-  - `~/.claude/skills/cf-share/`
-  - `~/.claude/skills/cynical-code-review/`
-  - `~/.claude/skills/cynical-architecture-review/`
-  - `~/.claude/skills/cynical-cruft-removal/`
-  - `~/.claude/skills/exhaustive-code-review/`
-  - `~/.claude/skills/thermo-nuclear-code-quality-review/`
-  - `~/.claude/skills/startup-pragmatism/`
-  - `~/.claude/skills/stepwise/`
-  - `~/.claude/skills/arch-epic/`
-- Gemini CLI:
-  - `~/.gemini/skills/arch-step/`
-  - `~/.gemini/skills/arch-step-goal-prompt/`
-  - `~/.gemini/skills/miniarch-step/`
-  - `~/.gemini/skills/arch-docs/`
-  - `~/.gemini/skills/arch-mini-plan/`
-  - `~/.gemini/skills/lilarch/`
-  - `~/.gemini/skills/bugs-flow/`
-  - `~/.gemini/skills/bottom-up-diagnostic/`
-  - `~/.gemini/skills/audit-loop/`
-  - `~/.gemini/skills/comment-loop/`
-  - `~/.gemini/skills/audit-loop-sim/`
-  - `~/.gemini/skills/north-star-investigation/`
-  - `~/.gemini/skills/arch-flow/`
-  - `~/.gemini/skills/arch-skills-guide/`
-  - `~/.gemini/skills/agent-definition-auditor/`
-  - `~/.gemini/skills/agents-md-authoring/`
-  - `~/.gemini/skills/prompt-authoring/`
-  - `~/.gemini/skills/browseros/`
-  - `~/.gemini/skills/chatgpt-web/`
-  - `~/.gemini/skills/skill-authoring/`
-  - `~/.gemini/skills/herdr-helper/`
-  - `~/.gemini/skills/figma-best-practices/`
-  - `~/.gemini/skills/fal-ai-tools/`
-  - `~/.gemini/skills/transcribe-audio/`
-  - `~/.gemini/skills/flutter-reference/`
-  - `~/.gemini/skills/pr-authoring/`
-  - `~/.gemini/skills/commit-history-authoring/`
-  - `~/.gemini/skills/amir-publish/`
-  - `~/.gemini/skills/codex-cleanup/`
-  - `~/.gemini/skills/disk-cleanup/`
-  - `~/.gemini/skills/codex-review-yolo/`
-  - `~/.gemini/skills/fresh-consult/`
-  - `~/.gemini/skills/intent-police/`
-  - `~/.gemini/skills/unblocker/`
-  - `~/.gemini/skills/agent-delegate/`
-  - `~/.gemini/skills/plan-audit/`
-  - `~/.gemini/skills/plan-implement/`
-  - `~/.gemini/skills/plan-interview/`
-  - `~/.gemini/skills/conductor/`
-  - `~/.gemini/skills/delegated-implementation/`
-  - `~/.gemini/skills/model-consensus/`
-  - `~/.gemini/skills/contact-sheet-builder/`
-  - `~/.gemini/skills/fc-branded-pdf/`
-  - `~/.gemini/skills/cf-share/`
-  - `~/.gemini/skills/cynical-code-review/`
-  - `~/.gemini/skills/cynical-architecture-review/`
-  - `~/.gemini/skills/cynical-cruft-removal/`
-  - `~/.gemini/skills/exhaustive-code-review/`
-  - `~/.gemini/skills/thermo-nuclear-code-quality-review/`
-  - `~/.gemini/skills/startup-pragmatism/`
-  - `~/.gemini/skills/stepwise/`
-  - `~/.gemini/skills/arch-epic/`
+Install destinations are `~/.agents/skills/` for Codex,
+`~/.claude/skills/` for Claude Code, and `~/.gemini/skills/` for Gemini.
+[Makefile](Makefile) owns their exact membership.
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
@@ -346,7 +208,7 @@ arch_skill hook entries.
 
 ### `arch-step`
 
-Use `arch-step` for broad or ambiguity-heavy full-arch work. It owns the standalone full-arch workflow, including:
+When explicitly selected, use `arch-step` for broad or ambiguity-heavy full-arch work. It owns the standalone full-arch workflow, including:
 
 - `new`
 - `reformat`
@@ -398,7 +260,7 @@ Use `arch-step-goal-prompt` when the user wants a durable Markdown goal prompt f
 
 ### `miniarch-step`
 
-Use `miniarch-step` when the work still needs a canonical full-arch doc, phased execution, and native goal-mode auto flow, but does not need `arch-step`'s broader staged helper surface. It keeps the trimmed command surface without changing the full-work posture.
+When explicitly selected, use `miniarch-step` when the work still needs a canonical full-arch doc, phased execution, and native goal-mode auto flow, but does not need `arch-step`'s broader staged helper surface. It keeps the trimmed command surface without changing the full-work posture.
 
 It keeps the same full-arch artifact shape and the same clean-audit handoff to `arch-docs`, but with a shorter command surface:
 
@@ -432,7 +294,7 @@ Use `miniarch-step` when the work needs full-arch execution but does not need `a
 
 ### `arch-epic`
 
-Use when one goal is too large for a single `arch-step` plan and should be decomposed into approved, ordered sub-plans. The epic doc owns the raw goal, decomposition, inter-plan gates, sub-plan DOC_PATHs, and append-only orchestration history; each sub-plan remains a real arch-step plan.
+When explicitly selected, use when one goal is too large for a single `arch-step` plan and should be decomposed into approved, ordered sub-plans. The epic doc owns the raw goal, decomposition, inter-plan gates, sub-plan DOC_PATHs, and append-only orchestration history; each sub-plan remains a real arch-step plan.
 
 Interactive and automatic modes preserve the same role lifecycle. A same-host
 planner or implementation worker starts as a new clean native child from the
@@ -461,31 +323,34 @@ one bounded pass plus review and names the next command.
 
 ### `arch-mini-plan`
 
-Use when the task still needs canonical arch blocks, but the planning should be done in one pass and follow-through should happen later via `miniarch-step` or `arch-step`, then `arch-docs` for later docs cleanup.
+When explicitly selected, use when the task still needs canonical arch blocks, but the planning should be done in one pass and follow-through should happen later via `miniarch-step` or `arch-step`, then `arch-docs` for later docs cleanup.
 
 ### `lilarch`
 
-Use for contained features or improvements that should fit in 1-3 phases.
+When explicitly selected, use for contained features or improvements that should fit in 1-3 phases.
 
 ### `bugs-flow`
 
-Use for Sentry/log-driven bug analysis, narrow fixes, and explicit-review-only follow-up.
+When explicitly selected, use for Sentry/log-driven bug analysis, narrow fixes, and explicit-review-only follow-up.
 
 ### `bottom-up-diagnostic`
 
-Use for case-level statistical analysis when an aggregate, average, funnel, cohort comparison, or sample must be rebuilt from the underlying population. It materializes constituent observations, inspects variation and outliers, and reaggregates the result. It may surface evidence of a software defect, but `bugs-flow` owns error diagnosis, reproduction, repair, and verification. The package includes concrete evidence-artifact patterns, sample tables, worked examples, and anti-examples that distinguish population evidence from aggregate storytelling.
+Choose this population-analysis workflow explicitly to rebuild aggregate
+statistics from constituent observations, cohorts, and outliers. Report any
+software-defect signal without automatically starting diagnosis or repair;
+ordinary bug work follows the repo's required discipline.
 
 ### `audit-loop`
 
-Use for repo-wide audit passes where the agent should exhaustively map the codebase and current proof surface before editing, then rank and attack the biggest real unresolved risks by consequence instead of picking something convenient. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
+When explicitly selected, use for repo-wide audit passes where the agent should exhaustively map the codebase and current proof surface before editing, then rank and attack the biggest real unresolved risks by consequence instead of picking something convenient. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
 
 ### `comment-loop`
 
-Use for repo-wide code comment hardening passes where the agent should exhaustively map the repo, current proof surface, and current explanatory coverage before editing, then rank and attack the biggest shared explanation gaps around contracts, conventions, gotchas, and subtle behavior instead of writing narration wherever it feels helpful.
+When explicitly selected, use for repo-wide code comment hardening passes where the agent should exhaustively map the repo, current proof surface, and current explanatory coverage before editing, then rank and attack the biggest shared explanation gaps around contracts, conventions, gotchas, and subtle behavior instead of writing narration wherever it feels helpful.
 
 ### `audit-loop-sim`
 
-Use for repo-wide real-app automation passes where the agent should exhaustively map the app, journeys, and current automation surface before editing, then rank and attack the biggest unresolved automation risks by consequence instead of cashing out on tiny safe test tweaks. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
+When explicitly selected, use for repo-wide real-app automation passes where the agent should exhaustively map the app, journeys, and current automation surface before editing, then rank and attack the biggest unresolved automation risks by consequence instead of cashing out on tiny safe test tweaks. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
 
 ### `goal-loop` — optional source only
 
@@ -496,7 +361,7 @@ quantified investigation.
 
 ### `north-star-investigation`
 
-Use for quantified investigations where ranked hypotheses and brutal tests are the main job.
+When explicitly selected, use for quantified investigations where ranked hypotheses and brutal tests are the main job.
 
 ### `arch-flow`
 
@@ -623,7 +488,7 @@ This package is retained in the repository for manual use but is not installed b
 
 ### `fresh-consult`
 
-Use when the user or another skill wants a clean, independent read-only second
+When explicitly selected, use when the user or another skill wants a clean, independent read-only second
 opinion on a concrete artifact, completion claim, flow-consistency question, or
 readability check. Ordinary same-host work uses a new clean native child
 (`fork_turns: "none"` in Codex or a clean named/custom subagent in Claude).
@@ -697,7 +562,7 @@ lifecycles.
 
 ### `plan-audit`
 
-Use when the user wants an existing planning artifact audited before work starts, in whatever format it already uses: PRD, migration plan, architecture plan, checklist, issue body, inline plan, or design doc. It improves plan quality by checking the North Star, done-state requirements, real ambiguity, constraints and non-constraints, repo/code truth when relevant, depth-first implementation risk, tiny-team simplicity, existing-pattern fit, drift-proofing, side doors, required deletes, and proof gaps.
+When explicitly selected, use when the user wants an existing planning artifact audited before work starts, in whatever format it already uses: PRD, migration plan, architecture plan, checklist, issue body, inline plan, or design doc. It improves plan quality by checking the North Star, done-state requirements, real ambiguity, constraints and non-constraints, repo/code truth when relevant, depth-first implementation risk, tiny-team simplicity, existing-pattern fit, drift-proofing, side doors, required deletes, and proof gaps.
 
 Use `plan-audit implementation-audit` when the user wants code already written for a plan reviewed against that plan. This mode reviews code shape, owner path, SSOT, side-door closure, duplicate truth, stale docs/prompts, proof gaps, drift, caller fit, changed tests as code, and elegance. It is not generic diff review, does not run tests or CI, does not ask for logs, and does not investigate whether a completion claim is truthful.
 
@@ -705,7 +570,7 @@ The skill is prompt-first and doctrine-only. It may maintain `<PLAN_STEM>_PLAN_A
 
 ### `plan-implement`
 
-Use when the user wants to implement an existing plan, phase, section, checklist, issue-body plan, or design doc while keeping implementation state easy to resume. The skill works depth-first from narrow proven slices, keeps `<PLAN_STEM>_IMPLEMENTATION_LOG.md` beside non-trivial file-backed plans, reuses proof until a real invalidator makes it stale, runs checks for impact rather than habit, and uses plan-audit implementation lenses for warm review while code is still easy to repair.
+When explicitly selected, use when the user wants to implement an existing plan, phase, section, checklist, issue-body plan, or design doc while keeping implementation state easy to resume. The skill works depth-first from narrow proven slices, keeps `<PLAN_STEM>_IMPLEMENTATION_LOG.md` beside non-trivial file-backed plans, reuses proof until a real invalidator makes it stale, runs checks for impact rather than habit, and uses plan-audit implementation lenses for warm review while code is still easy to repair.
 
 The plan remains source of truth, the plan-audit log owns `PLA-*` and `IMP-*`
 findings, and the implementation log is speed/resume state. Independent native
@@ -720,7 +585,7 @@ and reviewer while delegated workers drive the plan or outcome.
 
 ### `conductor`
 
-Use when the user wants a goal conducted to verified completion by delegated
+When explicitly selected, use when the user wants a goal conducted to verified completion by delegated
 workers while the parent remains the executive architect, scope judge, and
 deeply cynical reviewer. Intake spans a spectrum: a finished plan document, a
 partial plan, or a described outcome. Outcome and partial-plan intake first
@@ -776,7 +641,7 @@ to audit a plan rather than implement it.
 
 ### `model-consensus`
 
-Use when the user wants two selected model participants to cross-check,
+When explicitly selected, use when the user wants two selected model participants to cross-check,
 critique, and converge on a plan, architecture, investigation, design, or
 concept. The parent resolves transport separately: same-host roles use
 separate new clean native children when the host can honor the requested
@@ -820,7 +685,7 @@ Use when the user wants a local artifact — an HTML report, screenshot set, ana
 
 ### `cynical-code-review`
 
-Use when the user wants a prompt-only skeptical implementation-integrity code review over implemented code, a branch, diff, path set, completion claim, or optional plan-backed implementation and wants the review saved to disk. The skill assumes the completion story may be misleading, treats names/docs/status/tests as claims rather than proof, hunts name-only completion, split-brain owners, side doors, partial unification, stale authority paths, stopped-short user workflows, overbuilt machinery, scope contamination, fake proof receipts, and docs/status/tests that mask broken code, then writes `target.md`, `suspicion-map.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-code-review/...`. Its verdicts are `approve`, `not-approved`, or `coverage-incomplete`.
+When explicitly selected, use when the user wants a prompt-only skeptical implementation-integrity code review over implemented code, a branch, diff, path set, completion claim, or optional plan-backed implementation and wants the review saved to disk. The skill assumes the completion story may be misleading, treats names/docs/status/tests as claims rather than proof, hunts name-only completion, split-brain owners, side doors, partial unification, stale authority paths, stopped-short user workflows, overbuilt machinery, scope contamination, fake proof receipts, and docs/status/tests that mask broken code, then writes `target.md`, `suspicion-map.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-code-review/...`. Its verdicts are `approve`, `not-approved`, or `coverage-incomplete`.
 
 It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` subprocesses, or turn review into a test/doc nit pass.
 
@@ -828,7 +693,7 @@ Use `cynical-code-review` when distrust of the implementation story is the job. 
 
 ### `cynical-architecture-review`
 
-Use when the user wants a prompt-only skeptical architecture review over a branch, diff, subsystem, plan-backed implementation, or code area and wants the review saved to disk. The skill assumes the architecture may have emerged accidentally through iteration, preserves the intended UX and hard experiment requirements, hunts sprawl, invalid split ownership, duplicate truth, accidental abstractions, compatibility shims, flags-as-architecture, registries, adapters, state spread, wrong decomposition, and needless complexity, then writes `target.md`, `architecture-map.md`, `complexity-ledger.md`, `subtraction-map.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-architecture-review/...`. Its verdicts are `approve`, `not-approved`, or `scope-incomplete`.
+When explicitly selected, use when the user wants a prompt-only skeptical architecture review over a branch, diff, subsystem, plan-backed implementation, or code area and wants the review saved to disk. The skill assumes the architecture may have emerged accidentally through iteration, preserves the intended UX and hard experiment requirements, hunts sprawl, invalid split ownership, duplicate truth, accidental abstractions, compatibility shims, flags-as-architecture, registries, adapters, state spread, wrong decomposition, and needless complexity, then writes `target.md`, `architecture-map.md`, `complexity-ledger.md`, `subtraction-map.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-architecture-review/...`. Its verdicts are `approve`, `not-approved`, or `scope-incomplete`.
 
 It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` subprocesses, redesign the product, or turn review into a QA/test/doc pass unless the user explicitly asks.
 
@@ -836,7 +701,7 @@ Use `cynical-architecture-review` when accidental architecture and subtraction a
 
 ### `cynical-cruft-removal`
 
-Use when the user wants a prompt-only skeptical cleanup review over a repo, branch, diff, subsystem, test suite, dependency set, generated artifact set, or docs/examples/prompt surface and wants a deep deletion report saved to disk. The skill assumes references are not proof of value, identifies live roots and current purpose, hunts dead code, self-referential islands, retired V1/V2 paths, stale feature flags, worthless tests, fake coverage, unused dependencies, obsolete configs/scripts, stale generated artifacts, point-in-time docs/examples, and other low-value artifacts, then writes `target.md`, `live-root-map.md`, `purpose-map.md`, `reference-graph-notes.md`, `low-value-catalog.md`, `test-bloat-report.md`, `deletion-candidates.md`, `keep-decisions.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-cruft-removal/...`. Its verdicts are `cruft-found`, `no-material-cruft-found`, `scope-incomplete`, or `unsafe-to-judge`.
+When explicitly selected, use when the user wants a prompt-only skeptical cleanup review over a repo, branch, diff, subsystem, test suite, dependency set, generated artifact set, or docs/examples/prompt surface and wants a deep deletion report saved to disk. The skill assumes references are not proof of value, identifies live roots and current purpose, hunts dead code, self-referential islands, retired V1/V2 paths, stale feature flags, worthless tests, fake coverage, unused dependencies, obsolete configs/scripts, stale generated artifacts, point-in-time docs/examples, and other low-value artifacts, then writes `target.md`, `live-root-map.md`, `purpose-map.md`, `reference-graph-notes.md`, `low-value-catalog.md`, `test-bloat-report.md`, `deletion-candidates.md`, `keep-decisions.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-cruft-removal/...`. Its verdicts are `cruft-found`, `no-material-cruft-found`, `scope-incomplete`, or `unsafe-to-judge`.
 
 It is review-only and workflow-neutral. It does not fix code, delete files, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` subprocesses, or turn review into a QA/test/doc pass.
 
@@ -844,7 +709,7 @@ Use `cynical-cruft-removal` when deletion value and low-value artifact discovery
 
 ### `exhaustive-code-review`
 
-Use when the user wants a prompt-only exhaustive code review over a branch,
+When explicitly selected, use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim and wants the review saved to
 disk. The skill divides real coverage needs into non-overlapping new clean
 native read-only slices, bounds fanout by host slots, collision risk, and parent
@@ -879,9 +744,9 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `bottom-up-diagnostic`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `disk-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Invoke a selected workflow as `$skill-name`; see [Shipped skills](#shipped-skills) for the available choices.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
-- Docs cleanup loops default to `arch-docs`.
+- Choose `arch-docs` explicitly for its documentation-retirement loop.
 - Read-only checklist and next-step inspection uses `arch-flow`.
 
 Examples:

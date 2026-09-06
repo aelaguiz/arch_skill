@@ -1,7 +1,7 @@
 interface:
   display_name: "BrowserOS"
   short_description: "Safe preflight for direct BrowserOS MCP use"
-  default_prompt: "Use $browseros before any direct BrowserOS MCP call. For page work, reuse one safe task-authorized normal non-hidden tab; if a new tab is necessary, request hidden=false and background=true, then verify its actual window, visibility, and active state. Keep routine page tools backgrounded, prove profile/account identity when relevant, and reconcile task-created state; use live discovery without tab work for BrowserOS-managed connector-only work."
+  default_prompt: "Use $browseros for BrowserOS work and all Codex CLI browser automation. Reuse existing windows and background pages, verify the intended profile and site identity, and clean up task-created state. Foreground changes require the user's request; BrowserOS unavailability is a blocker, not permission to switch browser tools."
 
 dependencies:
   tools:

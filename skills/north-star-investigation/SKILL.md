@@ -1,13 +1,14 @@
 ---
 name: north-star-investigation
-description: "Run the standalone math-first investigation loop using a Commander's Intent doc, ranked hypotheses, and brutal tests. Use when a request needs quantitative sanity checks, fastest-learning bets, and an investigation worklog rather than a fixed implementation plan. Not for ordinary bug fixes, feature delivery, or generic goal loops that do not need this level of quantified hypothesis work."
+description: "Explicitly selected quantitative investigation loop with a Commander's Intent document, ranked hypotheses, and tests that distinguish them. Use when the user chooses $north-star-investigation or binding task instructions require it. Uncertainty, debugging, or a quantitative question alone does not select this workflow."
 metadata:
   short-description: "Quantitative investigation loop"
 ---
 
 # North Star Investigation
 
-Use this skill for the investigation workflow where quantitative reasoning and fastest-learning bets are the main job.
+Use this workflow only after explicit selection as `$north-star-investigation` or a
+binding task instruction requiring it.
 
 ## When to use
 

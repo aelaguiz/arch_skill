@@ -1,13 +1,14 @@
 ---
 name: stepwise
-description: "Run an ordered multi-step process inside a target repo with one clean worker per independent step, a new clean observational critic, and a Stepwise-owned diagnose-and-repair loop that resumes the exact worker, walks upstream when inputs are suspect, and repairs at root cause. Same-host roles prefer native children; external Claude, Codex, Grok, or Kimi sessions remain available when their provider, model, lifecycle, isolation, automation, or structured receipt provides a deliberate benefit. Use for named process execution with strict step ordering and evidence. Do NOT use for plan-doc implementation (arch-step), bet-and-learn optimization, one-shot reviews, or single-turn work."
+description: "Explicitly selected ordered process with a clean worker and critic per step and exact-worker repair. Use when the user chooses $stepwise or binding task instructions require it. A numbered task list or ordinary multi-step work does not select worker orchestration."
 metadata:
   short-description: "Diagnostic multi-step orchestrator with critics"
 ---
 
 # stepwise
 
-Execute an ordered multi-step process in a target repo. Each independent step
+After explicit selection of `$stepwise`, execute the chosen ordered process.
+Each independent step
 runs in a new clean child using transport selected for that step. Same-host
 work normally uses an active-host native child; the existing Claude, Codex,
 Grok, and Kimi subprocess harness is the explicit external adapter. A new clean critic

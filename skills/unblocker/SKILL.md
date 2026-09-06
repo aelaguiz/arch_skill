@@ -1,16 +1,14 @@
 ---
 name: unblocker
-description: "Stand up and consult a long-lived unblocker agent - the run's end blocker and authorizer - that answers every mid-run \"I need authorization\" or \"I am blocked\" moment from the user's high-level intent so delegated work never parks in waiting-for-user. Armed at run start with the user's verbatim ask, the plan, and boundaries, it presumes the run is already authorized for everything the plan names, kills self-imposed approval gates, works real blockers from first principles and plan intent, reserves Pro for major unresolved problems, and passes the user only matters that genuinely need their authority or access, change what they asked for, or touch production surfaces (prod apps/data, deploys, releases, external sends, money), which always stay user-owned. Use when the user wants an unblocker or authorization agent over a run, or a skill like epic-to-prs or issue-to-pr arms one into its goal prompt. Not intent-police (advisory drift watch), not a code reviewer, never a production approver."
+description: "Explicitly selected long-lived companion that resolves claimed blockers against existing user authority. Use when the user chooses $unblocker or a deliberately selected parent workflow requires it. A stalled task or approval question alone does not select this companion; it cannot create permission for production actions or scope expansion."
 metadata:
   short-description: "Long-lived end blocker that authorizes and unblocks a run"
 ---
 
 # Unblocker
 
-Use this skill to stand up and consult a long-lived agent whose only job is
-to be the run's end blocker: when a worker decides it is blocked or needs
-authorization, the unblocker decides, from the user's high-level intent, and
-the work keeps moving.
+Use this workflow only after explicit selection as `$unblocker` or a
+binding task instruction requiring it.
 
 The failure this skill exists to kill: hours into a delegated run, an agent
 invents an approval gate the user never asked to hold ("authorize both"),
@@ -34,8 +32,7 @@ make install
   delegated, or overnight run.
 - A skill authoring a persistent goal for a long run (`epic-to-prs`,
   `issue-to-pr`, goal loops) arms one into the goal prompt.
-- A run's workers keep stalling on approval requests the user never asked
-  to hold.
+- Within the selected workflow, workers need an existing-authority check.
 
 ## When not to use
 

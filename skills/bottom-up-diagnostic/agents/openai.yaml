@@ -1,7 +1,7 @@
 interface:
   display_name: "Bottom-Up Population Analysis"
   short_description: "Analyze populations, not software bugs"
-  default_prompt: "Use $bottom-up-diagnostic for case-level statistical analysis of this bounded population. Save the constituent observations, inspect cohorts and outliers, reaggregate the statistics, and return a population conclusion whose confidence matches coverage. Do not use this as a software bug workflow; route asks to diagnose, reproduce, repair, or verify errors, regressions, crashes, Sentry issues, and broken behavior to $bugs-flow."
+  default_prompt: "Use $bottom-up-diagnostic to analyze this bounded population from constituent observations, inspect cohorts and outliers, and reaggregate a conclusion whose confidence matches coverage. Report defect signals without starting a repair workflow."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

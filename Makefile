@@ -8,9 +8,9 @@ REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio arch-loop del
 # per-skill directories in every install root.
 SHARED_DIRS := _shared
 # `SKILLS` is the active agents/Codex surface. Claude mirrors it.
-SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor delegated-implementation agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup disk-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism issue-to-pr epic-to-prs check-my-agents unblocker spreadsheet-formatting
-CLAUDE_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor delegated-implementation agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup disk-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism issue-to-pr epic-to-prs check-my-agents unblocker spreadsheet-formatting
-GEMINI_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor delegated-implementation model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup disk-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism issue-to-pr epic-to-prs check-my-agents unblocker spreadsheet-formatting
+SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor delegated-implementation agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup disk-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism issue-to-pr epic-to-prs check-my-agents unblocker spreadsheet-formatting readable-reports
+CLAUDE_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring pr-review-followthrough commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor delegated-implementation agent-history model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup disk-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism issue-to-pr epic-to-prs check-my-agents unblocker spreadsheet-formatting readable-reports
+GEMINI_SKILLS := arch-step arch-step-goal-prompt miniarch-step arch-docs arch-mini-plan lilarch bugs-flow bottom-up-diagnostic audit-loop comment-loop audit-loop-sim north-star-investigation arch-flow arch-skills-guide agent-definition-auditor agents-md-authoring prompt-authoring browseros chatgpt-web skill-authoring herdr-helper figma-best-practices fal-ai-tools transcribe-audio flutter-reference pr-authoring commit-history-authoring amir-publish codex-review-yolo fresh-consult agent-delegate plan-audit plan-implement plan-interview conductor delegated-implementation model-consensus contact-sheet-builder fc-branded-pdf cf-share cynical-code-review cynical-architecture-review cynical-cruft-removal exhaustive-code-review stepwise arch-epic codex-cleanup disk-cleanup thermo-nuclear-code-quality-review intent-police startup-pragmatism issue-to-pr epic-to-prs check-my-agents unblocker spreadsheet-formatting readable-reports
 CURSOR_TEAM_KIT_SKILLS_DIR := vendor/cursor/plugins/cursor-team-kit/skills
 VENDORED_CURSOR_TEAM_KIT_SKILLS := thermo-nuclear-code-quality-review
 LOCAL_SKILLS := $(filter-out $(VENDORED_CURSOR_TEAM_KIT_SKILLS),$(SKILLS))
@@ -190,6 +190,29 @@ clean_gemini_stale_surfaces:
 
 install_skill: agents_install_skill clean_codex_skill_mirror
 
+# Copy reviewed files only; do not purge packages or refresh other runtimes.
+.PHONY: agents_install_files
+agents_install_files:
+	@test -n "$(FILES)" || { echo 'Set FILES to paths relative to skills/'; exit 1; }
+	@set -eu; \
+	for file in $(FILES); do \
+		case "$$file" in /*|*..*|*/build/*|*/__pycache__/*|*.pyc) echo "Invalid source: $$file"; exit 1;; esac; \
+		package=$${file%%/*}; \
+		case " $(SKILLS) $(SHARED_DIRS) " in *" $$package "*) ;; *) echo "Unowned package: $$package"; exit 1;; esac; \
+		test -f "skills/$$file"; \
+		test ! -L "$(AGENTS_SKILLS_DIR)/$$package"; \
+	done; \
+	mkdir -p "$(AGENTS_SKILLS_DIR)/../skill-backups"; \
+	backup=$$(mktemp -d "$(AGENTS_SKILLS_DIR)/../skill-backups/arch_skill.XXXXXX"); \
+	for file in $(FILES); do \
+		dest="$(AGENTS_SKILLS_DIR)/$$file"; \
+		if test -f "$$dest" && ! cmp -s "skills/$$file" "$$dest"; then \
+			mkdir -p "$$backup/$$(dirname "$$file")"; cp -p "$$dest" "$$backup/$$file"; \
+		fi; \
+		mkdir -p "$$(dirname "$$dest")"; cp -p "skills/$$file" "$$dest"; \
+	done; \
+	echo "Copied reviewed files; previous versions: $$backup"
+
 agents_install_skill:
 	mkdir -p $(AGENTS_SKILLS_DIR)
 	@for skill in $(REMOVED_SKILLS) $(SKILLS); do \
@@ -200,6 +223,10 @@ agents_install_skill:
 	done
 	@for skill in $(VENDORED_SKILLS); do \
 		cp -R $(CURSOR_TEAM_KIT_SKILLS_DIR)/$$skill $(AGENTS_SKILLS_DIR)/$$skill; \
+		if [ -f skills/$$skill/agents/openai.yaml ]; then \
+			mkdir -p $(AGENTS_SKILLS_DIR)/$$skill/agents; \
+			cp skills/$$skill/agents/openai.yaml $(AGENTS_SKILLS_DIR)/$$skill/agents/openai.yaml; \
+		fi; \
 	done
 	@for shared in $(SHARED_DIRS); do \
 		rm -rf $(AGENTS_SKILLS_DIR)/$$shared; \

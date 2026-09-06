@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Max Responsive Coaching: Program Review (2026-08-21)</title>
+<link rel="stylesheet" href="style/pico.min.css">
+<link rel="stylesheet" href="style/pokerskill-report.css">
+<style>
+  /* Inline evidence shots sit side by side at phone width; the lightbox gives full size. */
+  main > p > img { max-width: 265px; height: auto; display: inline-block; vertical-align: top; margin: 0.4rem 0.6rem 0.4rem 0; }
+  /* Contact-sheet grid for screenshot appendices. */
+  .grid { display: flex; flex-wrap: wrap; gap: 14px; }
+  .grid figure { width: 180px; margin: 0; }
+  .grid figcaption { font-size: 0.72rem; line-height: 1.3; margin-top: 0.3rem; }
+</style>
+</head>
+<body>
+
+<button class="ps-export" onclick="PS.exportPDF()" title="Export this report as a PDF">Export PDF</button>
+
+<header class="container ps-header">
+  <img class="ps-logo ps-logo-screen" src="style/assets/pokerskill-logo-dark.svg" alt="Poker Skill">
+  <img class="ps-logo ps-logo-print" src="style/assets/pokerskill-logo-print.svg" alt="Poker Skill">
+  <p class="ps-kicker">Play vs AI Coaching / Issue #4259</p>
+  <h1>Making Max Responsive: the machine works</h1>
+  <p class="ps-meta">
+    <span>Written 2026-08-21</span>
+    <span>PRs #4278 + #4295 (stacked), merge-ready</span>
+    <span>First sealed-set win: -38% median adjacent repetition</span>
+  </p>
+</header>
+
+<main class="container">
+<section>
+<h2>TL;DR</h2>
+<p><strong>The coaching-improvement machine now exists and provably works.</strong> Two stacked PRs are merge-ready. The first gives us poker hands at scale with real generated coaching. The second proves the full loop: measure how formulaic Max sounds, find the owner of the repetition, change one thing, and verify on sealed held-out sessions. First verified win: <strong>back-to-back repeated sentence frames in showdown hand-end coaching dropped 31 to 41 percent across all three sealed-set repeats</strong>, with factual quality no worse than the shipped prompt.</p>
+<table class="ps-data striped">
+<thead><tr><th>Needs you</th><th>What</th><th>Time</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><a href="blind-read.html">The blind read</a>: 20 A/B session pairs; finalizes adopt-or-revert on the wording change</td><td>~15 min</td></tr>
+<tr><td>2</td><td><code>ufc-approved</code> + merge on <a href="https://github.com/funcountry/psmobile/pull/4278">PR #4278</a> then <a href="https://github.com/funcountry/psmobile/pull/4295">PR #4295</a> (stacked)</td><td>minutes</td></tr>
+<tr><td>3</td><td>The corpora discussion (decisions listed at the bottom) before any next-phase work starts</td><td>one sitting</td></tr>
+</tbody></table>
+</section>
+
+<section>
+<h2>What shipped, in plain terms</h2>
+<table class="ps-data striped">
+<thead><tr><th>Piece</th><th>What it does</th><th>State</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/funcountry/psmobile/pull/4278">PR #4278</a>: fixture runner</td><td>Plays real five-hand coached matches headlessly against staging RustAI + real Groq at ~1.8 matches/min; deterministic by seed; exports eval-ready data with full receipts</td><td>Merge-ready; label yours</td></tr>
+<tr><td><a href="https://github.com/funcountry/psmobile/pull/4295">PR #4295</a>: outro skeleton</td><td>Session corpus (158 sessions, salted tune/check split), parity gate, repetition scorer, paired A/B bench, one pre-registered wording treatment with a sealed-set verdict</td><td>Merge-ready pending your blind read; label yours</td></tr>
+<tr><td>Data bank</td><td>164 matches / 820 hands / 2,784 accepted coaching rows</td><td><code>psagentspace/_artifacts/2026-08-20-coach-fixture-batches/</code></td></tr>
+</tbody></table>
+<p>Both PRs carry the shared label <code>stack: coach-eval-skeleton</code>. Everything serves psmobile <a href="https://github.com/funcountry/psmobile/issues/4259">#4259</a> (Max sounds responsive, not formulaic) under epic #4220.</p>
+</section>
+
+<section>
+<h2>The science: where the repetition actually lives</h2>
+<p>The owner table settled it as an identity, not a correlation: <strong>the repetition is authored by our own deterministic renderer, not chosen by the model.</strong></p>
+<ul>
+<li>71.5 percent of control rows are handed the same callback sentence ("Separately, Hero misplayed preflop: say plainly that preflop was a mistake"), and the model echoes it 98.4 percent of the time.</li>
+<li>Every output saying "preflop was a mistake" traces to an input containing that string. No exceptions in 530 rows.</li>
+<li>Counterfactually removing that one sentence family cuts the adjacent repeat rate 60 percent (0.248 to 0.099).</li>
+</ul>
+<p>So the fix went to the owning layer: one function, one sentence, four sanctioned wordings with identical meaning, chosen deterministically from the hand's own cards (no randomness, no memory, no new abstractions):</p>
+<table class="ps-data striped">
+<thead><tr><th>Variant</th><th>Wording</th></tr></thead>
+<tbody>
+<tr><td>0 (unchanged)</td><td>"... say plainly that preflop was a mistake."</td></tr>
+<tr><td>1</td><td>"... say plainly that Hero got preflop wrong."</td></tr>
+<tr><td>2</td><td>"... say plainly that preflop went wrong."</td></tr>
+<tr><td>3</td><td>"... say plainly that the mistake was preflop."</td></tr>
+</tbody></table>
+<p>A prompt-only tweak would have treated the wrong layer; the external review round is what forced the owner check before any prompt edits.</p>
+</section>
+<section>
+<h2>The verdict: three sealed-set repeats</h2>
+<p>Pre-registered before the sealed CHECK set was opened: target = adjacent normalized-frame repeat rate, showdown family; bar = median at or below 0.2961 (10 percent better than control) with same-direction improvement in all three repeats.</p>
+<table class="ps-data striped">
+<thead><tr><th>Repeat</th><th>Control (fielded wording)</th><th>Candidate (varied wording)</th><th>Change</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0.4183 (64/153)</td><td>0.2895 (44/152)</td><td>-30.8%</td></tr>
+<tr><td>2</td><td>0.4314 (66/153)</td><td>0.2549 (39/153)</td><td>-40.9%</td></tr>
+<tr><td>3</td><td>0.4314 (66/153)</td><td>0.2680 (41/153)</td><td>-37.9%</td></tr>
+</tbody></table>
+<p>Median candidate rate 0.2680 vs bar 0.2961: <strong>pass</strong>. Guardrails: length within bounds, distinct frames up, exact duplicates zero, factual failures at or below the same-run control in every repeat with no new failure class, and the dominant frame changed hands exactly as predicted (to a model-invented one, which is the already-identified next treatment).</p>
+<h3>Two documented exceptions, both ruled and preserved in the artifacts</h3>
+<ul>
+<li><strong>One Groq 503</strong> out of 1,560 bench calls made the literal "100 percent accepted" leg read 259/260, so the mechanical verdict file honestly says REVERT. All 779 returned candidate generations were accepted, and the failed row re-ran clean at identical bytes. Ruling: transport availability is not copy rejection; the guardrail holds at its declared intent. The literal false stays in the artifact as evidence.</li>
+<li><strong>One stochastic factual draw</strong> (247/248) on a frozen-corpus row whose input bytes are identical in both arms (the change cannot reach it); six targeted repeats all passed. Ruling: provider noise, gate holds, row banked.</li>
+</ul>
+<p>Bottom line against #4259: overall adjacent rate on the sealed set went from ~0.31 to ~0.20. The issue's final bar is 0.02, so this is the first crank of the machine, not the finish line. What is proven is that the machine turns.</p>
+</section>
+
+<section>
+<h2>Found along the way (free finds)</h2>
+<table class="ps-data striped">
+<thead><tr><th>Find</th><th>What</th><th>State</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/funcountry/psmobile/issues/4277">#4277</a></td><td>A five-hand match can finalize with no lite review (2/159 matches, both concurrencies)</td><td>Filed, P2</td></tr>
+<tr><td><a href="https://github.com/funcountry/psmobile/issues/4294">#4294</a></td><td>Chop pots: offline and runtime resolvers disagree 2x on pot size; the player-visible size word moves with it. Caught by the new parity gate</td><td>Filed, P2</td></tr>
+<tr><td>Env traps</td><td>backend/.env had a dead duplicate Groq key line (401s) and a quoted model id (404s); both fixed in canonical + worktree, GOTCHAS updated</td><td>Fixed</td></tr>
+<tr><td>Corpus fact</td><td>150 coached hands dedupe to only 37 distinct outro situations: rare families need seed mining, not volume</td><td>Input to corpora discussion</td></tr>
+</tbody></table>
+</section>
+
+<section>
+<h2>Your queue</h2>
+<ol>
+<li><strong><a href="blind-read.html">Do the blind read</a></strong> (15 min, 20 session pairs, no wrong answers). It is the human check that the metric was not gamed: pick the side you would ship. The answer key stays out of this share; adopt-or-revert on the final commit follows your read.</li>
+<li><strong>Labels + merges</strong>: <code>ufc-approved</code> on #4278 and #4295, merge #4278 first (stack order).</li>
+<li><strong>Corpora discussion</strong> (gates the next phase): split ratios and the run-identity key; per-family size targets given the 37-distinct-situations fact; whether headless "accepted" stands in for "displayed"; blessing the salt so the benchmark freezes; surface order for treatment two (the model-invented "He had better" headline residue is queued first).</li>
+</ol>
+</section>
+
+<section>
+<h2>Provenance</h2>
+<ul>
+<li>Active plan: <code>psagentspace/plans/drafts/2026-08-20-max-responsive-coaching-iteration-plan.md</code> (v4) and PR-2 spec <code>2026-08-20-outro-skeleton-pr2-spec.md</code> (v2.1); external GPT Pro review transcript banked beside them; conductor logs carry every dispatch, audit, send-back, and ruling.</li>
+<li>Evidence: PR #4278 <code>backend/scripts/coach_fixture_runner/evidence/2026-08-20-first-batch/</code>; PR #4295 <code>scripts/eval/coach_copy/evidence_outro_skeleton/</code> (baselines, owner table, verdict, failure rows, blind packet + separate answer key).</li>
+<li>Method lineage: the outro P2 goal loop and the Qwen verbalizer lessons (coaching repo).</li>
+</ul>
+</section>
+
+</main>
+
+<script src="style/pokerskill-nav.js"></script>
+<script src="style/pokerskill-lightbox.js"></script>
+<!-- Charts only if the report draws any:
+<script src="style/chart.umd.js"></script>
+<script src="style/pokerskill-charts.js"></script>
+-->
+</body>
+</html>

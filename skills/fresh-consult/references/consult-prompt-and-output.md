@@ -62,8 +62,8 @@ nearby repo, docs, research, tests, command output, or local evidence you judge
 necessary to answer the user's ask. Report what you read and what answer the
 evidence supports.
 
-Use your own native sub-agents on this host whenever they help you cover the
-material. Do not edit or write files, run formatters, coordinate directly with
+Use native sub-agents only within the authorized delegation scope and host
+limits. Do not edit or write files, run formatters, coordinate directly with
 sibling consults, start external agents, or start another controller.
 
 # Report Contract
@@ -144,6 +144,5 @@ Do not:
 - Launch an external same-provider process merely to obtain clean context or
   exact continuation that the host already provides natively. External
   transport remains valid when its concrete benefit is worth the process cost.
-- Manage a reviewer's internal native fan-out. The reviewer owns that choice on
-  its own host; the parent owns external topology, evidence checking, and
-  synthesis.
+- Expand a reviewer's delegation scope beyond the user's or parent's limits.
+  The parent owns the concurrency budget, evidence checking, and synthesis.

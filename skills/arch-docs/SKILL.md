@@ -1,13 +1,15 @@
 ---
 name: arch-docs
-description: "Aggressively retire stale repo documentation with the DGTFO loop: ground every topic against current code, treat old point-in-time docs as delete candidates by default, fold durable truth into real evergreen homes, and only keep or author standalone docs when current readers genuinely need them. Use when stale worklogs, implementation docs, misleading `living` docs, outdated READMEs, dead migration notes, or explicit native goal-mode `auto` docs cleanup need a code-grounded delete-first pass. Not for generic copy editing, open-ended aspirational doc authoring, or speculative taxonomy redesign."
+description: "Explicitly selected delete-first documentation audit and retirement loop grounded in current code. Use when the user chooses $arch-docs or binding task instructions require it. Ordinary README edits, documentation cleanup, navigation work, and applying existing audit findings do not select this lifecycle or authorize historical-document deletion."
 metadata:
   short-description: "Delete-first docs audit and retirement"
 ---
 
 # Arch Docs
 
-Use this skill when the code is stable enough to ground documentation against current reality and the main job is retiring stale point-in-time docs aggressively while preserving only the durable truth current readers still need.
+Use this workflow only after explicit selection as `$arch-docs` or a binding
+task instruction requiring it. Preserve the repository's deletion and
+historical-evidence rules throughout the selected retirement work.
 
 ## When to use
 

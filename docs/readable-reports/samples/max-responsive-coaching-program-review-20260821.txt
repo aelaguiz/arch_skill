@@ -1,0 +1,198 @@
+Source URL: https://share.fun.country/20260821-859dee7c9687/index.html
+Fetched: 2026-09-06
+
+Max Responsive Coaching: Program Review (2026-08-21)
+
+Export PDF
+
+Play vs AI Coaching / Issue #4259
+
+Making Max Responsive: the machine works
+
+Written 2026-08-21
+PRs #4278 + #4295 (stacked), merge-ready
+First sealed-set win: -38% median adjacent repetition
+
+TL;DR
+
+The coaching-improvement machine now exists and provably works. Two stacked PRs are merge-ready. The first gives us poker hands at scale with real generated coaching. The second proves the full loop: measure how formulaic Max sounds, find the owner of the repetition, change one thing, and verify on sealed held-out sessions. First verified win: back-to-back repeated sentence frames in showdown hand-end coaching dropped 31 to 41 percent across all three sealed-set repeats, with factual quality no worse than the shipped prompt.
+
+Needs you | 
+
+What | 
+
+Time | 
+
+1 | 
+
+The blind read: 20 A/B session pairs; finalizes adopt-or-revert on the wording change | 
+
+~15 min | 
+
+2 | 
+
+ufc-approved + merge on PR #4278 then PR #4295 (stacked) | 
+
+minutes | 
+
+3 | 
+
+The corpora discussion (decisions listed at the bottom) before any next-phase work starts | 
+
+one sitting | 
+
+What shipped, in plain terms
+
+Piece | 
+
+What it does | 
+
+State | 
+
+PR #4278: fixture runner | 
+
+Plays real five-hand coached matches headlessly against staging RustAI + real Groq at ~1.8 matches/min; deterministic by seed; exports eval-ready data with full receipts | 
+
+Merge-ready; label yours | 
+
+PR #4295: outro skeleton | 
+
+Session corpus (158 sessions, salted tune/check split), parity gate, repetition scorer, paired A/B bench, one pre-registered wording treatment with a sealed-set verdict | 
+
+Merge-ready pending your blind read; label yours | 
+
+Data bank | 
+
+164 matches / 820 hands / 2,784 accepted coaching rows | 
+
+psagentspace/_artifacts/2026-08-20-coach-fixture-batches/ | 
+
+Both PRs carry the shared label stack: coach-eval-skeleton. Everything serves psmobile #4259 (Max sounds responsive, not formulaic) under epic #4220.
+
+The science: where the repetition actually lives
+
+The owner table settled it as an identity, not a correlation: the repetition is authored by our own deterministic renderer, not chosen by the model.
+
+71.5 percent of control rows are handed the same callback sentence ("Separately, Hero misplayed preflop: say plainly that preflop was a mistake"), and the model echoes it 98.4 percent of the time.
+
+Every output saying "preflop was a mistake" traces to an input containing that string. No exceptions in 530 rows.
+
+Counterfactually removing that one sentence family cuts the adjacent repeat rate 60 percent (0.248 to 0.099).
+
+So the fix went to the owning layer: one function, one sentence, four sanctioned wordings with identical meaning, chosen deterministically from the hand's own cards (no randomness, no memory, no new abstractions):
+
+Variant | 
+
+Wording | 
+
+0 (unchanged) | 
+
+"... say plainly that preflop was a mistake." | 
+
+1 | 
+
+"... say plainly that Hero got preflop wrong." | 
+
+2 | 
+
+"... say plainly that preflop went wrong." | 
+
+3 | 
+
+"... say plainly that the mistake was preflop." | 
+
+A prompt-only tweak would have treated the wrong layer; the external review round is what forced the owner check before any prompt edits.
+
+The verdict: three sealed-set repeats
+
+Pre-registered before the sealed CHECK set was opened: target = adjacent normalized-frame repeat rate, showdown family; bar = median at or below 0.2961 (10 percent better than control) with same-direction improvement in all three repeats.
+
+Repeat | 
+
+Control (fielded wording) | 
+
+Candidate (varied wording) | 
+
+Change | 
+
+1 | 
+
+0.4183 (64/153) | 
+
+0.2895 (44/152) | 
+
+-30.8% | 
+
+2 | 
+
+0.4314 (66/153) | 
+
+0.2549 (39/153) | 
+
+-40.9% | 
+
+3 | 
+
+0.4314 (66/153) | 
+
+0.2680 (41/153) | 
+
+-37.9% | 
+
+Median candidate rate 0.2680 vs bar 0.2961: pass. Guardrails: length within bounds, distinct frames up, exact duplicates zero, factual failures at or below the same-run control in every repeat with no new failure class, and the dominant frame changed hands exactly as predicted (to a model-invented one, which is the already-identified next treatment).
+
+Two documented exceptions, both ruled and preserved in the artifacts
+
+One Groq 503 out of 1,560 bench calls made the literal "100 percent accepted" leg read 259/260, so the mechanical verdict file honestly says REVERT. All 779 returned candidate generations were accepted, and the failed row re-ran clean at identical bytes. Ruling: transport availability is not copy rejection; the guardrail holds at its declared intent. The literal false stays in the artifact as evidence.
+
+One stochastic factual draw (247/248) on a frozen-corpus row whose input bytes are identical in both arms (the change cannot reach it); six targeted repeats all passed. Ruling: provider noise, gate holds, row banked.
+
+Bottom line against #4259: overall adjacent rate on the sealed set went from ~0.31 to ~0.20. The issue's final bar is 0.02, so this is the first crank of the machine, not the finish line. What is proven is that the machine turns.
+
+Found along the way (free finds)
+
+Find | 
+
+What | 
+
+State | 
+
+#4277 | 
+
+A five-hand match can finalize with no lite review (2/159 matches, both concurrencies) | 
+
+Filed, P2 | 
+
+#4294 | 
+
+Chop pots: offline and runtime resolvers disagree 2x on pot size; the player-visible size word moves with it. Caught by the new parity gate | 
+
+Filed, P2 | 
+
+Env traps | 
+
+backend/.env had a dead duplicate Groq key line (401s) and a quoted model id (404s); both fixed in canonical + worktree, GOTCHAS updated | 
+
+Fixed | 
+
+Corpus fact | 
+
+150 coached hands dedupe to only 37 distinct outro situations: rare families need seed mining, not volume | 
+
+Input to corpora discussion | 
+
+Your queue
+
+Do the blind read (15 min, 20 session pairs, no wrong answers). It is the human check that the metric was not gamed: pick the side you would ship. The answer key stays out of this share; adopt-or-revert on the final commit follows your read.
+
+Labels + merges: ufc-approved on #4278 and #4295, merge #4278 first (stack order).
+
+Corpora discussion (gates the next phase): split ratios and the run-identity key; per-family size targets given the 37-distinct-situations fact; whether headless "accepted" stands in for "displayed"; blessing the salt so the benchmark freezes; surface order for treatment two (the model-invented "He had better" headline residue is queued first).
+
+Provenance
+
+Active plan: psagentspace/plans/drafts/2026-08-20-max-responsive-coaching-iteration-plan.md (v4) and PR-2 spec 2026-08-20-outro-skeleton-pr2-spec.md (v2.1); external GPT Pro review transcript banked beside them; conductor logs carry every dispatch, audit, send-back, and ruling.
+
+Evidence: PR #4278 backend/scripts/coach_fixture_runner/evidence/2026-08-20-first-batch/; PR #4295 scripts/eval/coach_copy/evidence_outro_skeleton/ (baselines, owner table, verdict, failure rows, blind packet + separate answer key).
+
+Method lineage: the outro P2 goal loop and the Qwen verbalizer lessons (coaching repo).

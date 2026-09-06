@@ -1,13 +1,14 @@
 ---
 name: bugs-flow
-description: "Run the standalone evidence-first bug workflow with a single bug doc: analyze, fix, and review. Use when a request includes symptoms, regressions, Sentry issues, logs, crashes, or 'why is this happening?' and you need to investigate, fix, and verify a bug. Not for feature planning, full-arch work, or open-ended optimization loops."
+description: "Explicitly selected analyze/fix/review lifecycle around one canonical bug document. Use when the user chooses $bugs-flow or binding task instructions require it. Symptoms, logs, crashes, Sentry issues, failed tests, and ordinary bug investigations do not select this lifecycle."
 metadata:
   short-description: "Analyze, fix, and verify bugs"
 ---
 
 # Bugs Flow
 
-Use this skill for the bug workflow family: analyze, fix, and optionally review.
+Use this workflow only after explicit selection as `$bugs-flow` or a
+binding task instruction requiring it.
 
 ## When to use
 
@@ -17,9 +18,8 @@ Use this skill for the bug workflow family: analyze, fix, and optionally review.
 
 ## When not to use
 
-- The user wants a repo-wide audit pass or leave-it-running defect hunt rather than one known bug. Use `audit-loop`.
-- The work is planned feature delivery or architecture planning. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
-- The task is open-ended optimization or a broad investigation loop rather than a concrete bug. Use native goal mode or `north-star-investigation`.
+- The task is a repo-wide audit, feature delivery, or open-ended optimization.
+  Follow the user's selected scope without activating a replacement lifecycle.
 
 ## Non-negotiables
 

@@ -61,7 +61,7 @@ Parallelism is a bonus the plan either offers or does not:
 - Fan out only when slices are dependency-ready under the plan's own
   ordering, touch disjoint owner surfaces, and share no unsettled decision.
 - The conductor owns the external fanout budget and integration. Workers may
-  use their own native sub-agents freely; they never start external agents.
+  use native sub-agents within authorized scope; they never start external agents.
 - Do not create a new slice from a post-approval audit finding. Route it by scope
   disposition: repair authorized work, subtract unauthorized work, or ask the
   human decision owner.

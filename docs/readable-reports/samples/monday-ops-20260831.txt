@@ -1,0 +1,1862 @@
+Source URL: https://share.fun.country/20260831-5086c8f814c9/index.html
+Fetched: 2026-09-06
+
+Monday operational status, Aug 31, 2026
+
+Export PDF
+
+Weekly Operational Status
+
+Monday operational status, Aug 31, 2026
+
+Written Aug 31, 2026
+Week of Aug 24 to Aug 30
+Every number's backing table is in the data appendix
+
+Team,
+
+If you read only this box, you have the week; every number's backing table is in the appendix at the bottom.
+
+The headline: the Play vs AI paid tier went live to 100% of users, and last Monday's promised checkout verdict came back: iOS checkout conversion recovered to the edge of its spring level, and this was the best gross revenue week of the six we track.
+
+2.1.40 shipped to both stores Thursday: the paid tier, the reliability fix wave, and server-side missions.
+
+Free players now get one fresh coached game per day; a player's first-ever game and replays stay free.
+
+The verdict: iOS converts 56.4% of started checkouts this week (79/140), a whisker under the spring's 58 to 66%.
+
+The newest build is back inside the spring band: 68.0% (34/50) on iOS 2.1.40 this week.
+
+Android is the open gap: 20.8% (40/192) on the same screens. The problem now lives in the traffic, not the screens.
+
+Gross revenue $1,242 this week, best of the six weeks we track, with Sunday still loading.
+
+Checkout starts set a record (332); 119 completed purchases, the second-best week this funnel has recorded.
+
+Trial starts 103, the most in the series we can pull; the spring peak was about 293 a week.
+
+Last week's trials are converting: 16 of 82 already paid (19.5% so far; the window closes tomorrow).
+
+23 people paid for the first time (15 via trials). Paid base 690, the highest point of the series we track.
+
+The organic build-out shipped at full speed: 28 website PRs in five days (charts section, rebuilt explainers, 11 community-answer articles, an engagement retrofit).
+
+We are testing what to call Play vs AI in the market: a dozen candidate framings, the first six-headline Meta test live since Friday.
+
+The costs, priced:
+
+Mission credit was dead about two days on the new build: our own flag cleanup deleted the flag. Restored Saturday; a make-whole decision is pending.
+
+The push-tap dead-end got worse, not better: the shipped fix did not survive scale (record 544 events, 92 people, Saturday). It needs an owner this week.
+
+The backend cutover glitched at app start for about 7% of Wednesday's users; hotfixed Thursday, now 0.85%. Purchases stayed perfect through it (18/18).
+
+Today's problems
+
+Prove the paid funnel at scale: Android's checkout conversion, and the paid tier's thin first cells (213 hit the cap wall, 6 opened checkout, 0 bought).
+
+Cost per new payer improved a third straight week: about $240 main-lane ($267 all-in). The $29.30 target is the destination of the mid-funnel work underway, not this week's expectation.
+
+Retention: day-1 return stepped down a third straight week (19.8%, 17.9%, 17.4%). The retention ladder shipped; its first job is unifying what counts as an action (onboarding vs not, lessons vs puzzles) before the 2-vs-3 day target locks.
+
+Sequenced, not forgotten
+
+Play vs AI residuals: error share fell to 15.6% from 22.3%; one new 2.1.40 bug is already fixed and waits on the next cut.
+
+Web: another record search week (clicks +12%, record day 156); still exactly one web payer ever.
+
+The onboarding readout's repair window closes Sep 5; fixing its assignment coverage this week keeps that arm read available.
+
+Next
+
+First Play vs AI ads are live; first read next Monday.
+
+3-player poker is merged and ships dark; it gets its own release.
+
+The next cut carries about 90 merged fixes; the dead-end diagnosis is owed this week.
+
+Three months of shipping, in one picture
+
+Commits to main per week (left axis) against store releases shipped and regression-ledger rows opened per week (right axis). Weeks run Monday to Sunday, earliest at the left; the covered week is the rightmost point. Series re-derived fresh this morning.
+
+How to read it honestly, in three lines:
+
+The cadence held through a launch week: 504 commits and 143 merged pull requests inside the week, carried by one store release (2.1.40, both stores) whose job was the Play vs AI paid tier plus the reliability fix wave. Ships in the window: 2.1.20 (May 22), 2.1.21 (Jun 3), 2.1.22 (Jun 12), 2.1.23 and 2.1.24 (Jun 24 and 26), 2.1.27 (Jul 3), 2.1.28 (Jul 9), 2.1.30 (Jul 15), 2.1.31 (Jul 17), 2.1.33 (Jul 23), 2.1.34 (Jul 25), 2.1.35 (Jul 29), 2.1.36 (Aug 4), 2.1.37 (Aug 6), 2.1.38 (Aug 11), 2.1.39 (Aug 18), 2.1.40 (Aug 27).
+
+The regression line measures how hard we are looking, not how broken the app is: this week's 49 rows are dominated by the deliberate pre-release and content-correctness gates, and they came alongside the best full crash-free week in the pulled series (99.62% of 15,366 sessions; weekly lane from late June) and a falling total crash count (60 events, 40 users, from 91 and 42).
+
+The named incidents of the window sit under the line, by date: the analytics transform red through Tuesday (green from Aug 26, closed after three clean mornings), the entitlement bootstrap glitch at Wednesday's backend cutover (hotfixed Thursday, 7% of day users down to 0.85%), mission credit dead on 2.1.40 from Thursday to Saturday (our own flag deletion, restored), the push-tap dead-end setting three record days (fix shipped and proved ineffective), and a Motorola GPU crash burst on the new Android build (over after 32 quiet hours). Every one is in the contamination map below with its fix state.
+
+This week's learnings
+
+The restored screens did recover checkout conversion, where the traffic is right.
+
+Last Monday's promised verdict, on a full mature week: iOS converts 56.4% of started checkouts (79/140), just under the May/June 58 to 66% era, and the newest build reads inside it (iOS 2.1.40: 68.0%, 34/50 this week; 66.1%, 39/59 lifetime). Android on the very same screens converts 20.8% (40/192). So the halving story ends where the mix story begins: today's checkout traffic is paid-heavy Android where spring's was organic-heavy iOS. The lever that is left is Android's funnel and the mix itself, not the screens.
+
+The funnel records kept coming, and the money followed.
+
+332 checkout starts, a new record (prior 301); 119 completed purchases, the second-best week this funnel has recorded (135, week of May 18); gross $1,242.18 on 37 paid transactions, the best of the six weeks we track, with Sunday still loading. 23 first-time payers, 15 of them through trials. And the conveyor filled: 103 trial starts (the most in the series we can pull; spring peaked about 293), while last week's 82 trials are converting at 19.5% so far (16/82).
+
+The paid tier's first cells are honest and thin.
+
+Play vs AI went to 100% with the daily cap live: 213 free players hit the cap wall this week, 6 opened checkout from it, 0 have purchased yet. Three days of data on a brand-new surface is a settling read, not a verdict; but the upgrade moment, not the cap, is clearly where the work is. Repeat play also fell (50.2% of finishers played 2+ games, from 65.6%), and the cap is the obvious candidate mechanism, unproven.
+
+A production flag is code, and deleting one needs the same discipline as deleting code.
+
+Friday's flag cleanup deleted the missions flag; every 2.1.40 user silently stopped earning mission credit for about two days (the day-completer count fell 246 to 182 before the version mix was understood). Restored Saturday, and the deeper fix shipped same week: mission credit now reads from an authoritative server-side lane instead of client events, so this class of silent death is measurable within a day.
+
+A favorable pilot read is not a fix.
+
+The push-tap dead-end fix looked 6.5x better per user on its first day at pilot volume. At full adoption the advantage decayed to none (11.7% of users on the fixed build vs 11.8% on the unfixed), while the class set three record days (peak 544 events, 92 people, Saturday). The old issue was closed, so for two days the bug had no owner; it is refiled fresh and needs a mechanism re-read this week.
+
+Top accomplishments this week
+
+Shipped 2.1.40 to both stores with the Play vs AI paid tier at 100%. Server-enforced daily cap with an upgrade path, the reliability fix wave, and the entitlement backend cutover behind it (13 migrations; all 12,061 entitlement users verified with zero mismatches), hotfixed and stable the next day.
+
+Delivered last Monday's checkout verdict, with the receipts. iOS checkout conversion recovered to the edge of the spring band (56.4%, 79/140; the newest build inside it at 68.0%, 34/50), on a record 332-start, 119-purchase, best-gross-of-the-window week.
+
+Built the retention ladder. An activity-day instrument that predicts week-one return, built bottoms-up from the raw export. Its first finding is about the measurement itself: what counts as an action is inconsistent today (onboarding vs non-onboarding activity, lessons vs puzzles), so unifying that definition is the next step, and the 2-vs-3 active-day target locks after it.
+
+The week in brief
+
+Money.
+
+Gross subscription revenue $1,242.18 on 37 paid transactions for Aug 24 to 30 ($952.39 store proceeds after fees), the best of the six weeks we track, and a floor: the store ledger loaded through Sunday morning, and last week's print matured up the same way ($782.08 became $877.23 on late rows, 46 became 50 transactions). The prior three weeks, oldest first: $619.87 (38), $772.58 (34), $877.23 (50). Three straight weeks up off the Aug 3 trough. July's recognized MRR stands at $1,674 (June $2,101); August reads $1,572 with a loading day still out, and gets judged when it settles. The paid base hit the highest point of the series we track: 690 on Aug 30 (554 annual / 136 monthly), from 679 (541 / 138) a week earlier. Refunds stayed quiet: one $64.99 refund this week; the August trial-refund cohort reads 1/35 (2.9%) so far, immature.
+
+Unit economics, the mandatory read.
+
+Cohort return on ad spend, net of refunds: the Aug 17 install cohort returned 6.7 cents per spend dollar by day 7 ($404.40 on $6,064.07), the best day-7 read in six cohorts (the Jul 6 week ran 8.8 cents; the weeks between ran 0.5 to 4.8); Aug 10 reads 5.0 cents at day 14 ($278.71 on $5,628.98); Jul 27 stays the series' worst at 0.7 cents through day 28. The after-store-fees twin runs about 82% of these cents. Cost per install: $3.16 blended ($6,149.11 over 1,949 attributed installs), splitting into $4.10 on the main lanes (1,287 installs) and $1.31 on the Brazil/Mexico probe lanes (662 installs, $868.11 of spend). Spend per new payer: $267.35 all-in (23 payers), $240.05 counting main-lane spend (22 non-probe payers; purchase attribution stays blind, so the class split rides the install lineage), improving three weeks running ($352, $275, now $240 to $267). The $29.30 March bar remains the destination; the distance to it is the expected state of a funnel deliberately mid-rebuild, and the mid-funnel, paid-tier, naming, and organic work above is what closes it. The probe lanes produced their first paying user ever: a $71 annual plan in Brazil, against about $2,272 of probe spend to date. Posture unchanged: spend stays on as the debugging instrument, and the full-funnel targets model I am building stays the decision instrument.
+
+Trial conveyor and the restored gates.
+
+103 trial starts this week, the most in the series we can pull (spring peaked about 293 a week, so the conveyor is roughly a third of the way back); 15 of the week's 23 new payers came through trial conversion. The restored puzzle gates' third week: 255 distinct users gated, 21 checkout starts, 6 purchases (4 trials, 2 direct monthlies) across the post-puzzle, collections, and Path gates. The new Play vs AI daily-limit gate served its first 6 users (no checkouts yet; three days old).
+
+The number that needs attention: day-1 return.
+
+Mature day-1 retention stepped down a third straight week: 19.8% (501/2,533), 17.9% (534/2,976), 17.4% (501/2,884), and the settling Aug 24 week reads 16.5% (328/1,990) before late devices land. That is weak for a habit product and moving the wrong way. Candidates, stated as candidates: the install mix shifted paid-and-probe-heavy (probe installs are a third of attributed volume), and the daily arc ran three straight Hard days at the week's end (the after-daily continue rate fell a third straight week, 82.9% to 78.6% to 75.4%). The retention ladder above is the instrument this question gets answered with; the mix cut is the first read owed.
+
+Community, one line.
+
+25 posts across the venues this week (Reddit 13, Two Plus Two 10, CardsChat 1, RecPoker 1; the X lane sat idle at 0 vs 10 prior); every Reddit score sat inside the platform's fuzz band, so no post is called a move; account karma rose 85 to 98 on the week.
+
+Standing money watches.
+
+Per-campaign payer attribution has been dark 29 days (every payer number here is all-source; the class split above rides install lineage instead). Dunning recovery remains 0% across all recorded history (200 lineages); no save-program motion this week, and the page says so. The Meta checkout-event family stays dark by design (day 35, zero steering impact). Google Play's rating climbed 4.18 to 4.29 in two days on the review-reply push; the iOS-to-Android rating gap holds at 0.23 stars (4.61 vs 4.38).
+
+Competitive clock.
+
+Nothing new observable on Chess.com's Gambit this week (third quiet week); the 3-to-6-month window from Aug 5 stands. The response is unchanged: retention, cheap acquisition while it lasts, and positioning into play, where 3-player is merged and ships dark.
+
+What we're focused on right now
+
+Play vs AI: prove the paid tier, ship 3-player, start the ads. The cap and upgrade path are live to everyone; 3-player is merged after a unanimous team playtest and ships dark until its own release; the first Meta ads for Play vs AI went live Friday.
+
+Mid-funnel and conversion. Peak trials were about 293 a week; we are roughly a third of the way back at 103, and mid-funnel plus conversion is where the unit economics get driven. The targets model rolls every stage up to scalable metrics so focus is chosen, not reactive.
+
+Turn organic into the top conversion source over 12 weeks. The build-out ran at full speed: 28 website PRs in five days (the charts section and hub, rebuilt game explainers, 11 community-thread-answering articles, commercial capture pages, an engagement retrofit of the worst pages, a 46-page title sweep, and install routing with real store badges on every content surface). Search clicks set records all week; the plan runs as side-band work, near-zero distraction from product.
+
+Shipped this week
+
+2.1.40 to both stores (live Thursday, 82 to 87% adoption by day 3) and Play vs AI to 100% of users (from 50/50): the paid tier (server-enforced daily cap plus upgrade sheet), the reliability fix wave, server-side missions, and the checkout dead-end fixes pictured below.
+
+The entitlement backend cutover (Wednesday: 13 migrations, 12,061/12,061 users verified, zero mismatches), hotfixed Thursday after the bootstrap glitch and green since.
+
+The organic build-out: 28 website PRs live Wednesday through this morning. The charts section and hub in the site nav, the hand-rankings family flip, a printable cheat-sheet flagship, 11 new game explainers, 11 community-thread-answering articles, commercial capture pages, an engagement retrofit of the worst pages on new templates, a 46-page title sweep, and install routing (real store badges on charts, glossary, blog, and quiz). Search set a new single-day click record (156, Monday).
+
+The Play vs AI naming and framing test went live. A dozen candidate framings in the playbook; the first Meta test (six headlines, one campaign, six ad sets) live since Friday; winners get rebuilt as real ads against the incumbent, then the winning message tests positioning.
+
+Content and store surface: the Puzzle Path re-sequence and seven corrected puzzle bodies went live by content release; both stores' review queues fully replied; Google Play rating 4.18 to 4.29 in two days.
+
+Done this week (internal; rides a named vehicle)
+
+3-player Play vs AI merged (a four-PR stack) after a unanimous team playtest; ships dark; vehicle: its own release.
+
+The coaching copy inversion: runtime LLM calls replaced by dev-time authored template pools with runtime lookup; the old runtime path deleted; vehicle: next releases.
+
+The retention anatomy wave (23 PRs): the activity-ladder instrument's plumbing and activation telemetry; vehicle: analysis surfaces, live now.
+
+The quality machine: 143 PRs merged; a shadow CI lane running about 6x faster in places; a deliberate test-coverage shrink (about 300k lines and half the Flutter tests removed); 49 regression rows from the gates.
+
+Fixes staged for the next cut: about 90 merged fixes queued on main, including the Play vs AI "already ended" repair; the push dead-end needs its diagnosis before that cut, not after.
+
+What improved
+
+Best full crash-free week in the series we can pull (weekly lane from late June): 99.62% of sessions (15,308/15,366), no day under 99.46%; weekly crash events 60 (40 users) from 91 (42).
+
+Play vs AI blocking-error share 15.6% (71/455), first week under the 20-to-22% band; the new build's closed-day reads run lower still (11.7% = 7/60 Aug 28; 4.3% = 4/93 Aug 29).
+
+Push taps arrive on the fixed builds: iOS 98.0% (192/196) blended, from 29.6% last week as adoption moved onto 2.1.39/2.1.40; Android 581/581.
+
+Paid base 690 (554 annual / 136 monthly), the highest point of the series we track; gross week best of the window.
+
+The data-contract check is green five straight days: the identity-coverage red was adjudicated Wednesday (the drifting all-time anchor demoted to informational with the rationale written into the check; the stable anchor still blocks and passes at 73.8%).
+
+Experiments in flight
+
+Two concluded by decision this week. The Play vs AI availability holdout ended with the 100% rollout, called on launch health; the cap shipped at one free game per day for everyone rather than as a 1-vs-3 split. Both recorded in the sweep; the arm-readout lanes they lacked are instrumentation work, tracked there.
+
+The daily-limit paywall is live and tiny: 6 presentations, 0 checkouts, 0 purchases; of 213 users who hit the cap wall, 6 opened the paygate. Settling; week-2 cells next Monday.
+
+The onboarding readout has five days to live: assignment coverage 68.0% (2,402/3,531) vs the 99.5% certification bar; enrollment closes Sep 1, data freeze Sep 5. The uncertified direction still runs against the test arm (-14.1pp entered-app-24h).
+
+The lifecycle missions-push holdout (90/10, live since Aug 24): 10.8% of delivered evening pushes convert to the 6-hour goal against an unverified ~3% organic baseline; the first causal read is due this week.
+
+The Play vs AI naming test is live: six headline framings from the dozen-framing playbook, one campaign, six ad sets, running since Friday; winners get rebuilt as real ads against the incumbent, then the winning message tests positioning. First read next Monday.
+
+The January home-tab split is still running unread (about 7,800 users split 50/50 this week; no readout lane; second consecutive edition flagged): decide it or kill it.
+
+The full flag-by-flag sweep, with exposure counts and readable-by dates, is appendix I.
+
+Today's problems
+
+1. Prove the paid funnel at scale: Android's checkout conversion, and a paid tier that has not sold yet.
+
+Business impact: closing is the last step of every acquisition dollar. iOS now closes 56.4% (79/140); Android closes 20.8% (40/192) on the same screens, and Android is where the paid traffic goes.
+
+The paid tier's first cells: 213 free players hit the cap wall, 6 opened checkout, 0 purchased. Three days old, settling; the upgrade moment is the work.
+
+What this week proved: the screens are no longer the problem (the newest iOS build converts 68.0%, 34/50, inside the spring band).
+
+State: actively worked (the week's largest engineering mass). Dated legs: paid-tier week-2 cells and the first Play vs AI ad read, both next Monday. Hosted paywalls did not ship again this week; the experiment PR is open with failing checks, and no ship date is claimed here.
+
+2. Close the cost-per-payer gap on its planned path.
+
+The read: 23 first-time payers on $6,149.11 all-in = $267.35 per payer ($240.05 on main-lane spend). The $29.30 target is where the funnel is being rebuilt toward, and the gap is the expected state of that rebuild, not this week's miss.
+
+The direction is right three weeks running: $352, $275, now $240 to $267, on progressively cleaner instruments.
+
+What closes it, in flight now: mid-funnel and conversion (trials a third of the way back to peak), the paid tier, the naming test finding the message, and the organic engine compounding underneath.
+
+The blind spot stands: per-campaign payer attribution has been dark 29 days; the class split (16 organic, 6 Meta-or-restricted, 1 probe) rides install lineage instead.
+
+The instrument: the full-funnel targets model is in progress and is the decision tool.
+
+3. Retention is weak and drifting, and now we have the instrument to attack it.
+
+The level: mature day-1 return stepped down three straight weeks (19.8%, 17.9%, 17.4%; the settling week reads 16.5%). Day-7 sits at 4.3 to 5.3%.
+
+The instrument: the retention ladder (activity days vs week-one return) shipped this week. Its first job is the measurement itself: what counts as an action is inconsistent today (onboarding vs non-onboarding activity, lessons vs puzzles), and that gets unified before the 2-vs-3 active-day target locks.
+
+The week's damage, repaired: mission credit dead about two days on 2.1.40 (our own flag deletion); restored, with an authoritative server lane so it cannot die silently again. The make-whole decision for the gap is mine and pending.
+
+Candidates for the drift, stated as candidates: paid-and-probe-heavy install mix; the hard back half of the puzzle arc (continue rate 75.4%, third straight decline).
+
+Known problems that come after we solve today's
+
+Ordered by where active work is, not by size; a queued problem can be larger than today's.
+
+Play vs AI residuals (motion: the fix wave shipped and proved itself): error share 15.6% and falling by build; the "already ended" bug is fixed in main awaiting a cut; the cap's named telemetry event is still missing (the cap reads ride a repaired experiment lane meanwhile); the hero-action presentation failure stays the top crash family (about a quarter of weekly crash events) even as total crashes fell. Tripwire: error share re-read on the next build; the named event lands.
+
+Web funnel conversion (motion: the 28-PR build-out, including install routing with real store badges shipped onto every content surface this week): clicks compound (+12% week, record day 156) but web-to-install holds near 1% and there is still exactly one web payer ever. Tripwire: the second web payer, or install conversion moving off 1% now that the routing exists.
+
+Experiment instrumentation (hard clock): onboarding assignment coverage gets repaired by Sep 5 to keep its arm read available; the January home-tab split gets decided or killed; the cap experiment's warehouse lane was rebuilt this week and the lifecycle holdout's first causal read is due now.
+
+The push-tap dead-end (not actively worked at week end, and this line says so): both shipped fixes failed, the class set three record days, and the fresh owner issue was filed Sunday. Why it waits: the week's attention went to the paid-tier ship and its incidents. Tripwire: an owner and a mechanism verdict this week, or this promotes to a today problem next Monday.
+
+Entitlement residuals: the bootstrap class is green (0.85%) but its residual-killer is merged and undeployed (my deploy decision); three Android users ever hit Google's "purchases not allowed" store block, all from one campaign (bounded question filed). Tripwire: deploy decision taken; class stays green three days.
+
+Churn plumbing (no motion this week, and this line says so): dunning recovery 0% across 200 recorded lineages; the in-app save surface has still never been shown; the Day-5 trial-reminder decision is mine, still owed against July's true 13.6% refund rate, second edition running. Tripwire: the Day-5 decision, and the save program's first ship.
+
+Coming up
+
+The paid tier's week-2 cells, the first Play vs AI ad read, and the Aug 17 trial cohort's matured conversion rate: all on next Monday's page.
+
+The next app cut, carrying about 90 merged fixes; the push dead-end diagnosis is owed before it.
+
+3-player's own release; the personalized home screen experiment queues behind it.
+
+Sep 1: onboarding enrollment closes (coverage repair by Sep 5 or never); 2.1.39's day-7 cohort finalizes.
+
+Decisions I owe: the missions make-whole for the two-day credit gap, the entitlement residual deploy, and the Day-5 trial reminder.
+
+The week in pictures
+
+Grouped by state; every caption states where the surface actually is. Tap to enlarge.
+
+Live in store: 2.1.40 (both stores, 100% since Thursday)
+
+The Play tab shows the free daily coached game allowance: "1 free game left today" (live in store, 2.1.40).
+
+When the free daily game is used, the upgrade sheet offers unlimited games with Plus: the paid tier reaching real users (live in store, 2.1.40).
+
+Cancelling a Google Play purchase now returns the player to the plan page ready to retry, not a dead end (live in store, 2.1.40).
+
+Backing out of the paywall no longer loses the player's place; Restore purchases returns to the exact puzzle (live in store, 2.1.40).
+
+Rides the next release (merged after the 2.1.40 cut)
+
+Every Play vs AI game earns a star grade, up to three stars, from coached decision quality (rides next release).
+
+Clearer in-hand coaching: "Two ways to win" now names the units ("It's 1 to call with 3 already in the pot") (rides next release).
+
+The Learn tab now always shows Today's Missions; the legacy Next Lesson bar is gone (rides next release).
+
+Puzzle Collections keep the player's exact place after cancelling the Plus paywall (rides next release).
+
+Buying Plus from a locked puzzle lands on a "Welcome to Plus!" celebration and hands the player straight back into the puzzle (rides next release).
+
+In development
+
+Three-player Play vs AI: two coached opponents at a three-seat table (dev capture; code merged, ships dark, its own release next).
+
+By-version scorecard
+
+Newest release first, from the canonical per-version export. Window = the days each version was the newest live release (2 to 9 days here; 2.1.40's window is still open), so dollar columns are not comparable across rows. Populations per column: onboarding is completions per onboarding start in the window; first lesson is of onboarding completers; D1/D7 is of new devices whose first session ran that version, mature cohorts only unless marked; crash rate is crash sessions over all sessions on the version (n beside it); paygate and checkout cover everyone who hit the paywall on that version; revenue is all store transactions on that version in the window, renewals included. "Settling" = too young to read; "open" = the window is still open. 2.1.37's client-derived cells are FLOORS (its telemetry queue destroyed events for about 15% of daily actives). One restatement flag for this whole table: the export restated checkout and paygate denominators on several CLOSED versions since last Monday (2.1.38's checkout conversion printed 29.9% on 72/241 last week and reads 19.5% on 37/190 now); the shrinking denominators point at an export definition change, it is filed as a gap, and no cell here is averaged against a prior page's print.
+
+Version | 
+
+Days live | 
+
+Onboarding 24h | 
+
+First lesson 24h | 
+
+D1 retention | 
+
+D7 retention | 
+
+Crash rate | 
+
+Paygate to checkout | 
+
+Checkout conversion | 
+
+CPI | 
+
+Gross rev in window | 
+
+2.1.40 | 
+
+5 (open) | 
+
+85.5% (944/1,104) | 
+
+44.0% (415/944) | 
+
+settling (15.9% so far) | 
+
+settling (~Sep 8) | 
+
+0.22% (n=5,980) | 
+
+11.5% (35/305) | 
+
+54.3% (19/35, settling) | 
+
+$3.66 (est, open) | 
+
+$895 (open) | 
+
+2.1.39 | 
+
+9 | 
+
+84.4% (2,985/3,538) | 
+
+43.9% (1,310/2,985) | 
+
+17.0% (630/3,707) | 
+
+4.2% (104/2,464, settling) | 
+
+0.37% (n=16,581) | 
+
+9.6% (325/3,400) | 
+
+39.5% (122/309) | 
+
+$2.92 | 
+
+$1,181 (restated up from $739 open print) | 
+
+2.1.38 | 
+
+7 | 
+
+82.1% (3,387/4,123) | 
+
+43.0% (1,457/3,387) | 
+
+18.0% (541/3,009) | 
+
+5.0% (149/3,009, now mature) | 
+
+0.42% (n=18,915) | 
+
+5.5% (213/3,892) | 
+
+19.5% (37/190) | 
+
+$2.77 | 
+
+$775 | 
+
+2.1.37 | 
+
+5 | 
+
+84.6% (1,559/1,842, floor) | 
+
+35.3% (550/1,559, floor) | 
+
+19.6% (355/1,813) | 
+
+5.9% (107/1,813) | 
+
+1.95% (n=9,068) | 
+
+6.9% (101/1,456, floor) | 
+
+12.6% (12/95, floor) | 
+
+$2.98 | 
+
+$408 | 
+
+2.1.36 | 
+
+2 | 
+
+87.1% (933/1,071) | 
+
+43.9% (410/933) | 
+
+18.6% (137/736) | 
+
+3.3% (24/736) | 
+
+0.29% (n=4,841) | 
+
+5.6% (48/856) | 
+
+48.9% (22/45) | 
+
+$3.78 | 
+
+$164 (2-day window) | 
+
+2.1.35 | 
+
+6 | 
+
+77.8% (791/1,017) | 
+
+36.2% (286/791) | 
+
+17.1% (275/1,610) | 
+
+4.8% (77/1,610) | 
+
+1.27% (n=4,236) | 
+
+8.6% (60/700) | 
+
+15.8% (6/38) | 
+
+$4.48 | 
+
+$592 | 
+
+Paygate to checkout = of paywall viewers, the share who started a store checkout. Checkout conversion = of started checkouts, the share that completed purchase per client telemetry. Table CPI is the scorecard's definition (the version window's spend over installs in that window; "est" where coverage is estimated); the weekly $3.16 in the brief divides all-channel spend by attributed installs over the calendar week, a different denominator and window, so the two are quoted separately and never blended. Likewise 2.1.40's gross-in-window ($895, version window from Aug 27) and the calendar week's $1,242.18 cover different windows. 2.1.39's checkout conversion here (39.5%, both platforms, lifetime-window basis) and the verdict cells in the brief (platform-split, calendar week) share a numerator family but not a denominator; both carry their fractions. The full definitions live on the Version Scorecard board.
+
+Amir
+
+Data appendix
+
+Everything above traces to a table here. Source-of-record tables and freshness in section K. This page's numbers recompute directly from the warehouse; the standing dashboards' export build predates Sunday (their partial-week reads are marked in the sweep, section L).
+
+A. Weekly business, last six complete weeks (Mon to Sun, UTC)
+
+Spend is all-channel from the spend ledger. Installs are ATTRIBUTED installs (organic not included), split main vs probe (probe = the Brazil/Mexico test-market campaigns bought for funnel data, never judged on payers). Revenue is the store transaction ledger: gross = purchase price on paid transactions; net = after refunds (restated onto the original row); proceeds = net after store fees and tax. The Aug 24 row is a floor (ledger loaded through Sunday 11:03am UTC); last week's row matured up $95.15 the same way.
+
+Week | 
+
+Ad spend | 
+
+Installs (blended) | 
+
+main | 
+
+probe | 
+
+CPI blended | 
+
+CPI main | 
+
+Gross | 
+
+Net of refunds | 
+
+Store proceeds | 
+
+Paid txns | 
+
+Trial-conv txns | 
+
+2026-07-20 | 
+
+$3,100.96 | 
+
+437 | 
+
+437 | 
+
+0 | 
+
+$7.10 | 
+
+$7.10 | 
+
+$825.39 | 
+
+$815.40 | 
+
+$674.55 | 
+
+42 | 
+
+8 | 
+
+2026-07-27 | 
+
+$4,608.09 | 
+
+890 | 
+
+890 | 
+
+0 | 
+
+$5.18 | 
+
+$5.18 | 
+
+$827.42 | 
+
+$697.44 | 
+
+$564.17 | 
+
+35 | 
+
+9 | 
+
+2026-08-03 | 
+
+$6,268.35 | 
+
+1,857 | 
+
+1,857 | 
+
+0 | 
+
+$3.38 | 
+
+$3.38 | 
+
+$619.87 | 
+
+$619.87 | 
+
+$513.33 | 
+
+38 | 
+
+4 | 
+
+2026-08-10 | 
+
+$5,628.98 | 
+
+1,989 | 
+
+1,445 | 
+
+544 | 
+
+$2.83 | 
+
+~$3.37 | 
+
+$772.58 | 
+
+$772.58 | 
+
+$619.07 | 
+
+34 | 
+
+7 | 
+
+2026-08-17 | 
+
+$6,064.07 | 
+
+2,037 | 
+
+1,285 | 
+
+752 | 
+
+$2.98 | 
+
+$3.77 | 
+
+$877.23 | 
+
+$877.23 | 
+
+$712.18 | 
+
+50 | 
+
+9 | 
+
+2026-08-24 | 
+
+$6,149.11 | 
+
+1,949 | 
+
+1,287 | 
+
+662 | 
+
+$3.16 | 
+
+$4.10 | 
+
+$1,242.18 | 
+
+$1,177.19 | 
+
+$952.39 | 
+
+37 | 
+
+15 | 
+
+Main-lane CPI derivation: main-lane spend (all-in minus the probe campaigns' $868.11 this week) over main attributed installs; $5,281.00 / 1,287 = $4.10. Probe-lane CPI this week: $868.11 / 662 = $1.31. Restatements vs last Monday's page: Aug 17 gross $782.08/46 to $877.23/50 (late rows); spend $6,059.37 to $6,064.07; trial-conv txns 8 to 9; CPI blended $2.97 to $2.98.
+
+B. New payers and trial starts by week
+
+New payer = first PAID transaction (gross > 0) in the week, all sources (per-campaign split unavailable, map row 2). Trial starts at lineage grain; "converted so far" is an eventual-fact column and is young for recent weeks.
+
+Week | 
+
+New payers | 
+
+via trial conversion | 
+
+Trial starts | 
+
+Converted so far | 
+
+2026-07-20 | 
+
+16 | 
+
+8 | 
+
+33 | 
+
+8 | 
+
+2026-07-27 | 
+
+20 | 
+
+9 | 
+
+19 | 
+
+4 | 
+
+2026-08-03 | 
+
+23 | 
+
+4 | 
+
+32 | 
+
+5 | 
+
+2026-08-10 | 
+
+16 | 
+
+7 | 
+
+50 | 
+
+7 | 
+
+2026-08-17 | 
+
+24 | 
+
+9 | 
+
+82 | 
+
+16 | 
+
+2026-08-24 | 
+
+23 | 
+
+15 | 
+
+103 | 
+
+0 | 
+
+Bridge: the week's 37 paid transactions (table A) include renewals and conversions of earlier cohorts; the 23 new payers are first-ever payments. Spend per new payer quoted in the brief = $6,149.11 / 23 = $267.35 all-in, $5,281.00 / 22 non-probe payers = $240.05 main-lane. Payer classes by install lineage: 16 organic/unattributed, 6 Meta or consent-restricted, 1 probe (the first probe payer ever), 0 ASA, 0 website. Restatements: Aug 17 week payers 22 to 24, trial starts 74 to 82, converted-so-far 1 to 16 (the maturation read; final tomorrow). The 103 is the highest week in the series this receipt can pull; the pull begins Jun 1, and spring's peak (about 293, March era) predates it, so the honest claim stops at "most since at least June".
+
+C. Cohort return on ad spend (ROAS), by install week
+
+Net-of-refund revenue per spend dollar at fixed day horizons, cents per dollar, attributable-channel spend only, anchored to INSTALL week. "Not mature" = the horizon has not fully elapsed for every install day in the cohort. The after-store-fees twin runs about 82% of these numbers (proceeds-to-net ratio 0.815, table A basis). Probe spend sits inside cohort denominators from Aug 10 onward (a probe-split ROAS lane remains a filed gap).
+
+Install week | 
+
+Cohort spend | 
+
+Day 7 | 
+
+Day 14 | 
+
+Day 30 | 
+
+2026-06-29 | 
+
+$2,664.85 | 
+
+14.3c ($381.00) | 
+
+14.3c | 
+
+14.7c ($390.99) | 
+
+2026-07-06 | 
+
+$3,251.19 | 
+
+8.8c ($286.80) | 
+
+6.8c | 
+
+6.8c | 
+
+2026-07-13 | 
+
+$2,947.87 | 
+
+2.5c ($74.98) | 
+
+5.3c | 
+
+5.3c | 
+
+2026-07-20 | 
+
+$3,100.96 | 
+
+3.1c ($94.96) | 
+
+5.2c | 
+
+5.2c | 
+
+2026-07-27 | 
+
+$4,608.09 | 
+
+0.5c ($23.87) | 
+
+0.5c | 
+
+not mature (0.7c at day 28) | 
+
+2026-08-03 | 
+
+$6,268.35 | 
+
+4.7c ($296.11) | 
+
+4.7c | 
+
+not mature | 
+
+2026-08-10 | 
+
+$5,628.98 | 
+
+4.8c ($268.06) | 
+
+5.0c ($278.71) | 
+
+not mature | 
+
+2026-08-17 | 
+
+$6,064.07 | 
+
+6.7c ($404.40) | 
+
+not mature | 
+
+not mature | 
+
+2026-08-24 | 
+
+$6,149.11 | 
+
+not mature (day 0) | 
+
+not mature | 
+
+not mature | 
+
+Restatement: the Aug 10 cohort's day-7 printed 3.6c last Monday and matured to 4.8c as late rows posted. The Aug 17 cohort's 6.7c day-7 is the best since the Jul 6 week's 8.8c.
+
+D. Paid base, plan mix, MRR, refunds
+
+Active paid base = users inside a paid coverage window on the date (store ledger; annual counted at 1/12 monthly-equivalent for the value column). Recognized MRR is the event-ledger monthly recognition (not a balance sheet); August is quoted as a floor with one loading day out and is judged when it settles.
+
+Date | 
+
+Active paid | 
+
+Annual | 
+
+Monthly | 
+
+Monthly-equivalent value | 
+
+2026-05-31 | 
+
+612 | 
+
+440 | 
+
+172 | 
+
+$4,270 | 
+
+2026-06-30 | 
+
+655 | 
+
+491 | 
+
+164 | 
+
+$4,461 | 
+
+2026-07-31 | 
+
+659 | 
+
+526 | 
+
+133 | 
+
+$4,325 | 
+
+2026-08-16 | 
+
+669 | 
+
+536 | 
+
+133 | 
+
+$4,389 | 
+
+2026-08-23 | 
+
+679 | 
+
+541 | 
+
+138 | 
+
+$4,481 | 
+
+2026-08-30 | 
+
+690 | 
+
+554 | 
+
+136 | 
+
+$4,532 | 
+
+Month | 
+
+Recognized MRR | 
+
+Paying rows | 
+
+Annual leg | 
+
+Monthly leg | 
+
+2026-03 | 
+
+$2,965 | 
+
+371 | 
+
+$1,013 | 
+
+$1,952 | 
+
+2026-04 | 
+
+$2,304 | 
+
+267 | 
+
+$559 | 
+
+$1,745 | 
+
+2026-05 | 
+
+$2,394 | 
+
+270 | 
+
+$527 | 
+
+$1,867 | 
+
+2026-06 | 
+
+$2,101 | 
+
+227 | 
+
+$323 | 
+
+$1,778 | 
+
+2026-07 | 
+
+$1,674 | 
+
+179 | 
+
+$230 | 
+
+$1,445 | 
+
+2026-08 (floor) | 
+
+$1,572 | 
+
+163 | 
+
+$181 | 
+
+$1,391 | 
+
+Refunds by UTC refund week: Aug 3 wk $74.98 (2), Aug 10 wk $64.99 (1), Aug 17 wk $60.72 (1), Aug 24 wk $64.99 (1). Trial-conversion refund rate by purchase month: June 22.4% (13/58); July matured 13.6% (6/44); August so far 2.9% (1/35), immature (14-day windows open). Cancellation-feedback lane: 0 responses this week; exactly 1 response all-time, so churn-reason claims have no data behind them yet and none are made.
+
+E. Paygate funnel: the verdict exhibit
+
+Monthly era table (event counts; the May/June rows are the 58 to 66% era the verdict measures against), then the weekly series, then this week by platform and version. Checkout conversion = commits over started checkouts; commits include trial commits.
+
+Month | 
+
+Paygates presented | 
+
+Checkouts started | 
+
+Commits | 
+
+Presented to checkout | 
+
+Checkout conversion | 
+
+2026-05 | 
+
+7,760 | 
+
+666 | 
+
+386 | 
+
+8.58% | 
+
+57.96% | 
+
+2026-06 | 
+
+10,879 | 
+
+576 | 
+
+379 | 
+
+5.29% | 
+
+65.80% | 
+
+2026-07 | 
+
+5,233 | 
+
+453 | 
+
+221 | 
+
+8.66% | 
+
+48.79% | 
+
+2026-08 so far | 
+
+12,701 | 
+
+1,011 | 
+
+307 | 
+
+7.96% | 
+
+30.37% | 
+
+Week (Mon) | 
+
+Presented | 
+
+Started | 
+
+Commits | 
+
+Presented to checkout | 
+
+Checkout conversion | 
+
+2026-07-06 | 
+
+849 | 
+
+112 | 
+
+60 | 
+
+13.19% | 
+
+53.57% | 
+
+2026-07-13 | 
+
+1,358 | 
+
+92 | 
+
+48 | 
+
+6.77% | 
+
+52.17% | 
+
+2026-07-20 | 
+
+1,179 | 
+
+119 | 
+
+47 | 
+
+10.09% | 
+
+39.50% | 
+
+2026-07-27 | 
+
+1,459 | 
+
+88 | 
+
+30 | 
+
+6.03% | 
+
+34.09% | 
+
+2026-08-03 | 
+
+2,426 | 
+
+141 | 
+
+42 | 
+
+5.81% | 
+
+29.79% | 
+
+2026-08-10 | 
+
+3,050 | 
+
+210 | 
+
+49 | 
+
+6.89% | 
+
+23.33% | 
+
+2026-08-17 | 
+
+3,495 | 
+
+301 | 
+
+92 | 
+
+8.61% | 
+
+30.56% | 
+
+2026-08-24 | 
+
+3,133 | 
+
+332 | 
+
+119 | 
+
+10.60% | 
+
+35.84% | 
+
+Series receipt for the record claims: this lane's telemetry begins late April; weekly starts peaked at 210 (Aug 10 wk) and 301 (Aug 17 wk) before this week's 332; weekly commits peaked at 135 (May 18 wk), so this week's 119 is the second-best ever (third-best: 109, week of Jun 1). August's 12,701 presented is the highest month in the lane's history (June's 10,879 was the prior peak).
+
+This week by platform and version (Aug 24 to 30). The iOS rows are the verdict: restored screens on a full mature week.
+
+Platform | 
+
+Version | 
+
+Presented | 
+
+Checkout started | 
+
+Commits | 
+
+Presented to checkout | 
+
+Checkout conversion | 
+
+ios | 
+
+2.1.39 | 
+
+769 | 
+
+90 | 
+
+45 | 
+
+11.7% | 
+
+50.0% | 
+
+ios | 
+
+2.1.40 | 
+
+477 | 
+
+50 | 
+
+34 | 
+
+10.5% | 
+
+68.0% | 
+
+android | 
+
+2.1.39 | 
+
+1,121 | 
+
+111 | 
+
+20 | 
+
+9.9% | 
+
+18.0% | 
+
+android | 
+
+2.1.40 | 
+
+745 | 
+
+80 | 
+
+20 | 
+
+10.7% | 
+
+25.0% | 
+
+Platform totals this week: iOS 79/140 = 56.4% checkout conversion; Android 40/192 = 20.8% (the remaining 1 Android start rode 2.1.37). Lifetime by version: iOS 2.1.38 38.5% (55/143), iOS 2.1.39 50.7% (74/146), iOS 2.1.40 66.1% (39/59); Android 2.1.38 15.6% (17/109), 2.1.39 19.0% (50/263), 2.1.40 24.7% (22/89). The Aug 26 to 27 cells sat inside the entitlement-bootstrap glitch window (map row 5): friction was live those days, so if anything the week's iOS read is a floor.
+
+E2. The restored puzzle gates, week three, and the new daily-limit gate
+
+Surface | 
+
+Users gated | 
+
+Presented | 
+
+Checkout starts | 
+
+Commits | 
+
+Post-puzzle | 
+
+156 | 
+
+186 | 
+
+14 | 
+
+4 | 
+
+Collections | 
+
+88 | 
+
+159 | 
+
+2 | 
+
+0 | 
+
+Path | 
+
+47 | 
+
+51 | 
+
+5 | 
+
+2 | 
+
+Play vs AI daily limit (new) | 
+
+6 | 
+
+6 | 
+
+0 | 
+
+0 | 
+
+Week three of the restored gates: 255 distinct users gated (a user can hit more than one surface), 21 starts, 6 commits (4 iOS trials, 1 iOS monthly, 1 Android monthly). The new Play vs AI daily-limit gate (app floor 2.1.40) served its first attributed volume Thursday: 6 users, no checkouts yet; of the 213 users who hit the cap wall this week, 6 reached this paygate. First cells, not a verdict.
+
+F. Discovery loop: weekly daily-puzzle completers, and the arc
+
+Week | 
+
+Daily-puzzle completers | 
+
+Continue rate after the daily | 
+
+2026-07-20 | 
+
+246 | 
+
+84.1% | 
+
+2026-07-27 | 
+
+159 | 
+
+87.4% | 
+
+2026-08-03 | 
+
+1,015 | 
+
+88.3% | 
+
+2026-08-10 | 
+
+1,567 | 
+
+82.9% | 
+
+2026-08-17 | 
+
+1,641 | 
+
+78.6% | 
+
+2026-08-24 | 
+
+1,632 | 
+
+75.4% (1,231/1,632) | 
+
+The three-week climb plateaued (1,632 vs the restated 1,641; the March 2 week's 2,488 record stands). The continue rate fell a third straight week, and the arc explains the shape: a Trivial-to-Easy front half (92.3% = 429/465, 93.0% = 480/516, 84.5% = 381/451) then four straight Tough-to-Hard days (50.7% = 239/471, 42.0% = 198/471, 36.3% = 151/416, 47.8% = 200/418). Aug 29's 36.3% is the hardest composed-arc day yet (prior low 36.1%, Aug 22). Three consecutive Hard days is new; the ramp doctrine targets a mid-band mix, and the difficulty steering question rides the content program, with the continue-rate cost priced above. Product boundaries inside the window, for attribution: the Path re-sequence (Aug 27) and the seven-puzzle daily correction (Aug 28).
+
+G. The Aug 24 page's commitments, resolved leg by leg
+
+Committed leg | 
+
+Resolution | 
+
+Checkout-conversion verdict on mature iOS cells, "next Monday" | 
+
+DELIVERED (E): iOS 56.4% (79/140) this week, 50.0% (45/90) on the mature 2.1.39 week, 68.0% (34/50) on 2.1.40; Android 20.8% (40/192). The mix explanation graduated from candidate to the working conclusion; the screens are exonerated. | 
+
+The Aug 17 trial cohort (printed 74) matures its conversion read | 
+
+RESTATED AND READ: the cohort matured to 82 trials; 16/82 = 19.5% converted so far; every window closes Sep 1, final on next Monday's page. | 
+
+2.1.39's first D7 cohort settles ~Aug 29 | 
+
+SETTLING STILL: 4.2% (104/2,464) on the export, 4.3% (107/2,506) on the weekly lane, both marked immature; final next page. | 
+
+Onboarding restart arms (no_puzzles / one_puzzle) launch after the paygate work | 
+
+NOT LAUNCHED (third week staged at 0%). The blocking fact is upstream: the readout lane itself is uncertified (68.0% coverage) with a Sep 5 freeze; launching new arms into a broken readout would repeat the miss. | 
+
+The Play vs AI paid release and its cap-split decision (50/50 if fielded) | 
+
+SHIPPED, decision changed: the split collapsed to one arm (1 free game/day for all free users) before first exposure; no 50/50 was fielded. The cap-level A/B died unread (I). | 
+
+RC-hosted paywalls: state their actual ship | 
+
+NOT SHIPPED, third week. No comms mention this week; the experiment PR is open with failing checks. No ship date claimed. | 
+
+Canon-contract identity-coverage adjudication "this week" (fourth silent carry = broken commitment) | 
+
+DONE Aug 26: the all-time install-space anchor was demoted to informational with written rationale (moves with acquisition mix); the stable device-space anchor still blocks and passes (73.8% in band). Contract check green five straight days. The install-space number stays visible (80.15%, out of its June band) as a tracked, non-blocking read. | 
+
+MW-027 purchase attributed coverage (carried watch) | 
+
+STILL RED, day 29. All payer numbers all-source; class split rides install lineage. | 
+
+Transform reliability (4 of 6 runs failed at the Aug 24 build) | 
+
+RECOVERED: first clean run Aug 26, three clean mornings by Aug 28, watch closed; latest run this morning green. The Aug 28 community-model publication failures were repaired same-day. | 
+
+Android notification dead-end fix #4336: "merged and fielded, dead-end count to zero" | 
+
+TRIPWIRE FAILED: merged Aug 24, shipped in 2.1.40, and proved ineffective at scale; the class set three record days (peak 544 ev / 92 users). Refiled fresh (#4682); owner and mechanism verdict owed this week (queue). | 
+
+PvAI error-share re-read on the first build carrying the fix wave | 
+
+DONE, favorable: 15.6% (71/455) for the week, first week under the band; 2.1.40 closed days run 4 to 12%. | 
+
+Active base watch (679 at Aug 23) | 
+
+UP: 690 (554/136) at Aug 30, the series high. | 
+
+Gambit clock (~3-6 months from Aug 5) | 
+
+No new observable facts, third quiet week; window stands. | 
+
+Web-funnel tripwire: the second payer or install conversion | 
+
+NOT TRIPPED: zero new web payers (all-time still 1); install conversion holds near 1%; clicks kept compounding (J). | 
+
+Full-funnel targets model: report what it produced and any target set | 
+
+IN PROGRESS, honestly: the setup session happened; no minutes or explicit targets are on record this week. The retention ladder (2-to-3 target) is the first downstream instrument that landed. Carried as owed, not claimed. | 
+
+Day-5 trial-reminder decision (owed against the true 13.6%) | 
+
+NOT TAKEN, second edition. Carried in the queue with its owner named (me). | 
+
+Spend-per-payer series | 
+
+UPDATED: $267.35 all-in / $240.05 main-lane (floors), from $352 and $275; still ~9x the bar. | 
+
+H. Contamination map (what was broken, what it poisons, when it reads clean)
+
+Instrument | 
+
+Broken window | 
+
+What it poisons | 
+
+Steering impact | 
+
+State | 
+
+Analytics transform / publication | 
+
+Red mornings through Aug 25 (six straight); green from Aug 26; Aug 28 community-model publication failures repaired same day | 
+
+Board-served models early week; the young community board | 
+
+No (reporting layer) | 
+
+GREEN at build (latest run this morning). This page recomputes from the warehouse with per-table freshness proof (K). | 
+
+Meta-attributed purchase coverage | 
+
+Aug 2 to present, day 29 | 
+
+Per-campaign payer split; campaign-level cost per payer | 
+
+YES: campaigns cannot be judged on payers | 
+
+STILL RED. All payer numbers all-source; class split rides install lineage. | 
+
+Daily Missions credit on 2.1.40 | 
+
+~Aug 27 to Aug 29 14:44 UTC (our flag deletion) | 
+
+Mission credit and day-completion lanes on the new build; the day-completer series dented | 
+
+YES: users earned nothing for ~2 days on the newest build | 
+
+Restored; authoritative server lane deployed and verified; make-whole decision pending (mine). | 
+
+Daily-puzzle deeplink resolution | 
+
+All week, worse: 184, 227, 224, 240, 389, 544 events by closed day | 
+
+Push-driven re-engagement landing (the tap arrives, the destination dies) | 
+
+YES: ~12% of the Android build's users hit it on a closed day | 
+
+NOT FIXED: the shipped fix proved ineffective at scale; refiled fresh (#4682); owner owed this week. | 
+
+Entitlement bootstrap (backend cutover) | 
+
+Aug 26 12:47 UTC to the Aug 27 hotfix; decayed 7.8% to 0.85% of day users | 
+
+App-start subscription checks; paygate readiness friction Aug 26-27 | 
+
+YES while hot | 
+
+Green day 2; purchases perfect through it (18/18); residual-killer merged, undeployed (decision owed). | 
+
+Build-health export (scorecard) | 
+
+Detected this build: checkout/paygate denominators restated on closed versions | 
+
+Cross-page comparability of scorecard checkout cells | 
+
+No | 
+
+Flagged above the table; filed as a gap; no cross-page averaging. | 
+
+Onboarding experiment readout | 
+
+Experiment lifetime (68.0% assignment coverage vs 99.5%) | 
+
+Arm-level onboarding verdicts | 
+
+No | 
+
+Five days to the Sep 5 freeze; direction quotable as uncertified only. | 
+
+Store-ledger ingest lag | 
+
+Loaded through Sunday 11:03 UTC | 
+
+Week revenue, txns, payers, trials are floors | 
+
+No | 
+
+Re-pulled at pre-send; last week's floors matured up (+$95.15 gross). | 
+
+AppFigures store-metrics ingest | 
+
+Watermark frozen Aug 21; Android downloads blind Aug 22-29 | 
+
+ASO board Android download cells | 
+
+No | 
+
+Still frozen at the Sunday watch read; no Android download claims here. | 
+
+Play vs AI warehouse lanes | 
+
+Go lifecycle lane frozen day 38; the cap's named event table absent day 3 | 
+
+Backend lifecycle facts; named cap exposure | 
+
+No | 
+
+Frontend lane + repaired cap-experiment lane carry all PvAI reads here. | 
+
+VoC theme tagging | 
+
+Stale since Aug 1 (0/39 current items tagged) | 
+
+Theme and topic claims from user feedback | 
+
+No | 
+
+Volume counts only this week; no theme claims made. | 
+
+Push delivery-rate verifier | 
+
+Sub-80% sixth day (79.1% = 1,802/2,277) | 
+
+Notification delivery lane | 
+
+Adjacent to push program | 
+
+Watch; the tap receipts here are event-paired and do not ride it. | 
+
+2.1.37 device telemetry queue | 
+
+2.1.37 era (closed) | 
+
+2.1.37 client cells are floors forever | 
+
+No | 
+
+Floor labels stand. | 
+
+DAU history window | 
+
+Rolling ~60-day view | 
+
+DAU claims before early July | 
+
+No | 
+
+June's 1,253 print forbids record claims; ceilings stated. | 
+
+Deliberate steering changes segmenting this week's reads: 2.1.40 to both stores (window opened Aug 27; iOS live Aug 28, Android 100% Aug 28); Play vs AI 50 to 100% (Aug 27 15:52 UTC); the free-game cap collapsed to one arm before exposure (Aug 24) and fielded Aug 26; the missions flag deleted (Aug 28) and re-created (Aug 29); the backend entitlement cutover (Aug 26, 13 migrations, approved and run deliberately); the Path re-sequence (Aug 27) and seven-puzzle daily correction (Aug 28); probe campaigns at $868.11 / 662 installs, segregated in every blended series. Also blind, stated once: the boot-performance lane has no rows for either live build (nothing here quotes boot times). Instruments verified clean: the spend ledger, the store transaction ledger, the paygate funnel events on all three live versions and both platforms, the crash/session lane, the attributed-install lane, the DAU and arc lanes, the push tap event-pairing, and the data-contract check (green five straight days after the Aug 26 adjudication).
+
+I. Experiment sweep (all arm-splitting mechanisms live this week)
+
+Census: all 20 live production feature flags read directly from the flag service this morning (read 09:07 UTC; two flags were deleted this week and one re-created, hence 20, was 21). Classification separates real experiments from rollouts, gates, and kill switches; the lifecycle holdout (a messaging-tool split, not a flag) is swept in because the comms name it. Exposure = distinct users evaluated this week.
+
+Experiment | 
+
+Class | 
+
+What it tests | 
+
+Arms and split | 
+
+Exposure this week | 
+
+Outcome side-by-side | 
+
+Verdict state | 
+
+Play vs AI availability | 
+
+CONCLUDED unread | 
+
+Does the coached-play surface change engagement and retention | 
+
+Was 50/50 per platform; rolled to 100% Aug 27 15:52 UTC | 
+
+5,306 with / 2,415 without (before and across the boundary) | 
+
+No warehouse assignment lane was ever wired; arm read not available | 
+
+Concluded by the 100% rollout decision, called on launch health | 
+
+Play vs AI free-game cap level | 
+
+CONCLUDED unread (pre-exposure) | 
+
+Does 1 vs 3 free games/day maximize upgrades without killing play | 
+
+Collapsed 0/80/20 to 0/100/0 on Aug 24 17:45 UTC, before any user saw it | 
+
+2,991 persons served "1" | 
+
+n/a: one arm only ever fielded | 
+
+Concluded pre-exposure by the ship decision; the cap itself is now a rollout, tracked in E2 and the play sweep | 
+
+Daily-limit paywall (cap wall funnel) | 
+
+NEW surface read | 
+
+Does the cap wall convert free players to Plus | 
+
+No arms; funnel read | 
+
+269 cap-exposed users; 213 reached the wall | 
+
+213 wall-reached, 6 paygate sessions (6/213), 0 purchases (0/6) | 
+
+Settling (3 days old); week-2 cells next Monday | 
+
+Two-puzzle onboarding | 
+
+CONCLUDING | 
+
+Does a second signed-out onboarding puzzle help completion | 
+
+control / test (stopped Aug 17) | 
+
+enrollment closes Sep 1 | 
+
+Uncertified direction unchanged: entered-app-24h control 71.0% (821/1,157) vs test 56.9% (708/1,245) | 
+
+data_issue: 68.0% assignment coverage (2,402/3,531) vs 99.5% bar; freeze Sep 5; certify or write off | 
+
+Onboarding restart arms | 
+
+Staged, inactive | 
+
+No puzzle vs one puzzle in signed-out onboarding | 
+
+control / no_puzzles / one_puzzle at 0% (34/33/33 configured) | 
+
+0 | 
+
+n/a | 
+
+Third week staged; waits on a certifiable readout lane | 
+
+Daily Missions | 
+
+Rollout (flag churn) | 
+
+(the A/B ended Aug 18; permanently unreadable, 0/6,206 assignments joined) | 
+
+100%; flag deleted Aug 28 16:47 UTC, re-created Aug 29 14:44 UTC | 
+
+~778 persons resolved nothing on the gap day | 
+
+n/a | 
+
+Outage tracked in the map; credit now reads from the authoritative server lane | 
+
+Lifecycle missions evening push | 
+
+Ongoing (NEW to the sweep) | 
+
+Does the evening save push cause 6-hour goal completion | 
+
+90 send / 10 holdout, live since Aug 24 | 
+
+send-volume lane, not person-flag | 
+
+10.8% of delivered pushes convert to the 6h goal vs ~3% unverified organic baseline | 
+
+First causal read due this week; baseline unverified, no verdict yet | 
+
+Play vs AI naming test (Meta) | 
+
+Ongoing (NEW) | 
+
+Which framing of Play vs AI converts: six headline candidates from the dozen-framing playbook | 
+
+Six ad sets, one campaign, IG Feed, same primary text | 
+
+ad-platform lane, not person-flag | 
+
+Not yet readable (live since Aug 28); winners advance to real-ad and positioning rounds | 
+
+First read next Monday | 
+
+Home-tab order (legacy) | 
+
+Ongoing, unread | 
+
+Learn-first vs Puzzles-first home | 
+
+50/50 since January | 
+
+3,817 / 3,969 | 
+
+No readout lane has ever existed | 
+
+Second consecutive flagged edition: decide or kill | 
+
+Ad-supported Plus shell | 
+
+Shell | 
+
+Flag exists; feature never fielded | 
+
+90/10 | 
+
+0 | 
+
+n/a | 
+
+Inert | 
+
+Paywall pricing-clarity shell | 
+
+Shell | 
+
+Pinned 100% to control | 
+
+100/0 | 
+
+rollout | 
+
+n/a | 
+
+Inert | 
+
+The remaining flags are rollouts, gates, kill switches, or allowlists (including the Play vs AI maintenance switch, OFF all week, and the iOS paygate presentation pin, extended to the new build Aug 27 and serving 2,849 persons the production presentation this week). Instrumentation repairs this week: the cap experiment's warehouse lane was rebuilt, and the lifecycle holdout was designed with its readout in hand.
+
+J. Web funnel and community
+
+Search Console (loaded through Aug 29, so weeks compare Monday to Saturday, day-matched): site clicks 823 on 210,700 impressions vs 734 on 194,490 the prior week, +12.1%; a new single-day click record Monday Aug 24 at 156 (prior record 150, Aug 21; Aug 28 also cleared it at 151). Content-wave surfaces: strategy charts routes 134 clicks (114 on the preflop chart) vs 84 prior; comparison pages 60 vs 54; the quiz 3, flat. The charts hub shipped to the site header Saturday. AI-assistant visits set a weekly record (26); the AI-visibility score took its biggest downward restatement yet (15.0 vs the 19.8 first print) and the trend watch carries it. The conversion axis is unchanged and honest: web-to-install holds near 1%, and the all-time web payer count is still exactly 1 (tripwire not tripped; queue entry).
+
+Community: 25 posts across the venues (Reddit 13, Two Plus Two 10, CardsChat 1, RecPoker 1; X idle at 0 vs 10 prior); every Reddit item score sat within the platform's ~3-point fuzz band, so no post is called a move; zero posts or parent threads removed; account karma 85 to 98 on the week; X followers 1,322 (down 2, inside fuzz).
+
+K. Provenance and freshness
+
+Read time: Monday Aug 31, 09:30 to 10:20 UTC. The overnight transform run SUCCEEDED (finished 08:51 UTC), and every source table was additionally proven current by direct max-date reads at pull time: spend and installs through Aug 31, monetization events through Aug 31, the store transaction ledger loaded through Aug 30 11:03 UTC (the Sunday floor named throughout), payers and trials through Aug 30, ROAS cohorts through Aug 31.
+
+Tables: canon.subscription_transaction, canon.m1_spend_daily, canon.attributed_install, canon.payer, canon.payer_attribution, canon.subscription_trial_start, canon.mrr_recognized_monthly, canon.roas_maturation, canon.app_version_build_health (2,574 rows), canon.monetization_event, canon.retention_dn_weekly, canon.learning_steering_weekly, canon.play_vs_ai_frontend_event, canon.play_vs_ai_cap_experiment_user, canon.app_version_release_windows, canon.web_install_funnel_weekly, canon.cancellation_feedback, ops.run_ledger, ops.verify_results, raw_sentry_health.sessions_daily, raw_meta_ads.facebook_insights (probe split), raw_puzzle_runtime.user_mission_days (the new authoritative missions lane).
+
+Narrative: LOG.md, EVENTS.md, REGRESSIONS.md (49 rows in window), the Morning Watch ledger, the week's comms export (Telegram FC 3.0, 167 messages, and Slack; research/2026-08-31-weekly-comms/), psmobile git and PR history (origin/main 0077e6d6; release-cut/2.1.40 0dce1557; ancestry receipts in the pictures manifest).
+
+Steering configs read back live this morning (09:07 UTC): all 20 production flags censused; Play vs AI availability at 100% both platforms; the maintenance switch OFF; missions at 100% on the re-created flag; the iOS paygate presentation pin active for both live builds; onboarding restart arms inactive; the cap serving one free game per day.
+
+Store truth: iOS 2.1.40 build 129 READY_FOR_SALE (App Store Connect read this morning; published Thursday Aug 27 straight to 100%, no phased release); Android 2.1.40 build 701 on the Play production track from Aug 27, observed at 100% by the Aug 28 morning sweep (ledger receipt). Every query and receipt: _artifacts/2026-08-31-monday-update/receipts/ in the workspace.
+
+L. Tracked-surface sweep
+
+The standing boards outside the toplines, one line each. Board reads come from the Saturday-evening export build (transform completed Aug 29 13:51 UTC), so board "this week" numbers are partial through Saturday; warehouse (canon) reads are full-week. A quiet surface stays one line; a blinded surface says so.
+
+Surface | 
+
+This week (fraction) | 
+
+Vs prior | 
+
+State | 
+
+Play vs AI (engagement/play) | 
+
+402 decision players (partial wk) / run stars live: 10.3% three-star (74/716) | 
+
+290 full prior week | 
+
+Growing; game-creation funnel lane blinded (exporter frontier gap) | 
+
+Play vs AI ops (engagement/play-ops) | 
+
+1,433 archived games / 493 players (partial) | 
+
+1,730 / 405 full week | 
+
+Healthy check green; go-lifecycle counters blind (same gap) | 
+
+Retention systems | 
+
+D1 return 16.8% (267/1,594, partial); mission day-1 completion 11.2% (235/2,091) | 
+
+17.4% (501/2,884); 16.7% | 
+
+Partial; the mission dip carries the outage caveat (map row 3) | 
+
+Streaks and freezes | 
+
+Participation 97.5% (2,586/2,652); breaks 787; refills 3/46 | 
+
+96.9%; 926; 7/82 | 
+
+Settled, stable; refill volume single-digit | 
+
+Conversion by app version (money/conversion) | 
+
+Person initial conversion 4.5% (103/2,287 mature); 2.1.40 so far 50% checkout conversion (26/52, session-grain board basis; the event lane in E reads 41.5% = 54/130 for the same build week) | 
+
+flat | 
+
+Settling; 2.1.40 immature | 
+
+Signup waterfall | 
+
+2.1.40: 500 signups, 57 checkout starters, 20 trial starters, 0 mature | 
+
+n/a | 
+
+Too green to judge | 
+
+Audience mix | 
+
+Low-frequency poker-player share 54.4% (337/619) on 2.1.40 installs | 
+
+53.2% (1,466/2,755) on 2.1.39 | 
+
+Settled, flat version over version | 
+
+Paid UA | 
+
+Board spend $5,228.65 (partial wk; canon full week $6,149.11); probe $755.29 / 557 Meta installs | 
+
+$6,064.07 | 
+
+Spend side quotable; probe OUTCOME side contaminated (Meta mapping gap) | 
+
+ASO | 
+
+iOS downloads 834 (partial); organic install share 22.7% (521/2,300) | 
+
+1,294 provisional; 26.2% | 
+
+Partial/lagged; Android week row absent (map row 9), not quotable | 
+
+VoC themes | 
+
+349 CSAT responses + 18 feedback + 7 store reviews (volume only) | 
+
+396 + 14 + 27 | 
+
+CONTAMINATED for themes (tagging stale since Aug 1); no theme claims | 
+
+VoC ratings | 
+
+Gap 0.23 stars: iOS 4.61 (407) vs Android 4.38 (207); new ratings +28 iOS / +15 Android | 
+
++30 / +24 | 
+
+Settled; gap unchanged; Play rating rose 4.18 to 4.29 midweek | 
+
+Learning steering (canon, full week) | 
+
+Weekly learners 3,614; 4+ day learners 10.5% (380/3,614); continue 75.4% (1,231/1,632) | 
+
+3,796; 10.0%; 78.6% | 
+
+Settled; the continue decline is the real signal (F) | 
+
+Cancellation feedback (canon) | 
+
+0 responses; 1 all-time | 
+
+0 | 
+
+No data; no churn-reason claims made | 
+
+Community | 
+
+25 posts; karma +13 to 98; X idle | 
+
+36 posts | 
+
+Settled; all score moves inside platform fuzz (J) | 
+
+Poker Skill weekly operational status. Draft built Aug 31, 2026. All receipts in the edition's artifact directory.

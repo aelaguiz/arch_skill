@@ -1,13 +1,14 @@
 ---
 name: fresh-consult
-description: "Run one or more clean, independent, read-only reviewers for strict pass/fail second opinions, completion checks, consistency audits, or readability checks. Fresh describes starting context, not a CLI: prefer a clean native child of the active host for same-host review, and use an external Claude, Codex, Cursor Agent, Grok, or Kimi session when a concrete provider, exact-model/profile, lifecycle, isolation, or receipt benefit justifies it. Resume the exact reviewer for bounded same-line follow-ups; start a new clean child for a new independent gate. Not for implementation, two-participant convergence, Codex `-p yolo` review receipts, or ordered orchestration."
+description: "Explicitly selected independent read-only consultation with clean reviewers and exact-reviewer follow-ups. Use when the user chooses $fresh-consult or binding task instructions require it. Ordinary review and requests for a second opinion may use a plain native reviewer without selecting this pass/fail workflow."
 metadata:
   short-description: "Clean independent read-only review"
 ---
 
 # Fresh Consult
 
-Use this skill for a clean, independent, read-only opinion. `Fresh` means a new
+Use this workflow only after explicit selection as `$fresh-consult` or a
+binding task instruction requiring it. `Fresh` means a new
 reviewer with clean starting context; it does not inherently mean a Claude,
 Codex, Cursor Agent, Grok, or Kimi CLI subprocess.
 

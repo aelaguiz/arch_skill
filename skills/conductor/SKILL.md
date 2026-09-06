@@ -1,15 +1,14 @@
 ---
 name: conductor
-description: "Conduct work to verified completion from a finished plan, partial plan, or described outcome; the parent is executive architect and cynical reviewer while workers implement, repair, and prove. Outcome or partial-plan intake runs an executive shaping stage — worker research, a parent trim to the smallest sufficient solution, an outcome map, one scope approval — and workers never dispatch before observable done-ness and an approved boundary exist. Execution runs a parallel worker fleet on a pinned model and thinking level (Codex gpt-6-astra at xhigh; swap to Kimi, Grok, Cursor, Claude): native children when the host can pin that profile, external agent-delegate sessions when it cannot or when cross-provider reach, aim rotation, or durable sessions matter. The `conductor terra` preset keeps its worktree, Terra xhigh, three-review, and PR follow-through path. Not for single bugs, open-ended metric loops, multi-plan epics, plan audits, one delegated task, parent-implemented plans, or read-only opinions."
+description: "Explicitly selected worker orchestration for an approved plan or outcome: the parent directs, integrates, and reviews while delegated workers implement. Use when the user chooses $conductor or binding task instructions require it. An ordinary request to finish work or implement a plan does not select a worker fleet."
 metadata:
   short-description: "Plan-or-outcome conductor with executive shaping and a pinned worker fleet"
 ---
 
 # Conductor
 
-Use this skill when the user wants a goal conducted to verified completion by
-delegated workers while the parent agent preserves its own context and serves
-as executive architect and deeply cynical reviewer. Intake spans a spectrum —
+Use this workflow only after explicit selection as `$conductor` or a
+binding task instruction requiring it. Intake spans a spectrum —
 a finished plan document, a partial plan, or a described outcome. What already
 exists on disk decides how much shaping happens first; the execution
 machinery is identical for all three.

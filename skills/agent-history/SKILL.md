@@ -1,6 +1,6 @@
 ---
 name: agent-history
-description: "Search and interpret local Codex, Claude Code, Pi, or Prime Agent session history from natural-language asks about prior prompts, goals, commands, corrections, tool use, child agents, timelines, or agent behavior. Handles asks that name a runtime loosely, such as prime, prime agent, prime-agent, or pi. Use the current runtime, current project, and last 24h by default unless the user says otherwise. Run the bundled helpers for JSONL/SQLite extraction, then synthesize evidence with confidence notes. Do not require rigid syntax, replace Git commit history tools, launch subprocesses, or dump raw transcripts by default."
+description: "Historical local Codex, Claude Code, Pi, or Prime Agent session evidence: retrieve prior prompts, goals, corrections, tool calls, child-agent briefs, and timelines. Supports natural-language history requests with bundled JSONL/SQLite helpers. Not for live agent status, streaming output, or session control; use the runtime's live interface for those. Defaults to the current project/runtime and last 24 hours."
 metadata:
   short-description: "Search local agent session history"
 ---
@@ -8,7 +8,8 @@ metadata:
 # Agent History
 
 Use this skill when the user wants to find, explain, or summarize past local
-agent-session evidence. The user may speak casually: "what prompt did I run
+agent-session evidence. Live status, streaming, and session control belong to
+the runtime's live interface. The user may speak casually: "what prompt did I run
 here", "what goal commands did I run today", "where did I have to correct the
 agent", or "find where I was struggling with the agent last night".
 
@@ -35,8 +36,7 @@ skill remains read-only and does not dispatch that agent itself.
 ## When Not To Use
 
 - The user wants Git commit history rewritten. Use `$commit-history-authoring`.
-- The user wants a fresh second opinion from another model. Use
-  `$fresh-consult`.
+- The user wants a fresh second opinion rather than historical evidence.
 - The user wants another agent to do work. Use the active host's native child
   for ordinary same-host work; use `$agent-delegate` only when a deliberate
   external worker/session provides the needed benefit.

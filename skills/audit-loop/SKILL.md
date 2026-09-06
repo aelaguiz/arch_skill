@@ -1,13 +1,14 @@
 ---
 name: audit-loop
-description: "Run the standalone repo-audit workflow with a root audit ledger: exhaustively map the codebase and current proof surface before any edits, rank risk fronts by consequence and proof weakness, then fix the biggest real bugs, dead code, duplication, and high-value regression gaps without changing contracts. Every editful pass must then audit its own diff for safety, unintended downstream consequences, elegance, and duplication before it can count as done. Use when the user wants a repo-wide audit pass, wants the agent to build a full mental model before acting, or wants to leave the audit running in Codex or Claude Code until no credible audit work remains. Not for a single known bug, feature planning, or generic optimization loops."
+description: "Explicitly selected repo-wide audit and repair loop: map the codebase, rank consequential defects, fix within current contracts, and review each change. Use when the user chooses $audit-loop or binding task instructions require it. An ordinary audit, known bug, or request to fix a few findings does not select this persistent lifecycle."
 metadata:
   short-description: "Exhaustive map-first repo audit loop"
 ---
 
 # Audit Loop
 
-Use this skill when the job is to exhaustively map a codebase and its current proof surface, rank the strongest risk fronts by consequence, reduce the biggest real unresolved risks without changing contracts, and audit each resulting change before it counts as done.
+Use this workflow only after explicit selection as `$audit-loop` or a
+binding task instruction requiring it.
 
 ## When to use
 

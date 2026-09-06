@@ -1,15 +1,14 @@
 ---
 name: cynical-architecture-review
-description: "Run a prompt-only cynical architecture review over a branch, diff, subsystem, plan-backed implementation, or code area by assuming the architecture was not intentionally designed but emerged through iteration and got cemented. Hunt for sprawl, invalid split ownership, duplicate truth, accidental abstractions, compatibility shims, flags-as-architecture, registries, adapters, state spread, wrong decomposition, and complexity not forced by the intended user experience or hard experiment requirements. Push subtraction-first architecture: delete, consolidate, move ownership, simplify boundaries, and preserve the same UX with fewer concepts and less code. Not for normal bug review, QA/test/doc review, exhaustive coverage review, completion-truth review, implementation, or proof harnesses."
+description: "Explicitly selected subtraction-first architecture review of a branch, diff, subsystem, or plan-backed implementation. Use when the user chooses $cynical-architecture-review or binding task instructions require it. Ordinary review, bug diagnosis, and implementation do not select this specialist workflow."
 metadata:
   short-description: "Subtraction-first accidental architecture review"
 ---
 
 # Cynical Architecture Review
 
-Use this skill when the user wants a skeptical architecture review that assumes
-the current structure may have emerged accidentally through iteration and then
-been mistaken for intentional design.
+Use this workflow only after explicit selection as `$cynical-architecture-review` or a
+binding task instruction requiring it.
 
 The job is to read current code, preserve the intended user experience and hard
 experiment requirements, find architecture that "just happened", identify
@@ -74,7 +73,7 @@ user's broader workflow.
 - Use the strongest read-only capability the host exposes, also tell every
   review child not to edit or write, and have the parent compare repository
   status and diffs with the pre-dispatch state before accepting child evidence.
-- Children may use their own native sub-agents on their own host at will; they
+- Children may use native sub-agents within authorized scope and host limits; they
   may not start external agents.
 - The parent owns child accounting, deduplication, integration, scope
   disposition, the saved artifact, and the final verdict.

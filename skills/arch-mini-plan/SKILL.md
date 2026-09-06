@@ -1,13 +1,14 @@
 ---
 name: arch-mini-plan
-description: "Create or repair a standalone one-pass mini architecture plan that writes the canonical arch blocks into one doc and then hands follow-through to `miniarch-step` or `arch-step`, with later docs cleanup handled by `arch-docs` using the finished artifact as context. Use when a request asks for a mini plan, compressed arch plan, or single-pass planning pass without running the full staged arch workflow. Not for tiny 1-3 phase features, bugs, open-ended loops, or full-arch execution."
+description: "Explicitly selected one-pass architecture plan with canonical arch blocks. Use when the user chooses $arch-mini-plan or a selected parent requires it. An ordinary short plan does not select this artifact format, and creating the plan does not activate implementation."
 metadata:
   short-description: "Compressed one-pass arch planning"
 ---
 
 # Arch Mini Plan
 
-Use this skill for the one-pass mini-plan version of arch: enough rigor to produce the canonical blocks, but not a multi-stage full-arch run.
+Use this workflow only after explicit selection as `$arch-mini-plan` or a
+binding task instruction requiring it.
 
 ## When to use
 

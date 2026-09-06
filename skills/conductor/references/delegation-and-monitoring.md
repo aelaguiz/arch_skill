@@ -135,8 +135,8 @@ explicit legacy `grok-*` ids remain exact.
 Every dispatched slice gets a liveness monitor suited to its transport, armed
 as part of dispatch and re-armed on every resume and respawn. Native children
 use host status/wait signals; external sessions use process and run-directory
-receipts. Tear it down only
-when the slice is accepted, escalated, or abandoned. This is standing
+receipts. On acceptance, escalation, or abandonment, first verify task-owned
+process cleanup under the shared policy, then retire the monitor. This is standing
 practice — the conductor does not wait for the user to ask for a monitor, and
 does not clear one after a slice and then forget to arm the next. Its job is
 twofold: prove the worker is alive and moving, and catch a wedge early,
@@ -144,11 +144,9 @@ without pulling the raw event stream into conductor context. Where the host
 provides a background-monitor capability, arm it so heartbeats push to you
 while you wait or work; where it does not, poll at the scoped interval.
 
-- **Scope the heartbeat interval to the slice's expected duration**, floor
-  five minutes, ceiling thirty. A narrow single-owner slice that should finish
-  in minutes gets a ~5-minute beat; a broad, high-effort slice that reasonably
-  runs 20-40 minutes beats toward the 30-minute ceiling. Match the beat to the
-  work: frequent enough to catch a wedge, rare enough to stay cheap. Still
+- **Scope the heartbeat to the task's deadline and progress signal.** Bound
+  each wait and inspect a missed progress condition before starting replacement
+  work. Keep foreground check-ins responsive while a background job runs. Still
   consume the real result when the child finishes — the heartbeat is a
   liveness and wedge signal, not the account of what the worker did.
 - **Each beat emits one compact line from cheap signals only**: native child

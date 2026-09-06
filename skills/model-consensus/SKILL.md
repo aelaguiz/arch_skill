@@ -1,14 +1,14 @@
 ---
 name: model-consensus
-description: "Orchestrate a prompt-only dialogue between two selected Claude, Codex, Cursor Agent, Grok, or Kimi participants until they converge on a lean plan, architecture, debugging strategy, investigation, design, or concept. Resolve transport independently per participant: use separate clean native children for same-host participants when native model capability suffices, and external sessions for cross-provider or unavailable exact-model/profile needs. Resume each exact participant between rounds; relay through the parent by default. Not for one-shot cold opinions, ordinary code review, ordered implementation loops, or broad idea tournaments."
+description: "Explicitly selected dialogue between two model participants that independently reason, critique, and converge on a bounded question. Use when the user chooses $model-consensus or binding task instructions require it. Ordinary analysis, review, and a single second opinion do not select multi-model dialogue."
 metadata:
   short-description: "Two-participant consensus with per-role transport"
 ---
 
 # Model Consensus
 
-Use this skill when the user wants two selected model participants to think
-together until they converge on the best answer. The parent agent orchestrates
+Use this workflow only after explicit selection as `$model-consensus` or a
+binding task instruction requiring it. The parent agent orchestrates
 the dialogue, preserves the goal, resolves transport independently for each
 participant, relays evidence, checks for agreement, and reports the result.
 Do not add or depend on a deterministic runner, script, controller, state

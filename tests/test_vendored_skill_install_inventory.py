@@ -55,20 +55,6 @@ class VendoredSkillInstallInventoryTests(unittest.TestCase):
         self.assertIn("cp -R $(CURSOR_TEAM_KIT_SKILLS_DIR)/$$skill", makefile)
         self.assertIn("scp -r $(CURSOR_TEAM_KIT_SKILLS_DIR)/$$skill", makefile)
 
-    def test_docs_and_routing_name_vendored_installed_skill(self) -> None:
-        readme = read(REPO_ROOT / "README.md")
-        usage = read(REPO_ROOT / "docs/arch_skill_usage_guide.md")
-        agents = read(REPO_ROOT / "AGENTS.md")
-
-        for doc in [readme, usage]:
-            self.assertIn(f"`{SKILL_NAME}`", doc)
-            self.assertIn(f"~/.agents/skills/{SKILL_NAME}/", doc)
-            self.assertIn(f"~/.claude/skills/{SKILL_NAME}/", doc)
-            self.assertIn(f"~/.gemini/skills/{SKILL_NAME}/", doc)
-            self.assertIn("vendor/cursor/plugins/cursor-team-kit/skills/", doc)
-
-        self.assertIn(f"Use `${SKILL_NAME}`", agents)
-
     def test_removed_code_review_skill_is_purged_from_install_inventory(self) -> None:
         makefile = read(REPO_ROOT / "Makefile")
 

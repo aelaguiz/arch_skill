@@ -1,0 +1,7 @@
+interface:
+  display_name: "Readable Reports"
+  short_description: "Make reports readable in one pass by a smart, busy expert"
+  default_prompt: "Use $readable-reports to rewrite this artifact so a smart, busy expert can read it in one pass: every sentence has a subject and a verb, every thing is named in plain words with its code after it, every PR, issue, document, or message is a labeled link, every status carries its cause and next step, numbers arrive with their comparison, the answer comes first, and the report never talks about itself. Preserve every fact; mark what you could not verify; do not dumb down the vocabulary."
+
+policy:
+  allow_implicit_invocation: true

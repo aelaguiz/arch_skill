@@ -1,13 +1,14 @@
 ---
 name: arch-epic
-description: "Orchestrate a goal too large for one `$arch-step` plan by decomposing it into approved ordered sub-plans, then running interactive handoffs, same-session `auto-plan` / `auto-implement`, or role-based planner/worker/critic execution. Same-host roles prefer clean native children from durable epic and sub-plan artifacts; the explicit external-harness lane remains available for deliberate provider, exact-model, lifecycle, isolation, automation, or receipt benefits. Use to break up and run a multi-plan epic, continue/resume an epic doc, plan every sub-plan before implementation, or implement an approved epic end to end. Not for a single architecture plan (`$arch-step`), one-pass mini plan (`$arch-mini-plan`), small feature (`$lilarch`), read-only status (`$arch-flow`), or foreign-repo step orchestration (`$stepwise`)."
+description: "Explicitly selected multi-plan execution lifecycle: decompose an authorized goal into approved ordered arch-step sub-plans, then plan, implement, and review them. Use when the user chooses $arch-epic or binding task instructions require it. Filing or decomposing GitHub issues, mentioning an epic, or asking for status does not select execution."
 metadata:
   short-description: "Multi-plan orchestrator wrapping arch-step with decomposition approval, progressive North-Star gates, and a per-sub-plan scope-drift critic"
 ---
 
 # arch-epic
 
-Wraps `$arch-step` to orchestrate goals too big for one canonical plan.
+After explicit selection, wraps `$arch-step` to execute a multi-plan goal.
+Filing or decomposing GitHub issues does not select this lifecycle.
 The skill takes a prose goal, proposes a plain-English decomposition
 whose count follows proof gates rather than a preset range, gets user approval, and then drives
 each sub-plan through arch-step's `new` → `auto-plan` → `implement-loop`

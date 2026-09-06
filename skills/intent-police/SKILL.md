@@ -1,14 +1,14 @@
 ---
 name: intent-police
-description: "Stand up and consult a long-lived, read-only intent-police agent that independently derives the user's intent from their verbatim words, keeps an on-disk intent ledger, and gives blunt advisory feedback on whether current work still serves that intent. Use when the user asks for an intent police or a standing check that long, delegated, or overnight work stays what they asked for. Consult it at plan changes and decisions, after feedback from other agents before adopting findings, before calling work done, when the user's direction changes, and periodically during long unattended stretches. It classifies direction changes as micro-adjustment versus fundamental shift, filters review findings for scope creep, infers the business problem behind capability asks, and recommends subtraction only. Not for code-quality review, one-shot cold reads, plan-artifact audits, convened decision panels, implementation, or any gating or escalation machinery."
+description: "Explicitly selected long-lived, read-only advocate checking ongoing decisions against the user's verbatim intent. Use when the user chooses $intent-police or binding task instructions require it. A long task, delegated work, or absent user does not select this companion. Feedback is advisory and cannot authorize scope or production actions."
 metadata:
   short-description: "Long-lived advocate for the user's intent"
 ---
 
 # Intent Police
 
-Use this skill to stand up and consult a long-lived agent whose only job is to
-hold the user's intent and say, plainly, whether the work still serves it.
+Use this workflow only after explicit selection as `$intent-police` or a
+binding task instruction requiring it.
 
 The failure this skill exists to stop: an agent converts the user's outcome
 into an implementation framing, reviewers generate findings scoped to that
@@ -26,11 +26,7 @@ the user actually asked for.
 
 - The user asks for an intent police, an intent check, or a standing watch
   that work stays what they asked for.
-- A long run of work — a goal, epic, plan implementation, or overnight
-  autonomous stretch — will involve decisions, reviews by other agents, or
-  done-claims while the user is away.
-- You are coordinating workers and reviewers and want a clean-context
-  advocate filtering review output for scope creep before it becomes work.
+- A deliberately selected parent requires this companion for its decisions.
 
 ## When not to use
 

@@ -169,7 +169,15 @@ Useful reasons:
 - you need a default prompt snippet
 - you want to force explicit invocation by setting `allow_implicit_invocation: false`
 
-Keep it minimal and accurate. Quote string values. If `default_prompt` exists, mention the skill explicitly as `$skill-name`.
+Choose invocation deliberately per package. Elective lifecycles, persistent
+loops, and specialist reviews normally use `policy.allow_implicit_invocation:
+false`; omission permits implicit selection. Narrow helpers and repo-required
+workflows remain available within their actual triggers. A selected parent may
+load its necessary documented helpers, but a handoff must not silently activate
+another elective workflow or override read-only/no-delegation scope.
+
+Keep it minimal and accurate. Quote string values. If `default_prompt` exists,
+mention `$skill-name` and the requested job; keep workflow doctrine in SKILL.md.
 
 On updates:
 

@@ -1,0 +1,1538 @@
+Source URL: https://share.fun.country/20260901-3e8e184c94c8/index.html
+Fetched: 2026-09-06
+
+Android monetization audit | Poker Skill
+
+Export PDF
+
+Android Monetization
+
+What was actually broken in 2.1.39 and 2.1.40
+
+Written September 1, 2026
+575 checkout starts
+45 recordings audited
+
+Reproduction
+
+Status: Reproduced by direct production
+observation.
+
+Lane: Canonical BigQuery checkout events joined to
+complete PostHog mobile recordings, then checked against the exact
+Android release source.
+
+What the reproduction showed:
+
+One production lesson-energy paygate showed only app-owned “Loading
+plans…” UI for roughly 8 to 10 seconds before the player backed out; no
+offering-ready event followed.
+
+A separate Play vs AI daily-limit paygate showed “This is taking
+longer than expected” and Retry for about 58 seconds, then recovered to
+pricing.
+
+One production flow exposed an internal RevenueCat and Clerk
+ownership error to the player for about 15 seconds. A manual action in
+the two-control error area was followed by recovery; the available
+pixels do not establish which control was tapped.
+
+Several failures returned the player to ordinary play with no
+visible explanation. Other explicit errors showed a clear dialog or
+later converted.
+
+Long static replay frames did not prove long foreground hangs.
+Mobile replay holds the last frame while the app is inactive or the OS
+owns the screen. One selected case logs app_background;
+another logs app_foreground on return.
+
+Release source contains a 10-second no-terminal watchdog that can
+put the paywall into “Checking purchase…” with its primary CTA disabled.
+A late result can resolve it, but the inspected path has no bounded
+in-place recovery action if neither native nor canonical evidence
+arrives. This is a credible recovery risk, not a replay-proven
+indefinite foreground hang.
+
+Deployed and analyzed source: Android 2.1.39 at
+7144eb88f79865d5e07264d48a48f9a9f1fe70b5; Android 2.1.40
+and the detached audit worktree at
+f77a39bc1a53c5dadb5a664f2eadaa2264fda723.
+
+Evidence lane | 
+
+What it showed | 
+
+BigQuery | 
+
+The closed 575-checkout population, corrected outcomes, acquisition
+groups, offering states, and instrumentation gaps. | 
+
+PostHog events | 
+
+Event order, lifecycle transitions, duplicate emissions, store
+outcomes, late commits, and offering recovery. | 
+
+PostHog recordings | 
+
+45 unique assigned recordings. Every available recording was watched
+end to end. One recording returned 404; two assigned event moments fell
+outside the available recording window. | 
+
+Sentry | 
+
+Not used for a new causal claim. The existing exact-owner issue
+already owns the provider failure class. This audit only claims the
+directly observed unsafe error presentation. | 
+
+Fly logs | 
+
+Structurally unnecessary for the player-visible client findings. No
+backend producer claim was added beyond the existing exact-owner
+issue. | 
+
+Device or simulator | 
+
+Not needed to reproduce production-observed pixels. Native Google
+Play UI remains outside PostHog mobile capture, so the report does not
+infer its contents. | 
+
+Prior same-class search: The search of
+/Users/aelaguiz/workspace/psagentspace/REGRESSIONS.md found
+the existing RevenueCat offering-stall class, the Android
+purchase-not-allowed class, the exact-owner entitlement-bootstrap class,
+and the Android trial-copy mismatch class. This audit extends their
+population and replay evidence. It adds the separate client
+error-presentation path to the ledger without duplicating the existing
+provider owner.
+
+Executive answer
+
+Android underperformed mainly because many more checkout
+starts ended in cancellation, not because paywalls broadly failed to
+load.
+
+Android purchased in 73 of 353 checkout starts,
+20.7%.
+
+iOS purchased in 122 of 222 starts, 55.0%.
+
+The 34.3-point purchase-rate gap decomposes into 26.5 points
+of extra Android cancellation, 4.7 points of extra unresolved
+outcomes, and 3.0 points of extra explicit errors.
+
+Cancellation accounts for 77.4% of the platform
+gap.
+
+Android offerings reached ready in 881 of 889 paygate sessions,
+99.1%.
+
+Even if every one of the 17 final Android error outcomes had
+converted, Android would reach only 25.5%, still far
+below iOS.
+
+Excluding the labeled test-market paid segment raises Android
+purchase rate only from 20.7% to 23.2%. That segment
+does not explain the gap by itself. The broader Android-versus-iOS
+acquisition-mix theory remains unresolved because the other acquisition
+differences were not normalized.
+
+Decision
+
+Fix the three narrow product defects and the reporting holes. Do not
+treat this as a systemic Android paywall-loading outage or a proven mass
+checkout hang. The next product question is why Android players cancel
+so often around the native handoff, a surface PostHog recordings cannot
+fully see.
+
+Method
+
+Cohort construction
+
+The denominator is a distinct paygate_checkout_started
+session on Android or iOS version 2.1.39 or 2.1.40 during the closed
+Aug. 18-31 UTC window. The audit reconciled each start across:
+
+subscription_checkout_store_interaction
+
+paygate_result
+
+paygate_checkout_finished
+
+subscription_commit
+
+A valid purchase or commit takes precedence over a conflicting later
+error or cancellation. A start with no canonical terminal remains
+unresolved. Five Android and three iOS 2.1.40 commits had no
+paygate_checkout_started; they were excluded from the start
+denominator rather than allowed to inflate conversion.
+
+PostHog and warehouse clocks can differ by seconds, and PostHog HogQL
+rendered some timestamps in US Central time. Case adjudication therefore
+used event order plus recording-relative time, not naive timestamp
+equality.
+
+Replay selection
+
+The replay casebook included:
+
+all 21 recent Android recordings with an explicit store error
+
+15 matched cancellation, unresolved, successful-purchase,
+offering-failure, and instrumentation controls
+
+the six longest available unresolved checkout captures
+
+four additional offering-problem recordings not already covered
+
+That is 45 unique recordings because one delayed-offering recording
+appears in both the flow and long-unresolved sets. Forty-four were
+available and watched in full. One was retention-expired with a 404. The
+error moment for one available recording and the checkout moment for
+another occurred after the recording ended; those cases stay blocked
+rather than being guessed.
+
+Mobile recordings were inspected frame by frame. A static frame
+during near-zero activity, a native billing handoff, or an explicit
+later app_foreground was treated as a capture limitation,
+not foreground-hang proof.
+
+Closed checkout population
+
+Platform | 
+
+Starts | 
+
+Purchased | 
+
+Cancelled | 
+
+Error | 
+
+Unresolved | 
+
+Android | 
+
+353 | 
+
+73 (20.7%) | 
+
+232 (65.7%) | 
+
+17 (4.8%) | 
+
+31 (8.8%) | 
+
+iOS | 
+
+222 | 
+
+122 (55.0%) | 
+
+87 (39.2%) | 
+
+4 (1.8%) | 
+
+9 (4.1%) | 
+
+By release
+
+Platform and release | 
+
+Starts | 
+
+Purchased | 
+
+Purchase rate | 
+
+Android 2.1.39 | 
+
+255 | 
+
+50 | 
+
+19.6% | 
+
+Android 2.1.40 | 
+
+98 | 
+
+23 | 
+
+23.5% | 
+
+iOS 2.1.39 | 
+
+147 | 
+
+75 | 
+
+51.0% | 
+
+iOS 2.1.40 | 
+
+75 | 
+
+47 | 
+
+62.7% | 
+
+Android improved by 3.9 points from 2.1.39 to 2.1.40, but the sample
+still sits far below iOS. The later release did not introduce a broad
+new collapse.
+
+What explains the platform
+gap
+
+Excess Android outcome versus iOS | 
+
+Percentage points | 
+
+Share of purchase-rate gap | 
+
+Cancellation | 
+
+26.5 | 
+
+77.4% | 
+
+Unresolved | 
+
+4.7 | 
+
+13.8% | 
+
+Error | 
+
+3.0 | 
+
+8.8% | 
+
+This is an arithmetic decomposition, not a causal model. It says
+where the outcomes land. It does not say why an Android player
+cancelled.
+
+Android acquisition groups
+
+Acquisition group | 
+
+Starts | 
+
+Purchased | 
+
+Purchase rate | 
+
+Cancelled | 
+
+Error | 
+
+Unresolved | 
+
+Main paid campaigns | 
+
+169 | 
+
+34 | 
+
+20.1% | 
+
+105 | 
+
+11 | 
+
+19 | 
+
+Test-market paid campaigns | 
+
+99 | 
+
+14 | 
+
+14.1% | 
+
+74 | 
+
+2 | 
+
+9 | 
+
+Unlinked or organic | 
+
+77 | 
+
+22 | 
+
+28.6% | 
+
+48 | 
+
+4 | 
+
+3 | 
+
+Other attributed campaigns | 
+
+8 | 
+
+3 | 
+
+37.5% | 
+
+5 | 
+
+0 | 
+
+0 | 
+
+Removing test-market traffic leaves 59 purchases from 254 starts,
+23.2%. The 2.5-point lift is real but far too small to
+explain the 34.3-point platform gap.
+
+Offering health
+
+Android release | 
+
+Paygate sessions | 
+
+Reached ready | 
+
+Refresh failed | 
+
+Still pending | 
+
+No ready or error | 
+
+2.1.39 | 
+
+640 | 
+
+633 | 
+
+6 | 
+
+0 | 
+
+1 | 
+
+2.1.40 | 
+
+249 | 
+
+248 | 
+
+0 | 
+
+3 | 
+
+1 | 
+
+The six 2.1.39 refresh failures were concentrated in three people or
+devices. Two of the three 2.1.40 still-pending sessions later reached
+ready, after 4.986 seconds and 66.253 seconds. The remaining session
+never reached ready; its player backed out after roughly 8 to 10 seconds
+of visible loading.
+
+What is actually broken
+
+1. Rare
+offering failures can block a real checkout
+
+One 2.1.40 lesson-energy paygate showed only app-owned “Loading
+plans…” UI for roughly 8 to 10 seconds. The player backed out and chose
+Keep Learning. No offering-ready or terminal offering-error event
+followed.
+
+A different 2.1.40 Play vs AI daily-limit paygate remained in
+app-owned loading UI for about 58 seconds. It showed “This is taking
+longer than expected” and Retry, then recovered to pricing. Its
+canonical ready event arrived 66.253 seconds after
+still_pending.
+
+Neither sequence is a Google Play capture gap. Every relevant pixel
+belongs to the app.
+
+The cohort also contains six 2.1.39 refresh-failure sessions. Four
+belonged to one player across two consecutive days. In the strongest
+sequence, the first failure allowed lessons to continue, but the later
+energy-gate failure repeated and was followed immediately by an explicit
+lesson quit.
+
+Disposition: Confirmed defect, low incidence. The
+recovered case proves that Retry and eventual pricing can work. The
+abandoned case's back-out path prevented a hard trap, but no ready event
+followed. Neither outcome makes the delayed offering load healthy.
+
+2.
+Purchase and entitlement errors are presented inconsistently
+
+The 21 explicit error recordings contained:
+
+Error class | 
+
+Recordings | 
+
+Purchase not allowed | 
+
+10 | 
+
+Store problem | 
+
+6 | 
+
+Purchase invalid | 
+
+3 | 
+
+Network error | 
+
+1 | 
+
+Duplicate operation guard | 
+
+1 | 
+
+Four affected players later committed. Some failures showed a clear,
+dismissible purchase dialog. Several returned silently to ordinary
+content. One showed an internal exact-owner entitlement message in a
+player-facing puzzle error surface. A tap in the two-control error area
+was followed by recovery, but the available pixels cannot distinguish
+Try again from Back to puzzles.
+
+The direct propagation owner in 2.1.40 is
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/features/puzzles/presentation/screens/puzzles_deeplink_resolver_screen.dart:284-287,
+which renders _resolution.lastError?.toString() as the
+subtitle. The provider failure itself remains owned by the production
+exact-owner issue, psmobile #4484. This report confirms the separate
+presentation defect: internal diagnostic text escaped the error
+boundary.
+
+Disposition: Confirmed player-facing error-handling
+defect. It is narrow and transient, but it should not reach players.
+
+3.
+Pending checkout lacks a clearly bounded in-place recovery state
+
+The release code protects against double charge and waits for late
+store truth, which is correct. The risk is what the player can do while
+that evidence never arrives.
+
+The no-terminal watchdog fires after 10 seconds.
+
+The service returns a pending outcome while the native future
+continues.
+
+The journey renders
+SubscriptionJourneyView.checking.
+
+The primary CTA reads “Checking purchase…” and is disabled.
+
+A back arrow remains, but no timeout-specific Check Again or Restore
+action appears on the inspected paywall state.
+
+The 31 unresolved Android starts do not prove 31 hangs. All have a
+store-start event and no later canonical terminal. Thirty have a
+recording. The six longest selected captures produced:
+
+one confirmed app background after checkout
+
+two visible forward-progress outcomes
+
+one recording that ends 34.5 seconds into checking
+
+two inactivity-dominated, relaunch-shaped gaps that do not prove
+foreground residence
+
+Disposition: Unresolved recovery risk in source. The
+source permits an unbounded wait if neither late native truth nor
+canonical evidence arrives, but the replay set does not establish a
+systemic foreground hang.
+
+4. Canonical
+monetization reporting has real gaps
+
+These are measurement defects, not player-flow defects:
+
+PostHog contains 153 Android
+paygate_presentation_invariant events across 2.1.39 and
+2.1.40. The canonical BigQuery path contains zero.
+
+Five Android and three iOS 2.1.40 purchase commits lack
+paygate_checkout_started.
+
+One watched cancellation emitted three to four copies of
+paygate_opened and paygate_result, two
+checkout start-finish cycles, and a late cancellation-verification event
+for one visible player action.
+
+subscription_benefits_cta records navigation from
+benefits to billing. It is not a store purchase click.
+
+Some successful purchases lack a store-start event, so raw
+event-family counts cannot be treated as complete checkout
+populations.
+
+Disposition: Confirmed measurement artifact.
+Session-grain reconciliation is required until canonical coverage is
+repaired.
+
+What is not broken
+
+Successful
+purchase and entitlement continuation
+
+Four matched successful-purchase controls genuinely purchased. The
+captured app states never contradicted the canonical outcomes. One
+recovered cleanly after a full process restart. Another confirmed
+unlimited energy after a purchase despite a duplicate-operation guard
+event.
+
+The earlier purchase-success handoff gap is real historical work, but
+it is resolved by the merged
+purchase-success fix, psmobile PR #4662. No entitlement-loss theory
+should be reopened from this cohort.
+
+Most cancellation controls
+
+The cancellation controls showed normal decline paths, native-store
+round trips, and continuation into free content. Static paywall frames
+around a later app_foreground were native or background
+capture gaps, not freezes.
+
+Cancellation is still the largest business problem in the cohort. The
+recordings cannot show whether the player rejected the native Google
+Play sheet, disliked the price, lacked a valid payment setup, or simply
+changed their mind.
+
+Broad offering availability
+
+Offers reached ready in 99.1% of the closed Android paygate-session
+population. That disproves a broad offering outage. It does not erase
+the rare, directly observed failures above.
+
+A broad missing-trial-label
+claim
+
+The audited 2.1.40 screens that had trial data showed the free-trial
+label and renewal terms. That does not close the eligibility-specific
+question because no qualifying existing-subscriber plan-change recording
+was available.
+
+Theory ledger
+
+Every recurring theory from the Aug. 17, Aug. 24, and Aug. 31 reports
+receives one final disposition below.
+
+Theory in plain English | 
+
+Final disposition | 
+
+What the audit found | 
+
+An alternative paygate presentation path caused the Android
+conversion gap | 
+
+Disproved | 
+
+Audited Android paygates rendered, accepted input, entered checkout,
+and continued across purchases and cancellations. No replay or
+population split tied the 34.3-point gap to that presentation path. | 
+
+Android hides a free-trial badge even when the current Google Play
+offer includes a trial | 
+
+Unresolved | 
+
+Trial labels and renewal terms were visible in the audited
+eligible-looking 2.1.40 screens, but no qualified existing-subscriber
+plan-change recording was available. Keep the question narrowly scoped
+under the
+Android trial-badge issue, psmobile #4225. | 
+
+A purchase can dismiss without showing success or usable Plus
+access | 
+
+Confirmed defect, resolved | 
+
+The prior handoff issue was valid and is closed under the
+purchase-success handoff issue, psmobile #4438. The cohort’s
+purchase controls showed entitlement continuation, and the merged
+purchase-success fix, psmobile PR #4662 owns the repair. | 
+
+RevenueCat exact-owner lookup can block entitlement bootstrap | 
+
+Confirmed defect | 
+
+One Android recording directly captured the internal exact-owner
+failure on screen. A manual action in the two-control error area was
+followed by recovery, but the selected control is not identifiable. The
+provider class remains open under the production
+exact-owner issue, psmobile #4484. The new finding here is unsafe
+player-facing propagation. | 
+
+Offering loading and refresh errors block some valid paygates | 
+
+Confirmed defect, rare | 
+
+Six of 640 2.1.39 sessions refreshed to failure. One 2.1.40
+lesson-energy session never reached ready and was abandoned after
+roughly 8 to 10 seconds. A different Play vs AI daily-limit session
+showed timeout copy and Retry for about 58 seconds, then recovered to
+pricing. This is real but not systemic. | 
+
+Dead-session and route-removal cleanup guards block valid
+purchases | 
+
+Expected behavior | 
+
+Watched guard and cleanup cases continued or had no live purchase
+UI. One duplicate-operation guard fired after a successful purchase with
+unlimited energy already visible. No player-facing block was
+reproduced. | 
+
+Store-side purchase blocks explain the Android gap | 
+
+Confirmed error class, disproved as the main
+cause | 
+
+The app recorded real purchase-not-allowed, invalid-purchase, store,
+and network errors. Some were silent, some were well handled, and four
+later committed. Even converting every final error would raise Android
+only to 25.5%. The remaining rate question belongs to the Android
+purchase-not-allowed investigation, psmobile #4684. | 
+
+Google Play download reporting was frozen | 
+
+Measurement artifact | 
+
+The store-reporting branch can remain stale while product checkout
+recordings and canonical app events continue. This affects reporting
+coverage, not the player flow. | 
+
+Purchase-attributed coverage at zero means paid Android checkouts
+failed | 
+
+Measurement artifact | 
+
+Real paid Android purchases exist in canonical checkout outcomes.
+The zero is signal-parity or attribution coverage failure, not zero
+product conversion. | 
+
+Android's overall acquisition mix explains the checkout gap | 
+
+Unresolved | 
+
+The labeled test-market segment converted worse, but removing its 99
+starts raises Android only from 20.7% to 23.2%, so that segment alone
+does not explain the gap. The remaining Android and iOS acquisition
+differences were not normalized. | 
+
+New finding from this audit
+
+Finding | 
+
+Disposition | 
+
+Evidence | 
+
+“Checking purchase…” can lack bounded in-place recovery | 
+
+Unresolved | 
+
+The 10-second watchdog, pending journey state, and disabled CTA
+exist in both release lines. One recording ends mid-check after 34.5
+seconds. Longer frame holds are explained or confounded by backgrounding
+and inactivity, so systemic foreground incidence is not proven. | 
+
+Release-code explanation
+
+The detached read-only checkout lives at
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901.
+
+Behavior | 
+
+Exact 2.1.40 source | 
+
+Interpretation | 
+
+No-terminal threshold is 10 seconds | 
+
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/core/subscriptions/purchase_execution/subscription_checkout_observability.dart:12 | 
+
+This is an observability and control-return threshold, not proof the
+store call failed. | 
+
+Native purchase races the watchdog; pending returns while late work
+continues | 
+
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/core/subscriptions/purchase_execution/subscription_purchase_service.dart:530-560 | 
+
+Correctly avoids inventing a terminal and keeps late store truth
+reachable. | 
+
+Nonterminal evidence renders the checking view | 
+
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/core/subscriptions/journey/subscription_journey_machine.dart:656-705 | 
+
+The journey remains charge-protective while it waits. | 
+
+Checking disables the primary CTA | 
+
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/features/subscription/presentation/components/paywall_readiness_cta.dart:38-55 | 
+
+Safe against double purchase, but there is no in-place recovery
+action on this state. | 
+
+Puzzle resolver displays lastError.toString() | 
+
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/features/puzzles/presentation/screens/puzzles_deeplink_resolver_screen.dart:284-287 | 
+
+Direct propagation owner for the internal text seen in replay. | 
+
+The watchdog, purchase-service race, and CTA behavior are present in
+both release tags. The purchase service and CTA files are unchanged
+between the tags. The journey machine changed, but both versions render
+a checking state for nonterminal evidence.
+
+Causal classifications
+
+Pending checkout: recovery blocker, not the
+initiating native-store cause. The app preserves uncertainty safely but
+does not bound the player’s in-place wait.
+
+Internal error copy: propagation defect. The
+exact-owner provider failure has a separate existing owner; the resolver
+turns internal detail into player text.
+
+Offering stall: confirmed availability failure with
+the exact stalled provider stage unresolved for this cohort. Retry is
+mitigation, not proof the provider cause is repaired.
+
+Canonical reporting gaps: observability defects.
+They distort analysis but do not cause checkout failure.
+
+No source, production state, provider state, app data, or issue state
+was changed during this audit.
+
+Recommended actions
+
+1. Give
+pending checkout a bounded recovery state
+
+Keep the double-charge guard. After a bounded evidence wait, replace
+the disabled-only primary action with an explicit Check
+again or existing Restore/reconcile action plus a safe exit. Do
+not re-enable Buy while purchase status is unknown.
+
+Smallest proof:
+
+one focused test where the native purchase future never
+completes
+
+one focused test where a late purchase completes after the
+watchdog
+
+require the first case to expose recovery without allowing a second
+charge
+
+require the second case to grant access once and clear pending
+state
+
+2. Stop
+rendering internal exceptions as player copy
+
+At puzzles_deeplink_resolver_screen.dart:284-287, keep
+the full internal failure in structured logs and map the subtitle to one
+player-safe message. Preserve Retry and Back to puzzles. A plain unit or
+widget test should pass an exact-owner failure and assert that provider,
+identity, and internal class names are absent from the rendered
+text.
+
+3.
+Preserve offering Retry, then record final disposition on the existing
+event
+
+Do not add a new event family. Add one final-disposition field to the
+existing offering-state event with values such as recovered, backed out,
+refresh failed, or never ready. This separates the 4.986-second and
+66.253-second recoveries from the 8-to-10-second abandonment with no
+ready event, without another dashboard or state machine.
+
+4. Repair one canonical
+checkout model
+
+Use distinct paygate sessions, not raw event counts. Bring the
+PostHog presentation-invariant family into the canonical path, reconcile
+late purchases with purchase precedence, and make commits-without-starts
+and starts-without-terminal visible as coverage warnings. Keep this in
+the existing dbt and Evidence surfaces.
+
+5.
+Investigate cancellation at the native boundary
+
+Use existing events first. Split cancellations by app decline before
+native handoff, native user cancellation, and cancellation after a
+store-start event. Segment by paygate surface and acquisition group. If
+the current terminal event cannot express that location, add one enum to
+it rather than another event family.
+
+PostHog replay should remain a control for app-owned screens. It
+cannot tell us which Google Play plan, payment method, or native error
+the player saw.
+
+What not to build
+
+no global retry around a possibly live native purchase
+
+no new checkout event family
+
+no new replay classifier or proof pipeline
+
+no broad offering rewrite
+
+no reopening of the merged purchase-success handoff work
+
+Limitations
+
+Native Google Play pixels are absent. A black,
+torn, or held app frame during checkout cannot prove a hang. The report
+uses surrounding app state and lifecycle events instead.
+
+A held mobile frame is not foreground proof. Mobile
+recordings preserve the last app screenshot through inactivity and OS
+suspension. Case 2 in the long-unresolved set logs
+app_foreground on return; case 3 logs
+app_background after checkout.
+
+Recording and event clocks are not exact twins.
+Event order and video-relative time carried more weight than
+second-level equality.
+
+One recording is unavailable. Store-error case 19
+returns 404. Store-error case 18 and flow case 7 have recordings, but
+their assigned event occurs after the available window.
+
+The trial-badge question lacks the required account
+state. A trial label was visible where trial data was present,
+but no qualified existing-subscriber plan-change session was
+available.
+
+Cancellation cause remains unresolved. The
+population proves where the gap lands. It does not reveal what happened
+inside the Google Play billing sheet.
+
+Privacy and sharing
+
+Raw recordings, timelines, and identifier-bearing extracts remain
+under
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replays.local/,
+which is git-ignored and excluded from the shared artifact. Shared
+screenshots were manually checked and contain no user IDs, device IDs,
+emails, IPs, tokens, or account identifiers. Replay links require the
+existing authenticated PostHog session.
+
+Source inventory
+
+Final working report:
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/android-monetization-replay-audit.md
+
+Theory inventory:
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/theory-inventory.md
+
+Candidate and sampling record:
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/session-candidates.md
+
+Store-error replay reviews:
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/error-cases-01-07.md,
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/error-cases-08-14.md,
+and
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/error-cases-15-21.md
+
+Flow-control replay reviews:
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/flow-cases-01-08.md
+and
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/flow-cases-09-15.md
+
+Long-unresolved replay review with final parent adjudication:
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/long-unresolved-cases.md
+
+Exhaustive offering review:
+/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/all-offering-problems.md
+
+Read-only release checkout:
+/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901
+
+Authenticated replay index
+
+All available recordings below were watched in full. The links open
+only for a signed-in PostHog user with access to project 215955.
+
+Explicit store-error cases
+
+Case | 
+
+Date | 
+
+Surface and error | 
+
+Replay | 
+
+Final visual disposition | 
+
+1 | 
+
+Aug. 31 | 
+
+Energy, purchase not allowed | 
+
+Open
+replay | 
+
+Silent close; the player continued browsing. | 
+
+2 | 
+
+Aug. 31 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+Native-store capture gap; a later purchase committed. | 
+
+3 | 
+
+Aug. 30 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+Likely silent failure; lower-confidence frame evidence. | 
+
+4 | 
+
+Aug. 29 | 
+
+Onboarding, purchase invalid | 
+
+Open
+replay | 
+
+No visible defect; onboarding continued. | 
+
+5 | 
+
+Aug. 27 | 
+
+Onboarding, purchase invalid | 
+
+Open
+replay | 
+
+Native-store capture gap; a later purchase committed. | 
+
+6 | 
+
+Aug. 27 | 
+
+Post-Puzzle, purchase not allowed | 
+
+Open
+replay | 
+
+Silent failure; the player continued for more than 25 minutes. | 
+
+7 | 
+
+Aug. 27 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+Internal entitlement text exposed; a manual action was followed by
+recovery. | 
+
+8 | 
+
+Aug. 26 | 
+
+Lesson Energy, store problem | 
+
+Open
+replay | 
+
+Silent first failure; the paygate re-presented and purchase
+committed. | 
+
+9 | 
+
+Aug. 25 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+Alternate paygate appeared; clean decline. | 
+
+10 | 
+
+Aug. 25 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+Clear purchase-not-allowed dialog; free path continued. | 
+
+11 | 
+
+Aug. 24 | 
+
+Onboarding, network error | 
+
+Open
+replay | 
+
+Silent network failure; free play continued. | 
+
+12 | 
+
+Aug. 22 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+No joined event or visible paywall; unresolved. | 
+
+13 | 
+
+Aug. 22 | 
+
+Onboarding, purchase invalid | 
+
+Open
+replay | 
+
+Native capture corrupted; automatic retry committed. | 
+
+14 | 
+
+Aug. 21 | 
+
+Onboarding, store problem | 
+
+Open
+replay | 
+
+Silent store failure; no visible retry. | 
+
+15 | 
+
+Aug. 21 | 
+
+Onboarding, store problem | 
+
+Open
+replay | 
+
+Clear store-problem dialog; play continued. | 
+
+16 | 
+
+Aug. 20 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+Likely silent; no player block. | 
+
+17 | 
+
+Aug. 20 | 
+
+Onboarding, store problem | 
+
+Open
+replay | 
+
+Clear store-problem dialog; play continued. | 
+
+18 | 
+
+Aug. 20 | 
+
+Onboarding, store problem | 
+
+Open
+replay | 
+
+Assigned error occurs about 51 seconds after recording ends. | 
+
+19 | 
+
+Aug. 18 | 
+
+Settings, store problem | 
+
+Open
+replay | 
+
+Recording unavailable with a 404. | 
+
+20 | 
+
+Aug. 18 | 
+
+Onboarding, purchase already in progress | 
+
+Open
+replay | 
+
+Purchase succeeded; the duplicate-operation guard was benign. | 
+
+21 | 
+
+Aug. 18 | 
+
+Onboarding, purchase not allowed | 
+
+Open
+replay | 
+
+Telemetry-only error during browsing; no purchase UI was open. | 
+
+Matched flow and control
+cases
+
+Case | 
+
+Release | 
+
+Surface and branch | 
+
+Replay | 
+
+Final visual disposition | 
+
+1 | 
+
+2.1.40 | 
+
+Post-puzzle cancellation | 
+
+Open
+replay | 
+
+Healthy decline; results remained usable. | 
+
+2 | 
+
+2.1.40 | 
+
+Onboarding cancellation | 
+
+Open
+replay | 
+
+Healthy voluntary cancellation with native-store capture gaps. | 
+
+3 | 
+
+2.1.40 | 
+
+Settings cancellation | 
+
+Open
+replay | 
+
+Healthy voluntary cancellation from Settings. | 
+
+4 | 
+
+2.1.39 | 
+
+Onboarding cancellation | 
+
+Open
+replay | 
+
+Healthy cancellation; puzzle play continued. | 
+
+5 | 
+
+2.1.40 | 
+
+Delayed offering and unresolved checkout | 
+
+Open
+replay | 
+
+Offering recovered after 66.253 seconds; later checkout had no
+terminal. | 
+
+6 | 
+
+2.1.40 | 
+
+Unresolved onboarding checkout | 
+
+Open
+replay | 
+
+Recording ends on checking; likely native gap, not proven. | 
+
+7 | 
+
+2.1.40 | 
+
+Unresolved onboarding checkout | 
+
+Open
+replay | 
+
+Assigned checkout occurs about 32 seconds after recording ends. | 
+
+8 | 
+
+2.1.39 | 
+
+Unresolved onboarding checkout | 
+
+Open
+replay | 
+
+First decline was healthy; second attempt is cut off in flight. | 
+
+9 | 
+
+2.1.40 | 
+
+Successful onboarding purchase | 
+
+Open
+replay | 
+
+Healthy purchase control. | 
+
+10 | 
+
+2.1.40 | 
+
+Successful onboarding purchase | 
+
+Open
+replay | 
+
+Healthy purchase control with an 88-second checkout capture gap;
+replay cannot distinguish a native overlay from uncaptured app UI. | 
+
+11 | 
+
+2.1.40 | 
+
+Successful lesson-energy purchase | 
+
+Open
+replay | 
+
+Healthy purchase control; later trial-cancellation telemetry did not
+undo access. | 
+
+12 | 
+
+2.1.39 | 
+
+Successful onboarding purchase | 
+
+Open
+replay | 
+
+Healthy purchase control; process restart recovered cleanly. | 
+
+13 | 
+
+2.1.39 | 
+
+Repeated offering refresh failures | 
+
+Open
+replay | 
+
+Two real refresh failures; player explicitly quit after the later
+energy failure. | 
+
+14 | 
+
+2.1.39 | 
+
+Repeated offering refresh failures | 
+
+Open
+replay | 
+
+Same recurring failure for the same player on another day. | 
+
+15 | 
+
+2.1.39 | 
+
+Open-versus-presented instrumentation mismatch | 
+
+Open
+replay | 
+
+Healthy visible cancellation; three-to-fourfold event
+duplication. | 
+
+Long-unresolved cases
+
+Case | 
+
+Release | 
+
+Surface | 
+
+Replay | 
+
+Final parent disposition | 
+
+1 | 
+
+2.1.40 | 
+
+Onboarding | 
+
+Open
+replay | 
+
+Nineteen-hour span has only 73 active seconds and a relaunch-shaped
+recovery. No foreground-hang proof. | 
+
+2 | 
+
+2.1.40 | 
+
+Play Vs Ai Daily Limit | 
+
+Open
+replay | 
+
+One-hour frame hold ends with app_foreground. This is
+an inactivity or background gap, not an hour of proven foreground
+freeze. | 
+
+3 | 
+
+2.1.39 | 
+
+Onboarding | 
+
+Open
+replay | 
+
+Confirmed app_background 47 seconds after checkout;
+later pending record aged out. | 
+
+4 | 
+
+2.1.39 | 
+
+Onboarding | 
+
+Open
+replay | 
+
+Healthy decline; the player entered puzzles and kept playing. | 
+
+5 | 
+
+2.1.40 | 
+
+Onboarding | 
+
+Open
+replay | 
+
+Recording ends 34.5 seconds into checking. Outcome remains
+unresolved. | 
+
+6 | 
+
+2.1.39 | 
+
+Onboarding | 
+
+Open
+replay | 
+
+Checking cleared to “Opening puzzle…” in about 20 seconds. | 
+
+Additional
+offering-problem recordings
+
+Date | 
+
+Release and surface | 
+
+Replay | 
+
+Final disposition | 
+
+Aug. 19 | 
+
+2.1.39 onboarding | 
+
+Open
+replay | 
+
+Offering error emitted during a clean exit to Learn; no visible
+failure in the captured frames. | 
+
+Aug. 27 | 
+
+2.1.39 onboarding | 
+
+Open
+replay | 
+
+Visible load-plans error for about five seconds; the player
+continued into a puzzle. | 
+
+Aug. 31 | 
+
+2.1.40 lesson energy | 
+
+Open
+replay | 
+
+Unrecovered app-owned offering load visible for roughly 8 to 10
+seconds; player backed out before ready. | 
+
+Aug. 31 | 
+
+2.1.40 onboarding | 
+
+Open
+replay | 
+
+Still-pending recovered in 4.986 seconds to localized pricing and an
+active CTA. | 
+
+Final verdict
+
+The Android monetization problem in these releases is not one hidden
+catastrophic bug. It is a large cancellation problem plus a small set of
+real reliability and measurement defects. Repair pending-state recovery,
+sanitize error copy, preserve offering recovery, and fix session-grain
+reporting. Then use the existing checkout events to locate cancellation
+around the native boundary before changing paywall design or traffic
+strategy.

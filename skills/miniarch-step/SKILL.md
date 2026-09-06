@@ -1,13 +1,14 @@
 ---
 name: miniarch-step
-description: "Operate the trimmed standalone full-arch workflow against one canonical plan artifact: `new`, `reformat`, `research`, `deep-dive`, `phase-plan`, `auto-plan`, `implement`, `implement-loop`, `auto-implement`, `full-auto`, `audit-implementation`, `status`, or `advance`. Use when the work still needs canonical architecture grounding, phased execution, and native goal-mode auto flow, but does not need the broader staged surface of `arch-step`. Not for one-pass mini planning, 1-3 phase feature flow, broad or ambiguity-heavy full-arch work, bugs, or open-ended loops."
+description: "Explicitly selected trimmed full-architecture lifecycle around one canonical plan. Use when the user chooses $miniarch-step or a selected parent requires it. Ordinary plan writing, feature work, implementation, and status requests do not select this lifecycle."
 metadata:
   short-description: "Trimmed full-arch workflow"
 ---
 
 # Miniarch Step
 
-Use this skill when the user wants the full arch shape and full auto support, but does not need the broader helper surface of `arch-step`.
+Use this workflow only after explicit selection as `$miniarch-step` or a
+binding task instruction requiring it.
 
 The primary object is one canonical full-arch plan doc. `miniarch-step` keeps the same artifact discipline and full-work posture as `arch-step`, but with a trimmed public command surface. It is not a lower-effort workflow: finish the requested outcome completely, but do not confuse completeness with more machinery.
 

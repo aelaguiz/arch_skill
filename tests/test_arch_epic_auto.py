@@ -3,8 +3,12 @@ import contextlib
 import io
 import json
 import os
+import signal
+import socket
+import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -1231,6 +1235,247 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             state["auto_execution"]["auto_run_dir"],
             str(run_dir.resolve()),
         )
+
+
+class ArchEpicProcessCleanupTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.runner = load_module(RUN_ARCH_EPIC_PATH, "arch_epic_cleanup_tests")
+
+    def wait_until(self, predicate, message, timeout=6):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            if predicate():
+                return
+            time.sleep(0.02)
+        self.fail(message)
+
+    @staticmethod
+    def process_running(pid):
+        result = subprocess.run(
+            ["ps", "-p", str(pid), "-o", "stat="],
+            capture_output=True, text=True, check=False,
+        )
+        return bool(result.stdout.strip()) and not result.stdout.strip().startswith("Z")
+
+    @contextlib.contextmanager
+    def child_case(self, *, detached=False, exit_code=None, output_error=False, hold_handoff=False):
+        with tempfile.TemporaryDirectory(prefix="arch-epic-process-test-") as td:
+            root = Path(td)
+            control = subprocess.Popen(
+                [sys.executable, "-c", "import time; time.sleep(60)"],
+                start_new_session=True,
+            )
+            launcher = None
+            try:
+                listener = (
+                    "import json, os, signal, socket, time\n"
+                    "from pathlib import Path\n"
+                    "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+                    "sock = socket.socket()\n"
+                    "sock.bind(('127.0.0.1', 0))\n"
+                    "sock.listen()\n"
+                    f"Path({str(root / 'listener.json')!r}).write_text("
+                    "json.dumps({'pid': os.getpid(), 'port': sock.getsockname()[1]}))\n"
+                    "time.sleep(60)\n"
+                )
+                command = (
+                    "import os, subprocess, sys, time\n"
+                    "from pathlib import Path\n"
+                    f"Path({str(root / 'worker.pid')!r}).write_text(str(os.getpid()))\n"
+                    f"subprocess.Popen([sys.executable, '-c', {listener!r}])\n"
+                    f"while not Path({str(root / 'listener.json')!r}).exists(): time.sleep(.01)\n"
+                    + ("print('ready', flush=True)\n" if output_error else "os.write(1, b'partial')\n")
+                    + ("time.sleep(60)\n" if exit_code is None else f"sys.exit({exit_code})\n")
+                )
+                invocation = (
+                    "import runpy, sys\n"
+                    "from pathlib import Path\n"
+                    f"runner = runpy.run_path({str(RUN_ARCH_EPIC_PATH)!r})\n"
+                    + (
+                        "def fail(_line): raise OSError('injected output failure')\n"
+                        "runner['_run_subprocess'].__globals__['_classify_event_line'] = fail\n"
+                        if output_error else ""
+                    )
+                    + (
+                        "exists = Path.exists\n"
+                        "Path.exists = lambda p: False if p.name == 'child.started_at' else exists(p)\n"
+                        if hold_handoff else ""
+                    )
+                    + f"code, _ = runner['_run_subprocess']([sys.executable, '-c', {command!r}], "
+                    f"Path({str(root / 'stream.log')!r}), Path({str(root)!r}), detached={detached!r})\n"
+                    "sys.exit(code if code >= 0 else 128 - code)\n"
+                )
+                launcher = subprocess.Popen(
+                    [sys.executable, "-c", invocation],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    start_new_session=True,
+                )
+                self.wait_until(
+                    lambda: (root / "listener.json").exists(),
+                    "listener did not start",
+                )
+                listener_info = json.loads((root / "listener.json").read_text())
+                self.wait_until(
+                    lambda: (root / "child.started_at").exists(),
+                    "child identity was not recorded",
+                )
+                yield root, launcher, control, listener_info
+            finally:
+                # These PIDs came only from this test's private temp directory.
+                # Stop the known groups even when an assertion or timeout fails.
+                try:
+                    worker_pid = self.runner._read_optional_int(root / "worker.pid")
+                    listener_path = root / "listener.json"
+                    if listener_path.exists():
+                        listener_pid = json.loads(listener_path.read_text())["pid"]
+                        if self.process_running(listener_pid):
+                            os.kill(listener_pid, signal.SIGKILL)
+                    if worker_pid is not None and self.process_running(worker_pid):
+                        if os.getpgid(worker_pid) == worker_pid:
+                            os.killpg(worker_pid, signal.SIGKILL)
+                        else:
+                            os.kill(worker_pid, signal.SIGKILL)
+                    owner_pid = self.runner._read_optional_int(root / "child.pid")
+                    if owner_pid is not None and self.process_running(owner_pid):
+                        os.kill(owner_pid, signal.SIGTERM)
+                        self.wait_until(lambda: not self.process_running(owner_pid), "test runner did not stop")
+                finally:
+                    for proc in (launcher, control):
+                        if proc is None:
+                            continue
+                        if proc.poll() is None:
+                            os.killpg(proc.pid, signal.SIGKILL)
+                        proc.communicate(timeout=5)
+
+    def assert_resources_stopped(self, root, control, listener):
+        for pid in (
+            int((root / "worker.pid").read_text()), listener["pid"],
+            int((root / "child.pid").read_text()),
+        ):
+            self.wait_until(lambda: not self.process_running(pid), f"owned PID {pid} survived")
+        with socket.socket() as probe:
+            probe.settimeout(0.1)
+            self.assertNotEqual(probe.connect_ex(("127.0.0.1", listener["port"])), 0)
+        self.assertIsNone(control.poll(), "unrelated control process was stopped")
+
+    def test_completion_cleans_descendants_and_preserves_exit_and_partial_output(self):
+        for detached in (False, True):
+            for code in (0, 7):
+                with self.subTest(detached=detached, code=code), self.child_case(
+                    detached=detached, exit_code=code,
+                ) as (root, launcher, control, listener):
+                    launcher.communicate(timeout=8)
+                    self.wait_until(lambda: (root / "exit_code").exists(), "missing exit status")
+                    self.assertEqual(int((root / "exit_code").read_text()), code)
+                    self.assertEqual((root / "events.jsonl").read_text(), "partial")
+                    self.assertEqual(launcher.returncode, 0 if detached else code)
+                    self.assert_resources_stopped(root, control, listener)
+
+    def test_foreground_output_exception_cleans_descendants(self):
+        with self.child_case(output_error=True) as (root, launcher, control, listener):
+            _, stderr = launcher.communicate(timeout=8)
+            self.assertNotEqual(launcher.returncode, 0)
+            self.assertIn(b"injected output failure", stderr)
+            self.assert_resources_stopped(root, control, listener)
+
+    def test_fast_exit_without_start_identity_preserves_output_and_status(self):
+        def exited_before_lookup(pid):
+            self.wait_until(lambda: not self.process_running(pid), "fast child did not exit")
+            return None
+
+        for expected_code in (0, 7):
+            with self.subTest(code=expected_code), tempfile.TemporaryDirectory(
+                prefix="arch-epic-process-test-"
+            ) as td:
+                root = Path(td)
+                with mock.patch.object(
+                    self.runner, "_process_started_at", side_effect=exited_before_lookup,
+                ):
+                    code, output = self.runner._run_subprocess(
+                        [sys.executable, "-c", f"import sys; print('fast output'); sys.exit({expected_code})"],
+                        root / "stream.log", root,
+                    )
+                self.assertEqual(code, expected_code)
+                self.assertEqual(output, "fast output\n")
+                self.assertEqual((root / "events.jsonl").read_text(), output)
+                self.assertEqual(int((root / "exit_code").read_text()), expected_code)
+                self.assertFalse((root / "child.started_at").exists())
+                self.assertFalse(self.process_running(int((root / "child.pid").read_text())))
+
+    def test_foreground_cancellation_cleans_descendants_and_preserves_signal_exit(self):
+        for signum in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+            with self.subTest(signum=signum), self.child_case() as (
+                root, launcher, control, listener,
+            ):
+                launcher.send_signal(signum)
+                launcher.communicate(timeout=8)
+                self.assertEqual(launcher.returncode, -signum)
+                self.assert_resources_stopped(root, control, listener)
+
+    def test_detached_terminate_cleans_descendants(self):
+        with self.child_case(detached=True) as (root, launcher, control, listener):
+            launcher.communicate(timeout=8)
+            args = self.runner._build_parser().parse_args([
+                "child-terminate", "--try-dir", str(root), "--reason", "test cancellation",
+            ])
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(args.func(args), 0)
+            self.assert_resources_stopped(root, control, listener)
+
+    def test_cancellation_before_detached_handoff_cleans_descendants(self):
+        with self.child_case(detached=True, hold_handoff=True) as (
+            root, launcher, control, listener,
+        ):
+            launcher.terminate()
+            launcher.communicate(timeout=8)
+            self.assertEqual(launcher.returncode, -signal.SIGTERM)
+            self.assert_resources_stopped(root, control, listener)
+
+    def test_foreground_terminate_cleans_descendants(self):
+        with self.child_case() as (root, launcher, control, listener):
+            args = self.runner._build_parser().parse_args([
+                "child-terminate", "--try-dir", str(root), "--reason", "test cancellation",
+            ])
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(args.func(args), 0)
+            launcher.communicate(timeout=8)
+            self.assertEqual(launcher.returncode, 128 + signal.SIGTERM)
+            self.assert_resources_stopped(root, control, listener)
+
+    def test_terminate_refuses_missing_or_stale_process_identity(self):
+        with self.child_case(detached=True) as (root, launcher, control, listener):
+            launcher.communicate(timeout=8)
+            (root / "child.pid").write_text(str(control.pid))
+            args = self.runner._build_parser().parse_args([
+                "child-terminate", "--try-dir", str(root), "--reason", "stale test",
+            ])
+            try:
+                for identity in ("stale process start time\n", None):
+                    with self.subTest(identity=identity):
+                        if identity is None:
+                            (root / "child.started_at").unlink()
+                        else:
+                            (root / "child.started_at").write_text(identity)
+                        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                            args.func(args)
+                        self.assertIsNone(control.poll())
+                        self.assertTrue(self.process_running(listener["pid"]))
+            finally:
+                heartbeat = json.loads((root / "heartbeat.json").read_text())
+                (root / "child.pid").write_text(str(heartbeat["pid"]))
+
+    def test_detached_missing_command_preserves_shell_exit_code(self):
+        with tempfile.TemporaryDirectory(prefix="arch-epic-process-test-") as td:
+            root = Path(td)
+            code, _ = self.runner._run_subprocess(
+                [str(root / "missing-command")], root / "stream.log", root,
+                detached=True,
+            )
+            self.assertEqual(code, 0)
+            self.assertEqual((root / "exit_code").read_text().strip(), "127")
+            pid = int((root / "child.pid").read_text())
+            self.wait_until(lambda: not self.process_running(pid), "failed runner survived")
 
 
 if __name__ == "__main__":

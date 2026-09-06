@@ -1,14 +1,14 @@
 ---
 name: browseros
-description: "Canonical preflight and operating contract for direct BrowserOS MCP use. Read and apply before the first BrowserOS MCP call whenever an agent will operate tabs, windows, or authenticated pages; upload or download files; capture screenshots; read or mutate web or BrowserOS-managed connector state; recover from BrowserOS errors; or coordinate browser work across agents. It owns non-hidden background operation, foreground-focus discipline, page lifecycle, dispatch-versus-task authorization, target and profile verification, observe-act-verify, timeout recovery, secrets, proof, and cleanup. Use it alongside narrower site skills such as $chatgpt-web, which own the site workflow while this skill owns BrowserOS mechanics. Not for BrowserOS installation or vendor development, generic connectors, or browsing that does not use BrowserOS MCP."
+description: "Required operating contract for Codex CLI browser work and direct BrowserOS MCP use: existing-window background operation, profile/account verification, task-owned page cleanup, and safe recovery of the same session. Codex CLI uses BrowserOS only and reports unavailability rather than switching browser tools. Use alongside narrower site skills such as $chatgpt-web. Not for BrowserOS installation/vendor development or generic non-browser connectors."
 ---
 
 # BrowserOS
 
-Apply this contract before the first direct BrowserOS MCP call. The
-goal is to complete the user's requested browser outcome while leaving the
-shared authenticated browser no less understandable, safe, or clean than it
-was at the start.
+Apply this contract before BrowserOS work. Codex CLI browser automation uses
+BrowserOS only, including supported direct MCP recovery of the same session.
+If it is unavailable, report the blocker; do not switch to standalone
+Playwright, bundled Browser, Chrome, Computer Use, or Node REPL browser control.
 
 For page work, reuse one normal non-hidden, task-designated page. If a new page
 is necessary, request exactly one with `hidden=false` and `background=true`.
@@ -62,20 +62,15 @@ for an ordinary single-page read-only task on a compatible current page.
 - Never create or work from hidden tabs or hidden windows, and never hide a
   task window as a focus workaround. Hidden surfaces consume resources while
   staying outside the normal user-visible tab strip and are easy to orphan.
-- Ordinary page-targeted tools operate against a page ID without requiring
-  tab or window activation. Keep reads, navigation, interaction, screenshots,
-  uploads, downloads, waits, and verification backgrounded unless a concrete
-  observed constraint requires foreground state.
+- Ordinary page-targeted tools operate against a page ID without activation.
+  Keep all routine interaction and verification backgrounded.
 - Default to zero deliberate foreground takeovers. Do not use
   `windows activate`, `tabs new` with `background=false`, or
   `windows set_visibility` with `activate=true` for routine work. When the
-  user explicitly requests a foreground handoff or a proved constraint has no
-  background-safe alternative, warn once, serialize it, and avoid repeated
+  user explicitly requests a foreground handoff, warn once, serialize it, and avoid repeated
   activation.
-- Creating a visible window is focus-capable. This includes `windows create`
-  with `hidden=false` and `tabs new` when no visible target window exists and
-  the host must create one. Use either only when genuinely required, capture
-  the focus baseline, warn that focus may move, and serialize the call.
+- Use existing BrowserOS windows. A new window, including one created
+  implicitly by opening a tab, requires the user's explicit request.
 - Window activation is never profile or account proof and is not a direct or
   general profile selector. Verify supported page-to-window/context evidence
   and an in-application account or workspace marker before credentialed or
@@ -100,6 +95,19 @@ for an ordinary single-page read-only task on a compatible current page.
   ownership rejection or broaden the user's authorization.
 - Stop BrowserOS work immediately when the user says stop.
 
+## Profile
+
+Default to the `Work` profile unless a narrower task or skill intentionally
+names another. Read `profile.info_cache` in
+`~/Library/Application Support/BrowserOS/Local State` and correlate it with
+current `Browser.getWindows` results; do not assume
+a saved profile ID is still correct. Open a needed page in that existing
+window with `browser.pages.newPage(url, {background: true, windowId})` through
+BrowserOS `run`, then verify its returned window/context and the site's own
+account marker before authenticated work. A login wall needs identity checks;
+it does not prove either a wrong profile or a genuine login requirement.
+Record the verified profile/window. Never activate a window to select a profile.
+
 ## First move for page work
 
 1. Resolve the requested outcome, intended site/account/profile, mutation
@@ -122,7 +130,7 @@ for an ordinary single-page read-only task on a compatible current page.
    Only when no compatible authorized page exists, request exactly one with
    `hidden=false` and `background=true`, then verify its actual containing
    window, visibility, and active state. If no visible target window existed,
-   treat any implicit visible-window creation as focus-capable. If the page
+   report that prerequisite rather than implicitly creating a window. If the page
    state cannot be established or it landed hidden, do not work through it;
    reconcile or report it under the lifecycle rules.
 

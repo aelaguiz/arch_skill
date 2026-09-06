@@ -1,13 +1,14 @@
 ---
 name: lilarch
-description: "Run the standalone small-feature 1-3 phase flow: create or repair a compact plan doc, lock requirements and defaults, write a tight implementation plan, implement locally, and self-audit. Use when a request is a contained feature or improvement that can realistically ship in 1-3 phases. Not for full-arch work, one-pass mini plans, bug investigations, or open-ended loops."
+description: "Explicitly selected small-feature start/plan/finish lifecycle with one compact plan and local implementation. Use when the user chooses $lilarch or binding task instructions require it. A small feature or improvement alone does not select this lifecycle."
 metadata:
   short-description: "Compact 1-3 phase feature flow"
 ---
 
 # Lilarch
 
-Use this skill for contained feature work that is too small for the full arch flow but still benefits from a real doc-backed plan.
+Use this workflow only after explicit selection as `$lilarch` or a
+binding task instruction requiring it.
 
 ## When to use
 
@@ -20,7 +21,8 @@ Use this skill for contained feature work that is too small for the full arch fl
 - The task is a migration, a broad refactor, or clearly larger than 3 phases.
 - The user wants a compressed one-pass arch plan instead of a start/plan/finish flow. Use `arch-mini-plan`.
 - The user wants the full arch workflow or the doc already behaves like a full-arch artifact. Use `miniarch-step` or `arch-step`.
-- Investigation dominates because the root cause is unknown. Use `bugs-flow` or `north-star-investigation`.
+- Investigation dominates because the root cause is unknown. Continue ordinary
+  diagnosis within the user's scope; do not silently select another lifecycle.
 
 ## Non-negotiables
 

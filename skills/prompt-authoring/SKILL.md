@@ -45,7 +45,9 @@ make install
 - Do not make the user classify the prompt. Infer the job from normal language and use prompt-type doctrine only as an internal lens.
 - If several prompt shapes apply, blend the useful guidance instead of forcing a choice.
 - Do not delay casual prompt-writing asks because optional details are missing. Make the best reasonable prompt, then name assumptions briefly if they matter.
-- Do not inflate a small one-shot prompt into a full reusable contract unless the artifact needs durable sections, examples, validation, or runtime boundaries.
+- Keep simple relays and same-role revisions to the short audited delta. Use
+  a full reusable contract only when the task needs it. Sequencing an approved
+  architecture preserves its final destination; it does not authorize redesign.
 - Keep commander’s intent mission-level; push concrete behaviors lower into success/failure, recognition tests, process, and examples.
 - For Codex goal prompts, prefer a Markdown prompt file when the goal is source-doc-backed, long-running, reviewer-gated, architecture-heavy, or likely to exceed paste-sized form. Use paste-sized `/goal` text only when the user asks for it or the host surface requires it.
 - For paste-sized `/goal` prompts, respect the form factor: 4,000 characters is a hard cap, 2,000-3,000 is the usual ceiling for complex goals, and source-doc-heavy goals should usually be shorter.
