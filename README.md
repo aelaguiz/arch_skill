@@ -56,6 +56,7 @@ Other shipped skills are:
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
+- `disk-cleanup` — reclaims developer disk space from known worktree, build, cache, and log locations, reuses local inventories, preserves active work and Git commits, and verifies the requested free-space target
 - `codex-babysit` — optional source-retained skill for watching an already-running Codex goal-mode tmux pane; it is not installed by default
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs and strict `approve | not-approved | inconclusive` verdicts
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
@@ -164,6 +165,7 @@ Installed skills:
   - `~/.agents/skills/commit-history-authoring/`
   - `~/.agents/skills/amir-publish/`
   - `~/.agents/skills/codex-cleanup/`
+  - `~/.agents/skills/disk-cleanup/`
   - `~/.agents/skills/codex-review-yolo/`
   - `~/.agents/skills/fresh-consult/`
   - `~/.agents/skills/intent-police/`
@@ -218,6 +220,7 @@ Installed skills:
   - `~/.claude/skills/commit-history-authoring/`
   - `~/.claude/skills/amir-publish/`
   - `~/.claude/skills/codex-cleanup/`
+  - `~/.claude/skills/disk-cleanup/`
   - `~/.claude/skills/codex-review-yolo/`
   - `~/.claude/skills/fresh-consult/`
   - `~/.claude/skills/intent-police/`
@@ -271,6 +274,7 @@ Installed skills:
   - `~/.gemini/skills/commit-history-authoring/`
   - `~/.gemini/skills/amir-publish/`
   - `~/.gemini/skills/codex-cleanup/`
+  - `~/.gemini/skills/disk-cleanup/`
   - `~/.gemini/skills/codex-review-yolo/`
   - `~/.gemini/skills/fresh-consult/`
   - `~/.gemini/skills/intent-police/`
@@ -296,7 +300,7 @@ Installed skills:
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, `eli10`, and `goal-loop` are removed from the live installed surface; `codex-babysit`, `eli10`, and `goal-loop` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex, Claude Code, Pi, and Prime Agent local history, including Prime child-agent transcripts; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `intent-police`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
+`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, `eli10`, and `goal-loop` are removed from the live installed surface; `codex-babysit`, `eli10`, and `goal-loop` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `agent-history` and `pr-review-followthrough` are installed on the agents/Codex and Claude Code surfaces. `agent-history` covers Codex, Claude Code, Pi, and Prime Agent local history, including Prime child-agent transcripts; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `intent-police`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `conductor`, `codex-cleanup`, `disk-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
 
 `herdr-helper` is installed on the agents/Codex, Claude Code, and Gemini CLI
 surfaces and requires an installed Herdr CLI at runtime.
@@ -598,6 +602,21 @@ Use when Amir wants to publish this skills repo across his usual machines: commi
 
 Use when `~/.codex` is multi-GB, old session JSONL/log/cache files are bloated, or many parallel Codex instances are stalling on SQLite `database is locked`. The skill ships a local bash helper that defaults to dry-run, refuses to run `--apply` while any `codex` process is alive, prunes stale dated/cache/temp files, checkpoints SQLite WALs, and rotates `log/codex-tui.log` without touching live config, credentials, memories, plugins, skills, prompts, or history indexes.
 
+### `disk-cleanup`
+
+Use when a developer Mac is running out of disk space or the user wants a
+specific amount free. The prompt-only skill starts with a bundled map of
+Amir's recurring worktree, build, cache, and log locations and any saved local
+cleanup inventory. Canonical checkouts such as `~/workspace/psmobile` and
+`~/workspace/psagentspace` are protected regardless of age or Git status. It
+preserves active and dirty worktrees, retained Git
+branches/commits, and unique ignored files, executes authorized cleanup, and
+measures actual free space afterward. It saves paths and recovery information
+for the next run. Use `codex-cleanup` for work confined to Codex state, and
+`arch-docs` for documentation cleanup.
+
+Example: `Use $disk-cleanup to get this machine back to 1 TB free.`
+
 ### `codex-babysit`
 
 This package is retained in the repository for manual use but is not installed by `make install` or `make remote_install`. When used manually, it keeps an already-running Codex goal-mode tmux pane alive across real usage limits or process death, rotates `aim` accounts only when Codex is actually blocked, restarts, resumes the same session, and verifies work resumed.
@@ -860,7 +879,7 @@ Practical rule:
 
 ## Usage
 
-- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `bottom-up-diagnostic`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
+- Primary surface: ask the agent to use `arch-step`, `arch-step-goal-prompt`, `miniarch-step`, `arch-epic`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `bottom-up-diagnostic`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `north-star-investigation`, `arch-flow`, `arch-skills-guide`, `agent-definition-auditor`, `agents-md-authoring`, `prompt-authoring`, `browseros`, `chatgpt-web`, `skill-authoring`, `herdr-helper`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `pr-authoring`, `pr-review-followthrough`, `commit-history-authoring`, `amir-publish`, `codex-cleanup`, `disk-cleanup`, `fresh-consult`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `contact-sheet-builder`, `fc-branded-pdf`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `thermo-nuclear-code-quality-review`, `stepwise`, or `codex-review-yolo`.
 - Full-arch execution defaults to `miniarch-step` when the trimmed command surface is enough and `arch-step` when the broader or helper-heavy surface is needed.
 - Docs cleanup loops default to `arch-docs`.
 - Read-only checklist and next-step inspection uses `arch-flow`.
