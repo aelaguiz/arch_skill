@@ -127,9 +127,13 @@ Always name the thing.
   the reader needs that answer to act: the cause of a blocker, the owner of
   a next step, a number the decision turns on. A fact nobody asked about is
   not announced as missing, and a status row never carries a note about
-  what the writer did not check. State findings decisively; qualify once,
-  where the qualification changes the decision, not in every sentence. He
-  needs useful decisions, not proof.
+  what the writer did not check. State findings the way a colleague would
+  say them out loud: "there was no broad paywall outage", not "the data
+  does not establish a broad paywall outage"; "Retry works around it; the
+  cause is not fixed", not "eventual pricing does not establish that the
+  provider cause is repaired". Qualify once, where the qualification
+  changes the decision, not in every sentence. He needs useful decisions,
+  not proof.
 - The answer comes first. One unhedged sentence on top carries the message.
   Each section's first sentence is its message. A body heading is a short
   message the reader can act on without the body ("Lifecycle is stuck on
@@ -138,7 +142,10 @@ Always name the thing.
   is the answer.
 - Numbers arrive with their comparison and their meaning in the same
   sentence: the rate, its raw counts, the baseline, and what it means for
-  the decision. Do the division for the reader. Give a percent only when
+  the decision. The plain comparison comes before any share derived from
+  it: "Android 20.7%, iOS 55.0%, and most of the difference is people
+  cancelling", not "cancellations account for 77.4% of the 34.3-point
+  gap". Do the division for the reader. Give a percent only when
   the base supports it; "21 to 29" is eight people, not "up 38.1%". Keep
   the precision the decision needs: "66 seconds", not "66.253 seconds".
 - One idea per sentence. Bold the one line a skimmer must not miss, if any;
@@ -154,7 +161,8 @@ Always name the thing.
   everything he would act on or decide from, including the table that says
   which theories are dead and which are alive. The appendix holds only what
   he would use to check a claim: which sources were read, as of when, and
-  what each could not show. Render sizes, file hashes, run ids, model
+  what each could not show. If he would never read it, it does not belong
+  on the page; link the working record instead. Render sizes, file hashes, run ids, model
   names, which worker did what, rules applied, and what was suppressed are
   not facts about the business and do not survive the rewrite. No sentence
   describes the report's own behavior. The artifact stands alone: no

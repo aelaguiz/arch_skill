@@ -216,3 +216,68 @@ round-2 stop:
 - Outputs: `/Users/aelaguiz/workspace/arch_skill/docs/readable-reports/rounds/round-3/`
 
 Verdict: pending (from the cold reader).
+
+Verdict (cold reader, as Amir), round 3 morning priorities: PASS. "I can
+read the first two screens and act: release the repairs, finish Tim's
+comparison, unblock Natasha's events. Nothing talks down to me, nothing
+reads as AI. A few things would make me grumble; none would stop me."
+
+Grumbles: "does not establish" twelve times (a lawyer tic; "doesn't mean");
+an appendix hint about "older remarks about Tim" with nothing shown;
+"The individual adjudication owner is unknown" (say nobody owns deciding);
+"expected purchase completions" (drop "expected"); one restated sentence;
+a 1,600-word coverage appendix he will skim past and never read.
+
+Keep: the one bold unhedged top line; his own words quoted with the message
+linked ("I need the business to acquire customers profitably, period." (FC
+message 64711)); "Lifecycle delivery is blocked because the mission events
+have not shipped." (status first, then what she did); the paragraph naming
+the four stacked checkout PRs in plain words with links ("That is what
+'root clean, children blocked' should have said the first time"); the
+Concern / What prevents completion / Intervention table shape.
+
+Fault: the writer's now, except "preserve every fact" still keeps the
+coverage appendix on the page.
+
+Verdict (cold reader, as Amir), round 3 Android audit: PASS. "First screen:
+the directive, the gap, the table. The theory table is in the body where I
+can see it, and the five changes plus the do-not list tell me what to do.
+The lawyer voice is half gone. Nothing talks down; nothing reads as AI."
+
+Grumbles: "does not establish" six times; "foreground residence"; the share
+of the gap (77.4% of 34.3 points) leads before the two rates; the
+milliseconds came back once; "app-owned".
+
+Keep: the bold directive; the two rates with counts and the "even if all 17
+errors became purchases, 25.5%" sentence; the paygate table ("What the
+player saw and did" / "Finding and next action"); the 31-unresolved table
+("One player backgrounded the app after checkout."); the theory table in
+the body; the five numbered changes and the do-not-build list; code
+pointers by line.
+
+Fault: the writer's.
+
+## Outcome
+
+Both round-3 rewrites pass the cold reader's bar. Final skill polish after
+round 3, all examples rather than rules: say findings the way a colleague
+would say them out loud ("there was no broad outage", not "the data does
+not establish"); the plain comparison before any derived share; if he
+would never read it, it does not belong on the page, link the working
+record instead.
+
+Numbers across rounds (morning priorities): original 2,338 words of
+fragments; round 1 4,802; round 2 4,164; round 3 3,248. Android audit:
+original 4,725; round 1 5,813; round 2 4,558; round 3 4,564.
+
+What the rounds taught about the skill, in order:
+1. A sentence rule without its boundary turns column headers, link tags,
+   and imperatives into stilted sentences (round 1).
+2. Any count-based rule ("used more than twice", "forty words") gets
+   applied like a rule and reads as treating the reader like a child
+   (Amir's correction after round 1).
+3. "Preserve every fact" and "mark unknowns in the text" without scope
+   produce a report about itself and forty hedges (round 2).
+4. Once the instructions stop causing failures, what remains is writer
+   habit ("does not establish"), best handled by an example of the spoken
+   version, not another rule (round 3).
