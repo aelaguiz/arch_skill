@@ -1,6 +1,6 @@
 # Delegated implementation for issue and epic delivery
 
-Status: authored and verified; ready for authorized merge and publication.
+Status: complete; authored, verified, merged, and published.
 
 ## User outcome and authority
 
@@ -164,7 +164,7 @@ precedence over amir-publish's broad tracked-file staging default.
 - [x] Save full plan before implementation.
 - [x] Implement the execution helper and caller/install integration.
 - [x] Worker validation and parent review of every deliverable.
-- [ ] Merge, push, install, and verify publication outcomes.
+- [x] Merge, push, install, and verify publication outcomes.
 
 The first Sol implementation launch failed at model capacity. A retry was
 interrupted when the user clarified authorship; no worker edits were present.
@@ -186,3 +186,26 @@ it did not validate this worktree. Its unrelated upstream-deletion warnings did
 not cause deletions. The separate local checks above supply package validation.
 Full outputs are in `/tmp/delegated-implementation-validation/`. No live issue,
 PR, Pro consultation, provider routing, or application tests were exercised.
+
+Implementation commit `cb780f9d408530cf993e7dd0fd2ff9f9dbe9323c` was
+fast-forward merged into `main` and pushed. `make install`, `make verify_install`,
+and direct comparisons of all three affected packages passed on all five
+machines. The parent read the complete command receipts and accepted the results.
+
+| Target | Hostname | Install and verification | Existing Hermes roots |
+|---|---|---|---:|
+| Local / `amir-m5` | `Amir-M5` | Passed | 1 |
+| `amirs-m3-max-new` | `Amirs-M3-Max-2` | Passed | 3 |
+| `amir-m3-36gb` | `Amir-M3-36gb` | Passed | 0 |
+| `agents@amirs-mac-studio` | `agents` | Passed | 22 |
+| `home` | `amir-server` | Passed | 0 |
+
+Agents/Codex and Claude package copies match source; Gemini has the expected
+frontmatter stripping; existing Hermes roots match source. Tracked Git state
+remained clean, and unrelated untracked work was preserved. Full publication
+receipts are in `/tmp/delegated-implementation-publication/`. An initial optional
+Hermes-profile glob failure affected only the temporary comparison command;
+the worker repaired that command and obtained a clean direct-comparison result.
+
+This completion annotation is a documentation-only follow-up to the verified
+implementation commit; it does not change any installed skill or install logic.
