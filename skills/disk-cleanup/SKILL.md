@@ -73,6 +73,10 @@ specifically requests that folder's cleanup. Reading canonical Git inventories
 and Git's normal registration updates when removing a separate worktree are
 allowed. If a checkout's role is unclear, keep it.
 
+Any reused or newly written cleanup script must enforce this protected set
+before every deletion or relocation. A safe preview does not compensate for
+an executable that lacks the same lexical and resolved containment checks.
+
 ## Preserve work while removing copies
 
 Use Git's worktree inventory, current working-tree status, and live process
@@ -103,6 +107,11 @@ candidate changed, skip it and continue through the other candidates. Retain
 the original path, common Git directory, branch, commit, and preserved-file
 mapping so the checkout can be recreated.
 
+Refresh process activity throughout long batches, not only at startup. Detect
+worktrees containing submodules during selection and keep them; do not
+deinitialize submodules or retry unsupported removal mechanisms as part of
+generic housekeeping.
+
 For caches and build folders, establish what regenerates them and whether a
 running process uses them. Verify that selected build paths contain no tracked
 source before deleting them. Keep credentials, live SQLite/WAL state, browser
@@ -125,3 +134,6 @@ Report actual before/after free space, actual bytes reclaimed, the largest
 removed categories, what was preserved or skipped, and the local receipt path.
 State whether the requested target was reached. Label estimates separately;
 do not add nested folder sizes or present `du` totals as measured free space.
+Take the completion measurement after verification. If the disk remains busy,
+select a cleanup batch with a few gigabytes of headroom beyond the requested
+threshold so current writes do not consume the entire margin during checks.

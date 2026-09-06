@@ -54,6 +54,12 @@ Parse NUL-delimited paths rather than splitting paths on spaces. Preserve
 staged and unstaged edits and untracked files; a failed status command is not
 evidence of a clean checkout. Leave locked worktrees alone.
 
+Check `git ls-files --stage -z` for entries with mode `160000` before measuring
+or moving ignored files. Keep worktrees containing these submodule entries.
+In the live evaluation, normal Git removal refused them even after clean
+submodule deinitialization; deinitializing added recovery work without removing
+the parent checkout. Do not repeat that workaround during routine cleanup.
+
 A retained local branch protects committed work even if it was never pushed
 or its changes were squash-merged. Do not require merge ancestry for that case.
 For detached checkouts, prove reachability from a retained ref or keep the
@@ -82,7 +88,10 @@ Capture and parse these locally. Map working directories and open file paths
 to worktree roots, matching whole path components. Include references from
 processes whose current directory is elsewhere. Do not mark a worktree active
 only because the cleanup's own `du`, `git`, or `lsof` inspection has it open.
-Refresh activity before mutation, and skip a selected path if fresh activity
+Identify the cleanup's own processes; do not ignore unrelated user processes
+just because their command names also match an inspection tool. Refresh the
+activity inventory periodically during long batches and check candidates close
+to mutation. Skip a selected path if fresh activity
 or changed Git state invalidates the selection. Keep parent-directory and
 nested-worktree relationships in view so one removal cannot take another
 checkout with it.
@@ -121,7 +130,10 @@ Restore its preserved local files to their recorded relative paths. This does
 not recreate deleted build products or installed dependencies; use the
 project's normal setup commands when that checkout is needed again.
 
-After a batch, verify actual free bytes, expected path removal, retained Git
-refs/commits, canonical checkout paths, and the preservation location. Save per-path skips and failures
-without calling them successful removals. A pending manifest or successful
-preview is preparation, not proof that disk space was reclaimed.
+After a batch, verify expected path removal, retained Git refs/commits,
+canonical checkout paths, and the preservation location, then measure actual
+free bytes. Save per-path skips and failures without calling them successful
+removals. If current writers consume a narrow margin during verification,
+continue through another eligible cache or disposable candidate and measure
+again. A pending manifest or successful preview is preparation, not proof
+that disk space was reclaimed.
