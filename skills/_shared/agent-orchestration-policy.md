@@ -67,6 +67,20 @@ that capability. Inspect the active tool surface. If a load-bearing capability
 is unavailable natively, use the appropriate external or background lane and
 say what it buys.
 
+External Codex and Claude execution sessions launch through AIMgr; follow
+`aim-rotation.md`. Only a parent running inside Prime shares its single AIMgr
+binding with native children: avoid long model-pinned Codex work there and
+rotate the root with `aim prime resume <session> --rotate`. Codex and Claude
+Code parents remain their own runtimes even when AIMgr launched them.
+
+## Codex model preference
+
+Default a Codex model choice to `gpt-6-astra` at `xhigh`. Accept `astra` as
+`gpt-6-astra`. When the user mentions GPT-5.6 Sol, recommend GPT-6 Astra at
+`xhigh`; use Astra for a casual or accidental old-model reference. Preserve a
+deliberate request to keep Sol or another exact model, and preserve explicitly
+chosen effort. Do not silently change the model of an existing session.
+
 ## Pin model and thinking level, or inherit knowingly
 
 A native child normally inherits the parent's model and thinking level. That
@@ -242,11 +256,10 @@ the agents it launches. Parallelize work that is genuinely independent; do not
 "maximize agents" as an end in itself. Account for available host slots, shared
 files, external process cost, and the parent's ability to review every result.
 
-A child may always create its own native sub-agents on its own host. That needs
-no parent permission, no assigned nested scope, and no budget: native fan-out is
-the child's local execution choice, and its cost and coordination stay on the
-child's host. This holds for every child role, including read-only reviewers and
-single-shot critics.
+A child may use native sub-agents only within the user's and parent's
+authorized delegation scope and the active host's constraints. Available slots
+alone do not authorize fanout; the parent accounts for shared build, device,
+and process load before assigning concurrent work.
 
 A child must not spawn external agents. A worker or reviewer started through
 `$agent-delegate` — or through any other external process or session — may not
@@ -256,6 +269,27 @@ External topology stays parent-owned. Ordinary worker and critic prompts should
 say both halves plainly. If peers need to communicate directly rather than
 through the parent, choose a host-native team deliberately and name why that
 topology helps.
+
+## Finish the owned processes
+
+Retain the host, task/worktree, runtime stop handle, and process identity for
+long-running work. Arm a bounded monitor at launch with a progress signal,
+deadline, and stall action. Tool yield and worker completion do not prove that
+their processes exited.
+
+On success, failure, cancellation, timeout, or a changed approach, stop unwanted
+task-owned workers, builds, servers, tunnels, watchers, and temporary devices
+before retrying. Prefer the runtime's targeted stop; otherwise verify PID,
+start time, and process-group/descendant ownership, request graceful shutdown,
+then inspect and stop only confirmed survivors after a bounded grace period.
+Check descendants and task ports on the actual host, including after SSH or
+agent cancellation; never blanket-kill processes by name.
+
+Before final handoff, the parent verifies this cleanup for every worker and
+reports no unwanted owned jobs, or names each intentional remaining resource,
+owner, stop handle, and end condition. Preserve shared services, BrowserOS,
+other agents' devices, worktrees, durable evidence, and build caches. Inspect
+survivors on resume after a crash; do not promise crash-proof cleanup.
 
 ## Require an integration-ready return
 

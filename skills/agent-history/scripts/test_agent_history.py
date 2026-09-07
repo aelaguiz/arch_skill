@@ -211,7 +211,7 @@ class AgentHistoryScriptTests(unittest.TestCase):
                 "cwd": str(project),
                 "rlmDepth": 0,
             },
-            {"type": "model_change", "timestamp": now_iso(), "provider": "anthropic", "modelId": "claude-fable-5"},
+            {"type": "model_change", "timestamp": now_iso(), "provider": "anthropic", "modelId": "claude-fable-5-1"},
             {"type": "session_info", "timestamp": now_iso(), "name": "prime root session"},
             {
                 "type": "custom",
@@ -392,7 +392,7 @@ class AgentHistoryScriptTests(unittest.TestCase):
             )
             self.assertEqual(proc.returncode, 0, proc.stderr)
             self.assertIn("prime root session", proc.stdout)
-            self.assertIn("claude-fable-5", proc.stdout)
+            self.assertIn("claude-fable-5-1", proc.stdout)
             self.assertIn("account cfo", proc.stdout)
             self.assertIn("1 compactions", proc.stdout)
 

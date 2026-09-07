@@ -1,14 +1,14 @@
 ---
 name: exhaustive-code-review
-description: "Run a prompt-only exhaustive code review over a branch, diff, path set, plan scope, or completion claim with a coverage-led set of clean native review slices when useful, reading touched files/hunks/abstractions/callers/side doors/proof/docs/generated/prompt surfaces, and saving a findings-first review artifact to disk. Use when the user asks for exhaustive, meticulous, line-by-line, file-by-file, abstraction-by-abstraction, feature-by-feature, or coverage-ledger review. Not for normal high-signal review, plan-backed `plan-audit implementation-audit`, maintainability-only thermonuclear review, implementation, repair, PR shipping, or external subprocess review."
+description: "Explicitly selected code review where systematic coverage is part of the deliverable, with a findings artifact and clean review slices when authorized. Use when the user chooses $exhaustive-code-review or binding task instructions require it. An ordinary code review or completion check does not select this workflow."
 metadata:
   short-description: "Exhaustive prompt-only code review saved to disk"
 ---
 
 # Exhaustive Code Review
 
-Use this skill when the user wants a meticulous code review where coverage is
-part of the deliverable. The job is to review the requested code scope, save the
+Use this workflow only after explicit selection as `$exhaustive-code-review` or a
+binding task instruction requiring it. The job is to review the requested code scope, save the
 review artifact to disk, and report the verdict plus path.
 
 This skill does not dictate the user's workflow. It does not implement, repair,
@@ -53,7 +53,7 @@ or decide what workflow the user should use next.
 - Use the strongest read-only capability the host exposes, also tell every
   review child not to edit or write, and have the parent compare repository
   status and diffs with the pre-dispatch state before accepting child evidence.
-- Children may use their own native sub-agents on their own host at will; they
+- Children may use native sub-agents within authorized scope and host limits; they
   may not start external agents.
 - The parent owns child accounting, evidence spot-checking, deduplication,
   integration, finding scope disposition, the artifact, and the final verdict.

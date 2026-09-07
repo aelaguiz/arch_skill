@@ -4,7 +4,7 @@ These examples are distilled from real investigations with product-specific
 identity and history removed. They teach the reasoning move, not a lookup table.
 A new population analysis still has to discover its own grain, evidence,
 variation, and proof limits. Some examples surface a credible software-defect
-signal; that is a handoff to `bugs-flow`, not permission to turn this skill into
+signal; that is a handoff to ordinary bug investigation, not permission to turn this skill into
 bug diagnosis or repair.
 
 Each example uses the same compact lens:
@@ -124,7 +124,7 @@ Each example uses the same compact lens:
   request, and retry intervals showed backoff already existed.
 - **Evidence-bounded conclusion:** old engagement writes were 80% of the request
   population, while the visible mobile error was an outlier. Concentration
-  behind one outward identity was a software-defect signal for `bugs-flow`.
+  behind one outward identity was a software-defect signal for ordinary bug investigation.
 - **Lesson:** classify the whole request population at the shared boundary. The
   request that receives the error need not represent the dominant cohort.
 
@@ -157,7 +157,7 @@ Each example uses the same compact lens:
   the same pre-write boundary.
 - **Evidence-bounded conclusion:** zero of 39 live tabs changed. Successful
   publication did not prove data mutation, and the cross-family pattern was a
-  software-defect signal for `bugs-flow` to diagnose and repair.
+  software-defect signal for ordinary bug investigation to diagnose and repair.
 - **Lesson:** enumerate the whole affected surface and verify the target system
   directly. A green adjacent workflow is not proof of the desired side effect.
 

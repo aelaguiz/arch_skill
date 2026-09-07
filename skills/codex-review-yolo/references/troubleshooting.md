@@ -13,7 +13,7 @@ Common failure modes when invoking codex exec for review, and what to do.
   this standalone V2 profile on top of the base config.
 - Inspect it with
   `rg -n '^(model|model_reasoning_effort|service_tier|sandbox_mode)[[:space:]]*=' "${CODEX_HOME:-$HOME/.codex}/yolo.config.toml"`.
-- If it is missing or does not select `gpt-5.6-sol`, `ultra`, `fast`, and
+- If it is missing or does not select `gpt-6-astra`, `xhigh`, `fast`, and
   `danger-full-access`, the user needs to configure it before this skill is
   usable. Do not invent a substitute profile; that exact contract is the point
   of this skill.
@@ -21,7 +21,7 @@ Common failure modes when invoking codex exec for review, and what to do.
 ## The namespaced final-output file never appears
 
 - Most common cause: codex errored before producing a final message. Read the run's stream log, e.g. `$RUN_DIR/stream.log` — the error is usually near the end.
-- Second cause: codex still running. At ultra with a realistic prompt, audits
+- Second cause: codex still running. At xhigh with a realistic prompt, audits
   commonly take 5+ minutes, and broad audits can reasonably take 20-40 minutes.
   Poll process status and `stream.log` every few minutes, not every few
   seconds.
@@ -49,7 +49,7 @@ Common failure modes when invoking codex exec for review, and what to do.
 
 ## Codex reads stale files
 
-- Codex at ultra does read the current filesystem state, but if there's been a `git commit --amend` or reset between invocations, be explicit in the prompt: "the current HEAD is <sha>, committed just now; read it, not the branch history from earlier today."
+- Codex at xhigh does read the current filesystem state, but if there's been a `git commit --amend` or reset between invocations, be explicit in the prompt: "the current HEAD is <sha>, committed just now; read it, not the branch history from earlier today."
 
 ## Rate limits / fast-tier saturation
 

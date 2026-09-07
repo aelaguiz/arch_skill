@@ -1,15 +1,14 @@
 ---
 name: plan-implement
-description: "Implement an existing plan, phase, section, or checklist faster by keeping the plan, audit log, implementation log, proof freshness, and warm plan-backed code review aligned while coding. Use when the user wants plan-backed implementation with less duplicate rereading, fewer repeated checks, compaction-safe progress, native subagent acceleration when available, and continuous review against plan-audit quality doctrine. Not for creating plans, generic code review, external worker swarms, CI policing, deterministic runners, or manually spawning coding-harness executables."
+description: "Explicitly selected plan implementation lifecycle with an implementation log, proof freshness, and continuing plan-backed review. Use when the user chooses $plan-implement or binding task instructions require it. Asking to implement or finish a plan alone does not select these extra workflow duties."
 metadata:
   short-description: "Plan-backed implementation with resumable review state"
 ---
 
 # Plan Implement
 
-Use this skill when the user wants code implemented from an existing plan,
-phase, section, checklist, issue plan, or design doc while preserving plan
-truth, review state, proof freshness, and resumability.
+Use this workflow only after explicit selection as `$plan-implement` or a
+binding task instruction requiring it.
 
 The job is to go faster by wasting less motion: fewer repeated code reads,
 fewer duplicate checks, fewer late review surprises, and less context loss
@@ -78,7 +77,7 @@ state machine, or script-backed completion judge.
   children, also tell them not to edit or write, and have the parent compare
   repository status and diffs with the pre-dispatch state before accepting
   their evidence.
-- Children may use their own native sub-agents on their own host at will; they
+- Children may use native sub-agents within authorized scope and host limits; they
   may not start external agents.
 - The parent owns child accounting, evidence spot-checking, deduplication,
   integration, finding scope disposition, source-of-truth updates, proof

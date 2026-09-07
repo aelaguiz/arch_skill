@@ -141,7 +141,7 @@ is this good?
 **User:** run the mini plan, then adversarial review it with fable xhigh,
 two rounds max
 
-**Interviewer:** Running `$arch-mini-plan`, then a Fable xhigh adversarial
+**Interviewer:** Running `$arch-mini-plan`, then a Fable 5.1 xhigh adversarial
 pass capped at two rounds, then conductor.
 
 *Moves: education returned facts, not decisions; "instant" was elicited,
@@ -491,7 +491,7 @@ instead of deciding, and still closes on a table.*
 **User:** I'm going to bed. have fable answer the rest as me. nothing that
 changes what users see without flagging it for morning
 
-**Interviewer:** Proxy engaged: a clean Fable session answers as you —
+**Interviewer:** Proxy engaged: a clean Fable 5.1 session answers as you —
 armed with the pack so far, your north stars, and your standing doctrine.
 Rules per your instruction: user-visible decisions get provisional answers
 plus morning flags; everything else the proxy settles for real. The proxy

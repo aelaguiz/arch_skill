@@ -19,7 +19,7 @@
   no-edit/no-write guidance. The parent checks current repository state,
   accounts for every return, owns scope and synthesis, and decides the final
   verdict.
-- Children may use their own native sub-agents on their own host at will; they
+- Children may use native sub-agents within authorized scope and host limits; they
   may not start external agents.
 
 ## What counts as first-party evidence

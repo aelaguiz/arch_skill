@@ -1,13 +1,13 @@
 ---
 name: bottom-up-diagnostic
-description: "Run case-level statistical analysis of a bounded population by materializing raw observations, inspecting variation, cohorts, and outliers, and reaggregating results instead of trusting totals or averages. Use for funnels, telemetry, transactions, user behavior, experiments, operations, or other quantitative questions where conclusions must be grounded in constituent rows or cases. It may surface evidence of a software defect, but it does not own diagnosis, reproduction, repair, or verification; use bugs-flow when the goal is to diagnose or fix errors, regressions, crashes, Sentry issues, or other broken software behavior. Not for code review or math-first experiment selection."
+description: "Explicitly selected case-level population analysis: materialize constituent observations, inspect cohorts and outliers, and reaggregate a bounded statistical question. Use when the user chooses $bottom-up-diagnostic or binding task instructions require it. Ordinary bug diagnosis, logs, and multiple affected users do not select this workflow."
 metadata:
   short-description: "Case-level statistics, not bug diagnosis"
 ---
 
 # Bottom-Up Population Analysis
 
-Own one job: turn an aggregate statistical question into inspectable
+After explicit selection, turn an aggregate statistical question into inspectable
 constituent observations, then reaggregate them into a population conclusion
 that another analyst can audit.
 
@@ -37,25 +37,17 @@ Use this skill for asks such as:
 - "Break this average down by cohort and inspect the outliers before deciding
   whether the change is real."
 
-Also use it when a sample and an aggregate disagree, when a population-level
+Within a selected analysis, inspect cases when a sample and aggregate disagree, a population-level
 claim cannot be audited from its constituent observations, or when statistical
 analysis may reveal a cohort or pattern worth handing to a product or bug
 workflow.
 
 ## Do Not Use When
 
-- The root ask is to diagnose, reproduce, repair, or verify a software error,
-  regression, crash, Sentry issue, failed test, or broken user flow. Use
-  `bugs-flow`, even when logs, screenshots, events, or several affected users
-  are available. That workflow may use a bottom-up population analysis as one
-  evidence method without changing ownership.
-- The evidence is one user's journey, one recording, one stack trace, or one
-  failing request and the goal is to explain why the software broke. Use
-  `bugs-flow`.
-- The job is to rank hypotheses and choose the fastest quantitative experiment
-  under a math-first investigation loop. Use `north-star-investigation`.
-- The deliverable is exhaustive code-review coverage over files, callers, and
-  side doors. Use `exhaustive-code-review`.
+- The root ask is software diagnosis, reproduction, repair, or verification,
+  even when logs or several affected users are available. Follow the repo's
+  required bug discipline; ordinary diagnosis need not select another skill.
+- The job is experiment selection or code review rather than population analysis.
 - The answer is already available from one authoritative record and no
   aggregate, cohort, or case-level ambiguity remains.
 
@@ -146,7 +138,7 @@ of distinctions to analyze, not a finite classification menu.
 When the detailed evidence disagrees with the initial story, update the story.
 Do not reinterpret the cases to preserve a favored cause. If the pattern points
 to a software defect, report the affected cohort and evidence boundary, then
-hand diagnosis, reproduction, repair, and verification to `bugs-flow`.
+report the signal; begin diagnosis or repair only if the user's task includes it.
 
 ### 4. Reaggregate And Reconcile
 
@@ -204,7 +196,7 @@ Weak work:
 - treats missing telemetry, HTTP acceptance, a green workflow, or a passing
   summary as proof of a population outcome;
 - claims a software root cause instead of reporting a statistical bug signal
-  and handing it to `bugs-flow`.
+  and reporting it without starting a repair workflow.
 
 ## Output Contract
 
@@ -224,8 +216,8 @@ result includes:
    and still unknown. Confidence must match coverage and proof level.
 6. **Next analytical action or handoff** — only the smallest evidence read,
    query, or instrumentation that would materially reduce uncertainty. If the
-   result is a credible software-defect signal, hand it to `bugs-flow`; do not
-   diagnose or repair it here.
+   result is a credible software-defect signal, report it without silently
+   starting diagnosis or repair.
 
 A result is invalid if its key claims cannot be traced to the saved artifacts,
 if its population math does not reconcile, if it reports causal certainty from

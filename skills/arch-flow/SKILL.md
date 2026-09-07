@@ -19,7 +19,7 @@ Read `references/detection.md`, `references/checklist-rules.md`, and `references
 - The user wants you to actually perform research, planning, implementation, or auditing. Use `arch-step`, `miniarch-step`, or `lilarch`.
 - The user wants generic continuation on a full-arch doc. Use `arch-step` or `miniarch-step`.
 - The user wants the concise strength/weakness status surface or wants to execute one explicit full-arch step. Use `arch-step` or `miniarch-step`.
-- The doc is a bug doc or a goal-loop doc. Use the governing skill for that workflow family.
+- The doc is a bug doc or an open-ended goal doc. Use `bugs-flow` for the bug or native goal mode for the goal.
 
 ## What to do
 

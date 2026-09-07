@@ -4,7 +4,7 @@ Use this reference after choosing the population grain and before building the
 primary artifact. The patterns are starting shapes, not formal schemas. Add,
 remove, or rename fields to preserve the real source semantics. They support
 statistical analysis across constituent observations; diagnosing or fixing a
-software error, regression, crash, or broken flow remains owned by `bugs-flow`.
+software error, regression, crash, or broken flow remains owned by ordinary bug investigation.
 
 ## What The Artifact Must Make Possible
 
@@ -107,7 +107,7 @@ R774       | 12:03:06 | 08:54:10    | marketing_link  | 3h09m     | 200    | 3  
 
 This population changes the question from "what caused one phone's error?" to
 "how do outcomes vary by producer, queue age, and retry state?" It can expose a
-cohort worth handing to `bugs-flow` without diagnosing the software defect.
+cohort worth handing to ordinary bug investigation without diagnosing the software defect.
 
 Useful companion views:
 
@@ -120,7 +120,7 @@ Useful companion views:
 
 Use when a quantitative claim depends on a bounded set of recordings,
 screenshots, or frame observations. Index one row per independent case and keep
-the source frames that support each classification. Use `bugs-flow` instead to
+the source frames that support each classification. Use ordinary bug investigation instead to
 diagnose one broken UI journey.
 
 ```text
@@ -145,7 +145,7 @@ end frames. A total duration cannot establish the available decision time.
 
 Use when an aggregate test or automation failure rate may combine setup,
 harness, environment, assertion, and product-gate outcomes. Record one row per
-attempt and the last visibly reached waypoint. Use `bugs-flow` for an ordinary
+attempt and the last visibly reached waypoint. Use ordinary bug investigation for an ordinary
 single failed test or for diagnosis and repair after the affected cohort is
 known.
 

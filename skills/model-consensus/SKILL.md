@@ -1,14 +1,14 @@
 ---
 name: model-consensus
-description: "Orchestrate a prompt-only dialogue between two selected Claude, Codex, Cursor Agent, Grok, or Kimi participants until they converge on a lean plan, architecture, debugging strategy, investigation, design, or concept. Resolve transport independently per participant: use separate clean native children for same-host participants when native model capability suffices, and external sessions for cross-provider or unavailable exact-model/profile needs. Resume each exact participant between rounds; relay through the parent by default. Not for one-shot cold opinions, ordinary code review, ordered implementation loops, or broad idea tournaments."
+description: "Explicitly selected dialogue between two model participants that independently reason, critique, and converge on a bounded question. Use when the user chooses $model-consensus or binding task instructions require it. Ordinary analysis, review, and a single second opinion do not select multi-model dialogue."
 metadata:
   short-description: "Two-participant consensus with per-role transport"
 ---
 
 # Model Consensus
 
-Use this skill when the user wants two selected model participants to think
-together until they converge on the best answer. The parent agent orchestrates
+Use this workflow only after explicit selection as `$model-consensus` or a
+binding task instruction requiring it. The parent agent orchestrates
 the dialogue, preserves the goal, resolves transport independently for each
 participant, relays evidence, checks for agreement, and reports the result.
 Do not add or depend on a deterministic runner, script, controller, state
@@ -98,8 +98,8 @@ architecture, and avoids kitchen-sink plans.
   ids and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
   runs `kimi-code/k3` and defaults an omitted effort to `max`. An omitted Codex
-  participant model defaults to `gpt-5.6-sol`, and an omitted effort on that
-  Sol lane defaults to `ultra`. Preserve explicit legacy Grok ids exactly.
+  participant model defaults to `gpt-6-astra`, and an omitted effort on that
+  Astra lane defaults to `xhigh`. Preserve explicit legacy Grok ids exactly.
   Never silently substitute model family/version or cross runtimes.
 - Keep the runner intelligent. The parent may tighten a round, require missing
   evidence, or stop on genuine agreement. It must not reduce the work to
@@ -142,7 +142,7 @@ Then:
    caller's theory or file map. Audit the actual populated participant prompt,
    not only the reusable shape.
 3. Resolve both participant provider/model/profile/effort choices exactly. Use
-   the Codex `gpt-5.6-sol`/`ultra` preference defaults and Kimi's
+   the Codex `gpt-6-astra`/`xhigh` preference defaults and Kimi's
    `kimi-code/k3`/`max` defaults, then ask one concise question if another
    load-bearing participant choice remains ambiguous.
 4. Inspect the active host's native child capabilities and choose transport for

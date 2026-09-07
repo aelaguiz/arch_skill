@@ -1,14 +1,14 @@
 ---
 name: cynical-cruft-removal
-description: "Run a prompt-only cynical cruft removal review over a repo, branch, diff, subsystem, test suite, or artifact set by assuming references are not proof of value. Produce a deep deletion report for low-value items that should go away: dead code, self-referential islands, retired V1/V2 paths, stale feature flags, worthless tests, fake coverage, unused dependencies, obsolete configs/scripts, stale generated artifacts, and point-in-time docs/examples that no longer serve a live purpose. Use when the user wants skeptical cleanup judgment and deletion candidates, not normal code review, docs-only cleanup, architecture review, implementation, or automated deletion."
+description: "Explicitly selected review producing a deletion report for low-value code, tests, dependencies, generated artifacts, or documentation. Use when the user chooses $cynical-cruft-removal or binding task instructions require it. Ordinary cleanup requests, docs edits, and applying audit findings do not select this specialist review or authorize deletion."
 metadata:
   short-description: "Deep deletion report for low-value repo artifacts"
 ---
 
 # Cynical Cruft Removal
 
-Use this skill when the user wants a skeptical cleanup review that produces a
-deep report of low-value repo items that should go away.
+Use this workflow only after explicit selection as `$cynical-cruft-removal` or a
+binding task instruction requiring it.
 
 The job is to distrust reference-count proof, identify live roots, trace current
 purpose, find dead or low-value clusters across code, tests, docs, configs,
@@ -77,7 +77,7 @@ broader workflow.
 - Use the strongest read-only capability the host exposes, also tell every
   review child not to edit or write, and have the parent compare repository
   status and diffs with the pre-dispatch state before accepting child evidence.
-- Children may use their own native sub-agents on their own host at will; they
+- Children may use native sub-agents within authorized scope and host limits; they
   may not start external agents.
 - The parent owns child accounting, deduplication, integration, scope
   disposition, the saved artifact, and the final verdict.

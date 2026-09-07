@@ -1,0 +1,694 @@
+
+
+Morning priorities · September 6, 2026 | Poker Skill
+
+Export PDF
+
+Business outcomes · Initiatives · Deliveries
+
+Morning priorities
+
+Written September 6, 2026
+
+First real run
+
+Suggested week: September 7–13
+
+Goals and process
+
+Morning business priorities for Amir · Weekly and daily
+deliveries for the team
+
+Step
+
+What comes first
+
+1 · Refresh
+
+Pull Telegram, Slack, GP and recently edited Google files,
+Codex/Prime sessions, GitHub, business data and existing reports. Check
+the 
+full source list
+; record freshness and
+gaps.
+
+2 · Prioritize
+
+Rank business outcomes from Amir’s direction and business
+evidence.
+
+3 · Reconstruct
+
+Establish what each person is doing and what materially
+changed.
+
+4 · Map
+
+Connect that work to priorities; expose misalignment and missing
+owners.
+
+5 · Judge
+
+Identify what to finish, unblock or redirect, including work
+dragging.
+
+6 · Deliver
+
+Derive weekly deliveries and today’s tasks; publish this report via
+CF Share.
+
+Business outcomes first. Tasks last. Preserve continuity. GP is
+non-authoritative. Plans and decisions are not goals; no invented metric
+targets.
+
+Acquisition recovery first. Get the existing purchase/signal
+repairs delivered, keep Tim’s campaign comparison grounded, and restore
+Natasha’s lifecycle triggers. Preserve Joey’s and Justin’s retention
+work.
+
+Business priorities
+
+Recommended ranking for Amir’s review.
+
+Priority
+
+Business outcome → initiative
+
+Why now
+
+1
+
+Profitable acquisition → campaign and signal
+recovery
+
+Amir’s explicit September 3–5 focus. Paid payer formation
+deteriorated; current purchase parity still fails. Campaign poisoning
+remains a hypothesis. 
+Direction
+ · 
+Data
+
+2
+
+LTV → lifecycle for missions and Play
+
+Natasha’s event dependency remains undelivered. More push deliveries
+have not produced more returners in the checked weeks. 
+Work
+ · 
+Data
+
+3
+
+Engagement/retention → useful next actions and reliable
+Play
+
+Missions expanded; Home/report cards and Play/tickets are underway.
+Finish these paths and deliver the merged improvements. 
+Continuity
+
+4
+
+Organic acquisition → search/chart traffic into
+learning
+
+Search is growing; paid outcomes remain sparse. Keep current SEO
+moving. The 18 modeled opportunities are not 18 build commitments. 
+Scope
+
+Background
+
+Engagement hypothesis → multiplayer MVP
+
+Three-player SNG is an explicit September 6 commitment. Keep it
+bounded alongside the acquisition priority. 
+Epic
+5080
+
+Where everyone’s work stands
+
+Person
+
+Outcome → current initiative
+
+Material progress and assessment
+
+Amir
+
+Profitable acquisition → comparisons, purchase/signals
+
+Comparison worksheets delivered; repair stacks moving. Checkout root
+now clean, children blocked. 
+Aligned; finish delivery.
+
+History
+ · 
+Final
+PR state
+
+Tim
+
+Profitable acquisition → March comparison, audiences, ASO
+
+Reset running September 2/4; audience rebuilt; SDK finding and 8 ASO
+assets September 5. 
+Aligned; historical comparison
+unresolved.
+ Amir’s later assessment credits their partnership.
+
+Evidence
+
+Natasha
+
+LTV → lifecycle
+
+Push audience cleaned; difficulty copy rotated; broken triggers and
+first-lesson interruptions identified. 
+Aligned; event delivery
+blocked.
+ 
+Evidence
+
+Joey
+
+Engagement/retention → missions, Home/report cards
+
+Mission bar is in 2.1.41; five-hand PvAI mission merged September 3
+but outside that release branch. Friday: Home/report-card metrics.
+
+Aligned; preserve progress.
+ 
+GP
+ · 
+Containment
+
+Justin
+
+Engagement/retention → Play/tickets, recovery
+
+Completion repair merged September 3; Play-tab/resume September 4;
+staging and push-entry testing visible. 
+Aligned; finish current
+work and release handoff.
+ 
+PRs
+ · 
+Slack
+
+Phil
+
+Acquisition → ad creative with Tim
+
+Two video variants September 3; concept still unfinished; Friday
+editing/YouTube. 
+Aligned; finish the existing cut.
+
+Media bodies and final handoff unverified. 
+Evidence
+
+Needs Amir’s attention
+
+Concern
+
+Evidence
+
+Intervention
+
+Lifecycle delivery is dragging.
+
+#4792/#4807 open at 15:40, same code since September 2; Natasha
+still needs working events. No restored-campaign evidence.
+
+Existing backend agent + Natasha finish the trigger-to-journey
+handoff. This is a dependency stall, not personal inactivity. 
+PRs
+
+Finished repairs still need release.
+
+Stores show 2.1.41; purchase-terminal repair merged. Checkout root
+#5001 now clean; #5056–#5059 blocked.
+
+Finish existing integration/build work and deliver the repairs. 
+Release evidence
+ · 
+Current state
+
+Comparison output risks missing Amir’s ask.
+
+Valid March comparison requested; later deck proposes a different
+Android test. Combined campaign/creative tab remains empty. The reset
+did run.
+
+Tim + data agent finish the comparison against actual running
+settings; make historical differences explicit. 
+Sources
+
+Exploration can displace the stated priority.
+
+Pricing changes deferred until after UA;18 tools rows are modeling.
+PvP is an authorized bounded milestone.
+
+Keep pricing/broad tools expansion at exploration; preserve existing
+organic and bounded PvP work. 
+Direction
+ · 
+Scope
+
+Customer follow-through has ownership gaps.
+
+Four objections across two lessons need adjudication; individual
+owner unknown. New S25 review points at old graphics draft #3923.
+
+Route the two lessons to the existing content agent; Justin routes
+the device issue to its current graphics owner. Age alone does not prove
+a stall. 
+Feedback
+
+Suggested GP deliveries
+
+Recommendations, not assignments already agreed. “Next work session”
+means today for Amir or each teammate’s next working day. Existing
+release/campaign approvals still apply.
+
+Person
+
+Outcome → initiative
+
+Deliver September 7–13
+
+Finish next work session
+
+Amir
+
+Profitable acquisition → purchase/signals
+
+Ship the existing purchase and attribution
+repairs.
+
+Finish remaining stack integration and produce the release candidate
+containing the completed fixes.
+
+Tim
+
+Profitable acquisition → historical comparison
+
+Run the intended comparison with usable
+campaign-to-conversion evidence.
+
+Complete running-versus-March comparison with the data agent;
+populate the missing campaign/creative view and correct verified setup
+mismatches.
+
+Natasha
+
+LTV → lifecycle
+
+Restore missions journeys; finish the current Play lifecycle
+revision.
+
+Connect existing journeys to repaired events in the next test build.
+Complete the trigger-to-message path with the backend owner.
+
+Joey
+
+Engagement/retention → next useful action
+
+Ship current Home; carry the merged PvAI mission into
+release.
+
+Finish Home’s next-action path before expanding the report-card
+metrics scope.
+
+Justin
+
+Engagement/retention → reliable Play
+
+Ship current Play/tickets with working resume and
+completion.
+
+Finish the ticket/Play slice and carry merged resume/no-advice
+repairs into the release candidate.
+
+Phil
+
+Acquisition → creative
+
+Deliver the current finished ad cut to Tim.
+
+Finish script 2’s concept and hand over placement-ready files before
+starting another concept.
+
+Evidence and source coverage
+
+Coverage is partial.
+ Main reads: September 6, 09:51–10:05 Chicago. Final PR check: 10:40. Company email/calendar, some Slack conversations, media bodies and live Customer.io configuration remain gaps. Successful Google Play loaders still contain older data.
+
+All 21 source groups: what was read and what is missing
+
+Refresh timestamps in this detailed table are UTC. The report summary uses Chicago time.
+
+Source group
+
+What was refreshed/read
+
+Actual coverage or remaining gap
+
+Slack
+
+Live channel/user discovery and 578 messages across 18 selected
+joined channels, including in-window replies and 30-day parent lookback;
+captured 14:53.
+
+40 joined of 103 visible. Other 22 joined channels excluded as
+machine/legacy;63 unjoined metadata-only. Human-to-human DMs and unknown
+private channels unavailable. Attachments mostly metadata. 
+Coverage
+
+Telegram
+
+Live FC group320 messages since August 31 plus 4 Andrew DM context
+messages; captured 14:53.
+
+FC latest September 5 14:55; Andrew latest August 25. Two dialogs
+only. Photo/PDF/audio bodies not read. Extract
+
+GP workbook
+
+Current57-tab metadata, Scrum, Work Lanes, September 2 Sync and
+relevant raw notes; comments checked.
+
+Team entries through September 4. Workbook edited September 6 does
+not mean every tab is current. Historical inventory not reread in full;
+credentials tab content excluded. 
+Ranges
+
+Recent Google files
+
+30 recent native files; sharedWithMe and all 7 shared drives;13
+workbook reads,5 Docs,4 decks, comments.
+
+Eight current ASO assets found. Bounded tab/range reads; image/video
+pixels and some cell notes not read. Synthetic Apple preview excluded
+from actuals. 
+Register
+
+Agent sessions
+
+Direct founder turns, selected outputs, goals and work across M5,
+Studio, M3 Max, M3 36GB and Linux.
+
+M5:752 prompts/69 threads and outputs49 threads; other-host/runtime
+samples disclosed. Latest sampled M5 prompt14:46:39. No complete
+all-account transcript census. 
+Coverage
+
+ChatGPT/browser AI
+
+Full visible bodies of 3 relevant conversations in an owned
+background tab: Meta diagnosis, retention, post-onboarding
+conversion.
+
+One authenticated context. One live thread absent from local
+catalog; other accounts/projects not exhausted. 
+Notes
+
+Local files/memory
+
+Recent roadmaps, source worklogs, uncommitted planning work, prior
+Morning Watch/replay/weekly records and ledger cursors.
+
+First real priorities run, so no prior equivalent report. Ledger
+spine/cursors remain old. Mtime alone not progress. 
+History
+ · 
+Planning
+
+GitHub
+
+PR bodies/status across 7 repos, selected
+commits/reviews/comments,576 open psmobile issue metadata;16 material
+PRs rechecked15:40.
+
+Initial PR list covers updated-since-August 31; older work followed
+selectively. Authorship under Amir’s account is not a human assignment.
+Projects scope remains missing. 
+Read
+log
+
+Builds/releases/deployment
+
+Actual store/staging/watch outputs; fetched release branch and
+checked specific merge ancestry.
+
+Store read14:01: iOS2.1.41(130), Play702 at 100%, no newer store
+candidate. OTA last checked11:14, none then. Backend/engine observations
+dated11:12–11:16. Not a new deployment or device test. 
+States
+
+BigQuery/Evidence
+
+Current canonical queries,21 query/result pairs and 15 relevant
+reports from37-report catalog.
+
+Transform succeeded14:01:50. Cached Evidence built07:15 on September
+5 basis. Live September 5 first opens151 versus cached88. All 37 report
+bodies were not fetched. 
+Freshness
+
+Operational workbooks/models
+
+Channel Performance, Checkout, stores, retention, profitability,
+user analysis, SEO and new recent workbooks.
+
+Reads do not recalculate stale spreadsheets. Checkout pull September
+5 23:31; Channel weekly September 5 02:57; User reactivations September
+4. App-store workbook shows September 6 noon pull despite earlier
+scheduled failure. 
+Coverage
+
+Telemetry/reliability
+
+Current canonical activity/Play rows; current Morning Watch, replay
+and newer engineering/Sentry summaries.
+
+Reused recorded checks; no new session replay or device test. Frozen
+rage aggregate does not mean no live events. 
+Metrics
+ · 
+Reports
+
+Revenue/stores
+
+Canonical revenue/cohort data, RevenueCat feed status,
+Appfigures/store outputs and native review evidence.
+
+Play downloads frozen August 21, performance August 25 despite
+successful13:00/13:20 loaders. RevenueCat closed-period data usable;
+direct credential path remains limited. 
+Horizon
+checks
+
+Ads/attribution
+
+Fresh canonical Meta/ASA spend, AppsFlyer and signal verifiers,
+OpenAI pilot rows; campaign context from current
+reports/communications.
+
+No fresh exhaustive partner-mapping or campaign-settings readback.
+OpenAI3 exact installs too few for performance claims. ASA paused
+context; no spend changes. 
+Evidence
+
+Lifecycle
+
+Live Customer.io event stream and canonical delivery/return rows;
+mission event history; actual Natasha discussion and repair PRs.
+
+Event stream through 12:00; live journey configurations not read.
+Removed client events alone cannot establish absent server mission
+completion or current campaign configuration. 
+Evidence
+
+Website/SEO/research
+
+GSC/GA4/website reports, canonical web funnel and fresh SEO/chart
+docs; existing research outputs.
+
+WarehouseGSC through September 3; Watch direct September 4.
+Ahrefs/Brand Radar quota unavailable until October 4.
+Contentful/Cloudflare live object/configuration change census not
+performed. 
+Sources
+
+Customer/community feedback
+
+64 text-bearing VOC rows,25 not generated form-open records;52
+social-text rows; current community and review outputs.
+
+No complete social inbox/thread census. Discord source activity
+remains old despite current polling. Current community packet’s appended
+posted statuses supersede its draft heading. 
+Evidence
+
+Content/creative/design
+
+Figma Home canvas read via official MCP; recent ASO assets; Phil’s
+messages; puzzle/lesson pipeline work and feedback.
+
+Design exists, not proved shipped. Figma comments/edit authorship
+unavailable in metadata; media bodies and whole live content catalog not
+reviewed. Puzzle blocked goal still has active work. 
+Design
+ · 
+Pipeline
+
+Email/calendar/meetings
+
+Six relevant personal-inbox notifications; calendar window screened
+for business context; available meeting docs.
+
+Company Gmail/Calendar403 scopes. Granola encrypted/no verified
+reader. Personal account is not company inbox coverage. 
+Limits
+
+Scheduled reports/collectors
+
+All 16 Studio jobs’ actual latest outputs, plus local
+morning/replay/community/weekly runs and warehouse feed state.
+
+Poker news failed today; weekdays-only reports correctly remain
+September 4. Staging/oldGP jobs sayok while output saysblocked. No
+sending routine retriggered. 
+Outputs
+
+Finance/staffing/other
+
+Fresh file discovery, model and historical agreement role scope;
+relevant invoice-notification headers.
+
+No current bank/accounting/payroll integration established.
+Profitability is a model, not cash/runway truth. Historical compensation
+excluded. 
+Scope
+
+Founder direction and team updates
+
+FC Telegram, September 3–5: profitable acquisition is Amir’s explicit focus. Later September 5 discussion credits Amir and Tim’s partnership. Slack confirms the March reset ran; it also records Natasha’s trigger dependency and Phil’s unfinished concept.
+
+Tim: March campaigns still running
+ · 
+Natasha: missions campaigns
+ · 
+Phil: current creative
+
+Current worksheets and planning
+
+GP team entries run through September 4. Joey: Home/report-card metrics. Justin: Play/tickets. Natasha: working lifecycle events. Tim: valid March comparison. Recent-file discovery covered 30 native Google files and seven shared drives.
+
+Company Scrum
+ · 
+Channel Performance
+ · 
+March comparison deck
+
+New commitments and explorations
+
+September 6 agent-session reads establish committed purchase/signal work and the bounded three-player SNG milestone. The 18 SEO/tools opportunities remain a modeling deliverable. Live ChatGPT bodies corroborate the desire for useful underlying evidence rather than a prescriptive verdict board. No private transcripts are included in this share.
+
+Acquisition signal work
+ · 
+Three-player SNG milestone
+ · 
+SEO opportunity workbook
+
+Business evidence
+
+Read-only BigQuery canonical queries and 15 Evidence reports. The canonical transform succeeded at 09:01 Chicago; the cached report build is older. Mature exact-paid cohorts have partial attribution. Push return comparisons are observational. Purchase parity is a small settled sample and does not establish why acquisition deteriorated.
+
+Evidence
+
+Implication
+
+Paid D30 payer formation: 
+96/6,500 April →15/2,694
+July
+; mature cohorts, partial attribution.
+
+Acquisition economics need work; cause remains unresolved. 
+Live rows
+
+29/29 initial store grants received Plus; zero expected
+client purchase completions.
+ September 4–6 sample:27 trials, 2
+direct purchases.
+
+Success measurement is broken; these are not 29 cash sales. The
+repair already merged. 
+Aggregate
+ · 
+Release context
+
+Settled Purchase parity 
+AppsFlyer 5 / Meta 0
+; spend
+gate 
+HOLDING
+.
+
+Green liveness does not mean readiness to scale. 
+Verifier detail
+
+Push deliveries 
+10,384→12,530
+,24-hour returners
+
+3,435→3,424
+; August 17/24 weeks.
+
+Finish useful journeys before increasing sends. Observational, with
+different campaign mix. 
+Rows
+
+Cached seven-day payers through September 4 
+21→29
+;
+complete-week GSC clicks 
+875→1,002
+.
+
+Preserve productive work. Recent acquisition volume also fell during
+a deliberate paid-test wind-down. 
+Data
+ · 
+Context
+
+Delivery state at 10:40 Chicago
+
+Both lifecycle PRs remained open with unchanged September 2 code. Checkout root #5001 was clean; downstream #5056–#5059 were blocked. Purchase-terminal repair #4975 was already merged. Readiness labels are separate from merge, release and observed customer behavior.
+
+Day event #4792
+ · 
+Row event #4807
+ · 
+Checkout #5001
+ · 
+Merged purchase repair #4975
+
+Merged versus released
+
+The fetched 2.1.41 release branch contains the mission bar (#4780), but not the later five-hand PvAI mission (#4859) or Justin’s Play/resume improvements (#4939/#4853). The store sweep at 09:01 Chicago still showed iOS 2.1.41 (130) and Play 702 at 100%. No newer store candidate was reported. Shorebird was last checked at 06:14, with no patch then.
+
+Mission bar
+ · 
+Five-hand mission
+ · 
+Play and resume
+
+Existing reports and purchase reconciliation
+
+Morning Watch covered September 4–5. Its saved September 4–6 purchase join was independently aggregated: 29 initial store grants, including 27 trials and two direct purchases; all 29 received Plus, while expected client purchase completions remained absent. Sixteen Studio job outputs were inspected. A scheduler “ok” was not accepted as proof of delivered work.
+
+Morning Watch (living report)
+ · 
+Replay review (living report)
+

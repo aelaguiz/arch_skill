@@ -87,10 +87,10 @@ automation.
   and exact user-named inputs before launch. Keep the parent's diagnosis,
   preferred implementation, and selected evidence path advisory unless the
   authoritative source actually chose them.
-- Runtime must be known. Effort must also be known except that GPT-5.6 Sol
-  defaults an omitted effort to `ultra` and Kimi K3 defaults it to `max`.
+- Runtime must be known. Effort must also be known except that GPT-6 Astra
+  defaults an omitted effort to `xhigh` and Kimi K3 defaults it to `max`.
   Model or profile must be known except that a Codex lane with no named model
-  defaults to `gpt-5.6-sol` and a Kimi lane defaults to `kimi-code/k3`. Codex runs
+  defaults to `gpt-6-astra` and a Kimi lane defaults to `kimi-code/k3`. Codex runs
   GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, Grok CLI naturally
   resolves to `grok-4.6`, and Kimi Code runs `kimi-code/k3`. Explicit legacy
@@ -187,8 +187,8 @@ automation.
 6. Identify the delegation mode. Use `fresh-resumable` unless the caller
    explicitly asks for a stateless one-shot worker or to resume a previous
    delegate.
-7. When an external Codex lane omits its model, apply `gpt-5.6-sol`; when that
-   Sol lane also omits effort, apply the preference default `ultra`. For Kimi,
+7. When an external Codex lane omits its model, apply `gpt-6-astra`; when that
+   Astra lane also omits effort, apply the preference default `xhigh`. For Kimi,
    apply `kimi-code/k3` and the model-default `max` effort when omitted. If
    another required execution value, write scope, or resume handle is
    incomplete, ask one question that names exactly what is missing and what it

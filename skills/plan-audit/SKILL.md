@@ -1,14 +1,14 @@
 ---
 name: plan-audit
-description: "Audit any planning document format before work starts, or run plan-backed implementation-audit code review after code exists. Use when the user wants a plan, PRD, migration plan, architecture plan, checklist, issue body, inline plan, or design doc audited for North Star clarity, done-state requirements, ambiguity, constraints, tiny-team simplicity, depth-first risk, elegant architecture, existing-pattern fit, drift-proofing, side doors, deletes, proof gaps, and bug-vector reduction; or wants implemented code reviewed against that plan for code shape, ownership, SSOT, side-door closure, drift, caller fit, and elegance. Not for writing plans, implementing code, generic diff/PR review, choosing workflows, running tests, proving CI, or spawning review harnesses."
+description: "Explicitly selected readiness audit of an existing planning artifact, or implementation audit of code against that plan. Use when the user chooses $plan-audit or a selected parent requires its review doctrine. Ordinary plan feedback, code review, and applying existing audit findings do not select this workflow."
 metadata:
   short-description: "Generic plan audit and plan-backed code review"
 ---
 
 # Plan Audit
 
-Use this skill to audit an existing planning artifact in whatever format it
-already uses. It has two modes:
+Use this workflow only after explicit selection as `$plan-audit` or a
+binding task instruction requiring it. It has two modes:
 
 - `plan-readiness`: improve plan quality before work starts.
 - `implementation-audit`: review implemented code against the plan after code

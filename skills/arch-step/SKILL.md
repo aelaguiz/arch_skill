@@ -1,13 +1,14 @@
 ---
 name: arch-step
-description: "Operate the standalone full-arch workflow against one canonical plan artifact and explicit doctrine: `new`, `reformat`, `research`, `deep-dive`, `external-research`, `phase-plan`, `auto-plan`, `plan-enhance`, `fold-in`, `overbuild-protector`, `consistency-pass`, `review-gate`, `implement`, `implement-loop`, `auto-implement`, `full-auto`, `audit-implementation`, `status`, or `advance`. Use when the user wants the full arch workflow, a specific full-arch step, or concise full-arch status. Initial architecture may include the smallest evidenced same-contract convergence closure before scope is signed off; later expansion requires explicit human approval. Not for read-only checklist routing, mini plans, lilarch, bugs, or open-ended loops."
+description: "Explicitly selected full architecture lifecycle around one canonical plan: planning, implementation, review, and supported automatic commands. Use when the user chooses $arch-step, an explicit arch-step command, or a selected parent requires it. Ordinary planning, implementation, and status requests do not select this lifecycle."
 metadata:
   short-description: "Standalone full-arch operator"
 ---
 
 # Arch Step
 
-Use this skill when the user wants the real full-arch workflow and one canonical plan doc should govern it end to end.
+Use this workflow only after explicit selection as `$arch-step` or a
+binding task instruction requiring it.
 
 The primary object is one canonical full-arch plan doc. Commands exist to move that doc toward a finished, internally consistent, decision-complete artifact. They are not independent mini-workflows.
 
@@ -27,7 +28,7 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
 
 - The user wants a read-only router or "what's next?" answer. Use `arch-flow`.
 - The remaining job is docs cleanup or consolidation after full-arch code work is clean. Use `arch-docs`; it can use the current plan/worklog as context.
-- The task is a one-pass mini plan, a 1-3 phase small-feature flow, a bug flow, or an open-ended loop. Use `arch-mini-plan`, `lilarch`, `bugs-flow`, `goal-loop`, or `north-star-investigation`.
+- The task is a one-pass mini plan, a 1-3 phase small-feature flow, a bug flow, or an open-ended loop. Use `arch-mini-plan`, `lilarch`, `bugs-flow`, native goal mode, or `north-star-investigation`.
 - The user is asking which arch skill to use. Use `arch-skills-guide`.
 
 ## Non-negotiables

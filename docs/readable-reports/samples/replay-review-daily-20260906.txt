@@ -1,0 +1,665 @@
+Source URL: https://share.fun.country/replay-review-daily/index.html
+Fetched: 2026-09-06
+
+Daily session replay review, Poker Skill
+
+Export PDF
+
+Replay review, living daily page
+
+What users actually did: session replays from 2026-09-04 08:00 UTC to 2026-09-06 08:00 UTC
+
+Run date 2026-09-06
+Model anthropic/claude-fable-5-1 (orchestrator at thinking high, every child at thinking medium)
+Source: PostHog session recordings, project 215955, plus BigQuery react_production for frequencies
+
+We watched 103 PostHog recordings from this 48-hour window: 24 first visits by brand new people (19 devices), 25 returning users, 27 sessions that touched a paywall, a checkout or a purchase, and 27 random draws, on both platforms, almost all on build 2.1.41 with a few on 2.1.40 and one on 2.1.39. Every sample was a seeded random draw from the full recording list for its population; the one followed thread is labeled and kept out of the counts. Most of the tape is people quietly finishing lessons and the daily puzzle. Below is what looked bad or odd, what is already known, and what we could not see.
+
+How to read this page
+ Every item says what it looks like, how many watched sessions showed it, what the warehouse says about how often it happens, and where to look. Whether something is a mistake is the reader's call. Every frame was opened and checked against its caption before publishing. Timestamps in the recording links are seconds from the start of the recording and can be off by about 10 seconds against the event clock. A fix merged to main is not on any phone watched here: every session ran a build cut before the merges named below.
+
+New since last time
+
+Seven items in full, then six things that looked odd on camera and, per the engineering pass, are the app working as written or the capture tool. Each is new to this review and survived the adversary re-check; where the adversary corrected a count or a reading, the corrected version is what is written here. Most consequential first.
+
+This looks bad: on Android the app dies while the person is using it and comes back on the "Checking for Updates" boot screen, somewhere else
+
+A person is in the middle of something; ten to twenty seconds later the app is cold-booting and they land on a different screen. Three cases hold up after the adversary re-timed each one against the event log:
+
+On the sign-up screen, brand new install (OnePlus). The sign-up page is on screen; ten seconds later it is the boot screen. The next recording opens on "Ready to begin?" and the person does the same onboarding puzzle a second time, then taps Continue six times on a mid-onboarding question and leaves for good in the window. Starting onboarding again from the welcome screen after a signed-out restart is how the code works today; there is no path that resumes a signed-out person at the sign-up page.
+
+Under the Google Play purchase sheet, brand new install (moto g play). The person tapped TRY FOR $0.00, the store sheet opened (never on camera), and 75 seconds later the next recording opens on the boot screen and "Setting up your account...". No purchase result of any kind was ever logged for that tap. The app never wrote a "went to background" event, which the Play sheet normally causes, so this reads as the process gone under the store sheet rather than a death in plain view.
+
+On the Puzzles tab right after the chapter reward screens, returning user (Samsung). "You earned 20 gems!", Continue, the Puzzles tab for two seconds, then the boot screen, then the Learn tab, which is not where they were.
+
+Before: the sign-up page on a brand new Android install (OnePlus, 2.1.41), 1:01 into the recording.
+
+After, ten seconds later: the cold-start boot screen, "Checking for Updates". The next recording starts onboarding again from the top.
+
+Before: the Choose a plan screen with the button greyed, right as the Google Play sheet opens (moto g play, 2.1.41). The store sheet itself is never on camera.
+
+After, 75 seconds later: the next recording opens on "Setting up your account..." with no purchase result logged in between.
+
+Four tiles, left to right: the "Fish King" badge, "You earned 20 gems!", the boot screen 12 seconds later, then a black frame (returning user, Samsung, 2.1.41). The person came back on the Learn tab.
+
+We saw it 3 times: on 2 of 19 new-user devices and 1 of 25 returning users, all Android 2.1.41. Two more restarts that the investigators first read the same way are not counted: in one (Play vs AI, hand 4 of 5) the app went to the background 2.5 seconds after the Fold tap and cold-started 20 seconds later, and in the other (a returning user under the Play sheet) the app had been in the background about six and a half minutes before the relaunch; both look like ordinary background kills or the person reopening the app, and they are listed under "What we could not see".
+
+I checked the data: rare, and not clearly an Android thing. Counting cold starts whose device was in the foreground and active less than 60 seconds earlier, Android shows 32 of 1,024 cold starts (about 3 percent) and iOS 17 of 942 (about 2 percent) in the window (react_production.splash_seen against activity and lifecycle events). 13 of 339 sign-up screens in the window were followed by a cold start within two minutes (11 Android, 2 iOS), 7 of them with no sign-in attempt in between (react_production.onboarding_handoff_created against splash_seen, Sept 4 to 6). Sentry has no crash row for any of the three devices at those moments, and it does not record an operating-system memory kill, so the cause cannot be told from here. Play Console vitals for 2.1.41 build 702 would settle it (see "Needs a human").
+
+Where to look: sign-up screen at 1:01, then the next recording at 0:05; moto g play, TRY tapped at 3:53, then the next boot at 0:00; Puzzles tab restart at 4:36 to 4:48.
+
+No issue names a restart on the sign-up screen or after the reward screens. Nearby, all open: Android app dies mid-render on specific devices (psmobile #4852) (open); commit purchase and pending-checkout terminal state (psmobile #3958) (open); explain Android native-checkout cancellations (psmobile #4823) (open) with its explanation PR Android checkout explanation (psmobile #5001) (open); Play vs AI: a server error on a hero action escapes as a fatal (psmobile #4850) (open); Play vs AI crashes on resume into a finished game (psmobile #4971) (open).
+
+This looks bad: on an iPhone the plan screen says "Checking purchase..." after the App Store sheet closes, and no result ever comes
+
+One session, a brand new iPhone install. The person tapped TRY on Choose a plan; the log shows the App Store sheet came and went within two seconds (the sheet is never on camera); the button then read "Checking purchase..." for the remaining 18 seconds of the recording while the person opened View All Plans and picked Yearly again. The recording ends there. Nothing was ever logged as a result, no Plus was granted, and that person has no event of any kind afterwards, checked an hour past the warehouse horizon.
+
+Choose a plan with both plans showing and the button greyed, reading "Checking purchase..." (iPhone, 2.1.41). It read this way for the last 18 seconds of the recording.
+
+We saw it once, in the 5 watched sessions where a checkout started and nothing was granted (money sample). I checked the data: rare. 52 checkouts started in the window; 7 have no result of any kind within 10 minutes, 6 of them Android and 1 iOS, this one (react_production.paygate_checkout_started, paygate_result, subscription_entitlement_transition, window). So this shape is 1 of 24 iOS checkouts. Two of the 7 people were granted Plus later; three never were by the horizon.
+
+Where to look: TRY tapped at 2:09, the label at 2:14. The engineering pass, low to medium confidence: the label stays until the store SDK answers (plan_billing_screen.dart lines 72 and 499, subscription_purchase_service.dart line 747, on the 2.1.41 branch at 9cf34215); whether the store ever called back cannot be told from our side; RevenueCat customer history for that app user would settle it.
+
+Filed this run as iOS checkout can sit on "Checking purchase..." with no result after the App Store sheet closes (psmobile #5072) (open). Nearby: iOS checkout loses its result after the 30 second watchdog (psmobile #3234) (closed 2026-07-28); paygate offerings hang (psmobile #3572) (open); pending-checkout terminal state (psmobile #3958) (open).
+
+This looks odd: on an Indonesian Play store the yearly plan card shows the same currency in two number styles
+
+The card reads "Rp 1.090.000" for the year, which is the store's own string, and "Rp90,833.33/month" underneath, which is the app's own arithmetic formatted the American way with a comma and two decimals. The pitch button and the plan-screen button read "TRY FOR IDR0.00", which is the store's trial string passed through untouched.
+
+The plan screen: "Rp 1.090.000" beside "Rp90,833.33/month" on the yearly card, "Rp 169.000 / mo" on the monthly card, and a button reading "TRY FOR IDR0.00" (Android, Indonesian Play store, 2.1.41).
+
+The pitch a few seconds earlier, with the button reading "TRY FOR IDR0.00" and the "No ads" row half hidden under it (same session, 384-pixel-wide screen).
+
+We saw it once in 27 money sessions. The one iOS Indonesian session in the same sample reads "TRY FOR Rp 0" from the App Store string. I checked the data: cannot tell, the label text is not in any event; one Android session in the window carries a trial price string starting with "IDR" (react_production.paygate_result.intro_price).
+
+Where to look: the plan screen at 1:40. The engineering pass, high confidence for the per-month line: subscription_currency_format.dart line 32 formats every currency as en_US with two decimals, and subscription_pricing_parts.dart line 125 computes the per-month value in the app, so any store that writes thousands with dots will read this way; the "IDR0.00" text comes from the store (paygate_cta_copy.dart line 47). Neither file changed between 2.1.41 and main.
+
+Filed this run as plan card per-month price is formatted en_US for every currency (psmobile #5073) (open); no prior issue or PR (searched "currency format per month" and "price locale" on funcountry/psmobile).
+
+This looks confusing: a brand new person tries to sign in to an account that does not exist, four times over a minute, and no message is in any captured frame
+
+One session on a new iPhone. The recording opens on the welcome page's sign-in path: Google, then "Still signing you in", then back to the same page with a "LAST USED" badge on Google and nothing else visible; then phone sign-in with Continue three times. The log says why each attempt ended (Google: "The External Account was not found."; phone: "We couldn't find that account." three times). The person then did onboarding, reached "Protect your streak", the app restarted six minutes later, and the device never signed in and never opened a lesson afterwards (last open 2026-09-04 13:42 UTC, checked through 2026-09-06 08:57 UTC).
+
+The sign-in page after the Google attempt: a "LAST USED" badge on Continue with Google and no message anywhere on screen (iPhone, 2.1.41). The code raises a bottom sheet titled "We couldn't find that account." on this error; no captured frame shows it.
+
+The adversary read the tap stream: after each of the three failures there is a tap in the bottom band of the screen, where the OK button of that notice sheet sits. The most likely reading is that the sheet was shown three times and dismissed three times, and fell between the 5-second screenshots each time. What survives is that no captured frame shows the text and that this person never got in.
+
+We saw it once on 19 new-user devices. I checked the data: rare. 11 of 517 new devices in the window logged a Google or phone "account not found" failure (react_production auth failure events).
+
+Where to look: from 0:20 to 1:26. Nearby, a question rather than a bug: can current iOS phone auth reverse a known account to not found (psmobile #3164) (open). No PR.
+
+This looks odd: a six-minute-old account ends its first session on the signed-out welcome screen, and no event says why
+
+One session on a new Android install (Galaxy A25): onboarding, Google sign-in, username, No Thanks on the paywall, one lesson done, then Profile, then Settings. The last frame is the welcome screen ("Get started / I already have an account"). No logout, deletion, or identity event was written, and no device of this model or this account has opened the app since.
+
+Before: Settings at 5:55, with Profile, Friends, Preferences, Appearance, Notifications and the Subscription rows on screen; Log out sits below the bottom edge until the list is scrolled (Android, 2.1.41).
+
+After, twelve seconds later: the signed-out welcome screen, "Get started / I already have an account". No logout event exists for this account.
+
+The adversary read the tap stream: the five touches the investigator first called "five taps at one spot" are five short upward drags over 2.4 seconds, that is scrolling the Settings list, then one tap lower on the screen, where Log out sits once the list is scrolled. Scroll down, tap Log out is the simplest reading. A normal logout writes an auth_logout row before it rotates ids, and none exists; there is also no session summary row for this device at all, which fits "no next boot ever happened". So either the events never left the phone or the taps were something else.
+
+We saw it once in 3 new installs in the cold read. I checked the data: cannot tell, there is no event for it. Where to look: Settings at 5:50, the welcome screen at 6:07. Nearest: logout can jam silently (psmobile #3699) (closed 2026-08-10); nothing open.
+
+This looks odd: four to six taps in two seconds on a close control, and the tape cannot say whether the control was slow or the thumb impatient
+
+Two cases on iPhone. Six taps on the archive paywall's top corner in 2.1 seconds, one more two seconds later, and the recording ends five seconds after that with no close event. Four taps on the Play vs AI summary's X in 1.5 seconds, then the Play tab is on screen five seconds later. No frame shows the taps themselves; the before and after frames of the second case are below.
+
+Before: the Play vs AI summary ("Early bust", 5 hands) with its X in the top left, at 5:21 (iPhone, 2.1.41). Four taps landed on that X in the next 1.5 seconds.
+
+After, at 5:31: the Play tab, caught mid-transition with the summary still ghosted underneath. The Play tab also reads "Next free game in 20h 58m" after this one game.
+
+We saw it 2 times in 27 cold-read sessions (the adversary took a third case out: those touches were scrolling, see the welcome-screen item above). I checked the data: taps are not events, so the bursts cannot be counted; 27 of 581 paywall presentations in the window have no close result at all, rare (react_production.paygate_presented against paygate_result). The engineering pass reads the archive case as most likely end-of-session event loss, since the paywall was presented 0.3 seconds before the recording ends.
+
+Where to look: Play vs AI summary at 5:22; archive paywall at 6:00. Nearby: completion buttons lack pending feedback (psmobile #3424) (open). No issue names a slow close control.
+
+This looks odd: Learn map nodes sit under the floating tab bar, and on iPhone a node's glow shows through the Leaderboard label
+
+With the map scrolled, lesson nodes and the next section's heading sit in the gap between the missions bar and the tab bar and beneath the tab bar; on iPhone a purple node glow shows through the Leaderboard label, and the Start Lesson popover is cut by the missions bar.
+
+Crop of the Learn map (iPhone, 2.1.40): a purple node glow showing through the tab bar under the Leaderboard icon, and the "Capstone: Limped Pot Plan" Start Lesson popover cut off by the missions bar.
+
+We saw it in 7 of 27 cold-read sessions (5 with a node over a tab icon), on both platforms, 2.1.40 and 2.1.41; the returning-user investigator noted the same on a tablet layout. I checked the data: cannot tell, no event carries layout. The engineering pass reads it as the app working as written: the map is drawn under the bar, and the iOS tab bar is a glass pill that refracts what is under it, so the glow "over" the label is the glass.
+
+Where to look: the map at 0:02. Two neighbouring overlaps of the same map are open issues: scrolled map text shows above the floating section card (psmobile #4961) (open); missions bar covers the Start Lesson popover on compact screens (psmobile #3812) (open).
+
+Six things that looked odd on camera and read, per the engineering pass, as the app working as written or as the capture tool
+
+Kept short so the count is complete. Each: what it looked like, how often, where to look, and the engineering reading.
+
+Daily puzzle result stars drawn as thin slivers for 3 to 8 seconds. 3 of 11 result screens in the cold read. iPhone at 0:36. Reading: a capture artifact, the star animation caught mid-spin by the 5-second screenshot cadence.
+
+Daily result card reads "TIME 0:00" after 22 seconds in the puzzle. 1 of 25 returning users. iPhone at 0:31. Reading: works as written; the tile counts decision time from when the choice goes live to the tap (0.9 seconds here, shown as 0:00), not time in the puzzle. Another result frame in the corpus reads 1:19 on the same tile.
+
+"Which ranks higher?" lesson steps are four name buttons over an empty blurred room. 9 of 24 new-user recordings; people answered without visible trouble. Android at 2:48. Reading: works as written; a name-only quiz step renders on the ambient room surface. One thing to notice in the frame: the coach bubble says "Place all four on the ranking ladder, then take the top one" while the screen offers four buttons and no ladder.
+
+The pitch's comparison table is cut off at the TRY button on 384-pixel-wide Samsung screens ("No ads" half hidden until scrolled; the second frame under the Indonesian item above shows it). 2 of 13 Android money sessions; 57 of 206 Android paywall sessions in the window report a 384-wide screen (react_production.paygate_presented.screen_width). Android at 2:08. Reading: works as written; a scroll view above a fixed footer with no scroll hint.
+
+"One tap keeps your streak alive" spins and nothing visible happens. 1 of 25 returning users. iPhone at 0:06. Reading: the notification permission was undetermined, iOS showed its own permission dialog (never on camera; the frame is dimmed the way a screen under an iOS alert is), and the person tapped Don't Allow 1.9 seconds later; the spinner is the app waiting on that dialog. 42 iOS permission requests in the window, 15 denied within 3 seconds, 25 granted within 60 seconds.
+
+A lesson restarts from step 0 after the app was in the background 11 minutes, four answers already given. 1 of 24 new-user recordings. Android at 0:11. Reading: works as written; Android killed the backgrounded process, the lesson runtime lives in memory, and no resume-at-step path exists. I checked the data: common; of the 846 lessons left by backgrounding (Sept 3 to 6) that were later reopened, 399 started again at step 0 (react_production.lesson_exit, lesson_first_interaction).
+
+Daily puzzle result with the two stars drawn as thin yellow slivers, caught mid-animation (iPhone, 2.1.41). The same tile reads "TIME 1:19".
+
+Daily puzzle result reading "TIME 0:00" after 22 seconds in the puzzle (iPhone, 2.1.41); the tile counts decision time only.
+
+A "Which ranks higher?" step: four name buttons (Flush, Straight, Two Pair, Full House) over an empty blurred room, and a coach bubble about a "ranking ladder" that is not on screen (Android, 2.1.41).
+
+"Your streak is at risk. One tap keeps your streak alive." with a spinner in the main button and the whole screen dimmed, as it is under an iOS permission dialog (iPhone, 2.1.41).
+
+The Learn map on return after 11 minutes in the background, the same lesson node ("Out Counts and Cautions") ringed and ready to start again (Android, 2.1.41).
+
+Ten seconds later: the first step of that lesson with an empty progress bar, although four answers had been given before the app went to the background.
+
+Still happening
+
+Recurring items from the findings ledger, seen again this window. Three items.
+
+This looks odd: after cancelling at the store sheet, the same Plus pitch is on screen again, so the person declines twice (first seen 2026-09-04)
+
+A person taps TRY, cancels at the Google Play or App Store sheet (never on camera), and the pitch is back with "TRY FOR €0.00" and No Thanks. On camera it is one screen, not a flicker.
+
+The pitch on its second showing after a store cancel, with "TRY FOR €0.00" and No Thanks (Android, 2.1.41). A single frame cannot show that it is the second showing; the event log does.
+
+This window's count: 3 of 3 store cancels on 2.1.41 in the money sample, and the one 2.1.40 cancel did the same per its log, so the builds do not differ on what the person sees. I checked the data: 12 of 18 store-cancel sessions in the window log the paywall opened and removed 8 to 10 times inside one second right after the cancel, then a No Thanks 1 to 3 seconds later (react_production.paygate_result with terminal_source_event = 'route_disposed'); the person sees one screen. Where to look: Android at 1:55. The engineering pass reads it as not a defect: the code treats a store cancel as a purchase-sheet outcome, not a paywall decline, so it shows the wall again, the same rule on 2.1.40, 2.1.41 and main. Earlier fixes for the same shape: fix onboarding paywall reopening after checkout cancellation (psmobile #3483) (merged 2026-08-06); keep checkout cancel retries and Android Back inside the paywall (psmobile #4390) (merged 2026-08-24). No open issue names the burst of rows (listed under tracking below).
+
+This reads as aggressive: the out-of-energy sheet, seen from the tape (first seen 2026-09-02)
+
+The sheet ("Out of energy. Keep playing with Plus.", a Plus card, a "+6 energy Free" row, "Get unlimited energy", "Lose my progress & xp"). What the tape adds that a query does not: it is the last thing on screen before the app goes to the background in 2 of 24 new-user recordings; on a second wall six minutes after the free top-up, the free row reads "+6 energy Ready in 3h 54m" and is greyed, the person taps it twice, nothing changes, the app is backgrounded and the lesson closes at step 9 of 14; the free amount reads +6, +7, +8, or +9 in different sessions and once +6 then +9 five seconds apart.
+
+The out-of-energy sheet with the "+6 energy Free" row, the last screen of a 13-minute first session before the app went to the background (Android, 2.1.41).
+
+Five tiles, left to right: a lesson step, the correct answer, the sheet with the greyed "+6 energy Ready in 3h 54m" row, the same sheet after two taps on that row, then the Learn map after the lesson closed (returning user, Android, 2.1.41).
+
+This window's count: 9 of 24 new-user recordings, 5 of 25 returning, 5 of 27 money, 1 of 3 new installs in the cold read. I checked the data: it happens a lot. 540 showings to 237 devices in 329 sessions in the window; 109 followed by the app going to the background within 30 seconds, 68 within 60 seconds with no tap on the sheet; 90 fired at lesson start with energy at 0; 223 showings on 92 new devices (react_production.out_of_energy_modal_shown, out_of_energy_modal_action, app_background). Where to look: new user, last screen at 12:47; returning user, the greyed row at 19:06. The engineering pass: the greyed countdown row, the changing free amount (the larger of 6 and the steps left in this lesson minus current energy), and the sheet opening the instant "Start Next Lesson" is tapped at energy 0 all work as written. No issue.
+
+This looks odd: the Energy screen reads "CHARGING 0/20" with a "29H 45M" countdown to a 17-minute-old user (first seen 2026-09-02 as "CHARGING 28H 2M")
+
+The Energy screen: "CHARGING 0 / 20" with a "29H 45M" countdown, for a person 17 minutes into their first session (iPhone, 2.1.41).
+
+This window's count: once in the new-user sample and once in the money sample ("13H 5M" at 11 of 20). I checked the data: no event carries the countdown. Where to look: iPhone at 18:01. The engineering pass: works as written; the arithmetic (about 90 minutes per point, 20 points missing) matches both frames. No issue.
+
+Already being handled
+
+Defects with an issue or PR. Six items, with the state of every link and the one thing the video adds. A merge to main is not a shipped build: every session watched here ran a build cut before these merges, and the 2.1.41 release branch last moved on 2026-09-04.
+
+Known, fixed on main: after the restart under the store sheet, the next boot opens the onboarding paywall and closes it by itself in 54 milliseconds
+
+On the boot after the moto g play restart above, the event log shows the paywall opened 2.6 seconds into the boot and was booked as a "system back" decline 54 milliseconds later, so onboarding was recorded as "paywall dismissed" by a person who never saw a paywall. Nothing is on camera; the before frame is the Choose a plan screen under the first item and the after frame is "Setting up your account..." beside it. We saw it once in 24 new-user recordings. I checked the data: rare; 4 sessions in the window carry a system-back result under 300 milliseconds, all Android 2.1.41, out of 26 with any system-back result (react_production.paygate_result). Where to look: the next boot at 0:00. onboarding paygate self-dismisses in about 100 ms (psmobile #3760) (closed 2026-09-04) by stop Resolve replacing returning-user paygates (psmobile #4953) (merged 2026-09-04 to main, not in 2.1.41). What the video adds: the shape happens right after a store-sheet restart, on the build without the fix.
+
+Known, fixed on main: after the store grants Plus, the person is still on a screen that sells Plus and backs out by hand
+
+A person finishes a trial start at the App Store or Play sheet, and the app is still showing Choose a plan with the button now reading "Manage Subscription"; they tap back and the pitch ("Progress faster in improving your poker skills with Plus!") comes back with CONTINUE and No Thanks, to someone who already has Plus.
+
+Choose a plan a few seconds after the App Store granted Plus, with the button now reading "Manage Subscription" (iPhone, 2.1.41).
+
+Ten seconds later, after tapping back: the Plus pitch again with CONTINUE and No Thanks, shown to a person who already has Plus.
+
+We saw it in 7 of 12 watched store-granted sessions on camera (5 iOS, 2 Android) and in the log only in 2 more Android sessions where the frames were black. I checked the data: it happens most of the time on 2.1.41. 19 of 29 store-granted sessions in the window touch the pitch or plan screen again after the grant (12 of 15 iOS, 7 of 14 Android); 11 of 29 end with a hand dismissal after the grant (react_production.subscription_entitlement_transition joined to paygate_result, subscription_benefits_cta, subscription_view_all_plans_cta). Where to look: iPhone at 5:54 and 6:04; the second shape at 2:25, the plan screen closes itself and the pitch comes back. every 2.1.41 store purchase grants Plus but the app never recognizes it (psmobile #4922) (closed 2026-09-04) by fix purchased checkout terminal after entitlement-first success (psmobile #4975) (merged 2026-09-04 to main, not in 2.1.41). What the video adds: the pitch comes back with CONTINUE on the way out.
+
+Known, open: the username screen holds people for a while, and twice said "already taken" on a brand new account
+
+"That username is already taken." in red under the field on a brand new account, after 78 seconds of no taps (the keyboard is not captured) and 110 seconds on the screen in all; "Connect to the internet to continue." on another person who then left for two and a half minutes; the red rules hint "3-32 characters. Letters, numbers, or underscores only." sitting for 30 to 50 seconds while people edit. The typed name is masked in the recording, so a real collision cannot be ruled out; in the first session the person saved a username 11 seconds after that frame.
+
+"That username is already taken." under the masked username field on a brand new account (iPhone, 2.1.41). The typed text is not on camera.
+
+"Connect to the internet to continue." under the masked field; the log shows a 167-second offline episode at this point (iPhone, 2.1.41).
+
+We saw the taken message on 2 of 21 new installs in the money sample, over 30 seconds on the screen on 4 of 21 (money) and 2 of 19 (new users), and the rules hint on 2 of 3 sign-ups in the cold read. I checked the data: about one in ten wait over 30 seconds. 292 username screens in the window, median 11 seconds, 29 over 30 seconds, 10 over 60 seconds, 6 never completed (react_production.identity_gate_shown to identity_gate_completed); the taken-username error has no event, so it cannot be counted. Where to look: already taken at 3:05; offline line at 1:05. username setup blocks on a redundant availability preflight for 20 to 45 seconds (psmobile #4902) (open, no PR found). The engineering pass: the offline line and the rules hint work as written; the long waits and the "already taken" on a fresh account belong to that issue.
+
+Known, fix in review: Change Plan offers "Switch to yearly plan" to a person already on yearly
+
+Change Plan: "CURRENT PLAN Plus", Yearly $64.99 checked under OTHER PLANS, and a button reading "Switch to yearly plan" for a person already on yearly; they tapped Cancel subscription next (Android, 2.1.41).
+
+We saw it once (1 of 12 granted sessions opened Manage Subscription). I checked the data: the plan shown is not in an event; the subscription-management action fires 8 times for 3 Android people and twice for 1 iOS person in the window (canon.monetization_event, loaded only to 2026-09-05 15:00 UTC). Where to look: Android at 11:28. active annual subscribers lose current-plan identity (psmobile #4798) (open); fix current subscription identity before plan changes (psmobile #5012) (merged 2026-09-05 into a stacked branch, not main); preserve current subscription identity before plan changes (psmobile #5043) (merged 2026-09-06 into a stacked branch, not main); the same, restacked (psmobile #5058) (open).
+
+Known, fixed on main: the lesson's Continue does nothing after Keep Learning on the out-of-energy exit
+
+Seen once this window (1 of 24 new-user recordings) on iPhone 2.1.41; no frame shows a dead tap, so no frame is placed. Where to look: iPhone at 10:28. lesson Continue dead after the out-of-energy sheet (psmobile #4959) (closed 2026-09-05) by keep Continue responsive after cancelling an energy-gated exit (psmobile #5002) (merged 2026-09-05 to main) and hide the blocked exit behind the Energy sheet (psmobile #5047) (merged 2026-09-06 to main), neither in 2.1.41.
+
+Known, open: opening the app from a puzzle push shows three loading screens for 6 to 11 seconds
+
+"Checking for Updates", then "Opening today's puzzle...", then "Loading puzzle...", then the puzzle at 6 or 11 seconds.
+
+"Opening today's puzzle..." one second after a puzzle push was tapped (Android, 2.1.41), the second of three loading screens.
+
+"Loading puzzle..." four seconds later, the third loading screen; the puzzle itself appeared at 6 seconds.
+
+We saw it in 2 of 3 push opens whose recording started at boot (returning users, Android). I checked the data: the app's own timer cannot tell the real wait; it reports a median of 1.2 seconds for 69 push opens because it stops before the puzzle is drawn; 19 of 1,024 Android boots and 10 of 940 iOS boots kept the splash up over 8 seconds (react_production.splash_hidden.time_to_first_screen_ms). Where to look: Android from 0:00. deep-link delivery can report success before the destination is interactive (psmobile #3521) (open), which says the same about the timer.
+
+Needs a human
+
+Concrete things a person could open, with the evidence and a rough time to look. In no particular order.
+
+The iPhone checkout that never resolved. Open the recording at 2:09 and look up that app user in RevenueCat for any transaction or cancel at 17:36 UTC on 2026-09-04. About 10 minutes. The money investigator's list of the other no-result checkouts is in /Users/aelaguiz/workspace/psagentspace/_artifacts/replay-review/runs/2026-09-06/corpus.local/inv-money/REPORT.md under "What I would watch next".
+
+The three foreground restarts on Android. Open Play Console vitals for 2.1.41 build 702 (crash and ANR rate, by device) and compare against the device models named in /Users/aelaguiz/workspace/psagentspace/_artifacts/replay-review/runs/2026-09-06/corpus.local/engineering-eye/REPORT.md. About 10 minutes. This is the one lane nobody in this pass could reach.
+
+The Indonesian plan screen. Read the two prices in the frame under "New since last time"; the engineering report names subscription_currency_format.dart line 32 on the 2.1.41 branch. Two minutes. Filed as psmobile #5073 (open).
+
+The account that ended on the welcome screen. Look up the Clerk record for the user behind the recording at 5:50 (deleted or not) and scrub the last 15 seconds of the replay for a Log out tap. About 10 minutes.
+
+The sign-in that found no account. Scrub the recording between 0:15 and 0:35 for an OK tap on a bottom sheet. Five minutes; the adversary's tap-stream reading says the sheet was there, and a look at the replay would confirm it.
+
+The map under the glass tab bar. Open the recording at 0:02 on a phone-sized window and decide how the glow under Leaderboard reads. Three minutes.
+
+Corpus hygiene, done during this run. Four uncited frames and one contact sheet in the new-user corpus folder showed a typed phone number in full; the orchestrator deleted them with a note in the session folder, and stripped email addresses from every metadata and event-log file in the corpus (124 files). This page used none of those frames. The replay-side issue is phone number readable in retained session replay (psmobile #4900) (open). Nothing left to do here.
+
+What we could not see
+
+Capture limits met this run, items that could not be settled from the recordings, and what was cut.
+
+Capture limits
+
+Native store sheets (Google Play, App Store), the Google, Apple and phone sign-in sheets, iOS permission dialogs, and the welcome overlay are never on camera. Where they matter, the page shows the frame before and the frame after and says so.
+
+Frames arrive about every 5 seconds, so anything shorter (the 54 ms paywall pop, a notice sheet dismissed in a second) has no picture. Taps are not events; the investigators' tap streams come from the replay export and were re-read by the adversary.
+
+On Android the store sheet, the out-of-energy sheet, and the paywall are often not on camera: black frames or 25 to 400 second holes in 7 of 13 Android money sessions. Tap coordinates on some Android devices are scaled about 1.3x relative to the frame.
+
+The warehouse had events loaded to about 2026-09-06 05:58 UTC when the synthesis ran and 08:57 UTC when the adversary re-checked, so any "never came back" means "not by then".
+
+Two sampled paid-attributed Android devices in the new-user sample had only a 25 to 26 second recording each and were never watched, so that sample's denominator is 19 devices, not 21. Five of the 32 cold-read draws were web-source recordings with no frames and were skipped; 27 were watched.
+
+Play vs AI events do not reach the warehouse for this window, so nothing about Play vs AI can be counted from the data.
+
+Unresolved: two things nobody could settle
+
+Taps near the next map node open nothing, on an older build. A person back after 76 days on 2.1.39 taps three times near the next map node; the map scrolls to the previous section with the current node under the missions bar; a minute of staring; gone. 1 of 25 returning users. No event exists for a tap that opens nothing. Android at 0:05. Nearby: missions bar covers the Start Lesson popover on compact screens (psmobile #3812) (open).
+
+Three tiles, left to right: the Learn map on arrival with the next node ringed (2.1.39, Android); ten seconds later the map has scrolled to the previous section "Draw Fundamentals"; a minute later, the same view. Three taps near the node opened nothing.
+
+The Play vs AI free-game cap. One person got "You've played your free coached game for today. NEXT FREE GAME IN 6H 22M" on "Run it back" after one game, while a 3-day user played four in a row; the Play tab in the tap-burst item above also reads "Next free game in 20h 58m" after a single game. Play vs AI events do not reach the warehouse, so it cannot be counted; the server's daily-cap and match rows for both people on 2026-09-04 would settle it. iPhone at 8:36. Searched "coached game cap" on funcountry/psmobile: only closed copy issues.
+
+Two tiles: the Play vs AI summary after one game with "Play again" and "Run it back", then five seconds later the sheet "You’ve played your free coached game for today. NEXT FREE GAME IN 6H 22M" (iPhone, 2.1.40).
+
+Cut from the findings, and why
+
+Two of the five "foreground" restarts. The Play vs AI restart (Samsung at 5:49): the event log shows the app went to the background 2.5 seconds after the Fold tap and cold-started 20 seconds later, so it was not in the foreground when it died. The returning user's restart under the Play sheet (Samsung at 5:44 and 12:43): the app had been in the background about six and a half minutes; the trial did start at the store and the app learned of it by restore in the next session, which is the "still on a screen that sells Plus" shape, not a death.
+
+"30 of 74 store sheet opens by new devices have no result within 15 minutes." That count looked only at the tables the app writes for a minority of outcomes. Counting every result table, 58 of 63 new-device sheet opens have a result within 15 minutes and 5 do not. The number measured which tables the app writes to, not hung sheets, and is dropped.
+
+"The out-of-energy sheet is where most new-user sessions stop, 8 to 14 minutes in." An aggregate a query already shows, and on the tape it is 9 of 24, not most. Only the tape-only parts stay on the page.
+
+The Android half of "TRY, then a spinner, and no result ever." That was the six-minute background case above, where the store did grant the trial. The iPhone case stands alone as one session.
+
+"Five taps at one spot" before the welcome screen. The tap stream shows five scroll flicks and one tap where Log out sits; rewritten in the item, and removed from the tap-burst count.
+
+Not carried because a query already shows them: people replaying the daily puzzle right after finishing it (8 of 25 returning, 2 of 27 cold read; an open issue exists), "You've finished all lessons" as the first screen for long-tenure users (61 devices in the window), runs of wrong answers in the first lesson (6 of 19 new devices), every first paywall still reading "TRY FOR $0.00" or the local equivalent, and a plan screen going quiet for 103 seconds on an iPhone that was most likely idle.
+
+Ledger items from earlier runs that this corpus did not see
+
+The welcome message that opens the daily puzzle mid-lesson; the Play vs AI error on the player's action; the leaderboard "Couldn't load standings"; raw error text as body copy; offline infinity energy; "We could not save this result."; tiny cards on a foldable outer screen (the cold read notes one Pixel Fold drawing lessons at normal size); the Play maintenance banner (window over); weeks-old devices answering the first-run questions again. Not seen does not mean gone; it means no investigator drew a session with it this window.
+
+Things we noticed about our own tracking
+
+For the data owner. One line each. Nothing here is a headline.
+
+No event marks a process death. session_summary.end_reason=process_start with explicit_close=false is on 1,414 of 1,522 summaries in the window (every session that is not a rollover), so it cannot serve as a restart marker; only the gap method (a cold start with no app_background before it) separates a death in the foreground from an ordinary background kill. Sentry does not report an operating-system kill.
+
+paygate_checkout_finished.result_status is "cancelled" for all 18 rows in the window although 29 sessions were granted Plus; the grant is visible only in subscription_entitlement_transition (part of the closed purchase never recognized issue (psmobile #4922) (closed 2026-09-04)).
+
+subscription_checkout_store_interaction writes a terminal row for 22 of 63 new-device store sheet opens; the other outcomes surface only in paygate_result and subscription_entitlement_transition. Any "no result" count must join all three.
+
+After a store cancel on 2.1.41, the onboarding gate writes 8 to 10 paygate_open_attempted, post_auth_onboarding_blocked reason=unknown_route_removed, and paygate_result route_disposed rows inside one second before one presentation sticks (12 of 18 store-cancel sessions, 110 rows); the person sees one screen, and the rows inflate presentation counts.
+
+The "username already taken" error has no event (profile_update_rejected is empty in the window) and identity_gate_completed.reason is always reserved_default_username, so the taken message cannot be counted.
+
+push_prompt_metagate_shown is written twice for one showing (seen_count_before 2 and 3 within 100 ms) on iOS 2.1.41 build 130; and push_eligibility_snapshot before the day-2 prompt can read permission_status=not_determined with reason=permission_denied on the same row.
+
+Every puzzle event in two returning sessions (puzzle_answer, puzzle_complete, path_puzzle_completed, post_puzzle_cta_tapped) and the push-prompt events in two others are written twice in BigQuery; not re-checked by the engineering pass.
+
+Play vs AI events (surface shown, availability, start result) do not land in react_production for this window; 83 sessions reached the match screen.
+
+The deep-link latency clock (deeplink_dispatch_latency_ms) stops before the puzzle is drawn, so it reads 1 to 3 seconds for opens that show 6 to 11 seconds of loading screens (known in the deep-link delivery issue (psmobile #3521) (open)).
+
+canon.monetization_event was loaded only to 2026-09-05 15:00 UTC and canon.subscription_trial_start to 2026-09-04 11:22 UTC at run time, so whether a grant is a trial or a paid purchase could not be read for this window.
+
+The iPhone checkout session under "New since last time" has no session_summary row and no paygate_result row of any kind, and its install_id on the checkout row matches no app_foreground row; joins by install_id miss it, joins by device id or Clerk user id find it.
+
+react_production.network_status is listed among tables carrying posthog_session_id but does not exist in us-south1. One April-build session (app 2.1.10) writes its posthog_session_id in upper case with no event_occurred_at_ms; a case-sensitive join misses it.
+
+Typed phone numbers are legible in replay frames on the sign-up and confirm-code screens (three money exports and one cold-read draw had frames deleted for this reason; four new-user frames still need it, see "Needs a human"): phone number readable in retained session replay (psmobile #4900) (open).
+
+How this was done
+
+Window: 2026-09-04 08:00 UTC to 2026-09-06 08:00 UTC, about 48 hours, not a release day. Release 2.1.41 has been current since 2026-09-01; in this window 567 Android and 513 iOS devices opened it, plus about 100 devices still on 2.1.40.
+
+Run date and model: 2026-09-06; anthropic/claude-fable-5-1, orchestrator at thinking high, every child at thinking medium. Four investigators (new users, returning users, money, cold read), an engineering eye that read origin/release/2.1.41 (9cf34215), origin/release/2.1.40 (eea05d4e) and origin/main (19377c87, 2026-09-05) and checked every fix with git merge-base --is-ancestor, a synthesizer, an adversary that re-ran every count, re-read every tap stream and opened every frame, and this page builder, who opened every frame again.
+
+Populations and counts: 103 recordings in all. New users: 24 first-visit recordings from 19 devices (seeded stratified draw across paid and organic, iOS and Android, seed 20260906; 21 devices sampled, 2 with 25-second recordings never watched). Returning users: 25 recordings (uniform random, one per device, sessions under 30 seconds and over 90 minutes excluded, shuffle seed declared). Money: 27 sessions that touched a paywall, a checkout or a grant (three seeded groups with a written planned list; one followed thread labeled and kept out of the counts). Cold read: 32 random draws from the full recording list ordered by start time (seed 20260906), 27 watched, 5 web-source draws with no frames skipped and counted. The one recording drawn by two investigators (the sign-up restart) is counted once.
+
+Frequencies: BigQuery poker-skill-a2d33, react_production and canon, over the same window unless a line says Sept 3 to 6; the adversary re-ran every count on 2026-09-06 with events loaded to about 08:57 UTC, and its corrected numbers are the ones on this page.
+
+GitHub: every defect was searched on funcountry/psmobile with gh issue list and gh pr list (--state all, two or three keywords); no item named another code home, so funcountry/rustai and funcountry/puzzledb were not searched. Every linked state was re-read with gh issue view or gh pr view on 2026-09-06 by the synthesizer and again by the adversary.
+
+Corpus: /Users/aelaguiz/workspace/psagentspace/_artifacts/replay-review/runs/2026-09-06/corpus.local/ (per-investigator reports and METHOD.md, per-session frames, event logs and tap streams, the engineering report, the synthesis, the adversary review, and this page's notes under page/PAGE-NOTES.md).
+
+Corrections ledger: /Users/aelaguiz/workspace/psagentspace/_artifacts/replay-review/state/feedback-ledger.md, read before writing and binding on every sentence here. Findings ledger: /Users/aelaguiz/workspace/psagentspace/_artifacts/replay-review/state/findings-ledger.md.
+
+Evidence index
+
+Every recording cited on this page: 31 recordings, newest first. Open the deep link and use the timestamp from the finding.
+
+Recording id | 
+
+Deep link | 
+
+Platform | 
+
+Build | 
+
+Which finding | 
+
+01a0746d-10b6-7626-84fa-be1f169cd47b | 
+
+https://us.posthog.com/project/215955/replay/01a0746d-10b6-7626-84fa-be1f169cd47b | 
+
+Android | 
+
+2.1.41 | 
+
+New: two number styles for one currency on the plan card | 
+
+01a07454-eb1c-7b04-a882-6a84dbcfa992 | 
+
+https://us.posthog.com/project/215955/replay/01a07454-eb1c-7b04-a882-6a84dbcfa992 | 
+
+iOS | 
+
+2.1.41 | 
+
+Handled: still on a screen that sells Plus after the grant; Handled: the username screen | 
+
+01a07450-9703-77d1-8191-3c152a9d1fa0 | 
+
+https://us.posthog.com/project/215955/replay/01a07450-9703-77d1-8191-3c152a9d1fa0 | 
+
+iOS | 
+
+2.1.40 | 
+
+New: map nodes under the floating tab bar | 
+
+01a0733d-8a3e-7f0c-82f4-abc13a26401a | 
+
+https://us.posthog.com/project/215955/replay/01a0733d-8a3e-7f0c-82f4-abc13a26401a | 
+
+Android | 
+
+2.1.41 | 
+
+New: things that looked odd but read as working as written; Handled: "Switch to yearly plan" to a yearly subscriber | 
+
+01a072a5-de27-7bef-9d00-b7ecf3eac969 | 
+
+https://us.posthog.com/project/215955/replay/01a072a5-de27-7bef-9d00-b7ecf3eac969 | 
+
+Android | 
+
+2.1.41 | 
+
+Still happening: the out-of-energy sheet | 
+
+01a07278-cc89-7421-930b-f95d028a150e | 
+
+https://us.posthog.com/project/215955/replay/01a07278-cc89-7421-930b-f95d028a150e | 
+
+Android | 
+
+2.1.41 | 
+
+New: Android app dies in the foreground | 
+
+01a07271-83c5-7993-b4c9-e87021587ebe | 
+
+https://us.posthog.com/project/215955/replay/01a07271-83c5-7993-b4c9-e87021587ebe | 
+
+Android | 
+
+2.1.39 | 
+
+Could not see: taps near a map node open nothing (2.1.39) | 
+
+01a07207-6a68-7719-a3ab-82397c799149 | 
+
+https://us.posthog.com/project/215955/replay/01a07207-6a68-7719-a3ab-82397c799149 | 
+
+iOS | 
+
+2.1.41 | 
+
+Still happening: the Energy screen countdown | 
+
+01a0705a-3644-7135-9c4e-5f75b86bf408 | 
+
+https://us.posthog.com/project/215955/replay/01a0705a-3644-7135-9c4e-5f75b86bf408 | 
+
+iOS | 
+
+2.1.41 | 
+
+New: tap bursts on a close control | 
+
+01a07048-1618-78cb-a731-6a018d8228b7 | 
+
+https://us.posthog.com/project/215955/replay/01a07048-1618-78cb-a731-6a018d8228b7 | 
+
+Android | 
+
+2.1.41 | 
+
+New: things that looked odd but read as working as written | 
+
+01a06ff3-162c-7963-a80b-0a24c5bf3c1a | 
+
+https://us.posthog.com/project/215955/replay/01a06ff3-162c-7963-a80b-0a24c5bf3c1a | 
+
+iOS | 
+
+2.1.41 | 
+
+Handled: the username screen | 
+
+01a06f8d-f9bb-7a64-96a7-05908e062dcd | 
+
+https://us.posthog.com/project/215955/replay/01a06f8d-f9bb-7a64-96a7-05908e062dcd | 
+
+Android | 
+
+2.1.41 | 
+
+Still happening: the out-of-energy sheet | 
+
+01a06f7f-e24e-7ca1-a519-e81302233a8e | 
+
+https://us.posthog.com/project/215955/replay/01a06f7f-e24e-7ca1-a519-e81302233a8e | 
+
+iOS | 
+
+2.1.41 | 
+
+Handled: lesson Continue dead after Keep Learning | 
+
+01a06f6a-df03-77c3-b796-078186de21e3 | 
+
+https://us.posthog.com/project/215955/replay/01a06f6a-df03-77c3-b796-078186de21e3 | 
+
+Android | 
+
+2.1.41 | 
+
+New: Android app dies in the foreground; Handled: paywall opens and closes itself after a restart | 
+
+01a06f66-1486-719b-9a31-915276fd871b | 
+
+https://us.posthog.com/project/215955/replay/01a06f66-1486-719b-9a31-915276fd871b | 
+
+Android | 
+
+2.1.41 | 
+
+New: Android app dies in the foreground | 
+
+01a06e87-865b-722a-8821-242cab814ba4 | 
+
+https://us.posthog.com/project/215955/replay/01a06e87-865b-722a-8821-242cab814ba4 | 
+
+Android | 
+
+2.1.41 | 
+
+New: things that looked odd but read as working as written | 
+
+01a06e52-afda-77ee-8e82-2a8c10775c6e | 
+
+https://us.posthog.com/project/215955/replay/01a06e52-afda-77ee-8e82-2a8c10775c6e | 
+
+iOS | 
+
+2.1.40 | 
+
+Could not see: the Play vs AI free-game cap | 
+
+01a06e41-094d-75ce-8c30-3d106698f8a6 | 
+
+https://us.posthog.com/project/215955/replay/01a06e41-094d-75ce-8c30-3d106698f8a6 | 
+
+iOS | 
+
+2.1.41 | 
+
+Handled: still on a screen that sells Plus after the grant | 
+
+01a06e32-ef15-72dc-90c0-a3d545142804 | 
+
+https://us.posthog.com/project/215955/replay/01a06e32-ef15-72dc-90c0-a3d545142804 | 
+
+iOS | 
+
+2.1.41 | 
+
+New: things that looked odd but read as working as written | 
+
+01a06e14-e18d-7693-8724-382f8a3424bb | 
+
+https://us.posthog.com/project/215955/replay/01a06e14-e18d-7693-8724-382f8a3424bb | 
+
+Android | 
+
+2.1.41 | 
+
+Could not see: restart cut from the foreground-death item (app went to background first) | 
+
+01a06e14-1044-7d55-a941-0aa2e494adc6 | 
+
+https://us.posthog.com/project/215955/replay/01a06e14-1044-7d55-a941-0aa2e494adc6 | 
+
+Android | 
+
+2.1.41 | 
+
+New: Android app dies in the foreground | 
+
+01a06e12-d581-788b-8571-587bde6ac14f | 
+
+https://us.posthog.com/project/215955/replay/01a06e12-d581-788b-8571-587bde6ac14f | 
+
+Android | 
+
+2.1.41 | 
+
+New: Android app dies in the foreground | 
+
+01a06dfd-4983-7330-ac63-1d6ef8cce275 | 
+
+https://us.posthog.com/project/215955/replay/01a06dfd-4983-7330-ac63-1d6ef8cce275 | 
+
+Android | 
+
+2.1.41 | 
+
+Handled: three loading screens on a puzzle push open | 
+
+01a06db3-811e-77c9-990f-7245731ca759 | 
+
+https://us.posthog.com/project/215955/replay/01a06db3-811e-77c9-990f-7245731ca759 | 
+
+Android | 
+
+2.1.41 | 
+
+Could not see: restart cut from the foreground-death item (six minutes in the background) | 
+
+01a06d7c-6060-7897-a8bd-e8e28cd0f816 | 
+
+https://us.posthog.com/project/215955/replay/01a06d7c-6060-7897-a8bd-e8e28cd0f816 | 
+
+iOS | 
+
+2.1.41 | 
+
+New: iPhone checkout stuck on "Checking purchase..." | 
+
+01a06d69-7835-79c6-b9d5-1afcf34e8799 | 
+
+https://us.posthog.com/project/215955/replay/01a06d69-7835-79c6-b9d5-1afcf34e8799 | 
+
+Android | 
+
+2.1.41 | 
+
+New: new account ends its first session on the signed-out welcome screen | 
+
+01a06d42-2199-7654-b634-b4b6b8e46c22 | 
+
+https://us.posthog.com/project/215955/replay/01a06d42-2199-7654-b634-b4b6b8e46c22 | 
+
+iOS | 
+
+2.1.41 | 
+
+New: things that looked odd but read as working as written | 
+
+01a06cfd-4ab7-79cc-89a0-8bceea6500af | 
+
+https://us.posthog.com/project/215955/replay/01a06cfd-4ab7-79cc-89a0-8bceea6500af | 
+
+Android | 
+
+2.1.41 | 
+
+Still happening: pitch shown again after a store cancel | 
+
+01a06ce6-f899-78b1-aeb3-bdf6b8a2d706 | 
+
+https://us.posthog.com/project/215955/replay/01a06ce6-f899-78b1-aeb3-bdf6b8a2d706 | 
+
+iOS | 
+
+2.1.41 | 
+
+New: things that looked odd but read as working as written | 
+
+01a06c9f-81dc-72b4-bcc3-4cf27120b2b9 | 
+
+https://us.posthog.com/project/215955/replay/01a06c9f-81dc-72b4-bcc3-4cf27120b2b9 | 
+
+iOS | 
+
+2.1.41 | 
+
+New: sign-in to an account that does not exist | 
+
+01a06c34-506e-7f12-9c50-542eb29508af | 
+
+https://us.posthog.com/project/215955/replay/01a06c34-506e-7f12-9c50-542eb29508af | 
+
+iOS | 
+
+2.1.41 | 
+
+New: tap bursts on a close control | 
+
+Corrections ledger: feedback-ledger.md on GitHub, on disk at /Users/aelaguiz/workspace/psagentspace/_artifacts/replay-review/state/feedback-ledger.md.
+
+ Poker Skill replay review, living page redeployed every run · generated 2026-09-06 · corrections ledger: feedback-ledger.md

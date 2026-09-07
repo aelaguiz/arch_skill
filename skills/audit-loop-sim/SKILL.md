@@ -1,13 +1,14 @@
 ---
 name: audit-loop-sim
-description: "Run the standalone real-app automation audit workflow with a root simulator audit ledger: exhaustively map the app, journeys, and current automation surface before any edits, rank automation risk fronts by consequence and proof weakness, then fix the biggest end-to-end automation gaps and same-story bugs without changing contracts. Every editful pass must then audit its own diff for safety, unintended downstream consequences, elegance, and duplication before it can count as done. Use when the user wants repo-wide simulator or emulator automation work, wants the agent to build a full mental model before acting, or wants to leave the automation audit running in Codex or Claude Code until no credible work remains. Not for a single known bug, generic repo audit, or manual QA-only work."
+description: "Explicitly selected mobile automation audit and repair loop: map journeys and coverage, rank gaps, and verify repairs on the sanctioned device lane. Use when the user chooses $audit-loop-sim or binding task instructions require it. Ordinary QA, a device repro, or a single app bug does not select this loop."
 metadata:
   short-description: "Exhaustive map-first real-app automation loop"
 ---
 
 # Audit Loop Sim
 
-Use this skill when the job is to exhaustively map a mobile app, its journeys, and its current automation surface, rank the strongest automation risk fronts by consequence, reduce the biggest unresolved real-app automation risks without changing contracts, and audit each resulting change before it counts as done.
+Use this workflow only after explicit selection as `$audit-loop-sim` or a
+binding task instruction requiring it.
 
 ## When to use
 
@@ -21,7 +22,7 @@ Use this skill when the job is to exhaustively map a mobile app, its journeys, a
 - The task is a concrete known bug, crash, regression, or Sentry issue. Use `bugs-flow`.
 - The work is a general repo bug hunt, dead-code sweep, or duplication cleanup rather than a real-app automation audit. Use `audit-loop`.
 - The work is fixed-scope feature delivery or architecture planning. Use `arch-step`, `arch-mini-plan`, or `lilarch`.
-- The task is manual QA only, a release checklist, or an open-ended optimization loop where the main job is not closing real-app automation risk. Use `goal-loop` or `north-star-investigation`.
+- The task is manual QA only, a release checklist, or an open-ended optimization loop where the main job is not closing real-app automation risk. Use native goal mode or `north-star-investigation`.
 
 ## Non-negotiables
 

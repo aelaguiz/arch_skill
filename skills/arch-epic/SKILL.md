@@ -1,13 +1,14 @@
 ---
 name: arch-epic
-description: "Orchestrate a goal too large for one `$arch-step` plan by decomposing it into approved ordered sub-plans, then running interactive handoffs, same-session `auto-plan` / `auto-implement`, or role-based planner/worker/critic execution. Same-host roles prefer clean native children from durable epic and sub-plan artifacts; the explicit external-harness lane remains available for deliberate provider, exact-model, lifecycle, isolation, automation, or receipt benefits. Use to break up and run a multi-plan epic, continue/resume an epic doc, plan every sub-plan before implementation, or implement an approved epic end to end. Not for a single architecture plan (`$arch-step`), one-pass mini plan (`$arch-mini-plan`), small feature (`$lilarch`), read-only status (`$arch-flow`), or foreign-repo step orchestration (`$stepwise`)."
+description: "Explicitly selected multi-plan execution lifecycle: decompose an authorized goal into approved ordered arch-step sub-plans, then plan, implement, and review them. Use when the user chooses $arch-epic or binding task instructions require it. Filing or decomposing GitHub issues, mentioning an epic, or asking for status does not select execution."
 metadata:
   short-description: "Multi-plan orchestrator wrapping arch-step with decomposition approval, progressive North-Star gates, and a per-sub-plan scope-drift critic"
 ---
 
 # arch-epic
 
-Wraps `$arch-step` to orchestrate goals too big for one canonical plan.
+After explicit selection, wraps `$arch-step` to execute a multi-plan goal.
+Filing or decomposing GitHub issues does not select this lifecycle.
 The skill takes a prose goal, proposes a plain-English decomposition
 whose count follows proof gates rather than a preset range, gets user approval, and then drives
 each sub-plan through arch-step's `new` → `auto-plan` → `implement-loop`
@@ -96,7 +97,7 @@ change requires the user.
   implementation: use `$arch-step full-auto` or `$miniarch-step full-auto`.
 - One-pass mini plan that hands off to implement: use `$arch-mini-plan`.
 - 1–3 phase feature flow: use `$lilarch`.
-- Open-ended optimization with bet-and-learn iteration: use `$goal-loop`.
+- Open-ended optimization with bet-and-learn iteration: use native goal mode.
 - Read-only routing across arch artifacts: use `$arch-flow`.
 - Stepped orchestration in a foreign repo with a per-step critic: use
   `$stepwise`.
@@ -186,7 +187,7 @@ Must happen every run:
   explicit external harness, the user supplies role execution for
   `epic_planner`, `implementation_worker`, and `critic`; ask once for missing
   load-bearing values. An omitted model on an external Codex role defaults to
-  `gpt-5.6-sol`, and an omitted effort on that Sol role defaults to `ultra`.
+  `gpt-6-astra`, and an omitted effort on that Astra role defaults to `xhigh`.
   An external Kimi role defaults to `kimi-code/k3` and the model-default `max`
   effort; other runtimes, Codex models, and efforts never silently default.
   Natural Grok wording resolves to `grok-4.6`, while explicitly named legacy

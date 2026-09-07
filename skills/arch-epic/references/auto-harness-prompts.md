@@ -53,7 +53,7 @@ Every child must:
 - leave compact, inspectable evidence
 - avoid nested automatic continuation commands such as `auto-plan` or
   `implement-loop`
-- use your own native sub-agents freely, but do not start external agents or
+- use native sub-agents within authorized scope, but do not start external agents or
   manually launch model-harness processes
 - avoid broad repo rewrites unrelated to the active sub-plan
 

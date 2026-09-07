@@ -19,59 +19,15 @@ reviews hard-fail scope cycling when agent-created work is later used to justify
 more work: code and architecture return `not-approved`, and cruft returns
 `cruft-found`.
 
-The current skill suite is:
+The [README](../README.md#shipped-skills) describes the shipped skills;
+[Makefile](../Makefile) owns the exact per-runtime install inventory.
 
-- `arch-step`
-- `arch-step-goal-prompt`
-- `miniarch-step`
-- `arch-docs`
-- `arch-mini-plan`
-- `lilarch`
-- `bugs-flow`
-- `bottom-up-diagnostic`
-- `audit-loop`
-- `comment-loop`
-- `audit-loop-sim`
-- `goal-loop`
-- `north-star-investigation`
-- `arch-flow`
-- `arch-skills-guide`
-- `arch-epic`
-
-Use `miniarch-step` for full-arch work when you want the trimmed command surface. Use `arch-step` when you need the broader or helper-heavy full-arch surface.
-
-Other shipped skills:
-
-- `agent-definition-auditor`
-- `agents-md-authoring`
-- `prompt-authoring`
-- `browseros`
-- `chatgpt-web`
-- `skill-authoring`
-- `figma-best-practices`
-- `fal-ai-tools`
-- `eli10` (source-retained; active installation owned by `utility-skill`)
-- `pr-authoring`
-- `commit-history-authoring`
-- `amir-publish`
-- `codex-cleanup`
-- `codex-babysit` (source-retained; not installed by default)
-- `codex-review-yolo`
-- `fresh-consult`
-- `agent-delegate`
-- `plan-audit`
-- `plan-implement`
-- `plan-interview`
-- `conductor`
-- `agent-history`
-- `model-consensus`
-- `contact-sheet-builder`
-- `cynical-code-review`
-- `cynical-architecture-review`
-- `cynical-cruft-removal`
-- `exhaustive-code-review`
-- `stepwise`
-- `thermo-nuclear-code-quality-review`
+Elective lifecycles, persistent loops, and specialist reviews require explicit
+selection, such as `$bugs-flow`; a matching topic alone does not select them.
+A chosen parent may load required helpers without starting a separate elective
+workflow. Required authoring, BrowserOS, spreadsheet, and other repository
+duties still apply within their actual triggers. History retrieval remains a
+narrow implicit helper; live status and control use the live runtime.
 
 Examples in this guide use Codex `$skill` notation. In Claude Code, invoke the same skill as `/skill`.
 
@@ -91,193 +47,15 @@ Restart Codex, Claude Code, Gemini, or Hermes Agent after install so the running
 reloads skills and drops any hook list cached before install removed old
 arch_skill hook entries.
 
-Default local path:
+Codex discovers the personal packages in `~/.agents/skills/`; Claude uses
+`~/.claude/skills/`, Gemini uses `~/.gemini/skills/`, and existing Hermes
+profiles receive the `arch_skill/` category. See the [installer](../Makefile)
+for membership and the [README](../README.md#install) for options.
 
-- `~/.agents/skills/arch-step/`
-- `~/.agents/skills/arch-step-goal-prompt/`
-- `~/.agents/skills/miniarch-step/`
-- `~/.agents/skills/arch-docs/`
-- `~/.agents/skills/arch-mini-plan/`
-- `~/.agents/skills/lilarch/`
-- `~/.agents/skills/bugs-flow/`
-- `~/.agents/skills/bottom-up-diagnostic/`
-- `~/.agents/skills/audit-loop/`
-- `~/.agents/skills/comment-loop/`
-- `~/.agents/skills/audit-loop-sim/`
-- `~/.agents/skills/goal-loop/`
-- `~/.agents/skills/north-star-investigation/`
-- `~/.agents/skills/arch-flow/`
-- `~/.agents/skills/arch-skills-guide/`
-- `~/.agents/skills/agent-definition-auditor/`
-- `~/.agents/skills/agents-md-authoring/`
-- `~/.agents/skills/prompt-authoring/`
-- `~/.agents/skills/browseros/`
-- `~/.agents/skills/chatgpt-web/`
-- `~/.agents/skills/skill-authoring/`
-- `~/.agents/skills/figma-best-practices/`
-- `~/.agents/skills/fal-ai-tools/`
-- `~/.agents/skills/pr-authoring/`
-- `~/.agents/skills/commit-history-authoring/`
-- `~/.agents/skills/amir-publish/`
-- `~/.agents/skills/codex-cleanup/`
-- `~/.agents/skills/codex-review-yolo/`
-- `~/.agents/skills/fresh-consult/`
-- `~/.agents/skills/agent-delegate/`
-- `~/.agents/skills/plan-audit/`
-- `~/.agents/skills/plan-implement/`
-- `~/.agents/skills/plan-interview/`
-- `~/.agents/skills/conductor/`
-- `~/.agents/skills/agent-history/`
-- `~/.agents/skills/model-consensus/`
-- `~/.agents/skills/contact-sheet-builder/`
-- `~/.agents/skills/cynical-code-review/`
-- `~/.agents/skills/cynical-architecture-review/`
-- `~/.agents/skills/cynical-cruft-removal/`
-- `~/.agents/skills/exhaustive-code-review/`
-- `~/.agents/skills/stepwise/`
-- `~/.agents/skills/arch-epic/`
-- `~/.agents/skills/thermo-nuclear-code-quality-review/`
-
-The vendored maintainability rubric is also installed at `~/.claude/skills/thermo-nuclear-code-quality-review/` for Claude Code and `~/.gemini/skills/thermo-nuclear-code-quality-review/` for Gemini.
-
-Codex reads the same installed skills from `~/.agents/skills/`. `make install` also removes older `~/.codex/skills/<skill>` mirrors from previous installs and removes old arch_skill-owned hook entries from prior installs.
-
-Installed skills:
-
-- Codex:
-  - `arch-step`
-  - `arch-step-goal-prompt`
-  - `miniarch-step`
-  - `arch-docs`
-  - `arch-mini-plan`
-  - `lilarch`
-  - `bugs-flow`
-  - `bottom-up-diagnostic`
-  - `audit-loop`
-  - `comment-loop`
-  - `audit-loop-sim`
-  - `goal-loop`
-  - `north-star-investigation`
-  - `arch-flow`
-  - `arch-skills-guide`
-  - `agent-definition-auditor`
-  - `agents-md-authoring`
-  - `prompt-authoring`
-  - `browseros`
-  - `chatgpt-web`
-  - `skill-authoring`
-  - `figma-best-practices`
-  - `fal-ai-tools`
-  - `pr-authoring`
-  - `commit-history-authoring`
-  - `amir-publish`
-  - `codex-cleanup`
-  - `codex-review-yolo`
-  - `fresh-consult`
-  - `agent-delegate`
-  - `plan-audit`
-  - `plan-implement`
-  - `plan-interview`
-  - `conductor`
-  - `agent-history`
-  - `model-consensus`
-  - `contact-sheet-builder`
-  - `cynical-code-review`
-  - `cynical-architecture-review`
-  - `cynical-cruft-removal`
-  - `exhaustive-code-review`
-  - `stepwise`
-  - `arch-epic`
-  - `thermo-nuclear-code-quality-review`
-- Claude Code:
-  - `arch-step`
-  - `arch-step-goal-prompt`
-  - `miniarch-step`
-  - `arch-docs`
-  - `arch-mini-plan`
-  - `lilarch`
-  - `bugs-flow`
-  - `bottom-up-diagnostic`
-  - `audit-loop`
-  - `comment-loop`
-  - `audit-loop-sim`
-  - `goal-loop`
-  - `north-star-investigation`
-  - `arch-flow`
-  - `arch-skills-guide`
-  - `agent-definition-auditor`
-  - `agents-md-authoring`
-  - `prompt-authoring`
-  - `browseros`
-  - `chatgpt-web`
-  - `skill-authoring`
-  - `figma-best-practices`
-  - `fal-ai-tools`
-  - `pr-authoring`
-  - `commit-history-authoring`
-  - `amir-publish`
-  - `codex-cleanup`
-  - `codex-review-yolo`
-  - `fresh-consult`
-  - `agent-delegate`
-  - `plan-audit`
-  - `plan-implement`
-  - `plan-interview`
-  - `conductor`
-  - `agent-history`
-  - `model-consensus`
-  - `contact-sheet-builder`
-  - `cynical-code-review`
-  - `cynical-architecture-review`
-  - `cynical-cruft-removal`
-  - `exhaustive-code-review`
-  - `stepwise`
-  - `arch-epic`
-  - `thermo-nuclear-code-quality-review`
-- Gemini:
-  - `arch-step`
-  - `arch-step-goal-prompt`
-  - `miniarch-step`
-  - `arch-docs`
-  - `arch-mini-plan`
-  - `lilarch`
-  - `bugs-flow`
-  - `bottom-up-diagnostic`
-  - `audit-loop`
-  - `comment-loop`
-  - `audit-loop-sim`
-  - `goal-loop`
-  - `north-star-investigation`
-  - `arch-flow`
-  - `arch-skills-guide`
-  - `agent-definition-auditor`
-  - `agents-md-authoring`
-  - `prompt-authoring`
-  - `browseros`
-  - `chatgpt-web`
-  - `skill-authoring`
-  - `figma-best-practices`
-  - `fal-ai-tools`
-  - `pr-authoring`
-  - `commit-history-authoring`
-  - `amir-publish`
-  - `codex-cleanup`
-  - `codex-review-yolo`
-  - `fresh-consult`
-  - `agent-delegate`
-  - `plan-audit`
-  - `plan-implement`
-  - `plan-interview`
-  - `conductor`
-  - `model-consensus`
-  - `contact-sheet-builder`
-  - `cynical-code-review`
-  - `cynical-architecture-review`
-  - `cynical-cruft-removal`
-  - `exhaustive-code-review`
-  - `stepwise`
-  - `arch-epic`
-  - `thermo-nuclear-code-quality-review`
+For a reviewed Codex-only update, use `make agents_install_files FILES="..."`
+with exact paths relative to `skills/`. It copies only those files, preserves
+previous versions outside discovery, and does not purge skills or touch other
+runtimes. Restart Codex before checking native selection behavior.
 
 Install removes stale pre-skill command surfaces, removed or default-disabled skill packages such as `codex-babysit`, older Codex skill mirrors, old arch_skill-owned hook entries, and source/build internals from installed skill packages. It does not install new hooks.
 
@@ -364,7 +142,7 @@ every child return integration-ready evidence.
 
 ### `arch-step`
 
-Use for broad or ambiguity-heavy full-arch planning, continuation, implementation, helper-assisted hardening, implementation-frontier implement/audit delivery, or implementation audit.
+When explicitly selected, use for broad or ambiguity-heavy full-arch planning, continuation, implementation, helper-assisted hardening, implementation-frontier implement/audit delivery, or implementation audit.
 
 Examples:
 
@@ -421,7 +199,7 @@ Practical rules:
 
 ### `miniarch-step`
 
-Use when the work still needs a canonical full-arch doc, phased execution, and native goal-mode auto flow, but does not need the broader `arch-step` helper surface. This is a trimmed command surface, not a lower-effort workflow.
+When explicitly selected, use when the work still needs a canonical full-arch doc, phased execution, and native goal-mode auto flow, but does not need the broader `arch-step` helper surface. This is a trimmed command surface, not a lower-effort workflow.
 
 Examples:
 
@@ -449,7 +227,7 @@ Practical rule:
 
 ### `arch-epic`
 
-Use when one execution goal is too large for a single `arch-step` plan and should be decomposed into approved, ordered sub-plans with inter-plan gates. The epic doc owns the raw goal, decomposition, sub-plan DOC_PATHs, orchestration log, decision log, and critic verdict pointers. Each sub-plan remains a real arch-step-style plan; the epic doc is not a replacement for the sub-plan plan docs.
+When explicitly selected, use when one execution goal is too large for a single `arch-step` plan and should be decomposed into approved, ordered sub-plans with inter-plan gates. The epic doc owns the raw goal, decomposition, sub-plan DOC_PATHs, orchestration log, decision log, and critic verdict pointers. Each sub-plan remains a real arch-step-style plan; the epic doc is not a replacement for the sub-plan plan docs.
 
 Examples:
 
@@ -471,7 +249,7 @@ Practical rule:
   Same-host planner, implementation-worker, and critic roles prefer clean
   native children; the separate external harness is selected only for a
   deliberate external benefit.
-- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5 high` becomes `claude-fable-5`; bare `Codex` becomes `gpt-5.6-sol` at `ultra`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-5.6-sol` before launching children.
+- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5.1 high` becomes `claude-fable-5-1`; bare `Codex` becomes `gpt-6-astra` at `xhigh`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-6-astra` before launching children.
 - Role-based automatic mode drives sub-plans depth-first. Planner and
   implementation roles are resumable by exact handle; a new clean critic's
   accepted findings return to the owning role instead of creating a repair
@@ -510,7 +288,7 @@ Examples:
 
 ### `arch-mini-plan`
 
-Use when the task still needs canonical architecture blocks, but the planning should happen in one pass and follow-through should later happen in `miniarch-step` or `arch-step`, then `arch-docs` for later docs cleanup.
+When explicitly selected, use when the task still needs canonical architecture blocks, but the planning should happen in one pass and follow-through should later happen in `miniarch-step` or `arch-step`, then `arch-docs` for later docs cleanup.
 
 Examples:
 
@@ -519,7 +297,7 @@ Examples:
 
 ### `lilarch`
 
-Use for contained feature work that should fit in 1-3 phases.
+When explicitly selected, use for contained feature work that should fit in 1-3 phases.
 
 Examples:
 
@@ -530,15 +308,18 @@ If lilarch stops fitting, escalate to `miniarch-step reformat` first, and to `ar
 
 ### `bugs-flow`
 
-Use for regressions, crashes, incidents, or Sentry/log-driven fixes.
+When explicitly selected, use for regressions, crashes, incidents, or Sentry/log-driven fixes.
 
 ### `bottom-up-diagnostic`
 
-Use for case-level statistical analysis when aggregate metrics, averages, funnels, cohort comparisons, or samples cannot be trusted without the underlying population. It materializes constituent observations, inspects variation and outliers, then reaggregates the statistics from that evidence. Its bundled references provide concrete artifact patterns, sample tables, worked examples, and anti-examples. It may surface a software-defect signal, but use `bugs-flow` when the goal is to diagnose, reproduce, repair, or verify errors, regressions, crashes, Sentry issues, failed tests, or broken flows.
+Choose this population-analysis workflow explicitly to rebuild aggregate
+statistics from constituent observations, cohorts, and outliers. Report any
+software-defect signal without automatically starting diagnosis or repair;
+ordinary bug work follows the repo's required discipline.
 
 ### `audit-loop`
 
-Use for repo-wide audit passes or "find and fix the biggest real problems" requests when the agent should first exhaustively map the codebase and current proof surface, then choose work from a consequence-first ranking rather than just picking something. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
+When explicitly selected, use for repo-wide audit passes or "find and fix the biggest real problems" requests when the agent should first exhaustively map the codebase and current proof surface, then choose work from a consequence-first ranking rather than just picking something. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
 
 Examples:
 
@@ -548,7 +329,7 @@ Examples:
 
 ### `comment-loop`
 
-Use for repo-wide code comment hardening passes or "deeply understand this repo, then explain the conventions and gotchas in code" requests when the agent should first exhaustively map the repo, current proof surface, and current explanatory coverage before choosing where comments actually matter.
+When explicitly selected, use for repo-wide code comment hardening passes or "deeply understand this repo, then explain the conventions and gotchas in code" requests when the agent should first exhaustively map the repo, current proof surface, and current explanatory coverage before choosing where comments actually matter.
 
 Examples:
 
@@ -558,7 +339,7 @@ Examples:
 
 ### `audit-loop-sim`
 
-Use for repo-wide real-app automation passes, simulator or emulator gap hunts, impactful mobile end-to-end coverage work, or "find the biggest automation blind spots in the real app" requests when the agent should first exhaustively map the app, journeys, and current automation surface, then choose work from a consequence-first ranking rather than just picking something. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
+When explicitly selected, use for repo-wide real-app automation passes, simulator or emulator gap hunts, impactful mobile end-to-end coverage work, or "find the biggest automation blind spots in the real app" requests when the agent should first exhaustively map the app, journeys, and current automation surface, then choose work from a consequence-first ranking rather than just picking something. Every editful pass must then audit its own diff for safety, downstream consequences, elegance, and duplication before it can count as done.
 
 Examples:
 
@@ -566,13 +347,16 @@ Examples:
 - `Use $audit-loop-sim review`
 - `Use $audit-loop-sim auto`
 
-### `goal-loop`
+### `goal-loop` — optional source only
 
-Use when the goal is clear but the path is unknown and you want a controller doc plus append-only iteration log.
+The source remains at `skills/goal-loop/`. It is not installed by default;
+`make install` and `make remote_install` remove installed copies. Use native
+goal mode for free-form goal work, or `north-star-investigation` for a
+quantified investigation.
 
 ### `north-star-investigation`
 
-Use when the work is a quantified investigation with ranked hypotheses and brutal tests.
+When explicitly selected, use when the work is a quantified investigation with ranked hypotheses and brutal tests.
 
 ### `arch-skills-guide`
 
@@ -622,12 +406,52 @@ silently inheriting whatever conversation is open.
 `new-clean` is the default; `continue-exact` is used only when the user asks to
 continue an identifiable conversation. Independent asks remain serial but
 start clean, while explicit follow-ups preserve the intended thread. It
-defaults to Pro with Extended thinking when mode or effort is omitted and is
+defaults to GPT-6 Pro with Extended thinking when mode or effort is omitted and is
 prose-only: no scripts, runners, harnesses, API calls, or automated login.
+It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
+`Work` (same projects in both), proves which one it is in, and fails over to
+the other when Pro is rate limited. If both are limited, pause the blocked
+Pro consultation while independent authorized work continues; no substitute
+reviewer can satisfy a required Pro review. Inside ChatGPT it
+always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
+Work's reasoning slider does not select GPT-6 Pro in Chat.
 
 Examples:
 
 - `Use $chatgpt-web to ask ChatGPT for a Pro Extended second opinion on this plan`
+
+### `issue-to-pr` and `epic-to-prs`
+
+Invoke these delivery workflows explicitly. A standalone issue normally gets
+Pro initial planning and final PR review. An epic shares planning and review
+across related issues, with useful batch checkpoints and final stack review
+instead of a separate review pair for every child. A checkpoint after two
+related issues can make sense when there is a meaningful combined result to
+assess; the count alone does not trigger it. Pro is also available for a
+major unexpected blocker the agent cannot resolve through local reasoning
+and investigation. Astra and Fable coordinators use `delegated-implementation`:
+Astra assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5.
+The parent owns architecture, scope, integration, and direct review of every
+deliverable and changed code line. Workers handle implementation, tests, CI
+repairs, and post-review code fixes. All skill authorship stays with the parent,
+including skill work inside child issues; workers may run validation. Independent
+issue work can run in parallel under the same originating coordinator. The
+active harness owns agent mechanics. Neither skill merges PRs.
+
+Examples:
+
+- `Use $issue-to-pr on issue 4484`
+- `Use $epic-to-prs on epic 4700; review meaningful batches together`
+
+### `delegated-implementation`
+
+Use when the parent should keep requirements, architecture, and direct review
+while workers implement accepted work. `issue-to-pr` and `epic-to-prs` apply
+this contract for Astra/Fable coordinators. It can also be requested directly:
+`Use $delegated-implementation on this accepted plan; keep the design and review
+with you.` Skill authorship remains the parent's work. Use `conductor` when the
+user wants its full plan-or-outcome lifecycle; this helper adds only execution
+responsibilities to the calling workflow.
 
 ### `skill-authoring`
 
@@ -647,7 +471,7 @@ Examples:
 
 ### `eli10`
 
-This package remains available in the repository for manual use but is not installed by `make install` or `make remote_install`. Its active installation is owned by `utility-skill`, and arch_skill leaves that installed copy untouched.
+This package remains available in the repository for manual use but is not installed by `make install` or `make remote_install`. Normal Codex, Claude Code, and Gemini sessions therefore do not discover it from the arch_skill installed surface.
 
 ### `commit-history-authoring`
 
@@ -675,7 +499,7 @@ Examples:
 
 ### `fresh-consult`
 
-Use when the user or another skill wants a clean, independent read-only opinion
+When explicitly selected, use when the user or another skill wants a clean, independent read-only opinion
 on a concrete artifact, completion claim, flow-consistency question, or
 readability check. Ordinary same-host reviews use a new clean native child
 (`fork_turns: "none"` in Codex or a clean named/custom subagent in Claude).
@@ -685,8 +509,8 @@ workspace-state checks, and synthesis.
 
 For an external consult, the user supplies enough information to resolve the
 runtime, model/profile, and effort, or the skill asks once. An omitted Codex
-model defaults to `gpt-5.6-sol`, and an omitted effort on that Sol lane
-defaults to `ultra`. Bare Kimi defaults to `kimi-code/k3` at `max`; natural
+model defaults to `gpt-6-astra`, and an omitted effort on that Astra lane
+defaults to `xhigh`. Bare Kimi defaults to `kimi-code/k3` at `max`; natural
 Grok wording selects `grok-4.6` and still requires an explicit effort. Exact
 versions and profiles are preserved without silent downgrade or provider
 switch.
@@ -703,9 +527,9 @@ host child handle and return contract. Monitor long work patiently.
 
 Examples:
 
-- `Use $fresh-consult with Codex gpt-5.6-sol ultra to audit whether this plan is complete`
+- `Use $fresh-consult with Codex gpt-6-astra xhigh to audit whether this plan is complete`
 - `Use $fresh-consult with Fugu Ultra xhigh to audit whether this plan is complete`
-- `Use $fresh-consult with Claude Fable 5 high for a cold read of this skill flow`
+- `Use $fresh-consult with Claude Fable 5.1 high for a cold read of this skill flow`
 - `Use $fresh-consult with Kimi K3 max for a cold read of this skill flow`
 - `Use $fresh-consult to tell me whether this doc is linear and not confusing`
 - `Use $fresh-consult to run three parallel cold reads on this plan`
@@ -728,15 +552,15 @@ same-host work uses native children directly. The adapter preserves exact model
 resolution, CLI invocation, namespaced receipts, shared-worktree reporting, and
 exact-handle resume.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-5.6-sol`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. An omitted Codex model defaults to `gpt-5.6-sol`, and an omitted effort on that Sol lane defaults to `ultra`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6-astra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. An omitted Codex model defaults to `gpt-6-astra`, and an omitted effort on that Astra lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
 Examples:
 
-- `Use $agent-delegate with Codex gpt-5.6-sol ultra to implement this README and Makefile update`
+- `Use $agent-delegate with Codex gpt-6-astra xhigh to implement this README and Makefile update`
 - `Use $agent-delegate with Fugu high to implement this README and Makefile update`
-- `Use $agent-delegate with Claude Fable 5 high to fix this failing test`
+- `Use $agent-delegate with Claude Fable 5.1 high to fix this failing test`
 - `Use $agent-delegate with Kimi K3 max to fix this failing test`
 - `Use $agent-delegate to run $skill-authoring on this one skill package`
 - `Use $agent-delegate to run two parallel workers on these fixes`
@@ -754,7 +578,7 @@ Practical rule:
 
 ### `plan-audit`
 
-Use when the user wants an existing planning artifact audited before work starts, or when code already written for a plan needs prompt-first review against that plan. It checks outcome clarity, real ambiguity, constraints, repo/code truth, depth-first risk, side doors, deletes, drift-proofing, owner path, SSOT, duplicate truth, stale docs/prompts, proof gaps, caller fit, and elegance.
+When explicitly selected, use when the user wants an existing planning artifact audited before work starts, or when code already written for a plan needs prompt-first review against that plan. It checks outcome clarity, real ambiguity, constraints, repo/code truth, depth-first risk, side doors, deletes, drift-proofing, owner path, SSOT, duplicate truth, stale docs/prompts, proof gaps, caller fit, and elegance.
 
 `plan-audit implementation-audit` is review-only. It uses strict `approve`, `not-approved`, or `scope-inconclusive` verdicts. It does not implement, run tests, prove CI, ask for logs, investigate honesty, or replace ordinary diff or PR review.
 
@@ -766,7 +590,7 @@ Practical rule:
 
 ### `plan-implement`
 
-Use when the user wants to implement an existing plan, phase, section, checklist, issue-body plan, or design doc while keeping implementation state easy to resume. It keeps `<PLAN_STEM>_IMPLEMENTATION_LOG.md` beside non-trivial file-backed plans, reuses proof until stale, runs checks for impact rather than habit, and uses warm plan-backed review while code is still easy to repair.
+When explicitly selected, use when the user wants to implement an existing plan, phase, section, checklist, issue-body plan, or design doc while keeping implementation state easy to resume. It keeps `<PLAN_STEM>_IMPLEMENTATION_LOG.md` beside non-trivial file-backed plans, reuses proof until stale, runs checks for impact rather than habit, and uses warm plan-backed review while code is still easy to repair.
 
 The plan remains source of truth. New independent native children start clean,
 accepted repairs return to the exact implementer, and independent rechecks use
@@ -788,7 +612,7 @@ Practical rule:
 
 ### `conductor`
 
-Use when the user wants a finished plan, a partial plan, or a described
+When explicitly selected, use when the user wants a finished plan, a partial plan, or a described
 outcome conducted to verified completion by delegated workers while the
 parent remains the executive architect, scope judge, and cynical reviewer.
 Outcome and partial-plan intake first run an executive shaping stage: worker
@@ -799,7 +623,7 @@ before dispatch when done-state or frozen scope is not defensible; the
 readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is Codex
-`gpt-5.6-sol` at `ultra`, with one-word swaps to Kimi, Grok, Cursor, or
+`gpt-6-astra` at `xhigh`, with one-word swaps to Kimi, Grok, Cursor, or
 Claude, and it covers every heavy role: implementation, research,
 verification, any requested cynical review, and the cold verifier. That
 profile runs on a native child when the host can reach the model in its child
@@ -847,7 +671,7 @@ Practical rule:
 
 ### `model-consensus`
 
-Use when the user wants two selected model participants to cross-check,
+When explicitly selected, use when the user wants two selected model participants to cross-check,
 critique, and converge. The parent resolves transport per participant:
 same-host roles use separate new clean native children when capable;
 cross-provider or unavailable exact-model/profile roles use external resumable
@@ -857,7 +681,7 @@ default topology, and no deterministic runner or controller is added.
 The user names the participant identities. Native roles use only model
 capabilities the host can confirm; an unavailable load-bearing identity selects
 the external lane. External shorthand follows the shared exact model resolver:
-bare Codex selects `gpt-5.6-sol` at `ultra`, bare Kimi selects `kimi-code/k3`
+bare Codex selects `gpt-6-astra` at `xhigh`, bare Kimi selects `kimi-code/k3`
 at `max`, and natural Grok wording selects `grok-4.6` while retaining Grok's
 explicit-effort requirement.
 
@@ -870,11 +694,11 @@ preserve exact host child handles. Both are read-only and parent-integrated.
 
 Examples:
 
-- `Use $model-consensus with Claude Fable 5 high and Codex gpt-5.6-sol ultra to find the simplest architecture for this repo change`
-- `Use $model-consensus with Fugu Ultra xhigh and Claude Fable 5 high to test this plan`
+- `Use $model-consensus with Claude Fable 5.1 high and Codex gpt-6-astra xhigh to find the simplest architecture for this repo change`
+- `Use $model-consensus with Fugu Ultra xhigh and Claude Fable 5.1 high to test this plan`
 - `Use $model-consensus with Kimi K3 max and Grok 4.6 high to test this plan`
-- `Use $model-consensus with Codex gpt-5.6-sol ultra in adversarial mode against Claude Sonnet 4.6 high; use an external Claude participant if the active host cannot confirm that exact native model`
-- `Use $model-consensus with gpt-5.6-sol ultra and Opus 4.7 max to read everything and figure out why this training path is failing`
+- `Use $model-consensus with Codex gpt-6-astra xhigh in adversarial mode against Claude Sonnet 4.6 high; use an external Claude participant if the active host cannot confirm that exact native model`
+- `Use $model-consensus with gpt-6-astra xhigh and Opus 4.7 max to read everything and figure out why this training path is failing`
 - `Use $model-consensus to have two models iterate on this concept until they agree or name the unresolved tradeoff`
 
 Practical rule:
@@ -916,7 +740,7 @@ Practical rule:
 
 ### `cynical-code-review`
 
-Use when the user wants a prompt-only skeptical implementation-integrity code
+When explicitly selected, use when the user wants a prompt-only skeptical implementation-integrity code
 review over implemented code, a branch, diff, path set, completion claim, or
 optional plan-backed implementation and wants the review saved to disk. It
 assumes the completion story may be misleading, treats names/docs/status/tests
@@ -942,7 +766,7 @@ Practical rule:
 
 ### `cynical-architecture-review`
 
-Use when the user wants a prompt-only skeptical architecture review over a
+When explicitly selected, use when the user wants a prompt-only skeptical architecture review over a
 branch, diff, subsystem, plan-backed implementation, or code area and wants the
 review saved to disk. It assumes the architecture may have emerged accidentally
 through iteration, preserves the intended UX and hard experiment requirements,
@@ -974,7 +798,7 @@ Practical rule:
 
 ### `cynical-cruft-removal`
 
-Use when the user wants a prompt-only skeptical cleanup review over a repo,
+When explicitly selected, use when the user wants a prompt-only skeptical cleanup review over a repo,
 branch, diff, subsystem, test suite, dependency set, generated artifact set, or
 docs/examples/prompt surface and wants a deep deletion report saved to disk. It
 assumes references are not proof of value, identifies live roots and current
@@ -1006,7 +830,7 @@ Practical rule:
 
 ### `exhaustive-code-review`
 
-Use when the user wants a prompt-only exhaustive code review over a branch,
+When explicitly selected, use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim, and wants the review saved to
 disk. It uses coverage-led clean native read-only slices, bounds fanout by host
 slots, collision risk, and parent integration capacity, reviews touched files, changed

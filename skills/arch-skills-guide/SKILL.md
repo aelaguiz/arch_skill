@@ -1,6 +1,6 @@
 ---
 name: arch-skills-guide
-description: "Explain the arch skill suite, distinguish the live subskills, and recommend the right one for a user's task. Use when a request asks which arch skill to use, what the difference is between `arch-step`, `miniarch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `goal-loop`, `north-star-investigation`, `arch-flow`, or wants a quick tour of the arch suite. Not for actually running the underlying workflow."
+description: "Explain the arch skill suite, distinguish the live subskills, and recommend the right one for a user's task. Use when a request asks which arch skill to use, what the difference is between `arch-step`, `miniarch-step`, `arch-docs`, `arch-mini-plan`, `lilarch`, `bugs-flow`, `audit-loop`, `comment-loop`, `audit-loop-sim`, `north-star-investigation`, `arch-flow`, or wants a quick tour of the arch suite. Not for actually running the underlying workflow."
 metadata:
   short-description: "Guide and selector for the arch skill suite"
 ---
@@ -65,14 +65,14 @@ Use this skill when the user needs help choosing or understanding the arch suite
    - repo-wide explanation hardening, high-value code comments, or map-first convention/gotcha comments -> `comment-loop`
    - repo-wide audit pass, systematic defect hunt, or leave-it-running cleanup loop -> `audit-loop`
    - repo-wide real-app automation audit loop with a simulator ledger -> `audit-loop-sim`
-   - open-ended goal where the path is unknown -> `goal-loop`
+   - open-ended goal where the path is unknown -> native goal mode
    - quant-heavy investigation with ranked hypotheses -> `north-star-investigation`
    - read-only checklist or next-step routing on an arch doc -> `arch-flow`
 3. Answer with:
    - the primary recommendation
    - a short why
    - the nearest lookalike and why it is not the default
-4. If the user says to proceed, stop guiding and switch to the recommended skill.
+4. If the user says to proceed, stop guiding and switch to the recommended workflow.
 
 ## Output expectations
 

@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Android monetization audit | Poker Skill</title>
+<link rel="stylesheet" href="style/pico.min.css">
+<link rel="stylesheet" href="style/pokerskill-report.css">
+<style>
+  /* Inline evidence shots sit side by side at phone width; the lightbox gives full size. */
+  main > p > img { max-width: 265px; height: auto; display: inline-block; vertical-align: top; margin: 0.4rem 0.6rem 0.4rem 0; }
+  /* Contact-sheet grid for screenshot appendices. */
+  .grid { display: flex; flex-wrap: wrap; gap: 14px; }
+  .grid figure { width: 180px; margin: 0; }
+  .grid figcaption { font-size: 0.72rem; line-height: 1.3; margin-top: 0.3rem; }
+</style>
+</head>
+<body>
+
+<button class="ps-export" onclick="PS.exportPDF()" title="Export this report as a PDF">Export PDF</button>
+
+<header class="container ps-header">
+  <img class="ps-logo ps-logo-screen" src="style/assets/pokerskill-logo-dark.svg" alt="Poker Skill">
+  <img class="ps-logo ps-logo-print" src="style/assets/pokerskill-logo-print.svg" alt="Poker Skill">
+  <p class="ps-kicker">Android Monetization</p>
+  <h1>What was actually broken in 2.1.39 and 2.1.40</h1>
+  <p class="ps-meta">
+    <span>Written September 1, 2026</span>
+    <span>575 checkout starts</span>
+    <span>45 recordings audited</span>
+  </p>
+</header>
+
+<main class="container">
+<h2 id="reproduction">Reproduction</h2>
+<p><strong>Status:</strong> Reproduced by direct production
+observation.</p>
+<p><strong>Lane:</strong> Canonical BigQuery checkout events joined to
+complete PostHog mobile recordings, then checked against the exact
+Android release source.</p>
+<p><strong>What the reproduction showed:</strong></p>
+<ol type="1">
+<li>One production lesson-energy paygate showed only app-owned “Loading
+plans…” UI for roughly 8 to 10 seconds before the player backed out; no
+offering-ready event followed.</li>
+<li>A separate Play vs AI daily-limit paygate showed “This is taking
+longer than expected” and Retry for about 58 seconds, then recovered to
+pricing.</li>
+<li>One production flow exposed an internal RevenueCat and Clerk
+ownership error to the player for about 15 seconds. A manual action in
+the two-control error area was followed by recovery; the available
+pixels do not establish which control was tapped.</li>
+<li>Several failures returned the player to ordinary play with no
+visible explanation. Other explicit errors showed a clear dialog or
+later converted.</li>
+<li>Long static replay frames did not prove long foreground hangs.
+Mobile replay holds the last frame while the app is inactive or the OS
+owns the screen. One selected case logs <code>app_background</code>;
+another logs <code>app_foreground</code> on return.</li>
+<li>Release source contains a 10-second no-terminal watchdog that can
+put the paywall into “Checking purchase…” with its primary CTA disabled.
+A late result can resolve it, but the inspected path has no bounded
+in-place recovery action if neither native nor canonical evidence
+arrives. This is a credible recovery risk, not a replay-proven
+indefinite foreground hang.</li>
+</ol>
+<p><strong>Deployed and analyzed source:</strong> Android 2.1.39 at
+<code>7144eb88f79865d5e07264d48a48f9a9f1fe70b5</code>; Android 2.1.40
+and the detached audit worktree at
+<code>f77a39bc1a53c5dadb5a664f2eadaa2264fda723</code>.</p>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Evidence lane</th>
+<th>What it showed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BigQuery</td>
+<td>The closed 575-checkout population, corrected outcomes, acquisition
+groups, offering states, and instrumentation gaps.</td>
+</tr>
+<tr>
+<td>PostHog events</td>
+<td>Event order, lifecycle transitions, duplicate emissions, store
+outcomes, late commits, and offering recovery.</td>
+</tr>
+<tr>
+<td>PostHog recordings</td>
+<td>45 unique assigned recordings. Every available recording was watched
+end to end. One recording returned 404; two assigned event moments fell
+outside the available recording window.</td>
+</tr>
+<tr>
+<td>Sentry</td>
+<td>Not used for a new causal claim. The existing exact-owner issue
+already owns the provider failure class. This audit only claims the
+directly observed unsafe error presentation.</td>
+</tr>
+<tr>
+<td>Fly logs</td>
+<td>Structurally unnecessary for the player-visible client findings. No
+backend producer claim was added beyond the existing exact-owner
+issue.</td>
+</tr>
+<tr>
+<td>Device or simulator</td>
+<td>Not needed to reproduce production-observed pixels. Native Google
+Play UI remains outside PostHog mobile capture, so the report does not
+infer its contents.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Prior same-class search:</strong> The search of
+<code>/Users/aelaguiz/workspace/psagentspace/REGRESSIONS.md</code> found
+the existing RevenueCat offering-stall class, the Android
+purchase-not-allowed class, the exact-owner entitlement-bootstrap class,
+and the Android trial-copy mismatch class. This audit extends their
+population and replay evidence. It adds the separate client
+error-presentation path to the ledger without duplicating the existing
+provider owner.</p>
+<h2 id="executive-answer">Executive answer</h2>
+<p><strong>Android underperformed mainly because many more checkout
+starts ended in cancellation, not because paywalls broadly failed to
+load.</strong></p>
+<ul>
+<li>Android purchased in 73 of 353 checkout starts,
+<strong>20.7%</strong>.</li>
+<li>iOS purchased in 122 of 222 starts, <strong>55.0%</strong>.</li>
+<li>The 34.3-point purchase-rate gap decomposes into <strong>26.5 points
+of extra Android cancellation</strong>, 4.7 points of extra unresolved
+outcomes, and 3.0 points of extra explicit errors.</li>
+<li>Cancellation accounts for <strong>77.4% of the platform
+gap</strong>.</li>
+<li>Android offerings reached ready in 881 of 889 paygate sessions,
+<strong>99.1%</strong>.</li>
+<li>Even if every one of the 17 final Android error outcomes had
+converted, Android would reach only <strong>25.5%</strong>, still far
+below iOS.</li>
+<li>Excluding the labeled test-market paid segment raises Android
+purchase rate only from <strong>20.7% to 23.2%</strong>. That segment
+does not explain the gap by itself. The broader Android-versus-iOS
+acquisition-mix theory remains unresolved because the other acquisition
+differences were not normalized.</li>
+</ul>
+<h3 id="decision">Decision</h3>
+<p>Fix the three narrow product defects and the reporting holes. Do not
+treat this as a systemic Android paywall-loading outage or a proven mass
+checkout hang. The next product question is why Android players cancel
+so often around the native handoff, a surface PostHog recordings cannot
+fully see.</p>
+<h2 id="method">Method</h2>
+<h3 id="cohort-construction">Cohort construction</h3>
+<p>The denominator is a distinct <code>paygate_checkout_started</code>
+session on Android or iOS version 2.1.39 or 2.1.40 during the closed
+Aug. 18-31 UTC window. The audit reconciled each start across:</p>
+<ul>
+<li><code>subscription_checkout_store_interaction</code></li>
+<li><code>paygate_result</code></li>
+<li><code>paygate_checkout_finished</code></li>
+<li><code>subscription_commit</code></li>
+</ul>
+<p>A valid purchase or commit takes precedence over a conflicting later
+error or cancellation. A start with no canonical terminal remains
+unresolved. Five Android and three iOS 2.1.40 commits had no
+<code>paygate_checkout_started</code>; they were excluded from the start
+denominator rather than allowed to inflate conversion.</p>
+<p>PostHog and warehouse clocks can differ by seconds, and PostHog HogQL
+rendered some timestamps in US Central time. Case adjudication therefore
+used event order plus recording-relative time, not naive timestamp
+equality.</p>
+<h3 id="replay-selection">Replay selection</h3>
+<p>The replay casebook included:</p>
+<ul>
+<li>all 21 recent Android recordings with an explicit store error</li>
+<li>15 matched cancellation, unresolved, successful-purchase,
+offering-failure, and instrumentation controls</li>
+<li>the six longest available unresolved checkout captures</li>
+<li>four additional offering-problem recordings not already covered</li>
+</ul>
+<p>That is 45 unique recordings because one delayed-offering recording
+appears in both the flow and long-unresolved sets. Forty-four were
+available and watched in full. One was retention-expired with a 404. The
+error moment for one available recording and the checkout moment for
+another occurred after the recording ended; those cases stay blocked
+rather than being guessed.</p>
+<p>Mobile recordings were inspected frame by frame. A static frame
+during near-zero activity, a native billing handoff, or an explicit
+later <code>app_foreground</code> was treated as a capture limitation,
+not foreground-hang proof.</p>
+<h2 id="closed-checkout-population">Closed checkout population</h2>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Platform</th>
+<th style="text-align: right;">Starts</th>
+<th style="text-align: right;">Purchased</th>
+<th style="text-align: right;">Cancelled</th>
+<th style="text-align: right;">Error</th>
+<th style="text-align: right;">Unresolved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Android</td>
+<td style="text-align: right;">353</td>
+<td style="text-align: right;">73 (20.7%)</td>
+<td style="text-align: right;">232 (65.7%)</td>
+<td style="text-align: right;">17 (4.8%)</td>
+<td style="text-align: right;">31 (8.8%)</td>
+</tr>
+<tr>
+<td>iOS</td>
+<td style="text-align: right;">222</td>
+<td style="text-align: right;">122 (55.0%)</td>
+<td style="text-align: right;">87 (39.2%)</td>
+<td style="text-align: right;">4 (1.8%)</td>
+<td style="text-align: right;">9 (4.1%)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="by-release">By release</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Platform and release</th>
+<th style="text-align: right;">Starts</th>
+<th style="text-align: right;">Purchased</th>
+<th style="text-align: right;">Purchase rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Android 2.1.39</td>
+<td style="text-align: right;">255</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">19.6%</td>
+</tr>
+<tr>
+<td>Android 2.1.40</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">23.5%</td>
+</tr>
+<tr>
+<td>iOS 2.1.39</td>
+<td style="text-align: right;">147</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">51.0%</td>
+</tr>
+<tr>
+<td>iOS 2.1.40</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">62.7%</td>
+</tr>
+</tbody>
+</table>
+<p>Android improved by 3.9 points from 2.1.39 to 2.1.40, but the sample
+still sits far below iOS. The later release did not introduce a broad
+new collapse.</p>
+<h3 id="what-explains-the-platform-gap">What explains the platform
+gap</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Excess Android outcome versus iOS</th>
+<th style="text-align: right;">Percentage points</th>
+<th style="text-align: right;">Share of purchase-rate gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cancellation</td>
+<td style="text-align: right;">26.5</td>
+<td style="text-align: right;">77.4%</td>
+</tr>
+<tr>
+<td>Unresolved</td>
+<td style="text-align: right;">4.7</td>
+<td style="text-align: right;">13.8%</td>
+</tr>
+<tr>
+<td>Error</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">8.8%</td>
+</tr>
+</tbody>
+</table>
+<p>This is an arithmetic decomposition, not a causal model. It says
+where the outcomes land. It does not say why an Android player
+cancelled.</p>
+<h3 id="android-acquisition-groups">Android acquisition groups</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Acquisition group</th>
+<th style="text-align: right;">Starts</th>
+<th style="text-align: right;">Purchased</th>
+<th style="text-align: right;">Purchase rate</th>
+<th style="text-align: right;">Cancelled</th>
+<th style="text-align: right;">Error</th>
+<th style="text-align: right;">Unresolved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Main paid campaigns</td>
+<td style="text-align: right;">169</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">20.1%</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr>
+<td>Test-market paid campaigns</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">14.1%</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr>
+<td>Unlinked or organic</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">28.6%</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td>Other attributed campaigns</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">37.5%</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>Removing test-market traffic leaves 59 purchases from 254 starts,
+<strong>23.2%</strong>. The 2.5-point lift is real but far too small to
+explain the 34.3-point platform gap.</p>
+<h2 id="offering-health">Offering health</h2>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Android release</th>
+<th style="text-align: right;">Paygate sessions</th>
+<th style="text-align: right;">Reached ready</th>
+<th style="text-align: right;">Refresh failed</th>
+<th style="text-align: right;">Still pending</th>
+<th style="text-align: right;">No ready or error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.1.39</td>
+<td style="text-align: right;">640</td>
+<td style="text-align: right;">633</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>2.1.40</td>
+<td style="text-align: right;">249</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<p>The six 2.1.39 refresh failures were concentrated in three people or
+devices. Two of the three 2.1.40 still-pending sessions later reached
+ready, after 4.986 seconds and 66.253 seconds. The remaining session
+never reached ready; its player backed out after roughly 8 to 10 seconds
+of visible loading.</p>
+<h2 id="what-is-actually-broken">What is actually broken</h2>
+<h3 id="1-rare-offering-failures-can-block-a-real-checkout">1. Rare
+offering failures can block a real checkout</h3>
+<p>One 2.1.40 lesson-energy paygate showed only app-owned “Loading
+plans…” UI for roughly 8 to 10 seconds. The player backed out and chose
+Keep Learning. No offering-ready or terminal offering-error event
+followed.</p>
+<p><img src="media/offering-abandoned.jpg"
+alt="Unrecovered Android offering load. The player backed out after 8 to 10 seconds; no ready event followed." /></p>
+<p>A different 2.1.40 Play vs AI daily-limit paygate remained in
+app-owned loading UI for about 58 seconds. It showed “This is taking
+longer than expected” and Retry, then recovered to pricing. Its
+canonical ready event arrived 66.253 seconds after
+<code>still_pending</code>.</p>
+<p><img src="media/offering-stall.jpg"
+alt="Recovered Android offering delay. The app-owned timeout state remained visible for about 58 seconds before pricing appeared." /></p>
+<p>Neither sequence is a Google Play capture gap. Every relevant pixel
+belongs to the app.</p>
+<p>The cohort also contains six 2.1.39 refresh-failure sessions. Four
+belonged to one player across two consecutive days. In the strongest
+sequence, the first failure allowed lessons to continue, but the later
+energy-gate failure repeated and was followed immediately by an explicit
+lesson quit.</p>
+<p><strong>Disposition:</strong> Confirmed defect, low incidence. The
+recovered case proves that Retry and eventual pricing can work. The
+abandoned case's back-out path prevented a hard trap, but no ready event
+followed. Neither outcome makes the delayed offering load healthy.</p>
+<h3
+id="2-purchase-and-entitlement-errors-are-presented-inconsistently">2.
+Purchase and entitlement errors are presented inconsistently</h3>
+<p>The 21 explicit error recordings contained:</p>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Error class</th>
+<th style="text-align: right;">Recordings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Purchase not allowed</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr>
+<td>Store problem</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr>
+<td>Purchase invalid</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td>Network error</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>Duplicate operation guard</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<p>Four affected players later committed. Some failures showed a clear,
+dismissible purchase dialog. Several returned silently to ordinary
+content. One showed an internal exact-owner entitlement message in a
+player-facing puzzle error surface. A tap in the two-control error area
+was followed by recovery, but the available pixels cannot distinguish
+Try again from Back to puzzles.</p>
+<p><img src="media/internal-error.jpg"
+alt="Confirmed unsafe error copy. An internal entitlement error reached the player." /></p>
+<p>The direct propagation owner in 2.1.40 is
+<code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/features/puzzles/presentation/screens/puzzles_deeplink_resolver_screen.dart:284-287</code>,
+which renders <code>_resolution.lastError?.toString()</code> as the
+subtitle. The provider failure itself remains owned by <a
+href="https://github.com/funcountry/psmobile/issues/4484" target="_blank" rel="noopener noreferrer">the production
+exact-owner issue, psmobile #4484</a>. This report confirms the separate
+presentation defect: internal diagnostic text escaped the error
+boundary.</p>
+<p><strong>Disposition:</strong> Confirmed player-facing error-handling
+defect. It is narrow and transient, but it should not reach players.</p>
+<h3
+id="3-pending-checkout-lacks-a-clearly-bounded-in-place-recovery-state">3.
+Pending checkout lacks a clearly bounded in-place recovery state</h3>
+<p>The release code protects against double charge and waits for late
+store truth, which is correct. The risk is what the player can do while
+that evidence never arrives.</p>
+<ul>
+<li>The no-terminal watchdog fires after 10 seconds.</li>
+<li>The service returns a pending outcome while the native future
+continues.</li>
+<li>The journey renders
+<code>SubscriptionJourneyView.checking</code>.</li>
+<li>The primary CTA reads “Checking purchase…” and is disabled.</li>
+<li>A back arrow remains, but no timeout-specific Check Again or Restore
+action appears on the inspected paywall state.</li>
+</ul>
+<p><img src="media/checking-risk.jpg"
+alt="Unresolved recovery risk. The primary CTA is disabled while the app waits for late purchase evidence." /></p>
+<p>The 31 unresolved Android starts do not prove 31 hangs. All have a
+store-start event and no later canonical terminal. Thirty have a
+recording. The six longest selected captures produced:</p>
+<ul>
+<li>one confirmed app background after checkout</li>
+<li>two visible forward-progress outcomes</li>
+<li>one recording that ends 34.5 seconds into checking</li>
+<li>two inactivity-dominated, relaunch-shaped gaps that do not prove
+foreground residence</li>
+</ul>
+<p><strong>Disposition:</strong> Unresolved recovery risk in source. The
+source permits an unbounded wait if neither late native truth nor
+canonical evidence arrives, but the replay set does not establish a
+systemic foreground hang.</p>
+<h3 id="4-canonical-monetization-reporting-has-real-gaps">4. Canonical
+monetization reporting has real gaps</h3>
+<p>These are measurement defects, not player-flow defects:</p>
+<ul>
+<li>PostHog contains 153 Android
+<code>paygate_presentation_invariant</code> events across 2.1.39 and
+2.1.40. The canonical BigQuery path contains zero.</li>
+<li>Five Android and three iOS 2.1.40 purchase commits lack
+<code>paygate_checkout_started</code>.</li>
+<li>One watched cancellation emitted three to four copies of
+<code>paygate_opened</code> and <code>paygate_result</code>, two
+checkout start-finish cycles, and a late cancellation-verification event
+for one visible player action.</li>
+<li><code>subscription_benefits_cta</code> records navigation from
+benefits to billing. It is not a store purchase click.</li>
+<li>Some successful purchases lack a store-start event, so raw
+event-family counts cannot be treated as complete checkout
+populations.</li>
+</ul>
+<p><strong>Disposition:</strong> Confirmed measurement artifact.
+Session-grain reconciliation is required until canonical coverage is
+repaired.</p>
+<h2 id="what-is-not-broken">What is not broken</h2>
+<h3 id="successful-purchase-and-entitlement-continuation">Successful
+purchase and entitlement continuation</h3>
+<p>Four matched successful-purchase controls genuinely purchased. The
+captured app states never contradicted the canonical outcomes. One
+recovered cleanly after a full process restart. Another confirmed
+unlimited energy after a purchase despite a duplicate-operation guard
+event.</p>
+<p><img src="media/purchase-success.jpg"
+alt="Healthy purchase control. Unlimited energy is visible after a successful purchase." /></p>
+<p>The earlier purchase-success handoff gap is real historical work, but
+it is resolved by <a
+href="https://github.com/funcountry/psmobile/pull/4662" target="_blank" rel="noopener noreferrer">the merged
+purchase-success fix, psmobile PR #4662</a>. No entitlement-loss theory
+should be reopened from this cohort.</p>
+<h3 id="most-cancellation-controls">Most cancellation controls</h3>
+<p>The cancellation controls showed normal decline paths, native-store
+round trips, and continuation into free content. Static paywall frames
+around a later <code>app_foreground</code> were native or background
+capture gaps, not freezes.</p>
+<p>Cancellation is still the largest business problem in the cohort. The
+recordings cannot show whether the player rejected the native Google
+Play sheet, disliked the price, lacked a valid payment setup, or simply
+changed their mind.</p>
+<h3 id="broad-offering-availability">Broad offering availability</h3>
+<p>Offers reached ready in 99.1% of the closed Android paygate-session
+population. That disproves a broad offering outage. It does not erase
+the rare, directly observed failures above.</p>
+<h3 id="a-broad-missing-trial-label-claim">A broad missing-trial-label
+claim</h3>
+<p>The audited 2.1.40 screens that had trial data showed the free-trial
+label and renewal terms. That does not close the eligibility-specific
+question because no qualifying existing-subscriber plan-change recording
+was available.</p>
+<p><img src="media/trial-visible.jpg"
+alt="A 2.1.40 paygate with visible free-trial label and renewal terms after offering recovery." /></p>
+<h2 id="theory-ledger">Theory ledger</h2>
+<p>Every recurring theory from the Aug. 17, Aug. 24, and Aug. 31 reports
+receives one final disposition below.</p>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Theory in plain English</th>
+<th>Final disposition</th>
+<th>What the audit found</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An alternative paygate presentation path caused the Android
+conversion gap</td>
+<td><strong>Disproved</strong></td>
+<td>Audited Android paygates rendered, accepted input, entered checkout,
+and continued across purchases and cancellations. No replay or
+population split tied the 34.3-point gap to that presentation path.</td>
+</tr>
+<tr>
+<td>Android hides a free-trial badge even when the current Google Play
+offer includes a trial</td>
+<td><strong>Unresolved</strong></td>
+<td>Trial labels and renewal terms were visible in the audited
+eligible-looking 2.1.40 screens, but no qualified existing-subscriber
+plan-change recording was available. Keep the question narrowly scoped
+under <a href="https://github.com/funcountry/psmobile/issues/4225" target="_blank" rel="noopener noreferrer">the
+Android trial-badge issue, psmobile #4225</a>.</td>
+</tr>
+<tr>
+<td>A purchase can dismiss without showing success or usable Plus
+access</td>
+<td><strong>Confirmed defect, resolved</strong></td>
+<td>The prior handoff issue was valid and is closed under <a
+href="https://github.com/funcountry/psmobile/issues/4438" target="_blank" rel="noopener noreferrer">the
+purchase-success handoff issue, psmobile #4438</a>. The cohort’s
+purchase controls showed entitlement continuation, and <a
+href="https://github.com/funcountry/psmobile/pull/4662" target="_blank" rel="noopener noreferrer">the merged
+purchase-success fix, psmobile PR #4662</a> owns the repair.</td>
+</tr>
+<tr>
+<td>RevenueCat exact-owner lookup can block entitlement bootstrap</td>
+<td><strong>Confirmed defect</strong></td>
+<td>One Android recording directly captured the internal exact-owner
+failure on screen. A manual action in the two-control error area was
+followed by recovery, but the selected control is not identifiable. The
+provider class remains open under <a
+href="https://github.com/funcountry/psmobile/issues/4484" target="_blank" rel="noopener noreferrer">the production
+exact-owner issue, psmobile #4484</a>. The new finding here is unsafe
+player-facing propagation.</td>
+</tr>
+<tr>
+<td>Offering loading and refresh errors block some valid paygates</td>
+<td><strong>Confirmed defect, rare</strong></td>
+<td>Six of 640 2.1.39 sessions refreshed to failure. One 2.1.40
+lesson-energy session never reached ready and was abandoned after
+roughly 8 to 10 seconds. A different Play vs AI daily-limit session
+showed timeout copy and Retry for about 58 seconds, then recovered to
+pricing. This is real but not systemic.</td>
+</tr>
+<tr>
+<td>Dead-session and route-removal cleanup guards block valid
+purchases</td>
+<td><strong>Expected behavior</strong></td>
+<td>Watched guard and cleanup cases continued or had no live purchase
+UI. One duplicate-operation guard fired after a successful purchase with
+unlimited energy already visible. No player-facing block was
+reproduced.</td>
+</tr>
+<tr>
+<td>Store-side purchase blocks explain the Android gap</td>
+<td><strong>Confirmed error class, disproved as the main
+cause</strong></td>
+<td>The app recorded real purchase-not-allowed, invalid-purchase, store,
+and network errors. Some were silent, some were well handled, and four
+later committed. Even converting every final error would raise Android
+only to 25.5%. The remaining rate question belongs to <a
+href="https://github.com/funcountry/psmobile/issues/4684" target="_blank" rel="noopener noreferrer">the Android
+purchase-not-allowed investigation, psmobile #4684</a>.</td>
+</tr>
+<tr>
+<td>Google Play download reporting was frozen</td>
+<td><strong>Measurement artifact</strong></td>
+<td>The store-reporting branch can remain stale while product checkout
+recordings and canonical app events continue. This affects reporting
+coverage, not the player flow.</td>
+</tr>
+<tr>
+<td>Purchase-attributed coverage at zero means paid Android checkouts
+failed</td>
+<td><strong>Measurement artifact</strong></td>
+<td>Real paid Android purchases exist in canonical checkout outcomes.
+The zero is signal-parity or attribution coverage failure, not zero
+product conversion.</td>
+</tr>
+<tr>
+<td>Android's overall acquisition mix explains the checkout gap</td>
+<td><strong>Unresolved</strong></td>
+<td>The labeled test-market segment converted worse, but removing its 99
+starts raises Android only from 20.7% to 23.2%, so that segment alone
+does not explain the gap. The remaining Android and iOS acquisition
+differences were not normalized.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="new-finding-from-this-audit">New finding from this audit</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Finding</th>
+<th>Disposition</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“Checking purchase…” can lack bounded in-place recovery</td>
+<td><strong>Unresolved</strong></td>
+<td>The 10-second watchdog, pending journey state, and disabled CTA
+exist in both release lines. One recording ends mid-check after 34.5
+seconds. Longer frame holds are explained or confounded by backgrounding
+and inactivity, so systemic foreground incidence is not proven.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="release-code-explanation">Release-code explanation</h2>
+<p>The detached read-only checkout lives at
+<code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901</code>.</p>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Behavior</th>
+<th>Exact 2.1.40 source</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No-terminal threshold is 10 seconds</td>
+<td><code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/core/subscriptions/purchase_execution/subscription_checkout_observability.dart:12</code></td>
+<td>This is an observability and control-return threshold, not proof the
+store call failed.</td>
+</tr>
+<tr>
+<td>Native purchase races the watchdog; pending returns while late work
+continues</td>
+<td><code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/core/subscriptions/purchase_execution/subscription_purchase_service.dart:530-560</code></td>
+<td>Correctly avoids inventing a terminal and keeps late store truth
+reachable.</td>
+</tr>
+<tr>
+<td>Nonterminal evidence renders the checking view</td>
+<td><code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/core/subscriptions/journey/subscription_journey_machine.dart:656-705</code></td>
+<td>The journey remains charge-protective while it waits.</td>
+</tr>
+<tr>
+<td>Checking disables the primary CTA</td>
+<td><code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/features/subscription/presentation/components/paywall_readiness_cta.dart:38-55</code></td>
+<td>Safe against double purchase, but there is no in-place recovery
+action on this state.</td>
+</tr>
+<tr>
+<td>Puzzle resolver displays <code>lastError.toString()</code></td>
+<td><code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901/apps/flutter/lib/features/puzzles/presentation/screens/puzzles_deeplink_resolver_screen.dart:284-287</code></td>
+<td>Direct propagation owner for the internal text seen in replay.</td>
+</tr>
+</tbody>
+</table>
+<p>The watchdog, purchase-service race, and CTA behavior are present in
+both release tags. The purchase service and CTA files are unchanged
+between the tags. The journey machine changed, but both versions render
+a checking state for nonterminal evidence.</p>
+<h3 id="causal-classifications">Causal classifications</h3>
+<ul>
+<li><strong>Pending checkout:</strong> recovery blocker, not the
+initiating native-store cause. The app preserves uncertainty safely but
+does not bound the player’s in-place wait.</li>
+<li><strong>Internal error copy:</strong> propagation defect. The
+exact-owner provider failure has a separate existing owner; the resolver
+turns internal detail into player text.</li>
+<li><strong>Offering stall:</strong> confirmed availability failure with
+the exact stalled provider stage unresolved for this cohort. Retry is
+mitigation, not proof the provider cause is repaired.</li>
+<li><strong>Canonical reporting gaps:</strong> observability defects.
+They distort analysis but do not cause checkout failure.</li>
+</ul>
+<p>No source, production state, provider state, app data, or issue state
+was changed during this audit.</p>
+<h2 id="recommended-actions">Recommended actions</h2>
+<h3 id="1-give-pending-checkout-a-bounded-recovery-state">1. Give
+pending checkout a bounded recovery state</h3>
+<p>Keep the double-charge guard. After a bounded evidence wait, replace
+the disabled-only primary action with an explicit <strong>Check
+again</strong> or existing Restore/reconcile action plus a safe exit. Do
+not re-enable Buy while purchase status is unknown.</p>
+<p>Smallest proof:</p>
+<ul>
+<li>one focused test where the native purchase future never
+completes</li>
+<li>one focused test where a late purchase completes after the
+watchdog</li>
+<li>require the first case to expose recovery without allowing a second
+charge</li>
+<li>require the second case to grant access once and clear pending
+state</li>
+</ul>
+<h3 id="2-stop-rendering-internal-exceptions-as-player-copy">2. Stop
+rendering internal exceptions as player copy</h3>
+<p>At <code>puzzles_deeplink_resolver_screen.dart:284-287</code>, keep
+the full internal failure in structured logs and map the subtitle to one
+player-safe message. Preserve Retry and Back to puzzles. A plain unit or
+widget test should pass an exact-owner failure and assert that provider,
+identity, and internal class names are absent from the rendered
+text.</p>
+<h3
+id="3-preserve-offering-retry-then-record-final-disposition-on-the-existing-event">3.
+Preserve offering Retry, then record final disposition on the existing
+event</h3>
+<p>Do not add a new event family. Add one final-disposition field to the
+existing offering-state event with values such as recovered, backed out,
+refresh failed, or never ready. This separates the 4.986-second and
+66.253-second recoveries from the 8-to-10-second abandonment with no
+ready event, without another dashboard or state machine.</p>
+<h3 id="4-repair-one-canonical-checkout-model">4. Repair one canonical
+checkout model</h3>
+<p>Use distinct paygate sessions, not raw event counts. Bring the
+PostHog presentation-invariant family into the canonical path, reconcile
+late purchases with purchase precedence, and make commits-without-starts
+and starts-without-terminal visible as coverage warnings. Keep this in
+the existing dbt and Evidence surfaces.</p>
+<h3 id="5-investigate-cancellation-at-the-native-boundary">5.
+Investigate cancellation at the native boundary</h3>
+<p>Use existing events first. Split cancellations by app decline before
+native handoff, native user cancellation, and cancellation after a
+store-start event. Segment by paygate surface and acquisition group. If
+the current terminal event cannot express that location, add one enum to
+it rather than another event family.</p>
+<p>PostHog replay should remain a control for app-owned screens. It
+cannot tell us which Google Play plan, payment method, or native error
+the player saw.</p>
+<h2 id="what-not-to-build">What not to build</h2>
+<ul>
+<li>no global retry around a possibly live native purchase</li>
+<li>no new checkout event family</li>
+<li>no new replay classifier or proof pipeline</li>
+<li>no broad offering rewrite</li>
+<li>no reopening of the merged purchase-success handoff work</li>
+</ul>
+<h2 id="limitations">Limitations</h2>
+<ol type="1">
+<li><strong>Native Google Play pixels are absent.</strong> A black,
+torn, or held app frame during checkout cannot prove a hang. The report
+uses surrounding app state and lifecycle events instead.</li>
+<li><strong>A held mobile frame is not foreground proof.</strong> Mobile
+recordings preserve the last app screenshot through inactivity and OS
+suspension. Case 2 in the long-unresolved set logs
+<code>app_foreground</code> on return; case 3 logs
+<code>app_background</code> after checkout.</li>
+<li><strong>Recording and event clocks are not exact twins.</strong>
+Event order and video-relative time carried more weight than
+second-level equality.</li>
+<li><strong>One recording is unavailable.</strong> Store-error case 19
+returns 404. Store-error case 18 and flow case 7 have recordings, but
+their assigned event occurs after the available window.</li>
+<li><strong>The trial-badge question lacks the required account
+state.</strong> A trial label was visible where trial data was present,
+but no qualified existing-subscriber plan-change session was
+available.</li>
+<li><strong>Cancellation cause remains unresolved.</strong> The
+population proves where the gap lands. It does not reveal what happened
+inside the Google Play billing sheet.</li>
+</ol>
+<h2 id="privacy-and-sharing">Privacy and sharing</h2>
+<p>Raw recordings, timelines, and identifier-bearing extracts remain
+under
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replays.local/</code>,
+which is git-ignored and excluded from the shared artifact. Shared
+screenshots were manually checked and contain no user IDs, device IDs,
+emails, IPs, tokens, or account identifiers. Replay links require the
+existing authenticated PostHog session.</p>
+<h2 id="source-inventory">Source inventory</h2>
+<ul>
+<li>Final working report:
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/android-monetization-replay-audit.md</code></li>
+<li>Theory inventory:
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/theory-inventory.md</code></li>
+<li>Candidate and sampling record:
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/session-candidates.md</code></li>
+<li>Store-error replay reviews:
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/error-cases-01-07.md</code>,
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/error-cases-08-14.md</code>,
+and
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/error-cases-15-21.md</code></li>
+<li>Flow-control replay reviews:
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/flow-cases-01-08.md</code>
+and
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/flow-cases-09-15.md</code></li>
+<li>Long-unresolved replay review with final parent adjudication:
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/long-unresolved-cases.md</code></li>
+<li>Exhaustive offering review:
+<code>/Users/aelaguiz/workspace/psagentspace/research/2026-09-01-android-monetization-replay-audit/replay-reviews/all-offering-problems.md</code></li>
+<li>Read-only release checkout:
+<code>/Users/aelaguiz/workspace/psmobile-worktrees/android-monetization-replay-audit-20260901</code></li>
+</ul>
+<h2 id="authenticated-replay-index">Authenticated replay index</h2>
+<p>All available recordings below were watched in full. The links open
+only for a signed-in PostHog user with access to project 215955.</p>
+<h3 id="explicit-store-error-cases">Explicit store-error cases</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th style="text-align: right;">Case</th>
+<th>Date</th>
+<th>Surface and error</th>
+<th>Replay</th>
+<th>Final visual disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>Aug. 31</td>
+<td>Energy, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a058ce-e379-73c7-b647-0858588a7e9a" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Silent close; the player continued browsing.</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>Aug. 31</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a055d2-61fc-7275-9e38-36e25c6990a4" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Native-store capture gap; a later purchase committed.</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>Aug. 30</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05079-d6e6-7520-8936-178ea6b541b4" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Likely silent failure; lower-confidence frame evidence.</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>Aug. 29</td>
+<td>Onboarding, purchase invalid</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a04b8a-3003-770c-9dd8-923a714a8899" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>No visible defect; onboarding continued.</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>Aug. 27</td>
+<td>Onboarding, purchase invalid</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a044f5-cd37-7eff-a0c0-007a661bc57b" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Native-store capture gap; a later purchase committed.</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>Aug. 27</td>
+<td>Post-Puzzle, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a040d2-77e5-7807-9422-fdb9c7d5e805" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Silent failure; the player continued for more than 25 minutes.</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>Aug. 27</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a04082-8deb-7cf2-a918-d117015ee3e5" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Internal entitlement text exposed; a manual action was followed by
+recovery.</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>Aug. 26</td>
+<td>Lesson Energy, store problem</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a03b96-3d60-7de4-9860-2c9d9c1792a1" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Silent first failure; the paygate re-presented and purchase
+committed.</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>Aug. 25</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a039b9-7daa-7e48-8013-1ae08ca38bc0" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Alternate paygate appeared; clean decline.</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>Aug. 25</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a0395a-5e41-72b3-a639-f0710fdb412d" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Clear purchase-not-allowed dialog; free path continued.</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>Aug. 24</td>
+<td>Onboarding, network error</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a032d5-f103-7bc3-879b-ec9158334f74" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Silent network failure; free play continued.</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>Aug. 22</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a02b16-ae9c-738e-b3b0-e4f1f25e4028" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>No joined event or visible paywall; unresolved.</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>Aug. 22</td>
+<td>Onboarding, purchase invalid</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a02a7f-c37b-7170-bb26-d1268c422151" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Native capture corrupted; automatic retry committed.</td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>Aug. 21</td>
+<td>Onboarding, store problem</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a0223b-1b2c-7e9d-b0e7-2049dd63feca" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Silent store failure; no visible retry.</td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td>Aug. 21</td>
+<td>Onboarding, store problem</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a02235-f632-7102-b8d2-91d1f00f7a86" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Clear store-problem dialog; play continued.</td>
+</tr>
+<tr>
+<td style="text-align: right;">16</td>
+<td>Aug. 20</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a020c4-29aa-7b27-a6fd-a868a8ecb3cb" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Likely silent; no player block.</td>
+</tr>
+<tr>
+<td style="text-align: right;">17</td>
+<td>Aug. 20</td>
+<td>Onboarding, store problem</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a01f60-6aa3-7480-a352-542e6ab584e7" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Clear store-problem dialog; play continued.</td>
+</tr>
+<tr>
+<td style="text-align: right;">18</td>
+<td>Aug. 20</td>
+<td>Onboarding, store problem</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a01cb4-114b-77b5-96a1-32b1ef24be59" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Assigned error occurs about 51 seconds after recording ends.</td>
+</tr>
+<tr>
+<td style="text-align: right;">19</td>
+<td>Aug. 18</td>
+<td>Settings, store problem</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a016b9-f6aa-7d23-b292-61280ef9a174" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Recording unavailable with a 404.</td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td>Aug. 18</td>
+<td>Onboarding, purchase already in progress</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a01695-297a-7ed3-83d2-f4459d8cdfd1" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Purchase succeeded; the duplicate-operation guard was benign.</td>
+</tr>
+<tr>
+<td style="text-align: right;">21</td>
+<td>Aug. 18</td>
+<td>Onboarding, purchase not allowed</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a015e2-507a-7aba-b04c-e0626a2c8427" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Telemetry-only error during browsing; no purchase UI was open.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="matched-flow-and-control-cases">Matched flow and control
+cases</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th style="text-align: right;">Case</th>
+<th>Release</th>
+<th>Surface and branch</th>
+<th>Replay</th>
+<th>Final visual disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>2.1.40</td>
+<td>Post-puzzle cancellation</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05a91-7348-713f-ad1a-4fbd6b750d4c" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy decline; results remained usable.</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>2.1.40</td>
+<td>Onboarding cancellation</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05a56-43e7-758e-8147-145be0a72d0b" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy voluntary cancellation with native-store capture gaps.</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>2.1.40</td>
+<td>Settings cancellation</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a0580a-e5e4-78a1-ae35-e9d6552ad16d" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy voluntary cancellation from Settings.</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>2.1.39</td>
+<td>Onboarding cancellation</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05426-3863-7c12-b37f-dcaea50b5e26" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy cancellation; puzzle play continued.</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>2.1.40</td>
+<td>Delayed offering and unresolved checkout</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05a32-986b-79cb-840c-81df148a2a54" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Offering recovered after 66.253 seconds; later checkout had no
+terminal.</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>2.1.40</td>
+<td>Unresolved onboarding checkout</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05795-a8c4-7b10-bde2-ed0ee0e8afa6" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Recording ends on checking; likely native gap, not proven.</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>2.1.40</td>
+<td>Unresolved onboarding checkout</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a046bf-e22f-7304-a93c-9227053f52c9" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Assigned checkout occurs about 32 seconds after recording ends.</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>2.1.39</td>
+<td>Unresolved onboarding checkout</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a03fd2-3dc2-7c85-81cd-a40abdd6932b" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>First decline was healthy; second attempt is cut off in flight.</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>2.1.40</td>
+<td>Successful onboarding purchase</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05aa2-f93c-713e-ad98-ea62a431caa3" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy purchase control.</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>2.1.40</td>
+<td>Successful onboarding purchase</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05514-8034-7e08-823c-c0f4692727c6" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy purchase control with an 88-second checkout capture gap;
+replay cannot distinguish a native overlay from uncaptured app UI.</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>2.1.40</td>
+<td>Successful lesson-energy purchase</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a057fe-e92e-70b3-8e8d-19da742eb3bd" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy purchase control; later trial-cancellation telemetry did not
+undo access.</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td>2.1.39</td>
+<td>Successful onboarding purchase</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a04ac1-889b-751a-adb6-ec187f7b3dd3" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy purchase control; process restart recovered cleanly.</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td>2.1.39</td>
+<td>Repeated offering refresh failures</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a02144-ccb7-713c-84a5-0daffc9ffdda" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Two real refresh failures; player explicitly quit after the later
+energy failure.</td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>2.1.39</td>
+<td>Repeated offering refresh failures</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a02483-49b0-778c-af7f-1e818b15073b" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Same recurring failure for the same player on another day.</td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td>2.1.39</td>
+<td>Open-versus-presented instrumentation mismatch</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a03caf-2226-74dc-b734-19be96967aa1" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy visible cancellation; three-to-fourfold event
+duplication.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="long-unresolved-cases">Long-unresolved cases</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th style="text-align: right;">Case</th>
+<th>Release</th>
+<th>Surface</th>
+<th>Replay</th>
+<th>Final parent disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>2.1.40</td>
+<td>Onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05495-f2af-77fa-932a-b879a53048de" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Nineteen-hour span has only 73 active seconds and a relaunch-shaped
+recovery. No foreground-hang proof.</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>2.1.40</td>
+<td>Play Vs Ai Daily Limit</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05a32-986b-79cb-840c-81df148a2a54" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>One-hour frame hold ends with <code>app_foreground</code>. This is
+an inactivity or background gap, not an hour of proven foreground
+freeze.</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>2.1.39</td>
+<td>Onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a03bfd-e21d-7a4e-bc9d-3189e4c642a6" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Confirmed <code>app_background</code> 47 seconds after checkout;
+later pending record aged out.</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>2.1.39</td>
+<td>Onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a0345f-ba62-76ed-b90f-3b189659029d" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Healthy decline; the player entered puzzles and kept playing.</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>2.1.40</td>
+<td>Onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05047-8f7a-7715-9121-f217c1606dba" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Recording ends 34.5 seconds into checking. Outcome remains
+unresolved.</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>2.1.39</td>
+<td>Onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a02373-530e-7ad4-816d-4f3646b8b3c3" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Checking cleared to “Opening puzzle…” in about 20 seconds.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="additional-offering-problem-recordings">Additional
+offering-problem recordings</h3>
+<table class="ps-data striped">
+<thead>
+<tr>
+<th>Date</th>
+<th>Release and surface</th>
+<th>Replay</th>
+<th>Final disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aug. 19</td>
+<td>2.1.39 onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a01936-4242-788b-8394-7357417b030f" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Offering error emitted during a clean exit to Learn; no visible
+failure in the captured frames.</td>
+</tr>
+<tr>
+<td>Aug. 27</td>
+<td>2.1.39 onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a042f5-56a9-7cfa-8523-bfdd0a21cc4f" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Visible load-plans error for about five seconds; the player
+continued into a puzzle.</td>
+</tr>
+<tr>
+<td>Aug. 31</td>
+<td>2.1.40 lesson energy</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a0550c-e8a1-7da3-a685-567ded95bfed" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Unrecovered app-owned offering load visible for roughly 8 to 10
+seconds; player backed out before ready.</td>
+</tr>
+<tr>
+<td>Aug. 31</td>
+<td>2.1.40 onboarding</td>
+<td><a
+href="https://us.posthog.com/project/215955/replay/01a05543-4696-7632-8f08-2c7eae7f7a6a" target="_blank" rel="noopener noreferrer">Open
+replay</a></td>
+<td>Still-pending recovered in 4.986 seconds to localized pricing and an
+active CTA.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="final-verdict">Final verdict</h2>
+<p>The Android monetization problem in these releases is not one hidden
+catastrophic bug. It is a large cancellation problem plus a small set of
+real reliability and measurement defects. Repair pending-state recovery,
+sanitize error copy, preserve offering recovery, and fix session-grain
+reporting. Then use the existing checkout events to locate cancellation
+around the native boundary before changing paywall design or traffic
+strategy.</p>
+
+</main>
+
+<script src="style/pokerskill-nav.js"></script>
+<script src="style/pokerskill-lightbox.js"></script>
+<!-- Charts only if the report draws any:
+<script src="style/chart.umd.js"></script>
+<script src="style/pokerskill-charts.js"></script>
+-->
+</body>
+</html>

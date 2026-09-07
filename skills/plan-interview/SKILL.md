@@ -1,16 +1,14 @@
 ---
 name: plan-interview
-description: "Conduct an evidence-grounded intent interview that turns a described outcome — even three words like 'build this' — into an approved Intent Pack: north star, user journey maps, UX delta with visual references, plain-language numbered requirements, non-goals, architecture constraints, an in-interview-approved test grid, definition of done, execution policy, and autonomy contract, closed by a decision table and a steerable plan-step gate defaulting to `arch-mini-plan`. Educates itself on code, docs, git history, and the user's past asks first — facts and a blank template, never a pre-drafted plan — then interviews breadth-first in plain non-jargon English with investigate-and-return cycles, with a proxy model able to answer as the user. Use when the user wants a planning interview, an intent pack, or intent captured before planning. Not for writing the implementation plan (arch-mini-plan/arch-step), auditing a plan (plan-audit), executing one (conductor), or read-only opinions (fresh-consult)."
+description: "Explicitly selected evidence-grounded interview that captures an approved Intent Pack before architecture planning. Use when the user chooses $plan-interview or a selected parent requires it. A brief or ambiguous request to build something does not select an interview lifecycle."
 metadata:
   short-description: "Interview-driven intent capture producing an approved Intent Pack"
 ---
 
 # Plan Interview
 
-Use this skill when the user wants the front of the pipeline done right: an
-interview that converts a described outcome into an Intent Pack so precise
-that downstream planning and execution never stop to ask a question the pack
-already answers, and nothing user-visible changes unless the pack names it.
+Use this workflow only after explicit selection as `$plan-interview` or a
+binding task instruction requiring it.
 
 The interview is a loop, not a line. The user's answers are investigation
 triggers, not entries to transcribe: the skill goes and figures out what the
