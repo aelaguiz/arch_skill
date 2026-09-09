@@ -175,11 +175,13 @@ happens to be open without deciding which one the user wants.
 - Continue an exact conversation the user names only when the intended
   conversation can be identified. If it cannot, stop and ask for the missing
   conversation choice rather than sending into an unrelated history.
-- While a `Pro` response is generating, keep a periodic check-in heartbeat,
-  defaulting to about every 5 minutes, using the host's heartbeat capability
-  when one exists, so the run never wedges silently during a long wait. Clear
-  the heartbeat as soon as the response is read or the run terminally fails;
-  never leave a stale heartbeat running.
+- While a `Pro` response is generating, check the page every **3-5 minutes**,
+  defaulting to 5 minutes. Set the check-in heartbeat to that same cadence
+  using the host's heartbeat capability when available. Do not poll every
+  10 seconds or run a separate rapid DOM, screenshot, or spinner-check loop.
+  Shorter host waits or user-facing progress updates do not require another
+  browser check. Clear the heartbeat as soon as the response is read or the
+  run terminally fails; never leave a stale heartbeat running.
 - For data questions, attach the BigQuery connector through `@BigQuery` in
   the composer. For GitHub or repository questions, attach `@GitHub`. Use both
   when the ask needs both. A typed name or confident answer does not prove
@@ -479,10 +481,12 @@ submitting.
    confirm it contains the full intended text and attachments. If it was
    truncated or split, stop the resulting generation and resubmit correctly.
 6. Wait in the same tab until generation finishes. For `Pro`, `Extended`, or
-   `Heavy`, 10+ minutes can be normal; poll slowly and let ChatGPT finish. For
-   a `Pro` run, set the check-in heartbeat (default about every 5 minutes)
-   before settling into the long wait so the run cannot wedge silently. At
-   each check-in, read what is actually on the page - the visible thinking or
+   `Heavy`, 10+ minutes can be normal. For a `Pro` run, after the submission
+   readback above, wait **3-5 minutes before the first generation check** and
+   leave **3-5 minutes between subsequent checks**; default to 5 minutes.
+   Set the check-in heartbeat to the same cadence. Between checks, do useful
+   independent work or wait without polling the browser. At each check-in,
+   read what is actually on the page - the visible thinking or
    reasoning summary, interim assistant messages, partial response text, error
    banners, connector failures - not just whether a spinner exists. If the
    thinking trace or an interim message already shows the run going wrong,
