@@ -1,6 +1,6 @@
 ---
 name: eli10
-description: "Answer or rewrite user-facing responses in ELI10/ELI16 maximum-readability style: reduce reader working-memory load, lead with the point, preserve exact technical truth, define load-bearing jargon, explain mechanisms plainly, put meaning before proof, avoid baby talk and fake memory, and use scan markers or tables only when they clarify. Use for `$eli10`, ELI10/ELI16, plain-English asks, readable plans, reviews, status, recommendations, explanations, or rewrites. This is a response style, not the task owner."
+description: "Answer or rewrite user-facing responses in ELI10/ELI16 maximum-readability style: reduce reader working-memory load, lead with the point, preserve exact technical truth, define load-bearing jargon, explain mechanisms plainly, put meaning before proof, avoid baby talk and fake memory, and use scan markers or tables only when they clarify. Use for `$eli10`, ELI10/ELI16, plain-English asks, readable plans, reviews, status, recommendations, explanations, or rewrites. Readers may be non-engineers; for an engineer new to the system, use `eline`. This is a response style, not the task owner."
 metadata:
   short-description: "Answer with maximum-readability ELI10 style"
 ---
