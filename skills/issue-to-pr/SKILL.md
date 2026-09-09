@@ -121,8 +121,9 @@ retries and failover submissions; polling an existing response is not a new
 consultation. Keep this a short entry, not a separate tracking system.
 
 Missing Pro probably means a temporary account rate limit. Under `$chatgpt-web`
-and `$browseros`, try the next configured account (`Work`, `Pro1` / `Pro One`,
-`Pro2`, `Pro3`, and others) in the same-named project with the needed context.
+and `$browseros`, find an available account among the already-open `Work` and
+Pro profiles, note which profile/window works, and use its same-named project
+with the needed context. The number of Pro profiles varies.
 All should have the same projects. Only after the available accounts are
 exhausted, report their observed conditions and pause the blocked Pro
 consultation or decision. Continue independent authorized work; pause

@@ -84,8 +84,9 @@ overrides a terminal state such as `issue-to-pr` never merging.
 - A required Pro review means GPT-6 Astra's literal `Pro` option, never Extra
   High, xhigh, Ultra, Thinking, or another substitute. Missing or disabled Pro
   probably means a temporary account rate limit. `$chatgpt-web`, with required
-  `$browseros` usage, tries the next configured account: `Work`, `Pro1` /
-  `Pro One`, `Pro2`, `Pro3`, and others, all with the same projects expected.
+  `$browseros` usage, finds an available account among the already-open `Work`
+  and variable number of Pro profiles, notes which profile/window works, and
+  uses it. All accounts should have the same projects.
   Only when the available accounts are exhausted, pause the blocked Pro
   decision and report the observed conditions while
   independent authorized work continues. Pause the whole run only when no

@@ -62,14 +62,24 @@ Routine page work is background-targetable. `snapshot`, `diff`, `grep`,
 `read`, `navigate`, `act`, `evaluate`, `screenshot`, `upload`, `download`,
 `pdf`, and `wait` address a verified page ID and normally do not need its tab
 selected or its window activated. `act` with `kind="focus"` focuses a DOM
-element inside that page; it is not permission to focus the BrowserOS window
-or desktop application.
+element inside that page; it does not mean the BrowserOS window or desktop
+application needs foreground focus.
+
+Protecting the user's focus is a primary requirement on this shared machine.
+An unexpected activation can interrupt typing or redirect input. Judge the
+actual operation and work through viable background methods, including supported
+page-targeted interaction, extraction, and file transfer, before taking focus.
+This is not a fixed retry count or a checkbox satisfied by one failed call.
 
 Background-targetable does not promise identical foreground semantics. A page
 that is not selected may report a different visibility state, throttle timers
 or media, defer paint, or need browser-chrome permission UI. Verify the real
-postcondition. Foreground changes require the user's explicit request;
-an observed background constraint alone is not permission.
+postcondition and investigate whether supported background methods can complete
+the operation. If it needs foreground behavior, use the minimum necessary
+takeover without a separate approval question. Say why once, keep the work in
+one brief phase, and return to background operation. Restore prior browser
+focus when the tools support it and the user has not since chosen another
+target. Do not claim to restore desktop focus the tools cannot observe.
 
 `background` and `hidden` are different:
 
@@ -93,7 +103,7 @@ Treat these operations as foreground-capable shared-state changes:
 
 | Operation | Contract |
 | --- | --- |
-| `tabs new` with `background=false` | Selects the new page; requires an explicit user request. |
+| `tabs new` with `background=false` | Selects the new page; use only when the operation needs foreground behavior after working through viable background methods. No separate focus approval is required. |
 | `windows activate` | Focuses a BrowserOS window; never use for routine targeting, observation, polling, screenshots, or profile guessing. |
 | `windows set_visibility` with `activate=true` | Shows and activates a window; use `activate=false` when visibility alone is sufficient. |
 | `windows create` | Requires an explicit user request; ordinary work reuses existing windows. |
@@ -120,12 +130,22 @@ tab. Report only the restoration current state proves.
 
 For CAPTCHA, 2FA, login, secure-field entry, consent, or another manual gate,
 verify and identify the safe page/window without sensitive details, then ask
-the user to switch to BrowserOS when ready. Do not activate or present the
-window unless the user asks. After the user finishes, relist and revalidate the
-page, profile/account, and target before continuing. A manual gate is not by
-itself proof that automation needs to take foreground focus.
+the user to switch to BrowserOS when ready. A manual input requirement does not
+itself justify taking focus while the user is doing other work. After the user
+finishes, relist and revalidate the page, profile/account, and target before
+continuing.
 
 ## Identity and profile constraints
+
+Expect the user's `Work` profile and a variable number of Pro profiles to have
+windows open at the same time. Inspect their actual mapping and keep the
+working profile/window/page identified in the existing task notes. Recheck the
+target before every interaction and readback, with fresh live membership and
+safe application identity after navigation, switching, recovery, or resuming,
+and before sends, mutations, and cleanup. This attention continues throughout
+the task; a successful startup check is not enough. Matching titles, projects,
+or URLs across profiles do not identify the account, and foreground activation
+does not prove which profile a page belongs to.
 
 Build page identity from both ephemeral handles and semantic evidence:
 

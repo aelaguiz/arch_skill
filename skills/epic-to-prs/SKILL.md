@@ -126,8 +126,9 @@ and failover submissions; response polling is not another consultation.
 
 If Pro is missing or disabled, treat it as a probable temporary account rate
 limit; an explicit cap triggers the same switch. Follow `$chatgpt-web` and
-`$browseros` through the next configured accounts (`Work`, `Pro1` / `Pro One`,
-`Pro2`, `Pro3`, and others). All should have the same projects. Continue in the
+`$browseros` to find an available account among the already-open `Work` and
+variable number of Pro profiles. Note which profile/window works and use it.
+All should have the same projects. Continue in the
 same-named project with the epic context restated. Record continuation thread
 URLs and reuse the original when available. Only after available accounts are
 exhausted, report their observed conditions and the blocked Pro decision. Continue

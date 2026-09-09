@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through BrowserOS after reading and applying $browseros and $prompt-authoring. Use for an explicit ChatGPT web consultation, attachments, a pushed PR review through the GitHub connector, or an exact conversation continuation. Defaults to GPT-6 Astra with the literal Pro option and Extended thinking in Chat, never Extra High, xhigh, Ultra, Thinking, or another substitute. Uses one tab at a time, the applicable project, deliberate thread selection, serial prompts, and a heartbeat during long waits. If Pro is missing or rate limited, try the next configured BrowserOS account: Work, Pro1 / Pro One, Pro2, Pro3, and others; all should have the same projects. Pause only the blocked Pro consultation after available accounts are exhausted; continue independent authorized work. Not for OpenAI API work, generic browser automation, automated login, or scripts."
+description: "Query logged-in ChatGPT through BrowserOS after reading and applying $browseros and $prompt-authoring. Use for an explicit ChatGPT web consultation, attachments, a pushed PR review through the GitHub connector, or an exact conversation continuation. Defaults to GPT-6 Astra with literal Pro and Extended thinking in Chat, never Extra High, xhigh, Ultra, Thinking, or another substitute. Discover the already-open Work profile and variable number of Pro profiles; note which account currently offers Pro and use it, continually checking the profile/window/page. Missing Pro probably means a temporary account rate limit; check another account and carry context into the same-named project. Uses one tab at a time, deliberate project/thread selection, serial prompts, and a heartbeat during waits. Pause the blocked consultation only after available accounts are exhausted; continue independent work. Not for OpenAI API work, generic browser automation, automated login, or scripts."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -16,8 +16,8 @@ scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
 Read and apply `../browseros/SKILL.md` before the first BrowserOS call. The
 canonical BrowserOS skill owns page provenance, window and profile identity,
 lifecycle, proof, recovery, secrets, and cleanup; this skill owns the
-ChatGPT-specific workflow, including selection among `Work`, `Pro1` / `Pro One`,
-`Pro2`, `Pro3`, and other configured ChatGPT profiles when Pro is unavailable.
+ChatGPT-specific workflow, including finding and remembering a working Pro
+account among the `Work` profile and a variable number of Pro profiles.
 
 Read `../_shared/agent-orchestration-policy.md` before the query. ChatGPT Web is
 an intentional provider/browser-capability lane rather than a generic local
@@ -52,12 +52,13 @@ happens to be open without deciding which one the user wants.
   reading it does not count.
 - Use BrowserOS MCP, not `web.run`, OpenAI API calls, shell browser scripts, or
   direct cookie/session handling.
-- BrowserOS has separate ChatGPT accounts in profiles such as `Work`, `Pro1`
-  (also called `Pro One`), `Pro2`, and `Pro3`; check other configured Pro
-  profiles too. All should have the same projects set up. Be
-  careful which window you are in. Choose one window deliberately for the
-  run, prove it under `$browseros` (the page's window or browser-context
-  evidence plus a safe in-app account or workspace marker, never an email,
+- There is one `Work` profile and any number of Pro profiles, each with its
+  own ChatGPT account. Their BrowserOS windows should already be open, and all
+  accounts should have the same projects. Discover the actual profiles and
+  windows; there is no fixed account count or required rotation order. Note
+  which account currently offers Pro and use it. Keep verifying the selected
+  profile/window/page throughout the run under `$browseros` (the page's window
+  or browser-context evidence plus a safe in-app account or workspace marker, never an email,
   token, or session payload), and name it in the receipt. If you cannot
   prove which profile a page belongs to, stop and ask instead of guessing.
 - Use one BrowserOS `https://chatgpt.com/` tab at a time in the chosen window.
@@ -143,8 +144,9 @@ happens to be open without deciding which one the user wants.
 - A missing or disabled literal `Pro` option in the verified `Chat` picker
   probably means that account is temporarily rate limited. An explicit
   usage-cap message confirms a limit. In either case, switch to the next
-  configured account under `$browseros`; check `Work`, `Pro1` / `Pro One`,
-  `Pro2`, `Pro3`, and any others before declaring Pro unavailable. Do not
+  account under `$browseros`, preferring one recently observed to offer Pro.
+  Update the run's notes with unavailable and working accounts. Check the
+  remaining configured accounts before declaring Pro unavailable. Do not
   retry the capped account or substitute `Extra High`, `xhigh`, `Ultra`,
   `Thinking`, another model, or the API. If no available account offers Pro,
   report the accounts checked and pause the blocked Pro consultation or
@@ -199,11 +201,11 @@ happens to be open without deciding which one the user wants.
    workstream with a Pro thread from the last 24-48 hours in that project and
    the thread is under about 6 turns. Otherwise use `new-in-project`, or
    `new-root` only when no project fits.
-4. Choose among the configured ChatGPT profile windows (`Work`, `Pro1` /
-   `Pro One`, `Pro2`, `Pro3`, and others). Start with an explicitly requested
-   profile. Otherwise prefer the window whose account already holds this
-   workstream's live Pro thread; with no live thread, use an available account.
-   If its Pro option is missing or capped, follow account failover below.
+4. Discover the already-open `Work` and Pro profile windows and read any
+   account-availability notes for this run. Start with an explicitly requested
+   profile or the account holding the needed thread when Pro is available
+   there; otherwise prefer the account most recently observed to offer Pro.
+   Verify its current state. If Pro is missing or capped, follow failover below.
 5. Under `$browseros`, select the single current-agent-controlled ChatGPT page
    for the run inside that window: safely task-adopt an eligible
    `https://chatgpt.com/` page there, or open exactly one new page as a tab
@@ -222,12 +224,22 @@ happens to be open without deciding which one the user wants.
 ## Profile Windows And Rate Limits
 
 Read and apply `$browseros`, including its profile/account operating details,
-before inspecting or switching accounts. Discover the configured profiles and
-their existing windows: `Work`, `Pro1` (also called `Pro One`), `Pro2`, `Pro3`,
-and any additional Pro accounts. Use live profile identity rather than assuming
-these labels exactly match every machine. All accounts should have the same
+before inspecting or switching accounts. The account pool is one `Work` profile
+and a variable number of Pro profiles whose windows should already be open.
+Names such as `Pro One`, `Pro1`, `Pro2`, and `Pro3` are examples, not a fixed
+inventory or rotation order. Discover what is open on this machine and verify
+the actual profile/window/page mapping. All accounts should have the same
 projects; verify the same-named project after switching. Conversations are per
 account, so carry the needed thread context into the destination conversation.
+
+Keep a brief note in the existing run context or worklog identifying which
+profile/window currently offers Pro, which accounts were unavailable, and when
+each was checked. Record positive availability, not just failures, and continue
+with the working account. Use these notes to avoid repeatedly choosing a capped
+account; refresh stale observations when resuming because limits are temporary.
+Recheck the working profile/window/page under `$browseros` throughout use and
+before every submission or readback. The shared project name alone cannot prove
+that this is the account whose availability you checked.
 
 In ChatGPT's `Chat` surface, inspect GPT-6 Astra's model and reasoning controls,
 including `Configure...` / `Intelligence` when present. If the literal `Pro`
@@ -237,14 +249,17 @@ still not Pro even if it is now the top setting. An explicit usage-cap message,
 including `You've hit your rate limit. Please try again later`, triggers the
 same account switch:
 
-1. Note the profile and observed condition: Pro missing/disabled or an explicit
-   rate-limit message. The missing option alone is a probable limit, not proof.
-2. Try the next configured account not yet checked. Under `$browseros`, select
-   or open one eligible ChatGPT page in its existing window, prove its profile,
-   and verify login. Keep all interaction backgrounded.
+1. Note the profile/window, observed condition, and when checked: Pro
+   missing/disabled or an explicit rate-limit message. The missing option
+   alone is a probable limit, not proof.
+2. Use a recently known working account, or check another configured account
+   not yet checked. Under `$browseros`, select or open one eligible ChatGPT page
+   in its existing window, prove its profile, and verify login. Protect the
+   user's foreground focus under that skill's operating rules.
 3. Set the surface to `Chat` and verify GPT-6 Astra's literal `Pro` option.
-   If unavailable there too, continue through the remaining accounts, including
-   `Pro2`, `Pro3`, and any additional configured Pro profiles.
+   If unavailable there too, update the note and continue through the remaining
+   accounts. When Pro is available, note that profile/window as the working
+   account and use it; there is no need to test every other account first.
 4. When Pro is available, open the same-named project and start a conversation
    with the necessary goal, decisions, and prior thread context. Re-attach files
    or re-tag `@GitHub` with the PR URL, verify `Pro` and the requested thinking
@@ -479,8 +494,8 @@ Return:
 
 - ChatGPT's answer
 - surface (`Chat`), model, mode, and effort used
-- verified profile window used and any account failovers, with the profiles
-  checked and whether Pro was missing/disabled or explicitly rate limited
+- verified working profile/window/page and any account failovers, with the
+  observed availability of accounts checked and when checked
 - conversation placement used: the project name plus `continue-exact`,
   `continue-recent-pro`, `new-in-project`, or `new-root` with a one-line reason
   when the choice was `new-root`

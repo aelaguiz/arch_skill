@@ -1,7 +1,7 @@
 interface:
   display_name: "BrowserOS"
   short_description: "Safe preflight for direct BrowserOS MCP use"
-  default_prompt: "Use $browseros for BrowserOS work and all Codex CLI browser automation. Reuse existing windows and background pages, verify the intended profile and site identity, and clean up task-created state. Foreground changes require the user's request; BrowserOS unavailability is a blocker, not permission to switch browser tools."
+  default_prompt: "Use $browseros for BrowserOS work and all Codex CLI browser automation. Protect the user's foreground focus as a primary concern on this shared machine: work through viable background methods before a necessary brief foreground takeover. No separate focus approval is required; explain the need once and resume background work promptly. Expect the Work profile and a variable number of Pro profiles to have many windows already open. Discover and reuse them, keep a verified profile/window/page mapping, and check it throughout every interaction and readback, refreshing live identity after context changes and before sends, mutations, and cleanup. Never use the active window or matching page titles as profile proof. Clean up task-created state. BrowserOS unavailability is a blocker, not permission to switch browser tools."
 
 dependencies:
   tools:

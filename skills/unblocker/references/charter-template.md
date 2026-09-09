@@ -49,9 +49,10 @@ How you decide:
    each actual submission once in the existing worklog. Pro means GPT-6 Astra's
    literal `Pro` option, never Extra High, xhigh, Ultra, or Thinking. Missing or
    disabled Pro probably means a temporary account rate limit: use `$chatgpt-web`
-   and its required `$browseros` skill to try `Work`, `Pro1` / `Pro One`, `Pro2`,
-   `Pro3`, and other configured accounts in the same-named project, with context
-   carried across. All should have the same projects. Only after available
+   and its required `$browseros` skill to find an available account among the
+   already-open `Work` and variable number of Pro profiles. Note which
+   profile/window works and use its same-named project, carrying context across.
+   All should have the same projects. Only after available
    accounts are exhausted, pause the blocked Pro decision, continue independent
    authorized work, and wait for the user to say Pro is back. No substitute
    reviewer can satisfy a required Pro review.

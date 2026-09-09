@@ -1,6 +1,6 @@
 ---
 name: browseros
-description: "Required operating contract for Codex CLI browser work and direct BrowserOS MCP use: existing-window background operation, profile/account verification, task-owned page cleanup, and safe recovery of the same session. Codex CLI uses BrowserOS only and reports unavailability rather than switching browser tools. Use alongside narrower site skills such as $chatgpt-web. Not for BrowserOS installation/vendor development or generic non-browser connectors."
+description: "Required operating contract for Codex CLI browser work and direct BrowserOS MCP use: protect the user's foreground focus on a shared machine, continually verify the working profile/window/page among many open profiles, reuse existing windows, clean up task-owned pages, and recover the same session safely. Work through viable background methods before necessary brief foreground use; no separate focus approval is required. Codex CLI uses BrowserOS only. Use alongside narrower site skills such as $chatgpt-web. Not for BrowserOS installation/vendor development or generic non-browser connectors."
 ---
 
 # BrowserOS
@@ -9,6 +9,18 @@ Apply this contract before BrowserOS work. Codex CLI browser automation uses
 BrowserOS only, including supported direct MCP recovery of the same session.
 If it is unavailable, report the blocker; do not switch to standalone
 Playwright, bundled Browser, Chrome, Computer Use, or Node REPL browser control.
+
+Protect the user's foreground focus as a primary concern. This is a shared
+machine; taking focus interrupts their typing and other work. Make a serious
+effort to complete the task in the background. When the needed operation
+cannot be completed that way, a brief foreground takeover is allowed without
+separate approval; explain the need once, minimize the interruption, and return
+to background work as soon as possible.
+
+Expect many BrowserOS profile windows to be open already: a `Work` profile
+and any number of Pro profiles. Their pages can look identical. Know which
+profile, window, and page each call addresses throughout the task; checking
+only at startup is insufficient. Discover and reuse the existing windows.
 
 For page work, reuse one normal non-hidden, task-designated page. If a new page
 is necessary, request exactly one with `hidden=false` and `background=true`.
@@ -52,8 +64,8 @@ for an ordinary single-page read-only task on a compatible current page.
 
 ## Non-negotiables
 
-- For page work, list tabs before opening one. List windows when profile,
-  account, visibility, or recording context matters.
+- For page work, list tabs and windows at the start and identify the working
+  profile/window/page. Expect several profiles to be open simultaneously.
 - Reuse one normal non-hidden page. A new page needs a concrete
   simultaneous-state requirement, explicit user request, or lack of a safe
   authorized page for the task. When justified, request exactly one with
@@ -64,11 +76,14 @@ for an ordinary single-page read-only task on a compatible current page.
   staying outside the normal user-visible tab strip and are easy to orphan.
 - Ordinary page-targeted tools operate against a page ID without activation.
   Keep all routine interaction and verification backgrounded.
-- Default to zero deliberate foreground takeovers. Do not use
-  `windows activate`, `tabs new` with `background=false`, or
-  `windows set_visibility` with `activate=true` for routine work. When the
-  user explicitly requests a foreground handoff, warn once, serialize it, and avoid repeated
-  activation.
+- Preserve foreground focus while completing the task. Work through viable
+  page-targeted background methods before using `windows activate`,
+  `tabs new` with `background=false`, or `windows set_visibility` with
+  `activate=true`. Convenience or one failed call does not establish a need
+  for focus. When the operation needs foreground behavior, no separate
+  approval is required: explain why once, serialize a short takeover, and
+  resume background work promptly. Restore prior browser focus when supported
+  and appropriate; do not override a new focus choice the user made.
 - Use existing BrowserOS windows. A new window, including one created
   implicitly by opening a tab, requires the user's explicit request.
 - Window activation is never profile or account proof and is not a direct or
@@ -80,9 +95,11 @@ for an ordinary single-page read-only task on a compatible current page.
   this task.
 - Record every task-created page, window, and tab group immediately. Do not
   rely on BrowserOS to return ownership metadata consistently.
-- Validate the page, profile/account context, site, and exact object before a
-  credentialed or mutating action. A numeric page ID is only an ephemeral
-  handle.
+- Before every interaction and readback, check that the addressed page still
+  matches the intended profile/window, account or workspace, site, and object.
+  Refresh live identity after navigation, account changes, recovery, or a
+  resumed task, and immediately before a send, other mutation, or cleanup.
+  A remembered page ID or the currently active window is insufficient.
 - Observe, act once, inspect the change, and verify the requested
   postcondition. An acknowledged click is not proof.
 - Treat every timed-out or disconnected state-changing call as unknown. Read
@@ -97,8 +114,13 @@ for an ordinary single-page read-only task on a compatible current page.
 
 ## Profile
 
-Default to the `Work` profile unless a narrower task or skill intentionally
-names another. Read `profile.info_cache` in
+There is one `Work` profile and a variable number of Pro profiles, often with
+many windows already open. Discover the current profiles and their windows;
+do not assume a fixed count, naming sequence, or that the frontmost window is
+the one the task needs. Default to `Work` unless a narrower task or skill
+intentionally chooses another profile.
+
+Read `profile.info_cache` in
 `~/Library/Application Support/BrowserOS/Local State` and correlate it with
 current `Browser.getWindows` results; do not assume
 a saved profile ID is still correct. Open a needed page in that existing
@@ -106,16 +128,19 @@ window with `browser.pages.newPage(url, {background: true, windowId})` through
 BrowserOS `run`, then verify its returned window/context and the site's own
 account marker before authenticated work. A login wall needs identity checks;
 it does not prove either a wrong profile or a genuine login requirement.
-Record the verified profile/window. Never activate a window to select a profile.
+Keep the verified profile label, window, page, and safe application marker in
+the task's working notes. Check each call against that mapping and update it
+from live evidence whenever the context changes. Similar page titles, the same
+project in several accounts, and yesterday's window IDs cannot establish
+identity. Never activate a window merely to select or identify a profile.
 
 ## First move for page work
 
 1. Resolve the requested outcome, intended site/account/profile, mutation
    authority, and the proof needed to call the task complete.
 2. Inspect the live BrowserOS tool-specific schema for any nontrivial call.
-3. List tabs. When profile, visibility, recording, manual takeover, or a
-   focus-capable lifecycle action matters, also read the current active page
-   and list windows.
+3. List tabs and windows, and read the current active page when available.
+   Resolve the intended profile and its existing window before choosing a page.
 4. Record a sanitized baseline: page handle, origin plus stable path without
    query or fragment, title, any returned window/context evidence, known
    provenance, and relevant BrowserOS active-page/window and visibility state.
@@ -166,11 +191,15 @@ not current-task authorization.
 Use this loop for interaction:
 
 ```text
-list/select -> snapshot -> act once -> inspect diff -> verify postcondition
+select -> verify profile/window/page -> snapshot -> act once -> inspect diff -> verify postcondition
 ```
 
 - Use refs from a fresh `snapshot` instead of coordinate guesses.
 - Treat every ref as stale after navigation or a substantial rerender.
+- Carry the verified profile/window/page through every interaction and
+  readback. Recheck live membership and the application's account/workspace
+  marker when context changes and before consequential actions; do not let
+  another open window or profile become the target by accident.
 - Keep ordinary page operations addressed to the verified page ID; they do
   not require selecting the tab or activating its window. Read the focus and
   background-behavior caveats in the operating details before relying on a
@@ -192,6 +221,7 @@ Keep a task-local ledger containing:
 
 ```text
 baseline pages/windows/groups
+working profile/window/page mapping and safe application identity
 task-adopted pages and their allowed workflow
 task-created pages/windows/groups, purpose, and lifecycle state
 task-created local artifacts, exact returned path, purpose, and lifecycle state
@@ -306,6 +336,7 @@ For page work, add this page-state block:
 
 ```text
 Pre-existing pages adopted/reused: <unique count>
+Working profile/window/page: <verified safe profile label and current handles>
 Pages: created <n> = closed <n> + retained <n> + unknown/orphan <n>
 Hidden browser surfaces: deliberately created 0; task-caused observed <n>; unknown <n or not inventoried>
 Foreground takeover: <none deliberately made, intentional, unexpected, or unknown>

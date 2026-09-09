@@ -248,13 +248,24 @@ a normal non-hidden tab.
 
 Routine page-targeted reads, navigation, interaction, screenshots, uploads,
 downloads, waits, and verification use the page ID and do not require tab or
-window activation. Default to zero deliberate foreground takeovers. Do not
+window activation. Protect the user's foreground focus as a primary concern
+on this shared machine: interruptions can redirect their typing and disrupt
+other work. Work through viable background methods before taking focus. Do not
 use `windows activate`, `tabs new` with `background=false`, or
 `windows set_visibility` with `activate=true` merely to target, observe,
-poll, retry, screenshot, or guess a profile. Foreground only for an explicit
-user-visible handoff or after a real site/tool constraint with no
-background-safe alternative has been observed; warn once and batch that work
-into one short phase.
+poll, retry, screenshot, or guess a profile. When the required operation needs
+foreground behavior, a brief takeover is allowed without separate approval.
+Explain the need once, keep the interruption short, and promptly return to
+background work. Restore prior browser focus where supported and appropriate,
+without overriding a newer focus choice by the user.
+
+Expect one `Work` profile and a variable number of Pro profiles with windows
+already open. Discover the live profile/window/page mapping and keep checking
+the target throughout interaction and readback. Refresh identity after context
+changes and before sends, mutations, and cleanup; matching titles or projects
+across accounts do not identify the profile. `$chatgpt-web` keeps a short note
+of which account currently offers Pro and uses that account when another is
+temporarily capped.
 
 If the user is recording, watching, or needs to take over, the correct page
 must be in a visible window. A successful action in a hidden equivalent page
@@ -268,8 +279,9 @@ is actually required.
 
 For CAPTCHA, 2FA, login, secure-field entry, consent, or another manual gate,
 identify the safe page/window without sensitive details and ask the user to
-switch to BrowserOS when ready. Do not activate or present the window unless
-the user asks. After the user finishes, relist and revalidate the page,
+switch to BrowserOS when ready. A manual input requirement does not itself
+justify taking focus while the user is doing other work. After the user
+finishes, relist and revalidate the page,
 profile/account, and target before continuing.
 
 ### The task-local page ledger
@@ -879,7 +891,7 @@ encodes.
 | Replacement leaves the old page open | Open and verify exactly one replacement, then close the verified task-created old page. |
 | Task finishes with callback, preview, or source tabs open | Run ledger-based cleanup before returning. |
 | Hidden page or window is created or used for task work | Do not use hidden browser surfaces; use a normal non-hidden background page. |
-| Automation steals focus or cursor | Stay backgrounded until an explicit foreground handoff or selected-page presentation is required. |
+| Automation steals focus or cursor | Protect the user's focus: work through viable background methods, then use only a necessary brief foreground phase without a separate approval question. |
 | Agent closes an unrelated user tab during cleanup | Close only verified task-created pages. |
 | Parent cannot close a child-owned page | Resume the exact child for cleanup. |
 | Parent-created page is handed to a child as if ownership transfers | Give the child a target specification; the child must own its own page. |
