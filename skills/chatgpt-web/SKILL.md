@@ -7,536 +7,161 @@ metadata:
 
 # ChatGPT Web
 
-Use this skill when the user wants a head start querying ChatGPT through the
-already logged-in BrowserOS browser session.
+Consult logged-in ChatGPT through BrowserOS and return an answer grounded in
+the requested inputs. Read this entry file completely; retrieve any truncated
+portion before proceeding.
 
-This is a prose-only helper skill. It uses BrowserOS MCP directly. It ships no
-scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
+## Critical operating rules
 
-Read and apply `../browseros/SKILL.md` before the first BrowserOS call. The
-canonical BrowserOS skill owns page provenance, window and profile identity,
-lifecycle, proof, recovery, secrets, and cleanup; this skill owns the
-ChatGPT-specific workflow, including finding and remembering a working Pro
-account among the `Work` profile and a variable number of Pro profiles.
+- **Apply `$browseros` before every browser phase.** Read
+  [the BrowserOS skill](../browseros/SKILL.md) before the first call and obey it
+  throughout. Protect the user's foreground focus and continually verify the
+  working profile/window/page. Use existing windows and one eligible ChatGPT
+  tab at a time. Never substitute another browser, the API, shell browser
+  scripts, cookie handling, or automated login.
+- **Pro means GPT-6 Astra with the literal `Pro` option.** Use ChatGPT's
+  `Chat` surface and `Extended` thinking when separately offered, unless the
+  user explicitly requests another configuration. **Extra High, xhigh, Ultra,
+  Thinking, a `5/5` indicator, or the highest remaining setting is not Pro.**
+  The BrowserOS profile named `Work` is separate from ChatGPT's `Work` surface;
+  a Pro request must use the `Chat` surface in every profile.
+- **Use an account that actually offers Pro.** Discover the already-open
+  `Work` and variable number of Pro profiles, including Pro2, Pro3, or others
+  present. Missing or disabled literal Pro probably means a temporary account
+  limit; an explicit cap confirms it. Note unavailable accounts and the account
+  that works, with check times and connector status. Switch to another account
+  instead of substituting a different tier. All should have the same projects;
+  verify the destination and carry the needed conversation context and inputs.
+- **Require real source access.** For data, attach `@BigQuery`; for GitHub or
+  repository work, attach `@GitHub`; attach both when needed. Select the actual
+  connector in the picker and verify retrieval of the required data or code.
+  A badge, typed name, or confident assertion is insufficient. Missing or broken
+  access means switch to a suitable Pro window or stop and tell the user.
+  Never accept or act on guesses about sources Pro could not access.
+- **Wait for the requested review.** After submission readback, check generation
+  every **3–5 minutes**, defaulting to 5, with the heartbeat at the same cadence.
+  Never poll every 10 seconds. Pro can take 10+ minutes. Elapsed time, a short
+  host wait, or a self-imposed review budget does not justify cancelling it or
+  substituting an older answer. Keep decisions that require this review pending
+  until a usable response arrives; continue independent authorized work.
 
-Read `../_shared/agent-orchestration-policy.md` before the query. ChatGPT Web is
-an intentional provider/browser-capability lane rather than a generic local
-child-agent route. Starting a new conversation and continuing an exact existing
-conversation are different context choices; never inherit whatever conversation
-happens to be open without deciding which one the user wants.
+## Prepare the consultation
 
-## Use When
+Apply [the shared orchestration policy](../_shared/agent-orchestration-policy.md)
+before querying. This is an explicitly chosen web consultation, not the default
+route for ordinary parallel work. Decide whether the task needs a new context
+or continuation of a particular conversation; do not inherit whichever thread
+happens to be open.
 
-- The user asks to ask ChatGPT, consult ChatGPT, get ChatGPT's opinion, or run a
-  prompt through the ChatGPT web UI.
-- The user wants BrowserOS MCP to drive logged-in ChatGPT instead of using the
-  OpenAI API.
-- The user wants local attachments included in a ChatGPT web prompt.
-- The user wants ChatGPT Pro to review code that lives on a pushed branch or PR
-  through the ChatGPT GitHub connector.
-- The user has a rough prompt and wants it shaped before sending.
+Read and apply [the prompt-authoring skill](../prompt-authoring/SKILL.md) to the
+actual prompt before each submission. Preserve explicit verbatim relays;
+otherwise send the ask, essential context, and desired output concisely. Keep
+caller hypotheses challengeable. Do not add personas, invented rubrics, repeated
+constraints, or a prescribed research path without a task-specific reason.
 
-## Do Not Use When
+Read [accounts-and-conversations.md](references/accounts-and-conversations.md)
+before choosing or switching the account, project, thread, or model controls.
+Prefer the applicable project and an appropriate existing workstream thread;
+an explicit user choice of exact thread or fresh chat wins. If an exact requested
+conversation cannot be identified, ask rather than sending into unrelated
+history. Use a root chat only when no existing project fits and report that choice.
 
-- The user wants OpenAI API usage or product/API guidance.
-- The user wants generic web automation unrelated to ChatGPT.
-- BrowserOS MCP is unavailable in the current host.
-- ChatGPT is not already logged in in BrowserOS.
-- The task would require automated login.
-- The user requests more than 10 attachments.
+Under `$browseros`, choose one authorized page in the selected existing window.
+Verify login with the safe boolean session check in that reference. Never
+inspect or output account details, tokens, cookies, or raw session data. Login
+and connector authorization repairs are manual.
 
-## Non-Negotiables
+Run prompts serially in the same tab. Continue a conversation for follow-ups;
+start a clean conversation for independent asks. Do not add tabs for uploads,
+polling, retries, or readback. During account switching, continue in the new
+verified page alone and clean up task-created pages no longer needed. If the
+user requests parallel ChatGPT runs, explain the serial constraint and proceed
+serially unless simultaneity is mandatory, in which case report the mismatch.
 
-- Read and apply `../browseros/SKILL.md` before the first direct BrowserOS MCP
-  call and obey it throughout this workflow; a name-drop of the skill without
-  reading it does not count.
-- Use BrowserOS MCP, not `web.run`, OpenAI API calls, shell browser scripts, or
-  direct cookie/session handling.
-- There is one `Work` profile and any number of Pro profiles, each with its
-  own ChatGPT account. Their BrowserOS windows should already be open, and all
-  accounts should have the same projects. Discover the actual profiles and
-  windows; there is no fixed account count or required rotation order. Note
-  which account currently offers Pro and use it. Keep verifying the selected
-  profile/window/page throughout the run under `$browseros` (the page's window
-  or browser-context evidence plus a safe in-app account or workspace marker, never an email,
-  token, or session payload), and name it in the receipt. If you cannot
-  prove which profile a page belongs to, stop and ask instead of guessing.
-- Use one BrowserOS `https://chatgpt.com/` tab at a time in the chosen window.
-  Reuse an eligible current-agent-controlled ChatGPT page in that
-  window when one can be safely task-adopted under `$browseros`; otherwise
-  open exactly one ChatGPT page as a tab in that window, landing and
-  verifying it the way `$browseros` prescribes.
-- Never create a new BrowserOS window. Use existing profile windows under
-  `$browseros`. Do not open pages hoping one lands in the
-  right profile.
-- Reusing the page does not mean reusing its conversation. Do login check,
-  conversation selection, mode selection, attachment upload, submission,
-  waiting, and response reading in that same page.
-- Do not open extra ChatGPT tabs for polling, attachment handling, retries,
-  separate prompts, or readback. During account failover, select or open one
-  eligible page in the next profile and continue there alone; clean up any
-  page this run created in the previous profile under `$browseros`.
-- Run ChatGPT Web prompts serially. If the user gives multiple ChatGPT asks,
-  process them one at a time in the same ChatGPT tab. Keep them in one
-  conversation only when they are explicit follow-ups; otherwise start a new
-  clean conversation in that tab for each independent ask. If the user asks for
-  parallel ChatGPT Web runs, explain that this skill runs serially to avoid web
-  session rate limits, then proceed sequentially. If simultaneous ChatGPT Web
-  runs are mandatory, fail loudly instead of opening parallel tabs.
-- Read and apply `../prompt-authoring/SKILL.md` to the actual populated prompt
-  before every submission; a name-drop of the skill without reading it does not
-  count. Preserve the user's intent and any explicitly requested verbatim
-  relay; otherwise remove hidden caller assumptions, leading success criteria,
-  and closed evidence paths before sending.
-- Do not over-prompt Pro. Pro is a frontier model, not a junior worker: send
-  the ask, the essential context it cannot infer, and the desired output shape,
-  then stop. Do not stack roles, personas, invented rubrics, step-by-step
-  methodologies, output schemas, repeated constraints, motivational framing, or
-  restated context the thread already has. When in doubt, cut; a short faithful
-  prompt beats an engineered one.
-- Always work in ChatGPT's `Chat` surface, never `Work`. The composer's
-  `Select chat surface` radio decides which picker you get; Pro exists only
-  in `Chat`. `Work` tops out at `Ultra`, and `Ultra` is not Pro. Check the
-  radio before touching the model pill and again before every send. A
-  prompt sent from `Work` was not a Pro run: redo it in `Chat`.
-- Default to **GPT-6 Astra Pro** in the `Chat` picker: select GPT-6 Astra and
-  the literal **`Pro`** option, with `Extended` thinking when that is a
-  separate control. **Pro is not Extra High, xhigh, Ultra, Thinking, or
-  whatever happens to be the highest available setting.** A `5/5` indicator
-  alone does not establish Pro; verify the actual `Pro` selection. If Pro is
-  missing, try the next account instead of selecting a substitute. Only
-  deviate when the user explicitly requests a different model or mode.
-- Respect explicit user choices for `Instant`, `Thinking`, `Pro`, `Light`,
-  `Standard`, `Extended`, or `Heavy`.
-- Do not downgrade or upgrade the requested mode silently.
-- Never automate login. If ChatGPT is not logged in, fail loudly and tell the
-  user to log in manually in BrowserOS.
-- Treat `Pro`, especially `Extended` or `Heavy`, as a long-running mode. A
-  response can take 10+ minutes. Wait patiently in the same tab until generation
-  finishes before reading or submitting anything else.
-- Actually read everything Pro emits - interim messages, the visible thinking
-  or reasoning summary, and the final response - during heartbeat check-ins
-  and at the end, and act on what it says. Errors often surface first in the
-  thinking trace or an interim message, such as Pro noting it cannot open a
-  file or reach a repo, long before the final text. A completed generation is
-  not automatically a success: if Pro says it cannot see an attachment, repo,
-  PR, required data, or connector, if it improvised around a missing input, if
-  it answers a different question than the one submitted, if it reports an
-  error, refuses, or returns something empty or degenerate, treat that as a
-  failed run. Fix the input and resubmit; if required connector access is
-  unavailable or broken, switch to a suitable Pro account or stop and tell the
-  user. Never relay a broken response as the answer or report success without
-  having read the text.
-- Submit any plan, and any other multi-paragraph body, as an attached file,
-  never typed or pasted into the composer. Newlines in the composer can send
-  early and split the message, so the composer gets only a short single-
-  paragraph ask that points at the attached file. After sending, read back the
-  submitted user message and confirm the full body arrived.
-- A response built on an input Pro never actually received is invalid even
-  when it reads as polished and confident. If Pro did not get something it was
-  supposed to get and worked around it - "I don't have the file, so I'll
-  assume...", reviewing a plan from its description instead of the attachment,
-  imagining repo contents it could not open, or inventing data without a
-  working BigQuery connection - discard the response. Restore actual access
-  before resubmitting, switching Pro accounts if needed, or stop and tell the
-  user what is unavailable. Never relay or build on an answer Pro invented
-  around a missing input.
-- Dismiss transient blocker popups immediately. They are UI noise, not part
-  of the response; closing one never counts as altering the run. If a
-  submission does not go through for a transient reason, wait about 5
-  minutes, dismiss any blocker, and resubmit the same prompt in the same tab.
-- A missing or disabled literal `Pro` option in the verified `Chat` picker
-  probably means that account is temporarily rate limited. An explicit
-  usage-cap message confirms a limit. In either case, switch to the next
-  account under `$browseros`, preferring one recently observed to offer Pro.
-  Update the run's notes with unavailable and working accounts. Check the
-  remaining configured accounts before declaring Pro unavailable. Do not
-  retry the capped account or substitute `Extra High`, `xhigh`, `Ultra`,
-  `Thinking`, another model, or the API. If no available account offers Pro,
-  report the accounts checked and pause the blocked Pro consultation or
-  decision. Continue independent authorized work; pause the whole run only
-  when no useful independent work remains. Wait for the user to say Pro is
-  available again; never count a pending review as passed.
-- Do not print, save, summarize, or inspect account details, cookies, tokens,
-  raw session payloads, or other secrets.
-- Enforce a maximum of 10 attachments. Do not silently drop files.
-- Keep the result simple: ChatGPT's answer plus a short receipt.
-- Place every conversation in the most applicable ChatGPT project. A root chat
-  outside any project has no project context, so its review is useless; use a
-  root chat only when no existing project plausibly fits, and say so in the
-  receipt.
-- Before starting a new conversation for continuing work, check whether the
-  workstream already has a live Pro thread: look in the most applicable project
-  for a Pro thread from the last 24-48 hours on this same work and continue it
-  instead of starting fresh. If that thread is already about 6 or more
-  prompt/response turns deep, start a new conversation in the same project
-  instead of overloading it. An explicit user choice of an exact thread or a
-  new chat always wins over this default.
-- Continue an exact conversation the user names only when the intended
-  conversation can be identified. If it cannot, stop and ask for the missing
-  conversation choice rather than sending into an unrelated history.
-- While a `Pro` response is generating, check the page every **3-5 minutes**,
-  defaulting to 5 minutes. Set the check-in heartbeat to that same cadence
-  using the host's heartbeat capability when available. Do not poll every
-  10 seconds or run a separate rapid DOM, screenshot, or spinner-check loop.
-  Shorter host waits or user-facing progress updates do not require another
-  browser check. Clear the heartbeat as soon as the response is read or the
-  run terminally fails; never leave a stale heartbeat running.
-- For data questions, attach the BigQuery connector through `@BigQuery` in
-  the composer. For GitHub or repository questions, attach `@GitHub`. Use both
-  when the ask needs both. A typed name or confident answer does not prove
-  access: verify the attached connector and its successful access to the
-  required sources. If either required connector is missing or not working,
-  switch to another suitable Pro account or stop and tell the user. Never
-  accept guessed data, imagined code, or an answer without actual source access.
+## Supply the inputs and send
 
-## First Move
+For a plan or any multi-paragraph body, attach a file and use only a short
+single-paragraph composer message pointing to it; newlines can submit early.
+Check absolute paths, existence, and the maximum of 10 attachments. Never drop
+requested files silently. Read
+[composer-and-attachments.md](references/composer-and-attachments.md) before
+attaching files, invoking connectors, or diagnosing composer interaction.
 
-1. Resolve the user's desired ChatGPT ask, required BigQuery/GitHub connectors,
-   and any explicit mode, effort, model, or attachment requests.
-2. Read `../prompt-authoring/SKILL.md` and apply it to the populated prompt
-   before touching ChatGPT. Keep it faithful to the user's intent, preserve an
-   explicitly requested verbatim relay, and make caller hypotheses
-   challengeable rather than task truth. Keep the prompt lean per the
-   over-prompting rule above: cut scaffolding instead of adding it.
-3. Resolve conversation placement: identify the most applicable ChatGPT
-   project, then resolve
-   `conversation = continue-exact | continue-recent-pro | new-in-project |
-   new-root`. `continue-exact` requires an explicit user request and an
-   identifiable target. `continue-recent-pro` applies when the ask continues a
-   workstream with a Pro thread from the last 24-48 hours in that project and
-   the thread is under about 6 turns. Otherwise use `new-in-project`, or
-   `new-root` only when no project fits.
-4. Discover the already-open `Work` and Pro profile windows and read any
-   account-availability notes for this run. Start with an explicitly requested
-   profile or the account holding the needed thread when Pro is available
-   there; otherwise prefer the account most recently observed to offer Pro.
-   Verify its current state. If Pro is missing or capped, follow failover below.
-5. Under `$browseros`, select the single current-agent-controlled ChatGPT page
-   for the run inside that window: safely task-adopt an eligible
-   `https://chatgpt.com/` page there, or open exactly one new page as a tab
-   in that window. Prove the page is in the chosen window before using it.
-   Never create a new window.
-6. Verify that page is logged in before doing anything else.
-7. In that page, open the resolved conversation: a new chat inside the chosen
-   project, the recent Pro thread, or the exact requested conversation. Verify
-   the thread before submitting into it. Do not submit while the page is merely
-   showing an arbitrary prior thread.
-8. Set the surface radio to `Chat` and verify the requested model and mode,
-   defaulting to GPT-6 Astra with literal `Pro`. If required Pro is missing or
-   disabled, switch to the next account below. Never send a Pro request from
-   `Work` or substitute Extra High.
+For a code review, commit and push the reviewable work to its PR branch and
+include the exact PR URL with `@GitHub`. Pasted diffs or descriptions do not
+replace the connector's access to the branch. Name the relevant repository or
+data scope so retrieval addresses the actual question.
 
-## Profile Windows And Rate Limits
+Before sending, verify the intended profile/window/page and conversation,
+`Chat` surface, model, literal mode and effort, every attachment chip, and each
+required connector. Fill the composer and inspect its actual text before
+clicking Send; a failed fill must not send a stale draft. Use the current tool
+schema and fresh refs.
 
-Read and apply `$browseros`, including its profile/account operating details,
-before inspecting or switching accounts. The account pool is one `Work` profile
-and a variable number of Pro profiles whose windows should already be open.
-Names such as `Pro One`, `Pro1`, `Pro2`, and `Pro3` are examples, not a fixed
-inventory or rotation order. Discover what is open on this machine and verify
-the actual profile/window/page mapping. All accounts should have the same
-projects; verify the same-named project after switching. Conversations are per
-account, so carry the needed thread context into the destination conversation.
+Send once and read back the submitted user message and attachments. Confirm
+that the entire intended input arrived. If it split or truncated, the resulting
+answer cannot be used: stop that invalid generation with a freshly verified
+control, repair the input, and submit correctly. If Send times out or disconnects,
+apply BrowserOS unknown-outcome handling before retrying.
 
-Keep a brief note in the existing run context or worklog identifying which
-profile/window currently offers Pro and the required connector access, which
-accounts were unavailable, and when each was checked. Record positive
-availability, not just failures, and continue with the working account. Use these notes to avoid repeatedly choosing a capped
-account; refresh stale observations when resuming because limits are temporary.
-Recheck the working profile/window/page under `$browseros` throughout use and
-before every submission or readback. The shared project name alone cannot prove
-that this is the account whose availability you checked.
+## Wait, read, and judge the result
 
-In ChatGPT's `Chat` surface, inspect GPT-6 Astra's model and reasoning controls,
-including `Configure...` / `Intelligence` when present. If the literal `Pro`
-option is absent or disabled, treat it as a probable temporary account rate
-limit. Do not redefine Pro as the highest remaining option. `Extra High` is
-still not Pro even if it is now the top setting. An explicit usage-cap message,
-including `You've hit your rate limit. Please try again later`, triggers the
-same account switch:
+Use the 3–5 minute generation-check cadence from the critical rules. Between
+checks, do independent work or use host waits; short host wakeups and user-facing
+updates do not require another browser call. Set the host's check-in heartbeat
+when available and clear it when the response is read or the run terminally
+fails. Do not claim a heartbeat was set if the host has none.
 
-1. Note the profile/window, observed condition, and when checked: Pro
-   missing/disabled or an explicit rate-limit message. The missing option
-   alone is a probable limit, not proof.
-2. Use a recently known working account, or check another configured account
-   not yet checked. Under `$browseros`, select or open one eligible ChatGPT page
-   in its existing window, prove its profile, and verify login. Protect the
-   user's foreground focus under that skill's operating rules.
-3. Set the surface to `Chat` and verify GPT-6 Astra's literal `Pro` option.
-   If unavailable there too, update the note and continue through the remaining
-   accounts. When Pro is available, note that profile/window as the working
-   account and use it; there is no need to test every other account first.
-4. When Pro is available, open the same-named project and start a conversation
-   with the necessary goal, decisions, and prior thread context. Re-attach files
-   and re-attach the required `@BigQuery` / `@GitHub` mentions with their source
-   context, including the PR URL for code reviews. Verify connector access,
-   `Pro`, and the requested thinking effort; submit the same ask and continue
-   in that page alone.
-5. Clean up pages this run created and no longer needs under `$browseros`.
-   Record the profiles checked, the successful profile, and continuation thread.
+At each scheduled check, read the visible thinking summary, interim messages,
+partial answer, errors, and connector activity. A spinner-only check is
+insufficient. If a snapshot is sparse or contains empty paragraph nodes, use
+bounded visible-text reads; tool-output truncation or omitted text does not
+prove Pro is silent. Read the full final response and relevant visible interim
+output before accepting it.
 
-Only after checking the available accounts should the run report that Pro
-cannot be used right now. Name the profiles and observed conditions, pause the
-blocked Pro consultation or decision, and continue independent authorized work.
-Pause the whole run only when no useful independent work remains. Wait for the
-user to say Pro is available again; do not poll capped accounts or count a
-pending review as passed. There is no substitute for GPT-6 Astra Pro: never
-Extra High, xhigh, Ultra, Thinking, another model, provider, reviewer, or API.
+Do not refresh, resubmit, open another polling tab, or cancel while a valid
+response is generating. Cancellation needs the user's stop instruction or a
+concrete invalid run, such as wrong input, failed required access, or an explicit
+error. Inspect fresh state and the exact control before cancelling; an old Stop
+ref may be stale or the response may have completed. A pending required review
+is never a passed review, and prior guidance does not replace the requested answer.
 
-## Login Check
+Act on concrete failures when observed. For missing or broken connectors,
+switch to another suitable already-open Pro account or stop and name the failed
+access. For a cap or missing Pro, follow account switching. Dismiss transient
+blocker dialogs, but do not resubmit unless readback proves no prompt was
+submitted; after a transient submission failure, wait about 5 minutes before
+retrying in the same page. A lost session or required manual action needs the
+specific manual repair. A long-running generation alone is not failure.
 
-From the ChatGPT page, use BrowserOS MCP page JavaScript to fetch:
+Accept only a response that addresses the submitted ask using the required
+inputs, with actual successful connector retrieval where required. A completed
+response that guesses around a missing file, inaccessible repo, or failed data
+query is invalid. Repair access or inputs before resubmission; do not relay that
+response as a verdict or use it to publish dependent changes.
+Refusals, empty replies, and answers that omit the requested work also fail
+this completion check; diagnose and repair the specific cause.
 
-```javascript
-fetch('/api/auth/session', { credentials: 'include' })
-```
+If no available account offers the required Pro configuration, report the
+profiles checked and observed conditions, pause the blocked consultation or
+decision, and continue useful independent work. Wait for the user to say Pro is
+available again rather than polling capped accounts.
 
-Use only the safe boolean result: whether the parsed JSON has a `user` value.
-Do not display or store the returned user, account, token, cookie, or session
-fields.
+## Return the result
 
-If the session does not prove a logged-in user, stop with:
+Return the answer plus a short receipt: actual surface/model/mode/effort;
+verified working profile/window/page and account availability observations;
+project and conversation link or identity; attachment filenames and the data
+or code actually retrieved through connectors, including the PR URL when used.
+Mention material prompt shaping and long waits, and report heartbeat cleanup
+accurately. Follow BrowserOS resource cleanup and identify any retained or
+unknown state. Keep secrets and sensitive URLs out of receipts.
 
-```text
-BrowserOS is not logged in to ChatGPT. Open https://chatgpt.com/ in BrowserOS,
-log in manually, then rerun $chatgpt-web.
-```
+On failure, name the exact condition and next repair, plus the dependent
+consultation or decision still pending. Do not report success based only on
+finished generation.
 
-If the endpoint cannot be checked, fail loudly. Do not infer login from visible
-page controls.
-
-## Projects And Conversation Selection
-
-Root chats without a project have none of the project's files, instructions, or
-prior threads, so a review sent there is context-free and useless. Pick where
-the conversation lives before composing anything:
-
-1. Read the project list in the ChatGPT sidebar and judge which project
-   actually matches the current ask: same repo, product, or workstream.
-2. If the ask continues work that recently went through Pro, open that
-   project's thread list and look for a Pro thread from the last 24-48 hours on
-   this same work. Open the candidate and skim enough of it to confirm it is
-   the same workstream, not just a similar title. Threads are per account:
-   if the live thread is in another profile window, that window is the one
-   to use unless it is rate limited.
-3. Continue that thread when it matches, is a `Chat`-surface thread (not
-   labeled `Work` in the sidebar), and is under about 6 prompt/response
-   turns. Around 6 or more turns, treat it as saturated and start a new
-   conversation in the same project instead.
-4. With no matching recent thread, start a new conversation inside the chosen
-   project.
-5. Use a root chat only when no existing project plausibly fits the ask, and
-   note that choice in the receipt.
-
-An explicit user request for a specific thread, a specific project, or a fresh
-chat overrides all of the defaults above.
-
-## Data And Repository Access Via Connectors
-
-**Actual source access is required. Pro can produce a confident answer even
-when it has no data or repository access; that answer is invalid.**
-
-1. For data questions, @mention the BigQuery connector in the composer. For
-   GitHub or repository questions, including code reviews and architecture
-   questions about our code, @mention GitHub. Attach both `@BigQuery` and
-   `@GitHub` when the ask needs both. Select the actual connector from the
-   mention picker and confirm it is attached; plain text naming it is not an
-   invocation. Name the relevant data scope or repository in the ask.
-2. For code review, commit and push the work to its PR branch and include the
-   exact PR URL with `@GitHub`. Do not substitute pasted diffs or file dumps
-   for the connector's access to the branch.
-3. Confirm the required connectors are available before sending. During
-   generation and before accepting the answer, inspect the visible connector
-   activity, returned source material, and Pro's messages for successful
-   access to the data or repository needed for this question. A connected
-   badge or Pro saying it has access is insufficient. The evidence must show
-   it actually retrieved the needed data or code; no retrieval, failed queries,
-   inaccessible sources, or guesses cannot support an accepted answer.
-4. If either required connector is unavailable or fails, stop using that run.
-   Switch to another already-open Pro profile under `$browseros`, or stop the
-   consultation and tell the user exactly which connector/source is
-   unavailable. On switching, verify literal Pro, the intended profile and
-   project, and working access to every required connector; carry the ask and
-   inputs over and attach the mentions again. Record the working account and
-   connector status in the existing availability notes. Connector failure
-   alone does not establish a Pro rate limit. Never automate connector
-   authorization; any needed connection or permission repair is manual.
-
-Discard any response built on guessed data or imagined repository contents.
-Resume only with actual access to all sources the ask requires; do not present
-the failed answer as a result, a completed review, or a basis for a decision.
-
-## Chat Surface: Chat, Never Work
-
-The ChatGPT composer has a `Select chat surface` radio group with two
-surfaces, `Chat` and `Work`. Select GPT-6 Astra Pro in `Chat`. Work's model picker
-and reasoning slider do not select Chat's Pro mode. A review sent from
-`Work` does not count as a Pro verdict; redo it in `Chat`.
-
-Before touching the model pill, and again before every send:
-
-1. Read the surface radio group and make sure `Chat` is the checked radio.
-   If `Work` is checked, select `Chat` and re-read the composer; the pill
-   changes with the surface.
-2. For a Pro run, confirm GPT-6 Astra and the literal `Pro` option are selected, with
-   `Extended` thinking where offered. Extra High, xhigh, Ultra, or a numeric
-   power level alone do not establish Pro. If Pro is unavailable, switch
-   accounts under the profile-window section before sending.
-3. When continuing a thread, confirm it is a Chat-surface thread. The
-   sidebar labels Work-surface chats with `Work`; a Work thread cannot carry
-   a Pro conversation, so start a new `Chat` conversation in the project
-   instead.
-
-Naming trap: the BrowserOS profile window called `Work` has nothing to do
-with ChatGPT's `Work` surface. In every BrowserOS profile, including `Work`,
-the ChatGPT surface is `Chat`.
-
-## Mode And Effort
-
-Default when the user does not specify:
-
-```text
-surface = Chat (never Work)
-mode = literal Pro option (never Extra High, xhigh, Ultra, or Thinking)
-effort = Extended
-model = GPT-6 Astra Pro
-```
-
-Use the ChatGPT model pill beside the composer, in the `Chat` surface.
-Prefer `Configure...` when available because it exposes the `Intelligence`
-dialog with explicit model options and thinking effort.
-
-Observed controls to select from:
-
-- surface: `Chat`, `Work` - always `Chat`
-- mode: `Instant`, `Thinking`, `Pro`
-- effort: `Light`, `Standard`, `Extended`, `Heavy`
-- model: GPT-6 Astra, with the literal `Pro` option verified in the live Chat
-  picker unless the user explicitly requests another model or mode
-
-**Pro means the literal `Pro` option on GPT-6 Astra.** It is not shorthand for
-maximum available reasoning. `Extra High` / `xhigh`, `Ultra`, `Thinking`, and
-every other non-Pro setting are different configurations and cannot satisfy a
-Pro request or required review. `Extended` is a separate thinking choice when
-offered; it does not turn a non-Pro selection into Pro. Neither a numeric
-`5/5` indicator nor a BrowserOS profile named `Pro` proves the selected mode.
-
-Re-open the live `Chat` picker and inspect the model's nested controls before
-concluding Pro is missing. If GPT-6 Astra's literal `Pro` option is absent or
-disabled, follow account failover; this is probably a temporary rate limit on
-that account. Do not select the highest remaining setting. Before every Pro
-send, confirm `Chat`, GPT-6 Astra, `Pro`, and the requested thinking effort.
-
-Do not run a Pro prompt merely to test the skill. Only use Pro when the user's
-actual request needs the default or explicitly asks for it.
-
-Because the default is `Pro` with `Extended` thinking, the default path also
-requires patient waiting. Do not treat a long silent period as failure by itself.
-
-## Attachments
-
-When the material to send is a plan or any multi-paragraph body, write it to a
-file (a temp file is fine) and attach it through the upload path below instead
-of typing it into the composer. The composer then carries only a short
-single-paragraph ask that references the attached file by name.
-
-Preflight attachments before browser interaction:
-
-- every path must be absolute
-- every path must exist
-- count must be 10 or fewer
-
-Use the BrowserOS file-upload path that works with ChatGPT in the selected
-ChatGPT page:
-
-1. Create a temporary visible file input in the page for BrowserOS MCP to use.
-2. Snapshot the temporary input and use the live BrowserOS MCP `upload` tool
-   with its exact ref and the user's absolute paths.
-3. Transfer the selected `File` objects into ChatGPT's hidden `#upload-files`
-   input.
-4. Dispatch `input` and `change` events on the ChatGPT input.
-5. Confirm visible attachment chips by filename.
-6. Remove the temporary visible input.
-
-If any requested filename does not appear as an attachment chip, stop before
-submitting.
-
-## Submission
-
-1. Verify the resolved conversation placement one final time. For
-   `new-in-project` the page must be a new chat inside the chosen project; for
-   `continue-recent-pro` or `continue-exact` the visible thread must be the
-   resolved thread; for `new-root` the page must be a new root chat.
-2. Fill the ChatGPT composer with the final prompt. If the ask includes a plan
-   or any multi-paragraph body, that body must already be an attached file and
-   the composer text must be a short single-paragraph ask referencing it.
-3. Confirm the surface radio is `Chat` and the selected mode and effort
-   match the request or default, GPT-6 Astra with literal `Pro` and Extended
-   thinking. If required Pro is missing or disabled, switch accounts before
-   sending. If the checked surface is `Work`, switch to `Chat` and reselect.
-4. Confirm every attachment chip and required `@BigQuery` / `@GitHub`
-   connector mention is attached. If a required connector is missing or known
-   to be broken, switch Pro accounts or stop and tell the user before sending.
-5. Click `Send prompt`, then read back the just-submitted user message and
-   confirm it contains the full intended text and attachments. If it was
-   truncated or split, stop the resulting generation and resubmit correctly.
-6. Wait in the same tab until generation finishes. For `Pro`, `Extended`, or
-   `Heavy`, 10+ minutes can be normal. For a `Pro` run, after the submission
-   readback above, wait **3-5 minutes before the first generation check** and
-   leave **3-5 minutes between subsequent checks**; default to 5 minutes.
-   Set the check-in heartbeat to the same cadence. Between checks, do useful
-   independent work or wait without polling the browser. At each check-in,
-   read what is actually on the page - the visible thinking or
-   reasoning summary, interim assistant messages, partial response text, error
-   banners, connector failures - not just whether a spinner exists. If the
-   thinking trace or an interim message already shows the run going wrong,
-   such as a missing attachment, failed BigQuery access, or an unreachable
-   repo, act on it then rather than waiting out the full generation.
-7. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
-   while a response is still generating. Dismissing a transient blocker
-   dialog is always allowed. If the submission did not go through for a
-   transient reason, wait about 5 minutes and resubmit the same prompt in the
-   same tab. If it was refused with the rate-limit message, follow the
-   profile-window failover instead of retrying here.
-8. Treat failure as concrete, not time-based: visible ChatGPT error, lost
-   login/session, required manual user action, missing attachment before send,
-   or a clearly inactive page with no generation indicator and no response
-   progress after a patient wait.
-9. Read the latest assistant response from the page in full, plus its visible
-   thinking or reasoning summary and any interim messages, and check them
-   against the submitted ask. Error signals anywhere in that output count as
-   failures even though generation completed: Pro saying it cannot access or
-   see the attachment, repo, PR, required data, or connector; no evidence of
-   actual retrieval from required connectors; Pro improvising around a
-   missing input by assuming, imagining, or working from a description of an
-   artifact it never opened; Pro answering a different or partial question; a
-   refusal; an empty or degenerate reply. On any of these, diagnose the input,
-   repair it, and resubmit. For missing or broken connector access, switch to
-   another suitable Pro profile or stop and tell the user. Never relay the
-   broken response: a polished answer built on data or code Pro never accessed
-   is still invalid.
-10. Clear the check-in heartbeat as soon as the response is read or the run
-    terminally fails. Do not leave it running past the run.
-
-## Output
-
-Return:
-
-- ChatGPT's answer
-- surface (`Chat`), model, mode, and effort used
-- verified working profile/window/page and any account failovers, with the
-  observed availability of accounts checked and when checked
-- conversation placement used: the project name plus `continue-exact`,
-  `continue-recent-pro`, `new-in-project`, or `new-root` with a one-line reason
-  when the choice was `new-root`
-- attachment filenames, if any; connectors used with a brief account of the
-  data or code actually accessed, and the PR URL for a code review
-- a short note if the prompt was shaped before submission
-- a short note when the run waited for a long Pro response, including that the
-  heartbeat was set and cleared
-
-If the run fails, name the exact failed condition and the next manual repair.
-When no available profile offers Pro after checking the configured accounts,
-say so plainly with the observed conditions, name the Pro
-consultation or decision that is paused and any independent work continuing,
-and wait for the user to say Pro is back.
+Use this skill for explicit ChatGPT web consultations, data questions, pushed
+PR reviews, attachments, and conversation continuation. Use other guidance for
+OpenAI API work, generic browser tasks, or BrowserOS installation. Do not send
+a Pro prompt merely to test this skill.

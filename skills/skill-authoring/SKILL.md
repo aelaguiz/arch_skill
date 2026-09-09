@@ -7,22 +7,37 @@ metadata:
 
 # Skill Authoring
 
-Use this skill when the work is creating or repairing an agent skill, not generic documentation.
+Write the smallest reusable instructions that preserve the user's intended
+outcome and let the agent exercise judgment. Use this skill for skill packages;
+apply `$prompt-authoring` to their prose.
 
-Skills are reusable prompt contracts first. Default to the smallest prompt-only
-package that preserves the user's intent and leaves room for agent judgment.
+## Critical authoring rules
 
-This skill is intentionally self-contained. Use the references in this folder
-and, for agent-using packages, the installed sibling shared policy named below;
-do not rely on external repo docs while doing the runtime work.
+- Put the mission and highest-consequence instructions immediately after the
+  title: required tools or context, authorization boundaries, evidence needed,
+  and what counts as completion. Include only those that matter to this skill.
+  Setup recipes, examples, and long explanations come later or in references.
+- Preserve essential constraints when shortening. Remove repetition and
+  generic advice before moving conditional detail; never hide a rule needed
+  on every invocation behind an optional reference. Important placement helps
+  attention; it does not make a truncated read acceptable.
+- Aim well below **500 body lines and approximately 5,000 tokens**. These are
+  authoring review thresholds, not fill-to targets or universal runtime limits.
+  Measure both; long lines can conceal a large prompt. A justified exception
+  still needs a complete, practical loading path.
+- Design for selective reading: keep the shared workflow in `SKILL.md`, link
+  each supporting reference directly with a clear condition for reading it,
+  and keep each detailed instruction in one owning place. Do not load every
+  reference by default or replace a useful small skill with a needless router.
+- Validate what the agent actually receives. Account for required companion
+  skills, selected references, and both individual and combined tool-output
+  budgets. Read complete entry files in suitably sized calls; if output is
+  truncated, retrieve the missing content before using the skill. Successful
+  file access is not proof that the instructions reached the agent.
 
-## Install
-
-```bash
-git clone git@github.com:aelaguiz/arch_skill.git
-cd arch_skill
-make install
-```
+For size measurement, reference layout, and loading checks, read
+[packaging-trigger-and-validation.md](references/packaging-trigger-and-validation.md)
+when editing package structure or an overgrown skill.
 
 ## When to use
 
@@ -55,10 +70,11 @@ make install
 - Keep the frontmatter `description` inside the runtime length cap; treat over-1024-character descriptions as invalid unless the target runtime documents a stricter cap.
 - Shape trigger boundaries against the visible peer group when related skills exist; do not judge a skill only in isolation.
 - Encode runtime-specific behavior in machine-readable fields when the host supports them; do not hide load, gating, or invocation rules only in prose.
-- Keep the shipped skill self-contained; do not depend on repo docs, hidden context, or local prompt packs at runtime.
+- Keep the package self-contained through bundled references and explicitly
+  required installed companions. Do not depend on hidden context or repo-only
+  docs, and do not duplicate companion instructions.
 - If a skill creates, resumes, replaces, or coordinates model agents, make the running agent read the installed sibling `../_shared/agent-orchestration-policy.md` before dispatch and apply `$prompt-authoring` to the actual populated child brief. That policy owns shared transport, starting-context, brief-authority, continuation, isolation, topology, and integration semantics; the skill should retain only its role, domain judgment, task slicing, handoffs, and result contract.
 - Do not copy a local orchestration mini-policy into an agent-using skill or add a dispatcher, controller, or skill-local script that owns those cross-skill decisions. Runtime adapters may still own narrow deterministic invocation and receipt mechanics when that is their actual job.
-- Keep `SKILL.md` lean and move heavy detail into `references/`.
 - Add `scripts/` only when deterministic reliability or repeated complexity justifies them, and record why a simple prompt-only package is not enough.
 - Do not create a runner, launcher, controller, or formal parameter schema unless the user explicitly asked for orchestration or the workflow genuinely cannot be expressed as prompt guidance.
 - Treat any script the skill ships as part of the agent's prompt budget; default to a high-signal verdict and a handle for detail, not an inline blob.
@@ -97,7 +113,9 @@ make install
 8. Encode any runtime-specific load, gating, slash-command, or invocation behavior in the runtime's machine-readable schema before treating the prose as done.
 9. Build the minimum viable package: `SKILL.md` first, then only the `references/`, `scripts/`, `assets/`, and `agents/` metadata the workflow truly needs.
 10. Co-edit `agents/openai.yaml` whenever the package's visible contract changes enough to make its current metadata inaccurate or incomplete.
-11. Use progressive disclosure aggressively: core contract in `SKILL.md`, deeper guidance in `references/`, determinism in `scripts/`.
+11. Review the opening for the critical instructions, then measure the entry
+    body and the normal invocation's combined reading load. Move conditional
+    detail into directly linked references; verify no essential rule was lost.
 12. Before adding a script, runner, launcher, or formal input interface, write the proof that prompt guidance is insufficient. If the proof is weak, keep it prompt-only.
 13. Validate trigger quality, package integrity, runtime-specific behavior, execution quality, and anti-heuristic quality before shipping.
 

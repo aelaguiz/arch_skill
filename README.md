@@ -394,6 +394,10 @@ primary concern: work through viable background methods first. Necessary brief
 foreground use needs no separate approval; explain the need and promptly return
 to background work.
 
+The entry file leads with these critical rules. Profile/focus mechanics,
+lifecycle/recovery, and tool/data procedures are separate bundled references
+read when the operation needs them.
+
 ### `chatgpt-web`
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
@@ -401,9 +405,9 @@ capabilities, or local attachments. The skill shapes rough prompts with
 `prompt-authoring` discipline, requires reading and applying the `browseros` skill,
 verifies that BrowserOS is already logged in, and uses one eligible tab without
 silently inheriting its arbitrary conversation.
-Use the most applicable project. Continue a matching Pro thread from the last
-24-48 hours for the same workstream unless it is about six turns deep; otherwise
-start a new conversation in that project. An explicit exact-thread or new-chat
+Use the most applicable project. Prefer a matching recent Pro thread for the
+same workstream; assess whether a longer thread needs a fresh conversation with
+the necessary context carried over. An explicit exact-thread or new-chat
 request wins. Independent asks remain serial. The default is GPT-6 Astra Pro
 with Extended thinking when mode or effort is omitted. The skill is prose-only:
 no scripts, runners, harnesses, API calls, or automated login.
@@ -429,9 +433,19 @@ connector is unavailable or fails, switch to another suitable Pro profile or
 stop and tell the user. A confident answer based on guessed data or inaccessible
 code is invalid and cannot count as a completed consultation or review.
 
+The main skill puts these critical rules first and loads account/conversation
+and composer/attachment procedures from conditional references. Pro generation
+checks are 3-5 minutes apart. Elapsed time alone does not justify cancelling a
+required review or treating an older answer as the requested verdict.
+
 ### `skill-authoring`
 
 Use when the user wants to write, edit, refactor, or audit a reusable agent skill package so it stays prompt-first, simple by default, generalized from user intent, anti-heuristic, and clear about peer boundaries, packaging, references, and validation.
+
+It puts critical instructions first, gives line and token review thresholds,
+and checks the full required reading against actual tool-output budgets.
+Detailed guidance lives in the skill's packaging reference; size targets never
+justify deleting essential constraints or accepting truncated instructions.
 
 ### `herdr-helper`
 
