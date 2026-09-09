@@ -126,8 +126,8 @@ correction. The correction fires on the "fetch succeeded" signal, which lands
 before the values do, so it consumes the correction with stale defaults.
 ```
 
-Signals: a file path, class name, PR number, Sentry short ID, or codename in
-the first two paragraphs; method names standing in for architecture; the
+Signals: a file path, class name, PR number, Sentry short ID, or unglossed
+codename in the first two paragraphs; method names standing in for architecture; the
 reader having to reverse-engineer the components from identifiers.
 
 The test is two questions about a strong engineer from another company reading

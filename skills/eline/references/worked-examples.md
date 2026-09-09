@@ -1,7 +1,8 @@
 # ELINE Worked Examples
 
 Use these to calibrate the floor and the ladder. They teach the shape; they are
-not templates to copy, and they are not memory of prior conversations.
+not templates to copy. The layer labels (L0 to L3) are shown here for
+teaching; the reader never sees them.
 
 ## One Incident, Three Ways
 
@@ -112,8 +113,7 @@ Three changes. The SDK's `retryOptions` drops to a single attempt, so the
 gateway's ladder is the only retry policy. The gateway timeout goes from 8s to
 12s so one full SDK attempt fits inside it. The SDK's 429 handling returns
 `rate_limited` plus the Retry-After value instead of sleeping, and the gateway
-honors the wait and labels the failure. The startup sign-in path got this same
-fix in August; token refresh is the sibling path that did not.
+honors the wait and labels the failure.
 ```
 
 Dig handles:
@@ -121,11 +121,11 @@ Dig handles:
 ```text
 Ask about:
 - the 429 change, which is the one part that touches the fork's code
-- why the August startup fix did not cover this path
+- whether the startup sign-in path wraps the same SDK with the same two clocks
 - what this does not fix: Clerk fully unreachable for minutes, and the ~4% of
   errors where two parts of the app disagree about sign-in state
-- the proof plan: a stalled fake Clerk in a dev build, plus two new alarm tags
-  that split "timeout" from "rate limited"
+- what would prove the fix: the doc has a stalled-server test pattern and two
+  alarm tags that split "timeout" from "rate limited"
 ```
 
 Why it works: the reader can stop after L0 and repeat the thesis correctly,
@@ -217,31 +217,37 @@ already carries the mechanism.
 
 ## A Design Decision
 
-Ask: "Should the server freeze a user's experiment arm so a modified client
-cannot change it?"
+Ask: "Dashboards are slow. Should we add a Postgres read replica?"
 
 ```text
-No. Experiment assignment has exactly one owner, PostHog. The client evaluates
-the flag and reports the resolved arm; the server enforces what was reported,
-within sanity bounds, and records what it enforced. It never decides.
+No, not for this. The slow dashboards are one unindexed query, not read
+load, and a replica would add replication lag to a screen that reads its own
+writes.
 
-PostHog is the feature-flag and experiment provider. The client holds a flag
-registry with offline defaults. The server applies the daily cap the arm
-implies and writes the cap it applied onto the usage row as history.
+The API server and the dashboards share one Postgres primary. Dashboards run
+aggregate queries over the orders table; the "order placed" screen reads the
+row it just inserted. Primary CPU sits around 30% at peak.
 
-A server-side frozen assignment would resist a tampered client, but it creates
-a second owner of the arm. Two owners of one fact means conflicts when they
-disagree, and it removes product's ability to move users between arms, change
-splits, or kill an arm live in PostHog without a deploy. At this product's
-scale, tamper via a modified client is an accepted risk; losing live control is
-not. The recorded cap on the usage row is history for analysis, not a control.
+The query stats show one dashboard query at 92% of dashboard time, doing a
+sequential scan on orders filtered by account and date. That is an index
+problem: a composite index on account and created-at turns it into an index
+range scan. A replica would not change that plan; it would run the same scan
+on a second box. It would also introduce replication lag, so the "order
+placed" screen could read a replica that does not yet have the row, unless
+that path is pinned to the primary, which is a new routing rule to maintain.
+Confirmed from the query stats and the plan; the CPU figure is two weeks of
+metrics.
 
-Ask about: how arm attribution reaches the warehouse without server exposure
-events, and what the sanity bounds on the reported value are.
+Add the index and re-measure. Revisit a replica when read CPU on the primary
+actually saturates, and pin read-your-writes paths to the primary at that
+point.
+
+Ask about: which other dashboard queries share the same filter shape, and
+whether the index build has to run concurrently to avoid blocking writes.
 ```
 
-Why it works: the decision and its forcing constraint come first, the
-recommendation is stated, the tradeoff is one paragraph with the reason it
-resolves the way it does, and the one nuance an engineer might misread (the
-recorded cap is history, not a second control) is called out inside L2. No
-identifier was needed, so there is no L3.
+Why it works: the decision and its forcing constraint come first, the setup
+is three sentences with no identifiers, the tradeoff carries its evidence with
+confidence marked, and the recommendation says what would reopen the
+question. Nothing the reader would act on needed an exact name, so there is no
+L3.

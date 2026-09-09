@@ -49,7 +49,7 @@ Other shipped skills are:
 - `transcribe-audio`: transcribes local recordings to verified plain-text files with live OpenAI transcription-model discovery, transport adaptation, ordered chunking, requested parallelism, and secret-safe API use
 - `flutter-reference` — doctrine-only Flutter app and game-building reference for architecture, Dart style, state management, lifecycle, performance, testing, CI, accessibility, localization, security, platform integration, and Flame/game-loop guidance
 - `eli10` — optional source-retained response-style skill; it is not installed by default
-- `eline` — ELINE (Explain Like I'm a New Engineer) response style: briefs a competent engineer who is new to the system in peer-engineer vocabulary, layered as thesis, setup, and problem area with evidence, adding exact identifiers only when the ask calls for them; the engineer-audience counterpart to `eli10`
+- `eline` — ELINE (Explain Like I'm a New Engineer) response style: briefs a competent engineer who is new to the system in peer-engineer vocabulary, layered as thesis, setup, and problem area with evidence, adding exact identifiers only when the reader will act on them; the engineer-audience counterpart to `eli10`
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based approved-scope receipt for plan-backed work
 - `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the approved plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
 - `issue-to-pr` — explicit issue delivery with Pro planning/final review and delegated implementation for Astra/Fable; the parent reviews every deliverable and retains all skill authorship
@@ -472,7 +472,7 @@ This package is retained in the repository for manual use but is not installed b
 
 ### `eline`
 
-Use when the user wants an explanation, summary, status, decision, or rewrite pitched at a competent engineer who is new to the system and short on time: the ELINE (Explain Like I'm a New Engineer) style. The skill assumes college-level CS and common industry vocabulary, glosses only system-specific names by their engineering role, collapses off-path components to their interface, and layers depth as thesis, setup, and problem area with critical evidence. It adds exact identifiers and nuance only when the ask calls for that depth and otherwise closes with the questions the reader would ask next. It is a response style, not the task owner; `eli10` remains the non-engineer plain-English lane and `readable-reports` owns report artifacts.
+Use when the user wants an explanation, summary, status, decision, or rewrite pitched at a competent engineer who is new to the system and short on time: the ELINE (Explain Like I'm a New Engineer) style. The skill assumes college-level CS and common industry vocabulary, glosses only system-specific names by their engineering role, collapses off-path components to their interface, and layers depth as thesis, setup, and problem area with critical evidence. It adds exact identifiers only when the reader will act on them and otherwise closes with the questions the reader would ask next. It is a response style, not the task owner; `eli10` remains the non-engineer plain-English lane and `readable-reports` owns status and delivery reports to be posted.
 
 ### `pr-authoring`
 
