@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through BrowserOS after reading and applying $browseros and $prompt-authoring. Use for an explicit ChatGPT web consultation, attachments, a pushed PR review through the GitHub connector, or an exact conversation continuation. Defaults to GPT-6 Astra with literal Pro and Extended thinking in Chat, never Extra High, xhigh, Ultra, Thinking, or another substitute. Discover the already-open Work profile and variable number of Pro profiles; note which account currently offers Pro and use it, continually checking the profile/window/page. Missing Pro probably means a temporary account rate limit; check another account and carry context into the same-named project. Uses one tab at a time, deliberate project/thread selection, serial prompts, and a heartbeat during waits. Pause the blocked consultation only after available accounts are exhausted; continue independent work. Not for OpenAI API work, generic browser automation, automated login, or scripts."
+description: "Query logged-in ChatGPT through BrowserOS after applying $browseros and $prompt-authoring. Use for explicit web consultations, data questions, pushed PR reviews, attachments, or exact conversation continuation. Requires @BigQuery for data and @GitHub for GitHub/repo questions, with actual source access; missing or broken access means switch Pro accounts or stop and tell the user, never accept guesses. Defaults to GPT-6 Astra with literal Pro and Extended thinking in Chat, never Extra High, xhigh, Ultra, or Thinking. Discover the already-open Work and Pro profiles, note and use a working account, and continually verify profile/window/page. Missing Pro probably means a temporary limit; try another account in the same-named project with context carried over. Uses one tab, serial prompts, and a heartbeat during waits. Pause blocked consultation when no suitable account works; continue independent work. Not for API work, generic browser automation, automated login, or scripts."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -120,11 +120,13 @@ happens to be open without deciding which one the user wants.
   thinking trace or an interim message, such as Pro noting it cannot open a
   file or reach a repo, long before the final text. A completed generation is
   not automatically a success: if Pro says it cannot see an attachment, repo,
-  PR, or connector, if it improvised around a missing input, if
+  PR, required data, or connector, if it improvised around a missing input, if
   it answers a different question than the one submitted, if it reports an
   error, refuses, or returns something empty or degenerate, treat that as a
-  failed run. Fix the input and resubmit in the same tab; never relay a broken
-  response as the answer or report success without having read the text.
+  failed run. Fix the input and resubmit; if required connector access is
+  unavailable or broken, switch to a suitable Pro account or stop and tell the
+  user. Never relay a broken response as the answer or report success without
+  having read the text.
 - Submit any plan, and any other multi-paragraph body, as an attached file,
   never typed or pasted into the composer. Newlines in the composer can send
   early and split the message, so the composer gets only a short single-
@@ -134,9 +136,11 @@ happens to be open without deciding which one the user wants.
   when it reads as polished and confident. If Pro did not get something it was
   supposed to get and worked around it - "I don't have the file, so I'll
   assume...", reviewing a plan from its description instead of the attachment,
-  imagining repo contents it could not open - discard the response, fix the
-  delivery of the missing input, and resubmit. Never relay or build on an
-  answer Pro invented around a missing input.
+  imagining repo contents it could not open, or inventing data without a
+  working BigQuery connection - discard the response. Restore actual access
+  before resubmitting, switching Pro accounts if needed, or stop and tell the
+  user what is unavailable. Never relay or build on an answer Pro invented
+  around a missing input.
 - Dismiss transient blocker popups immediately. They are UI noise, not part
   of the response; closing one never counts as altering the run. If a
   submission does not go through for a transient reason, wait about 5
@@ -176,18 +180,18 @@ happens to be open without deciding which one the user wants.
   when one exists, so the run never wedges silently during a long wait. Clear
   the heartbeat as soon as the response is read or the run terminally fails;
   never leave a stale heartbeat running.
-- Whenever the ask touches our repositories at all, tag `@GitHub` in the
-  composer so ChatGPT can see the repos through the ChatGPT GitHub connector.
-  To show code, do not paste large diffs. Commit and push the work to its PR
-  branch, then tag `@GitHub` and paste the PR URL so Pro reviews the actual
-  branch through the connector. Never automate connecting or authorizing the
-  connector; if it is not connected, fail loudly and tell the user to connect
-  it manually.
+- For data questions, attach the BigQuery connector through `@BigQuery` in
+  the composer. For GitHub or repository questions, attach `@GitHub`. Use both
+  when the ask needs both. A typed name or confident answer does not prove
+  access: verify the attached connector and its successful access to the
+  required sources. If either required connector is missing or not working,
+  switch to another suitable Pro account or stop and tell the user. Never
+  accept guessed data, imagined code, or an answer without actual source access.
 
 ## First Move
 
-1. Resolve the user's desired ChatGPT ask and any explicit mode, effort, model,
-   or attachment requests.
+1. Resolve the user's desired ChatGPT ask, required BigQuery/GitHub connectors,
+   and any explicit mode, effort, model, or attachment requests.
 2. Read `../prompt-authoring/SKILL.md` and apply it to the populated prompt
    before touching ChatGPT. Keep it faithful to the user's intent, preserve an
    explicitly requested verbatim relay, and make caller hypotheses
@@ -233,9 +237,9 @@ projects; verify the same-named project after switching. Conversations are per
 account, so carry the needed thread context into the destination conversation.
 
 Keep a brief note in the existing run context or worklog identifying which
-profile/window currently offers Pro, which accounts were unavailable, and when
-each was checked. Record positive availability, not just failures, and continue
-with the working account. Use these notes to avoid repeatedly choosing a capped
+profile/window currently offers Pro and the required connector access, which
+accounts were unavailable, and when each was checked. Record positive
+availability, not just failures, and continue with the working account. Use these notes to avoid repeatedly choosing a capped
 account; refresh stale observations when resuming because limits are temporary.
 Recheck the working profile/window/page under `$browseros` throughout use and
 before every submission or readback. The shared project name alone cannot prove
@@ -262,8 +266,10 @@ same account switch:
    account and use it; there is no need to test every other account first.
 4. When Pro is available, open the same-named project and start a conversation
    with the necessary goal, decisions, and prior thread context. Re-attach files
-   or re-tag `@GitHub` with the PR URL, verify `Pro` and the requested thinking
-   effort, and submit the same ask. Continue in that page alone.
+   and re-attach the required `@BigQuery` / `@GitHub` mentions with their source
+   context, including the PR URL for code reviews. Verify connector access,
+   `Pro`, and the requested thinking effort; submit the same ask and continue
+   in that page alone.
 5. Clean up pages this run created and no longer needs under `$browseros`.
    Record the profiles checked, the successful profile, and continuation thread.
 
@@ -323,24 +329,40 @@ the conversation lives before composing anything:
 An explicit user request for a specific thread, a specific project, or a fresh
 chat overrides all of the defaults above.
 
-## Repo Visibility Via GitHub
+## Data And Repository Access Via Connectors
 
-Tag `@GitHub` in the composer for any repo-grounded ask - code review, design
-or architecture questions about our code, or anything where ChatGPT should see
-the actual repository - so the connector gives it direct repo visibility
-instead of relying on pasted fragments.
+**Actual source access is required. Pro can produce a confident answer even
+when it has no data or repository access; that answer is invalid.**
 
-When the material to review is code, do not paste diffs or file dumps into the
-composer:
+1. For data questions, @mention the BigQuery connector in the composer. For
+   GitHub or repository questions, including code reviews and architecture
+   questions about our code, @mention GitHub. Attach both `@BigQuery` and
+   `@GitHub` when the ask needs both. Select the actual connector from the
+   mention picker and confirm it is attached; plain text naming it is not an
+   invocation. Name the relevant data scope or repository in the ask.
+2. For code review, commit and push the work to its PR branch and include the
+   exact PR URL with `@GitHub`. Do not substitute pasted diffs or file dumps
+   for the connector's access to the branch.
+3. Confirm the required connectors are available before sending. During
+   generation and before accepting the answer, inspect the visible connector
+   activity, returned source material, and Pro's messages for successful
+   access to the data or repository needed for this question. A connected
+   badge or Pro saying it has access is insufficient. The evidence must show
+   it actually retrieved the needed data or code; no retrieval, failed queries,
+   inaccessible sources, or guesses cannot support an accepted answer.
+4. If either required connector is unavailable or fails, stop using that run.
+   Switch to another already-open Pro profile under `$browseros`, or stop the
+   consultation and tell the user exactly which connector/source is
+   unavailable. On switching, verify literal Pro, the intended profile and
+   project, and working access to every required connector; carry the ask and
+   inputs over and attach the mentions again. Record the working account and
+   connector status in the existing availability notes. Connector failure
+   alone does not establish a Pro rate limit. Never automate connector
+   authorization; any needed connection or permission repair is manual.
 
-1. Make sure the work is committed and pushed to its PR branch, and have the
-   exact PR URL.
-2. In the composer, @mention GitHub to invoke the ChatGPT GitHub connector and
-   paste the PR URL, then ask for the review of that PR on its branch.
-3. Confirm the GitHub mention is attached before sending. If the connector is
-   not connected or cannot see the repo, fail loudly and tell the user to
-   connect it manually in ChatGPT settings; never automate connector
-   authorization.
+Discard any response built on guessed data or imagined repository contents.
+Resume only with actual access to all sources the ask requires; do not present
+the failed answer as a result, a completed review, or a basis for a decision.
 
 ## Chat Surface: Chat, Never Work
 
@@ -450,7 +472,9 @@ submitting.
    match the request or default, GPT-6 Astra with literal `Pro` and Extended
    thinking. If required Pro is missing or disabled, switch accounts before
    sending. If the checked surface is `Work`, switch to `Chat` and reselect.
-4. Confirm every attachment chip is present.
+4. Confirm every attachment chip and required `@BigQuery` / `@GitHub`
+   connector mention is attached. If a required connector is missing or known
+   to be broken, switch Pro accounts or stop and tell the user before sending.
 5. Click `Send prompt`, then read back the just-submitted user message and
    confirm it contains the full intended text and attachments. If it was
    truncated or split, stop the resulting generation and resubmit correctly.
@@ -462,8 +486,8 @@ submitting.
    reasoning summary, interim assistant messages, partial response text, error
    banners, connector failures - not just whether a spinner exists. If the
    thinking trace or an interim message already shows the run going wrong,
-   such as a missing attachment or an unreachable repo, act on it then rather
-   than waiting out the full generation.
+   such as a missing attachment, failed BigQuery access, or an unreachable
+   repo, act on it then rather than waiting out the full generation.
 7. Do not refresh, resubmit, open another tab, or start another ChatGPT prompt
    while a response is still generating. Dismissing a transient blocker
    dialog is always allowed. If the submission did not go through for a
@@ -478,13 +502,15 @@ submitting.
    thinking or reasoning summary and any interim messages, and check them
    against the submitted ask. Error signals anywhere in that output count as
    failures even though generation completed: Pro saying it cannot access or
-   see the attachment, repo, PR, or connector; Pro improvising around a
+   see the attachment, repo, PR, required data, or connector; no evidence of
+   actual retrieval from required connectors; Pro improvising around a
    missing input by assuming, imagining, or working from a description of an
    artifact it never opened; Pro answering a different or partial question; a
    refusal; an empty or degenerate reply. On any of these, diagnose the input,
-   repair it, and resubmit in the same tab instead of relaying the broken
-   response - a polished answer built on an input Pro never received is still
-   invalid.
+   repair it, and resubmit. For missing or broken connector access, switch to
+   another suitable Pro profile or stop and tell the user. Never relay the
+   broken response: a polished answer built on data or code Pro never accessed
+   is still invalid.
 10. Clear the check-in heartbeat as soon as the response is read or the run
     terminally fails. Do not leave it running past the run.
 
@@ -499,8 +525,8 @@ Return:
 - conversation placement used: the project name plus `continue-exact`,
   `continue-recent-pro`, `new-in-project`, or `new-root` with a one-line reason
   when the choice was `new-root`
-- attachment filenames, if any, and the PR URL when the GitHub connector was
-  used
+- attachment filenames, if any; connectors used with a brief account of the
+  data or code actually accessed, and the PR URL for a code review
 - a short note if the prompt was shaped before submission
 - a short note when the run waited for a long Pro response, including that the
   heartbeat was set and cleared

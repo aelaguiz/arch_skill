@@ -425,11 +425,18 @@ unavailable, and when checked; use the working account and refresh stale notes
 on resume. There is no fixed account count or rotation order. All should have
 the same projects; continually verify the profile/window/page and carry the
 conversation context into the same-named project after switching.
-Only after available accounts are exhausted does it pause the blocked Pro
-consultation while independent authorized work continues; no substitute
+For a Pro rate limit, only after available accounts are exhausted does it
+pause the blocked Pro consultation while independent authorized work continues; no substitute
 reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
 Work's reasoning slider does not select GPT-6 Astra Pro in Chat.
+
+Data questions require an attached `@BigQuery` connector; GitHub or repository
+questions require `@GitHub`, and questions needing both require both. The agent
+must verify actual retrieval of the required data or code. If a required
+connector is unavailable or fails, switch to another suitable Pro profile or
+stop and tell the user. A confident answer based on guessed data or inaccessible
+code is invalid and cannot count as a completed consultation or review.
 
 Examples:
 
