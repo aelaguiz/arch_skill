@@ -391,21 +391,26 @@ Use before the first direct BrowserOS MCP call. The skill owns one-tab-by-defaul
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
 capabilities, or local attachments. The skill shapes rough prompts with
-`prompt-authoring` discipline, applies the canonical `browseros` contract,
+`prompt-authoring` discipline, requires reading and applying the `browseros` skill,
 verifies that BrowserOS is already logged in, and uses one eligible tab without
 silently inheriting its arbitrary conversation.
-`new-clean` is the default; `continue-exact` is used only when the user asks to
-continue an identifiable conversation. Independent asks remain serial but
-start clean, while explicit follow-ups preserve the intended thread. It
-defaults to GPT-6 Pro with Extended thinking when mode or effort is omitted and is
-prose-only: no scripts, runners, harnesses, API calls, or automated login.
-It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
-`Work` (same projects in both), proves which one it is in, and fails over to
-the other when Pro is rate limited. If both are limited, pause the blocked
-Pro consultation while independent authorized work continues; no substitute
+Use the most applicable project. Continue a matching Pro thread from the last
+24-48 hours for the same workstream unless it is about six turns deep; otherwise
+start a new conversation in that project. An explicit exact-thread or new-chat
+request wins. Independent asks remain serial. The default is GPT-6 Astra Pro
+with Extended thinking when mode or effort is omitted. The skill is prose-only:
+no scripts, runners, harnesses, API calls, or automated login.
+Pro means GPT-6 Astra's literal `Pro` option, never Extra High, xhigh, Ultra,
+Thinking, or the highest remaining setting. If Pro is missing or disabled in
+the `Chat` picker, it probably means a temporary account rate limit. The skill
+uses `$browseros` to try the next configured account: `Work`, `Pro1` / `Pro One`,
+`Pro2`, `Pro3`, and any others. All should have the same projects; verify the
+profile and same-named project, and carry the conversation context across.
+Only after available accounts are exhausted does it pause the blocked Pro
+consultation while independent authorized work continues; no substitute
 reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
-Work's reasoning slider does not select GPT-6 Pro in Chat.
+Work's reasoning slider does not select GPT-6 Astra Pro in Chat.
 
 ### `skill-authoring`
 

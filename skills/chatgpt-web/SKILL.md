@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through one BrowserOS ChatGPT tab in a deliberately chosen profile window (`Pro One` or `Work`, same projects in both) after applying the canonical $browseros contract and $prompt-authoring discipline. Use when the user explicitly wants the ChatGPT web provider/capability, optional attachments, a pushed PR reviewed through the ChatGPT GitHub connector, or an exact existing conversation continued. Always uses ChatGPT's Chat surface, never Work (Work tops out at Ultra; Ultra is not Pro); defaults to GPT-6 Pro at maximum reasoning power (Pro / 5/5) with Extended thinking, places chats in the most applicable project, reuses a same-workstream Pro thread from the last 24-48 hours unless ~6+ turns deep, keeps a heartbeat during long Pro waits, runs serially, and fails over to the other profile window when Pro is rate limited. No substitute for Pro: pause the capped consultation; continue independent work. Not for OpenAI API work, automated login, or scripts."
+description: "Query logged-in ChatGPT through BrowserOS after reading and applying $browseros and $prompt-authoring. Use for an explicit ChatGPT web consultation, attachments, a pushed PR review through the GitHub connector, or an exact conversation continuation. Defaults to GPT-6 Astra with the literal Pro option and Extended thinking in Chat, never Extra High, xhigh, Ultra, Thinking, or another substitute. Uses one tab at a time, the applicable project, deliberate thread selection, serial prompts, and a heartbeat during long waits. If Pro is missing or rate limited, try the next configured BrowserOS account: Work, Pro1 / Pro One, Pro2, Pro3, and others; all should have the same projects. Pause only the blocked Pro consultation after available accounts are exhausted; continue independent authorized work. Not for OpenAI API work, generic browser automation, automated login, or scripts."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -16,8 +16,8 @@ scripts, runners, controllers, harnesses, schemas, or automation infrastructure.
 Read and apply `../browseros/SKILL.md` before the first BrowserOS call. The
 canonical BrowserOS skill owns page provenance, window and profile identity,
 lifecycle, proof, recovery, secrets, and cleanup; this skill owns the
-ChatGPT-specific workflow, including which of the two ChatGPT profile windows
-(`Pro One` or `Work`) a run uses and what to do when Pro is rate limited.
+ChatGPT-specific workflow, including selection among `Work`, `Pro1` / `Pro One`,
+`Pro2`, `Pro3`, and other configured ChatGPT profiles when Pro is unavailable.
 
 Read `../_shared/agent-orchestration-policy.md` before the query. ChatGPT Web is
 an intentional provider/browser-capability lane rather than a generic local
@@ -52,28 +52,29 @@ happens to be open without deciding which one the user wants.
   reading it does not count.
 - Use BrowserOS MCP, not `web.run`, OpenAI API calls, shell browser scripts, or
   direct cookie/session handling.
-- BrowserOS runs two profile windows for ChatGPT: `Pro One` and `Work`. Each
-  is its own ChatGPT login, and both have the same projects set up. Be
+- BrowserOS has separate ChatGPT accounts in profiles such as `Work`, `Pro1`
+  (also called `Pro One`), `Pro2`, and `Pro3`; check other configured Pro
+  profiles too. All should have the same projects set up. Be
   careful which window you are in. Choose one window deliberately for the
   run, prove it under `$browseros` (the page's window or browser-context
   evidence plus a safe in-app account or workspace marker, never an email,
   token, or session payload), and name it in the receipt. If you cannot
   prove which profile a page belongs to, stop and ask instead of guessing.
-- Use one BrowserOS `https://chatgpt.com/` tab in the chosen window for the
-  whole run. Reuse an eligible current-agent-controlled ChatGPT page in that
+- Use one BrowserOS `https://chatgpt.com/` tab at a time in the chosen window.
+  Reuse an eligible current-agent-controlled ChatGPT page in that
   window when one can be safely task-adopted under `$browseros`; otherwise
   open exactly one ChatGPT page as a tab in that window, landing and
   verifying it the way `$browseros` prescribes.
-- Never create a new BrowserOS window. The two profile windows already exist;
-  a run works inside one of them. Do not open pages hoping one lands in the
+- Never create a new BrowserOS window. Use existing profile windows under
+  `$browseros`. Do not open pages hoping one lands in the
   right profile.
 - Reusing the page does not mean reusing its conversation. Do login check,
   conversation selection, mode selection, attachment upload, submission,
   waiting, and response reading in that same page.
 - Do not open extra ChatGPT tabs for polling, attachment handling, retries,
-  separate prompts, or readback. The only second page a run may open is the
-  one in the other profile window during a rate-limit failover, and the run
-  then continues in that page alone.
+  separate prompts, or readback. During account failover, select or open one
+  eligible page in the next profile and continue there alone; clean up any
+  page this run created in the previous profile under `$browseros`.
 - Run ChatGPT Web prompts serially. If the user gives multiple ChatGPT asks,
   process them one at a time in the same ChatGPT tab. Keep them in one
   conversation only when they are explicit follow-ups; otherwise start a new
@@ -97,12 +98,13 @@ happens to be open without deciding which one the user wants.
   in `Chat`. `Work` tops out at `Ultra`, and `Ultra` is not Pro. Check the
   radio before touching the model pill and again before every send. A
   prompt sent from `Work` was not a Pro run: redo it in `Chat`.
-- Default to GPT-6 Pro in the `Chat` picker: the newest model generation
-  at its maximum reasoning power (`Pro`, `5/5`, or whatever the UI calls the top), with
-  `Extended` thinking when effort is a separate control. Model names written
-  in this skill are examples that go stale, never requirements: enumerate
-  the live Chat picker fresh and let it win over any remembered name. Only
-  deviate when the user explicitly names a different model or mode.
+- Default to **GPT-6 Astra Pro** in the `Chat` picker: select GPT-6 Astra and
+  the literal **`Pro`** option, with `Extended` thinking when that is a
+  separate control. **Pro is not Extra High, xhigh, Ultra, Thinking, or
+  whatever happens to be the highest available setting.** A `5/5` indicator
+  alone does not establish Pro; verify the actual `Pro` selection. If Pro is
+  missing, try the next account instead of selecting a substitute. Only
+  deviate when the user explicitly requests a different model or mode.
 - Respect explicit user choices for `Instant`, `Thinking`, `Pro`, `Light`,
   `Standard`, `Extended`, or `Heavy`.
 - Do not downgrade or upgrade the requested mode silently.
@@ -138,16 +140,17 @@ happens to be open without deciding which one the user wants.
   of the response; closing one never counts as altering the run. If a
   submission does not go through for a transient reason, wait about 5
   minutes, dismiss any blocker, and resubmit the same prompt in the same tab.
-- A Pro rate limit is not transient. `You've hit your rate limit. Please try
-  again later`, or an equivalent usage-cap message, means that window's
-  account is capped for Pro. Do not sit and retry it, and do not substitute:
-  never drop to `Extra High (4/5)`, `Thinking`, a lower effort, an older
-  generation, or the API to keep moving. Switch to the other profile window
-  and continue there per the profile-window section below. If both `Pro One`
-  and `Work` are rate limited, report the limit and pause the blocked Pro
-  consultation or decision. Continue independent authorized work; pause the
-  whole run only when no useful independent work remains. Wait for the user
-  to say Pro is available again; never count a pending review as passed.
+- A missing or disabled literal `Pro` option in the verified `Chat` picker
+  probably means that account is temporarily rate limited. An explicit
+  usage-cap message confirms a limit. In either case, switch to the next
+  configured account under `$browseros`; check `Work`, `Pro1` / `Pro One`,
+  `Pro2`, `Pro3`, and any others before declaring Pro unavailable. Do not
+  retry the capped account or substitute `Extra High`, `xhigh`, `Ultra`,
+  `Thinking`, another model, or the API. If no available account offers Pro,
+  report the accounts checked and pause the blocked Pro consultation or
+  decision. Continue independent authorized work; pause the whole run only
+  when no useful independent work remains. Wait for the user to say Pro is
+  available again; never count a pending review as passed.
 - Do not print, save, summarize, or inspect account details, cookies, tokens,
   raw session payloads, or other secrets.
 - Enforce a maximum of 10 attachments. Do not silently drop files.
@@ -196,10 +199,11 @@ happens to be open without deciding which one the user wants.
    workstream with a Pro thread from the last 24-48 hours in that project and
    the thread is under about 6 turns. Otherwise use `new-in-project`, or
    `new-root` only when no project fits.
-4. Choose the profile window, `Pro One` or `Work`. An explicit user choice
-   wins. Otherwise prefer the window whose account already holds this
-   workstream's live Pro thread; with no live thread, either window is fine.
-   A window known to be rate limited for Pro is not a choice.
+4. Choose among the configured ChatGPT profile windows (`Work`, `Pro1` /
+   `Pro One`, `Pro2`, `Pro3`, and others). Start with an explicitly requested
+   profile. Otherwise prefer the window whose account already holds this
+   workstream's live Pro thread; with no live thread, use an available account.
+   If its Pro option is missing or capped, follow account failover below.
 5. Under `$browseros`, select the single current-agent-controlled ChatGPT page
    for the run inside that window: safely task-adopt an eligible
    `https://chatgpt.com/` page there, or open exactly one new page as a tab
@@ -210,40 +214,51 @@ happens to be open without deciding which one the user wants.
    project, the recent Pro thread, or the exact requested conversation. Verify
    the thread before submitting into it. Do not submit while the page is merely
    showing an arbitrary prior thread.
-8. Set the surface radio to `Chat` and confirm the model pill reads `Pro`
-   before composing. Never send from `Work`.
+8. Set the surface radio to `Chat` and verify the requested model and mode,
+   defaulting to GPT-6 Astra with literal `Pro`. If required Pro is missing or
+   disabled, switch to the next account below. Never send a Pro request from
+   `Work` or substitute Extra High.
 
 ## Profile Windows And Rate Limits
 
-Two BrowserOS profile windows exist for ChatGPT, `Pro One` and `Work`. They
-are separate ChatGPT logins with the same projects set up, so either can host
-any run, but conversations do not carry across them: a thread that lives in
-`Work` cannot be continued from `Pro One`. Rate limits are per account, so
-the two windows are each other's fallback. Under `$browseros`, list windows
-and tabs before choosing, prove which profile the selected page is in, and
-work only in that page.
+Read and apply `$browseros`, including its profile/account operating details,
+before inspecting or switching accounts. Discover the configured profiles and
+their existing windows: `Work`, `Pro1` (also called `Pro One`), `Pro2`, `Pro3`,
+and any additional Pro accounts. Use live profile identity rather than assuming
+these labels exactly match every machine. All accounts should have the same
+projects; verify the same-named project after switching. Conversations are per
+account, so carry the needed thread context into the destination conversation.
 
-When a Pro submission in the current window is refused with `You've hit your
-rate limit. Please try again later` or an equivalent usage-cap message:
+In ChatGPT's `Chat` surface, inspect GPT-6 Astra's model and reasoning controls,
+including `Configure...` / `Intelligence` when present. If the literal `Pro`
+option is absent or disabled, treat it as a probable temporary account rate
+limit. Do not redefine Pro as the highest remaining option. `Extra High` is
+still not Pro even if it is now the top setting. An explicit usage-cap message,
+including `You've hit your rate limit. Please try again later`, triggers the
+same account switch:
 
-1. Record that window as rate limited for this run.
-2. Switch to the other profile window: select or open one ChatGPT page there
-   under `$browseros`, prove the profile, and verify login.
-3. Open the same-named project in that window and start a new conversation.
-   Restate the goal context the original thread had, and re-attach the files
-   or re-tag `@GitHub` with the PR URL; the new account has none of that.
-4. Submit the same prompt and continue the run there. Close the
-   rate-limited page if this run created it, per `$browseros` cleanup, and
-   name the failover and both windows in the receipt.
+1. Note the profile and observed condition: Pro missing/disabled or an explicit
+   rate-limit message. The missing option alone is a probable limit, not proof.
+2. Try the next configured account not yet checked. Under `$browseros`, select
+   or open one eligible ChatGPT page in its existing window, prove its profile,
+   and verify login. Keep all interaction backgrounded.
+3. Set the surface to `Chat` and verify GPT-6 Astra's literal `Pro` option.
+   If unavailable there too, continue through the remaining accounts, including
+   `Pro2`, `Pro3`, and any additional configured Pro profiles.
+4. When Pro is available, open the same-named project and start a conversation
+   with the necessary goal, decisions, and prior thread context. Re-attach files
+   or re-tag `@GitHub` with the PR URL, verify `Pro` and the requested thinking
+   effort, and submit the same ask. Continue in that page alone.
+5. Clean up pages this run created and no longer needs under `$browseros`.
+   Record the profiles checked, the successful profile, and continuation thread.
 
-If the other window is also rate limited, the run cannot get Pro right now.
-There is no substitute for Pro: do not use `Extra High (4/5)`, `Thinking`, a
-lower effort, an older generation, another provider, or the API in its place.
-Report the rate limit and both windows, pause the blocked Pro consultation
-or decision, and continue independent authorized work. Pause the whole run
-only when no useful independent work remains. Wait for the user to say Pro
-is available again; do not poll for the limit to lift or count a pending
-review as passed.
+Only after checking the available accounts should the run report that Pro
+cannot be used right now. Name the profiles and observed conditions, pause the
+blocked Pro consultation or decision, and continue independent authorized work.
+Pause the whole run only when no useful independent work remains. Wait for the
+user to say Pro is available again; do not poll capped accounts or count a
+pending review as passed. There is no substitute for GPT-6 Astra Pro: never
+Extra High, xhigh, Ultra, Thinking, another model, provider, reviewer, or API.
 
 ## Login Check
 
@@ -279,7 +294,7 @@ the conversation lives before composing anything:
    project's thread list and look for a Pro thread from the last 24-48 hours on
    this same work. Open the candidate and skim enough of it to confirm it is
    the same workstream, not just a similar title. Threads are per account:
-   if the live thread is in the other profile window, that window is the one
+   if the live thread is in another profile window, that window is the one
    to use unless it is rate limited.
 3. Continue that thread when it matches, is a `Chat`-surface thread (not
    labeled `Work` in the sidebar), and is under about 6 prompt/response
@@ -315,7 +330,7 @@ composer:
 ## Chat Surface: Chat, Never Work
 
 The ChatGPT composer has a `Select chat surface` radio group with two
-surfaces, `Chat` and `Work`. Select GPT-6 Pro in `Chat`. Work's model picker
+surfaces, `Chat` and `Work`. Select GPT-6 Astra Pro in `Chat`. Work's model picker
 and reasoning slider do not select Chat's Pro mode. A review sent from
 `Work` does not count as a Pro verdict; redo it in `Chat`.
 
@@ -324,17 +339,18 @@ Before touching the model pill, and again before every send:
 1. Read the surface radio group and make sure `Chat` is the checked radio.
    If `Work` is checked, select `Chat` and re-read the composer; the pill
    changes with the surface.
-2. Confirm the selected model is GPT-6 Pro, with `Pro` / `5/5` as the
-   maximum reasoning tier and `Extended` thinking where offered. Read the
-   checked surface directly; a high setting in Work is not a Pro selection.
+2. For a Pro run, confirm GPT-6 Astra and the literal `Pro` option are selected, with
+   `Extended` thinking where offered. Extra High, xhigh, Ultra, or a numeric
+   power level alone do not establish Pro. If Pro is unavailable, switch
+   accounts under the profile-window section before sending.
 3. When continuing a thread, confirm it is a Chat-surface thread. The
    sidebar labels Work-surface chats with `Work`; a Work thread cannot carry
    a Pro conversation, so start a new `Chat` conversation in the project
    instead.
 
 Naming trap: the BrowserOS profile window called `Work` has nothing to do
-with ChatGPT's `Work` surface. In either profile window, `Pro One` or
-`Work`, the ChatGPT surface is `Chat`.
+with ChatGPT's `Work` surface. In every BrowserOS profile, including `Work`,
+the ChatGPT surface is `Chat`.
 
 ## Mode And Effort
 
@@ -342,9 +358,9 @@ Default when the user does not specify:
 
 ```text
 surface = Chat (never Work)
-mode = maximum reasoning power the Chat picker offers (`Pro` / `5/5`)
+mode = literal Pro option (never Extra High, xhigh, Ultra, or Thinking)
 effort = Extended
-model = GPT-6 Pro (newest generation in Chat, at its most powerful tier)
+model = GPT-6 Astra Pro
 ```
 
 Use the ChatGPT model pill beside the composer, in the `Chat` surface.
@@ -356,25 +372,21 @@ Observed controls to select from:
 - surface: `Chat`, `Work` - always `Chat`
 - mode: `Instant`, `Thinking`, `Pro`
 - effort: `Light`, `Standard`, `Extended`, `Heavy`
-- model: GPT-6 Pro, verified in the live Chat picker; select the newest
-  generation at its most powerful tier unless the user names another model
+- model: GPT-6 Astra, with the literal `Pro` option verified in the live Chat
+  picker unless the user explicitly requests another model or mode
 
-`Pro` is shorthand for the maximum reasoning option on the newest model in
-the `Chat` surface - shown as `Pro` or `5/5` when the UI renders levels as
-a scale - not a frozen label. The ban runs one direction only: never
-select less power than the maximum available in `Chat`, and never select
-an older generation because its label matches a remembered name. `Extra
-High (4/5)` instead of the top level is a downgrade; so is an older model
-labeled `Pro` chosen over a newer generation whose own top tier carries a
-different name. GPT-6 Pro is the current selection. The rule is scoped to
-Chat: Work's maximum reasoning setting is not Chat Pro. The picker changes
-between sessions: in `Chat`, re-open the model pill and the `Intelligence` dialog, enumerate
-every model and every power level - including tiers nested inside a newer
-entry - and select the newest generation at its top power before
-concluding anything is missing. If you genuinely cannot reach a
-maximum-power configuration in `Chat`, fail loudly and tell the user
-instead of silently approximating. Before sending, confirm the surface is
-`Chat` and the picker displays the selection you resolved, not a stand-in.
+**Pro means the literal `Pro` option on GPT-6 Astra.** It is not shorthand for
+maximum available reasoning. `Extra High` / `xhigh`, `Ultra`, `Thinking`, and
+every other non-Pro setting are different configurations and cannot satisfy a
+Pro request or required review. `Extended` is a separate thinking choice when
+offered; it does not turn a non-Pro selection into Pro. Neither a numeric
+`5/5` indicator nor a BrowserOS profile named `Pro` proves the selected mode.
+
+Re-open the live `Chat` picker and inspect the model's nested controls before
+concluding Pro is missing. If GPT-6 Astra's literal `Pro` option is absent or
+disabled, follow account failover; this is probably a temporary rate limit on
+that account. Do not select the highest remaining setting. Before every Pro
+send, confirm `Chat`, GPT-6 Astra, `Pro`, and the requested thinking effort.
 
 Do not run a Pro prompt merely to test the skill. Only use Pro when the user's
 actual request needs the default or explicitly asks for it.
@@ -420,8 +432,9 @@ submitting.
    or any multi-paragraph body, that body must already be an attached file and
    the composer text must be a short single-paragraph ask referencing it.
 3. Confirm the surface radio is `Chat` and the selected mode and effort
-   match the request or default, GPT-6 Pro with Extended thinking. If the
-   checked surface is `Work`, switch to `Chat` and reselect before sending.
+   match the request or default, GPT-6 Astra with literal `Pro` and Extended
+   thinking. If required Pro is missing or disabled, switch accounts before
+   sending. If the checked surface is `Work`, switch to `Chat` and reselect.
 4. Confirm every attachment chip is present.
 5. Click `Send prompt`, then read back the just-submitted user message and
    confirm it contains the full intended text and attachments. If it was
@@ -466,8 +479,8 @@ Return:
 
 - ChatGPT's answer
 - surface (`Chat`), model, mode, and effort used
-- profile window used, `Pro One` or `Work`, plus any rate-limit failover
-  between them
+- verified profile window used and any account failovers, with the profiles
+  checked and whether Pro was missing/disabled or explicitly rate limited
 - conversation placement used: the project name plus `continue-exact`,
   `continue-recent-pro`, `new-in-project`, or `new-root` with a one-line reason
   when the choice was `new-root`
@@ -478,6 +491,7 @@ Return:
   heartbeat was set and cleared
 
 If the run fails, name the exact failed condition and the next manual repair.
-When both profile windows are rate limited, say so plainly, name the Pro
+When no available profile offers Pro after checking the configured accounts,
+say so plainly with the observed conditions, name the Pro
 consultation or decision that is paused and any independent work continuing,
 and wait for the user to say Pro is back.

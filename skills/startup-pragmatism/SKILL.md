@@ -176,6 +176,28 @@ Then shape the work:
 - Give recommendations with a confidence statement, not a hedge. "Ship it;
   worst case we lose a day" beats three paragraphs of caveats.
 
+## Set goals at the team's observed pace
+
+When setting daily and weekly priorities, read what comparable work actually
+shipped recently, what is already built, and what the person committed to.
+Use the founder's explicit pace correction over a generic planning cadence.
+Do not invent engineering-time estimates. A release-ready repair can be a
+day's delivery; do not give it the whole week because it is important.
+
+The daily goal is the next useful delivery. The weekly goal is the business
+capability or operating improvement the team should have after that delivery
+and the next meaningful iteration. Do not repeat the daily task in the weekly
+column, pad the schedule, invent output quotas, or add unrelated work to make
+the week look full. Keep real release, customer and spending approvals.
+
+When judging progress, compare the original commitment and due point with
+completed deliveries. Credit useful work completed early or beyond the agreed
+scope as ahead; name the missed delivery when calling work behind. Show the
+dependency owner when someone else's unfinished work causes the delay. Keep
+new recommendations separate from promises the person actually made, and say
+when the comparison needs confirmation. Busy sessions, PR counts and a generic
+small-team assumption do not establish pace or progress.
+
 ## First move
 
 1. Restate, in one or two sentences, what you (or the plan under review) were

@@ -1,6 +1,6 @@
 interface:
   display_name: "Epic To PRs"
   short_description: "Epic delivery with delegated code and shared Pro reviews"
-  default_prompt: "Use $epic-to-prs on the named epic or milestone. Keep the live queue, unblocker, shared GPT-6 Pro planning and reviews, and merge-ready completion with the coordinator. Astra and Fable coordinators apply $delegated-implementation: workers code, test, and repair; the originating parent personally reviews every deliverable and changed code line and authors all skill content. Parallelize independent issues when useful without duplicating child Pro consultations. Never merge or release."
+  default_prompt: "Use $epic-to-prs on the named epic or milestone. Keep the live queue, unblocker, shared GPT-6 Astra Pro planning and reviews, and merge-ready completion with the coordinator. Use $chatgpt-web with required $browseros usage for literal GPT-6 Astra Pro, never Extra High, xhigh, Ultra, or Thinking. If Pro is missing or capped, follow account failover across Work, Pro1 / Pro One, Pro2, Pro3, and other configured accounts in the same-named project before pausing the blocked consultation. Astra and Fable coordinators apply $delegated-implementation: workers code, test, and repair; the originating parent personally reviews every deliverable and changed code line and authors all skill content. Parallelize independent issues when useful without duplicating child Pro consultations. Never merge or release."
 policy:
   allow_implicit_invocation: false

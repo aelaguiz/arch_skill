@@ -3,14 +3,22 @@
 Current cadence (owner direction, 2026-09-04): use Pro for initial planning,
 meaningful batch checkpoints, major problems unresolved by local reasoning,
 and final review. Related issues share planning and reviews; ordinary fixes
-are verified locally. If both accounts are limited, pause the blocked Pro
+are verified locally. If all available accounts are limited, pause the blocked Pro
 decision while independent authorized work continues. `../SKILL.md` owns
 this runtime contract. The historical prompts below do not reinstate
 per-child reviews, automatic reapproval loops, or blanket whole-goal pauses.
 
-Current model selection: GPT-6 Pro with Extended thinking in ChatGPT's `Chat`
-surface, per `$chatgpt-web`. The dated model names in the verbatim evidence
-below describe past runs; they do not select the current review model.
+Current model and account selection (owner direction, 2026-09-08): GPT-6 Astra
+with the literal `Pro` option and Extended thinking in ChatGPT's `Chat` surface,
+per `$chatgpt-web` with required `$browseros` usage. Pro is not Extra High,
+xhigh, Ultra, Thinking, or the highest available setting. Missing or disabled
+Pro probably means a temporary account rate limit: try `Work`, `Pro1` /
+`Pro One`, `Pro2`, `Pro3`, and other configured accounts in the same-named
+project, carrying the needed context across. All should have the same projects.
+Only after available accounts are exhausted, pause the blocked Pro decision
+while independent authorized work continues. This supersedes the historical
+top-tier equivalence, two-account fallback, and whole-goal pause guidance below;
+verbatim quotations remain historical evidence, not current model selection.
 
 `issue-to-pr` originated from a dispatch template its owner typed
 near-identically ~30 times during 2026-08-24..30, plus the standing
@@ -39,7 +47,7 @@ current cadence above supersedes them where they differ.
   was anti-downgrade intent, but an agent obeyed the label and stuck with
   GPT-5.5 Pro over the newer generation's top tier. Owner ruling, verbatim:
   "yeah you fucking idiot 5.6 sol pro / it should always use the absolute
-  latest and absolute most powerful model." The rule is now: newest
+  latest and absolute most powerful model." The rule at that time was: newest
   generation at maximum reasoning power, resolved from the live picker;
   the ban runs one direction only - never less power, never an older
   generation.
@@ -63,11 +71,11 @@ current cadence above supersedes them where they differ.
 - Pro rate limits (2026-09-01): the standing instruction the owner sent
   to running agents, verbatim: "if you get rate limited 'You've hit your
   rate limit. Please try again later' by pro clear the goal for now until
-  pro un rate limits i'll let you know when." Since then a second BrowserOS
-  profile, `Pro One`, sits beside `Work`, with the same ChatGPT projects in
+  pro un rate limits i'll let you know when." At that time a second BrowserOS
+  profile, `Pro One`, sat beside `Work`, with the same ChatGPT projects in
   both: "If one is limited they should use the other one." And: "there is
   no substitute for Pro. If they can't get Pro, they can't use xhigh.
-  There's no substituting." Encoded as: failover to the other profile
+  There's no substituting." The historical rule was: failover to the other profile
   window per `$chatgpt-web`; both limited means pause the goal and wait for
   the owner, never a lesser tier, effort, model, or reviewer.
 - Chat surface, not Work (2026-09-02): an agent ran a "max power" review

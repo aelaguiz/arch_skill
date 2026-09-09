@@ -46,10 +46,15 @@ How you decide:
    reasoning after reasonable investigation and is likely to change the
    approach. Carry full goal context, attempted reasoning, options, and a
    recommendation; follow the run's cadence and have the coordinator record
-   each actual submission once in the existing worklog. If both BrowserOS
-   profile windows (`Pro One` and `Work`) are limited, pause the blocked Pro
-   decision, continue independent authorized work, and wait for the user to
-   say Pro is back. No substitute reviewer can satisfy a required Pro review.
+   each actual submission once in the existing worklog. Pro means GPT-6 Astra's
+   literal `Pro` option, never Extra High, xhigh, Ultra, or Thinking. Missing or
+   disabled Pro probably means a temporary account rate limit: use `$chatgpt-web`
+   and its required `$browseros` skill to try `Work`, `Pro1` / `Pro One`, `Pro2`,
+   `Pro3`, and other configured accounts in the same-named project, with context
+   carried across. All should have the same projects. Only after available
+   accounts are exhausted, pause the blocked Pro decision, continue independent
+   authorized work, and wait for the user to say Pro is back. No substitute
+   reviewer can satisfy a required Pro review.
 4. Only a matter needing the user's authority or access, changing what they
    asked for, or crossing a boundary goes to the user: one crisp question
    with a recommendation, and tell the worker what to work on meanwhile.

@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR with a plan on disk, startup-pragmatism, GPT-6 Pro planning/final review, and PR authoring/follow-through. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
+description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR with a plan on disk, startup-pragmatism, GPT-6 Astra Pro planning/final review, and PR authoring/follow-through. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
 metadata:
   short-description: "Issue delivery with delegated code and parent review"
 ---
@@ -102,10 +102,11 @@ consolidated recheck; decide from their impact, not the SHA changing.
 
 ## Consulting Pro
 
-Use GPT-6 Pro with Extended thinking through `$chatgpt-web`, at the newest
-generation's maximum reasoning power verified in the live picker. Use
-ChatGPT's `Chat` surface; `Work` and Ultra are not Pro. Follow that skill's
-browser, input-delivery, and rate-limit mechanics.
+Use GPT-6 Astra with the literal `Pro` option and Extended thinking through
+`$chatgpt-web`. Read and apply `$browseros` before BrowserOS calls. Verify
+`Pro` in ChatGPT's `Chat` surface: Extra High, xhigh, Ultra, Thinking, and the
+highest remaining setting are not Pro. Follow `$chatgpt-web` for input delivery
+and account switching when Pro is missing, disabled, or explicitly capped.
 
 Use the run's existing Pro thread, inheriting the epic's thread when
 applicable. Apply `$prompt-authoring` to every submission. Include the
@@ -119,8 +120,12 @@ artifact/revision and thread, plus the running submission count. Include
 retries and failover submissions; polling an existing response is not a new
 consultation. Keep this a short entry, not a separate tracking system.
 
-If both profile windows are rate limited, report it and pause the blocked
-Pro consultation or decision. Continue independent authorized work; pause
+Missing Pro probably means a temporary account rate limit. Under `$chatgpt-web`
+and `$browseros`, try the next configured account (`Work`, `Pro1` / `Pro One`,
+`Pro2`, `Pro3`, and others) in the same-named project with the needed context.
+All should have the same projects. Only after the available accounts are
+exhausted, report their observed conditions and pause the blocked Pro
+consultation or decision. Continue independent authorized work; pause
 the whole run only when no useful independent work remains. Wait for the
 user to say Pro is available again. Do not substitute another model for a
 required Pro review or claim a pending review passed.
