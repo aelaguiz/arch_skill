@@ -1,0 +1,7 @@
+interface:
+  display_name: "ELINE Peer Briefing"
+  short_description: "Explain it like I'm a strong engineer who is new to this system"
+  default_prompt: "Use $eline to explain this the way the owning engineer would brief a strong engineer from another team: assume standard CS and industry vocabulary, gloss only system-specific names by their role, collapse whatever is off the problem's path, lead with the thesis, spend most of the answer on the problem area with its critical evidence, add exact identifiers only if my ask calls for that depth, and end with the questions I would ask next rather than a plan."
+
+policy:
+  allow_implicit_invocation: true
