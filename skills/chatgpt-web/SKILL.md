@@ -1,15 +1,23 @@
 ---
 name: chatgpt-web
-description: "Query logged-in ChatGPT through BrowserOS after applying $browseros and $prompt-authoring. Use for explicit web consultations, data questions, pushed PR reviews, attachments, or exact conversation continuation. Requires @BigQuery for data and @GitHub for GitHub/repo questions, with actual source access; missing or broken access means switch Pro accounts or stop and tell the user, never accept guesses. Defaults to GPT-6 Astra with literal Pro and Extended thinking in Chat, never Extra High, xhigh, Ultra, or Thinking. Discover the already-open Work and Pro profiles, note and use a working account, and continually verify profile/window/page. Missing Pro probably means a temporary limit; try another account in the same-named project with context carried over. Uses one tab, serial prompts, and a heartbeat during waits. Pause blocked consultation when no suitable account works; continue independent work. Not for API work, generic browser automation, automated login, or scripts."
+description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros and $prompt-authoring. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro, real @BigQuery access for data and @GitHub access for repo work, existing Work/Pro profile windows, and 3–5-minute generation checks. Switch temporarily limited accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
 
 # ChatGPT Web
 
-Consult logged-in ChatGPT through BrowserOS and return an answer grounded in
-the requested inputs. Read this entry file completely; retrieve any truncated
-portion before proceeding.
+Consult Pro as an expert on the user's actual problem. For interpretation and
+planning, give it the original objective, relevant history, and current
+evidence so it can reconsider the question, diagnosis, and approach. The
+parent reads that judgment as a whole and then reports it in the user's
+preferred form. Calling Pro a peer does not compensate for restricting what
+it may conclude.
+
+**Every submission requires checking the full draft before Send and the new
+submitted user turn afterward.** Accept an answer only when it belongs to that
+verified request and serves the user's consultation purpose. Read this entry
+file completely; retrieve any truncated portion before proceeding.
 
 ## Critical operating rules
 
@@ -54,10 +62,27 @@ or continuation of a particular conversation; do not inherit whichever thread
 happens to be open.
 
 Read and apply [the prompt-authoring skill](../prompt-authoring/SKILL.md) to the
-actual prompt before each submission. Preserve explicit verbatim relays;
-otherwise send the ask, essential context, and desired output concisely. Keep
-caller hypotheses challengeable. Do not add personas, invented rubrics, repeated
-constraints, or a prescribed research path without a task-specific reason.
+actual outgoing request before every submission: composer text, instructions
+inside attachments, and relevant assumptions carried by the thread. Loading
+the skill or checking a reusable template does not perform this review.
+
+Begin with the decision the user needs help making. For new results, restore
+the original goal and explain what was tried, what was observed,
+and what remains uncertain. Supply the relevant evidence without replacing it
+with the parent's preferred interpretation. Present the current plan and
+candidate explanations as proposals unless the user actually made them binding.
+Invite Pro to decide what matters and change, reorder, or discard the approach.
+A useful recognition test is whether Pro could reject the parent's question or
+preferred experiment and still fulfill the user's request.
+
+Keep the brief concise without capping the expert's assessment to the parent's
+final-summary format. Ask for the judgment needed in whatever structure best
+explains it; do not impose fixed bullet counts, closed choices, or a preserved
+plan merely to make the answer easy to summarize. Read Pro's full assessment
+before condensing it for the user. Real constraints and specific questions
+remain useful; a named source-repair review can legitimately have a narrow
+verdict. Infer that scope from the task, not from a habitual review template.
+Preserve explicit verbatim relays.
 
 Read [accounts-and-conversations.md](references/accounts-and-conversations.md)
 before choosing or switching the account, project, thread, or model controls.
@@ -81,7 +106,8 @@ serially unless simultaneity is mandatory, in which case report the mismatch.
 ## Supply the inputs and send
 
 For a plan or any multi-paragraph body, attach a file and use only a short
-single-paragraph composer message pointing to it; newlines can submit early.
+single-paragraph composer message pointing to it. Keyboard-based fills can
+turn newlines into Enter and submit a fragment during the fill itself.
 Check absolute paths, existence, and the maximum of 10 attachments. Never drop
 requested files silently. Read
 [composer-and-attachments.md](references/composer-and-attachments.md) before
@@ -94,15 +120,25 @@ data scope so retrieval addresses the actual question.
 
 Before sending, verify the intended profile/window/page and conversation,
 `Chat` surface, model, literal mode and effort, every attachment chip, and each
-required connector. Fill the composer and inspect its actual text before
-clicking Send; a failed fill must not send a stale draft. Use the current tool
+required connector. Record the latest submitted user-message identity, then
+fill the live visible composer and compare its complete text with the intended
+message before clicking Send. Check that filling did not itself create a new
+user message. A failed fill must not send a stale draft. Use the current tool
 schema and fresh refs.
 
-Send once and read back the submitted user message and attachments. Confirm
-that the entire intended input arrived. If it split or truncated, the resulting
-answer cannot be used: stop that invalid generation with a freshly verified
-control, repair the input, and submit correctly. If Send times out or disconnects,
-apply BrowserOS unknown-outcome handling before retrying.
+Send once, then identify the new submitted user message separately from the
+composer. Compare its full body and attachment list with the intended input,
+verify the visible composer cleared, and associate the response with that
+message. Inspect collapsed text fully; a matching prefix or a whole-page text
+search is insufficient. If it split or truncated, the resulting answer cannot
+be used: stop that invalid generation if still running, using a freshly
+verified control, repair the input, and submit correctly. If Send times out or
+disconnects, apply BrowserOS unknown-outcome handling before retrying. Do not
+claim delivery or interpret the answer until this readback succeeds.
+
+When repairing delivery or access, preserve the consultation's substantive
+question, evidence, and scope. A technical retry does not authorize replacing
+an open assessment with a narrower debate or acceptance checklist.
 
 ## Wait, read, and judge the result
 
@@ -134,9 +170,11 @@ submitted; after a transient submission failure, wait about 5 minutes before
 retrying in the same page. A lost session or required manual action needs the
 specific manual repair. A long-running generation alone is not failure.
 
-Accept only a response that addresses the submitted ask using the required
-inputs, with actual successful connector retrieval where required. A completed
-response that guesses around a missing file, inaccessible repo, or failed data
+Accept only a response that serves the user's original consultation purpose
+and addresses the verified submitted ask using the required inputs, with actual
+successful connector retrieval where required. If the parent asked the wrong
+question, repair the prompt before treating its answer as the requested review.
+A completed response that guesses around a missing file, inaccessible repo, or failed data
 query is invalid. Repair access or inputs before resubmission; do not relay that
 response as a verdict or use it to publish dependent changes.
 Refusals, empty replies, and answers that omit the requested work also fail

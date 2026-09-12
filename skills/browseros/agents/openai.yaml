@@ -1,7 +1,7 @@
 interface:
   display_name: "BrowserOS"
   short_description: "Safe preflight for direct BrowserOS MCP use"
-  default_prompt: "Use $browseros for this browser task. Apply its critical focus, profile/window/page, ownership, and outcome rules before acting; read only the operating references needed for the task."
+  default_prompt: "Use $browseros for this browser task. Apply its focus, profile/window/page, ownership, and outcome rules. Verify field contents and any submission triggered by typing; read the operating references needed for the task."
 
 dependencies:
   tools:

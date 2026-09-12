@@ -84,6 +84,10 @@ file transfer, and screenshots. Use fresh snapshot refs for actions; navigation
 and substantial rerenders invalidate them. Inspect the returned change before
 choosing the next action. For field edits, verify the actual value before a
 send or save so a failed fill cannot submit an old draft.
+Read whether the input tool inserts text or emits keystrokes: newlines can
+trigger Enter-to-submit while a fill is still running. Inspect both the live
+field contents and any resulting submission before issuing a separate send or
+save. An input character count is not proof of the final application state.
 
 Prefer bounded semantic `read`, `grep`, or `diff` output for content. A sparse
 snapshot with empty paragraph nodes is not proof that no text exists: use a
