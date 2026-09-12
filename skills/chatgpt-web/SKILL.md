@@ -19,6 +19,12 @@ submitted user turn afterward.** Accept an answer only when it belongs to that
 verified request and serves the user's consultation purpose. Read this entry
 file completely; retrieve any truncated portion before proceeding.
 
+**Let Pro finish. It regularly takes around 30 minutes and can take longer.**
+That is an expectation, never a deadline. Do not click **Stop answering** unless
+the user explicitly asks to stop. Observe actual thinking/activity and answer
+changes; after at least 15 minutes without progress, reload once and recover
+the consultation autonomously as described below.
+
 ## Critical operating rules
 
 - **Apply `$browseros` before every browser phase.** Read
@@ -48,10 +54,9 @@ file completely; retrieve any truncated portion before proceeding.
   Never accept or act on guesses about sources Pro could not access.
 - **Wait for the requested review.** After submission readback, check generation
   every **3–5 minutes**, defaulting to 5, with the heartbeat at the same cadence.
-  Never poll every 10 seconds. Pro can take 10+ minutes. Elapsed time, a short
-  host wait, or a self-imposed review budget does not justify cancelling it or
-  substituting an older answer. Keep decisions that require this review pending
-  until a usable response arrives; continue independent authorized work.
+  Keep waiting while substantive traces or answer content advance, however long
+  the run takes. A ticking clock or spinner is not progress. Keep the requested
+  review pending until its usable answer arrives; continue independent work.
 
 ## Prepare the consultation
 
@@ -60,6 +65,8 @@ before querying. This is an explicitly chosen web consultation, not the default
 route for ordinary parallel work. Decide whether the task needs a new context
 or continuation of a particular conversation; do not inherit whichever thread
 happens to be open.
+The shared policy's deadlines and stall actions for owned processes do not
+set a timeout for a ChatGPT web response; this skill owns its recovery.
 
 Read and apply [the prompt-authoring skill](../prompt-authoring/SKILL.md) to the
 actual outgoing request before every submission: composer text, instructions
@@ -98,7 +105,9 @@ and connector authorization repairs are manual.
 
 Run prompts serially in the same tab. Continue a conversation for follow-ups;
 start a clean conversation for independent asks. Do not add tabs for uploads,
-polling, retries, or readback. During account switching, continue in the new
+polling, or readback. Retry in place first; if recovery needs a branch and the
+site creates a destination tab, verify it and continue there alone.
+During account switching, continue in the new
 verified page alone and clean up task-created pages no longer needed. If the
 user requests parallel ChatGPT runs, explain the serial constraint and proceed
 serially unless simultaneity is mandatory, in which case report the mismatch.
@@ -129,11 +138,13 @@ schema and fresh refs.
 Send once, then identify the new submitted user message separately from the
 composer. Compare its full body and attachment list with the intended input,
 verify the visible composer cleared, and associate the response with that
-message. Inspect collapsed text fully; a matching prefix or a whole-page text
+message. Record the user-message and outer response-turn IDs together when
+the response appears; virtualized history can later omit intervening turns.
+Inspect collapsed text fully; a matching prefix or a whole-page text
 search is insufficient. If it split or truncated, the resulting answer cannot
-be used: stop that invalid generation if still running, using a freshly
-verified control, repair the input, and submit correctly. If Send times out or
-disconnects, apply BrowserOS unknown-outcome handling before retrying. Do not
+be used: preserve the full intended input and repair delivery through the
+recovery procedure below, without clicking Stop. If Send times out or
+disconnects, read back its outcome before deciding whether to retry. Do not
 claim delivery or interpret the answer until this readback succeeds.
 
 When repairing delivery or access, preserve the consultation's substantive
@@ -148,27 +159,42 @@ updates do not require another browser call. Set the host's check-in heartbeat
 when available and clear it when the response is read or the run terminally
 fails. Do not claim a heartbeat was set if the host has none.
 
-At each scheduled check, read the visible thinking summary, interim messages,
-partial answer, errors, and connector activity. A spinner-only check is
-insufficient. If a snapshot is sparse or contains empty paragraph nodes, use
-bounded visible-text reads; tool-output truncation or omitted text does not
-prove Pro is silent. Read the full final response and relevant visible interim
-output before accepting it.
+Before monitoring, read
+[generation-progress-and-recovery.md](references/generation-progress-and-recovery.md).
+Anchor observations to the verified user message and its following response
+turn. Read the actual thinking summary, research/tool entries, interim messages,
+and answer text. Open that response's thinking disclosure when needed: the
+Activity panel can contain the traces outside `main` while the inline response
+says only `Pro thinking`. An assistant-message node may not exist yet.
 
-Do not refresh, resubmit, open another polling tab, or cancel while a valid
-response is generating. Cancellation needs the user's stop instruction or a
-concrete invalid run, such as wrong input, failed required access, or an explicit
-error. Inspect fresh state and the exact control before cancelling; an old Stop
-ref may be stale or the response may have completed. A pending required review
-is never a passed review, and prior guidance does not replace the requested answer.
+Keep the last substantive content and its observation time in the task notes.
+Compare content at each scheduled check, including same-length revisions;
+new/revised traces, results, or answer text reset the inactivity window. A
+timer tick, spinner, old answer, or mere DOM remount does not. Missing selectors,
+sparse snapshots, and truncated tool output require a better read, not a stall
+diagnosis. Restore this state after compaction; if it was lost, observe again
+rather than inventing how long the page has been inactive.
 
-Act on concrete failures when observed. For missing or broken connectors,
-switch to another suitable already-open Pro account or stop and name the failed
-access. For a cap or missing Pro, follow account switching. Dismiss transient
-blocker dialogs, but do not resubmit unless readback proves no prompt was
-submitted; after a transient submission failure, wait about 5 minutes before
-retrying in the same page. A lost session or required manual action needs the
-specific manual repair. A long-running generation alone is not failure.
+After **at least 15 minutes without substantive progress across multiple
+checks**, preserve the request and reload the same page once. This is a UI
+recovery trigger, not proof Pro is dead or permission to cancel it. An explicit
+page/response error or a verified bad submission can enter recovery immediately.
+Reidentify the conversation and response, reopen its Activity panel as needed,
+and read the recovered state. If the answer is complete, read it; if progress
+resumes, keep waiting. If it remains incomplete and not progressing after the
+page settles, retry the complete original request through the available retry
+or Send control and verify its delivery. If the same conversation cannot
+recover, branch from the last useful context and continue in the verified
+destination. Follow the reference for disabled input and branch mechanics.
+
+Do not turn routine stalls into a user handoff or stop at an error report. Keep
+recovering toward the requested answer without requiring the user to be present.
+Never shorten recovery into repeated Stop clicks, refresh loops, or a demand to
+stop researching and answer immediately. Preserve required evidence, connectors,
+Pro configuration, and expert freedom on every retry. Reconcile any external
+writes Pro was authorized to perform before repeating those instructions.
+For missing/broken connectors or an account cap, use the account-switching
+procedure; actual login or authorization repairs remain manual.
 
 Accept only a response that serves the user's original consultation purpose
 and addresses the verified submitted ask using the required inputs, with actual

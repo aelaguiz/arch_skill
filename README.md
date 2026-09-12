@@ -433,10 +433,15 @@ connector is unavailable or fails, switch to another suitable Pro profile or
 stop and tell the user. A confident answer based on guessed data or inaccessible
 code is invalid and cannot count as a completed consultation or review.
 
-The main skill puts these critical rules first and loads account/conversation
-and composer/attachment procedures from conditional references. Pro generation
-checks are 3-5 minutes apart. Elapsed time alone does not justify cancelling a
-required review or treating an older answer as the requested verdict.
+The main skill puts these critical rules first and loads account/conversation,
+composer/attachment, and generation-observation details from bundled references.
+Pro regularly takes around 30 minutes and can take longer; this is not a
+deadline. Check actual thinking/activity and answer content every 3–5 minutes,
+including the current response's Activity panel outside `main`. After at least
+15 minutes without substantive progress, reload once and inspect the recovered
+state. Recover autonomously through a verified full-request retry or, if needed,
+a branch. Do not click Stop answering unless the user asks, or replace the
+expert's question with a demand to finish immediately.
 
 ### `skill-authoring`
 
