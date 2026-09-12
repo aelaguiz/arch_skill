@@ -392,6 +392,13 @@ alongside a narrower BrowserOS-backed skill; that skill owns its site workflow
 while `browseros` owns BrowserOS mechanics. It is not for BrowserOS
 installation or vendor development.
 
+The shared machine has a `Work` profile and a variable number of Pro profiles
+with many windows already open. The skill requires continual verification of
+the working profile/window/page. Protecting the user's foreground focus is a
+primary concern: work through viable background methods first. Necessary brief
+foreground use needs no separate approval; explain the need and promptly return
+to background work.
+
 Examples:
 
 - `Use $browseros before updating this record in the already-open authenticated web app`
@@ -400,21 +407,40 @@ Examples:
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
 capabilities, or local attachments. It shapes rough prompts with
-`prompt-authoring` discipline, applies the canonical `browseros` contract,
+`prompt-authoring` discipline, requires reading and applying the `browseros` skill,
 verifies that BrowserOS is already logged in, and uses one eligible tab without
 silently inheriting whatever conversation is open.
-`new-clean` is the default; `continue-exact` is used only when the user asks to
-continue an identifiable conversation. Independent asks remain serial but
-start clean, while explicit follow-ups preserve the intended thread. It
-defaults to GPT-6 Pro with Extended thinking when mode or effort is omitted and is
-prose-only: no scripts, runners, harnesses, API calls, or automated login.
-It works in one of the two BrowserOS ChatGPT profile windows, `Pro One` or
-`Work` (same projects in both), proves which one it is in, and fails over to
-the other when Pro is rate limited. If both are limited, pause the blocked
-Pro consultation while independent authorized work continues; no substitute
+Use the most applicable project. Prefer a matching recent Pro thread for the
+same workstream; assess whether a longer thread needs a fresh conversation with
+the necessary context carried over. An explicit exact-thread or new-chat
+request wins. Independent asks remain serial. The default is GPT-6 Astra Pro
+with Extended thinking when mode or effort is omitted. The skill is prose-only:
+no scripts, runners, harnesses, API calls, or automated login.
+Pro means GPT-6 Astra's literal `Pro` option, never Extra High, xhigh, Ultra,
+Thinking, or the highest remaining setting. If Pro is missing or disabled in
+the `Chat` picker, it probably means a temporary account rate limit. The skill
+uses `$browseros` to discover the already-open `Work` profile and variable
+number of Pro profiles. Note which account currently offers Pro, which are
+unavailable, and when checked; use the working account and refresh stale notes
+on resume. There is no fixed account count or rotation order. All should have
+the same projects; continually verify the profile/window/page and carry the
+conversation context into the same-named project after switching.
+For a Pro rate limit, only after available accounts are exhausted does it
+pause the blocked Pro consultation while independent authorized work continues; no substitute
 reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
-Work's reasoning slider does not select GPT-6 Pro in Chat.
+Work's reasoning slider does not select GPT-6 Astra Pro in Chat.
+
+Data questions require an attached `@BigQuery` connector; GitHub or repository
+questions require `@GitHub`, and questions needing both require both. The agent
+must verify actual retrieval of the required data or code. If a required
+connector is unavailable or fails, switch to another suitable Pro profile or
+stop and tell the user. A confident answer based on guessed data or inaccessible
+code is invalid and cannot count as a completed consultation or review.
+
+The entry file puts critical rules first, with detailed account and composer
+procedures in conditional references. Pro checks stay 3-5 minutes apart, and
+elapsed time alone cannot justify abandoning a required review.
 
 Examples:
 
@@ -456,6 +482,10 @@ responsibilities to the calling workflow.
 ### `skill-authoring`
 
 Use when the user wants to write, edit, refactor, or audit a reusable agent skill package with precise triggers, lean packaging, and self-contained references.
+
+Apply its guidance on critical instructions first, line and token size review,
+selective reference loading, and verifying that all required instructions reach
+the agent without tool-output truncation.
 
 Examples:
 

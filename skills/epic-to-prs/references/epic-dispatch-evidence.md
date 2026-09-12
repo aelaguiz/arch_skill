@@ -3,14 +3,23 @@
 Current cadence (owner direction, 2026-09-04): use Pro for initial planning,
 meaningful batch checkpoints, major problems unresolved by local reasoning,
 and final review. Related issues share planning and reviews; ordinary fixes
-are verified locally. If both accounts are limited, pause the blocked Pro
+are verified locally. If all available accounts are limited, pause the blocked Pro
 decision while independent authorized work continues. `../SKILL.md` owns
 this runtime contract. The historical prompts below do not reinstate
 per-child reviews, automatic reapproval loops, or blanket whole-goal pauses.
 
-Current model selection: GPT-6 Pro with Extended thinking in ChatGPT's `Chat`
-surface, per `$chatgpt-web`. The dated model names in the verbatim evidence
-below describe past runs; they do not select the current review model.
+Current model and account selection (owner direction, 2026-09-09): GPT-6 Astra
+with the literal `Pro` option and Extended thinking in ChatGPT's `Chat` surface,
+per `$chatgpt-web` with required `$browseros` usage. Pro is not Extra High,
+xhigh, Ultra, Thinking, or the highest available setting. Missing or disabled
+Pro probably means a temporary account rate limit. Discover the already-open
+`Work` profile and variable number of Pro profiles, note which profile/window
+currently offers Pro, and use that account. Continue in the same-named project
+with the needed context; all accounts should have the same projects.
+Only after available accounts are exhausted, pause the blocked Pro decision
+while independent authorized work continues. This supersedes the historical
+top-tier equivalence, two-account fallback, and whole-goal pause guidance below;
+verbatim quotations remain historical evidence, not current model selection.
 
 `epic-to-prs` originated from the owner's epic goal prompts (2026-08-30,
 multiple running concurrently). The canonical verbatim example:
@@ -53,11 +62,11 @@ Historical rulings (cadence superseded above):
 - Pro rate limits (2026-09-01): the standing instruction the owner sent
   to running agents, verbatim: "if you get rate limited 'You've hit your
   rate limit. Please try again later' by pro clear the goal for now until
-  pro un rate limits i'll let you know when." Since then a second BrowserOS
-  profile, `Pro One`, sits beside `Work`, with the same ChatGPT projects in
+  pro un rate limits i'll let you know when." At that time a second BrowserOS
+  profile, `Pro One`, sat beside `Work`, with the same ChatGPT projects in
   both: "If one is limited they should use the other one." And: "there is
   no substitute for Pro. If they can't get Pro, they can't use xhigh.
-  There's no substituting." Encoded as: failover to the other profile
+  There's no substituting." The historical rule was: failover to the other profile
   window per `$chatgpt-web` (the one exception to one thread per epic:
   a continuation thread in the other account, both URLs recorded); both
   limited means pause the goal and wait for

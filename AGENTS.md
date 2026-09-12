@@ -104,8 +104,9 @@ Claude Code, and Gemini.
 - Use `$skill-authoring` for skill packages, `$agents-md-authoring` for
   AGENTS files, and `$prompt-authoring` for actual model-facing prompts.
 - Use `$browseros` before BrowserOS calls; Codex CLI browser work uses only
-  BrowserOS, existing windows, and background pages. Foreground changes need
-  the user's explicit request.
+  BrowserOS and existing windows. Protect the user's foreground focus: work
+  through viable background methods first; necessary brief foreground use
+  needs no separate approval. Keep verifying the target profile and window.
 - Use `$herdr` for requested live Herdr control and `$herdr-helper` for
   cross-session migration. Use `$agent-history` for past session evidence,
   never as the default for live status or streaming.

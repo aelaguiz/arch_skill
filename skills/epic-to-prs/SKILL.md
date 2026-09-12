@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared GPT-6 Pro planning, meaningful batch checkpoints, major-blocker consultations, and final stack review. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, or open-ended optimization."
+description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared GPT-6 Astra Pro planning, meaningful batch checkpoints, major-blocker consultations, and final stack review. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, or open-ended optimization."
 metadata:
   short-description: "Epic delivery with delegated code and shared Pro reviews"
 ---
@@ -109,11 +109,12 @@ later local repairs and verification.
 
 ## Pro thread and receipts
 
-Use one GPT-6 Pro thread for the epic, supplied by the user or created in
+Use one GPT-6 Astra Pro thread for the epic, supplied by the user or created in
 the applicable ChatGPT project. Keep the epic's consultations in that
-thread. `$chatgpt-web` owns browser mechanics: GPT-6 Pro with Extended
-thinking at the newest generation's maximum reasoning power, verified in
-ChatGPT's `Chat` surface. `Work` and Ultra are not Pro.
+thread. `$chatgpt-web` owns browser mechanics and requires reading and applying
+`$browseros` before BrowserOS calls. Select GPT-6 Astra's literal `Pro` option
+with Extended thinking in ChatGPT's `Chat` surface. Extra High, xhigh, Ultra,
+Thinking, and the highest remaining setting are not Pro.
 
 Apply `$prompt-authoring` to every submission. Give Pro the user's intent,
 accepted scope, relevant artifacts, queue and progress, believed critical
@@ -123,10 +124,14 @@ problems. Keep one short existing-worklog entry per actual submission:
 purpose, artifacts/revisions and thread, and running count. Count retries
 and failover submissions; response polling is not another consultation.
 
-If the current account is limited, follow `$chatgpt-web` to continue in the
-same-named project in the other profile window with the epic context
-restated. Record both thread URLs and reuse the original when available.
-If both accounts are limited, report the blocked Pro decision and continue
+If Pro is missing or disabled, treat it as a probable temporary account rate
+limit; an explicit cap triggers the same switch. Follow `$chatgpt-web` and
+`$browseros` to find an available account among the already-open `Work` and
+variable number of Pro profiles. Note which profile/window works and use it.
+All should have the same projects. Continue in the
+same-named project with the epic context restated. Record continuation thread
+URLs and reuse the original when available. Only after available accounts are
+exhausted, report their observed conditions and the blocked Pro decision. Continue
 independent authorized work. Pause the whole run only when no useful
 independent work remains, and wait for the user to say Pro is back. Never
 substitute another model for a required Pro review or count it as passed.

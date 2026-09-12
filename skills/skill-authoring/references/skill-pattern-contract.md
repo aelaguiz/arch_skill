@@ -36,9 +36,12 @@ This file is the contract for what a strong skill must contain, what it must not
      transport, context, brief-authority, continuation, isolation, topology,
      or integration doctrine.
 9. **Core runtime contract**
-   - Put the durable workflow, boundaries, and output expectations in `SKILL.md`.
+   - Put the mission and highest-consequence instructions first in `SKILL.md`,
+     followed by the common workflow and completion evidence.
 10. **Progressive disclosure**
-   - Move detailed doctrine, schemas, examples, and audits into `references/`.
+   - Keep essential constraints in the entry file; move conditional detail into
+     directly linked references with clear reading conditions. Apply the size
+     and complete-loading guidance in `packaging-trigger-and-validation.md`.
 11. **Determinism only when earned**
    - Add `scripts/` only when natural-language execution keeps failing, the same code is being re-authored repeatedly, or exact validation is the real job. Record why prompt-only guidance is not enough.
 12. **Validation**
@@ -182,6 +185,8 @@ If the problem is:
   keep only role-local workflow doctrine in the package?
 - Is agent dispatch still a judgment-led prompt contract rather than a skill-local controller or orchestration-owned script?
 - Does `SKILL.md` contain only the durable contract and workflow?
+- Are critical instructions near the top, and can the complete required reading
+  reach the agent within the actual tool-output budgets?
 - Are detailed examples and doctrine in `references/` instead of bloating the entrypoint?
 - Are scripts present only because they add real deterministic value?
 - Is there a written reason if the package adds scripts, runners, launchers, controllers, or formal inputs?

@@ -81,11 +81,14 @@ overrides a terminal state such as `issue-to-pr` never merging.
   Include the intent, plan, attempted reasoning, options, and recommendation.
   Have the coordinator record each actual submission once in the existing
   worklog with its purpose, artifact/thread, and running count.
-- A Pro rate limit is not a blocker to decide around. `$chatgpt-web` fails
-  over between the two BrowserOS profile windows, `Pro One` and `Work`; when
-  both are rate limited there is no substitute for Pro - never authorize a
-  lower tier, lower effort, older model, other provider, or other reviewer
-  in its place. Pause the blocked Pro decision and report the limit while
+- A required Pro review means GPT-6 Astra's literal `Pro` option, never Extra
+  High, xhigh, Ultra, Thinking, or another substitute. Missing or disabled Pro
+  probably means a temporary account rate limit. `$chatgpt-web`, with required
+  `$browseros` usage, finds an available account among the already-open `Work`
+  and variable number of Pro profiles, notes which profile/window works, and
+  uses it. All accounts should have the same projects.
+  Only when the available accounts are exhausted, pause the blocked Pro
+  decision and report the observed conditions while
   independent authorized work continues. Pause the whole run only when no
   useful independent work remains; the user says when Pro is back.
 - One decision per matter. Record it; a generated continuation, heartbeat,

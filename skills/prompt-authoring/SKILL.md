@@ -13,6 +13,13 @@ prompt-authoring work: infer the prompt shape, make reasonable assumptions,
 write or repair the prompt, and only ask when missing information would
 materially change the result or create real risk.
 
+Match the recipient's freedom and response depth to the judgment the user
+needs. In an expert consultation, preserve its ability to reinterpret evidence
+and change the approach. Keep the parent's final presentation requirements
+separate: a concise summary for the user does not require a capped assessment
+from the expert. A focused verification task may legitimately need a narrower
+answer. Apply this distinction to the actual prompt and its supporting inputs.
+
 ## Install
 
 ```bash
