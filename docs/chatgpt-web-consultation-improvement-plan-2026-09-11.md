@@ -158,6 +158,28 @@ reference or controller.
 
 ### Publication
 
-All four remote targets are reachable, on `main`, and have clean tracked
-working trees. Publication and installation results will be recorded after
-the reviewed commit is pushed.
+The combined revision and evidence docs were committed as `cecc89d`
+(`Preserve expert judgment and verify complete ChatGPT submissions`) and
+pushed to `origin/main` through `$amir-publish`.
+
+| Host | Result |
+| --- | --- |
+| Amir-M5, current machine | `make install` and `make verify_install` passed. Skipped a duplicate SSH install to the `amir-m5` alias. |
+| `amirs-m3-max-new` | Fast-forwarded `main`; installation and verification passed. |
+| `amir-m3-36gb` | Fast-forwarded `main`; installation and verification passed. |
+| `agents@amirs-mac-studio` | Fast-forwarded `main`; installation and verification passed. |
+| `home` | Fast-forwarded `main`; installation and verification passed. |
+
+The standard local installer also refreshed the pre-existing Hermes skill
+mirror. That was not needed for this task. Subsequent remote installs and
+verification used the existing `NO_HERMES=1` option, consistent with the user's
+stated preference. No reactive deletion was performed.
+
+Local logs are under `/tmp/chatgpt-web-skill-revision-20260911`; each remote's
+installation log is `/tmp/chatgpt-web-publish-20260911.log`. All four remote
+installs verified the implementation commit. This execution-record update is
+documentation only and is distributed afterward without repeating installs.
+
+The plan, combined skill revision, checks, and publication are complete.
+Running sessions still need to read the updated instructions before their
+next consultation; installation does not prove future model compliance.
