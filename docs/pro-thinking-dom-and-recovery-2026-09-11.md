@@ -250,3 +250,23 @@ within the metadata limit. The evidence report is not a runtime dependency.
 Distribution uses the requested `amir-publish` workflow with `NO_HERMES=1`,
 preserving the user's instruction that Hermes is not used. No Hermes-specific
 cleanup or unrelated skill repair is part of this revision.
+
+### Publication results
+
+Implementation commit `edf8d75` was pushed to `origin/main`. Standard install
+and `make verify_install NO_HERMES=1` succeeded on the local M5 and every
+reachable configured remote:
+
+| Machine | Install and verification |
+| --- | --- |
+| Local `Amir-M5` (`amir-m5` SSH target skipped) | Passed |
+| `amirs-m3-max-new` | Passed |
+| `amir-m3-36gb` | Passed |
+| `agents@amirs-mac-studio` | Passed |
+| `home` | Passed |
+
+Each machine's entry, generation reference, and invocation metadata were also
+compared with the published source in the agents/Codex, Claude, and Gemini
+installations: nine files per machine matched. Gemini's documented frontmatter
+removal was accounted for. These checks verify installed content; they cannot
+force an already-running agent to reread instructions after publication.
