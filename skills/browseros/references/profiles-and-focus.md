@@ -120,6 +120,11 @@ the task; a successful startup check is not enough. Matching titles, projects,
 or URLs across profiles do not identify the account, and foreground activation
 does not prove which profile a page belongs to.
 
+For ChatGPT, select only the existing numbered Pro profiles, such as Pro 1
+through Pro 5 or whichever are configured. The `Work` profile is reserved for
+the user's personal ChatGPT use and rate-limit capacity. Do not use it when a
+Pro profile is limited, lacks a connector, or contains no matching conversation.
+
 Build page identity from both ephemeral handles and semantic evidence:
 
 ```text

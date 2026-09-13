@@ -388,8 +388,9 @@ Use when the user wants to write, edit, refactor, or audit a prompt, reusable pr
 Use before the first direct BrowserOS MCP call. The skill owns one-tab-by-default page reuse, dispatch-versus-task authorization, target and profile identity, observe-act-verify, connector discovery, unknown timeout outcomes, proof selection, secrets, parallel page ownership, and cleanup of task-created pages, windows, and groups. Apply it alongside narrower BrowserOS-backed skills; for example, `chatgpt-web` owns the ChatGPT workflow while `browseros` owns browser mechanics. It is not for BrowserOS installation or vendor development. The longer [BrowserOS MCP operating guide](docs/browseros_mcp_operating_guide.md) preserves the evidence and rationale without bloating runtime context.
 
 The shared machine has a `Work` profile and a variable number of Pro profiles
-with many windows already open. The skill requires continual verification of
-the working profile/window/page. Protecting the user's foreground focus is a
+with many windows already open. For ChatGPT, only numbered Pro profiles are
+eligible; `Work` is reserved for the user and is never a fallback. The skill
+requires continual verification of the working profile/window/page. Protecting the user's foreground focus is a
 primary concern: work through viable background methods first. Necessary brief
 foreground use needs no separate approval; explain the need and promptly return
 to background work.
@@ -414,13 +415,15 @@ no scripts, runners, harnesses, API calls, or automated login.
 Pro means GPT-6 Astra's literal `Pro` option, never Extra High, xhigh, Ultra,
 Thinking, or the highest remaining setting. If Pro is missing or disabled in
 the `Chat` picker, it probably means a temporary account rate limit. The skill
-uses `$browseros` to discover the already-open `Work` profile and variable
-number of Pro profiles. Note which account currently offers Pro, which are
+uses `$browseros` to discover only the already-open numbered Pro profiles,
+such as Pro 1 through Pro 5 or whichever are configured. Never use the user's
+`Work` profile, including for retries or old-thread continuation; preserve its
+rate-limit capacity. Note which account currently offers Pro, which are
 unavailable, and when checked; use the working account and refresh stale notes
 on resume. There is no fixed account count or rotation order. All should have
 the same projects; continually verify the profile/window/page and carry the
 conversation context into the same-named project after switching.
-For a Pro rate limit, only after available accounts are exhausted does it
+For a Pro rate limit, only after eligible Pro accounts are exhausted does it
 pause the blocked Pro consultation while independent authorized work continues; no substitute
 reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and

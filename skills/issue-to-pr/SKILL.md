@@ -108,8 +108,8 @@ Use GPT-6 Astra with the literal `Pro` option and Extended thinking through
 highest remaining setting are not Pro. Follow `$chatgpt-web` for input delivery
 and account switching when Pro is missing, disabled, or explicitly capped.
 
-Use the run's existing Pro thread, inheriting the epic's thread when
-applicable. Apply `$prompt-authoring` to every submission. Include the
+Use the run's existing thread in an eligible numbered Pro profile, inheriting
+the epic's thread when applicable. Apply `$prompt-authoring` to every submission. Include the
 user's intent, accepted scope, relevant plan or PR artifacts, progress,
 important findings, and the believed critical path. Ask Pro to assess the
 work against the goal and the consequential decisions; provide enough
@@ -121,11 +121,12 @@ retries and failover submissions; polling an existing response is not a new
 consultation. Keep this a short entry, not a separate tracking system.
 
 Missing Pro probably means a temporary account rate limit. Under `$chatgpt-web`
-and `$browseros`, find an available account among the already-open `Work` and
-Pro profiles, note which profile/window works, and use its same-named project
-with the needed context. The number of Pro profiles varies.
-All should have the same projects. Only after the available accounts are
-exhausted, report their observed conditions and pause the blocked Pro
+and `$browseros`, use only the already-open numbered Pro profiles, such as
+Pro 1 through Pro 5 or whichever exist. Never use the user's `Work` profile,
+including for fallback or an old thread; preserve its rate-limit capacity.
+Note which eligible profile/window works and use its same-named project with
+the needed context. All should have the same projects. Only after eligible Pro
+accounts are exhausted, report their observed conditions and pause the blocked Pro
 consultation or decision. Continue independent authorized work; pause
 the whole run only when no useful independent work remains. Wait for the
 user to say Pro is available again. Do not substitute another model for a

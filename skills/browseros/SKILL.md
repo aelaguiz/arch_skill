@@ -27,6 +27,9 @@ this contract too.
   switching, recovery, or resuming, and immediately before sends, mutations,
   and cleanup. Matching titles, project names, or the active window do not
   establish the account.
+  For ChatGPT, use only the existing numbered Pro profiles. The user's `Work`
+  profile is reserved for their personal ChatGPT use and rate-limit capacity;
+  never select it for a consultation, retry, or account fallback.
 - **Use existing windows and authorized pages.** Reuse one compatible,
   current-agent-controlled page that this task may use. If a new page is
   necessary, request one normal background tab in the verified existing window
@@ -49,8 +52,9 @@ this contract too.
 Resolve the requested site, account, object, allowed changes, and completion
 proof. Live tool-specific schemas and results outrank remembered tool names,
 old traces, or saved IDs. For page work, list tabs and windows and inspect the
-active state when available. Default to `Work` unless the user or site skill
-selects another profile.
+active state when available. ChatGPT work uses only existing numbered Pro
+profiles under `$chatgpt-web`; `Work` is never a fallback for it. For other
+sites, default to `Work` unless the user or site skill selects another profile.
 
 Record a compact baseline in the existing task notes: verified profile/window/
 page, safe application identity, sanitized origin and stable path, provenance,

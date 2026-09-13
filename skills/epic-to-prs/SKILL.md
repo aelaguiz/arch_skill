@@ -126,12 +126,15 @@ and failover submissions; response polling is not another consultation.
 
 If Pro is missing or disabled, treat it as a probable temporary account rate
 limit; an explicit cap triggers the same switch. Follow `$chatgpt-web` and
-`$browseros` to find an available account among the already-open `Work` and
-variable number of Pro profiles. Note which profile/window works and use it.
+`$browseros` to use only the already-open numbered Pro profiles, such as Pro 1
+through Pro 5 or whichever exist. Never use the user's `Work` profile, including
+for fallback or an old thread; preserve its rate-limit capacity.
+Note which eligible profile/window works and use it.
 All should have the same projects. Continue in the
 same-named project with the epic context restated. Record continuation thread
-URLs and reuse the original when available. Only after available accounts are
-exhausted, report their observed conditions and the blocked Pro decision. Continue
+URLs and reuse the original when available in an eligible Pro profile. Only after
+eligible Pro accounts are exhausted, report their observed conditions and the
+blocked Pro decision. Continue
 independent authorized work. Pause the whole run only when no useful
 independent work remains, and wait for the user to say Pro is back. Never
 substitute another model for a required Pro review or count it as passed.
