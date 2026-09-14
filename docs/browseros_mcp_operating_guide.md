@@ -263,9 +263,11 @@ Expect one `Work` profile and a variable number of Pro profiles with windows
 already open. Discover the live profile/window/page mapping and keep checking
 the target throughout interaction and readback. Refresh identity after context
 changes and before sends, mutations, and cleanup; matching titles or projects
-across accounts do not identify the profile. `$chatgpt-web` keeps a short note
-of which account currently offers Pro and uses that account when another is
-temporarily capped.
+across accounts do not identify the profile. ChatGPT automation uses only the
+existing numbered Pro profiles; `Work` is reserved for the user's personal
+ChatGPT use and rate-limit capacity, never an account fallback. `$chatgpt-web`
+keeps a short note of which eligible Pro account works and switches within
+that pool when another is temporarily capped.
 
 If the user is recording, watching, or needs to take over, the correct page
 must be in a visible window. A successful action in a hidden equivalent page

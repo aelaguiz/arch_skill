@@ -13,14 +13,20 @@ accounts. Apply the BrowserOS profile-targeting reference before browser calls.
 
 ## Choose a working account
 
-The pool is one `Work` profile and however many Pro profiles are configured on
-this machine. `Pro One`, `Pro1`, `Pro2`, and `Pro3` are examples, not a fixed
-inventory or required order. Discover the existing windows through BrowserOS;
-never activate a window to infer its profile or create windows for this task.
+The account pool contains only the numbered Pro profiles configured on this
+machine: for example, `Pro One`, `Pro 1`, `Pro2`, `Pro3`, `Pro4`, and `Pro5`.
+Names and count vary; these examples are not a fixed inventory or rotation
+order. Discover the existing windows through BrowserOS; never activate a window
+to infer its profile or create windows for this task. The user's `Work` profile
+is excluded: do not use it for ChatGPT or test its Pro availability. Preserve
+its rate-limit capacity for the user, even if every Pro profile is unavailable.
 
-Start with an explicitly requested profile or the account containing the needed
-conversation if it offers Pro. Otherwise prefer a recently observed working
-account and verify its current state. Keep brief availability notes in the
+Start with an explicitly requested eligible Pro profile or an eligible Pro
+account containing the needed conversation if it offers Pro. A prior thread
+in `Work` does not make that profile eligible. Restore the needed context from
+already-available task artifacts into an eligible Pro conversation instead.
+Otherwise prefer a recently observed working account and verify its current
+state. Keep brief availability notes in the
 existing run context: safe profile label, window, Pro available or unavailable,
 required connector status, observed condition, and check time. Record the
 working account as well as failures. Recheck stale observations on resume;
@@ -95,8 +101,9 @@ Failed connector access requires a suitable account too, but does not itself
 prove a Pro rate limit.
 
 1. Record the current account's observed condition and time. Prefer another
-   recently verified working account; otherwise check the next configured
-   account not yet examined. Do not repeatedly retry the capped account.
+   recently verified working Pro account; otherwise check the next configured
+   numbered Pro account not yet examined. Never include `Work` in this search.
+   Do not repeatedly retry the capped account.
 2. Under BrowserOS, select or open one eligible page in that account's existing
    window and prove the profile/window/page. Verify login and the requested
    literal configuration. If unavailable, record it and continue the search.
@@ -106,6 +113,7 @@ prove a Pro rate limit.
    the exact PR URL for a code review. Verify every required connector works.
 4. Continue in that page alone. Clean up task-created pages no longer needed
    under BrowserOS and record the successful account and destination thread.
-5. If no available account works, report the profiles and observed conditions.
+5. If no eligible Pro account works, report the profiles and observed conditions.
    Keep the required consultation pending, continue independent work, and wait
-   for user notice that Pro is available again. Do not select a substitute tier.
+   for user notice that Pro is available again. Do not select a substitute tier
+   or fall back to `Work`.

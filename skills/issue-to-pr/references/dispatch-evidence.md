@@ -8,17 +8,20 @@ decision while independent authorized work continues. `../SKILL.md` owns
 this runtime contract. The historical prompts below do not reinstate
 per-child reviews, automatic reapproval loops, or blanket whole-goal pauses.
 
-Current model and account selection (owner direction, 2026-09-09): GPT-6 Astra
+Current model and account selection (owner direction, 2026-09-13): GPT-6 Astra
 with the literal `Pro` option and Extended thinking in ChatGPT's `Chat` surface,
 per `$chatgpt-web` with required `$browseros` usage. Pro is not Extra High,
 xhigh, Ultra, Thinking, or the highest available setting. Missing or disabled
-Pro probably means a temporary account rate limit. Discover the already-open
-`Work` profile and variable number of Pro profiles, note which profile/window
-currently offers Pro, and use that account. Continue in the same-named project
+Pro probably means a temporary account rate limit. Use only the already-open
+numbered Pro profiles, such as Pro 1 through Pro 5 or whichever exist. The
+user's `Work` profile is reserved for their personal use and rate-limit capacity;
+never use it, even as a fallback. Note which eligible profile/window currently
+offers Pro and use that account. Continue in the same-named project
 with the needed context; all accounts should have the same projects.
-Only after available accounts are exhausted, pause the blocked Pro decision
+Only after eligible Pro accounts are exhausted, pause the blocked Pro decision
 while independent authorized work continues. This supersedes the historical
-top-tier equivalence, two-account fallback, and whole-goal pause guidance below;
+top-tier equivalence, Work-profile fallback, two-account limit, and whole-goal
+pause guidance below;
 verbatim quotations remain historical evidence, not current model selection.
 
 `issue-to-pr` originated from a dispatch template its owner typed

@@ -1,11 +1,18 @@
 ---
 name: chatgpt-web
-description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros and $prompt-authoring. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro, real @BigQuery access for data and @GitHub access for repo work, existing Work/Pro profile windows, and 3–5-minute generation checks. Switch temporarily limited accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
+description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros and $prompt-authoring. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro, real @BigQuery access for data and @GitHub access for repo work, existing numbered Pro profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited Pro accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
 
 # ChatGPT Web
+
+**Use only the existing numbered Pro profiles, such as Pro 1 through Pro 5.**
+Discover whichever are configured; their number and spelling can vary.
+**Never use the BrowserOS `Work` profile for ChatGPT.** It is reserved for the
+user's personal use and rate-limit capacity, including when all Pro profiles
+are unavailable. This restriction also applies to retries and continuation of
+an old conversation.
 
 Consult Pro as an expert on the user's actual problem. For interpretation and
 planning, give it the original objective, relevant history, and current
@@ -39,11 +46,12 @@ the consultation autonomously as described below.
   Thinking, a `5/5` indicator, or the highest remaining setting is not Pro.**
   The BrowserOS profile named `Work` is separate from ChatGPT's `Work` surface;
   a Pro request must use the `Chat` surface in every profile.
-- **Use an account that actually offers Pro.** Discover the already-open
-  `Work` and variable number of Pro profiles, including Pro2, Pro3, or others
-  present. Missing or disabled literal Pro probably means a temporary account
+- **Use a numbered Pro account that actually offers Pro.** Discover the
+  already-open Pro profiles, including Pro 1, Pro2, Pro3, Pro4, Pro5, or other
+  numbered Pro profiles present; exclude `Work` from the account pool.
+  Missing or disabled literal Pro probably means a temporary account
   limit; an explicit cap confirms it. Note unavailable accounts and the account
-  that works, with check times and connector status. Switch to another account
+  that works, with check times and connector status. Switch to another Pro account
   instead of substituting a different tier. All should have the same projects;
   verify the destination and carry the needed conversation context and inputs.
 - **Require real source access.** For data, attach `@BigQuery`; for GitHub or
@@ -206,10 +214,10 @@ response as a verdict or use it to publish dependent changes.
 Refusals, empty replies, and answers that omit the requested work also fail
 this completion check; diagnose and repair the specific cause.
 
-If no available account offers the required Pro configuration, report the
+If no eligible numbered Pro account offers the required configuration, report the
 profiles checked and observed conditions, pause the blocked consultation or
 decision, and continue useful independent work. Wait for the user to say Pro is
-available again rather than polling capped accounts.
+available again rather than polling capped accounts. Never fall back to `Work`.
 
 ## Return the result
 
