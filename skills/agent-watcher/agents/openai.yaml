@@ -1,0 +1,6 @@
+interface:
+  display_name: "Agent Watcher"
+  short_description: "Watch Amir's live agent sessions for drift and self-blocking"
+  default_prompt: "Use $agent-watcher to watch all my active coding-agent sessions. Use <model> for the watcher sub-agents. Alert me when work drifts from what I asked, when an agent claims I authorized something I did not, or when an agent self-blocks."
+policy:
+  allow_implicit_invocation: false

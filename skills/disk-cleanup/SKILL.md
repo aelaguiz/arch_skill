@@ -1,6 +1,6 @@
 ---
 name: disk-cleanup
-description: "Reclaim substantial disk space on Amir's developer Macs by starting with known worktree, build, cache, and log locations and reusing local cleanup inventories. Use for a full disk, accumulated agent worktrees, routine developer cleanup, or a target such as 1 TB free. Protects canonical checkouts, active work, Git commits, and unique local files; verifies actual free space. Use codex-cleanup for a task confined to Codex SQLite/session maintenance, and arch-docs for stale documentation."
+description: "Reclaim substantial disk space on Amir's developer Macs by starting with known worktree, build, cache, and log locations and reusing local cleanup inventories. Use for a full disk, accumulated agent worktrees, routine or scheduled developer cleanup, or a target such as 1 TB free. Protects canonical checkouts, active work, Git commits, and unique local files; verifies actual free space. Use codex-cleanup for a task confined to Codex SQLite/session maintenance, and arch-docs for stale documentation."
 metadata:
   short-description: "Fast developer disk cleanup with work preserved"
 ---
@@ -10,7 +10,16 @@ metadata:
 Restore the user's requested disk headroom quickly while keeping their work
 recoverable and their running tools usable. Optimize for substantial reclaimed
 space and a shorter next cleanup. A long inventory or a small cache deletion
-does not finish a request for hundreds of gigabytes.
+does not finish a request for hundreds of gigabytes. Protect canonical checkouts,
+active work, and unique data before choosing deletion candidates.
+
+For routine or unattended runs without a numeric target, reclaim the obvious
+reproducible wins and identify the largest remaining opportunities. Reuse recent
+inventories and inspect likely owners; do not repeat an exhaustive whole-disk
+scan or invent a hundreds-of-gigabytes target every night. Finish when the
+clear, authorized candidates are handled. When an action needs approval, leave
+the data intact and report the exact opportunity instead of waiting for input
+or expanding deletion scope to force a larger result.
 
 ## When to use
 
@@ -40,7 +49,8 @@ removing checkouts or interpreting reclaimed bytes.
    Git state, and process use before acting; a saved deletion decision is not
    current proof. Without a saved inventory, enumerate the known worktree roots
    and their owning Git repositories first.
-3. Select enough large candidates to plausibly reach the target. Inspect and
+3. Select enough large candidates to plausibly reach the target, or the clear
+   wins for routine housekeeping without a target. Inspect and
    measure those candidates once. Save bulky results locally and report totals
    and the largest owners. Do not recursively scan `/`, the home directory,
    `~/workspace`, and their children concurrently: those scans repeat the same
@@ -118,6 +128,17 @@ source before deleting them. Keep credentials, live SQLite/WAL state, browser
 profiles, simulator user data, and VM volumes outside generic cache deletion.
 Use their owning tool when those storage classes become necessary to the task.
 
+Protect shared caches while their owning builds or tools are active, even if
+a snapshot shows no open file in that cache. Include process command-line path
+references and parent directories in activity checks without printing secrets.
+If another process recreates a removed path, leave the new contents alone; do
+not retry deletion against ongoing work.
+
+For simulator runtimes, Docker/Colima storage, or suspected duplicate models,
+read the corresponding guidance in [known-locations.md](references/known-locations.md).
+A shutdown simulator still contains saved state, and two policy paths may be
+aliases or different training runs. Neither observation proves disposable data.
+
 ## Leave a faster next run
 
 Keep a small private local report under `~/disk-cleanup-<date>/` or an existing
@@ -131,8 +152,9 @@ and failure handling against this skill. The skill must also work on a machine
 where no previous script or manifest exists.
 
 Report actual before/after free space, actual bytes reclaimed, the largest
-removed categories, what was preserved or skipped, and the local receipt path.
-State whether the requested target was reached. Label estimates separately;
+removed categories, what was preserved or skipped, and the local report path.
+State whether an explicit target was reached; for routine runs, state whether
+any clear wins remain and name approval-dependent opportunities with estimates. Label estimates separately;
 do not add nested folder sizes or present `du` totals as measured free space.
 Take the completion measurement after verification. If the disk remains busy,
 select a cleanup batch with a few gigabytes of headroom beyond the requested

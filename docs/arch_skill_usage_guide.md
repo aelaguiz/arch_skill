@@ -530,6 +530,23 @@ Examples:
 
 - `Use $codex-babysit to keep my running Codex goal alive`
 
+### `agent-watcher`
+
+Explicitly selected out-of-loop monitor for Amir's live coding-agent sessions.
+The parent (Fable or Astra) discovers active Codex, Claude Code, and Prime
+sessions, dispatches one watcher sub-agent per session on the cheap model Amir
+names, and adjudicates escalations with the surprise test before alerting him.
+Watchers keep an intent artifact and provenance ledger per session under
+`~/.agent-watcher/`, check only new events since their cursor, and skip
+sessions with no new bytes. Read-only; it never messages the watched sessions.
+`intent-police` and `unblocker` are the in-loop companions a coding agent
+consults; `check-my-agents` is the one-shot debrief.
+
+Examples:
+
+- `Run the agent-watcher skill, use Opus subagents`
+- `Watch all my sessions for scope creep and self-blocking, Sol xhigh for the watchers`
+
 ### `fresh-consult`
 
 When explicitly selected, use when the user or another skill wants a clean, independent read-only opinion

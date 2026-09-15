@@ -74,12 +74,32 @@ Colima storage can be concentrated in `~/.colima/_lima/`; Docker data may be
 inside a VM disk. Start with `docker system df` and the current Colima/Docker
 configuration. A large sparse disk is not all disposable, and deleting the VM
 image can destroy volumes. Use owner-supported pruning and space reclamation
-after identifying what is unused.
+after identifying what is unused. Prune unused build cache and images through
+the exact Docker context after checking active builds and container references;
+keep containers, volumes, and VM disks. Guest deletion may not release host
+blocks until trim reaches the data filesystem. For Colima, inspect mounts and
+use `colima --profile <profile> ssh -- sudo fstrim -av` when supported. Trimming
+only `/` can miss the separate data disk. Verify host free bytes afterward;
+trim output is not additional reclaimed host space.
 
 `~/Library/Developer/CoreSimulator/`, `~/Library/Android/`, and `~/.android/`
 hold simulator/emulator runtimes and device data. Inventory installed devices
 and active processes before considering obsolete runtimes. Do not erase device
-state as a substitute for cleaning build caches.
+state as a substitute for cleaning build caches. A shutdown device can be
+recently used and hold valuable test state; unattended cleanup leaves it intact.
+Check runtime assignments across current device sets and active processes.
+Only remove an unused runtime when no retained device depends on it, using
+`xcrun simctl runtime delete <runtime-id> --dry-run` followed by the exact
+owner-tool deletion when authorized. Verify existing devices and booted devices
+remain present. Runtime volumes mounted beneath CoreSimulator can inflate
+recursive `du` totals; avoid counting both mounted contents and their images.
+
+For suspected duplicate model or policy stores, resolve symlinks and compare
+file inventories and sizes first. Aliases consume no second payload copy, and
+different checkpoints are not duplicates. Preserve canonical model stores and
+unique training outputs; report potential deduplication for a user decision.
+Honor repository payload-access restrictions. In RustAI, never fetch, expand,
+hash, or load multiplayer policy payloads to investigate metadata or disk use.
 
 ## Broaden only for an unexplained remainder
 
