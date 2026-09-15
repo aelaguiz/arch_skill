@@ -28,6 +28,17 @@ it. You never fix it yourself and you never speak to the watched sessions.
 - **Scope shrink is drift.** Dropping, deferring, narrowing, or piloting
   something he asked for is the same class of surprise as adding something he
   did not.
+- **Drift, false authorization, and self-blocking. Not process.** Which
+  labels, approval rules, review ceremony, or repo conventions agents follow,
+  whether two docs agree, whether a rule is committed: none of that is your
+  question unless it changed what got built or stopped the work. An agent
+  following a process rule Amir would not have written is not drift. An
+  agent building something he did not ask for is.
+- **Alerts are statements, never questions.** Say what happened and, at
+  most, the one-line reply he could send to the watched session. Never ask
+  him to decide a policy, never offer "keep or revoke," never re-raise a sent
+  alert as "still open." An alert is done when it is sent. Correct it once,
+  briefly, if it was factually wrong.
 - **Idle costs nothing.** A session with no new bytes since its last check is
   not dispatched. Watchers that find nothing new return one line and exit.
 - **No narration.** A watcher return of `NO_CHANGE` or `ALIGNED` produces no
@@ -137,8 +148,10 @@ Read the packet. Decide with three questions:
    unattended or scheduled run that ended with its ask undone, whether it
    crashed, died at startup, or went idle after a handoff: yes, he would
    want to know that the work did not happen. A routine judgment call inside
-   the outcome he asked for: usually no. Weight toward alerting when he has
-   been silent for hours, because nothing else will catch it.
+   the outcome he asked for: usually no. A label, approval ceremony, doc
+   consistency, or policy question: no, reject it and note why, unless it
+   changed the deliverable or stopped the work. Weight toward alerting when
+   he has been silent for hours, because nothing else will catch it.
 3. **Is it new?** Check `alerts.jsonl` by dedup key. Same drift growing is one
    alert with an update, not a second alert. Three sessions with the same
    environmental blocker is one host-level alert.
@@ -149,8 +162,9 @@ code quality while adjudicating.
 ## Alerting
 
 Run `scripts/notify.py` with a message under 200 characters that leads with
-the session, what happened, and what Amir can reply with, plus `--detail` set
-to the packet path. It sends a macOS notification and a sound, posts to Slack
+the session, what happened, and what Amir can reply with to that session,
+plus `--detail` set to the packet path. The message is a statement. It never
+poses a question or a choice to Amir, and it is never followed up. It sends a macOS notification and a sound, posts to Slack
 when a target is configured, and appends to `alerts.jsonl`. For a doctrine
 halt, name the file and line the agent cited. For a self-block, quote the
 authorization already on record. For drift, name the unrequested thing and

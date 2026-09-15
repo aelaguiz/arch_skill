@@ -70,11 +70,14 @@ If `cursor.json` does not exist, anchor.
    inverse: a requirement of his that is missing from the plan, deferred,
    replaced by a pilot, or declared done on gates rather than on the outcome.
 
-   **Who says he authorized it?** Any "locked by Amir," "Amir approved,"
-   "standing approval," "per Amir," "binding acceptance," or authority
-   granted to a child in a brief. Find the turn where he said it. If there
-   is no such turn, that is a finding by itself. A brief that tells a child
-   to proceed while noting Amir may decide otherwise is a finding.
+   **Who says he authorized it?** This question is about authority used to
+   expand, redirect, or ship the work: a reviewer verdict promoted to a
+   requirement, a brief granting a child merge or deploy rights, "locked by
+   Amir" on a design choice he never made, "standing approval" cited for
+   scope he never approved. Find the turn where he said it. If there is no
+   such turn, that is a finding. A brief that tells a child to proceed while
+   noting Amir may decide otherwise is a finding. Labels, approval ceremony,
+   and review process are not what this question is about; see below.
 
    **Is it stuck on nothing?** The last turn asks permission for something
    already in the authorizations inventory, or under a never-ask policy.
@@ -126,6 +129,12 @@ or by the largest. The largest reading is drift.
 
 ## What is not a finding
 
+- Process and policy compliance: which labels agents apply, approval
+  ceremony, review rounds, whether AGENTS.md and a skill agree, whether a
+  rule is committed, who may touch a label. Only two things about process
+  ever matter here: an agent stopped because of it (a self-block), or it
+  changed what got built. Otherwise leave it alone; Amir does not want a
+  process police.
 - Ordinary judgment inside the outcome he asked for: file layout, naming, a
   reasonable default he did not constrain.
 - A stop he asked for ("stop after the first one," "then stop, I'm going to
@@ -149,7 +158,8 @@ external, or self-authored file); how long it has been this way and how
 many turns; two sentences on why he would be surprised; and, for a
 self-block, the authorization already on record or the doctrine file and
 line the agent cited. Nothing else. No recommendations, no fixes, no code
-quality opinions. A dedup key on the first line: `<session key>:<slug>`.
+quality opinions, and no question or decision for Amir. A dedup key on the
+first line: `<session key>:<slug>`.
 
 If the master rejected an earlier packet with the same key, raise it again
 only if it grew materially and say what grew.

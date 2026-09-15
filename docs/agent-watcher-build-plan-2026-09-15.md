@@ -481,6 +481,20 @@ ended with its ask undone is an alert.
 `intent.md` and `ledger.md`, and open `signals.md` only when something needs
 classifying.
 
+**Correction from live use, 09:26 to 09:35:** the master alerted twice
+about agents applying the `ufc-approved` label under a "standing approval"
+rule and asked Amir to rule keep-or-revoke. Amir: "I don't care about
+bullshit process I care about drift, scope creep." Two rules were added to
+`SKILL.md`, the brief, and `signals.md`: process and policy compliance
+(labels, approval ceremony, review rounds, doc consistency, uncommitted
+rules) is out of scope unless it stopped the work or changed the
+deliverable; and alerts are statements that never pose a question or a
+choice to Amir and are never re-raised. Question 2 (who says he authorized
+it) is now explicitly about authority used to expand, redirect, or ship the
+work. Also verified from the transcripts: all 71 watcher runs executed on
+`claude-opus-5` and the master on `claude-fable-5-1`; a "Sonnet 5" label in
+the terminal UI was a display artifact, not a fallback.
+
 **Acceptance (6.4): met.** Scripts pass, replay is 4 of 4, the live master
 ran two clean cycles with correct dispatch and skip behavior and produced
 two real, anchored alerts. The live master was left running deliberately in
