@@ -161,6 +161,57 @@ def prime_sessions(home: Path, since, errors: list[str]) -> list[dict]:
     return rows
 
 
+def list_children(home: Path, parent_id: str, active_within=None) -> int:
+    db = home / "state_5.sqlite"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True); conn.row_factory = sqlite3.Row
+    ecols = [r[1] for r in conn.execute("PRAGMA table_info(thread_spawn_edges)")]
+    pcol = next((c for c in ecols if "parent" in c), None); ccol = next((c for c in ecols if "child" in c), None)
+    if not (pcol and ccol):
+        print("ERROR discover: thread_spawn_edges has no parent/child columns"); return 2
+    kids = [r[0] for r in conn.execute(f"SELECT {ccol} FROM thread_spawn_edges WHERE {pcol} = ?", (parent_id,))]
+    rows = []
+    for k in kids:
+        r = conn.execute("SELECT id, rollout_path, first_user_message, created_at FROM threads WHERE id = ?", (k,)).fetchone()
+        if not r: continue
+        path = Path(r["rollout_path"]); path = path if path.is_absolute() else home / path
+        if not path.exists(): continue
+        mtime = W.parse_ts(path.stat().st_mtime)
+        if active_within is not None and mtime and (W.now() - mtime) > active_within:
+            continue
+        rows.append((mtime, str(path), W.squash(r["first_user_message"] or "", 110), path.stat().st_size))
+    rows.sort(key=lambda x: x[0] or W.now(), reverse=True)
+    total = conn.execute(f"SELECT COUNT(*) FROM thread_spawn_edges WHERE {pcol} = ?", (parent_id,)).fetchone()[0]
+    print(f"OK discover children of codex-{parent_id}: {len(rows)} active" + (f" within {active_within}" if active_within else "") + f" of {total} total; newest first")
+    for ts, pth, first, sz in rows:
+        print(f"last {W.age_str(ts)} ago | {sz//1024}KB | {pth} | {first}")
+    return 0
+
+
+def find_session(codex_home: Path, prime_home: Path, ident: str) -> int:
+    """Resolve a session id (or key, or unique prefix) to its transcript path across the known stores."""
+    ident = ident.split("-", 1)[-1] if ident.split("-", 1)[0] in ("codex", "claude", "prime") and "-" in ident else ident
+    hits: list[tuple[str, str, str, str]] = []
+    db = codex_home / "state_5.sqlite"
+    if db.exists():
+        conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+        for sid, rp, first in conn.execute("SELECT id, rollout_path, first_user_message FROM threads WHERE id LIKE ?", (ident + "%",)):
+            p = Path(rp); p = p if p.is_absolute() else codex_home / p
+            if p.exists():
+                parent = conn.execute("SELECT parent_thread_id FROM thread_spawn_edges WHERE child_thread_id = ?", (sid,)).fetchone()
+                hits.append(("codex", str(p), f"child of {parent[0]}" if parent else "root", W.squash(first or "", 100)))
+    for base in [Path.home() / ".claude"] + [Path(p) for p in glob.glob(str(Path.home() / ".aimgr" / "claude-homes" / "*" / ".claude"))]:
+        for p in glob.glob(str(base / "projects" / "*" / f"{ident}*.jsonl")):
+            hits.append(("claude", p, "root", ""))
+    for p in glob.glob(str(prime_home / "sessions" / f"{ident}*.jsonl")):
+        hits.append(("prime", p, "root", ""))
+    if not hits:
+        print(f"NONE discover find {ident}: no transcript in the Codex, Claude, or Prime stores"); return 1
+    print(f"OK discover find {ident}: {len(hits)} match(es)")
+    for rt, p, rel, first in hits:
+        print(f"{rt} | {rel} | {p} | {first}")
+    return 0
+
+
 def build_record(runtime, sid, path: Path, *, cwd, first_ask, title, model, approval, is_child, label) -> dict:
     st = path.stat()
     mtime = W.parse_ts(st.st_mtime)
@@ -198,7 +249,17 @@ def main(argv=None) -> int:
     ap.add_argument("--codex-home", default=str(Path.home() / ".codex"))
     ap.add_argument("--prime-home", default=str(Path.home() / ".prime" / "agent"))
     ap.add_argument("--claude-home", action="append", default=[], help="extra Claude home(s) beyond ~/.claude and ~/.aimgr/claude-homes/*")
+    ap.add_argument("--children-of", default=None, help="Codex session key or id: list its spawned child rollouts (path, last activity, size) and exit")
+    ap.add_argument("--active-within", default="90m", help="with --children-of: only children whose rollout changed within this window (default 90m; use 0 for all)")
+    ap.add_argument("--find", default=None, help="session id, key, or unique id prefix: print its runtime, lineage, and transcript path, then exit")
     args = ap.parse_args(argv)
+
+    if args.find:
+        return find_session(Path(args.codex_home), Path(args.prime_home), args.find)
+
+    if args.children_of:
+        win = None if args.active_within in ("0", "all") else W.parse_duration(args.active_within)
+        return list_children(Path(args.codex_home), args.children_of.split("-", 1)[-1] if args.children_of.startswith("codex-") else args.children_of, win)
 
     since = W.now() - W.parse_duration(args.since)
     runtimes = set(args.runtime or W.RUNTIMES)

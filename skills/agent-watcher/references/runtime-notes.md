@@ -112,7 +112,10 @@ sharp edges before promising a pin.
 S=~/.claude/skills/agent-watcher/scripts   # or the installed path on this host
 python3 $S/discover_sessions.py --since 6h
 python3 $S/session_events.py anchor --path <transcript>
-python3 $S/session_events.py since  --path <transcript> --cursor <n>
+python3 $S/session_events.py work   --path <transcript> [--cursor <n>] [--until HH:MM]
+python3 $S/discover_sessions.py --children-of <codex key>
+python3 $S/discover_sessions.py --find <session id he named>
+python3 $S/session_events.py since  --path <transcript> --cursor <n> --full-args
 python3 $S/session_events.py tail   --path <transcript> --tail-events 40
 python3 $S/notify.py --message "..." --detail <packet> --session <key> --dedup-key <key>
 ```

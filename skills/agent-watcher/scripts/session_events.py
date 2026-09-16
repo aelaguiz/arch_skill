@@ -9,6 +9,15 @@ Modes:
           Use on every later check. Returns the new cursor.
   tail    the last N events, read from the end. Use to see current activity
           on a large session without processing its backlog.
+  work    what the session actually did: files added and changed, commands by
+          class (broad searches, test runs, builds, installs, process starts,
+          VMs, pushes, PR and issue writes, sheet writes, deletes), Figma
+          primitives versus component reuse, spawns, and the agent's own
+          sentences claiming what the work is. From --cursor (default 0, the
+          whole session). This is the view to compare against Amir's words.
+
+--until <ISO or HH:MM local> stops at that time; use it to replay a session as
+it stood before a later event.
 
 Read-only. Prints a header line plus bounded rows; writes the full page to
 ~/.agent-watcher/sessions/<key>/events/ (or --out DIR).
@@ -25,6 +34,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True  # keep installed skill dirs free of __pycache__
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import watcher_lib as W  # noqa: E402
+import work_inventory as WI  # noqa: E402
 
 ROW_LIMITS = {"USER": 900, "USER_INTERRUPT": 300, "USER_QUEUED": 600, "ASSISTANT": 220, "TOOL": 160,
               "GOAL": 500, "HEARTBEAT": 400, "COMPACTION": 400, "SPAWN": 300, "AGENT_MSG": 300,
@@ -94,7 +104,7 @@ def write_page(out_dir: Path, mode: str, start: int, end: int, events: list[dict
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("mode", choices=("anchor", "since", "tail"))
+    ap.add_argument("mode", choices=("anchor", "since", "tail", "work"))
     ap.add_argument("--path", required=True, help="transcript file")
     ap.add_argument("--runtime", choices=W.RUNTIMES, help="inferred from the path when omitted")
     ap.add_argument("--cursor", type=int, default=0, help="byte offset to resume from (since)")
@@ -105,6 +115,8 @@ def main(argv=None) -> int:
     ap.add_argument("--anchor-users", type=int, default=60, help="max human messages to print in anchor (default 60)")
     ap.add_argument("--out", default=None, help="directory for the full page (default ~/.agent-watcher/sessions/<key>/events)")
     ap.add_argument("--kinds", default=None, help="comma list to print, e.g. USER,ASSISTANT (file keeps everything)")
+    ap.add_argument("--until", default=None, help="ignore events after this time (ISO, or HH:MM local today); for replay")
+    ap.add_argument("--full-args", action="store_true", help="since/tail: keep full arguments for write/create/patch tool calls in the page file")
     args = ap.parse_args(argv)
 
     path = Path(args.path).expanduser()
@@ -121,6 +133,56 @@ def main(argv=None) -> int:
     end = size
     more = False
 
+    until_ts = None
+    if args.until:
+        u = args.until.strip()
+        if re.fullmatch(r"\d{1,2}:\d{2}(:\d{2})?", u):
+            import datetime as _dt
+            today = _dt.datetime.now().astimezone()
+            hh, mm = int(u.split(":")[0]), int(u.split(":")[1])
+            until_ts = today.replace(hour=hh, minute=mm, second=int(u.split(":")[2]) if u.count(":") == 2 else 0, microsecond=0)
+        else:
+            until_ts = W.parse_ts(u)
+        if until_ts is None:
+            print("ERROR session_events: cannot parse --until"); return 2
+
+    def keep(ev: dict) -> bool:
+        if until_ts is None or not ev.get("ts"):
+            return True
+        t = W.parse_ts(ev["ts"])
+        return t is None or t <= until_ts
+
+    def strip_raw(ev: dict) -> dict:
+        raw = ev.pop("_raw", None)
+        if args.full_args and raw is not None and ev.get("kind") == "TOOL":
+            txt = WI._text_of(raw)
+            if re.search(r"apply_patch|Add File|Update File|createFrame|createRectangle|createInstance|gh pr|gh issue|gws|git push|worktree|rm -rf", txt):
+                ev["full_args"] = txt[:6000]
+        return ev
+
+    inv = WI.Inventory()
+    if args.mode == "work":
+        start = max(0, min(args.cursor, size))
+        end = start
+        for off, nxt, line in W.iter_lines(path, start):
+            obj = W.load_json(line)
+            end = nxt
+            if not obj:
+                continue
+            for ev in W.classify(runtime, obj):
+                if not keep(ev):
+                    continue
+                inv.add_event(ev, ev.get("_raw"))
+        key = key_for(runtime, path, [])
+        out_dir = Path(args.out).expanduser() if args.out else W.session_dir(key) / "events"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        page = out_dir / f"work-{start}-{end}.json"
+        page.write_text(json.dumps(inv.to_dict(), indent=1, ensure_ascii=False))
+        print(f"OK session_events work [{runtime}] {key}: from cursor {start} to {end}" + (f" until {args.until}" if args.until else "") + f"; file {W.short_path(page)}")
+        for ln in inv.summary_lines():
+            print(ln)
+        return 0
+
     if args.mode == "anchor":
         seen_user: list[str] = []
         for off, nxt, line in W.iter_lines(path, 0):
@@ -132,6 +194,9 @@ def main(argv=None) -> int:
             if not obj:
                 continue
             for ev in W.classify(runtime, obj):
+                if not keep(ev):
+                    continue
+                ev = strip_raw(ev)
                 if ev["kind"] in W.USER_KINDS:
                     sig = ev["text"][:200]
                     if sig in seen_user[-3:]:
@@ -150,6 +215,9 @@ def main(argv=None) -> int:
             if not obj:
                 continue
             for ev in W.classify(runtime, obj):
+                if not keep(ev):
+                    continue
+                ev = strip_raw(ev)
                 if ev["kind"] in W.USER_KINDS:
                     sig = ev["text"][:200]
                     if sig in seen_user[-3:]:
@@ -164,7 +232,7 @@ def main(argv=None) -> int:
             obj = W.load_json(line)
             if not obj:
                 continue
-            events.extend(W.classify(runtime, obj))
+            events.extend(strip_raw(ev) for ev in W.classify(runtime, obj) if keep(ev))
         events = events[-args.tail_events:]
 
     key = key_for(runtime, path, events) if args.mode == "anchor" else key_for(runtime, path, [])

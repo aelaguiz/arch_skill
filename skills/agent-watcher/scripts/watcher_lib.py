@@ -246,7 +246,9 @@ def classify_codex(obj: dict[str, Any]) -> list[dict[str, Any]]:
             elif name in CODEX_SPAWN_TOOLS:
                 out.append(_event("SPAWN", ts, "payload encrypted in rollout; read the parent's narration", name=name))
             else:
-                out.append(_event("TOOL", ts, _args_preview(args), name=name))
+                ev = _event("TOOL", ts, _args_preview(args), name=name)
+                ev["_raw"] = args
+                out.append(ev)
     return out
 
 
@@ -299,7 +301,9 @@ def classify_claude(obj: dict[str, Any]) -> list[dict[str, Any]]:
                     elif name == "AskUserQuestion":
                         out.append(_event("ASK", ts, _args_preview(inp, 400), name=name))
                     else:
-                        out.append(_event("TOOL", ts, _args_preview(inp), name=name))
+                        ev = _event("TOOL", ts, _args_preview(inp), name=name)
+                        ev["_raw"] = inp
+                        out.append(ev)
     elif t == "queue-operation":
         out.append(_event("USER_QUEUED", ts, str(obj.get("content") or ""), reason=obj.get("reason")))
     elif t == "system":
@@ -346,7 +350,9 @@ def classify_prime(obj: dict[str, Any]) -> list[dict[str, Any]]:
             if isinstance(content, list):
                 for b in content:
                     if isinstance(b, dict) and b.get("type") == "toolCall":
-                        out.append(_event("TOOL", ts, _args_preview(b.get("arguments")), name=str(b.get("name") or "")))
+                        ev = _event("TOOL", ts, _args_preview(b.get("arguments")), name=str(b.get("name") or ""))
+                        ev["_raw"] = b.get("arguments")
+                        out.append(ev)
         elif role == "toolResult" and msg.get("isError"):
             out.append(_event("TOOL_ERROR", ts, squash(content_text(content), 300)))
     elif t == "custom_message":

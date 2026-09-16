@@ -539,6 +539,11 @@ names, and adjudicates escalations with the surprise test before alerting him.
 Watchers keep an intent artifact and provenance ledger per session under
 `~/.agent-watcher/`, check only new events since their cursor, and skip
 sessions with no new bytes. Read-only; it never messages the watched sessions.
+On the 2026-09-15 regression against real traces, Opus watchers found nine of
+nine planted drifts (including a new screen 37 minutes after an agent built
+it) and Sonnet six of nine, missing new user-facing surfaces; name Opus when
+screens and inherited scope matter. Results are in
+`docs/agent-watcher-rewrite-plan-2026-09-15.md`.
 `intent-police` and `unblocker` are the in-loop companions a coding agent
 consults; `check-my-agents` is the one-shot debrief.
 
