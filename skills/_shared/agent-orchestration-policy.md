@@ -67,8 +67,8 @@ that capability. Inspect the active tool surface. If a load-bearing capability
 is unavailable natively, use the appropriate external or background lane and
 say what it buys.
 
-External Codex and Claude execution sessions launch through AIMgr; follow
-`aim-rotation.md`. Only a parent running inside Prime shares its single AIMgr
+External Codex and Claude execution sessions launch through AIMgr. Only a
+parent running inside Prime shares its single AIMgr
 binding with native children: avoid long model-pinned Codex work there and
 rotate the root with `aim prime resume <session> --rotate`. Codex and Claude
 Code parents remain their own runtimes even when AIMgr launched them.

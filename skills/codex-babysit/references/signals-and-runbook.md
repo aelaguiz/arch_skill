@@ -38,15 +38,6 @@ Read everything from `tmux capture-pane -t <target> -p`. Grep the footer/body fo
 - **Empty-composer ghost text** rotates among placeholders such as
   `Implement {feature}` — it is not a state signal; ignore it.
 
-## Shared aim + codex rotation facts
-
-Account mechanics, the codex auth/resume facts, and the core rotation
-sequence live in `../../_shared/aim-rotation.md` — read that file before
-acting on a limit. The pane-specific judgment stays here: rotate on the PANE
-usage-limit string, never on aim's percentage flags, and take the session id
-from the TUI footer when it shows one (fall back to the sessions directory
-per the shared file).
-
 ## Runbook: rotate + restart + resume + verify
 
 Trigger only on a real usage-limit pane string, process death, or a sustained

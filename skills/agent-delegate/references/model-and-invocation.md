@@ -697,28 +697,11 @@ changed-file mtimes — over consuming the event stream.
 
 ## Codex Usage-Limit Continuity
 
-A Codex worker that dies on a hard usage limit is recoverable without losing
-its session. Recognize it from the run artifacts: `stderr.log` or
+Recognize a hard usage limit from the run artifacts: `stderr.log` or
 `events.jsonl` showing a usage-limit / out-of-credits error on exit. A
 transient reconnect or backoff message is not a limit; leave those to codex's
-own retry.
-
-When the limit is real and an `aim` account pool is available:
-
-1. Rotate per `../../_shared/aim-rotation.md`: pick a healthy account,
-   `aim codex use <label>`, verify the switch took.
-2. Continue the **same worker** through the normal `resume` mode with the
-   captured `session_id.txt` — a new process on the new account, appending to
-   the same session. Match the original launch shape (profile, model,
-   effort).
-3. Verify the resumed worker actually makes progress on the new account
-   before reporting it recovered.
-
-This is exact-session continuation on the same runtime and model, not a
-fallback, so it does not violate the no-silent-fallback rule below — but say
-in the parent report that a rotation happened and on which account the work
-finished. Without an `aim` pool, a usage-limit death is an ordinary loud
-failure: preserve the run directory and report it.
+own retry. A usage-limit death is an ordinary loud failure: preserve the run
+directory and report it.
 
 ## Failure Behavior
 

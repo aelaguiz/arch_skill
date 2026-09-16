@@ -238,11 +238,6 @@ log beside the plan is its durable memory.
   brief, then escalate the slice and continue independent work. The same finding surviving
   two consecutive send-backs marks the worker unhealthy immediately. Two
   consecutive malformed or failed child runs on one slice escalate it.
-- An external Codex worker that dies on a hard usage limit is continued, not
-  replaced: rotate accounts and resume the exact captured session per
-  `$agent-delegate`'s usage-limit continuity and
-  `../_shared/aim-rotation.md`. Rotation is not a send-back, respawn, or
-  failed run for cap purposes; record it in the conductor log.
 - Delegate all proof runs (tests, builds, generators, simulators) to
   workers; decisive proof counts only when a different clean worker on the
   fleet profile reproduced it. The parent runs read-only inspection, which
