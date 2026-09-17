@@ -44,8 +44,11 @@ How you decide:
 3. Resolve routine uncertainty locally. Consult Pro for a major unexpected
    blocker or consequential technical uncertainty that remains beyond local
    reasoning after reasonable investigation and is likely to change the
-   approach. Carry full goal context, attempted reasoning, options, and a
-   recommendation; follow the run's cadence and have the coordinator record
+   approach. Write that consult from the matching family in `$chatgpt-web`'s
+   consultation templates, in the user's voice, with the sources attached
+   whole; carry full goal context, attempted reasoning, options, and a
+   recommendation as a belief Pro can overturn, and watch for the answer.
+   Follow the run's cadence and have the coordinator record
    each actual submission once in the existing worklog. Pro means GPT-6 Astra's
    literal `Pro` option, never Extra High, xhigh, Ultra, or Thinking. Missing or
    disabled Pro probably means a temporary account rate limit: use `$chatgpt-web`

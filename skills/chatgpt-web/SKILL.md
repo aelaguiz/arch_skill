@@ -1,6 +1,6 @@
 ---
 name: chatgpt-web
-description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros and $prompt-authoring. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro, real @BigQuery access for data and @GitHub access for repo work, existing numbered Pro profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited Pro accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
+description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros, writing the submission from its consultation templates in the user's voice with sources attached whole. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro, real @BigQuery access for data and @GitHub access for repo work, existing numbered Pro profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited Pro accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
@@ -80,25 +80,23 @@ The shared policy's deadlines and stall actions for owned processes do not
 set a timeout for a ChatGPT web response; this skill owns its recovery.
 
 Write the submission the way the user would say it to a colleague, not as a
-request form. Before writing, read the family that matches the ask in
-[consultation-templates.md](references/consultation-templates.md): reviewing a
-PR, after fixes, checking a written-up plan, planning an issue, an on-track
-check, a design round, a diagnosis, an audit, a retry, or a new thread. That
-family's shape, anti-patterns, and attach list are the contract for the
-submission. `$prompt-authoring`'s rules hold underneath; where its scaffold and
-the user's phrasing disagree, the phrasing wins.
+request form. Before writing, read the shape and the pre-send check in
+[consultation-templates.md](references/consultation-templates.md), then the
+family that matches the ask: reviewing a PR, after fixes, checking a
+written-up plan, planning an issue, an on-track check, a design round, a
+diagnosis, an audit, a retry, or a new thread. That family's shape,
+anti-patterns, and attach list are the contract for the submission.
+`$prompt-authoring`'s rules hold underneath; where its scaffold and the
+user's phrasing disagree, the phrasing wins.
 
-Every submission makes the same five moves. Open with what we are building
-and, when something is being authored, what the finished thing will contain.
 Hand over the sources whole: the canonical requirements source as a full
 export, the plan, the user's own words verbatim, raw evidence, and the PR or
 branch with `@GitHub` typed and picked in the composer (the words "GitHub
-connector" attach nothing). Say what was done and what was seen. Offer the
-agent's status as a belief. Ask one question about intent, and for a review
-say what kinds of problems to look for. Wherever something is being authored
-(a plan, a design, a diagnosis, an issue set) Pro writes it; the agent brings
-context, asks questions, goes back and forth until it is fully formed, then
-carries the agreed result into the artifact verbatim.
+connector" attach nothing). Offer the agent's status as a belief and ask
+about intent. Wherever something is being authored (a plan, a design, a
+diagnosis, an issue set) Pro writes it; the agent brings context, asks
+questions, goes back and forth until it is fully formed, then carries the
+agreed result into the artifact verbatim.
 
 Never ask for a verdict token, cap the answer, fence what Pro may conclude,
 pin a commit SHA, or restate a source in place of attaching it. Narrowing the
@@ -108,13 +106,9 @@ selected for a strict verdict, such as `$fresh-consult` or
 `$codex-review-yolo`, keeps its own footer by design. Preserve explicit
 verbatim relays.
 
-Before Send, read the draft once as the user and answer five questions: would
-he say this to a colleague in these words, with no `Goal`, `Context`,
-`Instructions`, or `Output` labels; could Pro reject the question and still
-help; is the canonical source in the room, whole; did the work's scope narrow
-the context; is the status a belief or a fact. A failed answer means a
-rewrite. This check is the pre-send review for a Pro submission; a
-dispatch-dimension checklist does not replace it.
+Before Send, run the reference's pre-send check on the actual draft; a failed
+question means a rewrite. That check is the pre-send review for a Pro
+submission; a dispatch-dimension checklist does not replace it.
 
 Read [accounts-and-conversations.md](references/accounts-and-conversations.md)
 before choosing or switching the account, project, thread, or model controls.
@@ -139,11 +133,13 @@ serially unless simultaneity is mandatory, in which case report the mismatch.
 
 ## Supply the inputs and send
 
-For a plan or any multi-paragraph body, attach a file and use only a short
-single-paragraph composer message pointing to it. Keyboard-based fills can
-turn newlines into Enter and submit a fragment during the fill itself.
-Check absolute paths, existence, and the maximum of 10 attachments. Never drop
-requested files silently. Read
+The ask itself goes in the composer as one paragraph, however long it runs:
+keyboard-based fills can turn newlines into Enter and submit a fragment
+during the fill itself, so the brief carries no line breaks. Plans, exports,
+evidence, and any other long body go in files the ask names; a one-line
+composer message pointing at an "ask file" is not a brief. Check absolute
+paths, existence, and the maximum of 10 attachments. Never drop requested
+files silently. Read
 [composer-and-attachments.md](references/composer-and-attachments.md) before
 attaching files, invoking connectors, or diagnosing composer interaction.
 

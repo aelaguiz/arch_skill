@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR with a plan on disk, startup-pragmatism, GPT-6 Astra Pro planning/final review, and PR authoring/follow-through. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
+description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR with a plan Pro writes and the coordinator carries onto disk, startup-pragmatism, GPT-6 Astra Pro planning/final review, and PR authoring/follow-through. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
 metadata:
   short-description: "Issue delivery with delegated code and parent review"
 ---
@@ -41,14 +41,15 @@ a GitHub issue, use the requested workflow instead.
 
 ## Delivery contract
 
-- Freeze acceptance and non-goals from the issue and the user's direction.
+- Freeze the accepted scope and non-goals from the issue and the user's direction.
   Reviewers and bots cannot expand or silently shrink that scope. Resolve
   routine scope interpretation from the contract; a change to what the user
   asked for belongs to the user.
-- Have Pro write the implementation plan and carry the agreed plan onto disk
-  verbatim before implementation; apply `$startup-pragmatism` to it. Keep the
-  same judgment during delivery: enough investigation and verification for
-  the actual change, without invented approval gates or proof machinery.
+- Have Pro write the implementation plan; bring `$startup-pragmatism` into
+  the back-and-forth, then carry the agreed plan onto disk verbatim before
+  implementation. Keep that judgment during delivery: enough investigation
+  and verification for the actual change, without invented approval gates or
+  proof machinery.
 - The run starts authorized for accepted in-scope work. Work in a dedicated
   worktree under the target repo's AGENTS.md. Require self-documenting code
   with clear comments at boundaries and role seams, relevant tests, and
@@ -63,7 +64,7 @@ a GitHub issue, use the requested workflow instead.
 ## Pro cadence
 
 For a standalone issue, the normal cadence is one initial planning
-consultation and one final PR review. Existing Pro planning that still
+consultation and one final PR review. A plan Pro already wrote that still
 covers the accepted scope satisfies the first consultation; do not repeat
 it just because this skill was invoked or a session resumed.
 
@@ -110,7 +111,8 @@ and account switching when Pro is missing, disabled, or explicitly capped.
 
 Use the run's existing thread in an eligible numbered Pro profile, inheriting
 the epic's thread when applicable. Write every submission from the matching
-family in `$chatgpt-web`'s consultation templates, in the user's voice:
+family in `$chatgpt-web`'s consultation templates
+(`../chatgpt-web/references/consultation-templates.md`), in the user's voice:
 planning is family D, where Pro writes the plan and the coordinator asks the
 questions until it is fully formed; a check of the written-up plan is C; the
 PR review is A; one round after fixes is B; an on-track check is E; a retry
@@ -143,12 +145,12 @@ required Pro review or claim a pending review passed.
 1. **Ramp up and plan.** Read live issue, parent, linked PRs, and discussion.
    Confirm the issue is open, available, and not already fixed; reproduce a
    bug before planning its fix, delegating reproduction under the execution
-   contract. Write acceptance, non-goals, implementation, and appropriate
-   verification on disk. Take the issue to Pro with family D so Pro writes
-   the plan (outcome, acceptance criteria, requirements, architecture, do's,
-   do not's, test plan); ask questions until it is fully formed, then carry
-   it onto disk verbatim. Existing Pro planning that still covers the
-   accepted scope satisfies this step.
+   contract. Settle the accepted scope and non-goals, then take the issue to
+   Pro with family D so Pro writes the plan (outcome, acceptance criteria,
+   requirements, architecture, do's, do not's, test plan); ask questions
+   until it is fully formed, then carry it onto disk verbatim and into the
+   issue. A plan Pro already wrote that still covers the accepted scope
+   satisfies this step.
 2. **Implement and verify.** Deliver the smallest coherent change in the
    worktree under the execution contract. Give workers tight requirements and
    appropriate checks, review every deliverable and changed code line, and

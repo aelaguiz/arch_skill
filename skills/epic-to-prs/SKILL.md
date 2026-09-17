@@ -63,10 +63,13 @@ without an issue queue belongs to native goal mode.
 
 ## Shared Pro cadence
 
-Begin with one epic planning consultation covering the goal, queue,
-implementation approach, dependencies, and verification. Reuse relevant
-existing Pro planning when it still covers the accepted scope. Child plans
-remain on disk but do not each require another planning consultation.
+Begin with one epic planning consultation in family D: Pro writes the epic
+plan covering the goal, queue, implementation approach, dependencies, and
+verification, and the coordinator asks the questions. Reuse a plan Pro
+already wrote when it still covers the accepted scope. A child fully covered
+by Pro's epic plan carries that part onto disk; a child that needs its own
+plan goes back to the epic thread with family D rather than getting an
+agent-written plan.
 
 Use Pro again for final review of the completed PR stack against the epic's
 goal, including interactions between PRs. A small coherent epic may need
@@ -117,7 +120,8 @@ with Extended thinking in ChatGPT's `Chat` surface. Extra High, xhigh, Ultra,
 Thinking, and the highest remaining setting are not Pro.
 
 Write every submission from the matching family in `$chatgpt-web`'s
-consultation templates, in the user's voice: epic planning is family D, where
+consultation templates (`../chatgpt-web/references/consultation-templates.md`),
+in the user's voice: epic planning is family D, where
 Pro writes the plan and the coordinator asks the questions until it is fully
 formed; a check of the written-up plan is C; a batch or stack review is A;
 one round after fixes is B; an on-track check is E; a retry is I; a

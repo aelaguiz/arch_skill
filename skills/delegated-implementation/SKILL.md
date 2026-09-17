@@ -22,8 +22,8 @@ read or standalone review does not start implementation.
 
 The parent defines the smallest coherent assignments, resolves architectural
 decisions and dependencies, and judges every deliverable against the accepted
-scope. It reads source and artifacts directly, writes plans and worker briefs,
-and records decisions in the existing worklog.
+scope. It reads source and artifacts directly, writes worker briefs from the
+accepted plan, and records decisions in the existing worklog.
 
 Workers investigate implementation details, reproduce failures, edit code and
 tests, run the required checks, and repair accepted findings. This includes
@@ -82,8 +82,9 @@ work, write that brief the way `$chatgpt-web`'s consultation templates write
 a PR review (family A): open with what we are building, hand over the plan,
 the canonical requirements export, the user's words, and the PR whole, offer
 the status as a belief, and say what to look for in the user's words. No
-verdict token, answer cap, scope fence, or commit SHA. The parent watches for
-the answer and reads all of it.
+verdict token, answer cap, scope fence, or commit SHA. A native reader has
+no `@GitHub`; give it the worktree path and the PR link instead. The parent
+watches for the answer and reads all of it.
 
 ## Review, repair, and accept
 

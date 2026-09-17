@@ -31,8 +31,9 @@ an answer based on guessed data or imagined code.
 
 ## Attach plans and longer bodies
 
-Put every plan or multi-paragraph body in a file. Use a short single-paragraph
-composer ask that names the attachment; pasted newlines can send prematurely.
+Put every plan, export, and evidence body in a file. The ask itself is typed
+into the composer as one paragraph, however long, because pasted newlines can
+send prematurely; do not move the ask into a file and point at it.
 Preflight absolute paths, existence, and the maximum of 10 attachments. Do not
 omit files to fit that limit.
 
@@ -59,7 +60,10 @@ During generation, reject claims based on a file Pro says it could not read.
 ## Attach the sources whole
 
 The consultation templates require the canonical sources as files, not links
-or summaries. Build them before opening the composer:
+or summaries. The issue, epic, or plan usually links the workbook, spec, or
+design record it was written from; that link is the source, and it is
+exported whole even when the issue restates it. Build the files before
+opening the composer:
 
 - **A Google Sheet**: export every tab with the `gws` sheets tooling into one
   Markdown file, tab by tab, with row numbers kept. The rows the agent thinks

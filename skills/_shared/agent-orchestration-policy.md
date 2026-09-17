@@ -157,10 +157,12 @@ independent review. Keep parent-only transport rationale, session bookkeeping,
 and receipt metadata out of the child brief unless they change the child's
 capabilities, continuity, or work.
 
-For a consultation with GPT-6 Astra Pro or a cold reviewer brief, the family
-shapes and anti-patterns in `../chatgpt-web/references/consultation-templates.md`
-apply on top of this section: the user's voice, sources attached whole, no
-verdict token, cap, fence, or commit SHA, and the caller watches for the answer.
+For a consultation with GPT-6 Astra Pro, or a Fable or Sol audit brief under
+`$delegated-implementation`, the family shapes and anti-patterns in
+`../chatgpt-web/references/consultation-templates.md` apply on top of this
+section: the user's voice, sources attached whole, no verdict token, cap,
+fence, or commit SHA, and the caller watches for the answer. A lane the user
+selected for a strict verdict keeps its footer.
 
 Recognition test: could the child reject the parent's theory and still satisfy
 the authoritative task? If not, either the theory is genuinely binding or the

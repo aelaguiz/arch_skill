@@ -1,6 +1,7 @@
 # Consultation Templates
 
-Read the family that matches the ask before writing any submission to Pro.
+Read the shape and the check, then the family that matches the ask, before
+writing any submission to Pro.
 Each family gives the brief as it should be written, in the user's own voice,
 then the anti-patterns to keep out of it, one example of the shape agents
 drift into, and what to attach. Slots are in square brackets. "Amir" below is
@@ -36,9 +37,11 @@ moves, in this order:
 5. **Ask one question about intent**, and for a review say what kinds of
    problems to look for. Then say what happens with the answer.
 
-The moves are sentences, not headings. A brief with `Goal`, `Context`,
-`Instructions`, or `Output` labels is a request form again, even when the
-words under the labels are right.
+The moves are sentences, not headings. A brief split under labels (Goal,
+Context, Instructions, Output, or any renamed set of them) is a request form
+again, even when the words under the labels are right. In the composer the
+whole brief is one paragraph, however long; the bulleted questions in A and D
+become a run of sentences. Files carry the sources, never the ask.
 
 `@GitHub` and `@BigQuery` are typed literally, in the message. Typing `@` in
 the composer opens the connector picker, and selecting GitHub or BigQuery
@@ -66,10 +69,11 @@ back to the user. Narrowing the work never narrows what Pro
 sees.
 
 Before Send, read the draft once as the user and answer five questions. Would
-he say this to a colleague in these words? Could Pro reject my question and
-still help? Is the canonical source in the room, whole? Did I narrow what Pro
-sees because someone narrowed what I should build? Is my status a belief or a
-fact? A failed answer means a rewrite, not a caveat.
+he say this to a colleague in these words, as sentences rather than a form?
+Could Pro reject my question and still help? Is the canonical source in the
+room, whole, with `@GitHub` picked? Did I narrow what Pro sees because someone
+narrowed what I should build? Is my status a belief or a fact? A failed answer
+means a rewrite, not a caveat.
 
 ## A. Reviewing a PR
 
@@ -238,7 +242,8 @@ the outcome, the acceptance criteria, the requirements, the architecture, the
 do's, the do not's, the test plan? Is there anything the code makes wrong now
 that we didn't see when we outlined it? Is there anything in it that would
 leave two owners for one thing, a web of calls, an overbuilt edge case, or a
-workaround for something we should fix first? If it's right, say so. I don't
+workaround for something we should fix first? What would you do better? If
+it's right, say so. I don't
 need a list to feel reviewed.
 
 **Anti-patterns**
@@ -292,15 +297,15 @@ what the seams are, what surprised me]. Here's what Amir has said about this:
 Outline it for me. How would you structure it? Give me your first cut with
 all seven parts, and say where you're unsure or where you need something from
 me. For a really well-architected but highly pragmatic solution, what are the
-key requirements, specifically? How would we know we did this well? Keep a
-clear separation of concerns and clear patterns, and reuse the ones the
-codebase already has. One owner for each truth; one abstraction instead of a
-web of calls. If there's an architectural limitation we should fix first, say
-so rather than planning around it. What tests should we put in up front that
-would actually tell us we succeeded?
+key requirements, specifically? How would we know we did this well? Is there a
+clear separation of concerns? Are there clear patterns, and are they the ones
+the codebase already has? Is there one owner for each truth, one abstraction
+instead of a web of calls? Is there an architectural limitation we should fix
+first rather than plan around? What would you do better? What tests should we
+put in up front that would actually tell us we succeeded?
 
 I'll ask questions and we'll go back and forth until it's fully formed. Then
-I'll put the final version in the issue exactly as we agreed.
+I'll put the final version in the plan doc and the issue exactly as we agreed.
 
 **Anti-patterns**
 
