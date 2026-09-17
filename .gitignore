@@ -6,3 +6,6 @@ gemini/
 .claude/arch_skill/
 __pycache__/
 *.py[cod]
+
+# Generated skill build output (pruned on install)
+skills/*/build/

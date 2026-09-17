@@ -1,7 +1,0 @@
-interface:
-  display_name: "ELI10 Maximum-Readability Answers"
-  short_description: "Explain at the right layer with plain speech, scan markers, exact truth, and renderer-aware tables"
-  default_prompt: "Use $eli10 to answer the current question with maximum readability: lead with the point, use simple speech, preserve exact technical facts, use emoji scan markers where helpful, explain root cause before symptoms, use renderer-appropriate tables only when they make compact information clearer, and do not add next steps unless I ask for them."
-
-policy:
-  allow_implicit_invocation: true
