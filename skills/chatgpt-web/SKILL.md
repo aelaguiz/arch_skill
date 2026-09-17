@@ -55,8 +55,9 @@ the consultation autonomously as described below.
   instead of substituting a different tier. All should have the same projects;
   verify the destination and carry the needed conversation context and inputs.
 - **Require real source access.** For data, attach `@BigQuery`; for GitHub or
-  repository work, attach `@GitHub`; attach both when needed. Select the actual
-  connector in the picker and verify retrieval of the required data or code.
+  repository work, attach `@GitHub`; attach both when needed. Verify the
+  connector pill in the draft and on the submitted turn, and verify retrieval
+  of the required data or code.
   A badge, typed name, or confident assertion is insufficient. Missing or broken
   access means switch to a suitable Pro window or stop and tell the user.
   Never accept or act on guesses about sources Pro could not access.
@@ -91,8 +92,9 @@ user's phrasing disagree, the phrasing wins.
 
 Hand over the sources whole: the canonical requirements source as a full
 export, the plan, the user's own words verbatim, raw evidence, and the PR or
-branch with `@GitHub` typed and picked in the composer (the words "GitHub
-connector" attach nothing). Offer the agent's status as a belief and ask
+branch with `@GitHub` written in the brief so it becomes the connector pill
+(the words "GitHub connector" attach nothing). Offer the agent's status as a
+belief and ask
 about intent. Wherever something is being authored (a plan, a design, a
 diagnosis, an issue set) Pro writes it; the agent brings context, asks
 questions, goes back and forth until it is fully formed, then carries the
@@ -133,13 +135,14 @@ serially unless simultaneity is mandatory, in which case report the mismatch.
 
 ## Supply the inputs and send
 
-The ask itself goes in the composer as one paragraph, however long it runs:
-keyboard-based fills can turn newlines into Enter and submit a fragment
-during the fill itself, so the brief carries no line breaks. Plans, exports,
-evidence, and any other long body go in files the ask names; a one-line
-composer message pointing at an "ask file" is not a brief. Check absolute
-paths, existence, and the maximum of 10 attachments. Never drop requested
-files silently. Read
+Enter the brief into the composer with the paste method in the composer
+reference: it keeps paragraphs and bullets as written, never submits on its
+own, and turns a literal `@GitHub` or `@BigQuery` into the connector pill.
+Never `fill` or `type` the brief; keystroke newlines are Enter and submit a
+fragment mid-fill. Plans, exports, evidence, and any other source go in files
+the brief names; a one-line composer message pointing at an "ask file" is not
+a brief. Check absolute paths, existence, and the maximum of 10 attachments.
+Never drop requested files silently. Read
 [composer-and-attachments.md](references/composer-and-attachments.md) before
 attaching files, invoking connectors, or diagnosing composer interaction.
 

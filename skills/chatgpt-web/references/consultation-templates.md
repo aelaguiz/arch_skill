@@ -29,7 +29,7 @@ moves, in this order:
 2. **Hand over the sources whole.** The canonical requirements source (the
    workbook, the spec, the design record) as a full export, the plan, the
    issue as filed, the user's words verbatim, raw evidence, and the PR or
-   branch with `@GitHub` picked in the composer. Never a link in place of the file,
+   branch with the `@GitHub` pill in the composer. Never a link in place of the file,
    never the rows the agent picked, never the agent's summary.
 3. **Say what was done and what was seen**, in three to five plain sentences.
 4. **Offer the status as a belief.** "I think I'm done." "Where I'm least
@@ -39,16 +39,16 @@ moves, in this order:
 
 The moves are sentences, not headings. A brief split under labels (Goal,
 Context, Instructions, Output, or any renamed set of them) is a request form
-again, even when the words under the labels are right. In the composer the
-whole brief is one paragraph, however long; the bulleted lists in A and D
-become a run of sentences. Files carry the sources, never the ask.
+again, even when the words under the labels are right. The brief goes into
+the composer as written, paragraphs and bullets intact, with the paste method
+in the composer reference. Files carry the sources, never the ask.
 
-`@GitHub` and `@BigQuery` are typed literally, in the message. Typing `@` in
-the composer opens the connector picker, and selecting GitHub or BigQuery
-there is what attaches the connector to the turn so Pro can read the repo or
-the data. The words "GitHub connector" in a message attach nothing. Every
-template below writes `@GitHub` where the PR or branch is handed over: type
-it, pick it, and verify the chip before Send.
+`@GitHub` and `@BigQuery` are written literally in the brief. Entered with
+the paste method in the composer reference, each becomes the connector pill,
+and the pill is what gives Pro the repo or the data. The words "GitHub
+connector" in a message attach nothing. Every template below writes `@GitHub`
+where the PR or branch is handed over: keep it, and verify the pill before
+Send.
 
 Wherever something is being authored, Pro writes it. The agent brings the
 context, asks questions, goes back and forth until it is fully formed, then
@@ -64,14 +64,14 @@ blocking findings", "one line per", "three sentences maximum"); a fence on
 what Pro may conclude ("do not expand into…", "reject any drift into…"); a
 commit SHA (say "here's the PR" and Pro reads the latest); the issue body or
 any restatement in place of the source; "confirm" or "judge only whether";
-the words "GitHub connector" in place of a picked `@GitHub`; handing the wait
+the words "GitHub connector" in place of an `@GitHub` pill; handing the wait
 back to the user. Narrowing the work never narrows what Pro
 sees.
 
 Before Send, read the draft once as the user and answer five questions. Would
 he say this to a colleague in these words, as sentences rather than a form?
 Could Pro reject my question and still help? Is the canonical source in the
-room, whole, with `@GitHub` picked? Did I narrow what Pro sees because someone
+room, whole, with the `@GitHub` pill? Did I narrow what Pro sees because someone
 narrowed what I should build? Is my status a belief or a fact? A failed answer
 means a rewrite, not a caveat.
 
@@ -148,8 +148,8 @@ the diff? Did anything adjacent change that nobody asked for?
 
 - Pinning a commit SHA. Say "here's the PR" and let Pro read the latest code,
   all of it.
-- Writing "GitHub connector attached" as text. Type `@GitHub`, pick it from
-  the picker, and verify the chip; otherwise Pro has no repo access.
+- Writing "GitHub connector attached" as text. Write `@GitHub` and verify it
+  became a pill; otherwise Pro has no repo access.
 - Asking for a verdict token. Pro gives its read; the agent owns the verdict.
 - Capping the answer: "only blocking findings", "one line per finding",
   "under 1500 words".
@@ -169,7 +169,7 @@ merge-ready; otherwise return CHANGES REQUIRED with only blocking in-scope
 defects. Do not require RustAI, Patrol, Flutter work, or any other adjacent
 milestone scope."
 
-**Attach**: the GitHub PR link with `@GitHub` picked; the plan document; the
+**Attach**: the GitHub PR link with the `@GitHub` pill; the plan document; the
 spreadsheet, if there is one, as a full export of every tab; the issue as
 filed; the user's words about this work, verbatim; raw test output; the repo's
 review policy and incident rules when the repo has them (see the last
@@ -214,7 +214,7 @@ Not this: "Fix verification. The attached plan applies your five findings:
 specified. First line PASS or CHANGES REQUIRED, then one line per finding."
 
 **Attach**: everything from the first review, re-attached; Pro's previous
-answer; the GitHub PR link with `@GitHub` picked.
+answer; the GitHub PR link with the `@GitHub` pill.
 
 ## C. Checking the written-up plan
 
@@ -265,7 +265,7 @@ seats, antes, movement, balancing, or generic mode abstractions."
 
 **Attach**: the written-up plan as it now sits in the issue or the doc; Pro's
 outline from the D thread; the spreadsheet as a full export; the user's words
-verbatim; the branch with `@GitHub` picked.
+verbatim; the branch with the `@GitHub` pill.
 
 ## D. Planning an issue with Pro
 
@@ -326,7 +326,7 @@ and do not expand scope."
 
 **Attach**: the spreadsheet as a full export; the plan document we're working
 from; the issue as filed; the user's words verbatim; the branch with
-`@GitHub` picked; any prior Pro planning in the thread.
+the `@GitHub` pill; any prior Pro planning in the thread.
 
 ## E. Standing advisor and on-track checks
 
@@ -362,8 +362,8 @@ reads needed): six of ten lanes are merge-ready as a PR stack. Three
 sentences maximum, then one line: ON TRACK or OFF TRACK with the correction."
 
 **Attach**: the spreadsheet as a full export; the plan document; the user's
-words about the epic; the live queue as the agent sees it; `@GitHub`
-picked.
+words about the epic; the live queue as the agent sees it; the `@GitHub`
+pill.
 
 ## F. Design and research rounds
 
@@ -473,7 +473,7 @@ four diagnoses and recommend the smallest truthful action for each, using the
 linked issues read-only."
 
 **Attach**: the audit or list in full; the source it was made from; the
-user's words about this area; `@GitHub` picked.
+user's words about this area; the `@GitHub` pill.
 
 ## I. Recovery: resend the whole thing
 
@@ -499,7 +499,7 @@ subscription'. Complete only that finding in at most four sentences. If it is
 not actionable, say PASS."
 
 **Attach**: everything the original ask carried, re-attached; `@GitHub` and
-`@BigQuery`, picked again from the picker.
+`@BigQuery` in the brief again, as pills.
 
 ## J. Starting a new thread or moving accounts
 
@@ -532,7 +532,7 @@ the on-track check described in the file."
 
 **Attach**: the spreadsheet as a full export; the plan document; the old
 thread's rulings, exported; the user's words, quoted with dates; the current
-issues; `@GitHub` picked.
+issues; the `@GitHub` pill.
 
 ## Bugs the reviewer checks against
 

@@ -43,6 +43,12 @@ and `.jsonl` in this repo root) and the Dynamic Missions Codex session
    "stopping at merge-ready for you"; it waits, reads the whole answer, and
    acts on it. Amir's ruling, 2026-09-16: "No, don't tell me too, dude. You
    have to watch for it."
+8. The brief goes into the composer as written, with a synthetic paste in page
+   context (verified 2026-09-17 on a 540-word Template A brief): paragraphs
+   and bullets survive, nothing sends mid-entry, and a literal `@GitHub` or
+   `@BigQuery` becomes the connector pill. Never `fill` or `type` the brief,
+   and never move the ask into a file; that workaround produced the ask-file
+   plus competing one-line prompt Amir flagged on 2026-09-17.
 
 ## Where every Pro prompt comes from today
 

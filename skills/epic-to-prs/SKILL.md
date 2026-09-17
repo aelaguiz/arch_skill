@@ -127,7 +127,7 @@ formed; a check of the written-up plan is C; a batch or stack review is A;
 one round after fixes is B; an on-track check is E; a retry is I; a
 continuation thread or account move is J. Attach the sources whole (the
 canonical requirements source as a full export, the plan, the issues, the
-user's words verbatim, raw output, the PRs with `@GitHub` picked) on every
+user's words verbatim, raw output, the PRs with the `@GitHub` pill) on every
 round, and let Pro read the latest. Never ask for a verdict token, cap the
 answer, fence what Pro may conclude, or pin a commit SHA. The coordinator
 watches for Pro's answer and acts on it; it never ends a turn telling the

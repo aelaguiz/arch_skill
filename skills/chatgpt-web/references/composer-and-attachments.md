@@ -4,22 +4,53 @@ Read the relevant section before attaching files or connectors, or when a
 composer interaction fails. BrowserOS owns profile, focus, mutation, and secret
 handling; use its live tool schemas and current page refs.
 
-Sections: [connectors](#attach-the-actual-connectors),
+Sections: [enter the brief](#enter-the-brief),
+[connectors](#attach-the-actual-connectors),
 [files](#attach-plans-and-longer-bodies),
 [sources whole](#attach-the-sources-whole),
 [composer diagnosis](#diagnose-a-composer-interaction),
 [delivery verification](#verify-delivery-on-every-submission).
 
+## Enter the brief
+
+The composer is a ProseMirror editor in which Enter sends. Never `fill` or
+`type` the brief: keystroke fills turn every newline into Enter and submit a
+fragment mid-fill, which is what drove agents to put the ask in a file. Enter
+the brief with a synthetic paste in page context instead. It keeps paragraphs,
+blank lines, and bullet lines exactly, never submits, and turns a literal
+`@GitHub` or `@BigQuery` in the text into the connector pill. Verified
+2026-09-17 on a 540-word Template A brief with two mentions.
+
+```javascript
+// page-context JS (evaluate), TEXT = the full brief as written
+const ed = document.querySelector('#prompt-textarea');   // the visible ProseMirror div
+ed.focus();
+const dt = new DataTransfer(); dt.setData('text/plain', TEXT);
+ed.dispatchEvent(new ClipboardEvent('paste', {clipboardData: dt, bubbles: true, cancelable: true}));
+// verify before Send: pills resolved, and the draft equals TEXT with pills read back as @Keyword
+const c = ed.cloneNode(true);
+c.querySelectorAll('[data-inline-selection-pill]').forEach(p => p.replaceWith('@' + p.getAttribute('data-keyword')));
+return JSON.stringify({pills: [...ed.querySelectorAll('[data-inline-selection-pill]')].map(p => p.getAttribute('data-keyword')),
+  matches: c.innerText.trim() === TEXT.trim(), userTurns: document.querySelectorAll('[data-message-author-role="user"]').length});
+```
+
+Send only when `matches` is true, every required pill is listed, and the
+user-turn count has not changed since before the paste. Click
+`button[data-testid="send-button"]` (accessible name `Send prompt`), then
+verify the submitted turn as described below. If a mention did not resolve
+into a pill, delete it, insert `@` with `document.execCommand('insertText',
+false, '@')`, which opens the picker, and pick the connector with a real
+click at the item's viewport coordinates (`act` `click_at`); synthetic DOM
+clicks on picker items do not register. Then paste the rest of the brief.
+
 ## Attach the actual connectors
 
-For data questions, type `@` and select BigQuery from the connector picker.
-For GitHub or repository questions, select GitHub. Use both when both kinds of
-sources are required. Confirm the actual attached mentions before sending;
-plain text naming a connector does not invoke it. Because the brief is
-inserted as one paragraph, place the mention in steps: insert the text up to
-the `@GitHub` or `@BigQuery`, type `@` and pick the connector from the picker
-so the pill lands in place, then insert the rest. A pasted `@GitHub` string,
-including one typed because the picker did not mount, is not a chip.
+For data questions the brief carries `@BigQuery`; for GitHub or repository
+questions it carries `@GitHub`; both when both kinds of sources are required.
+The paste in the section above resolves each into a pill; confirm the pills
+in the draft and again on the submitted turn before accepting an answer.
+Plain text naming a connector, such as "GitHub connector attached", attaches
+nothing.
 
 Name the relevant data scope or repository in the ask. For code review, include
 the exact pushed PR URL with the GitHub mention; file dumps and pasted diffs do
@@ -35,9 +66,9 @@ an answer based on guessed data or imagined code.
 
 ## Attach plans and longer bodies
 
-Put every plan, export, and evidence body in a file. The ask itself is typed
-into the composer as one paragraph, however long, because pasted newlines can
-send prematurely; do not move the ask into a file and point at it.
+Put every plan, export, and evidence body in a file. The brief itself goes
+into the composer with the paste method above, paragraphs intact; do not
+move the ask into a file and point at it.
 Preflight absolute paths, existence, and the maximum of 10 attachments. Do not
 omit files to fit that limit.
 
@@ -83,8 +114,8 @@ opening the composer:
 Pack within the 10-attachment limit by concatenating related items into one
 file with clear headings (for example the user's words and the issue as filed)
 rather than dropping any source. Name each file for what it is. Point Pro at
-the PR or branch by typing `@GitHub` and selecting it from the picker, and at
-data by typing `@BigQuery` the same way; the words "GitHub connector" attach
+the PR or branch with `@GitHub` in the brief, and at data with `@BigQuery`;
+the paste resolves them into pills, and the words "GitHub connector" attach
 nothing. Never pin a commit SHA in the ask.
 When continuing a thread, re-attach the sources on every round rather than
 telling Pro to scroll up.
@@ -93,9 +124,9 @@ telling Pro to scroll up.
 
 Read the exact schema for the available input tool, including whether it
 inserts text or types keystrokes. A tool named `fill` can type character by
-character and turn each newline into unmodified Enter. Use the
-one-paragraph composer ask above; a fill acknowledgment and its character
-count describe the attempted input, not a verified field value or submission.
+character and turn each newline into unmodified Enter. Enter the brief with
+the paste method above; a fill acknowledgment and its character count
+describe the attempted input, not a verified field value or submission.
 
 Locate the live visible editor. ChatGPT can render a hidden fallback
 `textarea[name="prompt-textarea"]` beside the actual
