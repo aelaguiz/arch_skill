@@ -144,6 +144,20 @@ real owner?
 Scope: would whoever commissioned this be surprised by any behavior change in
 the diff? Did anything adjacent change that nobody asked for?
 
+Failures: does it have silent failures? Does it swallow error conditions, or
+throw away data we would use to debug? Do all errors make it properly into
+Sentry?
+
+Telemetry: does it have the telemetry we need so that, from a business
+perspective, we can tell whether the thing is actually happening?
+
+Experience: does it add user experience that wasn't specified, most commonly a
+random toast or an interaction nobody asked for? Does it make something
+synchronous that used to be asynchronous, so it now blocks and slows the user
+down? Does it play nice with deep links? Does it work when users switch? Is
+there any experience change that would surprise the person who asked for
+this feature?
+
 **Anti-patterns**
 
 - Pinning a commit SHA. Say "here's the PR" and let Pro read the latest code,
