@@ -40,7 +40,7 @@ moves, in this order:
 The moves are sentences, not headings. A brief split under labels (Goal,
 Context, Instructions, Output, or any renamed set of them) is a request form
 again, even when the words under the labels are right. In the composer the
-whole brief is one paragraph, however long; the bulleted questions in A and D
+whole brief is one paragraph, however long; the bulleted lists in A and D
 become a run of sentences. Files carry the sources, never the ask.
 
 `@GitHub` and `@BigQuery` are typed literally, in the message. Typing `@` in

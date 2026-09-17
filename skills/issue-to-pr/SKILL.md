@@ -66,7 +66,10 @@ a GitHub issue, use the requested workflow instead.
 For a standalone issue, the normal cadence is one initial planning
 consultation and one final PR review. A plan Pro already wrote that still
 covers the accepted scope satisfies the first consultation; do not repeat
-it just because this skill was invoked or a session resumed.
+it just because this skill was invoked or a session resumed. Family C is
+the last exchange of that planning thread, used when the agreed plan was
+carried over and the code or the thread has moved since; it is not a second
+consultation per issue.
 
 For an issue inside a coherent epic or related batch, inherit the
 coordinator's shared planning and review scope. Do not add a plan review

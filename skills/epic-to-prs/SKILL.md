@@ -154,12 +154,13 @@ substitute another model for a required Pro review or count it as passed.
 ## Workflow
 
 1. **Adopt and plan.** Read the epic, live issues, supplied Pro thread, and
-   existing plans. Establish acceptance and the initial order. Write the
-   plan by taking the epic to Pro with family D, so Pro writes it and the
-   coordinator asks the questions until it is fully formed; carry the agreed
-   plan onto disk verbatim and apply `$startup-pragmatism`. Reuse existing
-   Pro planning that still covers the scope. Identify useful reviewable
-   batches where the work calls for them.
+   existing plans. Settle the accepted scope and the initial order, then
+   take the epic to Pro with family D, so Pro writes the plan and the
+   coordinator asks the questions until it is fully formed, bringing
+   `$startup-pragmatism` into that back-and-forth; carry the agreed plan
+   onto disk verbatim. Reuse a plan Pro already wrote when it still covers
+   the scope. Identify useful reviewable batches where the work calls for
+   them.
 2. **Arm the run.** Stand up `$unblocker` with the user's ask, scope,
    production boundary, and this Pro cadence. Author the goal prompt with
    `$prompt-authoring`, including the thread, unblocker contact, queue,

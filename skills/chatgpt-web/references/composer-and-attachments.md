@@ -15,7 +15,11 @@ Sections: [connectors](#attach-the-actual-connectors),
 For data questions, type `@` and select BigQuery from the connector picker.
 For GitHub or repository questions, select GitHub. Use both when both kinds of
 sources are required. Confirm the actual attached mentions before sending;
-plain text naming a connector does not invoke it.
+plain text naming a connector does not invoke it. Because the brief is
+inserted as one paragraph, place the mention in steps: insert the text up to
+the `@GitHub` or `@BigQuery`, type `@` and pick the connector from the picker
+so the pill lands in place, then insert the rest. A pasted `@GitHub` string,
+including one typed because the picker did not mount, is not a chip.
 
 Name the relevant data scope or repository in the ask. For code review, include
 the exact pushed PR URL with the GitHub mention; file dumps and pasted diffs do
@@ -89,8 +93,8 @@ telling Pro to scroll up.
 
 Read the exact schema for the available input tool, including whether it
 inserts text or types keystrokes. A tool named `fill` can type character by
-character and turn each newline into unmodified Enter. Use the short
-single-paragraph composer ask above; a fill acknowledgment and its character
+character and turn each newline into unmodified Enter. Use the
+one-paragraph composer ask above; a fill acknowledgment and its character
 count describe the attempted input, not a verified field value or submission.
 
 Locate the live visible editor. ChatGPT can render a hidden fallback
