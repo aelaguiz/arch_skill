@@ -1,0 +1,72 @@
+{
+  "receipt_version": 1,
+  "package": {
+    "name": "ELI10",
+    "title": "ELI10 Maximum-Readability Answers"
+  },
+  "doctrine": {
+    "language_version": "5.7",
+    "package_version": "5.1.0"
+  },
+  "source": {
+    "id": "eli10",
+    "root": "/Users/aelaguiz/workspace/arch_skill/skills/eli10/prompts",
+    "entrypoint": "SKILL.prompt"
+  },
+  "inputs": [
+    {
+      "path": "SKILL.prompt",
+      "kind": "entrypoint",
+      "sha256": "77b915b076b401da46d5cdab87039b018ca763cfb2cadd25746923e167e82d6e"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "package_file",
+      "sha256": "6972b33f1f95f78497e2a9650aac8538743637f613c089de0ec90f5ea29fa589"
+    },
+    {
+      "path": "refs/response_patterns.prompt",
+      "kind": "prompt",
+      "sha256": "95484d45eb9b6947159e1acc7c981c38fa81a7d8d48d5edde9ea3a15ef445e55"
+    },
+    {
+      "path": "refs/table_rendering.prompt",
+      "kind": "prompt",
+      "sha256": "e660559104f575ab419abaa4b949c8b3f03e3b1c5ff18967b87afe6a64780cd5"
+    },
+    {
+      "path": "scripts/render_codex_table.py",
+      "kind": "package_file",
+      "sha256": "ab711f97e9ae4034247bea82329f8f8075d4db8d62aad77d0e1324fd8d315d28"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "SKILL.md",
+      "kind": "skill_package_root",
+      "sha256": "4106d21dc9bee8d213fb851deb63a51d62fb589921afd27f101f359f6c524534"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "file",
+      "sha256": "6972b33f1f95f78497e2a9650aac8538743637f613c089de0ec90f5ea29fa589"
+    },
+    {
+      "path": "references/response-patterns.md",
+      "kind": "file",
+      "sha256": "60462e376c1006cd7a75663cc740030105ab34f055dd8fdd0400d3c498656b40"
+    },
+    {
+      "path": "references/table-rendering.md",
+      "kind": "file",
+      "sha256": "21f98a6c9451485d186d1307a059038a708b22d8a862a5a9fbe3006117ee6913"
+    },
+    {
+      "path": "scripts/render_codex_table.py",
+      "kind": "file",
+      "sha256": "ab711f97e9ae4034247bea82329f8f8075d4db8d62aad77d0e1324fd8d315d28"
+    }
+  ],
+  "source_tree_sha256": "9cbf88b6ba8556e922d044bc22e4ee1f2c87f60f2e342ecbb2fa0db0db943d90",
+  "output_tree_sha256": "d36272401abdd98411114f63c360d24dba507bee0bac0678883a073a89a4a7f7"
+}

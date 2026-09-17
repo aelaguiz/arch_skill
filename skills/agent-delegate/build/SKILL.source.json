@@ -1,0 +1,72 @@
+{
+  "receipt_version": 1,
+  "package": {
+    "name": "AgentDelegate",
+    "title": "Agent Delegate"
+  },
+  "doctrine": {
+    "language_version": "5.7",
+    "package_version": "5.1.0"
+  },
+  "source": {
+    "id": "agent-delegate",
+    "root": "/Users/aelaguiz/workspace/arch_skill/skills/agent-delegate/prompts",
+    "entrypoint": "SKILL.prompt"
+  },
+  "inputs": [
+    {
+      "path": "/Users/aelaguiz/workspace/arch_skill/shared/prompts/model_and_runtime/AGENTS.prompt",
+      "kind": "prompt",
+      "sha256": "4fa99d88ae9e42f1d858917db3fdffca725cb9e1822833900fc15bc5d2c319e2"
+    },
+    {
+      "path": "SKILL.prompt",
+      "kind": "entrypoint",
+      "sha256": "1566b47463726c971cdae103625209fd9f323d87a7e08d3d8b3aa5e94210ae1c"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "package_file",
+      "sha256": "c510fedba7e82ab67a20478b9f3cdd26c4412051dcbeef901a615fd3004aa1b8"
+    },
+    {
+      "path": "refs/delegate_invocation.prompt",
+      "kind": "prompt",
+      "sha256": "e3be61b921ffce03b7962edd941b7dffa1914334c358fc5e5ea61438a690a01a"
+    },
+    {
+      "path": "refs/delegate_prompt_and_output.prompt",
+      "kind": "prompt",
+      "sha256": "4379515e6507c3afb0872dcf71cf05fb1ead11553aa95e0070f5ea3350adeacc"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "SKILL.md",
+      "kind": "skill_package_root",
+      "sha256": "5351386cdd59c825d2077a25250ec48b4e2fb3a4095ecd02a4d87c638d278d99"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "file",
+      "sha256": "c510fedba7e82ab67a20478b9f3cdd26c4412051dcbeef901a615fd3004aa1b8"
+    },
+    {
+      "path": "references/delegate-invocation.md",
+      "kind": "file",
+      "sha256": "094c37708e9afa3307c0d7d26625fdc65f58d7036bdeacf0feaa3e08e7aae910"
+    },
+    {
+      "path": "references/delegate-prompt-and-output.md",
+      "kind": "file",
+      "sha256": "ae495feba38df298e5ee9ca57fc22b24cbdaa718a130b97ff8bf40c61fcaa2ea"
+    },
+    {
+      "path": "references/model-and-invocation.md",
+      "kind": "file",
+      "sha256": "37d26a886fe8a6f8ee42ce6509bddf8e08702177b7575abca8786c1686dc5ba3"
+    }
+  ],
+  "source_tree_sha256": "05c8d662cf2aa670b79eca3a6b5e565b0f4d0a75a0dc288c0a459ea5a0ce704e",
+  "output_tree_sha256": "5ba9ac450030d53e1065949f0df8e61e43cf8c2dd49a804ea331ccd41f26c6b1"
+}

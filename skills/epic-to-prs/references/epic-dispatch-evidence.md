@@ -128,6 +128,19 @@ Historical rulings (cadence superseded above):
   nothing from CI; no CI waits or CI fixes before or between Pro rounds; CI
   and bot follow-through run once after Pro has cleared the PR.
 
+- Primary and final (2026-09-17): owner asked for "a version of issue to
+  PR ... that's got a primary and then a final reviewer, and where I can
+  say: 'Okay look, your primary reviewer is going to be whatever, sole X
+  high or Fable 51X high, but your final reviewer is going to be pro.' ...
+  The goal here is just to speed up the process because I think a lot of
+  the initial issues can be taken away without needing pro." Then: "The
+  primary reviewer can also be used as a primary collaborator when it's
+  doing planning work and then, for instance, the ultimate one is the
+  ultimate one. The idea is it has the notion of a primary and then a
+  final." Naming a primary is optional; with none named Pro holds both
+  seats. Encoded as the primary and final seats in the entry file and
+  `references/primary-and-final.md`.
+
 Maintainer background (not needed at runtime):
 /Users/aelaguiz/workspace/psagentspace/factory/workflows/feature-development.md
 and factory/plans/drafts/2026-08-30-issue-to-pr-and-check-my-agents-skills.md.

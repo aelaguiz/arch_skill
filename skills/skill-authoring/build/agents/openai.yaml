@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skill Authoring"
+  short_description: "Create prompt-first reusable skills"
+  default_prompt: "Use $skill-authoring to design or repair a prompt-first skill with simple default shape, precise triggers, clear peer boundaries, lean packaging, self-contained references, and explicit $prompt-authoring discipline."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,42 @@
+{
+  "receipt_version": 1,
+  "package": {
+    "name": "ArchSkillsGuide",
+    "title": "Arch Skills Guide"
+  },
+  "doctrine": {
+    "language_version": "5.7",
+    "package_version": "5.1.0"
+  },
+  "source": {
+    "id": "arch-skills-guide",
+    "root": "/Users/aelaguiz/workspace/arch_skill/skills/arch-skills-guide/prompts",
+    "entrypoint": "SKILL.prompt"
+  },
+  "inputs": [
+    {
+      "path": "SKILL.prompt",
+      "kind": "entrypoint",
+      "sha256": "db33a5fc223d2c10d8bd92b0b8693ed357f21126bd427d692caa2c934c1b9445"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "package_file",
+      "sha256": "cab4b4d5ae225d4f9e19df138aab143da79ef3ee6a574d7b13200c03b2865d44"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "SKILL.md",
+      "kind": "skill_package_root",
+      "sha256": "d8f1de1144e3c3c1ba67b28f99f624cde38a973fd7924e23cdb887f07ab38c5b"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "file",
+      "sha256": "cab4b4d5ae225d4f9e19df138aab143da79ef3ee6a574d7b13200c03b2865d44"
+    }
+  ],
+  "source_tree_sha256": "185634a0c5956990525606d9e5295a4db012566f84fd54202293df9e5bc75f03",
+  "output_tree_sha256": "db7c339d0a973eb99d8b785d590c964351615c829862af4619f2f502e3dffcd1"
+}

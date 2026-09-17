@@ -62,6 +62,12 @@ that its answer is pending for the user to read, and never asks the user to
 watch the thread. How the agent waits is up to its harness; that it waits is
 not.
 
+These families serve whichever model holds the seat, not only Pro. When
+`issue-to-pr`'s primary is Sol or Fable, the brief is the same and "Pro" in
+the template reads as that model. A seat without connectors gets the
+worktree path and branch, `gh pr diff` saved to a file, and the same sources
+by absolute path in place of `@GitHub` and attachments.
+
 Never: a verdict token (PASS, APPROVED, VERDICT); a cap on the answer ("only
 blocking findings", "one line per", "three sentences maximum"); a fence on
 what Pro may conclude ("do not expand into…", "reject any drift into…"); a
@@ -98,7 +104,9 @@ cut or split from a bigger ask, say so here: the original issue, what Amir
 actually asked for in his words, and what is still owed after this PR.]
 
 What I did: [what changed, in plain words]. [What I ran and what I saw; raw
-output attached.] I think I'm done.
+output attached.] I think I'm done. [If another reviewer already went through
+this, say here what it found and what I did about it, attached as files; the
+ask below still asks you to read the PR yourself first.]
 
 Where I'm least sure: [one or two things].
 

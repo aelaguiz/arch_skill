@@ -457,14 +457,19 @@ Examples:
 
 ### `issue-to-pr` and `epic-to-prs`
 
-Invoke these delivery workflows explicitly. A standalone issue normally gets
-Pro initial planning and final PR review. An epic shares planning and review
-across related issues, with useful batch checkpoints and final stack review
-instead of a separate review pair for every child. A checkpoint after two
-related issues can make sense when there is a meaningful combined result to
-assess; the count alone does not trigger it. Pro is also available for a
-major unexpected blocker the agent cannot resolve through local reasoning
-and investigation. Every coordinator uses `delegated-implementation`: Astra
+Invoke these delivery workflows explicitly. Two seats do the consulting,
+named by the user at invocation: the primary writes the plan with the
+coordinator and takes the early review rounds; the final checks the
+written-up plan once and reviews the PR once at the end. Say "primary Sol
+xhigh, final Pro" or "primary Fable xhigh"; with no seats named, GPT-6 Astra
+Pro holds both, which is one planning consultation and one final review. An
+epic shares the seats across related issues: the primary plans and reviews
+batches, the final checks the plan and reviews the stack. A checkpoint after
+two related issues can make sense when there is a meaningful combined result
+to assess; the count alone does not trigger it. The primary is also
+available for a major unexpected blocker the agent cannot resolve through
+local reasoning and investigation. CI is the very last step, after the final
+has cleared the work. Every coordinator uses `delegated-implementation`: Astra
 assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5; any other
 parent uses a native child on its own model.
 The parent owns architecture, scope, integration, and direct review of every
@@ -477,7 +482,8 @@ active harness owns agent mechanics. Neither skill merges PRs.
 Examples:
 
 - `Use $issue-to-pr on issue 4484`
-- `Use $epic-to-prs on epic 4700; review meaningful batches together`
+- `Use $issue-to-pr on issue 5963, primary Sol xhigh, final Pro`
+- `Use $epic-to-prs on epic 4700, primary Fable xhigh, final Pro; review meaningful batches together`
 
 ### `delegated-implementation`
 

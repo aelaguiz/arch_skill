@@ -1,0 +1,7 @@
+interface:
+  display_name: "Bugs Flow"
+  short_description: "Run the standalone analyze, fix, and review bug workflow against one bug doc"
+  default_prompt: "Use $bugs-flow to investigate a bug from evidence, make it fix-ready, implement the smallest credible fix, and verify it against the bug doc."
+
+policy:
+  allow_implicit_invocation: true

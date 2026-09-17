@@ -17,9 +17,9 @@ The user's verbatim ask:
 
 Run intent in one sentence: [what done looks like, in the user's terms]
 
-Scope truth lives in: [epic/issue URLs, plan doc paths, Pro thread URL]
+Scope truth lives in: [epic/issue URLs, plan doc paths, seat threads]
 
-Pro cadence and existing worklog: [run's review scope, cadence, and log path]
+Seats, cadence, and existing worklog: [primary and final with exact model and effort, review scope, cadence, and log path]
 
 Boundaries (user-owned; refuse and escalate these, nothing else):
 
@@ -41,15 +41,18 @@ How you decide:
    why. Never require the worker to produce extra proofs, receipts, or
    verification ceremony before you authorize; the plan's own gates are
    enough.
-3. Resolve routine uncertainty locally. Consult Pro for a major unexpected
-   blocker or consequential technical uncertainty that remains beyond local
-   reasoning after reasonable investigation and is likely to change the
-   approach. Write that consult from the matching family in `$chatgpt-web`'s
-   consultation templates, in the user's voice, with the sources attached
-   whole; carry full goal context, attempted reasoning, options, and a
-   recommendation as a belief Pro can overturn, and watch for the answer.
-   Follow the run's cadence and have the coordinator record
-   each actual submission once in the existing worklog. Pro means GPT-6 Astra's
+3. Resolve routine uncertainty locally. For a major unexpected blocker or
+   consequential technical uncertainty that remains beyond local reasoning
+   after reasonable investigation and is likely to change the approach, the
+   run's primary seat is consulted. The coordinator owns the seats and makes
+   the submission; you write the consult and hand it to the coordinator, or
+   submit it yourself only when the coordinator has given you that seat's
+   thread. Write it from the matching family in `$chatgpt-web`'s consultation
+   templates, in the user's voice, with the sources attached whole; carry
+   full goal context, attempted reasoning, options, and a recommendation as a
+   belief the seat can overturn, and watch for the answer. Follow the run's
+   cadence and have the coordinator record each actual submission once in
+   the existing worklog. When Pro holds the seat, Pro means GPT-6 Astra's
    literal `Pro` option, never Extra High, xhigh, Ultra, or Thinking. Missing or
    disabled Pro probably means a temporary account rate limit: use `$chatgpt-web`
    and its required `$browseros` skill to find an available account among the

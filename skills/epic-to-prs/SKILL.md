@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared GPT-6 Astra Pro planning, meaningful batch checkpoints, major-blocker consultations, and final stack review. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, or open-ended optimization."
+description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared planning and review through two seats the user names at invocation: the primary writes the epic plan and reviews batches, the final checks the plan once and reviews the stack once; GPT-6 Astra Pro holds both when none is named. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, or open-ended optimization."
 metadata:
   short-description: "Epic delivery with delegated code and shared Pro reviews"
 ---
@@ -13,8 +13,9 @@ to Pro-reviewed, merge-ready PRs. Touching an epic during other work does
 not authorize this loop.
 
 Deliver the epic's accepted scope most important first. Use `issue-to-pr`
-for implementation and PR delivery, with shared Pro planning and review
-across related issues. Keep delivering until the queue and required reviews
+for implementation and PR delivery, with shared planning and review across
+related issues through the epic's primary and final seats, named once by the
+user and inherited by every child. Keep delivering until the queue and required reviews
 are complete, the user stops the run, or no useful unblocked work remains.
 
 Apply `$delegated-implementation` across the epic. Workers implement, test, and
@@ -61,72 +62,84 @@ without an issue queue belongs to native goal mode.
   while the next independent issue proceeds. Do not close issues or imply
   they are merged merely because their PRs are ready.
 
-## Shared Pro cadence
+## Shared primary and final
 
-Begin with one epic planning consultation in family D: Pro writes the epic
-plan covering the goal, queue, implementation approach, dependencies, and
-verification, and the coordinator asks the questions. Reuse a plan Pro
-already wrote when it still covers the accepted scope. A child fully covered
-by Pro's epic plan carries that part onto disk; a child that needs its own
-plan goes back to the epic thread with family D rather than getting an
-agent-written plan.
+Begin with one epic planning consultation with the primary in family D: it
+writes the epic plan covering the goal, queue, implementation approach,
+dependencies, and verification, and the coordinator asks the questions.
+Then the final reads the written-up plan once against the code (family C)
+before anyone builds. Reuse a plan the primary already wrote when it still
+covers the accepted scope. A child fully covered by the epic plan carries
+that part onto disk; a child that needs its own plan goes back to the
+primary with family D rather than getting an agent-written plan. When one
+model holds both seats, C is skipped if the plan has not moved.
 
-Use Pro again for final review of the completed PR stack against the epic's
-goal, including interactions between PRs. A small coherent epic may need
-only initial planning and final review. For larger work, choose meaningful
-batches or milestones that Pro can credibly assess. A checkpoint after two
+The primary reviews batches (A, one B round, a fresh A when the basis moved)
+until it finds nothing material. The final reviews the completed PR stack
+once against the epic's goal, including interactions between PRs, with the
+primary's batch findings and the fixes attached. A small coherent epic may
+need only the plan, its check, and the final stack review. For larger work,
+choose meaningful batches or milestones the primary can credibly assess. A checkpoint after two
 related issues can be useful when their combined result exposes integration
 or direction worth reviewing; there is no fixed issue count or mandatory
 boundary check. Explain briefly what this checkpoint will resolve.
 
-A batch checkpoint that reviews finished PRs can satisfy their final review;
-a planning or status-only checkpoint cannot. Final epic review should focus
+A primary's batch review does not discharge a child's final coverage; the
+final's stack review does, or the final's early review of a batch that must
+be merge-ready before the rest. A planning or status-only checkpoint
+discharges nothing. Final epic review should focus
 on the remaining changes and overall integration, using prior batch reviews
 as context instead of repeating every completed child review. Review early
 when a batch needs to be merge-ready before the rest of the epic.
 
 Between these consultations, the coordinator reasons through architecture,
 plan refinements, ordering, and scope; workers implement and repair code under
-the execution contract. Consult Pro for a major unexpected blocker or
+the execution contract. Consult the primary for a major unexpected blocker or
 consequential technical uncertainty that remains beyond the
 agent's reasoning after reasonable local investigation and is likely to
 change the approach. An issue boundary, dependency discovery, or ordinary
 uncertainty alone does not justify a check-in. Never serialize independently
 buildable issues behind an unrelated blocker.
 
-Batch accepted Pro findings. Workers repair code and run affected checks;
-the coordinator personally reviews the changes and evidence and repairs skill
-content itself. Do not run an automatic resubmission loop to obtain Pro
-approval of every edit.
+Batch accepted findings from either seat. Workers repair code and run
+affected checks; the coordinator personally reviews the changes and evidence
+and repairs skill content itself. Do not run an automatic resubmission loop
+to obtain a seat's approval of every edit.
 Seek another consultation for substantial redesign, unresolved consequential
 disagreement, or a repair
 that changes the basis of the review and needs independent judgment. The
 normal cadence is a baseline, not a hard cap.
 
-Pro reads the pushed branches through `@GitHub` and needs nothing from CI.
-Do not wait on CI before a Pro review, between Pro rounds, or across the
-epic while reviews are open, and do not fix CI or bot findings until Pro has
-cleared the work. CI is the very last step for each PR and for the stack:
-once Pro has cleared everything, let CI and the bots run once, fix what they
-find, and return to Pro only if a fix changed behavior. Assess post-review
+Both seats read the pushed branches (Pro through `@GitHub`, another model
+through the worktree and `gh pr diff`) and need nothing from CI. Do not wait
+on CI before a review, between rounds, or across the epic while reviews are
+open, and do not fix CI or bot findings until the final has cleared the
+work. CI is the very last step for each PR and for the stack: once the final
+has cleared everything, let CI and the bots run once, fix what they find,
+and return to the final only if a fix changed behavior. Assess post-review
 changes by their effect on behavior, integration, and review conclusions; a
-new SHA alone does not invalidate useful review. Record which revisions Pro
-actually saw plus later local repairs and verification.
+new SHA alone does not invalidate useful review. Record which revisions each
+seat actually saw plus later local repairs and verification.
 
-## Pro thread and receipts
+## Seats, threads, and receipts
 
-Use one GPT-6 Astra Pro thread for the epic, supplied by the user or created in
-the applicable ChatGPT project. Keep the epic's consultations in that
-thread. `$chatgpt-web` owns browser mechanics and requires reading and applying
-`$browseros` before BrowserOS calls. Select GPT-6 Astra's literal `Pro` option
-with Extended thinking in ChatGPT's `Chat` surface. Extra High, xhigh, Ultra,
-Thinking, and the highest remaining setting are not Pro.
+Read the user's seat names exactly and carry them into every child. Reach
+each seat as `issue-to-pr`'s
+[primary-and-final reference](../issue-to-pr/references/primary-and-final.md)
+says: Pro through `$chatgpt-web` with `$browseros`, literal `Pro` in the
+`Chat` surface, in one epic thread per Pro seat supplied by the user or
+created in the applicable ChatGPT project; another model as a clean native
+child or an external process through `$agent-delegate` at the exact model
+and effort, with one continuing planning session for D and a clean context
+per review round. Extra High, xhigh, Ultra, Thinking, and the highest
+remaining setting are not Pro.
 
 Write every submission from the matching family in `$chatgpt-web`'s
 consultation templates (`../chatgpt-web/references/consultation-templates.md`),
 in the user's voice: epic planning is family D, where
-Pro writes the plan and the coordinator asks the questions until it is fully
-formed; a check of the written-up plan is C; a batch or stack review is A;
+the primary writes the plan and the coordinator asks the questions until it
+is fully formed; the final's check of the written-up plan is C; a batch
+review by the primary or the stack review by the final is A;
 one round after fixes is B; an on-track check is E; a retry is I; a
 continuation thread or account move is J. Attach the sources whole (the
 canonical requirements source as a full export, the plan, the issues, the
@@ -153,21 +166,24 @@ eligible Pro accounts are exhausted, report their observed conditions and the
 blocked Pro decision. Continue
 independent authorized work. Pause the whole run only when no useful
 independent work remains, and wait for the user to say Pro is back. Never
-substitute another model for a required Pro review or count it as passed.
+substitute another model for a named seat or count a pending review as
+passed.
 
 ## Workflow
 
 1. **Adopt and plan.** Read the epic, live issues, supplied Pro thread, and
    existing plans. Settle the accepted scope and the initial order, then
-   take the epic to Pro with family D, so Pro writes the plan and the
+   take the epic to the primary with family D, so it writes the plan and the
    coordinator asks the questions until it is fully formed, bringing
    `$startup-pragmatism` into that back-and-forth; carry the agreed plan
-   onto disk verbatim. Reuse a plan Pro already wrote when it still covers
+   onto disk verbatim and have the final read it once against the code
+   (family C). Reuse a plan the primary already wrote when it still covers
    the scope. Identify useful reviewable batches where the work calls for
    them.
 2. **Arm the run.** Stand up `$unblocker` with the user's ask, scope,
-   production boundary, and this Pro cadence. Author the goal prompt with
-   `$prompt-authoring`, including the thread, unblocker contact, queue,
+   production boundary, the seats, and this cadence. Author the goal prompt
+   with `$prompt-authoring`, including both seats with exact model and
+   effort, their threads, unblocker contact, queue,
    shared review scope, execution responsibilities including parent-owned
    skill authorship, and completion condition. Arm the goal and unblocker
    using the active harness's supported mechanisms. Carry user-directed
@@ -178,23 +194,26 @@ substitute another model for a required Pro review or count it as passed.
    Parallelize independent scopes when useful; keep shared design decisions
    and overlapping work coordinated. Personally review every deliverable and
    changed code line, including worker-delivered issues. Collect locally ready
-   PRs without duplicate child Pro submissions. Resolve routine decisions
+   PRs without duplicate child submissions. Resolve routine decisions
    locally or through the unblocker, use meaningful batch checkpoints and
    major-blocker consultations when warranted, and continue independent
    scope while any real user question pends. Ask once; continuations do not
    supply an answer or justify repeated questions.
-4. **Review and finish.** Obtain final Pro review of the completed stack,
-   using batch reviews as coverage where applicable. Resolve material
-   findings through the same execution contract and personally review fixes.
-   Only then run CI and bot follow-through, once, as the very last step.
-   Every delivered issue needs the coordinator's direct review, Pro planning
-   and final review coverage, and passing required checks before merge-ready.
+4. **Review and finish.** Take batches to the primary until it finds nothing
+   material, then obtain the final's one review of the completed stack with
+   the primary's findings and the fixes attached. Resolve material findings
+   through the same execution contract and personally review fixes. Only
+   then run CI and bot follow-through, once, as the very last step. Every
+   delivered issue needs the coordinator's direct review, the primary's plan
+   and the final's plan check and review coverage, and passing required
+   checks before merge-ready.
    Do not mark the goal complete merely because all issues were dispatched;
    pending reviews and unresolved scope remain unfinished work.
-5. **Report.** List delivered issues and PRs, current heads and CI, Pro
-   review coverage and reviewed revisions, later local repairs, and the
-   submission count. For each review keep what Pro was shown, what Pro said,
-   and the coordinator's own conclusion separate. Name any unresolved
+5. **Report.** List delivered issues and PRs, current heads and CI, each
+   seat's exact model and effort, review coverage and reviewed revisions,
+   later local repairs, and the submission count per seat. For each review
+   keep what the seat was shown, what it said, and the coordinator's own
+   conclusion separate. Name any unresolved
    blocker or user escalation and
    preserve the remaining queue for continuation. Complete the goal only
    when its accepted work is merge-ready or the user explicitly removed it

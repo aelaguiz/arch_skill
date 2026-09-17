@@ -74,7 +74,8 @@ overrides a terminal state such as `issue-to-pr` never merging.
   Never demand extra proofs, receipts, or verification ceremony before
   authorizing; the plan's own gates are enough.
 - Resolve ordinary uncertainty from the plan and available evidence. Consult
-  the run's Pro thread for a major unexpected blocker or consequential
+  the run's primary seat (its Pro thread when Pro holds it) for a major
+  unexpected blocker or consequential
   technical uncertainty that remains beyond local reasoning after reasonable
   investigation and is likely to change the approach. Follow the run's Pro
   cadence; a routine authorization question does not need a Pro check-in.

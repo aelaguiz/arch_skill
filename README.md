@@ -51,8 +51,8 @@ Other shipped skills are:
 - `eli10` — optional source-retained response-style skill; it is not installed by default
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based approved-scope receipt for plan-backed work
 - `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the approved plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
-- `issue-to-pr` — explicit issue delivery with Pro planning/final review and delegated implementation for Astra/Fable; the parent reviews every deliverable and retains all skill authorship
-- `epic-to-prs` — explicit epic delivery with shared Pro planning and stack review, independent issue delegation, and parent-owned integration, direct review, and skill authorship
+- `issue-to-pr` — explicit issue delivery through two seats the user names at invocation (a primary that writes the plan and takes the early review rounds, a final that checks the plan once and reviews the PR once; Pro holds both by default), with delegated implementation; the parent reviews every deliverable and changed code line; CI last
+- `epic-to-prs` — explicit epic delivery with the same primary and final seats shared across issues (the primary plans and reviews batches, the final checks the plan and reviews the stack), independent issue delegation, and parent-owned integration and direct review
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials

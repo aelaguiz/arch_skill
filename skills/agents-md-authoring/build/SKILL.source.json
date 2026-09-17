@@ -1,0 +1,92 @@
+{
+  "receipt_version": 1,
+  "package": {
+    "name": "AgentsMdAuthoring",
+    "title": "AGENTS.md Authoring"
+  },
+  "doctrine": {
+    "language_version": "5.7",
+    "package_version": "5.1.0"
+  },
+  "source": {
+    "id": "agents-md-authoring",
+    "root": "/Users/aelaguiz/workspace/arch_skill/skills/agents-md-authoring/prompts",
+    "entrypoint": "SKILL.prompt"
+  },
+  "inputs": [
+    {
+      "path": "SKILL.prompt",
+      "kind": "entrypoint",
+      "sha256": "08cb4d0a4825434817ceb2aef88dcb6dd75c3d02262db2b4318f25398e183dad"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "package_file",
+      "sha256": "afaf8eee8a0966be9f288bf14667e2ddd9171ca86f2ab27d8c5ca760d986ab5b"
+    },
+    {
+      "path": "refs/agents_md_pattern_contract.prompt",
+      "kind": "prompt",
+      "sha256": "fba33077abd2fea4d1f8984ebb79372290dcd1dabf2c11d8550c1b48b1426aa7"
+    },
+    {
+      "path": "refs/content_budget_and_docs_index.prompt",
+      "kind": "prompt",
+      "sha256": "ff3642b73ef98accba079ab364d042ebd729a199485fa9aee340f91a5fc1435e"
+    },
+    {
+      "path": "refs/examples_and_anti_examples.prompt",
+      "kind": "prompt",
+      "sha256": "3598baee2bc1cb6906a620698c8de9f0fbbd0a38402f809a90a245d34e85f231"
+    },
+    {
+      "path": "refs/maintenance_and_portability.prompt",
+      "kind": "prompt",
+      "sha256": "c146dfcbf017926a921842a2194bb240e18d8ba288e6746fddc2be2310ecc73d"
+    },
+    {
+      "path": "refs/structure_and_scope.prompt",
+      "kind": "prompt",
+      "sha256": "cee44884c3abb64141ea01eeb207f25b7886dfde7b3d4bb8987822f8072708d9"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "SKILL.md",
+      "kind": "skill_package_root",
+      "sha256": "ed1de75efd45874b6107a1e9860a1abb9842528ebee7f421be8e3d4b0b20935f"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "file",
+      "sha256": "afaf8eee8a0966be9f288bf14667e2ddd9171ca86f2ab27d8c5ca760d986ab5b"
+    },
+    {
+      "path": "references/agents-md-pattern-contract.md",
+      "kind": "file",
+      "sha256": "6b97bc05dd21c4a0fd67a91e1b7fd251ff248387a086e7321c195b105b72bb0b"
+    },
+    {
+      "path": "references/content-budget-and-docs-index.md",
+      "kind": "file",
+      "sha256": "7f32aaf78d1c318e732d440ca47d2f76700556844cc8fa8c74f247844b4127d3"
+    },
+    {
+      "path": "references/examples-and-anti-examples.md",
+      "kind": "file",
+      "sha256": "8d4edcb2c38169c6f2c91bcc37e416ee484890a4e1fef2a04ac59fe1a1b23d88"
+    },
+    {
+      "path": "references/maintenance-and-portability.md",
+      "kind": "file",
+      "sha256": "4b3321289d2cacbab4c276a8dbe18e47aac202b32f79e0d992d467c2f16271ae"
+    },
+    {
+      "path": "references/structure-and-scope.md",
+      "kind": "file",
+      "sha256": "7788b118e5df24552714d41b14ddd349bda87b9cc3722d26d9c5fe5c428bd68d"
+    }
+  ],
+  "source_tree_sha256": "69618251c372a0ffb20b5da8363c239a0084100ed725a907394437680ef99082",
+  "output_tree_sha256": "7a0e7fc14ff0557c2987e8cf5bfcfc25364d5b2338212157b4c524c940c1be82"
+}

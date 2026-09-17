@@ -1,0 +1,102 @@
+{
+  "receipt_version": 1,
+  "package": {
+    "name": "NorthStarInvestigation",
+    "title": "North Star Investigation"
+  },
+  "doctrine": {
+    "language_version": "5.7",
+    "package_version": "5.1.0"
+  },
+  "source": {
+    "id": "north-star-investigation",
+    "root": "/Users/aelaguiz/workspace/arch_skill/skills/north-star-investigation/prompts",
+    "entrypoint": "SKILL.prompt"
+  },
+  "inputs": [
+    {
+      "path": "/Users/aelaguiz/workspace/arch_skill/shared/prompts/arch_operating_doctrine/AGENTS.prompt",
+      "kind": "prompt",
+      "sha256": "692b231fb13b22cbed82ef1a4bbcaec75a99f3bd9f1c4062d74ff8dd9e41525d"
+    },
+    {
+      "path": "SKILL.prompt",
+      "kind": "entrypoint",
+      "sha256": "dff80ebff6ad86fec56db3b9423064d0667684e9a2b473702435585eb4779c22"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "package_file",
+      "sha256": "2150aaa3c73ecf25510af3976ef5c85ccb042d79086aefc7ef52ad7f451ed813"
+    },
+    {
+      "path": "refs/bootstrap.prompt",
+      "kind": "prompt",
+      "sha256": "e3c0b5faba4222aadf14f747aab626eb18a66e6ba2e81419c5969a9c49808e6b"
+    },
+    {
+      "path": "refs/investigation_contract.prompt",
+      "kind": "prompt",
+      "sha256": "e5edd82e1ac1a65d2885cb816c165c8afb761e4689df1b8e93b05d36b4b1d954"
+    },
+    {
+      "path": "refs/iterate.prompt",
+      "kind": "prompt",
+      "sha256": "830dfdf020cf7f8fc678435edfecaad445f121050077858b99bb23384ab1dc58"
+    },
+    {
+      "path": "refs/quality_bar.prompt",
+      "kind": "prompt",
+      "sha256": "5a5403e8428caa611b4454cf225bd161c6a893787a1867928577999ae7ed8579"
+    },
+    {
+      "path": "refs/shared_doctrine.prompt",
+      "kind": "prompt",
+      "sha256": "7e62147d246fd233095c91fb92aa41b342144434ce036023f1c38bd1d30ed89e"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "SKILL.md",
+      "kind": "skill_package_root",
+      "sha256": "aac9615a8752d773b324ac600b8ad28f4e2a16a19283ef0e16261c88b9b0028d"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "file",
+      "sha256": "2150aaa3c73ecf25510af3976ef5c85ccb042d79086aefc7ef52ad7f451ed813"
+    },
+    {
+      "path": "references/arch-operating-doctrine.md",
+      "kind": "file",
+      "sha256": "5245d52b1e2582a3f2692ffaa81bbef6798eaeaf62133bd8a0d36c34a11cb5ac"
+    },
+    {
+      "path": "references/bootstrap.md",
+      "kind": "file",
+      "sha256": "5671d0fe6d2d5162efb64ac14419834b4472cae2981d1c9326dae91a1208f4fd"
+    },
+    {
+      "path": "references/investigation-contract.md",
+      "kind": "file",
+      "sha256": "922d211213cdccbbabd17eef4eaa2eaeaca4dceec0f9c967416622b01c12cd55"
+    },
+    {
+      "path": "references/iterate.md",
+      "kind": "file",
+      "sha256": "9c94631add514a414ac96cb59e09b092c02791ce95110fc5c657206d010ec515"
+    },
+    {
+      "path": "references/quality-bar.md",
+      "kind": "file",
+      "sha256": "312aeb126bd9bd263213a495c5ed5bbf0cc861ad96ee02d5155a557a55b3c34e"
+    },
+    {
+      "path": "references/shared-doctrine.md",
+      "kind": "file",
+      "sha256": "a3b710fb603f87107db0acb5362f7c08c3f0312958d901d3da5f47cec7f6357b"
+    }
+  ],
+  "source_tree_sha256": "1e218d5a9349751a35a9b5ef8403f6c006bab42e64cb4e348fcbbc8e30f3ccb9",
+  "output_tree_sha256": "fe6f94d70a63f647abad5a0b2a4a9b4c85f012c2f746ebad1436888bf4e1aec0"
+}

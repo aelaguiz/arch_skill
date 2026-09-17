@@ -1,0 +1,112 @@
+{
+  "receipt_version": 1,
+  "package": {
+    "name": "AuditLoop",
+    "title": "Audit Loop"
+  },
+  "doctrine": {
+    "language_version": "5.7",
+    "package_version": "5.1.0"
+  },
+  "source": {
+    "id": "audit-loop",
+    "root": "/Users/aelaguiz/workspace/arch_skill/skills/audit-loop/prompts",
+    "entrypoint": "SKILL.prompt"
+  },
+  "inputs": [
+    {
+      "path": "/Users/aelaguiz/workspace/arch_skill/shared/prompts/controller_lifecycle/AGENTS.prompt",
+      "kind": "prompt",
+      "sha256": "9e46f6f40b5393a33cd2e243cdd6f1405767917d82a4db7f51560ab316130131"
+    },
+    {
+      "path": "SKILL.prompt",
+      "kind": "entrypoint",
+      "sha256": "4688f3de82de0b8097d0db4cc00416fe5a4d757a4f6991029cf2503ef9665b22"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "package_file",
+      "sha256": "1440970f0f957b0ae880eb04efdf6a0c6f684d83ac516e4f6bd09431d9677ac7"
+    },
+    {
+      "path": "refs/audit_loop_controller.prompt",
+      "kind": "prompt",
+      "sha256": "e41230611a2510a3e3d9fa02d5801354d1ea0c8280fdb380b925baf73f201d88"
+    },
+    {
+      "path": "refs/ledger_contract.prompt",
+      "kind": "prompt",
+      "sha256": "d4fa7c21572efd64711f4cd19b1ca6cb99375ff6d0c09f3ebbad207f512015e1"
+    },
+    {
+      "path": "refs/quality_bar.prompt",
+      "kind": "prompt",
+      "sha256": "972e9e7f66f22a53c1059a92142131d18d48f0b769e460fe9895b01b5a0fe506"
+    },
+    {
+      "path": "refs/review.prompt",
+      "kind": "prompt",
+      "sha256": "4923ed13695e584aa0e80a5e6797cffc9044965afa524356d2c11e8fecfc4bda"
+    },
+    {
+      "path": "refs/run.prompt",
+      "kind": "prompt",
+      "sha256": "b160e9034b940c7429977f0035315ca15cda10779f4123cdb65df5ef6fe4b6b6"
+    },
+    {
+      "path": "refs/shared_doctrine.prompt",
+      "kind": "prompt",
+      "sha256": "b67886c00e1bec8c7c357ca0a3ecd47eb4c76920c1812d08d0ec9301af1fd939"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "SKILL.md",
+      "kind": "skill_package_root",
+      "sha256": "05c932c1b21a7acdb5524ff22119203d64a4b11bce4e75beb61299ca72ac2563"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "kind": "file",
+      "sha256": "1440970f0f957b0ae880eb04efdf6a0c6f684d83ac516e4f6bd09431d9677ac7"
+    },
+    {
+      "path": "references/audit-loop-controller.md",
+      "kind": "file",
+      "sha256": "31b421a96d64e5decf8a40c1f2bbfc8e345ddf84e909fe4015182beeaf23abf4"
+    },
+    {
+      "path": "references/controller-lifecycle.md",
+      "kind": "file",
+      "sha256": "49c1f33449552d9a764db8972cd53a295546216f6d8a01b3923504428a1e6b0e"
+    },
+    {
+      "path": "references/ledger-contract.md",
+      "kind": "file",
+      "sha256": "a703ff5ec118600644147e151da121ffee15106b13061e5c7ed17811bc603c24"
+    },
+    {
+      "path": "references/quality-bar.md",
+      "kind": "file",
+      "sha256": "bd59954c8e1913864bc17d794787d24bc7b1201da2200a222adc4a2f30cc40d4"
+    },
+    {
+      "path": "references/review.md",
+      "kind": "file",
+      "sha256": "d24da83204a73f6d68f1f5e968f8941c043081ff5653e735d11ae6ff65595969"
+    },
+    {
+      "path": "references/run.md",
+      "kind": "file",
+      "sha256": "80eed094e47fcaeb20a99ed5f7e2b13af105d1585a5df116fc820ee52a1e8ad2"
+    },
+    {
+      "path": "references/shared-doctrine.md",
+      "kind": "file",
+      "sha256": "1e761d2936f01f43ec0e218aa2a50ecb3a1a327900f699a23eabeea4e881fadd"
+    }
+  ],
+  "source_tree_sha256": "10d075d3affa291a7f5f01fca24a881f1a0b27eb564344cb4222784d221cd4f3",
+  "output_tree_sha256": "4b0a2a6d904abc809305d03c0955b397d4ef7384942a392ebb56ff42f67f10a3"
+}

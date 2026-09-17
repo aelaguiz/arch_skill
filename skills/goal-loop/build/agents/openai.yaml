@@ -1,0 +1,7 @@
+interface:
+  display_name: "Goal Loop"
+  short_description: "Run the standalone goal-seeking loop with a controller doc and append-only worklog"
+  default_prompt: "Use $goal-loop when the goal is clear but the path is unknown, and keep the controller, next bet, and append-only worklog honest."
+
+policy:
+  allow_implicit_invocation: true
