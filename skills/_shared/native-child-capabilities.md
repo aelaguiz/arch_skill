@@ -13,6 +13,11 @@ Prime Agent `packages/coding-agent`; Codex repo `ceb2ffb793` with installed
 `codex-cli 0.148.0-alpha.20` and `multi_agent_v2` stable; Claude Code `2.1.228`
 (build 2026-08-11) zod schemas plus current `code.claude.com` docs.
 
+**Re-verified 2026-09-17** against the live hosts: the Prime Agent catalog and
+spawn path, `codex-cli 0.154.0-alpha.3` catalogs and configuration schema, and
+Claude Code `2.1.274`. The "Open-source and unnamed parent models" section records
+what those probes established.
+
 **Harnesses move.** Treat every row as a starting expectation, not a promise.
 Inspect the live tool schema before you rely on a capability, and believe the
 schema over this file when they disagree.
@@ -63,6 +68,31 @@ catalog before deciding; do not assume either answer.
 anything about permissions, filesystem scope, worktree isolation, or network
 access. Choose those independently.
 
+## Open-source and unnamed parent models
+
+An open-source or otherwise unnamed parent model is an ordinary parent here. Three
+facts decide what its children can do:
+
+- **Inheritance is the default lane.** A child created without a model and without
+  a thinking level runs the parent's model and level on every host in the matrix.
+  That is the correct dispatch whenever nothing names a worker, and it needs no
+  pin, so a partially supported model never blocks it.
+- **An explicit unsupported thinking level fails the spawn.** Prime Agent refuses
+  it outright — verified on `openrouter/deepseek/deepseek-v4.1-flash` with
+  `medium`, whose error names the levels it does support — while an inherited
+  level is clamped instead. Do not assume a level is supported, and do not infer
+  support from a registry map: `anthropic/claude-fable-5-1` accepts `high`
+  although its registry entry does not list it.
+- **Reach is still per-installation.** A Prime Agent parent on an open-source
+  model was observed admitting native children on `openai-codex/gpt-5.6-luna` and
+  `sakana/fugu-max`, because that installation is authenticated for those
+  providers. The same request on another installation may fail.
+
+**Provenance for the Codex v2 row.** The requirement that a native child's catalog
+entry carry `multi_agent_version: "v2"` was read from the installed Codex binary
+and the local model catalogs, not spawn-tested under an untagged profile. Treat it
+as a strong expectation and verify it on the host in front of you.
+
 ## Using the matrix
 
 A native child is the right lane when four things are true:
@@ -78,4 +108,5 @@ A native child is the right lane when four things are true:
 
 When one fails, say which one and take the external lane for that reason. An
 unpinned native child is not a cheap lane: it runs the parent's model on
-whatever you gave it.
+whatever you gave it. That is the cost to control when a worker profile is named
+for the parent, and exactly the default when none is.

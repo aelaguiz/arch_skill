@@ -69,7 +69,7 @@ make install
   and constraints from the caller's hypotheses, preferences, and proposed
   evidence path. The recipient must be free to reject caller conjecture and
   still satisfy the authoritative task.
-- For a consultation with GPT-6 Astra Pro, or a Fable or Sol audit brief
+- For a consultation with GPT-6 Astra Pro, or an audit brief
   under `$delegated-implementation`, the user's phrasing supersedes this
   skill's scaffold. Write it as he would say it to a colleague, in sentences
   rather than labeled sections: open with what we are building and what the

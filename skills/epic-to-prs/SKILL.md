@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared GPT-6 Astra Pro planning, meaningful batch checkpoints, major-blocker consultations, and final stack review. Astra and Fable coordinators use delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, or open-ended optimization."
+description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared GPT-6 Astra Pro planning, meaningful batch checkpoints, major-blocker consultations, and final stack review. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, or open-ended optimization."
 metadata:
   short-description: "Epic delivery with delegated code and shared Pro reviews"
 ---
@@ -17,8 +17,8 @@ for implementation and PR delivery, with shared Pro planning and review
 across related issues. Keep delivering until the queue and required reviews
 are complete, the user stops the run, or no useful unblocked work remains.
 
-For an Astra or Fable coordinator, apply `$delegated-implementation` across the
-epic. Workers implement, test, and repair; the parent owns decisions, integration,
+Apply `$delegated-implementation` across the epic. Workers implement, test, and
+repair; the parent owns decisions, integration,
 and direct review of every deliverable and changed code line. All skill
 authorship stays with the parent, including skill work inside a child issue.
 
@@ -197,17 +197,16 @@ substitute another model for a required Pro review or count it as passed.
 
 ## Delegation
 
-For Astra and Fable coordinators, `$delegated-implementation` owns worker
-selection, requirements briefs, direct review, and code repair. The originating
-coordinator retains every deliverable's acceptance and all skill authorship
-when assigning issues to workers; an issue handoff does not replace it with
-another executive. For other dispatches, read the installed
-`../_shared/agent-orchestration-policy.md` and apply `$prompt-authoring` to the
-populated brief. Leave spawning mechanics to the active harness. Include
-accepted scope, boundary comments, unblocker contact, shared planning and review
-coverage, and the expected handoff. The coordinator owns Pro submissions and
-the submission count; children return artifacts and consequential questions
-without launching duplicate consultations.
+`$delegated-implementation` owns worker selection, requirements briefs, direct
+review, and code repair. The originating coordinator retains every deliverable's
+acceptance and all skill authorship when assigning issues to workers; an issue
+handoff does not replace it with another executive. Read the installed
+`../_shared/agent-orchestration-policy.md` before dispatch and apply
+`$prompt-authoring` to the populated brief. Leave spawning mechanics to the active
+harness. Include accepted scope, boundary comments, unblocker contact, shared
+planning and review coverage, and the expected handoff. The coordinator owns Pro
+submissions and the submission count; children return artifacts and
+consequential questions without launching duplicate consultations.
 
 ## References
 

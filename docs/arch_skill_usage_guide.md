@@ -464,8 +464,9 @@ instead of a separate review pair for every child. A checkpoint after two
 related issues can make sense when there is a meaningful combined result to
 assess; the count alone does not trigger it. Pro is also available for a
 major unexpected blocker the agent cannot resolve through local reasoning
-and investigation. Astra and Fable coordinators use `delegated-implementation`:
-Astra assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5.
+and investigation. Every coordinator uses `delegated-implementation`: Astra
+assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5; any other
+parent uses a native child on its own model.
 The parent owns architecture, scope, integration, and direct review of every
 deliverable and changed code line. Workers handle implementation, tests, CI
 repairs, and post-review code fixes. All skill authorship stays with the parent,

@@ -576,13 +576,14 @@ and `stepwise` or `arch-epic` for ordered role lifecycles.
 
 ### `delegated-implementation`
 
-Use this execution contract when an Astra or Fable coordinator runs
-`issue-to-pr` or `epic-to-prs`, or the user asks the parent to keep requirements
-and review while workers implement accepted work. Astra uses GPT-5.6 Sol at
-high; Fable uses Opus 5. The active harness supplies agent mechanics. Workers
-implement, test, and repair code; the parent personally reviews every
-deliverable and changed code line, including later fixes. All skill authorship
-stays with the parent using `skill-authoring`; workers may run validation.
+Use this execution contract when a coordinator runs `issue-to-pr` or
+`epic-to-prs`, or the user asks the parent to keep requirements and review while
+workers implement accepted work. Astra uses GPT-5.6 Sol at high; Fable uses
+Opus 5; any other parent uses a native child on its own model. The active
+harness supplies agent mechanics. Workers implement, test, and repair code; the
+parent personally reviews every deliverable and changed code line, including
+later fixes. All skill authorship stays with the parent using `skill-authoring`;
+workers may run validation.
 The calling workflow keeps its Pro cadence, delivery obligations, and completion
 boundary. This helper does not invoke conductor's full workflow.
 

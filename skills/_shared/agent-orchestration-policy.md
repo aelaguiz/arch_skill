@@ -73,7 +73,35 @@ binding with native children: avoid long model-pinned Codex work there and
 rotate the root with `aim prime resume <session> --rotate`. Codex and Claude
 Code parents remain their own runtimes even when AIMgr launched them.
 
+## Default dispatch for a parent model this repo does not name
+
+This repo names a worker for two parents: Astra and Fable. Every other parent —
+Sol, Terra, Luna, Opus, DeepSeek, GLM, Fugu, and whatever is added later — takes
+the default below, in every host. The Codex model preference below is about
+choosing a model for a Codex lane; it does not name a worker for a Codex parent.
+
+When the user names no model and the calling workflow names none, the child is a
+native child of the active host that inherits the parent's model and thinking
+level. Omit both values so the host supplies them. Do not substitute a vendor
+model. If this host cannot start a native child at all, say so, then either do the
+work in the parent or take an external lane on the parent's own model; do not open
+an external lane merely to have a worker when a native child exists.
+
+Each named value replaces only itself: a named effort runs on the inherited model,
+and an explicit level must be one that model supports. A named model, transport,
+or reviewer needs no justification.
+
+The default covers every role, including review. A review with no model named is a
+native same-model review; ask for a named reviewer when provider diversity is the
+point.
+
 ## Codex model preference
+
+Applies when a model is being chosen for a child that will run under Codex: an
+external Codex lane from any host, or a native child of a Codex parent that the
+user or workflow is pinning. An unpinned native child of a Codex parent inherits
+under the default above. On any other host, resolve a Codex id against that host's
+live catalog and do not assume it is present.
 
 Default a Codex model choice to `gpt-6-astra` at `xhigh`. Accept `astra` as
 `gpt-6-astra`. When the user mentions GPT-5.6 Sol, recommend GPT-6 Astra at
@@ -90,12 +118,17 @@ turns land on the most expensive model in the run. A child pinned to a cheaper
 model bills that model instead. Neither outcome is a property of "native" — it
 is a property of whether the dispatch stated the profile.
 
+The cost question has two directions. When a skill or the user names a worker for
+this parent, state that profile at dispatch or take the external lane. When
+nothing names one, the default above applies and the inherited child is the
+stated profile.
+
 So state the child's model and thinking level at dispatch the same way you state
-its starting context, and treat "cheap worker" as a profile you resolve rather
-than a transport you pick. Hosts differ in what they will accept: some take both
-values as spawn arguments, some take the model at the call site but the thinking
-level only in a stored agent definition, and some accept only aliases where you
-expected a full model id.
+its starting context, or state that the child inherits under the default above.
+Treat "cheap worker" as a profile you resolve rather than a transport you pick.
+Hosts differ in what they will accept: some take both values as spawn arguments,
+some take the model at the call site but the thinking level only in a stored agent
+definition, and some accept only aliases where you expected a full model id.
 
 Check three things before you rely on a pin:
 
@@ -157,7 +190,7 @@ independent review. Keep parent-only transport rationale, session bookkeeping,
 and receipt metadata out of the child brief unless they change the child's
 capabilities, continuity, or work.
 
-For a consultation with GPT-6 Astra Pro, or a Fable or Sol audit brief under
+For a consultation with GPT-6 Astra Pro, or an audit brief under
 `$delegated-implementation`, the family shapes and anti-patterns in
 `../chatgpt-web/references/consultation-templates.md` apply on top of this
 section: the user's voice, sources attached whole, no verdict token, cap,
