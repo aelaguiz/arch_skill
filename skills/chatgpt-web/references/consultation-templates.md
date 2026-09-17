@@ -90,7 +90,9 @@ attached.
 I've been working out of branch [name]. Here's the PR: [#N]. @GitHub, read
 the latest code on it yourself.
 
-The issue I picked up was [#M]: [one sentence on what it's for].
+The issue I picked up was [#M]: [one sentence on what it's for]. [If #M was
+cut or split from a bigger ask, say so here: the original issue, what Amir
+actually asked for in his words, and what is still owed after this PR.]
 
 What I did: [what changed, in plain words]. [What I ran and what I saw; raw
 output attached.] I think I'm done.
@@ -165,6 +167,14 @@ can't find his words, treat the change as unapproved and say so.
 Data: are we abusing local storage for something that belongs in the actual
 database for the user, where it survives a reinstall, a new device, or a
 user switch?
+
+Completeness: did we actually accomplish what Amir originally asked for?
+Was that ask split into two or three issues along the way, with this PR
+covering one of them, so that he thinks things are landing here that aren't?
+Was the original issue quietly dropped, deferred, or replaced by a
+prerequisite that got cut later? Is every piece of the original ask either in
+this PR or named plainly as still owed, with the issue that owes it? If the
+PR is being talked about as if it were the original issue, say so.
 
 Tests: does it have the appropriate automation tests? Does it use unit tests
 and property tests properly? Where something could conceivably pass a unit
@@ -372,7 +382,9 @@ Where we are. Done: [plainly]. In flight: [plainly]. Next: [what I'm about to
 do and why]. What I'm worried about: [the thing].
 
 What I'm looking for: am I still on the right path for what Amir wants out of
-this, or have I drifted? Say it straight. If the next thing I've queued is the
+this, or have I drifted? Say it straight. Of what he originally asked for,
+what is done, what got split into other issues, and what got dropped without
+anyone saying so? If the next thing I've queued is the
 wrong thing, tell me what the right thing is. Have I started working around
 something I should have fixed at the source? Is the stack growing patterns
 we'll regret? If the next step needs a plan, outline it and we'll go back and
