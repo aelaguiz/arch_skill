@@ -99,6 +99,9 @@ output attached.] I think I'm done.
 
 Where I'm least sure: [one or two things].
 
+Constraints I'm working around: [each one, and where it came from: Amir's
+words, a real external limit, or something I read in the code and assumed].
+
 What I'm looking for: did I implement the intent right, and is this the
 cleanest, most pragmatic way to do it? Read the plan and the sheet first, then
 the PR.
@@ -167,6 +170,15 @@ can't find his words, treat the change as unapproved and say so.
 Data: are we abusing local storage for something that belongs in the actual
 database for the user, where it survives a reinstall, a new device, or a
 user switch?
+
+Constraints: are we working around a constraint that makes this more
+convoluted than it needs to be? Is that constraint real, and how do we know?
+Did Amir say it, or did an agent read it in the code and treat it as an
+immutable constant when it's something we'd happily change? For each
+constraint the PR bends around, name it, say where it came from, and say what
+the straight version would look like without it. If freeing us of the
+constraint would make this simpler, say so plainly; Amir would rather remove
+the constraint than ship the workaround.
 
 Completeness: did we actually accomplish what Amir originally asked for?
 Was that ask split into two or three issues along the way, with this PR
@@ -281,8 +293,9 @@ that we didn't see when we outlined it? Is there anything in it that would
 leave two owners for one thing, a web of calls, an overbuilt edge case, or a
 workaround for something we should fix first? Anywhere the plan says Amir
 approved something, especially a change to what the player sees, is his
-approval there in his own words, or did an agent infer it? What would you do
-better? If it's right, say so. I don't
+approval there in his own words, or did an agent infer it? Is the plan
+bending around a constraint nobody verified is real, and would Amir just
+remove it if he knew? What would you do better? If it's right, say so. I don't
 need a list to feel reviewed.
 
 **Anti-patterns**
@@ -341,7 +354,11 @@ clear separation of concerns? Are there clear patterns, and are they the ones
 the codebase already has? Is there one owner for each truth, one abstraction
 instead of a web of calls? Is there an architectural limitation we should fix
 first rather than plan around? What would you do better? What tests should we
-put in up front that would actually tell us we succeeded?
+put in up front that would actually tell us we succeeded? Name every
+constraint you're planning around and where it comes from: Amir's words, a
+real external limit, or something read in the code. If a constraint isn't
+Amir's and dropping it would give a simpler plan, say so and outline the
+simpler version too, so I can ask him to free us of it.
 
 I'll ask questions and we'll go back and forth until it's fully formed. Then
 I'll put the final version in the plan doc and the issue exactly as we agreed.
