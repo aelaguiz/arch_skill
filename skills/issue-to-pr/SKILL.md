@@ -55,9 +55,11 @@ a GitHub issue, use the requested workflow instead.
   with clear comments at boundaries and role seams, relevant tests, and
   required repo checks. The execution contract above determines who authors
   each deliverable and who runs verification.
-- Use `$pr-authoring` and `$pr-review-followthrough`. PR Agent and other bots
-  are advisory; assess findings against the issue and code rather than
-  treating them as orders to expand scope.
+- Use `$pr-authoring` to publish and `$pr-review-followthrough` only at the
+  very end. CI is the last step of the whole job: nobody waits on it, fixes
+  it, or reports it until Pro has cleared the PR. PR Agent and other bots are
+  advisory; assess findings against the issue and code rather than treating
+  them as orders to expand scope.
 - Stop at merge-ready with receipts. Never merge, release, apply approval
   labels such as `ufc-approved`, or touch production surfaces.
 
@@ -96,13 +98,14 @@ unresolved consequential disagreement, or a repair that changes the basis
 of the review needs independent judgment. The normal planning/final pair
 is a baseline, not a hard cap on useful consultation.
 
-Finish expected edits and relevant checks before final review where
-practical, including known CI and review-thread repairs. Honor an explicit
-request to run Pro and CI concurrently. After review, assess any change to
-the reviewed revision: formatting or a rebase with unchanged behavior does
-not by itself require another Pro run. Changes that materially affect
-behavior, integration, or the conclusions of the review may need a
-consolidated recheck; decide from their impact, not the SHA changing.
+Pro reads the pushed branch through `@GitHub` and needs nothing from CI. Do
+not wait on CI before going to Pro, do not wait on it between Pro rounds, and
+do not fix CI or bot findings while Pro rounds are open. Run local tests for
+the change; that is the verification Pro sees. CI is the very last step:
+once Pro has cleared everything, let CI and the bots run once, fix what they
+find, and go back to Pro only if a CI fix changed behavior. Formatting, a
+flake, a shard, or a rebase with unchanged behavior does not reopen the
+review; decide from impact, not the SHA changing.
 
 ## Consulting Pro
 
@@ -161,17 +164,19 @@ required Pro review or claim a pending review passed.
    return code findings for repair. Author skill content directly. Resolve
    ordinary decisions locally, consult the run's unblocker when needed, and
    use Pro at the cadence above.
-3. **Publish and stabilize.** Use both PR skills to publish the PR and
-   handle review threads and CI, retaining the same authorship, test, and
-   direct-review responsibilities during follow-through. For shared reviews,
-   hand the coordinator the PR, revision, verification, and unresolved findings
-   without launching duplicate child reviews. Independent issues can proceed
-   meanwhile.
-4. **Final review and repair.** Submit the stable PR, or have it included
-   in the coordinator's batch/stack review. Route accepted findings through
-   the same execution contract, personally review repairs, and decide whether
-   their impact warrants a Pro recheck.
-5. **Report merge-ready.** Require completed Pro planning and final review
+3. **Publish.** Publish the PR with `$pr-authoring` and go straight to Pro.
+   Do not wait on CI, and do not start review-thread or CI follow-through.
+   For shared reviews, hand the coordinator the PR, revision, local
+   verification, and unresolved findings without launching duplicate child
+   reviews. Independent issues can proceed meanwhile.
+4. **Pro review and repair.** Submit the PR with family A, or have it
+   included in the coordinator's batch/stack review. Route accepted findings
+   through the same execution contract, personally review repairs, and decide
+   whether their impact warrants a Pro recheck. Still no CI.
+5. **CI and bots, last.** Only after Pro has cleared the PR, run
+   `$pr-review-followthrough`: let CI and the bots run once, fix what they
+   find, and return to Pro only if a fix changed behavior.
+6. **Report merge-ready.** Require completed Pro planning and final review
    coverage, the originating coordinator's direct review of every deliverable
    and changed code line, resolved material findings, and passing required
    checks.

@@ -7,6 +7,10 @@ description: "Explicit-invocation PR follow-through loop for an already-open Git
 
 Use this skill when the job is not "review a PR once" but "own an already-open PR until review feedback, CI, and merge-readiness are all clean."
 
+Inside `issue-to-pr` and `epic-to-prs`, this loop is the very last step: it
+starts only after GPT-6 Astra Pro has cleared the PR. Do not run it, and do
+not wait on CI, before or between Pro rounds.
+
 ## Install
 
 ```bash

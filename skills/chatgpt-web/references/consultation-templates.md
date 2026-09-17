@@ -214,6 +214,8 @@ simulated test? That is how we catch all sorts of bugs. Is it race-prone?
 - "Review it" with no flavor. Say what kinds of problems you want found.
 - Leading with your own test counts and CI status as if they were the verdict,
   then asking Pro to confirm.
+- Waiting for CI before sending the review, or between rounds. Pro reads the
+  branch; CI is the very last step, after Pro has cleared the PR.
 
 Not this: "Review PR 4734 at exact head 57eb43e4 against the approved plan.
 Return APPROVED only if this exact head is correct, complete, minimal, and

@@ -120,6 +120,14 @@ Historical rulings (cadence superseded above):
   templates in `$chatgpt-web`'s `references/consultation-templates.md`,
   which this skill's Pro sections now point at.
 
+- CI last (2026-09-17): agents waited on 30-minute CI runs before and
+  between Pro rounds. Owner, verbatim: "Dude, we don't need to keep waiting
+  for CI on every fucking turn. We can do CI at the very end after pro has
+  cleared everything." and "we don't give a flying fuck about CI until it's
+  the very very last step." Encoded as: Pro reads the pushed branch and needs
+  nothing from CI; no CI waits or CI fixes before or between Pro rounds; CI
+  and bot follow-through run once after Pro has cleared the PR.
+
 Maintainer background (not needed at runtime):
 /Users/aelaguiz/workspace/psagentspace/factory/workflows/feature-development.md
 and factory/plans/drafts/2026-08-30-issue-to-pr-and-check-my-agents-skills.md.

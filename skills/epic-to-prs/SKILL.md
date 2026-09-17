@@ -103,12 +103,15 @@ disagreement, or a repair
 that changes the basis of the review and needs independent judgment. The
 normal cadence is a baseline, not a hard cap.
 
-Have expected edits and relevant checks finished before final review where
-practical; honor an explicit request for Pro and CI in parallel. Assess
-post-review changes by their effect on behavior, integration, and review
-conclusions. A new SHA alone does not invalidate useful review. Consolidate
-any warranted recheck, and record which revisions Pro actually saw plus
-later local repairs and verification.
+Pro reads the pushed branches through `@GitHub` and needs nothing from CI.
+Do not wait on CI before a Pro review, between Pro rounds, or across the
+epic while reviews are open, and do not fix CI or bot findings until Pro has
+cleared the work. CI is the very last step for each PR and for the stack:
+once Pro has cleared everything, let CI and the bots run once, fix what they
+find, and return to Pro only if a fix changed behavior. Assess post-review
+changes by their effect on behavior, integration, and review conclusions; a
+new SHA alone does not invalidate useful review. Record which revisions Pro
+actually saw plus later local repairs and verification.
 
 ## Pro thread and receipts
 
@@ -183,6 +186,7 @@ substitute another model for a required Pro review or count it as passed.
 4. **Review and finish.** Obtain final Pro review of the completed stack,
    using batch reviews as coverage where applicable. Resolve material
    findings through the same execution contract and personally review fixes.
+   Only then run CI and bot follow-through, once, as the very last step.
    Every delivered issue needs the coordinator's direct review, Pro planning
    and final review coverage, and passing required checks before merge-ready.
    Do not mark the goal complete merely because all issues were dispatched;
