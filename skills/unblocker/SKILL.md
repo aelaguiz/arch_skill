@@ -78,7 +78,10 @@ overrides a terminal state such as `issue-to-pr` never merging.
   technical uncertainty that remains beyond local reasoning after reasonable
   investigation and is likely to change the approach. Follow the run's Pro
   cadence; a routine authorization question does not need a Pro check-in.
-  Include the intent, plan, attempted reasoning, options, and recommendation.
+  Write that consult from the matching family in `$chatgpt-web`'s
+  consultation templates, in the user's voice, with the sources attached
+  whole; include the intent, plan, attempted reasoning, options, and
+  recommendation as a belief Pro can overturn, and watch for the answer.
   Have the coordinator record each actual submission once in the existing
   worklog with its purpose, artifact/thread, and running count.
 - A required Pro review means GPT-6 Astra's literal `Pro` option, never Extra

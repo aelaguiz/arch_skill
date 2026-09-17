@@ -6,6 +6,7 @@ handling; use its live tool schemas and current page refs.
 
 Sections: [connectors](#attach-the-actual-connectors),
 [files](#attach-plans-and-longer-bodies),
+[sources whole](#attach-the-sources-whole),
 [composer diagnosis](#diagnose-a-composer-interaction),
 [delivery verification](#verify-delivery-on-every-submission).
 
@@ -54,6 +55,29 @@ may be siblings of its text node. If deliberately reusing an earlier file,
 verify that attachment in the selected thread and its relevance to this ask;
 do not describe it as newly attached.
 During generation, reject claims based on a file Pro says it could not read.
+
+## Attach the sources whole
+
+The consultation templates require the canonical sources as files, not links
+or summaries. Build them before opening the composer:
+
+- **A Google Sheet**: export every tab with the `gws` sheets tooling into one
+  Markdown file, tab by tab, with row numbers kept. The rows the agent thinks
+  are relevant are not the export; the whole workbook is.
+- **The plan and the design record**: the current file as it sits on disk or
+  in the issue, unedited.
+- **The user's words**: a small file of his verbatim messages and rulings
+  about this work, each dated, gathered from the session and the thread.
+- **Raw evidence**: test output, logs, data pulls, and screenshots as the
+  files the tools produced.
+- **The repo's review policy**, when it has one, for a review brief.
+
+Pack within the 10-attachment limit by concatenating related items into one
+file with clear headings (for example the user's words and the issue as filed)
+rather than dropping any source. Name each file for what it is. Point Pro at
+the PR or branch through the connector; never pin a commit SHA in the ask.
+When continuing a thread, re-attach the sources on every round rather than
+telling Pro to scroll up.
 
 ## Diagnose a composer interaction
 

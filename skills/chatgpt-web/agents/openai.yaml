@@ -1,7 +1,7 @@
 interface:
   display_name: "ChatGPT Web"
   short_description: "Query logged-in ChatGPT through BrowserOS"
-  default_prompt: "Use $chatgpt-web for this consultation. Read its full entry and required companions. Use only existing numbered Pro profiles; the Work profile is reserved for the user and must never be used, even as a fallback. Preserve Pro's expert judgment, verify complete delivery, observe its actual thinking activity, and recover stalled consultations without cancelling generation or requiring routine user rescue. Return the resulting assessment in the user's preferred form."
+  default_prompt: "Use $chatgpt-web for this consultation. Read its full entry and required companions, then the consultation-templates family that matches the ask; write the submission in the user's voice with the sources attached whole, no verdict token, no answer cap, no SHA pin. Use only existing numbered Pro profiles; the Work profile is reserved for the user and must never be used, even as a fallback. Preserve Pro's expert judgment, verify complete delivery, observe its actual thinking activity, and recover stalled consultations without cancelling generation or requiring routine user rescue. Return the resulting assessment in the user's preferred form, keeping what Pro was shown separate from what Pro said."
 
 dependencies:
   tools:

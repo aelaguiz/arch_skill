@@ -41,7 +41,7 @@ Other shipped skills are:
 - `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
 - `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, Markdown-backed Codex goal prompt files, and paste-sized `/goal` mission briefs
 - `browseros` — canonical preflight and operating contract to apply before direct BrowserOS MCP use; owns safe page reuse, provenance, profile and target identity, connector discovery, proof, timeout recovery, secrets, and task-created browser cleanup
-- `chatgpt-web` — explicit ChatGPT web-provider/browser lane with optional attachments; defaults to a new clean conversation, continues an exact conversation only when requested, and defaults to Pro with Extended thinking unless the user specifies another mode or effort
+- `chatgpt-web` — explicit ChatGPT web-provider/browser lane with optional attachments; writes each submission from the matching family in `references/consultation-templates.md` in the user's voice with sources attached whole (no verdict token, answer cap, scope fence, or SHA pin), defaults to a new clean conversation, continues an exact conversation only when requested, and defaults to Pro with Extended thinking unless the user specifies another mode or effort
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `herdr-helper` — higher-level Herdr workflows that safely reconstruct workspaces across sessions, preserve exact resumable agent continuity when available, verify the destination, and require confirmation before removing the source
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
@@ -403,10 +403,16 @@ read when the operation needs them.
 ### `chatgpt-web`
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
-capabilities, or local attachments. The skill shapes rough prompts with
-`prompt-authoring` discipline, requires reading and applying the `browseros` skill,
-verifies that BrowserOS is already logged in, and uses one eligible tab without
-silently inheriting its arbitrary conversation.
+capabilities, or local attachments. The skill writes each submission from the
+matching family in `references/consultation-templates.md` (PR review, after
+fixes, plan check, planning where Pro writes the plan, on-track check, design
+round, diagnosis, audit, retry, new thread) in the user's voice, with the
+canonical sources attached whole and no verdict token, answer cap, scope
+fence, or commit SHA; `prompt-authoring` discipline holds underneath. The
+agent watches for Pro's answer rather than handing the wait to the user. It
+requires reading and applying the `browseros` skill, verifies that BrowserOS
+is already logged in, and uses one eligible tab without silently inheriting
+its arbitrary conversation.
 Use the most applicable project. Prefer a matching recent Pro thread for the
 same workstream; assess whether a longer thread needs a fresh conversation with
 the necessary context carried over. An explicit exact-thread or new-chat

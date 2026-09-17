@@ -116,13 +116,21 @@ thread. `$chatgpt-web` owns browser mechanics and requires reading and applying
 with Extended thinking in ChatGPT's `Chat` surface. Extra High, xhigh, Ultra,
 Thinking, and the highest remaining setting are not Pro.
 
-Apply `$prompt-authoring` to every submission. Give Pro the user's intent,
-accepted scope, relevant artifacts, queue and progress, believed critical
-path, and the consequential questions. It should judge progress and work
-against the goal, with enough context to catch drift and integration
-problems. Keep one short existing-worklog entry per actual submission:
-purpose, artifacts/revisions and thread, and running count. Count retries
-and failover submissions; response polling is not another consultation.
+Write every submission from the matching family in `$chatgpt-web`'s
+consultation templates, in the user's voice: epic planning is family D, where
+Pro writes the plan and the coordinator asks the questions until it is fully
+formed; a check of the written-up plan is C; a batch or stack review is A;
+one round after fixes is B; an on-track check is E; a retry is I; a
+continuation thread or account move is J. Attach the sources whole (the
+canonical requirements source as a full export, the plan, the issues, the
+user's words verbatim, raw output, the PRs through the connector) on every
+round, and let Pro read the latest. Never ask for a verdict token, cap the
+answer, fence what Pro may conclude, or pin a commit SHA. The coordinator
+watches for Pro's answer and acts on it; it never ends a turn telling the
+user Pro's review is pending. Keep one short existing-worklog entry per
+actual submission: purpose, what was attached, thread, and running count.
+Count retries and failover submissions; response polling is not another
+consultation.
 
 If Pro is missing or disabled, treat it as a probable temporary account rate
 limit; an explicit cap triggers the same switch. Follow `$chatgpt-web` and
@@ -143,8 +151,11 @@ substitute another model for a required Pro review or count it as passed.
 
 1. **Adopt and plan.** Read the epic, live issues, supplied Pro thread, and
    existing plans. Establish acceptance and the initial order. Write the
-   plan, apply `$startup-pragmatism`, and obtain or reuse shared Pro planning.
-   Identify useful reviewable batches where the work calls for them.
+   plan by taking the epic to Pro with family D, so Pro writes it and the
+   coordinator asks the questions until it is fully formed; carry the agreed
+   plan onto disk verbatim and apply `$startup-pragmatism`. Reuse existing
+   Pro planning that still covers the scope. Identify useful reviewable
+   batches where the work calls for them.
 2. **Arm the run.** Stand up `$unblocker` with the user's ask, scope,
    production boundary, and this Pro cadence. Author the goal prompt with
    `$prompt-authoring`, including the thread, unblocker contact, queue,
@@ -172,7 +183,9 @@ substitute another model for a required Pro review or count it as passed.
    pending reviews and unresolved scope remain unfinished work.
 5. **Report.** List delivered issues and PRs, current heads and CI, Pro
    review coverage and reviewed revisions, later local repairs, and the
-   submission count. Name any unresolved blocker or user escalation and
+   submission count. For each review keep what Pro was shown, what Pro said,
+   and the coordinator's own conclusion separate. Name any unresolved
+   blocker or user escalation and
    preserve the remaining queue for continuation. Complete the goal only
    when its accepted work is merge-ready or the user explicitly removed it
    from scope; otherwise report the precise incomplete state.

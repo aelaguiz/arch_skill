@@ -69,6 +69,15 @@ make install
   and constraints from the caller's hypotheses, preferences, and proposed
   evidence path. The recipient must be free to reject caller conjecture and
   still satisfy the authoritative task.
+- For a consultation with GPT-6 Astra Pro or a brief to a cold reviewer, the
+  user's phrasing supersedes this skill's scaffold. Write it as he would say
+  it to a colleague: open with what we are building and what the finished
+  thing will contain, hand over the sources whole, offer the status as a
+  belief, ask one question about intent and say what to look for. No
+  `Goal`/`Context`/`Instructions`/`Output` labels, no verdict token, no answer
+  cap, no scope fence, no commit SHA. Where something is being authored, the
+  recipient writes it and the caller asks the questions. The family shapes
+  live in `../chatgpt-web/references/consultation-templates.md`.
 - Treat bare `fresh`, `fork`, `resume`, or `parallel` language as ambiguous in an agent prompt unless the prompt gives it an operational meaning or clearly delegates that meaning to the shared policy. Do not infer context, isolation, continuation, or topology from one of those words alone.
 - Keep the prompt's role, task-local workflow, and acceptance evidence local. Let the shared policy own reusable cross-skill orchestration semantics instead of copying a mini-policy into the prompt.
 - Treat skill prose as prompt prose. Keep it intent-driven and anti-heuristic; leave packaging, trigger metadata, and runtime boundaries to `$skill-authoring`.

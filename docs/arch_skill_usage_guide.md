@@ -407,10 +407,16 @@ Examples:
 ### `chatgpt-web`
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
-capabilities, or local attachments. It shapes rough prompts with
-`prompt-authoring` discipline, requires reading and applying the `browseros` skill,
-verifies that BrowserOS is already logged in, and uses one eligible tab without
-silently inheriting whatever conversation is open.
+capabilities, or local attachments. It writes each submission from the
+matching family in `references/consultation-templates.md` (PR review, after
+fixes, plan check, planning where Pro writes the plan, on-track check, design
+round, diagnosis, audit, retry, new thread) in the user's voice, with the
+canonical sources attached whole and no verdict token, answer cap, scope
+fence, or commit SHA; `prompt-authoring` discipline holds underneath. The
+agent watches for Pro's answer rather than handing the wait to the user. It
+requires reading and applying the `browseros` skill, verifies that BrowserOS
+is already logged in, and uses one eligible tab without silently inheriting
+whatever conversation is open.
 Use the most applicable project. Prefer a matching recent Pro thread for the
 same workstream; assess whether a longer thread needs a fresh conversation with
 the necessary context carried over. An explicit exact-thread or new-chat

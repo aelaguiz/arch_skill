@@ -65,6 +65,9 @@ the consultation autonomously as described below.
   Keep waiting while substantive traces or answer content advance, however long
   the run takes. A ticking clock or spinner is not progress. Keep the requested
   review pending until its usable answer arrives; continue independent work.
+  **The agent watches for Pro's answer, never the user.** Sending is not
+  done. Do not end the turn by telling the user Pro's answer is pending for
+  them to read; the consultation is done when the answer is read and acted on.
 
 ## Prepare the consultation
 
@@ -76,28 +79,41 @@ happens to be open.
 The shared policy's deadlines and stall actions for owned processes do not
 set a timeout for a ChatGPT web response; this skill owns its recovery.
 
-Read and apply [the prompt-authoring skill](../prompt-authoring/SKILL.md) to the
-actual outgoing request before every submission: composer text, instructions
-inside attachments, and relevant assumptions carried by the thread. Loading
-the skill or checking a reusable template does not perform this review.
+Write the submission the way the user would say it to a colleague, not as a
+request form. Before writing, read the family that matches the ask in
+[consultation-templates.md](references/consultation-templates.md): reviewing a
+PR, after fixes, checking a written-up plan, planning an issue, an on-track
+check, a design round, a diagnosis, an audit, a retry, or a new thread. That
+family's shape, anti-patterns, and attach list are the contract for the
+submission. `$prompt-authoring`'s rules hold underneath; where its scaffold and
+the user's phrasing disagree, the phrasing wins.
 
-Begin with the decision the user needs help making. For new results, restore
-the original goal and explain what was tried, what was observed,
-and what remains uncertain. Supply the relevant evidence without replacing it
-with the parent's preferred interpretation. Present the current plan and
-candidate explanations as proposals unless the user actually made them binding.
-Invite Pro to decide what matters and change, reorder, or discard the approach.
-A useful recognition test is whether Pro could reject the parent's question or
-preferred experiment and still fulfill the user's request.
+Every submission makes the same five moves. Open with what we are building
+and, when something is being authored, what the finished thing will contain.
+Hand over the sources whole: the canonical requirements source as a full
+export, the plan, the user's own words verbatim, raw evidence, and the PR or
+branch with the connector. Say what was done and what was seen. Offer the
+agent's status as a belief. Ask one question about intent, and for a review
+say what kinds of problems to look for. Wherever something is being authored
+(a plan, a design, a diagnosis, an issue set) Pro writes it; the agent brings
+context, asks questions, goes back and forth until it is fully formed, then
+carries the agreed result into the artifact verbatim.
 
-Keep the brief concise without capping the expert's assessment to the parent's
-final-summary format. Ask for the judgment needed in whatever structure best
-explains it; do not impose fixed bullet counts, closed choices, or a preserved
-plan merely to make the answer easy to summarize. Read Pro's full assessment
-before condensing it for the user. Real constraints and specific questions
-remain useful; a named source-repair review can legitimately have a narrow
-verdict. Infer that scope from the task, not from a habitual review template.
-Preserve explicit verbatim relays.
+Never ask for a verdict token, cap the answer, fence what Pro may conclude,
+pin a commit SHA, or restate a source in place of attaching it. Narrowing the
+work never narrows what Pro sees. Read Pro's full assessment before condensing
+it for the user; the agent, not Pro, writes any verdict. A lane the user
+selected for a strict verdict, such as `$fresh-consult` or
+`$codex-review-yolo`, keeps its own footer by design. Preserve explicit
+verbatim relays.
+
+Before Send, read the draft once as the user and answer five questions: would
+he say this to a colleague in these words, with no `Goal`, `Context`,
+`Instructions`, or `Output` labels; could Pro reject the question and still
+help; is the canonical source in the room, whole; did the work's scope narrow
+the context; is the status a belief or a fact. A failed answer means a
+rewrite. This check is the pre-send review for a Pro submission; a
+dispatch-dimension checklist does not replace it.
 
 Read [accounts-and-conversations.md](references/accounts-and-conversations.md)
 before choosing or switching the account, project, thread, or model controls.
@@ -131,9 +147,11 @@ requested files silently. Read
 attaching files, invoking connectors, or diagnosing composer interaction.
 
 For a code review, commit and push the reviewable work to its PR branch and
-include the exact PR URL with `@GitHub`. Pasted diffs or descriptions do not
-replace the connector's access to the branch. Name the relevant repository or
-data scope so retrieval addresses the actual question.
+include the PR URL with `@GitHub`; do not pin a commit SHA, Pro reads the
+latest. Pasted diffs or descriptions do not replace the connector's access to
+the branch. Attach the canonical requirements source whole, exported as
+described in the composer reference. Name the relevant repository or data
+scope so retrieval addresses the actual question.
 
 Before sending, verify the intended profile/window/page and conversation,
 `Chat` surface, model, literal mode and effort, every attachment chip, and each
@@ -225,6 +243,8 @@ Return the answer plus a short receipt: actual surface/model/mode/effort;
 verified working profile/window/page and account availability observations;
 project and conversation link or identity; attachment filenames and the data
 or code actually retrieved through connectors, including the PR URL when used.
+Keep three things separate in the receipt: what Pro was shown, what Pro said,
+and the agent's own conclusion. "Pro signed off" alone is not a receipt.
 Mention material prompt shaping and long waits, and report heartbeat cleanup
 accurately. Follow BrowserOS resource cleanup and identify any retained or
 unknown state. Keep secrets and sensitive URLs out of receipts.

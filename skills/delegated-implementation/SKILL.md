@@ -77,6 +77,14 @@ Workers return the changed artifacts, checks actually run and their results,
 unresolved findings, and any decision the parent needs to make. Keep detailed
 logs in artifacts; bring their useful evidence and paths into parent context.
 
+When the parent sends a Fable or Sol reader to review or audit delivered
+work, write that brief the way `$chatgpt-web`'s consultation templates write
+a PR review (family A): open with what we are building, hand over the plan,
+the canonical requirements export, the user's words, and the PR whole, offer
+the status as a belief, and say what to look for in the user's words. No
+verdict token, answer cap, scope fence, or commit SHA. The parent watches for
+the answer and reads all of it.
+
 ## Review, repair, and accept
 
 Personally inspect every deliverable and every changed line of code, including

@@ -45,10 +45,10 @@ a GitHub issue, use the requested workflow instead.
   Reviewers and bots cannot expand or silently shrink that scope. Resolve
   routine scope interpretation from the contract; a change to what the user
   asked for belongs to the user.
-- Write the implementation plan on disk before implementation and apply
-  `$startup-pragmatism`. Keep the same judgment during delivery: enough
-  investigation and verification for the actual change, without invented
-  approval gates or proof machinery.
+- Have Pro write the implementation plan and carry the agreed plan onto disk
+  verbatim before implementation; apply `$startup-pragmatism` to it. Keep the
+  same judgment during delivery: enough investigation and verification for
+  the actual change, without invented approval gates or proof machinery.
 - The run starts authorized for accepted in-scope work. Work in a dedicated
   worktree under the target repo's AGENTS.md. Require self-documenting code
   with clear comments at boundaries and role seams, relevant tests, and
@@ -109,11 +109,17 @@ highest remaining setting are not Pro. Follow `$chatgpt-web` for input delivery
 and account switching when Pro is missing, disabled, or explicitly capped.
 
 Use the run's existing thread in an eligible numbered Pro profile, inheriting
-the epic's thread when applicable. Apply `$prompt-authoring` to every submission. Include the
-user's intent, accepted scope, relevant plan or PR artifacts, progress,
-important findings, and the believed critical path. Ask Pro to assess the
-work against the goal and the consequential decisions; provide enough
-context to reason instead of requesting a context-free approval.
+the epic's thread when applicable. Write every submission from the matching
+family in `$chatgpt-web`'s consultation templates, in the user's voice:
+planning is family D, where Pro writes the plan and the coordinator asks the
+questions until it is fully formed; a check of the written-up plan is C; the
+PR review is A; one round after fixes is B; an on-track check is E; a retry
+is I; a new thread or account is J. Attach the sources whole (the canonical
+requirements source as a full export, the plan, the issue, the user's words
+verbatim, raw test output, the PR through the connector) and let Pro read the
+latest. Never ask for a verdict token, cap the answer, fence what Pro may
+conclude, or pin a commit SHA. The coordinator watches for Pro's answer and
+acts on it; it never ends a turn telling the user Pro's review is pending.
 
 Record each actual Pro submission once in the existing worklog: purpose,
 artifact/revision and thread, plus the running submission count. Include
@@ -138,8 +144,11 @@ required Pro review or claim a pending review passed.
    Confirm the issue is open, available, and not already fixed; reproduce a
    bug before planning its fix, delegating reproduction under the execution
    contract. Write acceptance, non-goals, implementation, and appropriate
-   verification on disk. Obtain or inherit the initial Pro
-   planning consultation and incorporate warranted findings locally.
+   verification on disk. Take the issue to Pro with family D so Pro writes
+   the plan (outcome, acceptance criteria, requirements, architecture, do's,
+   do not's, test plan); ask questions until it is fully formed, then carry
+   it onto disk verbatim. Existing Pro planning that still covers the
+   accepted scope satisfies this step.
 2. **Implement and verify.** Deliver the smallest coherent change in the
    worktree under the execution contract. Give workers tight requirements and
    appropriate checks, review every deliverable and changed code line, and
@@ -162,8 +171,9 @@ required Pro review or claim a pending review passed.
    checks.
    Report PR URL, change summary, current head and CI, the revision Pro
    actually reviewed, and any later changes with their local verification.
-   Include the Pro thread/verdict and submission count. Never imply Pro
-   reviewed a newer revision it did not see.
+   Include the Pro thread and submission count, and keep three things
+   separate: what Pro was shown, what Pro said, and the coordinator's own
+   conclusion. Never imply Pro reviewed a newer revision it did not see.
 
 ## Unblocking and persistent goals
 
