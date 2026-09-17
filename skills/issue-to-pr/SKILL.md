@@ -124,7 +124,8 @@ requirements source as a full export, the plan, the issue, the user's words
 verbatim, raw test output, the PR with the `@GitHub` pill) and let Pro read the
 latest. Never ask for a verdict token, cap the answer, fence what Pro may
 conclude, or pin a commit SHA. The coordinator watches for Pro's answer and
-acts on it; it never ends a turn telling the user Pro's review is pending.
+acts on it; it never ends a turn saying Pro is running or that its review is
+pending. How it waits is the harness's business; that it waits is not.
 
 Record each actual Pro submission once in the existing worklog: purpose,
 artifact/revision and thread, plus the running submission count. Include

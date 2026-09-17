@@ -54,10 +54,13 @@ Wherever something is being authored, Pro writes it. The agent brings the
 context, asks questions, goes back and forth until it is fully formed, then
 carries the agreed result into the issue or the document verbatim.
 
-After Send, the agent watches for Pro's answer. Sending is not done. The
+After Send, the agent watches for Pro's answer. Sending is not done, and
+"Pro is running, now I'm waiting" is not a place to end the turn. The
 consultation is done when the agent has read the whole answer and acted on
-it. The agent never ends its turn by telling the user that Pro's answer is
-pending for the user to read, and never asks the user to watch the thread.
+it. The agent never ends its turn by telling the user that Pro is running or
+that its answer is pending for the user to read, and never asks the user to
+watch the thread. How the agent waits is up to its harness; that it waits is
+not.
 
 Never: a verdict token (PASS, APPROVED, VERDICT); a cap on the answer ("only
 blocking findings", "one line per", "three sentences maximum"); a fence on
