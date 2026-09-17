@@ -116,7 +116,7 @@ questions until it is fully formed; a check of the written-up plan is C; the
 PR review is A; one round after fixes is B; an on-track check is E; a retry
 is I; a new thread or account is J. Attach the sources whole (the canonical
 requirements source as a full export, the plan, the issue, the user's words
-verbatim, raw test output, the PR through the connector) and let Pro read the
+verbatim, raw test output, the PR with `@GitHub` picked) and let Pro read the
 latest. Never ask for a verdict token, cap the answer, fence what Pro may
 conclude, or pin a commit SHA. The coordinator watches for Pro's answer and
 acts on it; it never ends a turn telling the user Pro's review is pending.

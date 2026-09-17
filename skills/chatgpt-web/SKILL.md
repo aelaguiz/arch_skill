@@ -92,7 +92,8 @@ Every submission makes the same five moves. Open with what we are building
 and, when something is being authored, what the finished thing will contain.
 Hand over the sources whole: the canonical requirements source as a full
 export, the plan, the user's own words verbatim, raw evidence, and the PR or
-branch with the connector. Say what was done and what was seen. Offer the
+branch with `@GitHub` typed and picked in the composer (the words "GitHub
+connector" attach nothing). Say what was done and what was seen. Offer the
 agent's status as a belief. Ask one question about intent, and for a review
 say what kinds of problems to look for. Wherever something is being authored
 (a plan, a design, a diagnosis, an issue set) Pro writes it; the agent brings

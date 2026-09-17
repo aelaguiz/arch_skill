@@ -28,7 +28,7 @@ moves, in this order:
 2. **Hand over the sources whole.** The canonical requirements source (the
    workbook, the spec, the design record) as a full export, the plan, the
    issue as filed, the user's words verbatim, raw evidence, and the PR or
-   branch with the connector attached. Never a link in place of the file,
+   branch with `@GitHub` picked in the composer. Never a link in place of the file,
    never the rows the agent picked, never the agent's summary.
 3. **Say what was done and what was seen**, in three to five plain sentences.
 4. **Offer the status as a belief.** "I think I'm done." "Where I'm least
@@ -39,6 +39,13 @@ moves, in this order:
 The moves are sentences, not headings. A brief with `Goal`, `Context`,
 `Instructions`, or `Output` labels is a request form again, even when the
 words under the labels are right.
+
+`@GitHub` and `@BigQuery` are typed literally, in the message. Typing `@` in
+the composer opens the connector picker, and selecting GitHub or BigQuery
+there is what attaches the connector to the turn so Pro can read the repo or
+the data. The words "GitHub connector" in a message attach nothing. Every
+template below writes `@GitHub` where the PR or branch is handed over: type
+it, pick it, and verify the chip before Send.
 
 Wherever something is being authored, Pro writes it. The agent brings the
 context, asks questions, goes back and forth until it is fully formed, then
@@ -54,7 +61,8 @@ blocking findings", "one line per", "three sentences maximum"); a fence on
 what Pro may conclude ("do not expand into…", "reject any drift into…"); a
 commit SHA (say "here's the PR" and Pro reads the latest); the issue body or
 any restatement in place of the source; "confirm" or "judge only whether";
-handing the wait back to the user. Narrowing the work never narrows what Pro
+the words "GitHub connector" in place of a picked `@GitHub`; handing the wait
+back to the user. Narrowing the work never narrows what Pro
 sees.
 
 Before Send, read the draft once as the user and answer five questions. Would
@@ -75,8 +83,8 @@ sentence]. The [spreadsheet / spec] we've been working out of is attached,
 full export; that's the source of truth for requirements. The plan is
 attached.
 
-I've been working out of branch [name]. Here's the PR: [#N]. GitHub connector
-attached; read the latest code on it yourself.
+I've been working out of branch [name]. Here's the PR: [#N]. @GitHub, read
+the latest code on it yourself.
 
 The issue I picked up was [#M]: [one sentence on what it's for].
 
@@ -136,6 +144,8 @@ the diff? Did anything adjacent change that nobody asked for?
 
 - Pinning a commit SHA. Say "here's the PR" and let Pro read the latest code,
   all of it.
+- Writing "GitHub connector attached" as text. Type `@GitHub`, pick it from
+  the picker, and verify the chip; otherwise Pro has no repo access.
 - Asking for a verdict token. Pro gives its read; the agent owns the verdict.
 - Capping the answer: "only blocking findings", "one line per finding",
   "under 1500 words".
@@ -155,7 +165,7 @@ merge-ready; otherwise return CHANGES REQUIRED with only blocking in-scope
 defects. Do not require RustAI, Patrol, Flutter work, or any other adjacent
 milestone scope."
 
-**Attach**: the GitHub PR link with the connector; the plan document; the
+**Attach**: the GitHub PR link with `@GitHub` picked; the plan document; the
 spreadsheet, if there is one, as a full export of every tab; the issue as
 filed; the user's words about this work, verbatim; raw test output; the repo's
 review policy and incident rules when the repo has them (see the last
@@ -200,7 +210,7 @@ Not this: "Fix verification. The attached plan applies your five findings:
 specified. First line PASS or CHANGES REQUIRED, then one line per finding."
 
 **Attach**: everything from the first review, re-attached; Pro's previous
-answer; the GitHub PR link with the connector.
+answer; the GitHub PR link with `@GitHub` picked.
 
 ## C. Checking the written-up plan
 
@@ -215,8 +225,8 @@ We lined this plan up together in this thread and I've written it into
 [issue #M / the plan doc]; it's attached. Before anyone builds, read it
 against the code.
 
-The sheet is attached, full export. The branch is [name], GitHub connector
-attached; check the plan's claims against what's actually there. Here's what
+The sheet is attached, full export. The branch is [name], @GitHub; check the
+plan's claims against what's actually there. Here's what
 Amir has said about this: [his words, dated].
 
 Where I'm least sure: [the part I may have carried over wrong, or the part of
@@ -250,7 +260,7 @@ seats, antes, movement, balancing, or generic mode abstractions."
 
 **Attach**: the written-up plan as it now sits in the issue or the doc; Pro's
 outline from the D thread; the spreadsheet as a full export; the user's words
-verbatim; the branch with the connector.
+verbatim; the branch with `@GitHub` picked.
 
 ## D. Planning an issue with Pro
 
@@ -274,7 +284,7 @@ and I want you to write it up. When it's done it will have:
 Here's where I'm at now. We're working on [plan name]; it's for [what it does
 for the player]. The sheet we've been working out of is attached, full export.
 The plan we're working from is attached. I've been working out of branch
-[name]; GitHub connector attached, read it yourself. The issue is [#M]; in my
+[name]; @GitHub, read it yourself. The issue is [#M]; in my
 words, it asks for [two sentences]. What I found in the code: [what exists,
 what the seams are, what surprised me]. Here's what Amir has said about this:
 [his words, dated].
@@ -310,8 +320,8 @@ smallest root-cause repair. Name only must-fix defects before implementation
 and do not expand scope."
 
 **Attach**: the spreadsheet as a full export; the plan document we're working
-from; the issue as filed; the user's words verbatim; the branch with the
-connector; any prior Pro planning in the thread.
+from; the issue as filed; the user's words verbatim; the branch with
+`@GitHub` picked; any prior Pro planning in the thread.
 
 ## E. Standing advisor and on-track checks
 
@@ -347,8 +357,8 @@ reads needed): six of ten lanes are merge-ready as a PR stack. Three
 sentences maximum, then one line: ON TRACK or OFF TRACK with the correction."
 
 **Attach**: the spreadsheet as a full export; the plan document; the user's
-words about the epic; the live queue as the agent sees it; the GitHub
-connector.
+words about the epic; the live queue as the agent sees it; `@GitHub`
+picked.
 
 ## F. Design and research rounds
 
@@ -397,8 +407,7 @@ Here's what's happening: [the symptom, in product terms: who sees what, since
 when, how often]. Here's what I've looked at and what I found: [the evidence,
 plainly]; the data and logs are attached. Here's what I think it might be and
 why I'm not sure: [the theories, and what each would predict]. This is
-everything I have. GitHub connector on the branch. BigQuery connector where
-the data lives.
+everything I have. @GitHub on the branch. @BigQuery where the data lives.
 
 What I'm looking for: how would you think about figuring out what the problem
 is? If you can see what it is, say so. If you need something I haven't given
@@ -422,8 +431,8 @@ ready for an implementer. Do not widen thresholds, mute the verifier, or add
 generic retries, fallbacks, modes, flags, or frameworks."
 
 **Attach**: every data pull, log, and screenshot the agent used; the issue if
-one exists, offered as a report not a diagnosis; the GitHub connector on the
-branch; the BigQuery connector when the question is about data.
+one exists, offered as a report not a diagnosis; `@GitHub` on the branch;
+`@BigQuery` when the question is about data.
 
 ## H. Auditing content, an issue set, or a candidate list
 
@@ -435,7 +444,7 @@ exactly what was agreed.
 
 Here's [the audit / the list / the report], attached in full. Here's what it's
 for and why we made it: [two sentences]. Here's the current state of [the repo
-/ the issues]; connector attached so you can check it against reality. Here's
+/ the issues]; @GitHub so you can check it against reality. Here's
 what Amir has said about this area: [his words, dated].
 
 What I'm looking for: go through it and tell me what's real, what's a
@@ -459,17 +468,17 @@ four diagnoses and recommend the smallest truthful action for each, using the
 linked issues read-only."
 
 **Attach**: the audit or list in full; the source it was made from; the
-user's words about this area; the GitHub connector.
+user's words about this area; `@GitHub` picked.
 
 ## I. Recovery: resend the whole thing
 
-When: Pro's answer was cut off, ran on the wrong model, lacked the connector,
+When: Pro's answer was cut off, ran on the wrong model, lacked `@GitHub`,
 or the page broke.
 
 **Template I**
 
 Your last answer [got cut off after X / ran on the wrong model / didn't have
-the GitHub connector attached]. Nothing about the ask has changed. Here's the
+@GitHub attached]. Nothing about the ask has changed. Here's the
 whole original ask again, with everything re-attached: [the full original
 brief, verbatim]. Start over from the sources, not from your partial answer.
 
@@ -484,8 +493,8 @@ Not this: "Your response truncated again after 'P1: Valid prepaid
 subscription'. Complete only that finding in at most four sentences. If it is
 not actionable, say PASS."
 
-**Attach**: everything the original ask carried, re-attached; the connector,
-re-selected.
+**Attach**: everything the original ask carried, re-attached; `@GitHub` and
+`@BigQuery`, picked again from the picker.
 
 ## J. Starting a new thread or moving accounts
 
@@ -518,7 +527,7 @@ the on-track check described in the file."
 
 **Attach**: the spreadsheet as a full export; the plan document; the old
 thread's rulings, exported; the user's words, quoted with dates; the current
-issues; the GitHub connector.
+issues; `@GitHub` picked.
 
 ## Bugs the reviewer checks against
 

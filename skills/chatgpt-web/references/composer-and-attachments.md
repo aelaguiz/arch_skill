@@ -75,7 +75,9 @@ or summaries. Build them before opening the composer:
 Pack within the 10-attachment limit by concatenating related items into one
 file with clear headings (for example the user's words and the issue as filed)
 rather than dropping any source. Name each file for what it is. Point Pro at
-the PR or branch through the connector; never pin a commit SHA in the ask.
+the PR or branch by typing `@GitHub` and selecting it from the picker, and at
+data by typing `@BigQuery` the same way; the words "GitHub connector" attach
+nothing. Never pin a commit SHA in the ask.
 When continuing a thread, re-attach the sources on every round rather than
 telling Pro to scroll up.
 

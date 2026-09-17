@@ -363,7 +363,7 @@ Bad shape:
 Better shape:
 - "We're working on Dynamic Missions; the sheet we've been working out of is
   attached, full export, and the plan is attached. I've been working out of
-  branch X; here's PR #5970, GitHub connector attached, read the latest. The
+  branch X; here's PR #5970, @GitHub, read the latest. The
   issue I picked up was #5949. What I did: ... I think I'm done. Where I'm
   least sure: ... What I'm looking for: did I implement the intent right, and
   is this the cleanest, most pragmatic way to do it? Read the plan and the
