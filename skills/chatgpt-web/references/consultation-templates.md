@@ -158,6 +158,11 @@ down? Does it play nice with deep links? Does it work when users switch? Is
 there any experience change that would surprise the person who asked for
 this feature?
 
+Tests: does it have the appropriate automation tests? Does it use unit tests
+and property tests properly? Where something could conceivably pass a unit
+test and still fail in practice, does it get an integration or fully
+simulated test? That is how we catch all sorts of bugs. Is it race-prone?
+
 **Anti-patterns**
 
 - Pinning a commit SHA. Say "here's the PR" and let Pro read the latest code,
