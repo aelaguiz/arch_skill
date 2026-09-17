@@ -162,6 +162,10 @@ Amir's approval? Approval is his words, quoted and dated, about that change;
 a reading of something he said about something else is not approval. If you
 can't find his words, treat the change as unapproved and say so.
 
+Data: are we abusing local storage for something that belongs in the actual
+database for the user, where it survives a reinstall, a new device, or a
+user switch?
+
 Tests: does it have the appropriate automation tests? Does it use unit tests
 and property tests properly? Where something could conceivably pass a unit
 test and still fail in practice, does it get an integration or fully
