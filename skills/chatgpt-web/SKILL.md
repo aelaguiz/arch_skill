@@ -32,9 +32,16 @@ been read and acted on. How you wait is your harness's business (polling, a
 heartbeat, a host wait); that you wait, and not the user, is not.
 
 **Let Pro finish. It regularly takes around 30 minutes and can take longer.**
-That is an expectation, never a deadline. Do not click **Stop answering** unless
-the user explicitly asks to stop. Observe actual thinking/activity and answer
-changes; after at least 15 minutes without progress, reload once and recover
+That is an expectation, never a deadline. Do not click **Stop answering** on a
+correct submission unless the user explicitly asks to stop. **A submission
+that went out wrong is the one case to stop at once:** a missing attachment
+chip or connector pill, duplicated or truncated text, or the wrong model or
+surface makes the answer unusable, so click Stop, fix the submission, and
+resend it whole. Letting it finish and "sending the files in a follow-up" is
+not a repair; Pro has already answered without them, and "the prompt is
+self-contained" is the agent's restatement standing in for the sources.
+Observe actual thinking/activity and answer changes on a correct submission;
+after at least 15 minutes without progress, reload once and recover
 the consultation autonomously as described below.
 
 ## Critical operating rules
@@ -161,7 +168,12 @@ scope so retrieval addresses the actual question.
 
 Before sending, verify the intended profile/window/page and conversation,
 `Chat` surface, model, literal mode and effort, every attachment chip, and each
-required connector. Record the latest submitted user-message identity, then
+required connector pill, immediately before the click and on every send path.
+Attachments do not survive a page reload; the text draft does. Any reload,
+clear, or retry resets this verification: a chip seen earlier is not a chip
+now. An insert or paste that timed out may have landed; read the composer
+before repeating it, and if the text is duplicated, clear it and enter it
+once. Record the latest submitted user-message identity, then
 fill the live visible composer and compare its complete text with the intended
 message before clicking Send. Check that filling did not itself create a new
 user message. A failed fill must not send a stale draft. Use the current tool
@@ -173,11 +185,15 @@ verify the visible composer cleared, and associate the response with that
 message. Record the user-message and outer response-turn IDs together when
 the response appears; virtualized history can later omit intervening turns.
 Inspect collapsed text fully; a matching prefix or a whole-page text
-search is insufficient. If it split or truncated, the resulting answer cannot
-be used: preserve the full intended input and repair delivery through the
-recovery procedure below, without clicking Stop. If Send times out or
-disconnects, read back its outcome before deciding whether to retry. Do not
-claim delivery or interpret the answer until this readback succeeds.
+search is insufficient. If the submitted turn is missing any required
+attachment or connector pill, carries duplicated or truncated text, or went
+to the wrong model or surface, the answer cannot be used: click Stop
+answering now, then resend the complete submission (family I) with every
+file re-attached and every chip and pill re-verified. Do not let a wrong
+submission run to completion, and do not patch it with a follow-up message.
+If Send times out or disconnects, read back its outcome before deciding
+whether to retry. Do not claim delivery or interpret the answer until this
+readback succeeds.
 
 When repairing delivery or access, preserve the consultation's substantive
 question, evidence, and scope. A technical retry does not authorize replacing

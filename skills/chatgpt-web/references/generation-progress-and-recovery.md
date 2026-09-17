@@ -146,6 +146,11 @@ requires reidentification, never substitution of another mounted response.
 
 ## Recover without Stop answering
 
+This section is for a correct submission that has stalled. A submission that
+went out wrong (missing attachment or pill, duplicated or truncated text,
+wrong model or surface) is not recovered here: stop it at once and resend it
+whole, as the entry file says.
+
 The entry file sets the timing: roughly 30 minutes is normal, with no completion
 deadline; 15+ minutes of observed inactivity permits one same-page reload.
 Never translate this into “allow up to 30 minutes.” Preserve the complete ask,

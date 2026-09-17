@@ -34,8 +34,13 @@ return JSON.stringify({pills: [...ed.querySelectorAll('[data-inline-selection-pi
   matches: c.innerText.trim() === TEXT.trim(), userTurns: document.querySelectorAll('[data-message-author-role="user"]').length});
 ```
 
-Send only when `matches` is true, every required pill is listed, and the
-user-turn count has not changed since before the paste. Click
+Send only when `matches` is true, every required pill is listed, every
+required attachment chip is present, and the user-turn count has not changed
+since before the paste. Run this check immediately before the click, on
+every send path, including after a reload, a clear, or a retry; a reload
+keeps the text draft and drops the attachments. A paste that timed out may
+have landed: read the editor's text length before repeating it, and if the
+brief appears twice, clear the editor and paste once. Click
 `button[data-testid="send-button"]` (accessible name `Send prompt`), then
 verify the submitted turn as described below. If a mention did not resolve
 into a pill, delete it, insert `@` with `document.execCommand('insertText',
@@ -168,7 +173,10 @@ If a tool truncates its output, retrieve the saved output or make a scoped
 read; do not equate an output limit with a truncated ChatGPT message.
 
 Check immediately after filling for an accidental new user turn. If only a
-fragment arrived, invalidate its answer and repair that submission before
-continuing. An assistant response or Stop button proves activity, not delivery
+fragment arrived, or the submitted turn lacks a required attachment or
+connector pill, invalidate its answer: click Stop answering, then resend the
+whole submission with everything re-attached and re-verified. A follow-up
+message carrying the missing files does not repair a review already running
+without them. An assistant response or Stop button proves activity, not delivery
 of the intended ask. A transport timeout remains an unknown mutation until
 readback establishes what happened.

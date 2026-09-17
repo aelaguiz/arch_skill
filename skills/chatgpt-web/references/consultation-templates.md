@@ -548,8 +548,10 @@ user's words about this area; the `@GitHub` pill.
 
 ## I. Recovery: resend the whole thing
 
-When: Pro's answer was cut off, ran on the wrong model, lacked `@GitHub`,
-or the page broke.
+When: the submission went out without its attachments or `@GitHub`, ran on
+the wrong model, or Pro's answer was cut off or the page broke. If Pro is
+still generating on a wrong submission, stop it first; its answer is
+unusable, and a follow-up with the files does not repair it.
 
 **Template I**
 
@@ -564,6 +566,8 @@ brief, verbatim]. Start over from the sources, not from your partial answer.
   sentences."
 - Retrying with fewer attachments than the original carried.
 - "If it is not actionable, say PASS."
+- Letting a wrong submission finish because "the prompt is self-contained",
+  then sending the files afterward.
 
 Not this: "Your response truncated again after 'P1: Valid prepaid
 subscription'. Complete only that finding in at most four sentences. If it is
