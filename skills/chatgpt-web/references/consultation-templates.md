@@ -156,7 +156,11 @@ random toast or an interaction nobody asked for? Does it make something
 synchronous that used to be asynchronous, so it now blocks and slows the user
 down? Does it play nice with deep links? Does it work when users switch? Is
 there any experience change that would surprise the person who asked for
-this feature?
+this feature? For every change to what the player sees, did Amir personally
+approve it, or did an agent convince itself it was fine and record that as
+Amir's approval? Approval is his words, quoted and dated, about that change;
+a reading of something he said about something else is not approval. If you
+can't find his words, treat the change as unapproved and say so.
 
 Tests: does it have the appropriate automation tests? Does it use unit tests
 and property tests properly? Where something could conceivably pass a unit
@@ -261,8 +265,10 @@ the outcome, the acceptance criteria, the requirements, the architecture, the
 do's, the do not's, the test plan? Is there anything the code makes wrong now
 that we didn't see when we outlined it? Is there anything in it that would
 leave two owners for one thing, a web of calls, an overbuilt edge case, or a
-workaround for something we should fix first? What would you do better? If
-it's right, say so. I don't
+workaround for something we should fix first? Anywhere the plan says Amir
+approved something, especially a change to what the player sees, is his
+approval there in his own words, or did an agent infer it? What would you do
+better? If it's right, say so. I don't
 need a list to feel reviewed.
 
 **Anti-patterns**
