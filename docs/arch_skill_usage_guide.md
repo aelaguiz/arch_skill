@@ -426,8 +426,10 @@ request wins. Independent asks remain serial. The default is GPT-6 Astra Pro
 with Extended thinking when mode or effort is omitted. The skill is prose-only:
 no scripts, runners, harnesses, API calls, or automated login.
 Pro means GPT-6 Astra's literal `Pro` option, never Extra High, xhigh, Ultra,
-Thinking, or the highest remaining setting. If Pro is missing or disabled in
-the `Chat` picker, it probably means a temporary account rate limit. The skill
+Thinking, or the highest remaining setting. Pro is the top `Power` position of
+the `Latest` model (the composer pill then reads `6 Pro`); it is not an entry
+in the model list. If `Power` cannot reach Pro in the `Chat` picker, it
+probably means a temporary account rate limit. The skill
 uses `$browseros` to discover only the already-open consultation profiles,
 the BrowserOS profiles labeled `Pro 1` through `Pro5` or whichever are
 configured. Those labels are browser profile names, not the model: the agent

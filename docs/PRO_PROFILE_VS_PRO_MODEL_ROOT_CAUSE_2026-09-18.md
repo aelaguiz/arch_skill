@@ -67,8 +67,32 @@ The skill's picker description was also stale. It told agents to use
 `Configure...` / `Intelligence` and a separate `Extended` control. In September
 snapshots `Extended` never appears as a button or menu item and `Configure...`
 appears in one session. The live menu is `Select model` (radios `Latest`,
-`GPT-5.6 Sol`, `GPT-5.5`, `Pro`) and `Power`. The `Pro` radio was disabled in
-203 snapshots and enabled in 21, which is the rate limit showing.
+`GPT-5.6 Sol`, `GPT-5.5`) and a `Power` slider. Pro is the top `Power` position
+of `Latest`: the open menu reads "Pro, 5 of 5" and the closed pill reads
+`6 Pro`. Pro is not in the model list.
+
+## The same thread then decided Pro did not exist
+
+After you caught the wrong model on 2026-09-18, the agent in session
+`01a0b4ac` went looking for Pro in the `Select model` list, found only
+`Latest`, `GPT-5.6 Sol`, and `GPT-5.5`, and told you "Every numbered Pro
+profile exposes `Pro` as disabled in the live picker" and "make the literal
+`Pro` option enabled in one numbered Pro profile". Two minutes after its first
+"missing" report, the menu on that same `pro3` page was labeled `6 Pro`. When
+you sent it back, `Pro2`'s pill read `6 Pro`. Its reasoning along the way
+included "Confirming Latest model as GPT-5.6 Thinking", taken from the
+`gpt-5-6-thinking` tag on its own earlier wrong-model answers.
+
+The old skill fed this: "Missing or disabled literal Pro probably means a
+temporary account limit", with no statement of where Pro lives in the menu.
+The first version of this fix repeated the error ("choose `Pro` under `Select
+model`") and was corrected the same day after reading this thread. The skill
+now says Pro is a `Power` level, the model list never contains it, a slider
+that ends at `Extra High, 4 of 4` is what "Pro unavailable" looks like, and a
+pill reading `6 Pro` proves the account offers it. Some menus show a disabled
+`Pro` radio below the model list (203 snapshots, against 21 enabled); what it
+means is not established, and the skill says it is not evidence that Pro is
+unavailable.
 
 ## What changed
 

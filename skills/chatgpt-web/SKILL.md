@@ -27,9 +27,13 @@ else does:
 
 1. **Before Send, the composer's model pill on this page.** It reads `6 Pro`
    when Pro is selected. `Medium`, `High`, `Extra High`, `Instant`, or a
-   model name without `Pro` means Pro is not selected: open the pill, choose
-   `Pro` under `Select model`, and read the pill again. If the control looks
-   different, open it and read which model and option are selected.
+   model name without `Pro` means Pro is not selected: open the pill, keep
+   `Latest` under `Select model`, move `Power` to its top position, `Pro, 5 of
+   5`, close the menu, and read the pill again. Pro is a power level of
+   `Latest`, not an entry in the model list: a list showing only `Latest`,
+   `GPT-5.6 Sol`, and `GPT-5.5` is normal and never means Pro is missing. If
+   the control looks different, open it and read which model and power are
+   selected.
 2. **After Send, the model slug on the response turn that answers your
    message:** `gpt-6-pro` for Pro. A tag or footer on an earlier turn says
    what served that turn, not yours.
@@ -101,8 +105,8 @@ the consultation autonomously as described below.
 - **Pro means GPT-6 Astra with the literal `Pro` option.** Use ChatGPT's
   `Chat` surface and `Extended` thinking when separately offered, unless the
   user explicitly requests another configuration. **Extra High, xhigh, Ultra,
-  Thinking, a `5/5` indicator, the highest remaining setting, or a browser
-  profile labeled `Pro` is not Pro.** Browser profile labels and ChatGPT's own
+  Thinking, a `5/5` indicator that does not say `Pro`, the highest remaining
+  setting, or a browser profile labeled `Pro` is not Pro.** Browser profile labels and ChatGPT's own
   controls share words by coincidence: the profile labeled `Pro 1` does not
   select the `Pro` model, and the profile labeled `Work` is separate from
   ChatGPT's `Work` surface. A Pro request uses the `Chat` surface and the
@@ -110,8 +114,11 @@ the consultation autonomously as described below.
 - **Use a consultation profile whose account currently offers Pro.** Discover
   the already-open consultation profiles, such as `Pro 1`, `Pro2`, `Pro3`,
   `Pro4`, `Pro5`, or others present; exclude `Work` from the pool.
-  A literal `Pro` option that is missing or disabled in the picker probably
-  means a temporary account limit; an explicit cap confirms it. Note
+  Pro is missing only when `Power` cannot reach it, so the slider ends at
+  `Extra High, 4 of 4`; that probably means a temporary account limit, and an
+  explicit cap message confirms it. The model list never contains Pro, so its
+  absence there says nothing, and a pill reading `6 Pro` proves this account
+  offers it. Note
   unavailable accounts and the account that works, with check times and
   connector status. Switch to another consultation profile
   instead of substituting a different tier, and select and read back `Pro`

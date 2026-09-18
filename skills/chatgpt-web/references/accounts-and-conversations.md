@@ -96,12 +96,21 @@ default on a new chat or a project page, so a thread that showed `6 Pro` does
 not carry Pro into the new chat opened from it.
 
 Observed composer shape: the model pill beside the composer shows the current
-setting and carries the tooltip `Thinking effort`. It reads `6 Pro` with Pro
-selected and an effort word such as `Medium`, `High`, `Extra High`, or
-`Instant` otherwise. Opening it shows `Select model` and `Power`.
-`Select model` lists radios such as `Latest`, `GPT-5.6 Sol`, and `Pro`; with
-Pro chosen the power slider reads `Pro, 5 of 5`. A `Pro` radio shown disabled
-means this account cannot offer Pro now. Other layouts appear, such as
+setting. It reads `6 Pro` with Pro selected and a power word such as `Medium`,
+`High`, `Extra High`, or `Instant` otherwise. While its menu is open the same
+button reads `Thinking effort`, so read the pill with the menu closed. The
+menu has `Select model`, whose radios are `Latest`, `GPT-5.6 Sol`, and
+`GPT-5.5`, and `Power`, a slider.
+
+Pro is the top `Power` position of `Latest`. With Pro available the slider has
+five positions: `Extra High` is `4 of 5` and Pro reads `Pro, 5 of 5`. Pro is
+not an entry in the model list. Do not look for it there, and never report Pro
+missing, disabled, or rate limited because the list shows only `Latest`,
+`GPT-5.6 Sol`, and `GPT-5.5`. When an account cannot offer Pro the slider ends
+at `Extra High, 4 of 4`, or ChatGPT shows a cap message. Some menus also show a
+disabled `Pro` radio below the model list; what it means is not established,
+and it is not evidence that Pro is unavailable. A pill that reads `6 Pro` on
+any page of an account proves that account offers Pro. Other layouts appear, such as
 `Configure...` / `Intelligence` or a separate `Extended` thinking control; use
 whatever is offered to the same end. The default is GPT-6 Astra, `Pro`, and
 `Extended` thinking where separately offered.
@@ -132,8 +141,11 @@ in the project and restore its needed context before submission.
 
 ## Switch accounts
 
-A missing/disabled literal Pro option after checking the live nested picker
+A `Power` slider that cannot reach Pro (it ends at `Extra High, 4 of 4`)
 suggests a temporary account limit; an explicit usage-cap message confirms it.
+Pro absent from the model list is normal and is not this signal. Before
+telling the user that no account offers Pro, read the pill or slider in each
+consultation profile and report what each one read.
 Failed connector access requires a suitable account too, but does not itself
 prove a Pro rate limit.
 
