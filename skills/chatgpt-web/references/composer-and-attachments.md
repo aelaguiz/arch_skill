@@ -77,8 +77,18 @@ move the ask into a file and point at it.
 Preflight absolute paths, existence, and the maximum of 10 attachments. Do not
 omit files to fit that limit.
 
-Use the upload path supported by the live ChatGPT page and BrowserOS schema.
-The established temporary-input route is:
+**Never click ChatGPT's own upload controls.** `Add files and more`, `Add
+photos & files`, and any file input open the operating system's file dialog,
+whether clicked by ref, by coordinates, or from script. No BrowserOS tool can
+see, fill, or close that dialog. It stays open over the user's window, takes
+their focus, and waits for a person to cancel it. BrowserOS `upload` sets
+files on an `input[type=file]` directly and never needs the dialog. If
+`upload` answers `Node is not a file input element`, the ref was a button or
+menu item; fix the ref, do not reach for the dialog. If a dialog did open,
+name its profile and window in your next update so the user can cancel it, and
+carry on through the route below.
+
+Attach through the temporary-input route:
 
 1. Create a temporary visible file input on the selected page and snapshot it.
 2. Use BrowserOS `upload` with that exact ref and the absolute file paths.

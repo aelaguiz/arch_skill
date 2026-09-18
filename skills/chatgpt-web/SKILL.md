@@ -231,7 +231,10 @@ Never `fill` or `type` the brief; keystroke newlines are Enter and submit a
 fragment mid-fill. Plans, exports, evidence, and any other source go in files
 the brief names; a one-line composer message pointing at an "ask file" is not
 a brief. Check absolute paths, existence, and the maximum of 10 attachments.
-Never drop requested files silently. Read
+Never drop requested files silently. Attach only through the temporary-input
+route in the composer reference; never click ChatGPT's `Add files and more` or
+`Add photos & files`, which open an operating-system file dialog that no tool
+can close and the user then has to cancel. Read
 [composer-and-attachments.md](references/composer-and-attachments.md) before
 attaching files, invoking connectors, or diagnosing composer interaction.
 
