@@ -228,7 +228,11 @@ entry, not a separate tracking system.
    local verification. Name each seat's exact model and effort, thread, and
    submission count, and keep three things separate for each: what it was
    shown, what it said, and the coordinator's own conclusion. Never imply a
-   seat reviewed a newer revision it did not see.
+   seat reviewed a newer revision it did not see. For every Pro review, quote
+   the two model readings `$chatgpt-web` requires: the composer pill before
+   Send (`6 Pro`) and the served-model slug on that answer (`gpt-6-pro`). A
+   review without both readings is reported as "model not verified", is not a
+   Pro review, and the PR is not merge-ready.
 
 ## Unblocking and persistent goals
 

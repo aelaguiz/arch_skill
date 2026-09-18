@@ -221,7 +221,10 @@ passed.
    seat's exact model and effort, review coverage and reviewed revisions,
    later local repairs, and the submission count per seat. For each review
    keep what the seat was shown, what it said, and the coordinator's own
-   conclusion separate. Name any unresolved
+   conclusion separate. For every Pro review, quote the composer pill read
+   before Send (`6 Pro`) and the served-model slug on that answer
+   (`gpt-6-pro`); a review without both is reported as "model not verified",
+   is not a Pro review, and its PR is not merge-ready. Name any unresolved
    blocker or user escalation and
    preserve the remaining queue for continuation. Complete the goal only
    when its accepted work is merge-ready or the user explicitly removed it
