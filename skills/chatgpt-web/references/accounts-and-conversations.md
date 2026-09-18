@@ -14,8 +14,8 @@ accounts. Apply the BrowserOS profile-targeting reference before browser calls.
 ## Choose a working account
 
 The account pool contains only the consultation profiles configured on this
-machine: the BrowserOS profiles labeled, for example, `Pro One`, `Pro 1`,
-`Pro2`, `Pro3`, `Pro4`, and `Pro5`.
+machine: the BrowserOS profiles labeled, for example, `pro1`, `pro2`, and
+`pro3`.
 Names and count vary; these examples are not a fixed inventory or rotation
 order. The label is how you find the profile and which login it holds. It is
 not the model: choosing the profile and choosing the model are two separate
@@ -87,10 +87,12 @@ Do not send into whichever history happens to be open.
 
 The composer's `Select chat surface` radio chooses between ChatGPT `Chat` and
 `Work`. Verify `Chat` before opening the model pill and again before sending.
+The page snapshot lists both radios without marking the selected one; read
+each radio's `aria-checked` value from the page.
 The BrowserOS profile named `Work` does not select this surface.
 
 The model is chosen and proven here, on the page, in every conversation you
-send into. The consultation profile does not choose it: a page in `Pro 1`
+send into. The consultation profile does not choose it: a page in `pro1`
 sends to whatever model its composer holds. The composer returns to ChatGPT's
 default on a new chat or a project page, so a thread that showed `6 Pro` does
 not carry Pro into the new chat opened from it.

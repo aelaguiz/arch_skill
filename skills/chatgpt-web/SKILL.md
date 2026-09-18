@@ -7,20 +7,38 @@ metadata:
 
 # ChatGPT Web
 
+**Two of the user's browser profile labels are also ChatGPT's own words: "Pro"
+and "Work". A label says which login a page uses and nothing about what
+ChatGPT is doing in that page.**
+
 **"Pro" is the model. It is never the browser profile.** Two unrelated things
 carry that word on this machine:
 
 - **Pro, the model:** GPT-6 Astra with the literal `Pro` option selected in
   the ChatGPT composer's model picker. In this skill, "Pro" alone always
-  means this.
+  means this, and so does the user's "work with Pro" or "get Pro signoff".
 - **The consultation profiles:** the BrowserOS browser profiles the user keeps
-  for agent ChatGPT work. Their labels start with `Pro` (`Pro 1`, `Pro2`,
-  `Pro One`, and so on). A label is a name the user typed, the same kind of
-  thing as `Work`. It says which ChatGPT login the page uses. It never
-  selects, implies, or proves the model.
+  for agent consultations. Their labels are `pro1`, `pro2`, and so on; the
+  user says "Pro 1" or "the Pro3 window". A label is a name the user typed,
+  the same kind of thing as `Work`. It says which ChatGPT login the page
+  uses. It never selects, implies, or proves the model.
+
+**"Work" is the user's browser profile or a ChatGPT product. A consultation
+uses neither.**
+
+- **`Work`, the browser profile:** the user's own BrowserOS profile. When the
+  user says "work profile", this is what they mean. Never use it for ChatGPT.
+  It is reserved for the user's personal use and rate-limit capacity,
+  including when every consultation profile is unavailable, and the
+  restriction covers retries and continuation of an old conversation.
+- **Work, ChatGPT's surface:** a separate product inside ChatGPT. The
+  composer's `Select chat surface` switch chooses `Chat` or `Work`, and the
+  sidebar labels its threads `Work`. It cannot run a Pro consultation in any
+  browser profile. Never select it, send from it, or continue one of its
+  threads. Every consultation is on `Chat`.
 
 **Being in a consultation profile does not make a consultation Pro.** A page
-in `Pro 1` sends to whatever model its composer holds, and the composer goes
+in `pro1` sends to whatever model its composer holds, and the composer goes
 back to ChatGPT's default on a new chat or a project page, even when the
 thread you just left was on Pro. Two readings prove the model, and nothing
 else does:
@@ -44,7 +62,7 @@ page carries other "Pro" text that says nothing about the model: the account
 button (`Pro 1 Pro, open profile menu` is the account's display name and its
 plan badge), `Used GPT-6 Pro` footers and `Pro feedback` buttons on earlier
 turns, thread and project titles, and the word Pro in your own prompt.
-Searching the page for "Pro" is not a reading, and "it was in `Pro 1`"
+Searching the page for "Pro" is not a reading, and "it was in `pro1`"
 describes the browser profile. If a send went out without the first reading,
 read the pill now and the slug as soon as answer text arrives; anything other
 than Pro is a wrong-model submission, stopped and resent as described below.
@@ -57,17 +75,18 @@ so afterward does not repair it: its answer, its interim notes, and its
 sign-off are not evidence, not an interpretation, and not a review. Only the
 user naming another model for this consultation changes that. Look for Pro in
 another composer instead: an existing Pro thread in the same project, then the
-same project in another consultation profile. If none reads `6 Pro`, pause this
+same project in another consultation profile. Check the BrowserOS profile of
+any tab before you adopt it, under `$browseros`: the same project name and a
+`6 Pro` pill also appear in the `Work` profile and in other profiles. A tab in
+the `Work` profile is never eligible. A tab in any other profile that is not a
+consultation profile is eligible only when the user named that profile for
+this consultation. If none reads `6 Pro`, pause this
 consultation, tell the user what each composer read, and continue other work.
 A menu click that did not change the pill selected nothing; the closed pill is
 the only confirmation.
 
 **Use only the existing consultation profiles.** Discover whichever are
 configured; their number and spelling can vary.
-**Never use the BrowserOS `Work` profile for ChatGPT.** It is reserved for the
-user's personal use and rate-limit capacity, including when every consultation
-profile is unavailable. This restriction also applies to retries and
-continuation of an old conversation.
 
 Consult Pro as an expert on the user's actual problem. For interpretation and
 planning, give it the original objective, relevant history, and current
@@ -121,14 +140,11 @@ the consultation autonomously as described below.
   `Chat` surface and `Extended` thinking when separately offered, unless the
   user explicitly requests another configuration. **Extra High, xhigh, Ultra,
   Thinking, a `5/5` indicator that does not say `Pro`, the highest remaining
-  setting, or a browser profile labeled `Pro` is not Pro.** Browser profile labels and ChatGPT's own
-  controls share words by coincidence: the profile labeled `Pro 1` does not
-  select the `Pro` model, and the profile labeled `Work` is separate from
-  ChatGPT's `Work` surface. A Pro request uses the `Chat` surface and the
-  picker's `Pro` option in every profile.
+  setting, or a browser profile labeled `pro` is not Pro.** A Pro request
+  uses the `Chat` surface and the picker's `Pro` option in every profile.
 - **Use a consultation profile whose account currently offers Pro.** Discover
-  the already-open consultation profiles, such as `Pro 1`, `Pro2`, `Pro3`,
-  `Pro4`, `Pro5`, or others present; exclude `Work` from the pool.
+  the already-open consultation profiles, such as `pro1`, `pro2`, `pro3`,
+  or others present; exclude the `Work` profile from the pool.
   Pro is missing from a composer only when `Power` cannot reach it: the slider
   ends at `Extra High, 4 of 4` and a disabled `Pro` entry appears under the
   model list. Hover that entry to read why; `Limit reached. Try again after
