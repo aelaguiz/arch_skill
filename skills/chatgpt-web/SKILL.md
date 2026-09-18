@@ -21,6 +21,12 @@ parent reads that judgment as a whole and then reports it in the user's
 preferred form. Calling Pro a peer does not compensate for restricting what
 it may conclude.
 
+**Every review brief hands over the original issue as filed and asks whether
+the work is complete to its full scope and requirements, not only whether the
+code is right.** The work is not done until Pro says it is implemented right,
+the PR is ready, and it is complete to that scope; the templates carry the
+wording.
+
 **Every submission requires checking the full draft before Send and the new
 submitted user turn afterward.** Accept an answer only when it belongs to that
 verified request and serves the user's consultation purpose. Read this entry

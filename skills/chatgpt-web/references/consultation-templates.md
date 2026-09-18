@@ -54,6 +54,17 @@ Wherever something is being authored, Pro writes it. The agent brings the
 context, asks questions, goes back and forth until it is fully formed, then
 carries the agreed result into the issue or the document verbatim.
 
+Every review brief, whether the first read (A), the read after fixes (B), or
+the final read before the work is put down, hands over the original issue as
+filed and asks two things, not one: is it implemented right, and is the
+original ask complete to its full scope and requirements, with every
+requirement either met in this PR or named plainly as still owed and the
+issue that owes it. Pro answers the question it is asked; a brief that asks
+only about the fixes, the delta, or "the fixed revisions" gets a fix check
+back, not a review. The work is not done until Pro has said all three: it is
+implemented right, the PR is ready, and it is complete to the full scope and
+requirements of the original issue.
+
 After Send, the agent watches for Pro's answer. Sending is not done. The
 consultation is done when the agent has read the whole answer and acted on
 it. The agent arms the host's wake-up for the answer and ends the turn rather
@@ -112,9 +123,13 @@ Where I'm least sure: [one or two things].
 Constraints I'm working around: [each one, and where it came from: Amir's
 words, a real external limit, or something I read in the code and assumed].
 
-What I'm looking for: did I implement the intent right, and is this the
-cleanest, most pragmatic way to do it? Read the plan and the sheet first, then
-the PR.
+What I'm looking for is two things. First, did I implement the intent
+right, and is this the cleanest, most pragmatic way to do it? Read the plan
+and the sheet first, then the PR. Second, is the original ask done? The issue
+is attached as filed; check the PR against its full scope and requirements,
+and tell me what is met here, what is still owed and which issue owes it,
+and where I am short. I am not done until you say it is implemented right,
+the PR is ready, and it is complete to that scope.
 
 - Where am I introducing risk that really wasn't necessary for this feature?
 - Where did I overbuild around edge cases?
@@ -190,13 +205,13 @@ the straight version would look like without it. If freeing us of the
 constraint would make this simpler, say so plainly; Amir would rather remove
 the constraint than ship the workaround.
 
-Completeness: did we actually accomplish what Amir originally asked for?
-Was that ask split into two or three issues along the way, with this PR
-covering one of them, so that he thinks things are landing here that aren't?
-Was the original issue quietly dropped, deferred, or replaced by a
-prerequisite that got cut later? Is every piece of the original ask either in
-this PR or named plainly as still owed, with the issue that owes it? If the
-PR is being talked about as if it were the original issue, say so.
+Completeness, always asked, never optional: did we actually accomplish what
+Amir originally asked for? Was that ask split into two or three issues along
+the way, with this PR covering one of them, so that he thinks things are
+landing here that aren't? Was the original issue quietly dropped, deferred, or
+replaced by a prerequisite that got cut later? Is every piece of the original
+ask either in this PR or named plainly as still owed, with the issue that owes
+it? If the PR is being talked about as if it were the original issue, say so.
 
 Tests: does it have the appropriate automation tests? Does it use unit tests
 and property tests properly? Where something could conceivably pass a unit
@@ -215,7 +230,11 @@ simulated test? That is how we catch all sorts of bugs. Is it race-prone?
 - Fencing what Pro may conclude: "do not expand into…", "reject any drift
   into…".
 - Pasting the issue body in place of the sheet and the plan. The issue is our
-  translation; Pro needs the source.
+  translation; Pro needs the source. The issue still goes in, as filed, next
+  to the source.
+- Leaving the issue out, or asking only whether the code is right. Without
+  the issue and the completion question Pro cannot say whether the ask is
+  done, and it will not volunteer it.
 - "Assess it on that accepted scope." Narrowing what Pro sees because the work
   was narrowed.
 - "Review it" with no flavor. Say what kinds of problems you want found.
@@ -251,8 +270,11 @@ up.
 What I did about each: [finding 1: what I did]. [Finding 2: what I did.]
 [Finding 3: what I did, or why I disagreed.]
 
-What I'm looking for: same question as last time, does this implement the
-intent, and is it still the cleanest way to do it? Read the PR again as a
+The issue, [#M], is re-attached as filed. What I'm looking for: the same
+two questions as last time. Does this implement the intent, and is it still
+the cleanest way to do it? And after these fixes, is the original ask
+complete to its full scope and requirements, with anything still owed named
+and the issue that owes it? Read the PR again as a
 whole. Don't just tick my fixes; they touched [areas] and I'd rather you catch
 something new now than after merge. Where did the fixes add risk that wasn't
 needed, overbuild an edge case, create a new pattern beside an existing one, or
@@ -269,13 +291,18 @@ against the bugs we've actually shipped.
   the first-round evidence.
 - Running this round more than once. A second round means the basis of the
   review changed; start again as A.
+- "Final read, on the fixed revisions only." A final read is a full A with the
+  issue attached and the completion question asked, never a fix check. The
+  work is not done until Pro says it is implemented right, the PR is ready,
+  and it is complete to the full scope and requirements.
 
 Not this: "Fix verification. The attached plan applies your five findings:
 (1)… (5)… Judge only whether each of the five findings is now resolved as you
 specified. First line PASS or CHANGES REQUIRED, then one line per finding."
 
-**Attach**: everything from the first review, re-attached; Pro's previous
-answer; the GitHub PR link with the `@GitHub` pill.
+**Attach**: everything from the first review, re-attached, the issue as
+filed included; Pro's previous answer; the GitHub PR link with the `@GitHub`
+pill.
 
 ## C. Checking the written-up plan
 

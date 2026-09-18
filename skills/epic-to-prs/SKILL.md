@@ -76,8 +76,12 @@ model holds both seats, C is skipped if the plan has not moved.
 
 The primary reviews batches (A, one B round, a fresh A when the basis moved)
 until it finds nothing material. The final reviews the completed PR stack
-once against the epic's goal, including interactions between PRs, with the
-primary's batch findings and the fixes attached. A small coherent epic may
+once against the epic's goal and against each issue's full scope and
+requirements, with the issues as filed attached, including interactions
+between PRs, with the primary's batch findings and the fixes attached. The
+epic is not done until the final has said the stack is implemented right,
+the PRs are ready, and every issue is complete to its full scope and
+requirements. A small coherent epic may
 need only the plan, its check, and the final stack review. For larger work,
 choose meaningful batches or milestones the primary can credibly assess. A checkpoint after two
 related issues can be useful when their combined result exposes integration

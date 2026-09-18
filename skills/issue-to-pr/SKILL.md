@@ -78,7 +78,8 @@ changed the basis of the review, until it finds nothing material. It answers
 the unblocker's major-blocker consults and any on-track check (E). The final
 reads the written-up plan once against the code before anyone builds (C),
 with the primary's planning exchange attached, and reviews the PR once after
-the primary is clean (A). The final reads the PR itself first; the primary's
+the primary is clean (A), with the issue as filed attached and the completion
+question asked. The final reads the PR itself first; the primary's
 findings and the fixes ride along as files in the brief's "what I did", as
 what happened since, not as the frame of the ask. Its findings get fixed and
 one B round; then CI.
@@ -202,14 +203,21 @@ entry, not a separate tracking system.
    run one B round, and start a fresh A when a fix changed the basis of the
    review, until the primary finds nothing material. Still no CI.
 5. **Final review.** Submit the PR to the final with family A, with the
-   primary's findings and the fixes attached. Fix what it finds, run one B
-   round, and return to the final only if a later fix changed behavior.
-   Still no CI.
+   issue as filed attached, the primary's findings and the fixes attached,
+   and both questions asked: is it implemented right, and is the original
+   ask complete to its full scope and requirements. A read that asks only
+   about the fixes or "the fixed revisions" is not the final review. Fix
+   what it finds, run one B round, and return to the final only if a later
+   fix changed behavior. The work is not done until the final has said all
+   three: implemented right, PR ready, complete to the full scope and
+   requirements. Still no CI.
 6. **CI and bots, last.** Only after the final has cleared the PR, run
    `$pr-review-followthrough`: let CI and the bots run once, fix what they
    find, and return to the final only if a fix changed behavior.
 7. **Report merge-ready.** Require the primary's plan, the final's plan check
-   and PR review, the originating coordinator's direct review of every
+   and PR review with its explicit answer that the work is implemented right,
+   the PR is ready, and the original issue is complete to its full scope and
+   requirements, the originating coordinator's direct review of every
    deliverable and changed code line, resolved material findings, and passing
    required checks (local checks by workers throughout, CI once at the end). Report PR URL, change summary, current head and CI, the
    revision each seat actually reviewed, and any later changes with their
