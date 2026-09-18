@@ -106,11 +106,17 @@ Pro is the top `Power` position of `Latest`. With Pro available the slider has
 five positions: `Extra High` is `4 of 5` and Pro reads `Pro, 5 of 5`. Pro is
 not an entry in the model list. Do not look for it there, and never report Pro
 missing, disabled, or rate limited because the list shows only `Latest`,
-`GPT-5.6 Sol`, and `GPT-5.5`. When an account cannot offer Pro the slider ends
-at `Extra High, 4 of 4`, or ChatGPT shows a cap message. Some menus also show a
-disabled `Pro` radio below the model list; what it means is not established,
-and it is not evidence that Pro is unavailable. A pill that reads `6 Pro` on
-any page of an account proves that account offers Pro. Other layouts appear, such as
+`GPT-5.6 Sol`, and `GPT-5.5`.
+
+When a composer cannot select Pro, the slider ends at `Extra High, 4 of 4` and
+a disabled `Pro` entry appears below the model list. Hover the disabled entry
+and read its tooltip: `Limit reached. Try again after 9:48 AM tomorrow.` is the
+account's rate limit with its reset time, which goes in the availability notes
+and the report to the user. This is a reading of this composer. Another chat
+in the same profile can still read `6 Pro`, so check an existing Pro thread in
+the project before leaving the profile. Do not send from the disabled composer
+on whatever it does offer; the entry file's no-send rule applies.
+Other layouts appear, such as
 `Configure...` / `Intelligence` or a separate `Extended` thinking control; use
 whatever is offered to the same end. The default is GPT-6 Astra, `Pro`, and
 `Extended` thinking where separately offered.
@@ -141,11 +147,14 @@ in the project and restore its needed context before submission.
 
 ## Switch accounts
 
-A `Power` slider that cannot reach Pro (it ends at `Extra High, 4 of 4`)
-suggests a temporary account limit; an explicit usage-cap message confirms it.
-Pro absent from the model list is normal and is not this signal. Before
-telling the user that no account offers Pro, read the pill or slider in each
-consultation profile and report what each one read.
+A `Power` slider that cannot reach Pro (it ends at `Extra High, 4 of 4`, with
+a disabled `Pro` entry under the model list) suggests a temporary account
+limit; the entry's hover tooltip or an explicit usage-cap message confirms it.
+Pro absent from the model list is normal and is not this signal. Switching
+accounts is the only response to a composer without Pro; running the
+consultation on another model is never one. Before telling the user that no
+account offers Pro, read the pill or slider in each consultation profile and
+report what each one read, with any reset time shown.
 Failed connector access requires a suitable account too, but does not itself
 prove a Pro rate limit.
 

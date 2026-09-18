@@ -49,6 +49,19 @@ describes the browser profile. If a send went out without the first reading,
 read the pill now and the slug as soon as answer text arrives; anything other
 than Pro is a wrong-model submission, stopped and resent as described below.
 
+**No Pro, no send.** When this composer's pill cannot be made to read `6 Pro`,
+do not send the consultation from it on any model. A run on `Latest`,
+`GPT-5.6 Sol`, `Extra High`, or anything else is not a weaker Pro
+consultation. It is a different reviewer the user did not ask for, and saying
+so afterward does not repair it: its answer, its interim notes, and its
+sign-off are not evidence, not an interpretation, and not a review. Only the
+user naming another model for this consultation changes that. Look for Pro in
+another composer instead: an existing Pro thread in the same project, then the
+same project in another consultation profile. If none reads `6 Pro`, pause this
+consultation, tell the user what each composer read, and continue other work.
+A menu click that did not change the pill selected nothing; the closed pill is
+the only confirmation.
+
 **Use only the existing consultation profiles.** Discover whichever are
 configured; their number and spelling can vary.
 **Never use the BrowserOS `Work` profile for ChatGPT.** It is reserved for the
@@ -72,7 +85,9 @@ wording.
 **Every submission requires checking the full draft before Send and the new
 submitted user turn afterward.** Accept an answer only when it belongs to that
 verified request and serves the user's consultation purpose. Read this entry
-file completely; retrieve any truncated portion before proceeding.
+file completely; retrieve any truncated portion before proceeding. After a
+context compaction or a resume, read it again before the next browser phase: a
+summary that says "work with Pro" does not carry these rules.
 
 **Pro's wait is yours, never the user's.** A consultation is finished when
 Pro's answer has been read and acted on, not when it was sent. Arm the host's
@@ -114,10 +129,11 @@ the consultation autonomously as described below.
 - **Use a consultation profile whose account currently offers Pro.** Discover
   the already-open consultation profiles, such as `Pro 1`, `Pro2`, `Pro3`,
   `Pro4`, `Pro5`, or others present; exclude `Work` from the pool.
-  Pro is missing only when `Power` cannot reach it, so the slider ends at
-  `Extra High, 4 of 4`; that probably means a temporary account limit, and an
-  explicit cap message confirms it. The model list never contains Pro, so its
-  absence there says nothing, and a pill reading `6 Pro` proves this account
+  Pro is missing from a composer only when `Power` cannot reach it: the slider
+  ends at `Extra High, 4 of 4` and a disabled `Pro` entry appears under the
+  model list. Hover that entry to read why; `Limit reached. Try again after
+  ...` is the account's rate limit and its reset time. A model list without
+  any `Pro` entry says nothing, and a pill reading `6 Pro` proves that composer
   offers it. Note
   unavailable accounts and the account that works, with check times and
   connector status. Switch to another consultation profile

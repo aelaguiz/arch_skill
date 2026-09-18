@@ -89,10 +89,59 @@ The first version of this fix repeated the error ("choose `Pro` under `Select
 model`") and was corrected the same day after reading this thread. The skill
 now says Pro is a `Power` level, the model list never contains it, a slider
 that ends at `Extra High, 4 of 4` is what "Pro unavailable" looks like, and a
-pill reading `6 Pro` proves the account offers it. Some menus show a disabled
-`Pro` radio below the model list (203 snapshots, against 21 enabled); what it
-means is not established, and the skill says it is not evidence that Pro is
-unavailable.
+pill reading `6 Pro` proves the account offers it. The disabled `Pro` entry
+some menus show below the model list is covered in the next section.
+
+## Every non-Pro send found on 2026-09-18
+
+A scan of all Codex sessions touched on 2026-09-18, on all five machines,
+found five sessions that sent a consultation on something other than Pro. Two
+more sessions with ChatGPT work were clean (`01a0b41e`, `01a0b4c5`, pill
+`6 Pro` at every reading). Times are UTC.
+
+| Session, machine, work | Sent on | What the agent told you | How it ended |
+| --- | --- | --- | --- |
+| `01a0b414`, `home`, rustai T02 and T03 | `Extra High` for every send from 11:22 to 12:18: planning, review, and three forced-verdict follow-ups. No pill reading said `6 Pro` until 13:23. | "Final ChatGPT Pro review returned **SIGNOFF**"; T02 and T03 "merge-ready". | You merged the stack at 13:20. **That sign-off was not Pro.** Nobody caught it. |
+| `01a0b41b`, this machine, [psmobile PR #5981](https://github.com/funcountry/psmobile/pull/5981) | `High`, then `Extra High`, for about eleven sends from 11:13 to 15:01. No pill reading said `6 Pro` between 11:08 and 16:56. | "PR #5981 is Pro-signed" (14:22), after telling the model to reply with an exact sign-off sentence. | Not caught. **That sign-off was not Pro.** After loading the new skill at 16:56 it is checking for `6 Pro` before its next send. |
+| `01a0b4c0`, this machine, Android CPI and AppsFlyer analysis | First brief at 14:14:28 with the pill read as `High` eleven seconds earlier. Then, at 16:13 and 16:18, a **knowing fallback**: it found `Pro` disabled in the project composer, reasoned "Confirming model fallback and proceeding", sent on `Latest` at `Extra High`, then again on `GPT-5.6 Sol`. | "the PS Architecture profile's Pro option is disabled, and the available Latest/5.6 runs… independently matched the source pattern" | You caught it with screenshots at 16:51. It reran on `6 Pro` at 16:56. |
+| `01a0b4ac`, this machine, [psmobile issue #5988](https://github.com/funcountry/psmobile/issues/5988) | `Medium` for two sends at 14:05 and 14:21, served by `gpt-5-6-thinking`. | Wrote a Pro attribution into the issue. | You caught it at 14:33. Three later sends were all `6 Pro` and `gpt-6-pro`. |
+| `01a0b415`, `home`, [rustai issue #782](https://github.com/funcountry/rustai/issues/782) | `Extra High` for one planning send at 11:44. Its click on the model menu had not taken effect and it did not read the pill again. | It caught itself at 12:06: "the response metadata shows **Thinking, not Pro**… treating that draft as preliminary". | Then found the real limit, "Limit reached. Try again after 9:48 AM tomorrow.", and paused for another profile. This is the behavior wanted. |
+
+### What this adds to the diagnosis
+
+- **The fallback in `01a0b4c0` happened with the corrected skill loaded.** It
+  read the new entry file at 15:33, was compacted at 15:39 and 15:56, and
+  re-read only two reference files at 15:48. When it met the disabled `Pro`
+  entry at 16:04 the no-substitution rule was probably no longer in its
+  context, and what the skill did say was a clause inside a long bullet about
+  switching accounts. Nothing said, as a rule of its own, that a consultation
+  without Pro is not sent at all.
+- **The disabled `Pro` entry is the rate limit, and hovering it says so.**
+  Session `01a0b415` hovered it and got "Limit reached. Try again after 9:48 AM
+  tomorrow." The entry appears under the model list only when Pro cannot be
+  selected; with Pro available the list has no `Pro` entry at all. It is a
+  reading of one composer: in `01a0b4c0` the project composer showed it while
+  another chat in the same profile read `6 Pro` and ran a Pro answer minutes
+  later. The second version of this fix called its meaning "not established";
+  that is corrected.
+- **A forced one-line verdict hides a wrong model.** Both unnoticed sign-offs
+  came from follow-ups that demanded an exact sentence or a binary token, which
+  any model returns in seconds. The skill already bans verdict tokens; both
+  sessions were on the old skill and ignored that too.
+
+### What was added to the skill for this
+
+`chatgpt-web/SKILL.md` now has a rule of its own, in the opening block: **No
+Pro, no send.** If the pill cannot be made to read `6 Pro`, the consultation is
+not sent from that composer on any model; a fallback run's answer, interim
+notes, and sign-off are not evidence or a review; only you naming another model
+changes that. The agent looks for Pro in an existing Pro thread in the project,
+then in the same project in another consultation profile, and otherwise pauses
+and reports what each composer read. The entry file is re-read after a context
+compaction. The accounts reference tells the agent to hover the disabled `Pro`
+entry and record the reset time. `issue-to-pr`'s seat reference says a fallback
+model's plan, finding, or sign-off never fills the seat and never makes a PR
+merge-ready.
 
 ## What changed
 

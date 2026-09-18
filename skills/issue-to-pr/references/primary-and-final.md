@@ -41,7 +41,9 @@ Pro seat only when `$chatgpt-web`'s readings prove it: the picker's selected
 model and `Pro` option read from the page before Send, and the model named
 on the response turn after it. A review that went out on any other model is
 not the seat's review, whichever profile it ran in: stop it, select `Pro`,
-and resend it whole.
+and resend it whole. When no composer offers Pro, the seat's consultation
+waits. A plan, finding, or sign-off from a fallback model never fills the seat,
+is never recorded as the seat's, and never makes a PR merge-ready.
 
 Rate limits,
 account switching, and delivery verification are `$chatgpt-web`'s rules.
