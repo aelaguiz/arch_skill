@@ -54,13 +54,12 @@ Wherever something is being authored, Pro writes it. The agent brings the
 context, asks questions, goes back and forth until it is fully formed, then
 carries the agreed result into the issue or the document verbatim.
 
-After Send, the agent watches for Pro's answer. Sending is not done, and
-"Pro is running, now I'm waiting" is not a place to end the turn. The
+After Send, the agent watches for Pro's answer. Sending is not done. The
 consultation is done when the agent has read the whole answer and acted on
-it. The agent never ends its turn by telling the user that Pro is running or
+it. The agent arms the host's wake-up for the answer and ends the turn rather
+than sleeping through the wait; it never tells the user that Pro is running or
 that its answer is pending for the user to read, and never asks the user to
-watch the thread. How the agent waits is up to its harness; that it waits is
-not.
+watch the thread. The wait belongs to the agent, not to the user.
 
 These families serve whichever model holds the seat, not only Pro. When
 `issue-to-pr`'s primary is Sol or Fable, the brief is the same and "Pro" in

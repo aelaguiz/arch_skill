@@ -26,10 +26,12 @@ submitted user turn afterward.** Accept an answer only when it belongs to that
 verified request and serves the user's consultation purpose. Read this entry
 file completely; retrieve any truncated portion before proceeding.
 
-**Do not end your turn while Pro is running. You watch it.** "Pro is running,
-I'm waiting" is not the end of a turn; the turn ends when Pro's answer has
-been read and acted on. How you wait is your harness's business (polling, a
-heartbeat, a host wait); that you wait, and not the user, is not.
+**Pro's wait is yours, never the user's.** A consultation is finished when
+Pro's answer has been read and acted on, not when it was sent. Arm the host's
+wake-up for it (a heartbeat or an equivalent automatic wake) and end the turn;
+do the next useful work and read the answer when the wake fires. Never hand
+"Pro is running" to the user as something for them to watch or come back for,
+and never hold a turn open with sleeps to wait for it.
 
 **Let Pro finish. It regularly takes around 30 minutes and can take longer.**
 That is an expectation, never a deadline. Do not click **Stop answering** on a
@@ -79,9 +81,10 @@ the consultation autonomously as described below.
   the run takes. A ticking clock or spinner is not progress. Keep the requested
   review pending until its usable answer arrives; continue independent work.
   **The agent watches for Pro's answer, never the user.** Sending is not
-  done, and "now I'm waiting" is not a place to stop. Do not end the turn by
-  telling the user Pro is running or that its answer is pending for them to
-  read; the consultation is done when the answer is read and acted on.
+  done. A progress update that says Pro is running is fine when the wake-up is
+  armed and the update says what will read the answer; telling the user the
+  answer is pending for them to read is not. The consultation is done when the
+  answer is read and acted on.
 
 ## Prepare the consultation
 
