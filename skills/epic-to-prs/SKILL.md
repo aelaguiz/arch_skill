@@ -133,13 +133,16 @@ each seat as `issue-to-pr`'s
 says: Pro through `$chatgpt-web` with `$browseros`, literal `Pro` selected
 in the model picker of the `Chat` surface and read back from the page before
 every Send, in one epic thread per Pro seat supplied by the user or
-created in the applicable ChatGPT project; another model as a clean native
-child or an external process through `$agent-delegate` at the exact model
-and effort, with one continuing planning session for D and a clean context
-per review round. Extra High, xhigh, Ultra, Thinking, the highest
-remaining setting, and a browser profile labeled `Pro` are not Pro: the
-label names the profile, and only the page's picker reading proves the
-model.
+created in the applicable ChatGPT project; another model by that
+reference's rules for Astra and Fable parents, with one continuing planning
+session for D and a clean context per review round. If you are not an Astra
+or a Fable parent, or you are not sure, use your own native subagents on
+your own model for every worker, reviewer, and seat except Pro, including a
+seat named for another model, and say which model it ran on. Do not start an
+external agent unless the user asks for an external one. Extra High, xhigh,
+Ultra, Thinking, the highest remaining setting, and a browser profile
+labeled `Pro` are not Pro: the label names the profile, and only the page's
+picker reading proves the model.
 
 Write every submission from the matching family in `$chatgpt-web`'s
 consultation templates (`../chatgpt-web/references/consultation-templates.md`),

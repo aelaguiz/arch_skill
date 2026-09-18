@@ -163,11 +163,15 @@ surface and read back from the page before every Send, in the consultation
 profiles only (the BrowserOS profiles labeled `Pro 1`, `Pro2`, and so on),
 never the `Work` profile, with `$chatgpt-web`'s rate-limit and
 account-switching rules. Those profile labels name browser profiles; being
-in one never makes a review a Pro review. Any other model as a clean native child or an
-external process through `$agent-delegate` at the exact model and effort
-named. A planning collaborator keeps one continuing session for the D
-back-and-forth; a review round starts clean. Do not substitute another model
-for a named seat or claim a pending review passed.
+in one never makes a review a Pro review. For any other model, Astra and
+Fable parents have their own rules in that reference. If you are not one of
+them, or you are not sure, use your own native subagents on your own model
+for every worker, reviewer, and seat except Pro, including a seat named for
+another model, and say which model it ran on. Do not start an external agent
+unless the user asks for an external one. A planning collaborator keeps one
+continuing session for the D back-and-forth; a review round starts clean.
+Otherwise do not substitute another model for a named seat, and never claim
+a pending review passed.
 
 Record each actual submission once in the existing worklog (the plan doc's
 worklog section when the run has no other): seat, exact model and effort

@@ -56,7 +56,15 @@ work, and wait for the user to say Pro is back.
 
 Read `../../_shared/agent-orchestration-policy.md` first; it owns native
 versus external transport, starting context, isolation, and the return
-contract. Then:
+contract.
+
+Astra and Fable parents have their own rules, below. If you are not one of
+them, or you are not sure, use your own native subagents on your own model
+for every worker, reviewer, and seat except Pro, including a seat named for
+another model, and say which model it ran on. Do not start an external agent
+unless the user asks for an external one.
+
+For an Astra or a Fable parent:
 
 - A Claude model (Fable 5.1, Opus 5) on a Claude host is a native child at
   the named model and effort. On any other host it is an external Claude
@@ -65,11 +73,12 @@ contract. Then:
   an external Codex process through `$agent-delegate` at the exact model and
   effort. Not `$codex-review-yolo`: its `VERDICT:` footer is the anti-pattern
   the consultation templates remove.
-- Whatever the seat, the brief is the family template from
-  `../../chatgpt-web/references/consultation-templates.md`, in the user's
-  voice, with the user's words verbatim and the sources whole. Where the
-  template says Pro, read the seat. Read the whole answer before acting on
-  it; the coordinator, not the seat, decides what is material.
+
+Whatever the seat and whoever the parent, the brief is the family template
+from `../../chatgpt-web/references/consultation-templates.md`, in the user's
+voice, with the user's words verbatim and the sources whole. Where the
+template says Pro, read the seat. Read the whole answer before acting on it;
+the coordinator, not the seat, decides what is material.
 
 ## Continuing versus clean context
 
