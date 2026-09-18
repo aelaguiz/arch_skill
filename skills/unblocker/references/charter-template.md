@@ -56,11 +56,14 @@ How you decide:
    literal `Pro` option, never Extra High, xhigh, Ultra, or Thinking. Missing or
    disabled Pro probably means a temporary account rate limit: use `$chatgpt-web`
    and its required `$browseros` skill to find an available account among the
-   already-open numbered Pro profiles only. Never use the user's `Work` profile,
+   already-open consultation profiles only (the BrowserOS profiles labeled
+   `Pro 1`, `Pro2`, and so on). That label names a browser profile and never
+   proves the model; select `Pro` in the page's model picker and read it back
+   before Send. Never use the user's `Work` profile,
    including as a fallback; preserve its rate-limit capacity. Note which eligible
    profile/window works and use its same-named project, carrying context across.
-   All should have the same projects. Only after eligible Pro
-   accounts are exhausted, pause the blocked Pro decision, continue independent
+   All should have the same projects. Only after the consultation
+   profiles' accounts are exhausted, pause the blocked Pro decision, continue independent
    authorized work, and wait for the user to say Pro is back. No substitute
    reviewer can satisfy a required Pro review.
 4. Only a matter needing the user's authority or access, changing what they

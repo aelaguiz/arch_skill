@@ -13,12 +13,14 @@ with the literal `Pro` option and Extended thinking in ChatGPT's `Chat` surface,
 per `$chatgpt-web` with required `$browseros` usage. Pro is not Extra High,
 xhigh, Ultra, Thinking, or the highest available setting. Missing or disabled
 Pro probably means a temporary account rate limit. Use only the already-open
-numbered Pro profiles, such as Pro 1 through Pro 5 or whichever exist. The
+consultation profiles, the BrowserOS profiles labeled Pro 1 through Pro5 or
+whichever exist; that label names a browser profile and never proves the
+model, which is read from the page's model picker before every Send. The
 user's `Work` profile is reserved for their personal use and rate-limit capacity;
-never use it, even as a fallback. Note which eligible profile/window currently
-offers Pro and use that account. Continue in the same-named project
+never use it, even as a fallback. Note which consultation profile/window's picker currently
+offers the `Pro` option and use that account. Continue in the same-named project
 with the needed context; all accounts should have the same projects.
-Only after eligible Pro accounts are exhausted, pause the blocked Pro decision
+Only after the consultation profiles' accounts are exhausted, pause the blocked Pro decision
 while independent authorized work continues. This supersedes the historical
 top-tier equivalence, Work-profile fallback, two-account limit, and whole-goal
 pause guidance below;

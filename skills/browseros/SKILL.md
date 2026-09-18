@@ -21,15 +21,22 @@ this contract too.
   a new focus choice the user made. Do not claim to restore unobservable desktop
   application focus.
 - **Know the profile, window, and page throughout the task.** Expect `Work`
-  and any number of Pro profiles with many windows already open. Discover their
+  and any number of ChatGPT consultation profiles, labeled `Pro 1`, `Pro2`,
+  and so on, with many windows already open. Discover their
   real mapping and keep it in the task notes. Check each interaction and
   readback against that mapping; refresh live identity after navigation,
   switching, recovery, or resuming, and immediately before sends, mutations,
   and cleanup. Matching titles, project names, or the active window do not
   establish the account.
-  For ChatGPT, use only the existing numbered Pro profiles. The user's `Work`
+  For ChatGPT, use only the existing consultation profiles. The user's `Work`
   profile is reserved for their personal ChatGPT use and rate-limit capacity;
   never select it for a consultation, retry, or account fallback.
+- **A profile label names a browser profile and nothing else.** `Pro 1` is a
+  name the user typed, the same kind of thing as `Work`. It tells you which
+  browser profile and login a page belongs to. It never tells you what the
+  site is doing inside that page: being in a profile labeled `Pro` does not
+  select, imply, or prove a ChatGPT model, mode, or plan. Read in-site state
+  such as the selected model from the live page, under the site skill's rules.
 - **Use existing windows and authorized pages.** Reuse one compatible,
   current-agent-controlled page that this task may use. If a new page is
   necessary, request one normal background tab in the verified existing window
@@ -52,7 +59,7 @@ this contract too.
 Resolve the requested site, account, object, allowed changes, and completion
 proof. Live tool-specific schemas and results outrank remembered tool names,
 old traces, or saved IDs. For page work, list tabs and windows and inspect the
-active state when available. ChatGPT work uses only existing numbered Pro
+active state when available. ChatGPT work uses only the existing consultation
 profiles under `$chatgpt-web`; `Work` is never a fallback for it. For other
 sites, default to `Work` unless the user or site skill selects another profile.
 

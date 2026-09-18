@@ -110,7 +110,8 @@ continuing.
 
 ## Identity and profile constraints
 
-Expect the user's `Work` profile and a variable number of Pro profiles to have
+Expect the user's `Work` profile and a variable number of ChatGPT consultation
+profiles, labeled `Pro 1`, `Pro2`, and so on, to have
 windows open at the same time. Inspect their actual mapping and keep the
 working profile/window/page identified in the existing task notes. Recheck the
 target before every interaction and readback, with fresh live membership and
@@ -120,10 +121,17 @@ the task; a successful startup check is not enough. Matching titles, projects,
 or URLs across profiles do not identify the account, and foreground activation
 does not prove which profile a page belongs to.
 
-For ChatGPT, select only the existing numbered Pro profiles, such as Pro 1
-through Pro 5 or whichever are configured. The `Work` profile is reserved for
-the user's personal ChatGPT use and rate-limit capacity. Do not use it when a
-Pro profile is limited, lacks a connector, or contains no matching conversation.
+For ChatGPT, select only the existing consultation profiles: the ones labeled
+`Pro 1` through `Pro5` or whichever are configured. The `Work` profile is
+reserved for the user's personal ChatGPT use and rate-limit capacity. Do not
+use it when a consultation profile is limited, lacks a connector, or contains
+no matching conversation.
+
+A profile label is a name the user typed for a browser profile. `Pro 1` says
+which profile and login a page belongs to, exactly as `Work` does. It does not
+select, imply, or prove the ChatGPT model, mode, or plan in that page. Record
+the label on the profile line of the task notes and nowhere else; the selected
+model is separate in-site state that `$chatgpt-web` reads from the page.
 
 Build page identity from both ephemeral handles and semantic evidence:
 

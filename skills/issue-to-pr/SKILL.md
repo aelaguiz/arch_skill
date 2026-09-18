@@ -158,16 +158,20 @@ harness's business; that it waits is not.
 Read [references/primary-and-final.md](references/primary-and-final.md)
 before the first consultation of a run, and again if the user renames a
 seat. It says how to reach each seat: Pro through `$chatgpt-web` with
-`$browseros`, literal `Pro` in the `Chat` surface, numbered Pro profiles
-only, never the `Work` profile, with `$chatgpt-web`'s rate-limit and
-account-switching rules; any other model as a clean native child or an
+`$browseros`, literal `Pro` selected in the model picker of the `Chat`
+surface and read back from the page before every Send, in the consultation
+profiles only (the BrowserOS profiles labeled `Pro 1`, `Pro2`, and so on),
+never the `Work` profile, with `$chatgpt-web`'s rate-limit and
+account-switching rules. Those profile labels name browser profiles; being
+in one never makes a review a Pro review. Any other model as a clean native child or an
 external process through `$agent-delegate` at the exact model and effort
 named. A planning collaborator keeps one continuing session for the D
 back-and-forth; a review round starts clean. Do not substitute another model
 for a named seat or claim a pending review passed.
 
 Record each actual submission once in the existing worklog (the plan doc's
-worklog section when the run has no other): seat, exact model and effort,
+worklog section when the run has no other): seat, exact model and effort
+(for Pro, the picker text as read from the page, never the profile label),
 purpose, artifact/revision and thread or session, plus the running count for
 that seat. A D exchange is one consultation; note its turn count. Include retries and failover submissions;
 polling an existing response is not a new consultation. Keep this a short

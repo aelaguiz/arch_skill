@@ -13,12 +13,14 @@ with the literal `Pro` option and Extended thinking in ChatGPT's `Chat` surface,
 per `$chatgpt-web` with required `$browseros` usage. Pro is not Extra High,
 xhigh, Ultra, Thinking, or the highest available setting. Missing or disabled
 Pro probably means a temporary account rate limit. Use only the already-open
-numbered Pro profiles, such as Pro 1 through Pro 5 or whichever exist. The
+consultation profiles, the BrowserOS profiles labeled Pro 1 through Pro5 or
+whichever exist; that label names a browser profile and never proves the
+model, which is read from the page's model picker before every Send. The
 user's `Work` profile is reserved for their personal use and rate-limit capacity;
-never use it, even as a fallback. Note which eligible profile/window currently
-offers Pro and use that account. Continue in the same-named project
+never use it, even as a fallback. Note which consultation profile/window's picker currently
+offers the `Pro` option and use that account. Continue in the same-named project
 with the needed context; all accounts should have the same projects.
-Only after eligible Pro accounts are exhausted, pause the blocked Pro decision
+Only after the consultation profiles' accounts are exhausted, pause the blocked Pro decision
 while independent authorized work continues. This supersedes the historical
 top-tier equivalence, Work-profile fallback, two-account limit, and whole-goal
 pause guidance below;
@@ -91,6 +93,17 @@ current cadence above supersedes them where they differ.
   checks the `Select chat surface` radio is `Chat` before the model pill
   and before every send; Pro exists only in `Chat`; a `Work` send is not
   a Pro verdict and is redone.
+- Profile label is not the model (2026-09-18): agents sent reviews on
+  ChatGPT's default model from a BrowserOS profile labeled `Pro` and
+  reported them as Pro reviews. Owner, verbatim: "some of my browser OS
+  profile names are pro (which is different than the GPT-6 Astro pro model
+  picker). They're saying, 'Oh it was in the pro browser profile so it's
+  good,' and then they're using whatever the default model is, which is the
+  catastrophe for me." Encoded as: those profiles are called consultation
+  profiles; "Pro" alone means only the model; `$chatgpt-web` selects `Pro`
+  in the picker and reads it back from the page before every send and from
+  the response turn after it; the model line of a receipt quotes those
+  readings, never the profile label.
 
 - Pro consultation voice (2026-09-16): the owner traced a Codex run
   (`01a0abbe-a311-75f0-9b87-ed006b673ccb`) that held the full planning

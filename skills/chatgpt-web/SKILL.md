@@ -1,18 +1,56 @@
 ---
 name: chatgpt-web
-description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros, writing the submission from its consultation templates in the user's voice with sources attached whole. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro, real @BigQuery access for data and @GitHub access for repo work, existing numbered Pro profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited Pro accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
+description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros, writing the submission from its consultation templates in the user's voice with sources attached whole. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro selected and read back in the model picker (a browser profile labeled Pro never proves the model), real @BigQuery access for data and @GitHub access for repo work, existing consultation profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
 
 # ChatGPT Web
 
-**Use only the existing numbered Pro profiles, such as Pro 1 through Pro 5.**
-Discover whichever are configured; their number and spelling can vary.
+**"Pro" is the model. It is never the browser profile.** Two unrelated things
+carry that word on this machine:
+
+- **Pro, the model:** GPT-6 Astra with the literal `Pro` option selected in
+  the ChatGPT composer's model picker. In this skill, "Pro" alone always
+  means this.
+- **The consultation profiles:** the BrowserOS browser profiles the user keeps
+  for agent ChatGPT work. Their labels start with `Pro` (`Pro 1`, `Pro2`,
+  `Pro One`, and so on). A label is a name the user typed, the same kind of
+  thing as `Work`. It says which ChatGPT login the page uses. It never
+  selects, implies, or proves the model.
+
+**Being in a consultation profile does not make a consultation Pro.** A page
+in `Pro 1` sends to whatever model its composer holds, and the composer goes
+back to ChatGPT's default on a new chat or a project page, even when the
+thread you just left was on Pro. Two readings prove the model, and nothing
+else does:
+
+1. **Before Send, the composer's model pill on this page.** It reads `6 Pro`
+   when Pro is selected. `Medium`, `High`, `Extra High`, `Instant`, or a
+   model name without `Pro` means Pro is not selected: open the pill, choose
+   `Pro` under `Select model`, and read the pill again. If the control looks
+   different, open it and read which model and option are selected.
+2. **After Send, the model slug on the response turn that answers your
+   message:** `gpt-6-pro` for Pro. A tag or footer on an earlier turn says
+   what served that turn, not yours.
+
+Take both readings in every conversation you send into, unless the user named
+another configuration, and write each with its time in the task notes. The
+page carries other "Pro" text that says nothing about the model: the account
+button (`Pro 1 Pro, open profile menu` is the account's display name and its
+plan badge), `Used GPT-6 Pro` footers and `Pro feedback` buttons on earlier
+turns, thread and project titles, and the word Pro in your own prompt.
+Searching the page for "Pro" is not a reading, and "it was in `Pro 1`"
+describes the browser profile. If a send went out without the first reading,
+read the pill now and the slug as soon as answer text arrives; anything other
+than Pro is a wrong-model submission, stopped and resent as described below.
+
+**Use only the existing consultation profiles.** Discover whichever are
+configured; their number and spelling can vary.
 **Never use the BrowserOS `Work` profile for ChatGPT.** It is reserved for the
-user's personal use and rate-limit capacity, including when all Pro profiles
-are unavailable. This restriction also applies to retries and continuation of
-an old conversation.
+user's personal use and rate-limit capacity, including when every consultation
+profile is unavailable. This restriction also applies to retries and
+continuation of an old conversation.
 
 Consult Pro as an expert on the user's actual problem. For interpretation and
 planning, give it the original objective, relevant history, and current
@@ -63,23 +101,29 @@ the consultation autonomously as described below.
 - **Pro means GPT-6 Astra with the literal `Pro` option.** Use ChatGPT's
   `Chat` surface and `Extended` thinking when separately offered, unless the
   user explicitly requests another configuration. **Extra High, xhigh, Ultra,
-  Thinking, a `5/5` indicator, or the highest remaining setting is not Pro.**
-  The BrowserOS profile named `Work` is separate from ChatGPT's `Work` surface;
-  a Pro request must use the `Chat` surface in every profile.
-- **Use a numbered Pro account that actually offers Pro.** Discover the
-  already-open Pro profiles, including Pro 1, Pro2, Pro3, Pro4, Pro5, or other
-  numbered Pro profiles present; exclude `Work` from the account pool.
-  Missing or disabled literal Pro probably means a temporary account
-  limit; an explicit cap confirms it. Note unavailable accounts and the account
-  that works, with check times and connector status. Switch to another Pro account
-  instead of substituting a different tier. All should have the same projects;
+  Thinking, a `5/5` indicator, the highest remaining setting, or a browser
+  profile labeled `Pro` is not Pro.** Browser profile labels and ChatGPT's own
+  controls share words by coincidence: the profile labeled `Pro 1` does not
+  select the `Pro` model, and the profile labeled `Work` is separate from
+  ChatGPT's `Work` surface. A Pro request uses the `Chat` surface and the
+  picker's `Pro` option in every profile.
+- **Use a consultation profile whose account currently offers Pro.** Discover
+  the already-open consultation profiles, such as `Pro 1`, `Pro2`, `Pro3`,
+  `Pro4`, `Pro5`, or others present; exclude `Work` from the pool.
+  A literal `Pro` option that is missing or disabled in the picker probably
+  means a temporary account limit; an explicit cap confirms it. Note
+  unavailable accounts and the account that works, with check times and
+  connector status. Switch to another consultation profile
+  instead of substituting a different tier, and select and read back `Pro`
+  again there. All should have the same projects;
   verify the destination and carry the needed conversation context and inputs.
 - **Require real source access.** For data, attach `@BigQuery`; for GitHub or
   repository work, attach `@GitHub`; attach both when needed. Verify the
   connector pill in the draft and on the submitted turn, and verify retrieval
   of the required data or code.
   A badge, typed name, or confident assertion is insufficient. Missing or broken
-  access means switch to a suitable Pro window or stop and tell the user.
+  access means switch to a suitable consultation profile's window or stop
+  and tell the user.
   Never accept or act on guesses about sources Pro could not access.
 - **Wait for the requested review.** After submission readback, check generation
   every **3–5 minutes**, defaulting to 5, with the heartbeat at the same cadence.
@@ -176,8 +220,11 @@ described in the composer reference. Name the relevant repository or data
 scope so retrieval addresses the actual question.
 
 Before sending, verify the intended profile/window/page and conversation,
-`Chat` surface, model, literal mode and effort, every attachment chip, and each
+`Chat` surface, the picker's selected model, literal `Pro` option, and effort
+as read from this page, every attachment chip, and each
 required connector pill, immediately before the click and on every send path.
+The profile check and the model check are two separate readings; the profile
+label never answers the model check.
 Attachments do not survive a page reload; the text draft does. Any reload,
 clear, or retry resets this verification: a chip seen earlier is not a chip
 now. An insert or paste that timed out may have landed; read the composer
@@ -263,17 +310,22 @@ response as a verdict or use it to publish dependent changes.
 Refusals, empty replies, and answers that omit the requested work also fail
 this completion check; diagnose and repair the specific cause.
 
-If no eligible numbered Pro account offers the required configuration, report the
+If no consultation profile's account offers the required configuration, report the
 profiles checked and observed conditions, pause the blocked consultation or
 decision, and continue useful independent work. Wait for the user to say Pro is
 available again rather than polling capped accounts. Never fall back to `Work`.
 
 ## Return the result
 
-Return the answer plus a short receipt: actual surface/model/mode/effort;
-verified working profile/window/page and account availability observations;
+Return the answer plus a short receipt: the surface, model, option, and
+effort quoted as read from the page before Send and from the response turn,
+on their own line; the verified working profile/window/page and account
+availability observations on a separate line;
 project and conversation link or identity; attachment filenames and the data
 or code actually retrieved through connectors, including the PR URL when used.
+The model line comes only from those page readings, never from the profile
+label, the request, or the plan; without a reading, say the model was not
+verified and do not call the answer a Pro review.
 Keep three things separate in the receipt: what Pro was shown, what Pro said,
 and the agent's own conclusion. "Pro signed off" alone is not a receipt.
 Mention material prompt shaping and long waits, and report heartbeat cleanup

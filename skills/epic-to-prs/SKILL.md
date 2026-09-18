@@ -130,13 +130,16 @@ seat actually saw plus later local repairs and verification.
 Read the user's seat names exactly and carry them into every child. Reach
 each seat as `issue-to-pr`'s
 [primary-and-final reference](../issue-to-pr/references/primary-and-final.md)
-says: Pro through `$chatgpt-web` with `$browseros`, literal `Pro` in the
-`Chat` surface, in one epic thread per Pro seat supplied by the user or
+says: Pro through `$chatgpt-web` with `$browseros`, literal `Pro` selected
+in the model picker of the `Chat` surface and read back from the page before
+every Send, in one epic thread per Pro seat supplied by the user or
 created in the applicable ChatGPT project; another model as a clean native
 child or an external process through `$agent-delegate` at the exact model
 and effort, with one continuing planning session for D and a clean context
-per review round. Extra High, xhigh, Ultra, Thinking, and the highest
-remaining setting are not Pro.
+per review round. Extra High, xhigh, Ultra, Thinking, the highest
+remaining setting, and a browser profile labeled `Pro` are not Pro: the
+label names the profile, and only the page's picker reading proves the
+model.
 
 Write every submission from the matching family in `$chatgpt-web`'s
 consultation templates (`../chatgpt-web/references/consultation-templates.md`),
@@ -159,14 +162,15 @@ consultation.
 
 If Pro is missing or disabled, treat it as a probable temporary account rate
 limit; an explicit cap triggers the same switch. Follow `$chatgpt-web` and
-`$browseros` to use only the already-open numbered Pro profiles, such as Pro 1
-through Pro 5 or whichever exist. Never use the user's `Work` profile, including
+`$browseros` to use only the already-open consultation profiles, the
+BrowserOS profiles labeled `Pro 1` through `Pro5` or whichever exist, and
+select and read back `Pro` again in the new page. Never use the user's `Work` profile, including
 for fallback or an old thread; preserve its rate-limit capacity.
 Note which eligible profile/window works and use it.
 All should have the same projects. Continue in the
 same-named project with the epic context restated. Record continuation thread
-URLs and reuse the original when available in an eligible Pro profile. Only after
-eligible Pro accounts are exhausted, report their observed conditions and the
+URLs and reuse the original when available in a consultation profile. Only after
+their accounts are exhausted, report their observed conditions and the
 blocked Pro decision. Continue
 independent authorized work. Pause the whole run only when no useful
 independent work remains, and wait for the user to say Pro is back. Never

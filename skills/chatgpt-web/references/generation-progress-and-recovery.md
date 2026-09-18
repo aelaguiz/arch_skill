@@ -124,7 +124,7 @@ attribute to establish that association by itself. This expression only reads.
     userMessageId: userId, userMounted: !!user, laterUserTurn,
     response: {
       turnId: responseId, text: response.innerText,
-      answerMessages: [...response.querySelectorAll('[data-message-author-role="assistant"]')].map(m => ({id: m.getAttribute('data-message-id'), text: m.innerText}))
+      answerMessages: [...response.querySelectorAll('[data-message-author-role="assistant"]')].map(m => ({id: m.getAttribute('data-message-id'), model: m.getAttribute('data-message-model-slug'), text: m.innerText}))
     },
     activityPanelVisible: visible(panel),
     activityText: laterUserTurn ? null : panel?.querySelector('[slot="content"]')?.innerText ?? null,
@@ -143,6 +143,12 @@ belong to that later request; reidentify the current work before using them.
 `userMounted: false` can mean virtualization; it does not undo the recorded
 association or prove a missing submission. A missing/ambiguous response ID
 requires reidentification, never substitution of another mounted response.
+
+Each answer message's `model` is the slug that served it: `gpt-6-pro` for Pro.
+It is absent until the assistant message mounts, so read it as soon as answer
+text arrives. On a Pro consultation any other slug, such as
+`gpt-5-6-thinking`, is a wrong-model submission. Only this turn's slug counts;
+an earlier turn's slug or `Used GPT-6 Pro` footer says what served that turn.
 
 ## Recover without Stop answering
 

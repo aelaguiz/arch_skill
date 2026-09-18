@@ -30,11 +30,23 @@ seats once for the epic; child issues inherit them.
 
 Pro is GPT-6 Astra with the literal `Pro` option, power 5 of 5, and Extended
 thinking where offered, in ChatGPT's `Chat` surface, reached through
-`$chatgpt-web` with `$browseros` applied. Use only the numbered Pro profiles;
-never the user's `Work` profile, including as a fallback. Rate limits,
+`$chatgpt-web` with `$browseros` applied. Use only the consultation profiles,
+the BrowserOS profiles labeled `Pro 1`, `Pro2`, and so on; never the user's
+`Work` profile, including as a fallback.
+
+The seat is the model, not the profile. A label such as `Pro 1` is a name the
+user typed for a browser profile; a page in it sends to whatever model its
+picker holds, which can be ChatGPT's default. A consultation counts for the
+Pro seat only when `$chatgpt-web`'s readings prove it: the picker's selected
+model and `Pro` option read from the page before Send, and the model named
+on the response turn after it. A review that went out on any other model is
+not the seat's review, whichever profile it ran in: stop it, select `Pro`,
+and resend it whole.
+
+Rate limits,
 account switching, and delivery verification are `$chatgpt-web`'s rules.
 Continue the run's thread for the seat, or the epic's thread when the issue
-is inside an epic. Only after eligible Pro accounts are exhausted, report the
+is inside an epic. Only after the consultation profiles' accounts are exhausted, report the
 observed conditions, pause the blocked consultation, continue independent
 work, and wait for the user to say Pro is back.
 
@@ -82,7 +94,9 @@ paste a summary in place of a source.
 
 ## Receipts
 
-Each submission's worklog entry names the seat, exact model and effort,
+Each submission's worklog entry names the seat, exact model and effort
+(for Pro, quoted from the page readings; the profile label goes under
+transport),
 transport, purpose, artifact or revision, thread or session handle, and the
 running count for that seat. The merge-ready report keeps three things
 separate for each seat: what it was shown, what it said, and the
