@@ -77,7 +77,7 @@ Other shipped skills are:
 - `cynical-code-review` — prompt-only skeptical implementation-integrity review that also reconstructs human scope provenance and hard-fails unauthorized scope ratchets/cycling as `not-approved`, normally targeting subtraction
 - `cynical-architecture-review` — prompt-only subtraction-first review that requires durable concepts to trace to human scope or the approved initial closure and hard-fails architecture made "required" through review cycling as `not-approved`
 - `cynical-cruft-removal` — prompt-only skeptical cleanup review that treats current reachability as separate from authorization and reports scope-laundered live code/tests/config/docs/dependencies as a `cruft-found` deletion cluster
-- `exhaustive-code-review` — prompt-only exhaustive review with coverage-led clean native slices, proportional host-aware fanout, parent accounting, approved-scope discipline, and a saved artifact under `/tmp/exhaustive-code-review/`
+- `exhaustive-code-review` — prompt-only exhaustive review driven by a bundled catalog of specific checks; when the user names a worker type or count, deals the catalog slices across that many clean native review children while the parent verifies every finding and owns the verdict; approved-scope discipline and a saved artifact under `/tmp/exhaustive-code-review/`
 - `thermo-nuclear-code-quality-review` — vendored Cursor Team Kit rubric for unusually strict maintainability reviews focused on code-judo simplification, 1k-line file growth, spaghetti branching, abstraction boundaries, and structural quality
 - `startup-pragmatism` — invokable early-stage startup reality check that snaps an agent out of proof/receipt/perfection-maximizing behavior and into 3-person seed-stage operating mode: self-check against eight trace-mined anti-patterns, run the four-question rigor budget (reversibility, cost of wrong vs slow, information available, learning per unit time), and reply with a cut list, a forced decision at current information, and where rigor is still owed
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; uses a new clean same-host native worker and critic when capable, resumes the exact worker for repair, and retains its subprocess machinery as the deliberate external lane
@@ -770,9 +770,13 @@ Use `cynical-cruft-removal` when deletion value and low-value artifact discovery
 
 When explicitly selected, use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim and wants the review saved to
-disk. The skill divides real coverage needs into non-overlapping new clean
-native read-only slices, bounds fanout by host slots, collision risk, and parent
-integration capacity, and accounts for every return before writing `target.md`,
+disk. The skill applies every slice of its bundled review catalog whose inputs
+are present in the target and records a final state for each applied check. When
+the user names a worker type or count ("use 12 sonnet agents"), it deals the
+slices across that many new clean native read-only children of exactly that
+type, bounds fanout by host slots, collision risk, and parent integration
+capacity, verifies every reported finding in the parent, and accounts for every
+return before writing `target.md`,
 `coverage.md`, `findings.md`, and `verdict.md` under
 `/tmp/exhaustive-code-review/...`. Its verdicts are `approve`, `not-approved`,
 or `coverage-incomplete`.

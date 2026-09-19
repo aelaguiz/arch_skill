@@ -907,8 +907,11 @@ Practical rule:
 
 When explicitly selected, use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim, and wants the review saved to
-disk. It uses coverage-led clean native read-only slices, bounds fanout by host
-slots, collision risk, and parent integration capacity, reviews touched files, changed
+disk. It applies every slice of its bundled review catalog whose inputs are
+present, and when the user names a worker type or count it deals those slices
+across that many clean native read-only children while the parent verifies every
+reported finding. It bounds fanout by host slots, collision risk, and parent
+integration capacity, reviews touched files, changed
 hunks, abstractions, callers, duplicate paths, side doors, stale truth,
 tests/proof, docs, generated artifacts, prompts, config, and other live truth
 surfaces, then saves
@@ -920,6 +923,7 @@ Examples:
 
 - `Use $exhaustive-code-review on this full branch`
 - `Use $exhaustive-code-review on the current diff`
+- `Use $exhaustive-code-review on this branch with 12 sonnet agents`
 - `Use $exhaustive-code-review for Phase 4 of docs/MY_PLAN.md`
 
 Practical rule:

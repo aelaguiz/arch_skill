@@ -1,524 +1,184 @@
-# Review Catalog
-
-Use this catalog to decide what to look for once the target is mapped. It is
-review doctrine, not a rule system. Apply judgment and cite real evidence.
-
-For every pattern:
-
-- name the concept the change touches
-- identify the canonical owner, or say there is no clear owner yet
-- search for old and alternate paths that can still express the same concept
-- read representative callers, readers, writers, tests, docs, prompts, schemas,
-  generated artifacts, config, and examples when they matter
-- decide whether the change converges the system or leaves two ways to be right
-- flag only changed-code or changed-scope risks with concrete evidence
-
-## Split-Brain Or Bifurcated Abstraction
+# Review Catalog Index
 
-Flag when the system has two live ways to express, mutate, validate, render,
-serialize, route, prompt, or configure the same concept.
-
-Common signs:
-
-- old service and new service both callable
-- old command path and new command path both registered
-- two schemas describe the same contract
-- one feature reads from the central store while another reads a local copy
-- docs or examples teach an old path that still works
-- direct mutation bypasses the intended owner
-- two generated artifacts can drift
-
-Read:
-
-- new owner and old owner
-- public entrypoints that reach either owner
-- representative internal callers
-- tests and fixtures that instantiate either model
-- docs, examples, prompts, schemas, and generated artifacts that name either
-  model
-
-Block when both paths remain live and can affect real behavior, callers can
-choose between models, the bridge is implicit, or docs/tests still make the old
-path look supported.
-
-Do not block when the old path is unreachable, the two paths intentionally
-serve different products or versions, or there is a short explicit migration
-shim with no new callers and a deletion point.
-
-Example:
-
-```markdown
-### [BLOCKING] New session writer bypasses the canonical save service
-
-- File: src/editor/ToolbarSaveButton.tsx
-- Symbol / line: `handleSave`
-- Risk: The button now calls `writeSessionDraft` directly while the rest of the
-  editor saves through `EditorSessionService.save`. That creates two live save
-  paths with different validation and retry behavior.
-- Evidence: `ToolbarSaveButton.tsx` calls `writeSessionDraft`; existing callers
-  in `src/editor/session/` use `EditorSessionService.save`.
-- Repair target: Route toolbar save through the canonical session service or
-  move the new validation into that owner and migrate callers.
-- Review pattern: split-brain abstraction
-```
-
-## Missed Centralized Owner
-
-Flag when local code repeats behavior that belongs in an existing service,
-schema, helper, adapter, prompt reference, config owner, or domain model.
-
-Common signs:
-
-- caller repeats validation instead of using the owner
-- one package knows internals of another package
-- UI reaches around state/session/persistence owner
-- script reimplements runtime behavior
-- tests encode production rules instead of calling canonical behavior
-- skill or prompt copies policy that should live in a shared reference
-
-Read:
-
-- existing owner that appears to own the concept
-- new local copies of validation, normalization, parsing, routing, or policy
-- callers that can now choose between central and local behavior
-- tests that may have copied the rule instead of exercising the owner
-
-Block when local code repeats a rule with one obvious owner, callers must know
-an ordering convention, the helper exists because the owner was inconvenient, or
-tests can pass while production behavior diverges from the owner.
-
-Do not block when the local rule is truly presentation-only, ordinary adapter
-glue, or the supposed central owner does not own the changed concept after
-reading the code.
-
-Example:
-
-```markdown
-### [BLOCKING] Form validation duplicates the account schema
-
-- File: src/account/AccountForm.tsx
-- Symbol / line: `validateLocalAccount`
-- Risk: The form reimplements account-name validation instead of using
-  `accountSchema`. The API and UI can now disagree on valid names.
-- Evidence: `validateLocalAccount` checks length and character rules locally;
-  `src/account/accountSchema.ts` already owns the same contract.
-- Repair target: Route form validation through the canonical schema or extract
-  the shared rule into the schema owner.
-- Review pattern: missed centralized owner
-```
-
-## Partial Migration
-
-Flag when one route, caller, feature, command, or artifact moved to the new
-model while adjacent same-contract paths still use the old model.
-
-Common signs:
-
-- one UI action uses the new service while a sibling action still calls the old
-  writer
-- one route accepts the new schema while a sibling route accepts the old shape
-- one generated file is updated but another generated consumer is stale
-- one command family moved to a new registry but aliases still point at the old
-  registry
-- feature flag keeps both paths selectable after migration is claimed
-
-Read adjacent routes, commands, jobs, components, prompts, scripts, API methods,
-old aliases, compatibility flags, fallback readers, direct mutation paths, docs,
-examples, and migration notes when present.
-
-Block when user-visible behavior can still enter through the old path, both
-data shapes remain accepted without one adapter boundary, or branch/plan intent
-promised migration, centralization, or deletion that did not happen.
-
-Do not block when scope explicitly migrates only one isolated caller and leaves
-a named follow-up with no shared invariant broken, or compatibility normalizes
-immediately through one adapter.
-
-Example:
-
-```markdown
-### [BLOCKING] CLI migrated to the new config loader but scheduled jobs did not
-
-- File: src/jobs/nightlyImport.ts
-- Symbol / line: `loadImportConfig`
-- Risk: The CLI now uses `ConfigService`, but nightly jobs still read env vars
-  directly. The same import can run with different defaults by entrypoint.
-- Evidence: `src/cli/import.ts` calls `ConfigService.loadImportConfig`;
-  `nightlyImport.ts` still reads `process.env.IMPORT_BATCH_SIZE`.
-- Repair target: Move the job to `ConfigService.loadImportConfig` or add a
-  single adapter that both entrypoints use.
-- Review pattern: partial migration
-```
-
-## Name-Only Completion Or False Simplification
-
-Flag when a change looks complete at the naming, convention, wrapper, checklist,
-or phase-label level, but the old behavior or complexity remains live
-underneath.
-
-Common signs:
-
-- a new "canonical" owner exists but callers still use the old owner
-- a wrapper or facade has the right name but forwards to old behavior unchanged
-- a "unified" path covers only one happy path while siblings stay split
-- a simplification adds a layer without deleting an older concept
-- a plan or completion note says migrated/deleted/centralized, but code still
-  exposes the old route, command, prompt, fixture, config, or generated artifact
-- tests assert the new label or wrapper instead of the intended outcome
-
-Read the actual control flow, data flow, callers, old entrypoints, side doors,
-tests, docs, prompts, examples, and generated artifacts. Treat names and phase
-status as claims to verify against runtime behavior, not proof.
-
-Block when apparent completion can coexist with the old behavior, two truths,
-side doors, or extra complexity the change was supposed to remove.
-
-Do not block when the old path is unreachable, the wrapper now owns a real
-invariant, or the plan explicitly scoped a temporary bridge with a deletion
-point.
-
-Example:
-
-```markdown
-### [BLOCKING] `UnifiedImportService` leaves the old import path live
-
-- File: src/import/UnifiedImportService.ts
-- Symbol / line: `runImport`
-- Risk: The new service gives the migration a unified name, but scheduled jobs
-  still call `legacyImport`. The same import behavior now has two live owners.
-- Evidence: `UnifiedImportService.runImport` handles the CLI path;
-  `src/jobs/nightlyImport.ts` still calls `legacyImport` directly.
-- Repair target: Route the job through the unified service or delete the old
-  path if it is no longer supported.
-- Review pattern: name-only completion
-```
-
-## Wrong-Layer Logic
-
-Flag feature-specific logic in shared layers, transport details in domain
-logic, persistence details in UI, product judgment in low-level utilities, or
-agent workflow policy hidden in scripts.
-
-Common signs:
-
-- shared helper knows a specific feature name
-- UI component directly writes persistence state
-- domain model knows HTTP or GraphQL response details
-- script decides product, workflow, or agent-review policy instead of narrow
-  mechanics
-- prompt or skill hardcodes repo-local workflow policy that belongs elsewhere
-
-Read package boundaries, new imports, nearby ownership names, existing adapters,
-service boundaries, and tests that now need internal knowledge.
-
-Block when dependency direction is wrong, callers must understand internal
-lifecycle details, future features are likely to copy the wrong layer, or a
-script/generated artifact now owns reasoning that should stay in code or agent
-judgment.
-
-Do not block when the code is a true adapter and immediately normalizes the
-shape across layers.
-
-Example:
-
-```markdown
-### [BLOCKING] Shared renderer imports lesson-specific QA types
-
-- File: src/ui/playable_surface/renderSurface.ts
-- Symbol / line: `renderSurfaceControls`
-- Risk: The shared renderer imports lesson QA command types, which leaks
-  feature-specific QA behavior into the shared rendering layer.
-- Evidence: `renderSurface.ts` imports `LessonQaCommand`; nearby shared surface
-  files depend only on surface interfaces.
-- Repair target: Move lesson command mapping behind a lesson-owned adapter or
-  pass only the shared command interface into the renderer.
-- Review pattern: wrong-layer logic
-```
-
-## Thin Or Fake Abstraction
-
-Flag wrappers and helpers that add a live concept without removing real
-complexity, naming a real domain concept, hiding a dangerous boundary, reducing
-caller burden, or making invalid use harder.
-
-Common signs:
-
-- manager/facade only forwards arguments unchanged
-- helper exists for one call site and has no domain name
-- abstraction accepts a bag of flags instead of owning a state model
-- wrapper makes tests mock the wrapper instead of behavior
-- new layer has the same method names as the wrapped layer
-- "future flexibility" is the only reason it exists
-
-Read call sites before and after, repeated logic the abstraction claims to
-remove, invariants it claims to own, and tests that now mock it.
-
-Block when the abstraction removes no meaningful complexity, hides a dangerous
-boundary, creates a second API, or weakens behavior proof.
-
-Do not block when the wrapper names a real domain concept, hides a risky
-boundary, reduces caller burden, or is needed to split a large file into a clear
-owned unit.
-
-Example:
-
-```markdown
-### [BLOCKING] `CommandExecutionFacade` is a second command API
-
-- File: src/commands/CommandExecutionFacade.ts
-- Symbol / line: `execute`
-- Risk: The facade forwards to `CommandService.execute` with the same
-  arguments. It gives callers two equivalent APIs and no new invariant.
-- Evidence: New callers import the facade while existing callers use
-  `CommandService`.
-- Repair target: Delete the facade or move a real invariant into the canonical
-  command service.
-- Review pattern: thin abstraction
-```
-
-## Drift-Prone Proof
-
-Flag tests and proof that pass while the real behavior can still be wrong.
-
-Common signs:
-
-- test repeats the same conditional as production code
-- test asserts a helper was called but not the behavior that matters
-- integration behavior is tested only through mocked adapters
-- deletion is tested by grep or absence without proving old behavior is
-  unreachable
-- fixture builds impossible states production cannot produce
-- snapshot blesses a stale contract without semantic assertion
-
-Read changed tests, fixtures, production behavior under test, existing
-higher-level tests, and the bug or obligation the proof is supposed to protect.
-
-Block when risky behavior changed without behavior-boundary proof, tests prove
-mocks or duplicated rules, fixtures make impossible states look valid, or
-claimed deletion leaves old behavior reachable.
-
-Do not block when the change is low-risk and already covered by typecheck,
-build, or existing tests, or when a unit test is the correct proof for a truly
-isolated shared owner.
-
-Example:
-
-```markdown
-### [BLOCKING] Test repeats the permission rule instead of exercising it
-
-- File: tests/admin/deleteUser.test.ts
-- Symbol / line: `canDeleteFixture`
-- Risk: The test duplicates the admin permission conditional in fixture setup.
-  If production permission logic changes, the test can still pass.
-- Evidence: `canDeleteFixture` checks role and org status locally; production
-  permission lives in `src/auth/permissions.ts`.
-- Repair target: Build the test through the production permission API or add an
-  integration assertion that reaches it.
-- Review pattern: drift-prone proof
-```
-
-## Stale Truth Surface
-
-Flag docs, comments, examples, prompt references, generated files, telemetry
-names, stable IDs, and install commands that now teach the wrong thing.
-
-Common signs:
-
-- README command uses old CLI, env var, or API
-- examples instantiate old APIs
-- prompt instructions name archived workflows as live behavior
-- generated artifact was not regenerated after schema changes
-- telemetry event names still imply old behavior
-- comments explain a retired invariant
-
-Read touched docs plus docs/examples/prompts/generated artifacts that mention
-changed symbols, commands, routes, schemas, env vars, public APIs, or install
-surfaces.
-
-Block when a future developer or agent would copy stale instructions and
-reintroduce the old path, generated artifacts contradict runtime code, or public
-commands/install behavior changed while live docs teach the old contract.
-
-Do not block historical docs clearly marked historical, internal changes with
-no live truth surface, or stale surfaces unrelated to changed behavior.
-
-Example:
-
-```markdown
-### [BLOCKING] README still teaches direct writer usage
-
-- File: README.md
-- Symbol / line: `Saving drafts`
-- Risk: Code migrates draft writes behind `DraftService`, but the README still
-  shows callers importing `writeDraft` directly.
-- Evidence: README example imports `writeDraft`; changed production code routes
-  through `DraftService.save`.
-- Repair target: Update the live example to use `DraftService` or remove it.
-- Review pattern: stale truth surface
-```
-
-## Boundary, Lifecycle, And Error Gap
-
-Flag changed code that crosses a platform, SDK, network, auth, storage,
-process, filesystem, UI lifecycle, or other external boundary without carrying
-the boundary's failure modes and cleanup obligations.
-
-Common signs:
-
-- network call assumes success or ignores partial failure
-- filesystem write is non-atomic where partial state matters
-- async work has no cancellation or stale-result guard
-- listener, timer, or handle is not cleaned up
-- retry hides permanent failure
-- error handling logs sensitive data or swallows the only diagnostic
-
-Read boundary wrappers, nearby error conventions, caller expectations on
-failure, tests/telemetry/messages for failure paths, and primary docs only when
-current platform behavior matters.
-
-Block when reachable failure corrupts state, hides data loss, leaks data,
-leaves resources alive, or moves lifecycle cleanup into caller memory.
-
-Do not block when the canonical boundary already owns the failure mode and the
-changed code uses it correctly.
-
-Example:
-
-```markdown
-### [BLOCKING] Import job can leave half-applied state on API failure
-
-- File: src/jobs/importCustomers.ts
-- Symbol / line: `runImport`
-- Risk: Customers are saved before the remote cursor update succeeds. If cursor
-  update fails, the next run can import the same page again.
-- Evidence: `saveCustomers(page.items)` runs before `updateCursor(page.next)`;
-  the update error is logged but does not roll back or make the write
-  idempotent.
-- Repair target: Put customer writes and cursor update behind one transaction
-  or make import idempotent through the canonical service.
-- Review pattern: boundary lifecycle error
-```
-
-## Caller Contract And Invariant Leak
-
-Flag APIs where correct use depends on caller memory instead of type shape,
-ownership, routing, or fail-loud enforcement.
-
-Common signs:
-
-- boolean flags select incompatible modes
-- nullable fields allow impossible combinations
-- caller must call methods in a hidden order
-- caller must pass matching arrays, indexes, or IDs by convention
-- caller chooses between old and new APIs
-- error-prone sequence is repeated across call sites
-
-Read public signatures, changed call sites, representative existing call sites,
-type definitions, runtime guards, and tests that prove invalid states fail.
-
-Block when a new impossible state exists, callers can misuse the API without
-immediate failure, or an invariant moved from the owner into caller convention.
-
-Do not block when the API is private to one file and all callers are visible
-and safe, or a stronger type/parser/schema/runtime guard prevents the state.
-
-Example:
-
-```markdown
-### [BLOCKING] Nullable state allows saved-but-unvalidated sessions
-
-- File: src/session/sessionState.ts
-- Symbol / line: `SessionState`
-- Risk: `validatedAt?: Date` lets callers create a saved session with no
-  validation timestamp, while downstream code treats saved sessions as
-  validated.
-- Evidence: `saveSession` accepts `SessionState`; `renderSessionBadge` checks
-  only `state.saved`.
-- Repair target: Represent draft, validated, and saved states as distinct
-  variants or make `saveSession` own validation.
-- Review pattern: invariant leak
-```
-
-## Agent, Prompt, Or Skill Surface Regression
-
-Flag instruction-bearing changes that make agents less capable, less truthful,
-or more likely to bypass judgment.
-
-Common signs:
-
-- skill prose depends on hidden history instead of runtime context
-- script owns workflow judgment rather than narrow mechanics
-- prompt replaces reasoning with keyword rules or brittle checklists
-- agent-facing doc names archived commands as live behavior
-- multiple skills claim the same lane with no peer boundary
-- generated skill output and source doctrine can drift
-- install docs, runtime metadata, and README disagree
-
-Read changed `SKILL.md`, `AGENTS.md`, `CLAUDE.md`, prompt files, `agents/*.yaml`,
-generated outputs, install docs, Makefile targets, and sibling skills with
-overlapping descriptions.
-
-Block when a shipped skill depends on archived runtime files, judgment moves
-into a runner without deterministic need, trigger metadata overlaps a peer, or
-source/generated/install surfaces disagree.
-
-Do not block when a checklist is a judgment aid and the agent still owns
-synthesis, or a script performs narrow mechanics with bounded output.
-
-Example:
-
-```markdown
-### [BLOCKING] Skill trigger overlaps `plan-audit`
-
-- File: skills/example-review/SKILL.md
-- Symbol / line: `description`
-- Risk: The description claims both generic branch review and plan-backed
-  implementation review, making routing ambiguous with `plan-audit`.
-- Evidence: Description says "review any branch or plan implementation";
-  `plan-audit` already owns plan-backed implementation review.
-- Repair target: Narrow the trigger to the actual lane and add a handoff line.
-- Review pattern: agent prompt skill surface
-```
-
-## Security And Trust Boundary Regression
-
-Flag only reachable security risks introduced or worsened by the reviewed
-change. Do not emit generic security warnings.
-
-Common signs:
-
-- user input reaches command execution, SQL, shell, filesystem paths, HTML,
-  templates, deserialization, or network requests
-- auth or authorization moves from owner to caller
-- logs include secrets, tokens, credentials, PII, or request bodies
-- dependency or infrastructure trust changes without pinning or validation
-- file upload, archive extraction, or path handling lacks normalization
-- tenant, account, org, or workspace boundary assumptions changed
-
-Read the changed trust boundary, validation/escaping/logging/auth owners, paths
-from input source to sink, and authoritative external security docs only when
-the claim depends on current external behavior.
-
-Block when untrusted input reaches a dangerous sink, authorization becomes
-caller memory, sensitive data can leak, or tenant/account/org/workspace
-isolation can be bypassed.
-
-Do not block when the value is not attacker-controlled and the reviewer can
-cite why, or the canonical boundary validates the value and all changed paths
-use that boundary.
-
-Example:
-
-```markdown
-### [BLOCKING] Export path trusts user-controlled filenames
-
-- File: src/export/writeExport.ts
-- Symbol / line: `writeExport`
-- Risk: The export path joins a user-provided filename directly into the output
-  path. A crafted filename can write outside the export directory.
-- Evidence: `path.join(exportDir, request.filename)` is used without basename
-  or normalization checks; `request.filename` comes from the API body.
-- Repair target: Normalize and validate filenames at the export boundary, or
-  generate server-owned filenames.
-- Review pattern: security trust boundary
-```
+Every check in the catalog, grouped by slice file: 67 checks in 16 slice files. Use this index to decide
+which slices apply to the review target, to divide slices among children, and
+to look up the entry for a finding you are verifying. The entries themselves
+are in the slice files: what to read and compare, when to block, when not to,
+and example findings.
+
+A slice applies when the target actually contains what its header says it
+needs. Record slices that do not apply in `coverage.md` with the input that was
+missing.
+
+
+## Code and pull request checks
+
+Apply when the target has a diff.
+
+
+### `catalog-code-agent-and-prompt-surfaces.md`
+
+Applies when the diff touches prompts, skills, agent instructions, or workflow configuration: a skill package, a prompt or agent definition file, a repository-level instruction file, a reviewer or generator prompt, and the scripts, metadata, and generated copies that ship beside them. These files are live product surface and get the same reading as application code.
+
+- **C-41 Judgment replaced by a rule, a script, or a gate.** Does this change take a decision away from the agent that the agent should be making?
+- **C-44 An agent-facing surface that no longer matches what runs.** Would an agent that has only this changed surface and the repository do the right thing?
+
+
+### `catalog-code-async-and-concurrency.md`
+
+Applies when the change contains asynchronous work, concurrency control, shared or persisted state written from a response, or a destructive write. Needs the diff and the repository at head; C-30 also needs the repository's own instructions.
+
+- **C-21 Guard before the await, not after.** Can the owner of this work change between the guard that approved it and the write that follows?
+- **C-22 Detached async work with no error owner.** If this detached work fails, does anything hear about it?
+- **C-23 A result that arrives after its moment.** Can a late, superseded, or cancelled result still change state or be reported as accepted?
+- **C-30 New locking or elevated isolation.** Does this change add concurrency machinery to business state that operation identity and database constraints would handle?
+- **C-35 A destructive write before the replacement lands.** If the process dies between the deletion and the completed replacement, what is left live, and can it be rebuilt?
+
+
+### `catalog-code-comments-and-claims.md`
+
+Applies when the change contains code whose correctness is not visible from reading it, a deliberate departure from what the surrounding code does, or prose that describes the change. Needs the diff, the repository at head with history for the touched lines, and whatever prose accompanies the change: the request, the pull request body, the README, and changed comments.
+
+- **C-19 Non-obvious code with no why-comment.** Does each delicate thing this change introduces say why it is that way and what breaks if someone changes it?
+- **C-20 Temporary or divergent code with no label.** Does every deliberate departure in this change say at the site that it is deliberate, why it is there, and what the end state is?
+- **C-26 Prose claims more than the code establishes.** Does every claim in the prose around this change have a line of code or a named test that makes it true?
+
+
+### `catalog-code-environment-trust-data.md`
+
+Applies when the change touches how the software is built, installed, or launched, or contains SQL. Needs the diff and the repository at head, plus the build, continuous-integration, and deploy declarations for C-27, and the schema of every column the changed SQL compares for C-34.
+
+- **C-27 Environment and config parity gap.** Does the path this change was exercised on declare the same environment as the path that ships?
+- **C-34 SQL construction defects.** Can a value the producer really emits make this query return something other than what its author intends?
+
+
+### `catalog-code-failure-handling.md`
+
+Applies when the change touches an error path, a default for a missing value, a user-facing state that exists because something went wrong, a status gate, or a call into a vendor SDK. Needs the diff and the repository at head; C-12 also needs the request. These six checks ask what the code does when something is missing or fails. Report each defect once, under the check that found it.
+
+- **C-10 A catch or guard that reports nothing.** Can an error path this change touches fail with nothing reporting it?
+- **C-11 A missing value defaulted into a valid one.** Can a consumer tell a measured value from no measurement here?
+- **C-12 A failure rendered as a user experience.** Does this change render a state that exists because something failed?
+- **C-13 Diagnostic data trimmed, mapped, or redacted.** Does the report leaving this code carry what the provider returned?
+- **C-24 A fail-open status gate.** Does an unrecognized, blank or missing value take the good path here?
+- **C-31 An unwrapped platform SDK call.** Can a changed call into a vendor SDK throw past its error boundary?
+
+
+### `catalog-code-fix-quality.md`
+
+Applies when the change fixes a reported defect. Needs the diff, the repository at head, and the bug report, issue, or counterexample the fix cites.
+
+- **C-15 The fix landed on the reported site only.** Does every other consumer of the thing this fix is about have the same protection the patched site now has?
+- **C-16 Asymmetric fix: one branch of two.** Was the same defect left in the mirror branch of the decision this fix touched?
+- **C-17 Symptom fixed, cause untouched.** After this fix, can the condition that produced the failure still occur?
+- **C-18 The check was loosened to pass.** Did the acceptance bar move in the same change that claims the thing now passes?
+- **C-42 The fix's own new code reopens the class.** Does the code this fix adds contain a fresh instance of the defect class it repairs?
+
+
+### `catalog-code-layers-and-contracts.md`
+
+Applies when the change moves logic across a module or package boundary, adds an import between layers, or changes a signature, a type, or a calling convention. Needs the diff, the repository at head for the boundaries and the existing adapters, and the call sites of every changed interface.
+
+- **C-38 Logic placed in the wrong layer.** Does this change put feature-specific or lower-level knowledge in a layer that should not hold it?
+- **C-39 A caller must remember an invariant the boundary should enforce.** Can a caller of this changed interface get it wrong without failing immediately?
+
+
+### `catalog-code-owners-and-paths.md`
+
+Applies when the change has a diff. Needs the repository at head as well: every check here compares something in the change against code that is not in the change, so none can be done from the diff text alone.
+
+- **C-01 The superseded path is still on disk.** Did everything this change says it removed actually stop existing?
+- **C-02 Unification in name but not in fact.** Did the number of live implementations actually go down?
+- **C-03 Callers not moved, or an adoption count of one.** Does any surface doing the same job still reach the old mechanism?
+- **C-04 A second implementation of an owned concept.** Does something in the repository already own the concept this new symbol computes, parses, validates, styles, fetches, or decides?
+- **C-05 Two live paths decide the same fact differently.** Can two live paths give different answers about the same fact?
+
+
+### `catalog-code-scope-and-surprise.md`
+
+Applies when the change has a diff and the target carries what commissioned it: the request, issue, plan, or instruction, plus the description the change ships with. Needs the trunk for comparison, and a run or screenshots for the visual half of C-07 when the target has them.
+
+- **C-06 A user-visible change nobody commissioned.** Would the person who commissioned this work be surprised to find this behavior in the result?
+- **C-07 Collateral change under a non-product scope.** The stated scope was not a product change — did look, feel, and when things happen come out identical to the trunk?
+- **C-37 The diff leaves the named surface.** Does every changed path fall inside the surface the task named?
+
+
+### `catalog-code-size-and-machinery.md`
+
+Applies when the change has a diff and the target carries the request that commissioned it. Needs the diff and its stat, the originating request, the repository at head, and the repository's own instruction file, which says whether this is a product, a hobby project, or an experiment. C-40 also needs the report, issue, or alarm the change answers, for how often the defect occurs.
+
+- **C-08 Change size against the ask.** Is the durable machinery in this change a large multiple of what the request describes?
+- **C-09 A new flag, mode, knob, or approval state.** Did the request ask for this control surface?
+- **C-36 Test or receipt machinery added to a fix.** Did the request ask for the verification machinery this change adds?
+- **C-40 A repair riskier than the defect it answers.** Does this change put more at risk than the defect it repairs costs?
+
+
+### `catalog-code-telemetry-and-state.md`
+
+Applies when the change touches analytics events, a persisted or published status field, the shape of state a caller has to interpret, a clock read, or a schema, wire or dependency contract. Needs the diff and the repository at head; C-14 and C-33 also need the other side of the contract — the event definitions and the queries that read them, or the client, second repository or lockfile still holding the old shape. These five checks ask what the system records and how it represents it. Report each defect once, under the check that found it.
+
+- **C-14 Telemetry removed, renamed, gated, or absent.** Did this change lose an event, or ship a flow without one?
+- **C-25 Derived status recorded as observed fact.** Does each status field's name match the event that sets it?
+- **C-29 One field carrying two meanings.** Does any field this change touches take part in two decisions?
+- **C-32 Device clock used to derive product state.** Is a clock read here stamping an event, or deciding something?
+- **C-33 A schema or wire change with no compatibility answer.** What does a reader or writer on the old contract do after this lands?
+
+
+## Proof and completion checks
+
+Apply when the target includes a completion claim, a PR description, tests, run evidence, or screenshots.
+
+
+### `catalog-proof-completion-claims.md`
+
+Applies when the target carries a completion claim, a PR body, a status report, or a worker's summary. Needs the claim text, the artifacts it cites, the ask, and the repository at head. Report each defect once, under the check that found it.
+
+- **V-01 A completion claim with nothing outside itself.** Does this completion rest on an artifact outside the claim whose content was read back?
+- **V-05 Evidence that proves an earlier hop.** Does the cited evidence measure the thing the claim asserts, or something upstream of it?
+- **V-11 A prescribed step or model not shown to have run.** Did the load-bearing step or model the ask named run, shown by something that could only exist if it had?
+- **V-14 Merged treated as delivered.** Is the work this claim calls live actually running from a revision that contains it?
+- **V-15 A claim sourced from a document or an agent.** Does each load-bearing fact come from a source that can be executed or queried rather than from something someone wrote?
+- **V-20 A requirement dropped between ask and delivery.** Does every requirement in the authorizing ask have an artifact in the delivery, or an authorization to drop it?
+- **V-21 A completion that discloses a defect.** Does the completion claim disclose an unresolved defect, a caveat, or a moved bar in its own text?
+
+
+### `catalog-proof-fixtures-and-consistency.md`
+
+Applies when the target has tests with fixtures or helpers, or an analysis or completion claim that sits beside earlier conclusions on the same subject. Needs the diff including tests and fixtures, the repository at head, the production code that would really produce the fixture's data, and the earlier documents on the subject.
+
+- **V-24 A test that drains or retries its way to green.** Could this test reach its assertions by consuming or re-attempting whatever it met, instead of by the expected thing happening?
+- **V-25 A fixture the real producer could not emit.** Could the production path that feeds this code have produced exactly this input?
+- **V-23 A conclusion that contradicts the earlier one.** Does this conclusion disagree with what the canonical earlier document on the same subject concluded, without saying which is true?
+
+
+### `catalog-proof-pictures.md`
+
+Applies when the change touches user-visible code and the target carries screenshots, a mock, or both. Needs the images themselves, opened, the diff, and the ask. Both checks need a reviewer that can open images; where it cannot, both return could not evaluate rather than clean. V-12 asks whether the images exist, render, and show the claimed state; V-13 asks what they show against the mock, so a missing image set is V-12's alone.
+
+- **V-12 Before and after images missing or wrong.** Do the images on this change exist, render, and show the states they claim?
+- **V-13 The built screen not itemized against the mock.** Did someone open the built screen and the mock together and write out the differences?
+
+
+### `catalog-proof-run-evidence.md`
+
+Applies when the target has run logs, a named CI run, a test guide, or a scheduled job. Needs the completion claim, the diff, and the run evidence itself. V-02 compares the claim's surface against the surface that ran and V-22 compares the run's inputs against the changed paths, so one end-to-end run on the real surface satisfies both and is flagged by neither.
+
+- **V-02 No end-to-end run on the real surface.** Was the behavior this claim names exercised on the surface a user actually touches?
+- **V-03 A run with no device or build identity.** Does the run evidence say which device it ran on and which build it ran?
+- **V-10 Green CI accepted without checking what ran.** Did the cited green run select and exercise the changed code at the head under review?
+- **V-16 A procedure written but never executed.** Has anyone walked the procedure this change adds, as written?
+- **V-17 An improvement claimed with no number.** Does this improvement claim carry a before, an after, and the target it is measured against?
+- **V-22 Verification spend the user did not authorize.** Does each test or CI run here carry information the change actually needs?
+
+
+### `catalog-proof-tests.md`
+
+Applies when the change contains tests, fixtures, verification code, or a run offered as proof. Needs the diff including tests, the repository at head, the defect or requirement the proof cites, and the run record when a run is evidence.
+
+- **V-04 A test that cannot fail on the defect.** If the lines this test guards broke again, would the test go red?
+- **V-06 The test replaces the boundary the change touched.** Does this test still run the code the change edited, or a stand-in?
+- **V-07 The oracle comes from the thing under test.** Did the expected value come from anywhere but the code under test?
+- **V-08 An assertion a family of wrong values satisfies.** Does the value the defect produces satisfy this assertion?
+- **V-09 An absence proved with no positive control.** Does anything show this harness detects the thing it reports zero of?
+- **V-18 A retained test requiring the removed behavior.** Does a retained test or document still demand the removed behavior?
+- **V-19 Verification code that checks existence only.** Would this verifier report success on a non-empty but wrong input?

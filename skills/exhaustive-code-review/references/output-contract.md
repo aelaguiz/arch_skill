@@ -44,12 +44,17 @@ Record what was reviewed:
 - tests, fixtures, proof, docs, examples, comments, schemas, generated
   artifacts, prompts, config, telemetry, stable IDs, install surfaces, and
   package metadata when relevant
-- child accounting for every launched review slice: lens and path ownership,
-  clean or explicitly justified inherited context, final state, evidence the
-  parent accepted or rejected, and the pre/post-dispatch repository-state check
+- catalog accounting: which slices applied, which did not and the input that
+  was missing, and for every applied check its final state (finding, clean, or
+  could not evaluate with the reason). A compact table is fine.
+- child accounting for every launched cell: the slice and paths it owned, the
+  worker type that actually ran, clean or explicitly justified inherited
+  context, final state, which reported findings the parent accepted, rejected,
+  or merged and why, and the pre/post-dispatch repository-state check
 - known coverage gaps
 
-Keep this as prose and compact lists. It is not a formal checklist engine.
+Keep this as prose, compact lists, and at most one table. These are review
+notes, not a checklist engine.
 
 ## `findings.md`
 
@@ -64,13 +69,15 @@ Use this shape for each finding:
 - Evidence: <diff, file, child report, command output, source anchor, or "see file">
 - Scope disposition: <authorized | approved-convergence-required | new-scope-needs-human | out-of-scope | unauthorized-built-scope | not applicable>
 - Repair target: <what must change, without writing the patch>
-- Review pattern: <catalog pattern>
+- Review pattern: <catalog check id and name>
 ```
 
 Rules:
 
 - Findings must be tied to changed code or the requested review scope.
-- Findings must cite evidence the reviewer actually read.
+- Findings must cite evidence the reviewer actually read. A finding that came
+  from a child is included only after the parent has opened the code and
+  confirmed it.
 - Any in-scope competing path, duplicate owner, side door, stale truth surface,
   proof gap, or changed-code risk that must change before approval is a
   `REQUIRED REPAIR`.
@@ -115,7 +122,7 @@ VERDICT: approve | not-approved | coverage-incomplete
 ## Coverage Summary
 
 - Scope reviewed:
-- Native review slices and repository-state check:
+- Catalog slices applied, worker type and count, and repository-state check:
 - Files/hunks/abstractions covered:
 - Competing paths, side doors, and adjacent surfaces:
 - Proof/docs/generated/prompt surfaces:
