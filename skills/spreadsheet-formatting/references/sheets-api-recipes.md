@@ -24,8 +24,13 @@ Gotchas that cost time:
 - `gws` prints `Using keyring backend: keyring` on the first line; strip it
   before `json.loads`.
 - Work on a copy (`drive files copy`) when the user has not asked for edits
-  to the live file; say which file you touched.
-- `values.update` with `RAW` stores formulas as text; use `USER_ENTERED`.
+  to the live file; say which file you touched. Keep the copy's file id
+  from the `copy` reply and address every later write to it explicitly:
+  across several tool calls it is easy to drift back to the original id.
+- `values.update` with `RAW` stores formulas as text; formulas and anything
+  Sheets should parse need `USER_ENTERED`. `RAW` is right for literals that
+  must stay exact: numeric JSON values, and text that `USER_ENTERED` would
+  parse (`1/2`, `3-4`, codes with leading zeros).
 - Field masks: `fields` lists exactly the properties you send. A bare
   `"fields": "userEnteredFormat"` resets every unlisted format property on
   the range to default; that is useful once when rebuilding a tab and
