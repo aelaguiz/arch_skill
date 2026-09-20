@@ -1,7 +1,7 @@
 interface:
   display_name: "BrowserOS"
   short_description: "Safe preflight for direct BrowserOS MCP use"
-  default_prompt: "Use $browseros for this browser task. Apply its focus, profile/window/page, ownership, and outcome rules. Read its Terms first: Work and pro1 are browser profile labels, not ChatGPT's Work surface or the Pro model. For ChatGPT, use only the existing consultation profiles (labeled pro1, pro2, and so on); never use the user's Work browser profile, including as a fallback. A profile label names a browser profile and never proves the ChatGPT model; read the selected model from the live page. Verify field contents and any submission triggered by typing; read the operating references needed for the task."
+  default_prompt: "Use $browseros for this browser task. Apply its focus, profile/window/page, ownership, and outcome rules. Read its Terms first: Work and pro1 are browser profile labels, not ChatGPT's Work surface or the Pro model. For ChatGPT, use only the existing consultation profiles (labeled pro1, pro2, and so on); never use the user's Work browser profile, including as a fallback. A profile label names a browser profile and never proves the ChatGPT model; read the selected model from the live page. Logins, SSO, and OAuth pages open in the Work window by your own newPage call; a login wall or account chooser outside Work means the wrong window, not a missing credential, and a command-line login never launches the browser. Verify field contents and any submission triggered by typing; read the operating references needed for the task."
 
 dependencies:
   tools:

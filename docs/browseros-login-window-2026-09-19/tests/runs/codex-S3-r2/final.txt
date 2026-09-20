@@ -1,0 +1,63 @@
+1. Verify live identity—do not trust the supplied IDs as current:
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+```js
+browser.run({code: `const w=await browser.cdp('Browser.getWindows');
+const d=Object.fromEntries(w.windows.map(x=>[x.windowId,x.browserContextId]));
+const p=await browser.pages.list();
+return {windows:w.windows.map(x=>({window:x.windowId,profileDir:x.browserContextId,type:x.windowType})),
+pages:p.map(x=>({page:x.pageId,window:x.windowId,profileDir:d[x.windowId],title:x.title}))};`})
+```
+
+Expected: `Default` maps to `Work`; its current normal visible window replaces `1595534029` if changed. Record the sanitized map in task notes.
+
+2. Start authentication without allowing automatic browser launch:
+
+```text
+exec_command({
+  cmd:"umask 077; BROWSER=true gws-fc auth login --services drive,sheets > /private/tmp/claude-501/-Users-aelaguiz-workspace-arch-skill/e7e26c09-d590-4d1e-a230-d643740616bd/scratchpad/tests/work/.gws-fc-auth.log 2>&1",
+  tty:true,
+  yield_time_ms:1000
+})
+```
+
+Expected: running session ID; private log contains the Google OAuth URL. Read only enough of that file to extract the URL; never repeat it in notes or messages.
+
+3. Open it without disturbing Amir:
+
+```js
+browser.run({code: `const p=await browser.pages.newPage("<EXTRACTED_OAUTH_URL>",{background:true,windowId:<CURRENT_DEFAULT_WINDOW>}); return {page:p.pageId,window:p.windowId,title:p.title};`})
+```
+
+Then rerun step 1 and `tabs snapshot({pageId:<AUTH_PAGE>})`. Expected: a normal, visible, inactive background tab in verified `Work`.
+
+4. Immediately before each click, rerun the profile check. Then:
+
+```text
+act({pageId:<AUTH_PAGE>,kind:"click",ref:<amir@fun.country account ref>})
+```
+
+Relist pages/windows, take a fresh snapshot, then:
+
+```text
+act({pageId:<CURRENT_AUTH_PAGE>,kind:"click",ref:<Continue-or-Allow ref>})
+```
+
+Relist after every click. Expected: localhost callback consumed by the waiting CLI.
+
+5. Poll the exec session, then run:
+
+```bash
+gws-fc drive about get
+```
+
+Expected: successful authenticated Drive response. Relist, close only the recorded task-owned OAuth page with `tabs close({pageId:<AUTH_PAGE>})`, and delete the exact temporary log.
+
+Message to Amir only if `Work` shows password/2FA/CAPTCHA:
+
+> Google authentication for gws-fc needs your input in the `Work` profile, background tab titled “Sign in - Google Accounts.” Please complete it there and tell me when done.
+
+Need from Amir before continuing: nothing.

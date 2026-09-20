@@ -1,0 +1,36 @@
+**Plan (dry run)**
+
+Window map already says `Default` (`Work`) = window `1595534029`; I'd still re-derive it live before opening anything, since the map may have drifted.
+
+1. **Shell (background):**
+   `BROWSER=true gws-fc auth login -s drive,sheets > ./gws-fc-auth.log 2>&1 &`
+   Expect: the tool prints "Open this URL in your browser to authenticate: https://accounts.google.com/o/oauth2/...", the `true` launcher does nothing, and the process keeps waiting on its localhost callback. (I'd check `--help` output first for a `BROWSER`-honoring path; `-s drive,sheets` limits the scope picker to what the task needs.)
+
+2. **Shell:** `grep -o 'https://accounts.google.com[^ ]*' ./gws-fc-auth.log` — read the URL into my working memory only; never into notes or the reply (it carries a state token).
+
+3. **BrowserOS `run`:**
+   ```js
+   const w = await browser.cdp('Browser.getWindows');
+   const win = w.windows.find(x => x.browserContextId === 'Default' && x.windowType === 'normal');
+   const p = await browser.pages.newPage('<URL from step 2>', {background: true, windowId: win.windowId});
+   const pages = await browser.pages.list();
+   const me = pages.find(x => x.pageId === p.pageId);
+   return {page: p.pageId, window: me.windowId, profileDir: w.windows.find(x => x.windowId === me.windowId)?.browserContextId, title: me.title};
+   ```
+   Expect: `{page: N, window: 1595534029, profileDir: 'Default', title: 'Sign in - Google Accounts'}`. Record this in `./browseros-notes.md` (label `Work`, dir `Default`, window, page — no URL).
+
+4. **`snapshot` on page N.** Expect Google's "Choose an account" listing Amir's own accounts (amir@fun.country, aelaguiz@gmail.com, amir@cratejoy.com) — confirming `Work`. If it lists only `proN@fun.country`, I placed it wrong: close and stop, don't click anything.
+
+5. **`act` click on `amir@fun.country`**, snapshot, then `act` click **Continue/Allow** on the consent screen (fall back to `evaluate`-dispatched click if `act` succeeds without change). Expect redirect to `localhost:<port>`; I don't read that URL.
+
+6. **Shell:** `tail ./gws-fc-auth.log` then `gws-fc drive about get` (or the equivalent read). Expect "authenticated" and a successful read — that's the proof, not the page.
+
+7. **`run` relist** filtering `accounts.google.com|localhost`. Expect only my page N. Close it. Any second Google tab I didn't open is reported with its profile, not driven.
+
+8. Retry the original Sheets create.
+
+**Message to Amir** (only if step 4 shows a password/2FA/"Verify it's you" gate): "Google sign-in for gws-fc is waiting in the `Work` profile as a background tab titled 'Sign in - Google Accounts'. It needs your password/2FA — switch to it when you're ready and tell me when it's done. I won't touch it."
+
+Otherwise no message until completion.
+
+**Needed from Amir:** nothing.

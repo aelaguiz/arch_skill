@@ -99,12 +99,14 @@ restore the previously focused non-BrowserOS desktop application. The compact
 surface may also lack a symmetrical action to reselect the exact baseline
 tab. Report only the restoration current state proves.
 
-For CAPTCHA, 2FA, login, secure-field entry, consent, or another manual gate,
-verify and identify the safe page/window without sensitive details, then ask
-the user to switch to BrowserOS when ready. A manual input requirement does not
-itself justify taking focus while the user is doing other work. After the user
-finishes, relist and revalidate the page, profile/account, and target before
-continuing.
+For CAPTCHA, 2FA, a password prompt, secure-field entry, consent, or another
+manual gate, first prove the page is in `Work`; a gate elsewhere is the wrong
+window, not a manual step. Then keep the page as a background tab, name the
+profile and tab title to the user, and ask them to switch to BrowserOS when
+ready. A manual input requirement does not itself justify taking focus while
+the user is doing other work. After the user finishes, relist and revalidate
+the page, profile/account, and target before continuing.
+`logins-and-oauth.md` owns the sign-in mechanics.
 
 ## Identity and profile constraints
 

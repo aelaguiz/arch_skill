@@ -1,0 +1,68 @@
+1. Run:
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+Expected: `Default` → `Work`, `Profile 7` → `pro1`.
+
+2. Call `browser.run`:
+
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages
+  .filter(p => p.pageId === 640 || /posthog\.com|accounts\.google\.com/.test(p.url))
+  .map(p => ({
+    page: p.pageId, window: p.windowId,
+    profileDir: dir[p.windowId], title: p.title, url: p.url,
+    active: p.active, hidden: p.hidden
+  }));
+```
+
+Expected: page 640 is in window `1595534269`, `Profile 7`/`pro1`; the single `pro1` account confirms the placement error. I would not click `e2` or `e3`.
+
+3. Call `browser.run`:
+
+```js
+return await browser.pages.newPage(
+  'https://us.posthog.com/project/221159/feature_flags',
+  {background: true, windowId: 1595534029}
+);
+```
+
+Expected: a new page ID in the existing `Work` window, without changing Amir’s foreground focus.
+
+4. Re-run step 2, including the new page ID, then call:
+
+```js
+return await browser.pages.getInfo(NEW_PAGE_ID);
+```
+
+Expected: `windowId: 1595534029`, `browserContextId: "Default"`, normal visible surface, background/unselected.
+
+5. Call `browser.evaluate`:
+
+```js
+{
+  "pageId": NEW_PAGE_ID,
+  "expression": "() => ({title: document.title, url: location.origin + location.pathname, text: document.body.innerText.slice(0, 20000)})"
+}
+```
+
+Expected: the authenticated PostHog staging project and its feature-flag list. I would extract flag names and enabled states. If `Work` instead shows a genuine password/2FA/CAPTCHA gate, I would stop and hand off that background tab.
+
+6. After verifying page 640 is still task-owned and not selected, call:
+
+```js
+{"action":"close","pageId":640}
+```
+
+Then repeat step 2 to prove it closed and the `Work` page remains.
+
+Exact message to Amir:
+
+> PostHog opened in the `pro1` profile, page 640; I did not select that Google account. I reopened PostHog in the `Work` profile as a background tab and am reading the staging feature flags there.
+
+Needed from Amir: **nothing**.

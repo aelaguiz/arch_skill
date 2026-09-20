@@ -1,0 +1,45 @@
+## 1. Tool calls, in order
+
+**Call 1 — open RudderStack in `Work`.** RudderStack is not ChatGPT, so "use pro1" does not apply to it; the token in the secrets folder is read-only, so the console is the only way to make this change. `Default` = `Work` = window `1595534029` from the map I just derived.
+
+```
+mcp__browseros__run
+code: |
+  const p = await browser.pages.newPage('https://app.rudderstack.com/', {background: true, windowId: 1595534029});
+  return {page: p.pageId, window: p.windowId};
+```
+Expect a new background tab in the `Work` window; no focus change, no interruption to Amir's typing.
+
+**Call 2 — verify where it actually landed** (arguments are the request, not the result):
+
+```
+mcp__browseros__run
+code: |
+  const w = await browser.cdp('Browser.getWindows');
+  const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+  const pages = await browser.pages.list();
+  return pages.filter(p => p.url.includes('rudderstack.com'))
+    .map(p => ({page: p.pageId, window: p.windowId, profileDir: dir[p.windowId], title: p.title}));
+```
+Expect `profileDir: 'Default'` → `Work`. If it shows anything else, I close that page and reopen with the corrected window ID before touching the console.
+
+**Call 3 — read the page, bounded**, to confirm signed-in state and the workspace marker:
+
+```
+mcp__browseros__read   pageId: <new page>
+```
+Expect the Poker Skill / US-region console, already signed in. A `/login` wall or Google chooser here would mean `Work` genuinely lapsed — I'd hand it off in place, not type anything.
+
+Only then: navigate to the staging PostHog destination, snapshot, add the two event names, verify the field values before saving, save once, and re-read the saved allowlist as independent proof.
+
+I would also write the profile/window/page map to the task notes file alongside page 875 (`pro1`).
+
+## 2. Message to Amir
+
+None yet — three background reads change nothing he can see. First message comes after the save:
+
+> RudderStack staging PostHog allowlist updated — `Work` profile, background tab "RudderStack — PostHog (staging)". Added <event1>, <event2>; re-read the saved destination to confirm. Poker Skill workspace, US. ChatGPT consultation page 875 (`pro1`) left open.
+
+## 3. Needed from Amir
+
+Nothing to proceed. One thing to confirm before I hit save: the exact two event-name strings as they appear in the plan — if the plan's wording and the code's emitted names differ, I'll stop and ask rather than allowlist a near-miss.

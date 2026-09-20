@@ -1,0 +1,35 @@
+## 1. Next tool calls
+
+**a. No re-check needed on placement.** The join is already done and it's the proof, not a guess: page 911 → window 1595534029 → `browserContextId: Default` → label `Work`. The login wall is therefore *not* a wrong-profile error — it's a real gate in `Work`. The signed-in-page search is also already done (`pages.list()` has no other facebook.com page anywhere), so the "look before asking for a login" step is satisfied.
+
+**b. Write the task notes file** (required by the skill, and needed to survive a compaction):
+
+```
+Write(file_path: "/private/tmp/claude-501/-Users-aelaguiz-workspace-arch-skill/e7e26c09-d590-4d1e-a230-d643740616bd/scratchpad/tests/work/browseros-notes.md",
+content: """# BrowserOS task notes — Meta Business Manager ad spend
+Profile map (from Local State + Browser.getWindows):
+  Work=Default win 1595534029 | pro1=Profile 7 win 1595534269
+  pro3=Profile 15 win 1595535735 | pro2=Profile 20 win 1595535397 | pro4=Profile 28 win 1595534892
+Task-created page: 911 — Work/Default, win 1595534029, background,
+  origin business.facebook.com, path /login/, title "Log in to Facebook"
+State: real login gate in Work (email+password form, no Google SSO control).
+  Handed to Amir. Do not type, do not navigate, do not close, do not activate.
+Page IDs are invalid after a BrowserOS restart — rerun the join before acting.
+"""
+)
+```
+Expected: file written.
+
+**c. Then stop and wait.** No act/evaluate/fill on page 911 — I won't type into a password form or drive a gate. When Amir hands it back I'd rerun the window-map join (IDs may have changed) and re-read the page before anything else.
+
+## 2. Message to Amir
+
+> Meta Business Manager is sitting at a real login wall in your **`Work` profile**, window with the Facebook tab titled **"Log in to Facebook"** — it's a background tab I opened, so it won't steal focus from what you're typing.
+>
+> This is the right profile (verified `Default` → `Work`), not a misplacement: the page offers only email + password, no "Continue with Google", so I can't get past it and I won't type credentials. Your Facebook session there has lapsed.
+>
+> Could you log in on that tab (plus any 2FA) and tell me when it's through? I'll pick it up from there and pull yesterday's (2026-09-18) spend for the Poker Skill ad account. I'll leave the tab exactly where it is until you do.
+
+## 3. Needed from Amir
+
+Amir to complete the Facebook login and any 2FA in the `Work`-profile tab titled "Log in to Facebook", then confirm. Nothing else — I'll resolve the Poker Skill ad account and the date range myself once I'm in, and come back if the account picker is ambiguous.

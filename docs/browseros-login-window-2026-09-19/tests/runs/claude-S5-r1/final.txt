@@ -1,0 +1,46 @@
+## 1. Next tool calls, in order
+
+**a. Read the reference the contract requires before opening a page** (I'm about to create one and later clean it up):
+
+- `Read /Users/aelaguiz/.claude/skills/browseros/references/profiles-and-focus.md`
+- `Read /Users/aelaguiz/.claude/skills/browseros/references/lifecycle-and-recovery.md`
+
+Expect: supported `newPage` targeting method + cleanup/ownership rules.
+
+**b. Open my own page in the `Work` window.** Page 402 is pre-existing and not mine — inventory only, no navigate/close/reload. Window `1595534029` = `Default` = `Work`, which is where PostHog is logged in.
+
+`mcp__browseros__run`:
+```js
+const p = await browser.pages.newPage(
+  'https://us.posthog.com/project/221159/feature_flags',
+  {background: true, windowId: 1595534029});
+return p;
+```
+Expect: a new pageId, no focus change (Amir keeps typing in his window).
+
+**c. Re-verify where it landed** — same join as the inventory run:
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+return (await browser.pages.list())
+  .filter(p => p.url.includes('posthog.com'))
+  .map(p => ({page: p.pageId, window: p.windowId, profileDir: dir[p.windowId],
+              title: p.title, isActive: p.isActive}));
+```
+Expect: my new page with `profileDir: 'Default'`, plus 402 untouched.
+
+**d. Write the notes file** `./browseros-notes.md` with the label map, window IDs, page 402 (not mine), my page ID.
+
+**e. Read the flags** on my page only: `mcp__browseros__read` (bounded visible text), then `mcp__browseros__grep` for specific flag keys from the plan if the list is long/paginated. If it shows a login wall, that's a real gate in `Work` — hand it back, don't retry.
+
+**f. Cleanup at the end:** `run` → `browser.pages.close(<myPageId>)`, then one final relist to confirm only 402 remains.
+
+## 2. Message to Amir
+
+None now. Nothing needs his input, and he's typing — I'll report at the end, naming the profile: "Read staging feature flags from a background tab I opened in the `Work` profile (window 1595534029), now closed. Your existing `Work` PostHog tab (page 402) was left untouched."
+
+## 3. Needed from Amir
+
+Nothing.
+
+**Caveat on this dry run:** BrowserOS tools aren't attached, so none of the above has executed — this is the plan, not a result. Separately, the `posthog` MCP server is unauthorized and can't be authorized from a non-interactive session; browser reads don't depend on it.

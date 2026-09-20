@@ -1,6 +1,6 @@
 ---
 name: browseros
-description: "Required operating contract for Codex CLI browser work and direct BrowserOS MCP use: protect the user's foreground focus on a shared machine, continually verify the working profile/window/page among many open profiles, reuse existing windows, clean up task-owned pages, and recover the same session safely. Use viable background methods before necessary brief foreground use; no separate focus approval is required. Codex CLI uses BrowserOS only. Use alongside narrower site skills such as $chatgpt-web. Not for BrowserOS installation/vendor development or generic non-browser connectors."
+description: "Required operating contract for Codex CLI browser work and direct BrowserOS MCP use: protect the user's foreground focus on a shared machine, continually verify the working profile/window/page among many open profiles, reuse existing windows, open logins, SSO, and OAuth pages in the Work window by your own call, clean up task-owned pages, and recover the same session safely. Use viable background methods before necessary brief foreground use; no separate focus approval is required. Codex CLI uses BrowserOS only. Use alongside narrower site skills such as $chatgpt-web. Not for BrowserOS installation/vendor development or generic non-browser connectors."
 ---
 
 # BrowserOS
@@ -28,6 +28,7 @@ every page with these meanings.
 | page or tab number | An MCP page ID. It carries no profile and changes after a BrowserOS restart. | Evidence of where the page lives. |
 | `session` | The connection handle an MCP call returns and accepts. | A profile selector or a site login. |
 | account name or badge inside a page ("Pro Pro") | The site account's display name and plan. | The BrowserOS profile label or the selected model. |
+| a login wall, "Choose an account" | Evidence of which profile the page is in: the user's site logins and Google accounts live in `Work`; a `pro` profile shows a login wall and offers only `proN@fun.country`. | Proof that a credential is missing or that the user must log in. |
 
 Lowercase "work" in this skill is the ordinary word. Read in-site state such
 as the selected model from the live page, under the site skill's rules.
@@ -105,11 +106,54 @@ Never open a page with `tabs new`. It has no window or profile argument, so
 the page can land in any profile. Never call `windows activate` to steer where
 a page opens or to find out which profile a window is.
 
-A URL printed by a command-line tool (a login, OAuth, or device-code link) goes
-through `newPage` too. Do not let the tool or `open` launch the browser: the
-operating system hands the URL to whichever profile was used last. Use the
-tool's no-browser option when it has one, copy the URL, and open it in the
-right window yourself.
+## Logins, SSO, and OAuth: keep the login in the `Work` window
+
+The user's site logins live in the `Work` profile, and most business sites
+sign in there with one click through Google. A `pro` profile holds one ChatGPT
+login and, in Google, only `proN@fun.country`. So a site opened in a `pro`
+window shows a login wall, and its Google chooser offers the wrong account.
+That is a placement error you made, not a missing credential. Fix the window;
+do not go looking for a credential or a permission.
+
+- **Every site that is not a ChatGPT consultation opens in `Work`.** A profile
+  the user named for ChatGPT ("use pro1") applies to ChatGPT only. Take the
+  `Default` window ID from a fresh check and open the site there with
+  `newPage`. Do not ask whether you may use `Work` for a business site: it is
+  the default, and the user set it up for exactly this.
+- **A login wall or a "Choose an account" page outside `Work` means the wrong
+  window.** Do not click "Sign in with Google" or "Use another account", do not
+  type anything, and do not ask the user for credentials. Close the page if
+  this task opened it, open the site in `Work`, and say what happened:
+  "RudderStack opened in `pro1`; reopened in `Work`."
+- **Before asking anyone to log in, look for the signed-in page.** Filter
+  `pages.list()` by host and join it to the window map. A signed-in page in
+  `Work` proves the site is logged in there: read it if the provenance rules
+  below let this task use it, otherwise open your own page in the same `Work`
+  window, which shares that login. Ask for a login only when `Work` itself
+  shows the gate.
+- **A command-line login never launches the browser.** BrowserOS is the
+  system default browser, so `open`, a tool's "opens browser" step, and a
+  library's browser call all land in whichever window the user touched last.
+  Prefer the tool's no-browser or device-code option (`gcloud auth login
+  --no-launch-browser`, `aws login --no-browser`, `gh auth login` without
+  `--web`; read `--help`). Without one, run the tool with `BROWSER=true` so
+  the launch does nothing, take the URL from its output, and open that URL
+  yourself in `Work` with `newPage`. Prove the login from the tool (`gcloud
+  auth list`, `gh auth status`, a read that works), not from the page.
+- **Relist after every sign-in click.** Google may continue in the same tab,
+  open a popup window in the same profile, or, when a tool launched the
+  browser, land in a window you never chose. Find the page by URL in the
+  relist, with its profile, and continue only in a page that is yours and in
+  `Work`. A tab you did not open is an orphan to report, not a page to use.
+- **A real gate in `Work` is handed off in place.** A password, 2FA, CAPTCHA,
+  or workspace-policy block in `Work` is the user's step. Keep the page as a
+  background tab in `Work`, tell the user the profile and the tab title, wait,
+  and reread the page when they hand it back.
+- **Name the window every time you mention a login.** "Google sign-in for
+  RudderStack, `Work` profile, background tab", never "the login page".
+
+Read [logins-and-oauth.md](references/logins-and-oauth.md) before running a
+command-line login, driving a sign-in page, or handing a gate to the user.
 
 ## Critical operating rules
 
@@ -154,9 +198,8 @@ Resolve the requested site, account, object, allowed changes, and completion
 proof. Live tool-specific schemas and results outrank remembered tool names,
 old traces, or saved IDs. For page work, run the profile check and inspect the
 active state when available. ChatGPT consultations use only the existing
-consultation profiles under `$chatgpt-web`; the `Work` profile is never a
-fallback for them. For other sites, default to the `Work` profile unless the
-user or site skill selects another profile.
+consultation profiles under `$chatgpt-web`; every other site opens in `Work`
+unless the user or site skill selects another profile for that site.
 
 Record a compact baseline in the existing task notes: verified profile/window/
 page, safe application identity, sanitized origin and stable path, provenance,
@@ -237,6 +280,9 @@ references for an ordinary single-page read.
 
 - [profiles-and-focus.md](references/profiles-and-focus.md): profile discovery,
   new-page targeting, foreground or visibility changes, and manual takeover.
+- [logins-and-oauth.md](references/logins-and-oauth.md): command-line logins,
+  reading a sign-in page as profile evidence, SSO popups and callbacks, stray
+  tabs from a browser launch, and handing a real gate to the user.
 - [lifecycle-and-recovery.md](references/lifecycle-and-recovery.md): resource
   creation and cleanup, unknown mutations, transport recovery, and parallel
   page ownership. Before coordinating agents, also apply the installed

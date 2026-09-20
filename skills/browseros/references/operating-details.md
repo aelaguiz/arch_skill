@@ -56,7 +56,8 @@ persist cookies, tokens, passwords, card data, API keys, callback URLs, raw
 secret files, or session payloads.
 
 For an expected OAuth callback, prove consumption from the originating
-application when possible. Do not read, screenshot, quote, or persist its
+application when possible; `logins-and-oauth.md` owns where the sign-in page
+opens and how the flow is driven. Do not read, screenshot, quote, or persist its
 query or fragment. If inventory unavoidably returns a code-bearing URL, do not
 repeat it; retain only a safe title or origin/path marker. Close a
 task-created callback page only after consumption is proved.

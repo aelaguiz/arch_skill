@@ -1,0 +1,56 @@
+1. Exact calls, in order:
+
+```js
+// BrowserOS run
+const created = await browser.pages.newPage(
+  'https://us.posthog.com/project/221159/feature_flags',
+  { background: true, windowId: 1595534029 }
+);
+return created;
+```
+
+Expected: one task-owned, unselected tab in the `Work` profile. Save its returned page ID as `P`.
+
+```js
+// BrowserOS run
+const w = await browser.cdp('Browser.getWindows');
+const dirs = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages
+  .filter(p => p.pageId === P)
+  .map(p => ({
+    page: p.pageId, window: p.windowId,
+    profileDir: dirs[p.windowId], title: p.title,
+    url: p.url, isActive: p.isActive
+  }));
+```
+
+Expected: `window:1595534029`, `profileDir:'Default'` (`Work`), visible normal window, `isActive:false`, PostHog feature-flags URL/title.
+
+```text
+BrowserOS read {
+  pageId: P,
+  selector: "main",
+  format: "markdown"
+}
+```
+
+Expected: authenticated “Poker Skill staging” workspace marker and the feature-flag rows, including flag names/keys and current status. I would parse only the flags shown by this task-owned page. I would not touch pre-existing `Work` profile, page 402 because its ownership is ambiguous.
+
+```text
+BrowserOS tabs { action: "close", pageId: P }
+```
+
+Expected: the task-owned background tab closes without disturbing page 402.
+
+```js
+// BrowserOS run — final reconciliation
+const pages = await browser.pages.list();
+return pages.filter(p => p.pageId === P || p.pageId === 402);
+```
+
+Expected: `P` absent; pre-existing page 402 remains.
+
+2. Message to Amir: none during browser work. It remains entirely background-targeted. After extraction, I would send the flag comparison/result.
+
+3. Anything needed from Amir: **nothing**.

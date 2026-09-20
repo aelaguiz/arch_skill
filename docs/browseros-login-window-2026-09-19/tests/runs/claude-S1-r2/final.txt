@@ -1,0 +1,36 @@
+I read the skill and both relevant references (profile targeting + logins/OAuth). RudderStack is not a ChatGPT consultation, so it opens in `Work` (`Default` = window 1595534029). "use pro1" applied to ChatGPT only.
+
+## 1. Next tool calls, in order
+
+**a. Open the console in the `Work` window** — `mcp__browseros__run`:
+```js
+const p = await browser.pages.newPage('https://app.rudderstack.com/',
+  {background: true, windowId: 1595534029, hidden: false});
+return {page: p.pageId, window: p.windowId};
+```
+Expect a new page ID in window 1595534029, unselected.
+
+**b. Re-verify where it landed** (never trust the arguments) — `mcp__browseros__run`:
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages.filter(p => p.url.includes('rudderstack.com'))
+  .map(p => ({page: p.pageId, window: p.windowId, profileDir: dir[p.windowId],
+              type: w.windows.find(x=>x.windowId===p.windowId)?.windowType, title: p.title}));
+```
+Expect `profileDir: 'Default'`, windowType `normal` → confirms `Work`.
+
+**c. Read the page, bounded** — `mcp__browseros__read` on that page ID. Expect the signed-in console. Checking for two things: workspace marker "Poker Skill" / US region, and whether it's a login wall. A wall here would be real (I'd hand it off in place, not switch profiles).
+
+**d. Write the map to notes** — `Write` to `notes/browser-map.md`: `Work`/`Default`/window 1595534029/page N, plus pro1 = Profile 7 / window 1595534269, ChatGPT page 875.
+
+Then: navigate to the staging PostHog destination, snapshot, open the event-allowlist field, fill the two event names, read the field back before saving, save once, and re-read the saved destination as an independent postcondition.
+
+## 2. Message to Amir
+
+> RudderStack console is open in your **`Work` profile**, background tab "RudderStack" (window with your own logins) — the pro1 profile only has ChatGPT. The API token in secrets is read-only, so the allowlist edit has to go through the web console. Next I add the two event names to the **staging** PostHog destination allowlist for #6026 and read the saved config back. Nothing to do on your end unless it asks you to re-auth — I'll leave that tab in `Work` and tell you rather than touching a password prompt.
+
+## 3. Needed from Amir
+
+Nothing. The staging-only allowlist change is the accepted plan step; I'll report the exact before/after values. I'd only stop if the console shows a real gate in `Work`, or if the destination turns out to be production rather than staging.

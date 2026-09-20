@@ -1,0 +1,151 @@
+[
+ {
+  "id": "A",
+  "runtime": "codex",
+  "session_id": "01a0bbe0-6212-7e51-b10d-7b2801e96535",
+  "path": "/Users/aelaguiz/.codex/sessions/2026/09/19/rollout-2026-09-19T17-53-59-01a0bbe0-6212-7e51-b10d-7b2801e96535.jsonl",
+  "lines": [
+   10,
+   54,
+   58,
+   459,
+   1955,
+   1963,
+   1977,
+   1981,
+   1992,
+   1996
+  ],
+  "summary": "RudderStack opened in pro1 window 1595534269 via newPage; /login; Google chooser listed only Pro One; agent asked permission to use Work and waited.",
+  "evidence_quality": "exact"
+ },
+ {
+  "id": "A-user",
+  "runtime": "codex",
+  "session_id": "01a0b4ac-6226-7903-a44b-2b5af2a75b3f",
+  "path": "/Users/aelaguiz/.codex/sessions/2026/09/18/rollout-2026-09-18T08-19-51-01a0b4ac-6226-7903-a44b-2b5af2a75b3f.jsonl",
+  "lines": [
+   24575,
+   24577,
+   24582
+  ],
+  "summary": "User: rudder stack login on the wrong window; use Work; oauth link pops wherever. This session had not opened RudderStack.",
+  "evidence_quality": "exact"
+ },
+ {
+  "id": "B",
+  "runtime": "codex",
+  "session_id": "01a07478-57d6-70b3-b399-071ad0f4b1d2",
+  "path": "/Users/aelaguiz/.codex/sessions/2026/09/05/rollout-2026-09-05T21-07-19-01a07478-57d6-70b3-b399-071ad0f4b1d2.jsonl",
+  "lines": [
+   298,
+   310,
+   322,
+   331,
+   332,
+   346,
+   350,
+   354,
+   362,
+   366,
+   370,
+   405
+  ],
+  "summary": "gws-fc auth login rejected --no-browser; run bare; CLI launched page 276 (profile unproven); agent also captured printed URL and navigated own page 274; chose amir@fun.country; consent; done.",
+  "evidence_quality": "exact"
+ },
+ {
+  "id": "C",
+  "runtime": "prime",
+  "session_id": "01a04548-cba6-7588-ba8f-9e636cbfbd23",
+  "path": "/Users/aelaguiz/.prime/agent/sessions/01a04548-cba6-7588-ba8f-9e636cbfbd23.jsonl",
+  "lines": [
+   13954,
+   13957,
+   13974,
+   15445
+  ],
+  "summary": "gcloud auth login --no-launch-browser; URL opened with tabs new (no window arg); second account amir@cratejoy.com hit a password prompt; handed off.",
+  "evidence_quality": "exact"
+ },
+ {
+  "id": "D",
+  "runtime": "prime",
+  "session_id": "01a04548-cba6-7588-ba8f-9e636cbfbd23",
+  "path": "/Users/aelaguiz/.prime/agent/sessions/01a04548-cba6-7588-ba8f-9e636cbfbd23.jsonl",
+  "lines": [
+   2971,
+   2972,
+   2975,
+   2997
+  ],
+  "summary": "aws login --no-browser driven through BrowserOS by an Opus 5 worker; verified via CLI.",
+  "evidence_quality": "exact"
+ },
+ {
+  "id": "E",
+  "runtime": "claude",
+  "session_id": "087ecf7a-3f39-4d43-b719-1a1a30c4894f",
+  "path": "/Users/aelaguiz/.aimgr/claude-homes/claudalyst/.claude/projects/-Users-aelaguiz-workspace-psagentspace/087ecf7a-3f39-4d43-b719-1a1a30c4894f.jsonl",
+  "lines": [
+   580,
+   583,
+   585,
+   592
+  ],
+  "summary": "Opus 5 worker briefed to prefer a URL-printing login mode and drive consent via BrowserOS as amir@fun.country; succeeded.",
+  "evidence_quality": "exact",
+  "child_path": "/Users/aelaguiz/.aimgr/claude-homes/claudalyst/.claude/projects/-Users-aelaguiz-workspace-psagentspace/087ecf7a-3f39-4d43-b719-1a1a30c4894f/subagents/agent-a2eae16b9f2728f5c.jsonl"
+ },
+ {
+  "id": "F",
+  "ref": "docs/browseros-session-review-2026-09-09/evidence.json#SEP-CODEX-003"
+ },
+ {
+  "id": "G",
+  "ref": "docs/browseros-session-review-2026-09-09/evidence.json#prime-20"
+ },
+ {
+  "id": "H",
+  "ref": "docs/browseros-session-review-2026-09-09/evidence.json#parent-profile-20260702"
+ },
+ {
+  "id": "I",
+  "runtime": "codex",
+  "session_id": "019f39fd-10a6-7d62-8a96-20fbd525aeb2",
+  "path_glob": "/Users/aelaguiz/.codex/sessions/2026/07/06/rollout-2026-07-06T19-31-54-019f39fd*.jsonl",
+  "lines": [
+   8,
+   173,
+   177
+  ],
+  "summary": "Meta Business loginpage in Profile 15 (then called work profile); wall was real; user redirected worker to signed-in facebook tab in Default.",
+  "evidence_quality": "exact"
+ },
+ {
+  "id": "J",
+  "ref": "docs/browseros-session-review-2026-09-09/evidence.json#prime-09,prime-10"
+ },
+ {
+  "id": "K",
+  "runtime": "codex",
+  "session_id": "019f846b-4a45-7523-93e2-f4b666689e4d",
+  "path": "/Users/aelaguiz/.codex/sessions/2026/07/21/rollout-2026-07-21T06-24-11-019f846b-4a45-7523-93e2-f4b666689e4d.jsonl",
+  "lines": [
+   3632,
+   3648,
+   3657,
+   3658,
+   3670,
+   3680
+  ],
+  "summary": "Stale task tab in Profile 26 reused; windows activate and set_visibility activate:true on that window; user: 'you're using wrong profile window dude'; agent remapped from signed-in Work tabs.",
+  "evidence_quality": "exact"
+ },
+ {
+  "id": "machine",
+  "summary": "LaunchServices http/https handler = com.browseros.browseros; BROWSER=echo makes python webbrowser print instead of launch; gcloud has --no-launch-browser and --no-browser; gh auth login defaults to device flow unless --web; gws-fc auth login has no no-browser flag but prints the URL.",
+  "evidence_quality": "exact",
+  "checked": "2026-09-19"
+ }
+]

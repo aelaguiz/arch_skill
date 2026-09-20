@@ -1,0 +1,56 @@
+1. `apply_patch` creates `browseros-task-notes.md`, recording the supplied profile/window map, pre-existing ambiguous `Work` page 402 as inventory-only, and zero task-created pages. Expected: baseline ledger saved.
+
+2. BrowserOS `run`:
+
+```js
+return await browser.pages.newPage(
+  'https://us.posthog.com/project/221159/feature_flags',
+  {background: true, windowId: 1595534029}
+);
+```
+
+Expected: receipt containing new page ID `P`; page 402 remains untouched.
+
+3. BrowserOS `run`:
+
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages
+  .filter(p => p.pageId === P)
+  .map(p => ({
+    page: p.pageId,
+    window: p.windowId,
+    profileDir: dir[p.windowId],
+    title: p.title,
+    url: p.url,
+    isActive: p.isActive,
+    hidden: p.hidden
+  }));
+```
+
+Expected: `P` is a normal, visible, inactive background page in window `1595534029`, profile directory `Default` (`Work`).
+
+4. BrowserOS `evaluate`:
+
+```json
+{
+  "pageId": "P",
+  "expression": "({title:document.title,path:location.pathname,text:document.body.innerText.slice(0,30000)})"
+}
+```
+
+Expected: title/workspace text confirms “Poker Skill staging”; body text contains the current feature-flag names, keys, enabled states, and rollout details. If still loading, use page-targeted `wait`, then repeat this bounded read—never activate the window.
+
+5. Reverify `P` with step 3, update the notes, then `tabs`:
+
+```json
+{"action":"close","pageId":"P"}
+```
+
+Finally rerun the joined inventory. Expected: `P` is gone; pre-existing `Work` page 402 remains open and unmodified.
+
+Message to Amir: none during execution. No foreground takeover or manual input is needed.
+
+Need from Amir: nothing.

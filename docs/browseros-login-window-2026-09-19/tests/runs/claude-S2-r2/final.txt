@@ -1,0 +1,34 @@
+## 1. Tool calls, in order
+
+**a.** `mcp__browseros__run` — close the misplaced page and reopen in `Work`, in one call:
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const workWin = w.windows.find(x => x.browserContextId === 'Default').windowId;
+await browser.pages.close(879);
+const p = await browser.pages.newPage('https://app.rudderstack.com/', {background: true, windowId: workWin});
+const info = await browser.pages.getInfo(p.pageId ?? p);
+return {workWin, page: p, url: info.url, title: info.title,
+        window: info.windowId, profileDir: dir[info.windowId], isActive: info.isActive};
+```
+Expect: `workWin: 1595534029`, a new page ID, `profileDir: 'Default'`, `isActive: false`, and a URL that is *not* `/login` (signed-in console) — that's the postcondition I'm checking.
+
+**b.** `mcp__browseros__snapshot` on the new page ID — expect the RudderStack console with a workspace switcher. If it still shows "Log in" in `Default`, that is a real gate and I stop and hand it to Amir in place.
+
+**c.** `mcp__browseros__read` (bounded) on the new page to confirm the active workspace is **Poker Skill** before touching anything — `browserContextId: Default` proves the profile, not the workspace.
+
+Then I'd write the notes file (label, `Default`, window `1595534029`, page ID) and stop before any allowlist edit until point 3 is answered.
+
+I would not click `Log in with Google` [ref=e4] on page 879: a login wall outside `Work` is my placement error, and that chooser would only offer `pro1@fun.country`.
+
+## 2. Message to Amir
+
+> RudderStack landed in the `pro1` profile (window 1595534269) — my mistake, that profile is only for ChatGPT, so it hit a login wall. I closed that tab and reopened the console in your `Work` profile as a background tab titled "RudderStack"; it should be signed in there. Nothing has been changed in RudderStack yet.
+>
+> Before I edit the staging allowlist I need the two exact event names, and which source/destination the allowlist sits under — I don't want to guess at a string that gets written to a live config.
+
+## 3. Needed from Amir
+
+1. The **two exact event names** (verbatim, case-sensitive).
+2. The **source or destination** in the Poker Skill workspace whose staging allowlist to edit, and the allowlist/transformation name if there's more than one.
+3. Only if `Work` also shows a login wall: he logs in in that background tab and tells me when done.

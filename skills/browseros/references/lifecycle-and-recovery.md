@@ -117,7 +117,7 @@ change another user-visible choice merely because it simplifies recovery.
 | Screenshot timeout | Large-response pressure | Use a small semantic probe or a smaller screenshot. |
 | One page hangs after a long evaluation | Execution still running | Stop stacking calls on that target. |
 | HTTP 500/503 or closed channel | Transport/server lifecycle | Wait once, rediscover, and issue one small read-only tab probe. |
-| Login page | Wrong profile or real auth gate | Prove intended context before requesting login. |
+| Login page or account chooser | Wrong window until proved otherwise | Prove the profile; outside `Work`, reopen the site in `Work` (`SKILL.md`, "Logins, SSO, and OAuth"). |
 | CAPTCHA or 2FA | Manual security gate | Pause for the user. |
 
 Use this recovery order:
