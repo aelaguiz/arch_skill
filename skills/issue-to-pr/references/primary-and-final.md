@@ -48,7 +48,10 @@ is never recorded as the seat's, and never makes a PR merge-ready.
 Rate limits,
 account switching, and delivery verification are `$chatgpt-web`'s rules.
 Continue the run's thread for the seat, or the epic's thread when the issue
-is inside an epic. Only after the consultation profiles' accounts are exhausted, report the
+is inside an epic. When a switch moves the run to another consultation
+profile, verify the new page, then close the pages the run created in the
+profile it left; the entry file's Browser pages section owns when pages
+close. Only after the consultation profiles' accounts are exhausted, report the
 observed conditions, pause the blocked consultation, continue independent
 work, and wait for the user to say Pro is back.
 

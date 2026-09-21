@@ -67,8 +67,9 @@ a GitHub issue, use the requested workflow instead.
   it, or reports it until the final has cleared the PR. PR Agent and other bots are
   advisory; assess findings against the issue and code rather than treating
   them as orders to expand scope.
-- Stop at merge-ready with receipts. Never merge, release, apply approval
-  labels such as `ufc-approved`, or touch production surfaces.
+- Stop at merge-ready with receipts and the run's own browser pages closed.
+  Never merge, release, apply approval labels such as `ufc-approved`, or
+  touch production surfaces.
 
 ## Primary and final
 
@@ -181,6 +182,35 @@ that seat. A D exchange is one consultation; note its turn count. Include retrie
 polling an existing response is not a new consultation. Keep this a short
 entry, not a separate tracking system.
 
+## Browser pages
+
+Many runs of this skill share one BrowserOS at the same time, so pages a run
+leaves open pile up in the user's browser. Each page a run opens is that
+run's to close. Note each one in the worklog as it opens, the way
+`$browseros` tracks task-created pages.
+
+The test for closing a page is whether this run will come back to it. While
+the issue is in flight, a seat's thread page is working context through
+every round, wait, and rate-limit pause, and closing it early loses that
+context; when unsure mid-run, keep the page. A page whose one purpose is
+finished, such as a sign-in popup or a single lookup, can close then. The
+rest close at two points:
+
+- **Leaving a profile.** When a consultation moves to another consultation
+  profile or account, verify the new page first, then close the pages this
+  run created in the profile it left.
+- **The run ends.** At merge-ready, or when the run is cancelled, handed
+  off, or abandoned, check that each seat's thread is in the worklog, then
+  close every page this run created, in every profile. The conversation
+  stays in ChatGPT, and the worklog entry reopens it if the issue comes back.
+
+`$browseros` owns the closing mechanics and the ownership proof. Close only
+pages this run created and recorded, by their recorded identity. Another
+run's thread page looks just like this one's, so a title, project name, or
+idle look never makes a page closable; adopted pages, the user's pages, and
+other agents' pages stay open. Inside an epic, the shared thread pages are
+the coordinator's and stay open until the epic's last shared review.
+
 ## Workflow
 
 1. **Ramp up and plan.** Read live issue, parent, linked PRs, and discussion.
@@ -236,7 +266,9 @@ entry, not a separate tracking system.
    the two model readings `$chatgpt-web` requires: the composer pill before
    Send (`6 Pro`) and the served-model slug on that answer (`gpt-6-pro`). A
    review without both readings is reported as "model not verified", is not a
-   Pro review, and the PR is not merge-ready.
+   Pro review, and the PR is not merge-ready. Once those receipts are in the
+   worklog, close the run's pages as Browser pages says, and name any page
+   kept open and why.
 
 ## Unblocking and persistent goals
 
