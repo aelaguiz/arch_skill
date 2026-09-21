@@ -1,0 +1,7 @@
+1. **Tool calls:** None. The supplied evidence already proves page 911 is task-created, in the `Work` profile (`Default`), and showing a real Facebook password gate. I would not call `act`, `evaluate`, `tabs`, `windows.activate`, open another page, or type credentials.
+
+2. **Message to Amir:**
+
+> Meta Business Manager needs your Facebook login in the `Work` profile, background tab titled “Log in to Facebook.” Please switch to that tab, sign in and complete any 2FA, then tell me “done.”
+
+3. **Need from Amir:** Complete the login in that exact tab and reply “done.”

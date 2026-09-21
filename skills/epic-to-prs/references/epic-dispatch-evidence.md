@@ -13,12 +13,14 @@ with the literal `Pro` option and Extended thinking in ChatGPT's `Chat` surface,
 per `$chatgpt-web` with required `$browseros` usage. Pro is not Extra High,
 xhigh, Ultra, Thinking, or the highest available setting. Missing or disabled
 Pro probably means a temporary account rate limit. Use only the already-open
-numbered Pro profiles, such as Pro 1 through Pro 5 or whichever exist. The
+consultation profiles, the BrowserOS profiles labeled Pro 1 through Pro5 or
+whichever exist; that label names a browser profile and never proves the
+model, which is read from the page's model picker before every Send. The
 user's `Work` profile is reserved for their personal use and rate-limit capacity;
-never use it, even as a fallback. Note which eligible profile/window currently
-offers Pro and use that account. Continue in the same-named project
+never use it, even as a fallback. Note which consultation profile/window's picker currently
+offers the `Pro` option and use that account. Continue in the same-named project
 with the needed context; all accounts should have the same projects.
-Only after eligible Pro accounts are exhausted, pause the blocked Pro decision
+Only after the consultation profiles' accounts are exhausted, pause the blocked Pro decision
 while independent authorized work continues. This supersedes the historical
 top-tier equivalence, Work-profile fallback, two-account limit, and whole-goal
 pause guidance below;
@@ -84,6 +86,62 @@ Historical rulings (cadence superseded above):
   checks the `Select chat surface` radio is `Chat` before the model pill
   and before every send; Pro exists only in `Chat`; a `Work` send is not
   a Pro verdict and is redone.
+
+- Pro consultation voice (2026-09-16): the owner traced a Codex run
+  (`01a0abbe-a311-75f0-9b87-ed006b673ccb`) that held the full planning
+  workbook but sent Pro the issue body and test output, and reviewed the
+  621-prompt inventory. Verbatim: "I have long suspected that the agents
+  prompt in this incredibly myopic way... an agent will tell me, 'Oh I got
+  a code review and Pro passed it,' and then I'll do the same code review
+  with Pro and get a very different answer." "It's got a spreadsheet,
+  right? It should be giving it the spreadsheet. It's not giving it the
+  context." How he would prompt it: "Hey we're working on this plan. Here's
+  the spreadsheet that we've been working out of. I've been working out of
+  this branch. Here's the GitHub connector. Here's the branch. There's a PR
+  you can read. I was working on this issue and I think I'm done. I'm
+  looking for: did I implement the intent right?" For a review: "Look for
+  things like: Where did I overbuild around edge cases? Where did I create
+  new patterns where there were existing clean ones? Where did I create
+  split brain? Where did I create a web of individual calls rather than a
+  single centralized clear abstraction? Where am I working around an
+  architectural limitation that I should be tackling first?" and "Is this
+  the cleanest, most pragmatic way to do this? Where am I introducing risk
+  that really wasn't necessary for this feature?" On heads: "you don't
+  have to specify the exact head... putting in a SHA hash is an
+  anti-pattern." On planning: "there's an inversion of responsibilities,
+  right? You write up the plan. Outline this for me... I want Pro to
+  outline the plan in all the places where there's a plan being written.
+  I want Pro to do it not the agent... I will ask you questions and we'll
+  go back and forth until it's a fully formed plan." What the plan
+  contains: "a clear outcome we're after, top-level acceptance criteria,
+  clear extremely clear requirements, a clear architectural plan, clear
+  do's, clear do not's, a clear test plan." On the scaffold: "what I'm
+  saying right now supersedes prompt authoring." On waiting, after an
+  agent ended its turn with "read Pro's review when it lands": "No, don't
+  tell me too, dude. You have to watch for it." Encoded as the family
+  templates in `$chatgpt-web`'s `references/consultation-templates.md`,
+  which this skill's Pro sections now point at.
+
+- CI last (2026-09-17): agents waited on 30-minute CI runs before and
+  between Pro rounds. Owner, verbatim: "Dude, we don't need to keep waiting
+  for CI on every fucking turn. We can do CI at the very end after pro has
+  cleared everything." and "we don't give a flying fuck about CI until it's
+  the very very last step." Encoded as: Pro reads the pushed branch and needs
+  nothing from CI; no CI waits or CI fixes before or between Pro rounds; CI
+  and bot follow-through run once after Pro has cleared the PR.
+
+- Primary and final (2026-09-17): owner asked for "a version of issue to
+  PR ... that's got a primary and then a final reviewer, and where I can
+  say: 'Okay look, your primary reviewer is going to be whatever, sole X
+  high or Fable 51X high, but your final reviewer is going to be pro.' ...
+  The goal here is just to speed up the process because I think a lot of
+  the initial issues can be taken away without needing pro." Then: "The
+  primary reviewer can also be used as a primary collaborator when it's
+  doing planning work and then, for instance, the ultimate one is the
+  ultimate one. The idea is it has the notion of a primary and then a
+  final." Naming a primary is optional; with none named Pro holds both
+  seats. Encoded as the primary and final seats in the entry file and
+  `references/primary-and-final.md`.
 
 Maintainer background (not needed at runtime):
 /Users/aelaguiz/workspace/psagentspace/factory/workflows/feature-development.md

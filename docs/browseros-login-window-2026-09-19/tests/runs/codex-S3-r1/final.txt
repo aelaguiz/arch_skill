@@ -1,0 +1,68 @@
+1. **Freshly verify browser ownership/profile.**
+
+```text
+browser.run({
+  code: `const w=await browser.cdp('Browser.getWindows');
+  const dir=Object.fromEntries(w.windows.map(x=>[x.windowId,x.browserContextId]));
+  const pages=await browser.pages.list();
+  return {windows:w.windows.map(x=>({windowId:x.windowId,profileDir:x.browserContextId,windowType:x.windowType,visible:x.visible})),
+    pages:pages.map(p=>({pageId:p.pageId,windowId:p.windowId,url:new URL(p.url).origin,title:p.title,profileDir:dir[p.windowId]}))};`
+})
+```
+
+Expected: live window/page inventory. Identify the visible `Default` window as `Work`; do not trust the supplied IDs if they changed.
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+Expected: sanitized profile-label map. Record the verified map and page IDs in the task notes, excluding query strings.
+
+2. **Confirm the CLI has no headless option, then start OAuth without allowing it to open a random window.**
+
+```bash
+gws-fc auth login --help
+BROWSER=true gws-fc auth login \
+  --services drive,sheets \
+  --scopes https://www.googleapis.com/auth/drive,https://www.googleapis.com/auth/spreadsheets \
+  > ./gws-auth.log 2>&1 &
+echo $!
+```
+
+Expected: `gws-auth.log` contains the authentication URL; the process waits.
+
+3. Read that URL privately:
+
+```bash
+sed -n '/Open this URL in your browser:/,+1p' ./gws-auth.log
+```
+
+Do not print or save the URL in notes or the reply.
+
+4. Open it only in the verified `Work` window:
+
+```text
+browser.run({
+  code: `const p=await browser.pages.newPage(AUTH_URL,{background:true,hidden:false,windowId:DEFAULT_WINDOW_ID});
+  const w=await browser.cdp('Browser.getWindows'); const ps=await browser.pages.list();
+  return {created:p,identity:ps.find(x=>x.pageId===p.pageId),windows:w.windows};`
+})
+```
+
+Expected: a normal visible background OAuth tab in `Work`.
+
+5. Snapshot, select `amir@fun.country`, and click Continue/Allow using fresh refs; relist after each click. If `act` reports success but the page does not change, use `evaluate` to dispatch the element’s click, then reread.
+
+6. If a password, 2FA, CAPTCHA, or policy gate appears, send:
+
+> Google OAuth is at a manual gate in the `Work` profile, background tab titled “<title>”. Please complete it there, then reply `done`.
+
+Need from Amir: only that manual completion and `done`; otherwise **nothing**.
+
+7. After callback, relist without reading its query string, then prove auth:
+
+```bash
+gws-fc drive about get
+```
+
+Expected: successful Drive metadata response. Only then run the workbook-creation command once its title/content specification is available.

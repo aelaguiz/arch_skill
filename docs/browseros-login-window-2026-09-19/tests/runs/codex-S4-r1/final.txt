@@ -1,0 +1,39 @@
+1. **Fresh profile check (BrowserOS `run`):**
+   ```js
+   const w = await browser.cdp("Browser.getWindows");
+   const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+   const p = await browser.pages.list();
+   return p.filter(x => x.pageId === 640 || /posthog|accounts\.google\.com/.test(x.url))
+     .map(x => ({page:x.pageId, window:x.windowId, profileDir:dir[x.windowId], title:x.title, url:x.url}));
+   ```
+   Expected: page 640 is in window `1595534269`, `profileDir: "Profile 7"`.
+
+2. **Verify labels (shell):**
+   ```bash
+   python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+   ```
+   Expected: `Profile 7` is `pro1`; `Default` is `Work`.
+
+3. **Do not select the Google account. Close the task-owned wrong-profile page (BrowserOS `run`):**
+   ```js
+   return await browser.pages.close(640);
+   ```
+   Expected: page 640 disappears; no window activation.
+
+4. **Open PostHog in the existing Work window (BrowserOS `run`):**
+   ```js
+   return await browser.pages.newPage(
+     "https://us.posthog.com/project/221159/feature_flags",
+     {background:true, windowId:1595534029}
+   );
+   ```
+   Expected: a new normal visible background page.
+
+5. **Relist and verify its actual profile, then read the feature-flag list (`run` with `pages.list`, `pages.getInfo`, and bounded `snapshot`/`read`).**
+   Expected: the page is in `Work`; if signed in, the staging feature flags are readable. If Work shows a real password/2FA/CAPTCHA gate, stop and hand it off.
+
+Message to Amir:
+
+> Page 640 was in `pro1`, not `Work`; I’m reopening PostHog in the verified `Work` window. I did not choose the `pro1@fun.country` Google account.
+
+Before continuing: **nothing**.

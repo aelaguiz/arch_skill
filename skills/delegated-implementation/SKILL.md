@@ -1,6 +1,6 @@
 ---
 name: delegated-implementation
-description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr and epic-to-prs for Astra or Fable coordinators, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-5.6 Sol high; Fable delegates to Opus 5. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
+description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr and epic-to-prs for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-5.6 Sol high; Fable delegates to Opus 5; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
 metadata:
   short-description: "Parent judgment and review, worker implementation and tests"
 ---
@@ -22,8 +22,8 @@ read or standalone review does not start implementation.
 
 The parent defines the smallest coherent assignments, resolves architectural
 decisions and dependencies, and judges every deliverable against the accepted
-scope. It reads source and artifacts directly, writes plans and worker briefs,
-and records decisions in the existing worklog.
+scope. It reads source and artifacts directly, writes worker briefs from the
+accepted plan, and records decisions in the existing worklog.
 
 Workers investigate implementation details, reproduce failures, edit code and
 tests, run the required checks, and repair accepted findings. This includes
@@ -45,8 +45,11 @@ An Astra parent assigns implementation and verification to GPT-5.6 Sol
 (`gpt-5.6-sol`) at `high`. A Fable parent assigns them to Opus 5, using the
 user's effort choice or the harness's applicable default. These are deliberate
 worker selections; the general Astra preference does not replace Sol here.
-Honor explicit user model and effort overrides. For another parent model,
-use the worker choice supplied by the user or calling workflow.
+Honor a worker the user or the calling workflow named. For any other parent —
+Sol, Terra, Luna, Opus, DeepSeek, GLM, Fugu, and whatever is added later — the
+worker is a native child of the active host that inherits the parent's model and
+thinking level; read the default in
+`../_shared/agent-orchestration-policy.md`.
 
 Read the installed `../_shared/agent-orchestration-policy.md` before dispatch
 and apply `$prompt-authoring` to each populated brief. The active harness
@@ -54,8 +57,8 @@ provides the available agents, model identifiers, capabilities, and instructions
 for spawning and continuing them. Use that live context for mechanics and
 honor the selected worker model; this skill adds no launch procedure.
 
-This contract describes the executive parent's role. An assigned Sol or Opus
-worker implements its bounded brief and returns the result to that parent.
+This contract describes the executive parent's role. An assigned worker
+implements its bounded brief and returns the result to that parent.
 Handing it an issue does not make it a replacement executive or require another
 layer of delegation. Keep skill authorship out of worker assignments.
 
@@ -76,6 +79,15 @@ Keep enough capacity to review and integrate each return promptly.
 Workers return the changed artifacts, checks actually run and their results,
 unresolved findings, and any decision the parent needs to make. Keep detailed
 logs in artifacts; bring their useful evidence and paths into parent context.
+
+When the parent sends a reader to review or audit delivered
+work, write that brief the way `$chatgpt-web`'s consultation templates write
+a PR review (family A): open with what we are building, hand over the plan,
+the canonical requirements export, the user's words, and the PR whole, offer
+the status as a belief, and say what to look for in the user's words. No
+verdict token, answer cap, scope fence, or commit SHA. A native reader has
+no `@GitHub`; give it the worktree path and the PR link instead. The parent
+watches for the answer and reads all of it.
 
 ## Review, repair, and accept
 

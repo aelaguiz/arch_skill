@@ -1,18 +1,92 @@
 ---
 name: chatgpt-web
-description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros and $prompt-authoring. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro, real @BigQuery access for data and @GitHub access for repo work, existing numbered Pro profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited Pro accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
+description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros, writing the submission from its consultation templates in the user's voice with sources attached whole. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro selected and read back in the model picker (a browser profile labeled Pro never proves the model), real @BigQuery access for data and @GitHub access for repo work, existing consultation profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
 metadata:
   short-description: "Query logged-in ChatGPT through BrowserOS"
 ---
 
 # ChatGPT Web
 
-**Use only the existing numbered Pro profiles, such as Pro 1 through Pro 5.**
-Discover whichever are configured; their number and spelling can vary.
-**Never use the BrowserOS `Work` profile for ChatGPT.** It is reserved for the
-user's personal use and rate-limit capacity, including when all Pro profiles
-are unavailable. This restriction also applies to retries and continuation of
-an old conversation.
+**Two of the user's browser profile labels are also ChatGPT's own words: "Pro"
+and "Work". A label says which login a page uses and nothing about what
+ChatGPT is doing in that page.**
+
+**"Pro" is the model. It is never the browser profile.** Two unrelated things
+carry that word on this machine:
+
+- **Pro, the model:** GPT-6 Astra with the literal `Pro` option selected in
+  the ChatGPT composer's model picker. In this skill, "Pro" alone always
+  means this, and so does the user's "work with Pro" or "get Pro signoff".
+- **The consultation profiles:** the BrowserOS browser profiles the user keeps
+  for agent consultations. Their labels are `pro1`, `pro2`, and so on; the
+  user says "Pro 1" or "the Pro3 window". A label is a name the user typed,
+  the same kind of thing as `Work`. It says which ChatGPT login the page
+  uses. It never selects, implies, or proves the model.
+
+**"Work" is the user's browser profile or a ChatGPT product. A consultation
+uses neither.**
+
+- **`Work`, the browser profile:** the user's own BrowserOS profile. When the
+  user says "work profile", this is what they mean. Never use it for ChatGPT.
+  It is reserved for the user's personal use and rate-limit capacity,
+  including when every consultation profile is unavailable, and the
+  restriction covers retries and continuation of an old conversation.
+- **Work, ChatGPT's surface:** a separate product inside ChatGPT. The
+  composer's `Select chat surface` switch chooses `Chat` or `Work`, and the
+  sidebar labels its threads `Work`. It cannot run a Pro consultation in any
+  browser profile. Never select it, send from it, or continue one of its
+  threads. Every consultation is on `Chat`.
+
+**Being in a consultation profile does not make a consultation Pro.** A page
+in `pro1` sends to whatever model its composer holds, and the composer goes
+back to ChatGPT's default on a new chat or a project page, even when the
+thread you just left was on Pro. Two readings prove the model, and nothing
+else does:
+
+1. **Before Send, the composer's model pill on this page.** It reads `6 Pro`
+   when Pro is selected. `Medium`, `High`, `Extra High`, `Instant`, or a
+   model name without `Pro` means Pro is not selected: open the pill, keep
+   `Latest` under `Select model`, move `Power` to its top position, `Pro, 5 of
+   5`, close the menu, and read the pill again. Pro is a power level of
+   `Latest`, not an entry in the model list: a list showing only `Latest`,
+   `GPT-5.6 Sol`, and `GPT-5.5` is normal and never means Pro is missing. If
+   the control looks different, open it and read which model and power are
+   selected.
+2. **After Send, the model slug on the response turn that answers your
+   message:** `gpt-6-pro` for Pro. A tag or footer on an earlier turn says
+   what served that turn, not yours.
+
+Take both readings in every conversation you send into, unless the user named
+another configuration, and write each with its time in the task notes. The
+page carries other "Pro" text that says nothing about the model: the account
+button (`Pro 1 Pro, open profile menu` is the account's display name and its
+plan badge), `Used GPT-6 Pro` footers and `Pro feedback` buttons on earlier
+turns, thread and project titles, and the word Pro in your own prompt.
+Searching the page for "Pro" is not a reading, and "it was in `pro1`"
+describes the browser profile. If a send went out without the first reading,
+read the pill now and the slug as soon as answer text arrives; anything other
+than Pro is a wrong-model submission, stopped and resent as described below.
+
+**No Pro, no send.** When this composer's pill cannot be made to read `6 Pro`,
+do not send the consultation from it on any model. A run on `Latest`,
+`GPT-5.6 Sol`, `Extra High`, or anything else is not a weaker Pro
+consultation. It is a different reviewer the user did not ask for, and saying
+so afterward does not repair it: its answer, its interim notes, and its
+sign-off are not evidence, not an interpretation, and not a review. Only the
+user naming another model for this consultation changes that. Look for Pro in
+another composer instead: an existing Pro thread in the same project, then the
+same project in another consultation profile. Check the BrowserOS profile of
+any tab before you adopt it, under `$browseros`: the same project name and a
+`6 Pro` pill also appear in the `Work` profile and in other profiles. A tab in
+the `Work` profile is never eligible. A tab in any other profile that is not a
+consultation profile is eligible only when the user named that profile for
+this consultation. If none reads `6 Pro`, pause this
+consultation, tell the user what each composer read, and continue other work.
+A menu click that did not change the pill selected nothing; the closed pill is
+the only confirmation.
+
+**Use only the existing consultation profiles.** Discover whichever are
+configured; their number and spelling can vary.
 
 Consult Pro as an expert on the user's actual problem. For interpretation and
 planning, give it the original objective, relevant history, and current
@@ -21,15 +95,37 @@ parent reads that judgment as a whole and then reports it in the user's
 preferred form. Calling Pro a peer does not compensate for restricting what
 it may conclude.
 
+**Every review brief hands over the original issue as filed and asks whether
+the work is complete to its full scope and requirements, not only whether the
+code is right.** The work is not done until Pro says it is implemented right,
+the PR is ready, and it is complete to that scope; the templates carry the
+wording.
+
 **Every submission requires checking the full draft before Send and the new
 submitted user turn afterward.** Accept an answer only when it belongs to that
 verified request and serves the user's consultation purpose. Read this entry
-file completely; retrieve any truncated portion before proceeding.
+file completely; retrieve any truncated portion before proceeding. After a
+context compaction or a resume, read it again before the next browser phase: a
+summary that says "work with Pro" does not carry these rules.
+
+**Pro's wait is yours, never the user's.** A consultation is finished when
+Pro's answer has been read and acted on, not when it was sent. Arm the host's
+wake-up for it (a heartbeat or an equivalent automatic wake) and end the turn;
+do the next useful work and read the answer when the wake fires. Never hand
+"Pro is running" to the user as something for them to watch or come back for,
+and never hold a turn open with sleeps to wait for it.
 
 **Let Pro finish. It regularly takes around 30 minutes and can take longer.**
-That is an expectation, never a deadline. Do not click **Stop answering** unless
-the user explicitly asks to stop. Observe actual thinking/activity and answer
-changes; after at least 15 minutes without progress, reload once and recover
+That is an expectation, never a deadline. Do not click **Stop answering** on a
+correct submission unless the user explicitly asks to stop. **A submission
+that went out wrong is the one case to stop at once:** a missing attachment
+chip or connector pill, duplicated or truncated text, or the wrong model or
+surface makes the answer unusable, so click Stop, fix the submission, and
+resend it whole. Letting it finish and "sending the files in a follow-up" is
+not a repair; Pro has already answered without them, and "the prompt is
+self-contained" is the agent's restatement standing in for the sources.
+Observe actual thinking/activity and answer changes on a correct submission;
+after at least 15 minutes without progress, reload once and recover
 the consultation autonomously as described below.
 
 ## Critical operating rules
@@ -43,28 +139,41 @@ the consultation autonomously as described below.
 - **Pro means GPT-6 Astra with the literal `Pro` option.** Use ChatGPT's
   `Chat` surface and `Extended` thinking when separately offered, unless the
   user explicitly requests another configuration. **Extra High, xhigh, Ultra,
-  Thinking, a `5/5` indicator, or the highest remaining setting is not Pro.**
-  The BrowserOS profile named `Work` is separate from ChatGPT's `Work` surface;
-  a Pro request must use the `Chat` surface in every profile.
-- **Use a numbered Pro account that actually offers Pro.** Discover the
-  already-open Pro profiles, including Pro 1, Pro2, Pro3, Pro4, Pro5, or other
-  numbered Pro profiles present; exclude `Work` from the account pool.
-  Missing or disabled literal Pro probably means a temporary account
-  limit; an explicit cap confirms it. Note unavailable accounts and the account
-  that works, with check times and connector status. Switch to another Pro account
-  instead of substituting a different tier. All should have the same projects;
+  Thinking, a `5/5` indicator that does not say `Pro`, the highest remaining
+  setting, or a browser profile labeled `pro` is not Pro.** A Pro request
+  uses the `Chat` surface and the picker's `Pro` option in every profile.
+- **Use a consultation profile whose account currently offers Pro.** Discover
+  the already-open consultation profiles, such as `pro1`, `pro2`, `pro3`,
+  or others present; exclude the `Work` profile from the pool.
+  Pro is missing from a composer only when `Power` cannot reach it: the slider
+  ends at `Extra High, 4 of 4` and a disabled `Pro` entry appears under the
+  model list. Hover that entry to read why; `Limit reached. Try again after
+  ...` is the account's rate limit and its reset time. A model list without
+  any `Pro` entry says nothing, and a pill reading `6 Pro` proves that composer
+  offers it. Note
+  unavailable accounts and the account that works, with check times and
+  connector status. Switch to another consultation profile
+  instead of substituting a different tier, and select and read back `Pro`
+  again there. All should have the same projects;
   verify the destination and carry the needed conversation context and inputs.
 - **Require real source access.** For data, attach `@BigQuery`; for GitHub or
-  repository work, attach `@GitHub`; attach both when needed. Select the actual
-  connector in the picker and verify retrieval of the required data or code.
+  repository work, attach `@GitHub`; attach both when needed. Verify the
+  connector pill in the draft and on the submitted turn, and verify retrieval
+  of the required data or code.
   A badge, typed name, or confident assertion is insufficient. Missing or broken
-  access means switch to a suitable Pro window or stop and tell the user.
+  access means switch to a suitable consultation profile's window or stop
+  and tell the user.
   Never accept or act on guesses about sources Pro could not access.
 - **Wait for the requested review.** After submission readback, check generation
   every **3–5 minutes**, defaulting to 5, with the heartbeat at the same cadence.
   Keep waiting while substantive traces or answer content advance, however long
   the run takes. A ticking clock or spinner is not progress. Keep the requested
   review pending until its usable answer arrives; continue independent work.
+  **The agent watches for Pro's answer, never the user.** Sending is not
+  done. A progress update that says Pro is running is fine when the wake-up is
+  armed and the update says what will read the answer; telling the user the
+  answer is pending for them to read is not. The consultation is done when the
+  answer is read and acted on.
 
 ## Prepare the consultation
 
@@ -76,28 +185,37 @@ happens to be open.
 The shared policy's deadlines and stall actions for owned processes do not
 set a timeout for a ChatGPT web response; this skill owns its recovery.
 
-Read and apply [the prompt-authoring skill](../prompt-authoring/SKILL.md) to the
-actual outgoing request before every submission: composer text, instructions
-inside attachments, and relevant assumptions carried by the thread. Loading
-the skill or checking a reusable template does not perform this review.
+Write the submission the way the user would say it to a colleague, not as a
+request form. Before writing, read the shape and the pre-send check in
+[consultation-templates.md](references/consultation-templates.md), then the
+family that matches the ask: reviewing a PR, after fixes, checking a
+written-up plan, planning an issue, an on-track check, a design round, a
+diagnosis, an audit, a retry, or a new thread. That family's shape,
+anti-patterns, and attach list are the contract for the submission.
+`$prompt-authoring`'s rules hold underneath; where its scaffold and the
+user's phrasing disagree, the phrasing wins.
 
-Begin with the decision the user needs help making. For new results, restore
-the original goal and explain what was tried, what was observed,
-and what remains uncertain. Supply the relevant evidence without replacing it
-with the parent's preferred interpretation. Present the current plan and
-candidate explanations as proposals unless the user actually made them binding.
-Invite Pro to decide what matters and change, reorder, or discard the approach.
-A useful recognition test is whether Pro could reject the parent's question or
-preferred experiment and still fulfill the user's request.
+Hand over the sources whole: the canonical requirements source as a full
+export, the plan, the user's own words verbatim, raw evidence, and the PR or
+branch with `@GitHub` written in the brief so it becomes the connector pill
+(the words "GitHub connector" attach nothing). Offer the agent's status as a
+belief and ask
+about intent. Wherever something is being authored (a plan, a design, a
+diagnosis, an issue set) Pro writes it; the agent brings context, asks
+questions, goes back and forth until it is fully formed, then carries the
+agreed result into the artifact verbatim.
 
-Keep the brief concise without capping the expert's assessment to the parent's
-final-summary format. Ask for the judgment needed in whatever structure best
-explains it; do not impose fixed bullet counts, closed choices, or a preserved
-plan merely to make the answer easy to summarize. Read Pro's full assessment
-before condensing it for the user. Real constraints and specific questions
-remain useful; a named source-repair review can legitimately have a narrow
-verdict. Infer that scope from the task, not from a habitual review template.
-Preserve explicit verbatim relays.
+Never ask for a verdict token, cap the answer, fence what Pro may conclude,
+pin a commit SHA, or restate a source in place of attaching it. Narrowing the
+work never narrows what Pro sees. Read Pro's full assessment before condensing
+it for the user; the agent, not Pro, writes any verdict. A lane the user
+selected for a strict verdict, such as `$fresh-consult` or
+`$codex-review-yolo`, keeps its own footer by design. Preserve explicit
+verbatim relays.
+
+Before Send, run the reference's pre-send check on the actual draft; a failed
+question means a rewrite. That check is the pre-send review for a Pro
+submission; a dispatch-dimension checklist does not replace it.
 
 Read [accounts-and-conversations.md](references/accounts-and-conversations.md)
 before choosing or switching the account, project, thread, or model controls.
@@ -122,22 +240,38 @@ serially unless simultaneity is mandatory, in which case report the mismatch.
 
 ## Supply the inputs and send
 
-For a plan or any multi-paragraph body, attach a file and use only a short
-single-paragraph composer message pointing to it. Keyboard-based fills can
-turn newlines into Enter and submit a fragment during the fill itself.
-Check absolute paths, existence, and the maximum of 10 attachments. Never drop
-requested files silently. Read
+Enter the brief into the composer with the paste method in the composer
+reference: it keeps paragraphs and bullets as written, never submits on its
+own, and turns a literal `@GitHub` or `@BigQuery` into the connector pill.
+Never `fill` or `type` the brief; keystroke newlines are Enter and submit a
+fragment mid-fill. Plans, exports, evidence, and any other source go in files
+the brief names; a one-line composer message pointing at an "ask file" is not
+a brief. Check absolute paths, existence, and the maximum of 10 attachments.
+Never drop requested files silently. Attach only through the temporary-input
+route in the composer reference; never click ChatGPT's `Add files and more` or
+`Add photos & files`, which open an operating-system file dialog that no tool
+can close and the user then has to cancel. Read
 [composer-and-attachments.md](references/composer-and-attachments.md) before
 attaching files, invoking connectors, or diagnosing composer interaction.
 
 For a code review, commit and push the reviewable work to its PR branch and
-include the exact PR URL with `@GitHub`. Pasted diffs or descriptions do not
-replace the connector's access to the branch. Name the relevant repository or
-data scope so retrieval addresses the actual question.
+include the PR URL with `@GitHub`; do not pin a commit SHA, Pro reads the
+latest. Pasted diffs or descriptions do not replace the connector's access to
+the branch. Attach the canonical requirements source whole, exported as
+described in the composer reference. Name the relevant repository or data
+scope so retrieval addresses the actual question.
 
 Before sending, verify the intended profile/window/page and conversation,
-`Chat` surface, model, literal mode and effort, every attachment chip, and each
-required connector. Record the latest submitted user-message identity, then
+`Chat` surface, the picker's selected model, literal `Pro` option, and effort
+as read from this page, every attachment chip, and each
+required connector pill, immediately before the click and on every send path.
+The profile check and the model check are two separate readings; the profile
+label never answers the model check.
+Attachments do not survive a page reload; the text draft does. Any reload,
+clear, or retry resets this verification: a chip seen earlier is not a chip
+now. An insert or paste that timed out may have landed; read the composer
+before repeating it, and if the text is duplicated, clear it and enter it
+once. Record the latest submitted user-message identity, then
 fill the live visible composer and compare its complete text with the intended
 message before clicking Send. Check that filling did not itself create a new
 user message. A failed fill must not send a stale draft. Use the current tool
@@ -149,11 +283,15 @@ verify the visible composer cleared, and associate the response with that
 message. Record the user-message and outer response-turn IDs together when
 the response appears; virtualized history can later omit intervening turns.
 Inspect collapsed text fully; a matching prefix or a whole-page text
-search is insufficient. If it split or truncated, the resulting answer cannot
-be used: preserve the full intended input and repair delivery through the
-recovery procedure below, without clicking Stop. If Send times out or
-disconnects, read back its outcome before deciding whether to retry. Do not
-claim delivery or interpret the answer until this readback succeeds.
+search is insufficient. If the submitted turn is missing any required
+attachment or connector pill, carries duplicated or truncated text, or went
+to the wrong model or surface, the answer cannot be used: click Stop
+answering now, then resend the complete submission (family I) with every
+file re-attached and every chip and pill re-verified. Do not let a wrong
+submission run to completion, and do not patch it with a follow-up message.
+If Send times out or disconnects, read back its outcome before deciding
+whether to retry. Do not claim delivery or interpret the answer until this
+readback succeeds.
 
 When repairing delivery or access, preserve the consultation's substantive
 question, evidence, and scope. A technical retry does not authorize replacing
@@ -214,17 +352,24 @@ response as a verdict or use it to publish dependent changes.
 Refusals, empty replies, and answers that omit the requested work also fail
 this completion check; diagnose and repair the specific cause.
 
-If no eligible numbered Pro account offers the required configuration, report the
+If no consultation profile's account offers the required configuration, report the
 profiles checked and observed conditions, pause the blocked consultation or
 decision, and continue useful independent work. Wait for the user to say Pro is
 available again rather than polling capped accounts. Never fall back to `Work`.
 
 ## Return the result
 
-Return the answer plus a short receipt: actual surface/model/mode/effort;
-verified working profile/window/page and account availability observations;
+Return the answer plus a short receipt: the surface, model, option, and
+effort quoted as read from the page before Send and from the response turn,
+on their own line; the verified working profile/window/page and account
+availability observations on a separate line;
 project and conversation link or identity; attachment filenames and the data
 or code actually retrieved through connectors, including the PR URL when used.
+The model line comes only from those page readings, never from the profile
+label, the request, or the plan; without a reading, say the model was not
+verified and do not call the answer a Pro review.
+Keep three things separate in the receipt: what Pro was shown, what Pro said,
+and the agent's own conclusion. "Pro signed off" alone is not a receipt.
 Mention material prompt shaping and long waits, and report heartbeat cleanup
 accurately. Follow BrowserOS resource cleanup and identify any retained or
 unknown state. Keep secrets and sensitive URLs out of receipts.

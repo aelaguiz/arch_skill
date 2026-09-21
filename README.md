@@ -40,8 +40,8 @@ Other shipped skills are:
 - `agent-definition-auditor` — cold-reader scoring and findings for `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompts, and other agent-definition markdown
 - `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
 - `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, Markdown-backed Codex goal prompt files, and paste-sized `/goal` mission briefs
-- `browseros` — canonical preflight and operating contract to apply before direct BrowserOS MCP use; owns safe page reuse, provenance, profile and target identity, connector discovery, proof, timeout recovery, secrets, and task-created browser cleanup
-- `chatgpt-web` — explicit ChatGPT web-provider/browser lane with optional attachments; defaults to a new clean conversation, continues an exact conversation only when requested, and defaults to Pro with Extended thinking unless the user specifies another mode or effort
+- `browseros` — canonical preflight and operating contract to apply before direct BrowserOS MCP use; owns safe page reuse, provenance, profile and target identity, logins/SSO/OAuth placement in the Work window, connector discovery, proof, timeout recovery, secrets, and task-created browser cleanup
+- `chatgpt-web` — explicit ChatGPT web-provider/browser lane with optional attachments; writes each submission from the matching family in `references/consultation-templates.md` in the user's voice with sources attached whole (no verdict token, answer cap, scope fence, or SHA pin), defaults to a new clean conversation, continues an exact conversation only when requested, and defaults to Pro with Extended thinking unless the user specifies another mode or effort
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `herdr-helper` — higher-level Herdr workflows that safely reconstruct workspaces across sessions, preserve exact resumable agent continuity when available, verify the destination, and require confirmation before removing the source
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
@@ -51,8 +51,8 @@ Other shipped skills are:
 - `eli10` — optional source-retained response-style skill; it is not installed by default
 - `pr-authoring` — writes and publishes high-quality GitHub pull requests from real repo changes, including an anchor-based approved-scope receipt for plan-backed work
 - `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the approved plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
-- `issue-to-pr` — explicit issue delivery with Pro planning/final review and delegated implementation for Astra/Fable; the parent reviews every deliverable and retains all skill authorship
-- `epic-to-prs` — explicit epic delivery with shared Pro planning and stack review, independent issue delegation, and parent-owned integration, direct review, and skill authorship
+- `issue-to-pr` — explicit issue delivery through two seats the user names at invocation (a primary that writes the plan and takes the early review rounds, a final that checks the plan once and reviews the PR once; Pro holds both by default), with delegated implementation; the parent reviews every deliverable and changed code line; CI last
+- `epic-to-prs` — explicit epic delivery with the same primary and final seats shared across issues (the primary plans and reviews batches, the final checks the plan and reviews the stack), independent issue delegation, and parent-owned integration and direct review
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
@@ -62,6 +62,7 @@ Other shipped skills are:
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
 - `unblocker` — long-lived end blocker and authorizer for a run: armed with the user's high-level intent and plan, it kills self-imposed approval gates (the run starts authorized), decides real blockers from plan intent with Pro escalation for major problems unresolved by local reasoning, keeps a decision log, and reserves only production surfaces and genuinely user-owned matters for the user
 - `intent-police` — long-lived read-only advocate that derives the user's intent from their verbatim words, keeps an on-disk intent ledger, classifies direction changes as micro-adjustment versus fundamental shift, filters other agents' review findings for scope creep, and gives blunt subtraction-only alignment feedback at decisions, post-review, and done-claims
+- `agent-watcher` — explicitly selected out-of-loop monitor for Amir's live coding-agent sessions: discovers active Codex, Claude Code, and Prime sessions, dispatches one cheap watcher sub-agent per session on a per-watcher rest interval, keeps an intent artifact and provenance ledger per session, and alerts (macOS notification, sound, optional Slack) when work drifts from what Amir asked, when an agent claims authorization he never gave, or when an agent self-blocks on nothing; read-only, never messages the watched sessions
 - `delegated-implementation` — reusable execution contract: Astra delegates code and tests to GPT-5.6 Sol high, Fable to Opus 5; the parent owns requirements, every deliverable's direct review, and all skill authorship
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
 - `plan-audit` — prompt-first generic audit for existing planning artifacts plus plan-backed implementation code review; verifies human scope provenance and the pre-approval minimal convergence closure, never adds scope from audit, and blocks unauthorized built scope without running tests or dictating workflow
@@ -76,7 +77,7 @@ Other shipped skills are:
 - `cynical-code-review` — prompt-only skeptical implementation-integrity review that also reconstructs human scope provenance and hard-fails unauthorized scope ratchets/cycling as `not-approved`, normally targeting subtraction
 - `cynical-architecture-review` — prompt-only subtraction-first review that requires durable concepts to trace to human scope or the approved initial closure and hard-fails architecture made "required" through review cycling as `not-approved`
 - `cynical-cruft-removal` — prompt-only skeptical cleanup review that treats current reachability as separate from authorization and reports scope-laundered live code/tests/config/docs/dependencies as a `cruft-found` deletion cluster
-- `exhaustive-code-review` — prompt-only exhaustive review with coverage-led clean native slices, proportional host-aware fanout, parent accounting, approved-scope discipline, and a saved artifact under `/tmp/exhaustive-code-review/`
+- `exhaustive-code-review` — prompt-only exhaustive review driven by a bundled catalog of specific checks; when the user names a worker type or count, deals the catalog slices across that many clean native review children while the parent verifies every finding and owns the verdict; approved-scope discipline and a saved artifact under `/tmp/exhaustive-code-review/`
 - `thermo-nuclear-code-quality-review` — vendored Cursor Team Kit rubric for unusually strict maintainability reviews focused on code-judo simplification, 1k-line file growth, spaghetti branching, abstraction boundaries, and structural quality
 - `startup-pragmatism` — invokable early-stage startup reality check that snaps an agent out of proof/receipt/perfection-maximizing behavior and into 3-person seed-stage operating mode: self-check against eight trace-mined anti-patterns, run the four-question rigor budget (reversibility, cost of wrong vs slow, information available, learning per unit time), and reply with a cut list, a forced decision at current information, and where rigor is still owed
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; uses a new clean same-host native worker and critic when capable, resumes the exact worker for repair, and retains its subprocess machinery as the deliberate external lane
@@ -385,10 +386,12 @@ Use when the user wants to write, edit, refactor, or audit a prompt, reusable pr
 
 ### `browseros`
 
-Use before the first direct BrowserOS MCP call. The skill owns one-tab-by-default page reuse, dispatch-versus-task authorization, target and profile identity, observe-act-verify, connector discovery, unknown timeout outcomes, proof selection, secrets, parallel page ownership, and cleanup of task-created pages, windows, and groups. Apply it alongside narrower BrowserOS-backed skills; for example, `chatgpt-web` owns the ChatGPT workflow while `browseros` owns browser mechanics. It is not for BrowserOS installation or vendor development. The longer [BrowserOS MCP operating guide](docs/browseros_mcp_operating_guide.md) preserves the evidence and rationale without bloating runtime context.
+Use before the first direct BrowserOS MCP call. The skill owns one-tab-by-default page reuse, dispatch-versus-task authorization, target and profile identity, where logins, SSO, and OAuth pages open (the Work window, by the agent's own call, including command-line logins), observe-act-verify, connector discovery, unknown timeout outcomes, proof selection, secrets, parallel page ownership, and cleanup of task-created pages, windows, and groups. Apply it alongside narrower BrowserOS-backed skills; for example, `chatgpt-web` owns the ChatGPT workflow while `browseros` owns browser mechanics. It is not for BrowserOS installation or vendor development. The longer [BrowserOS MCP operating guide](docs/browseros_mcp_operating_guide.md) preserves the evidence and rationale without bloating runtime context.
 
-The shared machine has a `Work` profile and a variable number of Pro profiles
-with many windows already open. For ChatGPT, only numbered Pro profiles are
+The shared machine has a `Work` profile and a variable number of ChatGPT
+consultation profiles, labeled `Pro 1`, `Pro2`, and so on,
+with many windows already open. A profile label names a browser profile and
+never proves the ChatGPT model. For ChatGPT, only consultation profiles are
 eligible; `Work` is reserved for the user and is never a fallback. The skill
 requires continual verification of the working profile/window/page. Protecting the user's foreground focus is a
 primary concern: work through viable background methods first. Necessary brief
@@ -402,10 +405,16 @@ read when the operation needs them.
 ### `chatgpt-web`
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
-capabilities, or local attachments. The skill shapes rough prompts with
-`prompt-authoring` discipline, requires reading and applying the `browseros` skill,
-verifies that BrowserOS is already logged in, and uses one eligible tab without
-silently inheriting its arbitrary conversation.
+capabilities, or local attachments. The skill writes each submission from the
+matching family in `references/consultation-templates.md` (PR review, after
+fixes, plan check, planning where Pro writes the plan, on-track check, design
+round, diagnosis, audit, retry, new thread) in the user's voice, with the
+canonical sources attached whole and no verdict token, answer cap, scope
+fence, or commit SHA; `prompt-authoring` discipline holds underneath. The
+agent watches for Pro's answer rather than handing the wait to the user. It
+requires reading and applying the `browseros` skill, verifies that BrowserOS
+is already logged in, and uses one eligible tab without silently inheriting
+its arbitrary conversation.
 Use the most applicable project. Prefer a matching recent Pro thread for the
 same workstream; assess whether a longer thread needs a fresh conversation with
 the necessary context carried over. An explicit exact-thread or new-chat
@@ -413,17 +422,22 @@ request wins. Independent asks remain serial. The default is GPT-6 Astra Pro
 with Extended thinking when mode or effort is omitted. The skill is prose-only:
 no scripts, runners, harnesses, API calls, or automated login.
 Pro means GPT-6 Astra's literal `Pro` option, never Extra High, xhigh, Ultra,
-Thinking, or the highest remaining setting. If Pro is missing or disabled in
-the `Chat` picker, it probably means a temporary account rate limit. The skill
-uses `$browseros` to discover only the already-open numbered Pro profiles,
-such as Pro 1 through Pro 5 or whichever are configured. Never use the user's
+Thinking, or the highest remaining setting. Pro is the top `Power` position of
+the `Latest` model (the composer pill then reads `6 Pro`); it is not an entry
+in the model list. If `Power` cannot reach Pro in the `Chat` picker, it
+probably means a temporary account rate limit. The skill
+uses `$browseros` to discover only the already-open consultation profiles,
+the BrowserOS profiles labeled `Pro 1` through `Pro5` or whichever are
+configured. Those labels are browser profile names, not the model: the agent
+selects `Pro` in the model picker, reads it back from the page before every
+Send, and reports that reading as the model. Never use the user's
 `Work` profile, including for retries or old-thread continuation; preserve its
 rate-limit capacity. Note which account currently offers Pro, which are
 unavailable, and when checked; use the working account and refresh stale notes
 on resume. There is no fixed account count or rotation order. All should have
 the same projects; continually verify the profile/window/page and carry the
 conversation context into the same-named project after switching.
-For a Pro rate limit, only after eligible Pro accounts are exhausted does it
+For a Pro rate limit, only after the consultation profiles' accounts are exhausted does it
 pause the blocked Pro consultation while independent authorized work continues; no substitute
 reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
@@ -432,7 +446,7 @@ Work's reasoning slider does not select GPT-6 Astra Pro in Chat.
 Data questions require an attached `@BigQuery` connector; GitHub or repository
 questions require `@GitHub`, and questions needing both require both. The agent
 must verify actual retrieval of the required data or code. If a required
-connector is unavailable or fails, switch to another suitable Pro profile or
+connector is unavailable or fails, switch to another suitable consultation profile or
 stop and tell the user. A confident answer based on guessed data or inaccessible
 code is invalid and cannot count as a completed consultation or review.
 
@@ -569,13 +583,14 @@ and `stepwise` or `arch-epic` for ordered role lifecycles.
 
 ### `delegated-implementation`
 
-Use this execution contract when an Astra or Fable coordinator runs
-`issue-to-pr` or `epic-to-prs`, or the user asks the parent to keep requirements
-and review while workers implement accepted work. Astra uses GPT-5.6 Sol at
-high; Fable uses Opus 5. The active harness supplies agent mechanics. Workers
-implement, test, and repair code; the parent personally reviews every
-deliverable and changed code line, including later fixes. All skill authorship
-stays with the parent using `skill-authoring`; workers may run validation.
+Use this execution contract when a coordinator runs `issue-to-pr` or
+`epic-to-prs`, or the user asks the parent to keep requirements and review while
+workers implement accepted work. Astra uses GPT-5.6 Sol at high; Fable uses
+Opus 5; any other parent uses a native child on its own model. The active
+harness supplies agent mechanics. Workers implement, test, and repair code; the
+parent personally reviews every deliverable and changed code line, including
+later fixes. All skill authorship stays with the parent using `skill-authoring`;
+workers may run validation.
 The calling workflow keeps its Pro cadence, delivery obligations, and completion
 boundary. This helper does not invoke conductor's full workflow.
 
@@ -755,9 +770,13 @@ Use `cynical-cruft-removal` when deletion value and low-value artifact discovery
 
 When explicitly selected, use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim and wants the review saved to
-disk. The skill divides real coverage needs into non-overlapping new clean
-native read-only slices, bounds fanout by host slots, collision risk, and parent
-integration capacity, and accounts for every return before writing `target.md`,
+disk. The skill applies every slice of its bundled review catalog whose inputs
+are present in the target and records a final state for each applied check. When
+the user names a worker type or count ("use 12 sonnet agents"), it deals the
+slices across that many new clean native read-only children of exactly that
+type, bounds fanout by host slots, collision risk, and parent integration
+capacity, verifies every reported finding in the parent, and accounts for every
+return before writing `target.md`,
 `coverage.md`, `findings.md`, and `verdict.md` under
 `/tmp/exhaustive-code-review/...`. Its verdicts are `approve`, `not-approved`,
 or `coverage-incomplete`.

@@ -1,0 +1,44 @@
+1. Refresh labels:
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+Expected: `Default` → `Work`; `Profile 7` → `pro1`.
+
+2. Reconfirm live ownership and find RudderStack pages:
+
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages.filter(p => p.url.includes('rudderstack.com'))
+  .map(p => ({page:p.pageId, window:p.windowId, profileDir:dir[p.windowId],
+    title:p.title, url:p.url, isActive:p.isActive}));
+```
+
+Expected: page 879 is the task-created inactive login page in `pro1`, not `Work`; any pre-existing `Work` pages remain inventory-only.
+
+3. Close the wrongly placed task page and open a replacement without taking focus:
+
+```js
+await browser.pages.close(879);
+return await browser.pages.newPage(
+  'https://app.rudderstack.com/',
+  {background:true, windowId:1595534029}
+);
+```
+
+Expected: page 879 closes; a new ordinary background page is created in the `Work` window.
+
+4. Re-run step 2 plus `browser.pages.getInfo(<newPageId>)`, then snapshot `<newPageId>`.
+
+Expected: `profileDir:"Default"`, window `1595534029`, visible, inactive. It should show the authenticated RudderStack console or a real `Work` login gate.
+
+5. If authenticated, inspect the workspace marker and proceed only after it says `Poker Skill`. Before saving, rerun the profile check, verify both exact event names and existing allowlist values, save once, then independently reread both entries.
+
+Exact message to Amir now:
+
+> RudderStack opened in `pro1`; I would close that task tab and reopen it as a background tab in `Work` so I don’t interrupt your typing. I still need the two exact event names before changing the staging allowlist.
+
+Need from Amir: **the two exact event names**.

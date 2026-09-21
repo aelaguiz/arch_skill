@@ -124,7 +124,7 @@ attribute to establish that association by itself. This expression only reads.
     userMessageId: userId, userMounted: !!user, laterUserTurn,
     response: {
       turnId: responseId, text: response.innerText,
-      answerMessages: [...response.querySelectorAll('[data-message-author-role="assistant"]')].map(m => ({id: m.getAttribute('data-message-id'), text: m.innerText}))
+      answerMessages: [...response.querySelectorAll('[data-message-author-role="assistant"]')].map(m => ({id: m.getAttribute('data-message-id'), model: m.getAttribute('data-message-model-slug'), text: m.innerText}))
     },
     activityPanelVisible: visible(panel),
     activityText: laterUserTurn ? null : panel?.querySelector('[slot="content"]')?.innerText ?? null,
@@ -144,7 +144,18 @@ belong to that later request; reidentify the current work before using them.
 association or prove a missing submission. A missing/ambiguous response ID
 requires reidentification, never substitution of another mounted response.
 
+Each answer message's `model` is the slug that served it: `gpt-6-pro` for Pro.
+It is absent until the assistant message mounts, so read it as soon as answer
+text arrives. On a Pro consultation any other slug, such as
+`gpt-5-6-thinking`, is a wrong-model submission. Only this turn's slug counts;
+an earlier turn's slug or `Used GPT-6 Pro` footer says what served that turn.
+
 ## Recover without Stop answering
+
+This section is for a correct submission that has stalled. A submission that
+went out wrong (missing attachment or pill, duplicated or truncated text,
+wrong model or surface) is not recovered here: stop it at once and resend it
+whole, as the entry file says.
 
 The entry file sets the timing: roughly 30 minutes is normal, with no completion
 deadline; 15+ minutes of observed inactivity permits one same-page reload.

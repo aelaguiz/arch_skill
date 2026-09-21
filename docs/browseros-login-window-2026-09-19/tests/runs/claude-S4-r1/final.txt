@@ -1,0 +1,35 @@
+## 1. Next tool calls, in order
+
+**a. `mcp__browseros__run`** — fresh joined check (my notes/IDs may be stale; also looks for an already-signed-in PostHog page before any login):
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages.filter(p => /posthog\.com|accounts\.google\.com/.test(p.url))
+  .map(p => ({page: p.pageId, window: p.windowId, profileDir: dir[p.windowId],
+              type: w.windows.find(x => x.windowId === p.windowId)?.windowType, title: p.title}));
+```
+Expect: page 640 → window 1595534269 / `Profile 7` = **pro1**, confirming the chooser (only `pro1@fun.country`) is wrong-profile evidence, not a missing credential. Possibly other PostHog pages in other profiles — those aren't mine; inventory only.
+
+**b. `mcp__browseros__run`** — close the page this task wrongly opened: `await browser.pages.close(640)`. Expect: closed; no account was ever selected, so nothing was mutated in Google.
+
+**c. `mcp__browseros__run`** — open PostHog in the `Work` window (`Default` = window 1595534029):
+```js
+return await browser.pages.newPage('https://us.posthog.com/project/221159/feature_flags',
+  {background: true, windowId: 1595534029});
+```
+Expect: a new background page ID in `Work`.
+
+**d. `mcp__browseros__run`** — repeat check (a) for the new page ID. Expect `profileDir: 'Default'` = `Work`.
+
+**e. `mcp__browseros__read`** (or `grep`) on the new page — bounded visible text of the flag list. Expect the staging feature flags, since Amir's PostHog login lives in `Work`. If `Work` itself shows a login/2FA gate, I stop there, leave it as a background tab, and hand it to Amir.
+
+Skipped: clicking `pro1@fun.country`, "Use another account", `tabs new`, or `windows activate` — all would deepen the placement error or steal focus.
+
+## 2. Message to Amir
+
+> Correction on my end: I opened PostHog in the `pro1` profile (window …4269) instead of `Work`, so it hit a login wall and I clicked "Continue with Google" there. I did **not** select an account — that chooser only offered `pro1@fun.country`. I've closed that page and reopened PostHog as a background tab in your `Work` profile, titled "Feature flags • PostHog". Nothing was changed in either Google account. Reading the staging flag list now; I'll ping you only if `Work` asks for a password or 2FA.
+
+## 3. Needed from Amir
+
+Nothing.

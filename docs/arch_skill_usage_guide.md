@@ -392,8 +392,10 @@ alongside a narrower BrowserOS-backed skill; that skill owns its site workflow
 while `browseros` owns BrowserOS mechanics. It is not for BrowserOS
 installation or vendor development.
 
-The shared machine has a `Work` profile and a variable number of Pro profiles
-with many windows already open. For ChatGPT, only numbered Pro profiles are
+The shared machine has a `Work` profile and a variable number of ChatGPT
+consultation profiles, labeled `Pro 1`, `Pro2`, and so on,
+with many windows already open. A profile label names a browser profile and
+never proves the ChatGPT model. For ChatGPT, only consultation profiles are
 eligible; `Work` is reserved for the user and is never a fallback. The skill
 requires continual verification of the working profile/window/page. Protecting the user's foreground focus is a
 primary concern: work through viable background methods first. Necessary brief
@@ -407,10 +409,16 @@ Examples:
 ### `chatgpt-web`
 
 Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
-capabilities, or local attachments. It shapes rough prompts with
-`prompt-authoring` discipline, requires reading and applying the `browseros` skill,
-verifies that BrowserOS is already logged in, and uses one eligible tab without
-silently inheriting whatever conversation is open.
+capabilities, or local attachments. It writes each submission from the
+matching family in `references/consultation-templates.md` (PR review, after
+fixes, plan check, planning where Pro writes the plan, on-track check, design
+round, diagnosis, audit, retry, new thread) in the user's voice, with the
+canonical sources attached whole and no verdict token, answer cap, scope
+fence, or commit SHA; `prompt-authoring` discipline holds underneath. The
+agent watches for Pro's answer rather than handing the wait to the user. It
+requires reading and applying the `browseros` skill, verifies that BrowserOS
+is already logged in, and uses one eligible tab without silently inheriting
+whatever conversation is open.
 Use the most applicable project. Prefer a matching recent Pro thread for the
 same workstream; assess whether a longer thread needs a fresh conversation with
 the necessary context carried over. An explicit exact-thread or new-chat
@@ -418,17 +426,22 @@ request wins. Independent asks remain serial. The default is GPT-6 Astra Pro
 with Extended thinking when mode or effort is omitted. The skill is prose-only:
 no scripts, runners, harnesses, API calls, or automated login.
 Pro means GPT-6 Astra's literal `Pro` option, never Extra High, xhigh, Ultra,
-Thinking, or the highest remaining setting. If Pro is missing or disabled in
-the `Chat` picker, it probably means a temporary account rate limit. The skill
-uses `$browseros` to discover only the already-open numbered Pro profiles,
-such as Pro 1 through Pro 5 or whichever are configured. Never use the user's
+Thinking, or the highest remaining setting. Pro is the top `Power` position of
+the `Latest` model (the composer pill then reads `6 Pro`); it is not an entry
+in the model list. If `Power` cannot reach Pro in the `Chat` picker, it
+probably means a temporary account rate limit. The skill
+uses `$browseros` to discover only the already-open consultation profiles,
+the BrowserOS profiles labeled `Pro 1` through `Pro5` or whichever are
+configured. Those labels are browser profile names, not the model: the agent
+selects `Pro` in the model picker, reads it back from the page before every
+Send, and reports that reading as the model. Never use the user's
 `Work` profile, including for retries or old-thread continuation; preserve its
 rate-limit capacity. Note which account currently offers Pro, which are
 unavailable, and when checked; use the working account and refresh stale notes
 on resume. There is no fixed account count or rotation order. All should have
 the same projects; continually verify the profile/window/page and carry the
 conversation context into the same-named project after switching.
-For a Pro rate limit, only after eligible Pro accounts are exhausted does it
+For a Pro rate limit, only after the consultation profiles' accounts are exhausted does it
 pause the blocked Pro consultation while independent authorized work continues; no substitute
 reviewer can satisfy a required Pro review. Inside ChatGPT it
 always uses the `Chat` surface, never `Work`: Pro exists only in `Chat`, and
@@ -437,7 +450,7 @@ Work's reasoning slider does not select GPT-6 Astra Pro in Chat.
 Data questions require an attached `@BigQuery` connector; GitHub or repository
 questions require `@GitHub`, and questions needing both require both. The agent
 must verify actual retrieval of the required data or code. If a required
-connector is unavailable or fails, switch to another suitable Pro profile or
+connector is unavailable or fails, switch to another suitable consultation profile or
 stop and tell the user. A confident answer based on guessed data or inaccessible
 code is invalid and cannot count as a completed consultation or review.
 
@@ -451,15 +464,21 @@ Examples:
 
 ### `issue-to-pr` and `epic-to-prs`
 
-Invoke these delivery workflows explicitly. A standalone issue normally gets
-Pro initial planning and final PR review. An epic shares planning and review
-across related issues, with useful batch checkpoints and final stack review
-instead of a separate review pair for every child. A checkpoint after two
-related issues can make sense when there is a meaningful combined result to
-assess; the count alone does not trigger it. Pro is also available for a
-major unexpected blocker the agent cannot resolve through local reasoning
-and investigation. Astra and Fable coordinators use `delegated-implementation`:
-Astra assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5.
+Invoke these delivery workflows explicitly. Two seats do the consulting,
+named by the user at invocation: the primary writes the plan with the
+coordinator and takes the early review rounds; the final checks the
+written-up plan once and reviews the PR once at the end. Say "primary Sol
+xhigh, final Pro" or "primary Fable xhigh"; with no seats named, GPT-6 Astra
+Pro holds both, which is one planning consultation and one final review. An
+epic shares the seats across related issues: the primary plans and reviews
+batches, the final checks the plan and reviews the stack. A checkpoint after
+two related issues can make sense when there is a meaningful combined result
+to assess; the count alone does not trigger it. The primary is also
+available for a major unexpected blocker the agent cannot resolve through
+local reasoning and investigation. CI is the very last step, after the final
+has cleared the work. Every coordinator uses `delegated-implementation`: Astra
+assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5; any other
+parent uses a native child on its own model.
 The parent owns architecture, scope, integration, and direct review of every
 deliverable and changed code line. Workers handle implementation, tests, CI
 repairs, and post-review code fixes. All skill authorship stays with the parent,
@@ -470,7 +489,8 @@ active harness owns agent mechanics. Neither skill merges PRs.
 Examples:
 
 - `Use $issue-to-pr on issue 4484`
-- `Use $epic-to-prs on epic 4700; review meaningful batches together`
+- `Use $issue-to-pr on issue 5963, primary Sol xhigh, final Pro`
+- `Use $epic-to-prs on epic 4700, primary Fable xhigh, final Pro; review meaningful batches together`
 
 ### `delegated-implementation`
 
@@ -529,6 +549,28 @@ This package remains available in the repository for manual use but is not insta
 Examples:
 
 - `Use $codex-babysit to keep my running Codex goal alive`
+
+### `agent-watcher`
+
+Explicitly selected out-of-loop monitor for Amir's live coding-agent sessions.
+The parent (Fable or Astra) discovers active Codex, Claude Code, and Prime
+sessions, dispatches one watcher sub-agent per session on the cheap model Amir
+names, and adjudicates escalations with the surprise test before alerting him.
+Watchers keep an intent artifact and provenance ledger per session under
+`~/.agent-watcher/`, check only new events since their cursor, and skip
+sessions with no new bytes. Read-only; it never messages the watched sessions.
+On the 2026-09-15 regression against real traces, Opus watchers found nine of
+nine planted drifts (including a new screen 37 minutes after an agent built
+it) and Sonnet six of nine, missing new user-facing surfaces; name Opus when
+screens and inherited scope matter. Results are in
+`docs/agent-watcher-rewrite-plan-2026-09-15.md`.
+`intent-police` and `unblocker` are the in-loop companions a coding agent
+consults; `check-my-agents` is the one-shot debrief.
+
+Examples:
+
+- `Run the agent-watcher skill, use Opus subagents`
+- `Watch all my sessions for scope creep and self-blocking, Sol xhigh for the watchers`
 
 ### `fresh-consult`
 
@@ -865,8 +907,11 @@ Practical rule:
 
 When explicitly selected, use when the user wants a prompt-only exhaustive code review over a branch,
 diff, path set, plan scope, or completion claim, and wants the review saved to
-disk. It uses coverage-led clean native read-only slices, bounds fanout by host
-slots, collision risk, and parent integration capacity, reviews touched files, changed
+disk. It applies every slice of its bundled review catalog whose inputs are
+present, and when the user names a worker type or count it deals those slices
+across that many clean native read-only children while the parent verifies every
+reported finding. It bounds fanout by host slots, collision risk, and parent
+integration capacity, reviews touched files, changed
 hunks, abstractions, callers, duplicate paths, side doors, stale truth,
 tests/proof, docs, generated artifacts, prompts, config, and other live truth
 surfaces, then saves
@@ -878,6 +923,7 @@ Examples:
 
 - `Use $exhaustive-code-review on this full branch`
 - `Use $exhaustive-code-review on the current diff`
+- `Use $exhaustive-code-review on this branch with 12 sonnet agents`
 - `Use $exhaustive-code-review for Phase 4 of docs/MY_PLAN.md`
 
 Practical rule:

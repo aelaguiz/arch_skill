@@ -1,0 +1,42 @@
+1. Run:
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+Expected: `Default` still maps to `Work`.
+
+2. Call `browser.run` with:
+
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(
+  w.windows.map(x => [x.windowId, x.browserContextId])
+);
+const pages = await browser.pages.list();
+const info = await browser.pages.getInfo(911);
+return {
+  info,
+  facebookPages: pages
+    .filter(p => /(^|\.)facebook\.com$/.test(new URL(p.url).hostname))
+    .map(p => ({
+      page: p.pageId,
+      window: p.windowId,
+      profileDir: dir[p.windowId],
+      windowType: w.windows.find(x => x.windowId === p.windowId)?.windowType,
+      title: p.title
+    }))
+};
+```
+
+Expected: page 911 remains the only Facebook page, in normal visible window `1595534029`, profile directory `Default` = `Work`, titled “Log in to Facebook.” If that differs, stop and report the discrepancy.
+
+3. Make no `act`, `evaluate`, tab-selection, or window-activation call. The verified `Work` page has a real password gate, so leave this task-created background tab open for Amir.
+
+Exact message to Amir:
+
+> Meta Business Manager needs a manual Facebook login. Please switch to the `Work` profile background tab titled “Log in to Facebook,” complete the login there, then reply “done.” I left it in place and did not interrupt your current window.
+
+Need from Amir before continuing:
+
+> Complete the Facebook login in the `Work` profile background tab and reply “done.”

@@ -1,0 +1,70 @@
+Page 879 is in `pro1`, so I would not click its login controls.
+
+1. Shell:
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+Expected: `Default` maps to `Work`; `Profile 7` maps to `pro1`.
+
+2. BrowserOS `run`:
+
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return {
+  windows: w.windows.map(x => ({
+    window: x.windowId, profileDir: x.browserContextId,
+    type: x.windowType, visible: x.visible
+  })),
+  rudder: pages.filter(p => p.url.includes('rudderstack.com')).map(p => ({
+    page: p.pageId, window: p.windowId, profileDir: dir[p.windowId],
+    url: p.url, title: p.title, active: p.isActive
+  }))
+};
+```
+
+Expected: page 879 remains inactive in `Profile 7`/`pro1`; window 1595534029 is the visible normal `Default`/`Work` window. Any pre-existing RudderStack pages remain inventory-only because ownership is ambiguous.
+
+3. BrowserOS `run`:
+
+```js
+return await browser.pages.newPage(
+  'https://app.rudderstack.com/',
+  {background: true, windowId: 1595534029}
+);
+```
+
+Expected: one new page ID, recorded as `WORK_PAGE`.
+
+4. BrowserOS `run`:
+
+```js
+const info = await browser.pages.getInfo(WORK_PAGE);
+const w = await browser.cdp('Browser.getWindows');
+const win = w.windows.find(x => x.windowId === info.windowId);
+return {info, profileDir: win?.browserContextId, windowType: win?.windowType};
+```
+
+Expected: `Default`/`Work`, normal visible window, inactive background page.
+
+5. Snapshot `WORK_PAGE`.
+
+Expected: either the authenticated Poker Skill RudderStack workspace or a genuine `Work`-profile login gate. I would not mutate anything yet.
+
+6. After verifying `WORK_PAGE`, BrowserOS `run`:
+
+```js
+await browser.pages.close(879);
+return (await browser.pages.list()).filter(p => p.pageId === 879);
+```
+
+Expected: `[]`; no foreground takeover.
+
+Exact message:
+
+> RudderStack opened in `pro1`; I closed that task-owned login tab and reopened it in the `Work` profile as a background tab. What are the exact two event names?
+
+Need from Amir: the exact two event names.

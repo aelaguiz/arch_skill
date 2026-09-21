@@ -19,6 +19,8 @@ These are adapted from real failures already seen in this repo, but rewritten as
 - Case 13: validation was requested but not made real
 - Case 14: goal prompt became a form or competing source of truth
 - Case 15: execution goal softened into a non-completion report
+- Case 16: the agent's restatement replaced the source
+- Case 17: verdict token, SHA pin, and scope fence made the review narrow
 - How to use these examples safely
 
 ## Case 1: commander’s intent collapsed into procedure
@@ -339,6 +341,83 @@ Transferable principle:
 - execution goals should make non-completion language hard to use. If the user
   wants the system working, done means the system works and the evidence proves
   it.
+
+## Case 16: the agent's restatement replaced the source
+
+Real failure pattern:
+- an agent held the full planning workbook and the plan, then sent the
+  expert reviewer a 25KB brief that pasted the issue body verbatim plus its
+  own test output, and asked it to assess "on that accepted scope"
+- the reviewer answered well about the issue and said so: "the verdict
+  applies only to the RED-suite deliverable"; the user reran the same review
+  with the workbook attached and got a different answer
+- the agent's pre-send check was a dispatch-dimension checklist ("original
+  user correction quoted; same architect/thread"), which the brief passed
+
+Bad shape:
+- "Final review of PR #5970 against the accepted scope in the attached
+  issue. Judge the PR against that scope. Test output attached."
+- a brief with `Goal`, `Context`, `Instructions`, and `Output` headings whose
+  context section is the agent's summary of the sources
+
+Better shape:
+- "We're working on Dynamic Missions; the sheet we've been working out of is
+  attached, full export, and the plan is attached. I've been working out of
+  branch X; here's PR #5970, @GitHub, read the latest. The
+  issue I picked up was #5949. What I did: ... I think I'm done. Where I'm
+  least sure: ... What I'm looking for: did I implement the intent right, and
+  is this the cleanest, most pragmatic way to do it? Read the plan and the
+  sheet first, then the PR."
+
+Why the better shape works:
+- the reviewer reads the source the user reads, so its answer can match his
+- the status is a belief the reviewer can overturn
+- the question is about intent, so an issue that got the intent wrong is in
+  reach
+- the moves are sentences, so the brief reads like a colleague, not a form
+
+Transferable principle:
+- narrowing the work never narrows what the reviewer sees. Attach the
+  canonical source whole; the agent's restatement is not evidence.
+
+## Case 17: verdict token, SHA pin, and scope fence made the review narrow
+
+Real failure pattern:
+- across a 621-prompt corpus, six in ten review briefs asked for a verdict
+  token, one in three capped the answer, one in four fenced what the reviewer
+  could conclude, and nearly all pinned a commit SHA
+- the reviewer produced the token, the cap, and the fence, and the agent
+  reported "Pro passed it" while the user's own review of the same PR found
+  real problems
+
+Bad shape:
+- "Review PR 4734 at exact head 57eb43e4 against the approved plan. Return
+  APPROVED only if this exact head is correct, complete, minimal, and
+  merge-ready; otherwise return CHANGES REQUIRED with only blocking in-scope
+  defects. Do not require RustAI, Patrol, Flutter work, or any other adjacent
+  milestone scope."
+- "Judge only whether each of the five findings is now resolved. First line
+  PASS or CHANGES REQUIRED, then one line per finding."
+
+Better shape:
+- "Here's the PR; read the latest. Where am I introducing risk that really
+  wasn't necessary? Where did I overbuild around edge cases? Where did I
+  create new patterns where there were existing clean ones, split brain, or
+  a web of individual calls instead of one clear abstraction? Where am I
+  working around an architectural limitation I should tackle first? If the
+  issue itself got the intent wrong, say so. Whatever you find, I'll fix and
+  bring back."
+
+Why the better shape works:
+- the reviewer reads the whole PR as it is, not a frozen head
+- the reviewer decides what matters; the agent writes the verdict afterward
+- the question names the kinds of problems the user actually finds, so the
+  answer covers them
+- nothing forbids the reviewer from saying the scope is wrong
+
+Transferable principle:
+- a token, a cap, a fence, or a pin each trades a real review for an easy
+  summary. The agent owns the summary; the reviewer owns the review.
 
 ## How to use these examples safely
 

@@ -1,0 +1,34 @@
+## Correction first
+Page 640 is in the `pro1` profile (`Profile 7`, window 1595534269), not `Work`. PostHog isn't a ChatGPT consultation, so it should never have opened there — the login wall and the `pro1@fun.country` chooser are my placement error, not a missing credential. I will not click that account or "Use another account".
+
+## 1. Tool calls, in order
+
+**a. Relist with window map** (`mcp__browseros__run`, page 640):
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages.filter(p => /posthog\.com|accounts\.google\.com/.test(p.url))
+  .map(p => ({page:p.pageId, window:p.windowId, profileDir:dir[p.windowId],
+              type:w.windows.find(x=>x.windowId===p.windowId)?.windowType, title:p.title}));
+```
+Expect: 640 → `Profile 7`; no popup window spawned by the click; possibly an already-signed-in PostHog page in `Default` (`Work`). If one exists and is user-owned, I inventory it only and report it rather than driving it.
+
+**b. Close my orphaned chooser** — `tabs action="close" pageId=640`. Expect: tab gone from the `pro1` window; nothing else touched.
+
+**c. Open PostHog in `Work`** (`run`, on a surviving page):
+```js
+return await browser.pages.newPage('https://us.posthog.com/project/221159/feature_flags',
+  {background: true, windowId: 1595534029});
+```
+Expect: a new background tab in the `Work` window with a new page ID.
+
+**d. Verify placement** — `run`: `browser.pages.getInfo(<newId>)` plus the same `Browser.getWindows` join. Expect `windowId 1595534029`, `browserContextId "Default"` → `Work`. If it lands anywhere else, I stop and report instead of proceeding.
+
+**e. Read the flags** — `mcp__browseros__read` (bounded visible text) on the new page. Expect the staging feature-flag list. If instead `Work` shows PostHog's own login or a Google "Verify it's you", that is a real gate: I leave the page as a background tab in `Work` and hand off.
+
+## 2. Message to Amir
+> Correction: I'd opened PostHog in the `pro1` profile (window 1595534269) and clicked "Continue with Google" there — my mistake; that chooser only offers `pro1@fun.country`. I closed that tab without selecting an account and reopened PostHog as a background tab in your `Work` profile, titled "Feature flags • PostHog". Reading the staging flags from there now. Nothing in your `pro1` window was signed into.
+
+## 3. Needed from Amir
+Nothing — unless step (e) shows a real gate in `Work`, in which case I'd ask him to complete it in that background tab and tell me when done.

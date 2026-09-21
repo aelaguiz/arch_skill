@@ -1,7 +1,7 @@
 interface:
   display_name: "Disk Cleanup"
   short_description: "Reclaim developer disk space using known storage locations"
-  default_prompt: "Use $disk-cleanup to reclaim the requested disk headroom from known storage locations and saved inventories. Exclude canonical checkouts such as ~/workspace/psmobile and ~/workspace/psagentspace regardless of age or Git status, preserve active work and recoverable local files, and verify actual free space afterward."
+  default_prompt: "Use $disk-cleanup to reclaim requested disk headroom, or clean obvious reproducible wins during routine housekeeping, using known locations and saved inventories. Exclude canonical checkouts such as ~/workspace/psmobile and ~/workspace/psagentspace regardless of age or Git status, preserve active work and recoverable local files, and verify actual free space afterward. For unattended runs, leave approval-dependent data intact and report the opportunity."
 
 policy:
   allow_implicit_invocation: true

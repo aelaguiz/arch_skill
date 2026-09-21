@@ -10,7 +10,9 @@ implementation, proof, and review reading on the selected model and effort.
 The cost rule is about pinning, not about transport. A native child inherits
 the parent's model and thinking level unless the dispatch pins them, so an
 unpinned native worker may not use the selected fleet profile. A pinned one bills its own model. Pin the profile or
-take the external lane; never route bulk work to an unpinned native child.
+take the external lane; never route bulk work to an unpinned native child. When
+the fleet profile is the parent's own, the inherited native child already carries
+it and counts as pinned for every rule in this skill.
 
 Take the native lane when all four hold:
 
@@ -99,14 +101,18 @@ thinking level, durability, isolation, and receipts. Resolve it before choosing
 transport, and carry the same model and thinking level across whichever lane you
 choose — the fleet is defined by that profile, not by the runtime that hosts it.
 
+When the parent is a model this repo does not name and the user names no
+provider, the fleet profile is the parent's own model and thinking level.
+
 The user supplies the runtime and normally the thinking level plus a
 model/profile outside the defaults. When the fleet is Codex and the model is
 omitted, use `gpt-6-astra`; when that Astra lane also omits the level, use
 `xhigh`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
 `max`. For Codex, accept explicit `astra`, `luna`, and `terra` as `gpt-6-astra`,
 `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
-missing execution values. The default fleet is Astra at xhigh; do not assume it is cheaper than the
-parent. Announce the raw-to-resolved model mapping and the selected lane before
+missing execution values. For a parent this repo names, the default fleet is
+Astra at xhigh; do not assume it is cheaper than the parent. Announce the
+raw-to-resolved model mapping and the selected lane before
 the first launch, per agent-delegate's resolution doctrine. Do not silently
 change runtime, model, or thinking level mid-run; if a worker model is clearly
 failing the work, that is a user decision, not a silent substitution.

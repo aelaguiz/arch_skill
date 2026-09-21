@@ -1,0 +1,36 @@
+## 1. Tool calls, in order
+
+**1. Read** `/Users/aelaguiz/.claude/skills/browseros/references/profiles-and-focus.md` — the skill requires this before choosing a profile or opening a page. Expect: confirmation of `newPage(url, {background:true, windowId})` as the only profile-safe open, plus focus rules.
+
+**2. Write** `./browseros-notes.md` in the task folder with the verified map: `Work=Default=window 1595534029`, `pro1=Profile 7`, `pro3=Profile 15`, `pro2=Profile 20`, `pro4=Profile 28`; page 402 = Work, **user-owned, inventory only**.
+
+**3. `mcp__browseros__run`** (open my own page in the verified Work window — I will *not* read, navigate, or reuse 402, since it's pre-existing and not mine):
+```js
+const np = await browser.pages.newPage(
+  'https://us.posthog.com/project/221159/feature_flags',
+  {background: true, windowId: 1595534029});
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return {opened: np.pageId ?? np, posthog: pages
+  .filter(p => p.url.includes('posthog.com'))
+  .map(p => ({page: p.pageId, window: p.windowId, profileDir: dir[p.windowId],
+              title: p.title, isActive: p.isActive}))};
+```
+Expect: a new page ID with `profileDir:'Default'`, `isActive:false`, alongside untouched page 402. If `profileDir` isn't `Default`, I close it and retry with a fresh window map.
+
+**4. `mcp__browseros__read`** on the new page ID (bounded visible text) — expect the flag list (name, key, status, rollout). A login wall here would be a real gate in `Work`, not a profile error.
+
+**5. `mcp__browseros__grep`/`act` scroll + re-read** only if the list is paginated/virtualized, then compare against the plan.
+
+**6. `mcp__browseros__run`**: `await browser.pages.close(<newId>)`, then relist posthog pages — expect only 402 remaining.
+
+## 2. Message to Amir
+
+None needed to proceed. At completion:
+
+> Staging feature flags read from PostHog project 221159 — `Work` profile (Default), window 1595534029, in a background tab I opened and have since closed. I left your existing tab ("Feature flags • Poker Skill staging • PostHog", `Work` profile, page 402) untouched. Flags vs. plan: [comparison].
+
+## 3. Needed from Amir
+
+Nothing. (The `posthog` MCP server is unauthorized in this non-interactive session, so I'm going through the browser — no action required from you unless PostHog shows a 2FA/SSO gate in `Work`, which I'd hand back in place.)

@@ -29,7 +29,7 @@ surface currently divides responsibility this way:
 | Visual proof | `screenshot` | Bound size and frequency; full-page only when required. |
 | Page-context JavaScript | `evaluate` | Return small data; navigation destroys the old page execution context. |
 | Server-side BrowserOS SDK | `run` | Read-only or safely repeatable by default; check structured `ok` and `error`. |
-| File transfer | `upload`, `download` | Select the exact current control and verify the final artifact. |
+| File transfer | `upload`, `download` | Select the exact current control and verify the final artifact. Give `upload` the ref of the real `input[type=file]`. Never click a site's upload button, menu item, or file input: that opens the operating system's file dialog, which BrowserOS cannot see or close and the user must cancel. |
 | Document capture | `pdf` | A PDF proves document output, not screen layout. |
 
 Historical names such as `list_pages`, `new_page`, `navigate_page`,
@@ -56,7 +56,8 @@ persist cookies, tokens, passwords, card data, API keys, callback URLs, raw
 secret files, or session payloads.
 
 For an expected OAuth callback, prove consumption from the originating
-application when possible. Do not read, screenshot, quote, or persist its
+application when possible; `logins-and-oauth.md` owns where the sign-in page
+opens and how the flow is driven. Do not read, screenshot, quote, or persist its
 query or fragment. If inventory unavoidably returns a code-bearing URL, do not
 repeat it; retain only a safe title or origin/path marker. Close a
 task-created callback page only after consumption is proved.

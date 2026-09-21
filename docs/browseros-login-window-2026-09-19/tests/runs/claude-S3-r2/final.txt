@@ -1,0 +1,48 @@
+## What I'd run, in order
+
+**1. Start the login without letting it launch a browser** (it waits, so background it):
+
+```
+Bash: BROWSER=true gws-fc auth login --services drive,sheets \
+  > ./gws-auth.log 2>&1   (run_in_background: true)
+```
+Expect: no browser window opens; log gets "Open this URL…" + an accounts.google.com URL; process keeps waiting on the callback.
+
+**2.** `Read ./gws-auth.log` — expect the URL (carries a state token; I keep it out of notes and out of my reply).
+
+**3. Open it in the `Work` window myself** (`Default` = window 1595534029):
+
+```
+mcp__browseros__run:
+  const p = await browser.pages.newPage(URL, {background: true, windowId: 1595534029});
+  return p;
+```
+Expect a new background tab, no focus change.
+
+**4. Re-verify placement** (same call as before, narrowed):
+
+```
+mcp__browseros__run:
+  const w = await browser.cdp('Browser.getWindows');
+  const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+  return (await browser.pages.list())
+    .filter(p => /accounts\.google\.com/.test(p.url))
+    .map(p => ({page: p.pageId, window: p.windowId, profileDir: dir[p.windowId], title: p.title}));
+```
+Expect the new page at `profileDir: 'Default'` → `Work`. If it shows `Profile 7/15/20/28`, I close it and reopen in 1595534029.
+
+**5.** `snapshot` that page → expect "Choose an account" listing Amir's own accounts. **6.** `act` click `amir@fun.country` (if `act` reports success with no change, dispatch the click via `evaluate`). **7.** `snapshot`, then `act` Continue/Allow on the Drive+Sheets consent. **8.** Relist (step 4's call, widened to the site host) to catch a popup or a tab I didn't open.
+
+**9. Prove from the tool, not the page:** `Read ./gws-auth.log` (expect success + `credentials.enc` written), then a real read — `gws-fc drive files list --help` to get exact flags, then that one-row list.
+
+**10.** Close only the sign-in page I opened; relist once more.
+
+## Message to Amir
+
+Sent after step 3, before touching the page:
+
+> Re-authing gws-fc for Drive+Sheets as amir@fun.country. The Google consent page is a **background tab in your `Work` window** (title "Sign in – Google Accounts") — I opened it there deliberately and I'm driving it in the background, so it won't take focus. I'll tell you if it asks for a password, 2FA, or "Verify it's you" — that part is yours.
+
+## What I need from you first
+
+Nothing. If the chooser shows `amir@fun.country` as "Signed out", or 2FA/CAPTCHA appears, I stop there, leave the tab in `Work`, and hand it to you.

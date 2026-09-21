@@ -1,0 +1,52 @@
+1. Refresh profile labels:
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+Expected: `Default` still maps to `Work`.
+
+2. Open RudderStack in a background tab in the existing `Work` window:
+
+```js
+browser.run({
+  code: `const ws=(await browser.cdp('Browser.getWindows')).windows;
+const work=ws.find(w => w.browserContextId==='Default' && w.windowType==='normal' && w.visible);
+if (!work) throw new Error('No visible normal Work window');
+return browser.pages.newPage('https://app.rudderstack.com/', {
+  background:true,
+  windowId:work.windowId
+});`
+})
+```
+
+Expected: one new page-creation receipt; no window activation and no interaction with `pro1` page 875.
+
+3. Verify placement and inspect the page:
+
+```js
+browser.run({
+  code: `const w=await browser.cdp('Browser.getWindows');
+const dir=Object.fromEntries(w.windows.map(x=>[x.windowId,x.browserContextId]));
+const pages=await browser.pages.list();
+return pages.filter(p=>p.url.includes('rudderstack.com'))
+ .map(p=>({page:p.pageId,window:p.windowId,profileDir:dir[p.windowId],
+           title:p.title,url:new URL(p.url).origin+new URL(p.url).pathname}));`
+})
+```
+
+Then, for the returned page ID:
+
+```js
+browser.run({
+  code: `return browser.pages.getInfo(<PAGE_ID>);`
+})
+```
+
+Expected: normal, visible, background page in `Default`/`Work`. I would record that creation receipt in the existing worklog.
+
+4. Read a fresh snapshot, verify workspace `Poker Skill`, staging PostHog destination, and the current allowlist. Using refs from that snapshot, I would add each exact event once, confirm the field values, save once, then reread authoritative allowlist state. Immediately before Save, I would rerun step 3. I would not retry a timed-out Save until readback proves it did not land.
+
+Exact message to Amir: none. If `Work` shows a real password/2FA/CAPTCHA gate: “RudderStack needs your input in the `Work` profile, background tab titled ‘<TITLE>’. Please complete the sign-in gate there and tell me when it’s done.”
+
+Need from Amir before continuing: nothing.

@@ -74,22 +74,28 @@ overrides a terminal state such as `issue-to-pr` never merging.
   Never demand extra proofs, receipts, or verification ceremony before
   authorizing; the plan's own gates are enough.
 - Resolve ordinary uncertainty from the plan and available evidence. Consult
-  the run's Pro thread for a major unexpected blocker or consequential
+  the run's primary seat (its Pro thread when Pro holds it) for a major
+  unexpected blocker or consequential
   technical uncertainty that remains beyond local reasoning after reasonable
   investigation and is likely to change the approach. Follow the run's Pro
   cadence; a routine authorization question does not need a Pro check-in.
-  Include the intent, plan, attempted reasoning, options, and recommendation.
+  Write that consult from the matching family in `$chatgpt-web`'s
+  consultation templates, in the user's voice, with the sources attached
+  whole; include the intent, plan, attempted reasoning, options, and
+  recommendation as a belief Pro can overturn, and watch for the answer.
   Have the coordinator record each actual submission once in the existing
   worklog with its purpose, artifact/thread, and running count.
 - A required Pro review means GPT-6 Astra's literal `Pro` option, never Extra
   High, xhigh, Ultra, Thinking, or another substitute. Missing or disabled Pro
   probably means a temporary account rate limit. `$chatgpt-web`, with required
-  `$browseros` usage, uses only the already-open numbered Pro profiles, such as
-  Pro 1 through Pro 5 or whichever exist. The user's `Work` profile is reserved
+  `$browseros` usage, uses only the already-open consultation profiles, the
+  BrowserOS profiles labeled `Pro 1` through `Pro5` or whichever exist. That
+  label names a browser profile and never proves the model; the model is the
+  picker reading `$chatgpt-web` takes from the page before Send. The user's `Work` profile is reserved
   for their personal use and rate-limit capacity; never use it as a fallback.
   Note which eligible profile/window works and use it.
   All should have the same projects.
-  Only when eligible Pro accounts are exhausted, pause the blocked Pro
+  Only when the consultation profiles' accounts are exhausted, pause the blocked Pro
   decision and report the observed conditions while
   independent authorized work continues. Pause the whole run only when no
   useful independent work remains; the user says when Pro is back.

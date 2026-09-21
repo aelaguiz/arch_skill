@@ -1,7 +1,7 @@
 interface:
   display_name: "Exhaustive Code Review"
-  short_description: "Prompt-only exhaustive code review saved to disk"
-  default_prompt: "Use $exhaustive-code-review to review the requested code with the skill's systematic coverage and findings artifact. Stay read-only and use native review slices only within authorized delegation."
+  short_description: "Exhaustive catalog-driven code review saved to disk"
+  default_prompt: "Use $exhaustive-code-review to review the requested code against the skill's review catalog and save the findings artifact. Stay read-only. If I name a worker type or count, divide the catalog slices among that many clean native review children and verify every reported finding yourself."
 
 policy:
   allow_implicit_invocation: false

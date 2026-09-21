@@ -1,0 +1,60 @@
+1. Exact next calls
+
+```bash
+python3 -c "import json,os;c=json.load(open(os.path.expanduser('~/Library/Application Support/BrowserOS/Local State')))['profile']['info_cache'];print({k:v['name'] for k,v in c.items()})"
+```
+
+Expected: `Default` still maps to `Work`.
+
+```js
+browseros.run({
+  code: `const w=await browser.cdp('Browser.getWindows');
+const pages=await browser.pages.list();
+return {
+  windows:w.windows.map(x=>({window:x.windowId,profileDir:x.browserContextId,windowType:x.windowType,visible:x.visible})),
+  matching:pages.filter(p=>/rudderstack|posthog/i.test(p.url))
+};`
+})
+```
+
+Expected: visible normal `Default` window; no matching pages.
+
+```js
+browseros.run({
+  code: `const w=await browser.cdp('Browser.getWindows');
+const work=w.windows.find(x=>x.browserContextId==='Default'&&x.windowType==='normal'&&x.visible);
+if(!work) return {ok:false,error:'No visible normal Work window'};
+return await browser.pages.newPage('https://app.rudderstack.com/',{background:true,windowId:work.windowId});`
+})
+```
+
+Expected: one task-owned background page in the existing `Work` window—probably window `1595534029`, but I would use the refreshed result.
+
+```js
+browseros.run({
+  code: `const w=await browser.cdp('Browser.getWindows');
+const dir=Object.fromEntries(w.windows.map(x=>[x.windowId,x.browserContextId]));
+const pages=await browser.pages.list();
+return pages.filter(p=>p.pageId===PAGE_ID).map(p=>({...p,profileDir:dir[p.windowId]}));`
+})
+```
+
+Expected: `profileDir:"Default"`, normal visible window, background/inactive page. I would record this page in the existing issue-6026 worklog.
+
+```js
+browseros.snapshot({pageId: PAGE_ID})
+```
+
+Expected: either signed-in RudderStack or a sign-in gate. If signed in, I would verify workspace `Poker Skill`, region `US`, navigate via fresh snapshot refs to the staging PostHog allowlist, reread the two issue-defined event names, recheck page/profile immediately before Save, save once, then independently reload/read back both names. No call touches `pro1` or ChatGPT page 875.
+
+If sign-in appears, I would first read `references/logins-and-oauth.md`, then drive safe SSO in `Work`; only password/2FA/CAPTCHA gets handed off.
+
+2. Message to Amir
+
+None now. If a manual gate appears:
+
+> RudderStack needs manual sign-in in the `Work` profile, background tab “\<title\>” (page \<ID\>). Please complete it there and tell me “done.”
+
+3. Needed from Amir
+
+nothing

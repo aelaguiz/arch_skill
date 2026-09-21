@@ -1,0 +1,33 @@
+## Assessment
+
+Page 911 is in window 1595534029 → `Default` → the **`Work`** profile. So placement is already right — this is not a wrong-window login wall. No other facebook.com page exists anywhere, and there's no "Continue with Google" to click. That makes it a real gate in `Work`: Amir's step, handed off in place. I do not type into e3/e4, do not click e5, do not navigate or close the page.
+
+## 1. Tool calls
+
+**Call 1 — `mcp__browseros__run` (re-verify immediately before the handoff, and capture the exact tab title):**
+```js
+const w = await browser.cdp('Browser.getWindows');
+const dir = Object.fromEntries(w.windows.map(x => [x.windowId, x.browserContextId]));
+const pages = await browser.pages.list();
+return pages
+  .filter(p => p.url.includes('facebook.com'))
+  .map(p => ({page: p.pageId, window: p.windowId, profileDir: dir[p.windowId],
+              type: w.windows.find(x => x.windowId === p.windowId)?.windowType, title: p.title}));
+```
+Expect exactly one row: `{page: 911, window: 1595534029, profileDir: 'Default', type: 'normal', title: 'Log in to Facebook'}`. If a second facebook tab appears, it's user-owned — inventory only.
+
+**Call 2 — `Write`** to `/private/tmp/claude-501/-Users-aelaguiz-workspace-arch-skill/e7e26c09-d590-4d1e-a230-d643740616bd/scratchpad/tests/work/browseros-notes.md`: label map, window map, and the baseline line `Work / Default / window 1595534029 / page 911 (task-created, background) — business.facebook.com login gate, awaiting user`. Expect: file written.
+
+Then I stop and wait. No further browser calls until Amir hands it back.
+
+## 2. Message to Amir
+
+> Meta Business Manager is asking for a login, and it's asking in your own profile — so this is a real sign-in, not me being in the wrong window.
+>
+> The page is in the **`Work`** profile, background tab titled **"Log in to Facebook"** (window 1595534029). I opened it; it's sitting in the background so it won't pull you out of what you're typing. Switch to it when convenient and sign in — including any 2FA. I haven't typed anything into the email or password fields and won't.
+>
+> Tell me when you're through and I'll re-check the tab, go to Ads Manager, and pull yesterday's spend for the Poker Skill ad account.
+
+## 3. What I need from Amir
+
+Two things: (a) complete the Facebook sign-in in that `Work` background tab and tell me when it's done; (b) confirm the exact ad account name or ID for "Poker Skill" if more than one matches once I'm in Ads Manager — I'll ask then rather than guess.

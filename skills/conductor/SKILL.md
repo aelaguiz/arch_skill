@@ -36,7 +36,8 @@ log beside the plan is its durable memory.
   native child inherits the parent's model unless the dispatch pins
   its model and thinking level; a pinned child bills its own. Pin the profile
   or take the external lane, and never route bulk work to an unpinned native
-  child.
+  child. When the fleet profile is the parent's own, the inherited native child
+  already carries it and counts as pinned for every rule in this skill.
 - The parent is the scope judge. Workers are genuinely smart but
   over-scope and over-iterate; the parent trims every proposal to the
   smallest sufficient solution and holds the approved boundary against
@@ -169,7 +170,9 @@ log beside the plan is its durable memory.
   profile, never on an unpinned native child, because review reading is the
   largest block of bulk tokens in the run.
 - Native model, thinking level, and starting context are all explicit at
-  dispatch. Codex states `fork_turns` — `"none"` for a clean phase worker or
+  dispatch — the first two stated, or under the inherited fleet deliberately
+  omitted so the host supplies the parent's own, with the resolved values recorded
+  in the log. Codex states `fork_turns` — `"none"` for a clean phase worker or
   critic, a positive count for deliberately bounded chat context, `"all"` only
   when the whole conversation is genuinely required — because omitting it
   currently inherits everything. Claude uses a clean named subagent by default;
@@ -238,11 +241,6 @@ log beside the plan is its durable memory.
   brief, then escalate the slice and continue independent work. The same finding surviving
   two consecutive send-backs marks the worker unhealthy immediately. Two
   consecutive malformed or failed child runs on one slice escalate it.
-- An external Codex worker that dies on a hard usage limit is continued, not
-  replaced: rotate accounts and resume the exact captured session per
-  `$agent-delegate`'s usage-limit continuity and
-  `../_shared/aim-rotation.md`. Rotation is not a send-back, respawn, or
-  failed run for cap purposes; record it in the conductor log.
 - Delegate all proof runs (tests, builds, generators, simulators) to
   workers; decisive proof counts only when a different clean worker on the
   fleet profile reproduced it. The parent runs read-only inspection, which
@@ -296,11 +294,14 @@ log beside the plan is its durable memory.
 5. Read `../_shared/scope-and-convergence.md`.
 6. Resolve the artifact path, boundary (whole plan unless the user named a
    phase range), the worker profile, per-role lane and starting context, max
-   parallelism, wave cap, and cold-verifier toggle. The fleet profile defaults
-   to Codex `gpt-6-astra` at `xhigh`; a user-named provider swaps the whole
-   fleet — Kimi to `kimi-code/k3` at `max`, Grok to `grok-4.6`, Cursor to
-   `composer-2.5-fast`, Claude to a supported Claude model. Then pick the lane
-   per `references/delegation-and-monitoring.md`: a native child when this host
+   parallelism, wave cap, and cold-verifier toggle. When the parent is a model
+   this repo does not name, the fleet profile is the parent's own model and
+   thinking level; `../_shared/agent-orchestration-policy.md` owns what "name"
+   means here. Otherwise the fleet profile defaults to Codex `gpt-6-astra` at
+   `xhigh`; a user-named provider swaps the whole fleet — Kimi to `kimi-code/k3`
+   at `max`, Grok to `grok-4.6`, Cursor to `composer-2.5-fast`, Claude to a
+   supported Claude model. Then pick the lane per
+   `references/delegation-and-monitoring.md`: a native child when this host
    can pin that model and thinking level durably, otherwise `$agent-delegate`.
    Ask one consolidated question only for load-bearing missing values. The
    Terra shortcut supplies its own external execution values, so do not ask for
