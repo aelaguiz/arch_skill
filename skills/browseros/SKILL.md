@@ -75,7 +75,7 @@ Run the check:
   window IDs may have changed and notes may be wrong;
 - immediately before a send, a login, or any external mutation;
 - when a page shows a login wall. A login wall is first a sign of the wrong
-  profile. Check the profile before asking the user to log in.
+  profile. Check the profile before signing in.
 
 Write the map (label, directory key, window ID, your page IDs) to a notes file
 in the task's working folder and reread it after a compaction. Name the profile
@@ -85,10 +85,16 @@ used to ask for it. The user is watching several windows and cannot see which
 one you mean.
 
 If BrowserOS calls return only a `session` value with no text, or `run` fails
-with an output-schema error, this host cannot see the browser. Say exactly
-that and stop browser work. An empty result is not "no windows open", and a
-page opened without seeing the result can land in any profile. The browser is
-fine and other hosts can still use it, so do not suggest restarting BrowserOS.
+with an output-schema error, this host's MCP client is dropping the results;
+the browser is fine, so do not suggest restarting BrowserOS. Do not act blind
+through those tools: an empty result is not "no windows open", and a page
+opened without seeing the result can land in any profile. Keep working by
+calling the same BrowserOS MCP endpoint directly from the shell (the
+`browseros` URL in this host's MCP configuration, normally
+`http://127.0.0.1:9000/mcp`): POST `initialize` with `Accept:
+application/json, text/event-stream`, keep the returned `Mcp-Session-Id`
+header, POST `tools/call`, and read `result.content[].text`. Every rule here
+still applies.
 
 ## Open pages only where you can choose the profile
 
@@ -125,12 +131,12 @@ do not go looking for a credential or a permission.
   type anything, and do not ask the user for credentials. Close the page if
   this task opened it, open the site in `Work`, and say what happened:
   "RudderStack opened in `pro1`; reopened in `Work`."
-- **Before asking anyone to log in, look for the signed-in page.** Filter
+- **Before signing in, look for the signed-in page.** Filter
   `pages.list()` by host and join it to the window map. A signed-in page in
   `Work` proves the site is logged in there: read it if the provenance rules
   below let this task use it, otherwise open your own page in the same `Work`
-  window, which shares that login. Ask for a login only when `Work` itself
-  shows the gate.
+  window, which shares that login. Sign in only when `Work` itself shows the
+  gate, and then do it yourself.
 - **A command-line login never launches the browser.** BrowserOS is the
   system default browser, so `open`, a tool's "opens browser" step, and a
   library's browser call all land in whichever window the user touched last.
@@ -145,15 +151,21 @@ do not go looking for a credential or a permission.
   browser, land in a window you never chose. Find the page by URL in the
   relist, with its profile, and continue only in a page that is yours and in
   `Work`. A tab you did not open is an orphan to report, not a page to use.
-- **A real gate in `Work` is handed off in place.** A password, 2FA, CAPTCHA,
-  or workspace-policy block in `Work` is the user's step. Keep the page as a
-  background tab in `Work`, tell the user the profile and the tab title, wait,
-  and reread the page when they hand it back.
+- **Work a gate in `Work` yourself.** A sign-in, consent screen, "Verify it's
+  you", code prompt, or CAPTCHA is part of the task, not a reason to stop. Let
+  the browser's saved password fill, use a credential the task or the user's
+  secrets files provide, read an emailed code yourself, and try the CAPTCHA.
+  The only gate that is the user's is one that needs their body or a secret
+  only they hold: a phone approval, a passkey or fingerprint, a password
+  stored nowhere you can reach. Finish everything else first, then ask once,
+  naming the profile and tab title, and keep working on whatever does not
+  depend on it. ChatGPT sign-in inside a consultation profile is
+  `$chatgpt-web`'s.
 - **Name the window every time you mention a login.** "Google sign-in for
   RudderStack, `Work` profile, background tab", never "the login page".
 
 Read [logins-and-oauth.md](references/logins-and-oauth.md) before running a
-command-line login, driving a sign-in page, or handing a gate to the user.
+command-line login, driving a sign-in page, or working a gate.
 
 ## Critical operating rules
 

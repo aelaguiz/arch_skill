@@ -118,7 +118,7 @@ change another user-visible choice merely because it simplifies recovery.
 | One page hangs after a long evaluation | Execution still running | Stop stacking calls on that target. |
 | HTTP 500/503 or closed channel | Transport/server lifecycle | Wait once, rediscover, and issue one small read-only tab probe. |
 | Login page or account chooser | Wrong window until proved otherwise | Prove the profile; outside `Work`, reopen the site in `Work` (`SKILL.md`, "Logins, SSO, and OAuth"). |
-| CAPTCHA or 2FA | Manual security gate | Pause for the user. |
+| CAPTCHA, code prompt, or password | Sign-in gate | Work it yourself (`logins-and-oauth.md`, "Gates: work them yourself"). Only a step that needs the user's body or a secret only they hold goes to the user, after everything else is done. |
 
 Use this recovery order:
 
@@ -159,8 +159,9 @@ sanitization. Serialize large screenshots and long evaluations so agents do
 not overload the shared BrowserOS transport.
 
 If a child leaves a page open, resume that exact child for cleanup. If it
-cannot be resumed, report the page as an orphan for manual cleanup. A fresh
-agent or deeper rail must not defeat the ownership boundary.
+cannot be resumed, the parent closes the pages that child's receipt records
+creating, after matching each live page to the receipt. A page no receipt
+explains stays an orphan to report; nobody closes a page on a guess.
 
 ## Completion receipt
 
