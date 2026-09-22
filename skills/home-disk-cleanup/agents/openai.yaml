@@ -1,0 +1,7 @@
+interface:
+  display_name: "Home Server Disk Cleanup"
+  short_description: "Clean root and data drives on the home training server"
+  default_prompt: "Use $home-disk-cleanup on home to remove obsolete RustAI training/test policies and other disposable buildup, preserving active and retained artifacts. Verify available space separately on root and the mounted /mnt drives."
+
+policy:
+  allow_implicit_invocation: true

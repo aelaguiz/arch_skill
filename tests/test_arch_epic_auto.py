@@ -67,7 +67,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
     def test_codex_shorthand_resolves_against_available_model_names(self):
         resolved = self.model_resolution.resolve_execution_phrase(
             "codex gpt 5.4 mini high",
-            codex_models=["gpt-5.6-sol", "gpt-5.4-mini"],
+            codex_models=["gpt-6-sol", "gpt-5.4-mini"],
         )
 
         self.assertEqual(resolved.runtime, "codex")
@@ -77,26 +77,36 @@ class ArchEpicAutoModeTests(unittest.TestCase):
     def test_codex_resolution_refuses_version_substitution(self):
         with self.assertRaises(self.model_resolution.ModelResolutionError):
             self.model_resolution.resolve_execution_phrase(
-                "codex gpt-5.6-sol xhigh",
+                "codex gpt-6-sol xhigh",
                 codex_models=["gpt-5.3-codex", "gpt-5.4-mini"],
             )
 
     def test_codex_resolution_accepts_preferred_compact_alias(self):
         resolved = self.model_resolution.resolve_execution_phrase(
-            "GPT56SOLXI",
-            codex_models=["gpt-5.6-sol"],
+            "GPT6SOLXI",
+            codex_models=["gpt-6-sol"],
         )
 
         self.assertEqual(resolved.runtime, "codex")
-        self.assertEqual(resolved.model, "gpt-5.6-sol")
+        self.assertEqual(resolved.model, "gpt-6-sol")
         self.assertEqual(resolved.effort, "xhigh")
+
+    def test_codex_luna_shorthand_uses_version_six(self):
+        for phrase in ("luna xhigh", "GPT6LUNAXI", "gpt-6-luna xhigh"):
+            with self.subTest(phrase=phrase):
+                resolved = self.model_resolution.resolve_execution_phrase(
+                    phrase,
+                    codex_models=["gpt-6-luna"],
+                )
+                self.assertEqual(resolved.model, "gpt-6-luna")
+                self.assertEqual(resolved.effort, "xhigh")
 
     def test_codex_defaults_to_astra_xhigh_and_accepts_natural_names(self):
         for phrase, source in [("codex", "default"), ("astra", "explicit"),
                                ("gpt 6 astra", "explicit"), ("gpt-6-astra", "explicit")]:
             with self.subTest(phrase=phrase):
                 result = self.model_resolution.resolve_execution_phrase(
-                    phrase, codex_models=["gpt-6-astra", "gpt-5.6-sol"])
+                    phrase, codex_models=["gpt-6-astra", "gpt-6-sol"])
                 self.assertEqual((result.runtime, result.model, result.effort),
                                  ("codex", "gpt-6-astra", "xhigh"))
                 self.assertEqual(result.model_source, source)
@@ -110,20 +120,20 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             self.assertEqual(result.effort_source, "explicit")
         with self.assertRaises(self.model_resolution.ModelResolutionError):
             self.model_resolution.resolve_execution_phrase(
-                "codex", codex_models=["gpt-5.6-sol"])
+                "codex", codex_models=["gpt-6-sol"])
 
     def test_explicit_sol_is_preserved_with_astra_recommendation(self):
-        for phrase in ("sol", "gpt-5.6-sol", "GPT56SOLXI"):
+        for phrase in ("sol", "gpt-6-sol", "GPT6SOLXI"):
             result = self.model_resolution.resolve_execution_phrase(
-                phrase, codex_models=["gpt-5.6-sol", "gpt-6-astra"])
-            self.assertEqual(result.model, "gpt-5.6-sol")
+                phrase, codex_models=["gpt-6-sol", "gpt-6-astra"])
+            self.assertEqual(result.model, "gpt-6-sol")
             self.assertEqual(result.effort, "xhigh")
             self.assertIn("Recommend gpt-6-astra", result.resolution_reason)
 
     def test_codex_sol_preserves_explicit_xhigh_override(self):
         resolved = self.model_resolution.resolve_execution_phrase(
-            "gpt-5.6-sol xhigh",
-            codex_models=["gpt-5.6-sol"],
+            "gpt-6-sol xhigh",
+            codex_models=["gpt-6-sol"],
         )
 
         self.assertEqual(resolved.effort, "xhigh")
@@ -147,7 +157,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             ),
             (
                 "luna ultra",
-                {"codex_models": ["gpt-5.6-luna"]},
+                {"codex_models": ["gpt-6-luna"]},
             ),
             (
                 "cursor agent composer 2.5 ultra",
@@ -180,7 +190,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 ):
                     self.model_resolution.resolve_execution_phrase(
                         phrase,
-                        codex_models=["gpt-5.6-sol", "gpt-5.4-mini"],
+                        codex_models=["gpt-6-sol", "gpt-5.4-mini"],
                     )
 
     def test_codex_argv_rejects_blocked_base_models(self):
@@ -208,7 +218,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 resolved = self.model_resolution.resolve_execution_phrase(
                     phrase,
-                    codex_models=["gpt-5.6-sol"],
+                    codex_models=["gpt-6-sol"],
                 )
                 self.assertEqual(resolved.runtime, "codex")
                 self.assertEqual(resolved.model, model)
@@ -489,11 +499,11 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         policy = self.model_resolution.resolve_role_execution_policy(
             {
                 "epic_planner": "claude opus 4.7 xhigh",
-                "implementation_worker": "codex gpt-5.6-sol xhigh",
+                "implementation_worker": "codex gpt-6-sol xhigh",
                 "repair_worker": "same as implementation",
                 "critic": "codex gpt 5.4 mini xhigh",
             },
-            codex_models=["gpt-5.6-sol", "gpt-5.4-mini"],
+            codex_models=["gpt-6-sol", "gpt-5.4-mini"],
         )
 
         self.assertEqual(policy["poll_seconds"], 180)
@@ -514,10 +524,10 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         policy = self.model_resolution.resolve_role_execution_policy(
             {
                 "epic_planner": "claude fable 5.1 high",
-                "implementation_worker": "codex gpt-5.6-sol xhigh",
+                "implementation_worker": "codex gpt-6-sol xhigh",
                 "critic": "codex gpt 5.4 mini xhigh",
             },
-            codex_models=["gpt-5.6-sol", "gpt-5.4-mini"],
+            codex_models=["gpt-6-sol", "gpt-5.4-mini"],
         )
 
         self.assertEqual(policy["roles"]["epic_planner"]["runtime"], "claude")
@@ -558,7 +568,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
     def test_codex_worker_command_is_resumable_and_hook_suppressed(self):
         argv = self.run_arch_epic._codex_worker_argv(
             Path("/repo"),
-            "gpt-5.6-sol",
+            "gpt-6-sol",
             "ultra",
             Path("/tmp/final.json"),
             "Do work.",
@@ -569,7 +579,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         self.assertIn("--dangerously-bypass-approvals-and-sandbox", argv)
         self.assertNotIn("--ephemeral", argv)
         self.assertIn("--model", argv)
-        self.assertIn("gpt-5.6-sol", argv)
+        self.assertIn("gpt-6-sol", argv)
         self.assertIn('model_reasoning_effort="ultra"', argv)
 
     def test_shared_kimi_cli_primitives_are_canonical(self):
@@ -1202,11 +1212,11 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                     {
                         "roles": {
                             "epic_planner": "claude opus 4.7 xhigh",
-                            "implementation_worker": "codex gpt-5.6-sol xhigh",
+                            "implementation_worker": "codex gpt-6-sol xhigh",
                             "repair_worker": "same as implementation_worker",
                             "critic": "codex gpt 5.4 mini xhigh",
                         },
-                        "codex_models": ["gpt-5.6-sol", "gpt-5.4-mini"],
+                        "codex_models": ["gpt-6-sol", "gpt-5.4-mini"],
                     }
                 ),
                 encoding="utf-8",

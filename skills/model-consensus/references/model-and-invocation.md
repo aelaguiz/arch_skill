@@ -85,14 +85,14 @@ Grok wording resolves to grok-4.6.
 Follow the shared model-resolution doctrine:
 
 - Accept `astra`, `luna`, and `terra` as Codex choices. They resolve to
-  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`; compact forms such as
-  `GPT56LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
+  `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`; compact forms such as
+  `GPT6LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
   `xhigh`. If a Codex lane names no model or profile, resolve it to
   `gpt-6-astra` and report that the model came from the default. If the
   resulting Astra lane names no effort, resolve it to `xhigh` and report
   `effort_source=preference_default`.
-- Preserve family and numeric version exactly. `gpt-5.6-luna` may normalize to
-  `gpt-5.6-luna`; it must not become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
+- Preserve family and numeric version exactly. `gpt-6-luna` may normalize to
+  `gpt-6-luna`; it must not become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
   `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
@@ -151,7 +151,7 @@ Model A: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effo
 Model B: "Claude Opus 4.7 xhigh" -> runtime=claude, model=claude-opus-4-7, effort=xhigh
 Model C: "codex" -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
 Model D: "codex high" -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
-Model E: "luna xhigh" -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
+Model E: "luna xhigh" -> runtime=codex, model=gpt-6-luna, effort=xhigh
 Model F: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
 Model G: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 Model H: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high

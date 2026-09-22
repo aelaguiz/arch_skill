@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.amir.nightly-disk-cleanup</string>
+	<key>LowPriorityIO</key>
+	<true/>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>/Users/aelaguiz/.local/bin/nightly-disk-cleanup</string>
+		<string>amirs-m3-max-new</string>
+		<string>Amirs-M3-Max-2</string>
+		<string>/Users/aelaguiz/.config/disk-cleanup/mission.md</string>
+	</array>
+	<key>StandardErrorPath</key>
+	<string>/Users/aelaguiz/.local/state/disk-cleanup/launchd.err.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/aelaguiz/.local/state/disk-cleanup/launchd.out.log</string>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>2</integer>
+		<key>Minute</key>
+		<integer>15</integer>
+	</dict>
+</dict>
+</plist>

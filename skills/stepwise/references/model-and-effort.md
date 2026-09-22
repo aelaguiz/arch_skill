@@ -84,8 +84,8 @@ This is reasoning, not a lookup table:
   aliases such as `fable` or `opus` are acceptable only when the user did not
   pin a version.
 - For ordinary Codex model ids, accept `astra`, `luna`, and `terra` as
-  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Compact forms such as
-  `GPT56LUNAXI` and `GPT56TERRAXI` preserve the variant and imply `xhigh`.
+  `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`. Compact forms such as
+  `GPT6LUNAXI` and `GPT56TERRAXI` preserve the variant and imply `xhigh`.
   When a Codex lane names no model or profile, use `gpt-6-astra` and report
   `model_source=default`. When that Astra lane names no effort, use `xhigh` and
   report `effort_source=preference_default`. Inspect the installed CLI's model

@@ -109,7 +109,7 @@ model/profile outside the defaults. When the fleet is Codex and the model is
 omitted, use `gpt-6-astra`; when that Astra lane also omits the level, use
 `xhigh`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
 `max`. For Codex, accept explicit `astra`, `luna`, and `terra` as `gpt-6-astra`,
-`gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
+`gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
 missing execution values. For a parent this repo names, the default fleet is
 Astra at xhigh; do not assume it is cheaper than the parent. Announce the
 raw-to-resolved model mapping and the selected lane before

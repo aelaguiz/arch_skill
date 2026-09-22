@@ -120,13 +120,13 @@ running.
 
 Treat model text as intent, not a loose alias:
 
-- `astra`, `luna`, and `terra` normalize to `gpt-6-astra`, `gpt-5.6-luna`, and
-  `gpt-5.6-terra`. Compact forms such as `GPT56LUNAXI` and `GPT56TERRAXI`
+- `astra`, `luna`, and `terra` normalize to `gpt-6-astra`, `gpt-6-luna`, and
+  `gpt-5.6-terra`. Compact forms such as `GPT6LUNAXI` and `GPT56TERRAXI`
   preserve the named variant and imply `xhigh`. A Codex role with no model or
   profile uses `gpt-6-astra`, reported with `model_source=default`. If that Astra
   role also omits effort, use `xhigh` and report
   `effort_source=preference_default`.
-- An explicit `gpt-5.6-luna` may normalize to `gpt-5.6-luna`; it must not
+- An explicit `gpt-6-luna` may normalize to `gpt-6-luna`; it must not
   become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`.
 - `gpt 5.3 codex` may normalize to `gpt-5.3-codex`.
 - `fugu` and `fugu-ultra` are Codex profile names; preserve them as `fugu` and
@@ -182,7 +182,7 @@ Always print the raw-to-resolved mapping before execution:
 planner: "codex" -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
 critic: "codex gpt-6-astra xhigh" -> runtime=codex, model=gpt-6-astra, effort=xhigh
 implementation_worker: "codex high" -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
-implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
+implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-6-luna, effort=xhigh
 critic: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
 critic: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 planner: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high

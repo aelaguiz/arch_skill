@@ -72,7 +72,7 @@ For an Astra or a Fable parent:
 - A Claude model (Fable 5.1, Opus 5) on a Claude host is a native child at
   the named model and effort. On any other host it is an external Claude
   process through `$agent-delegate` at the exact model and effort.
-- A Codex model (GPT-5.6 Sol, or GPT-6 Astra at an effort other than Pro) is
+- A Codex model (GPT-6 Sol, or GPT-6 Astra at an effort other than Pro) is
   an external Codex process through `$agent-delegate` at the exact model and
   effort. Not `$codex-review-yolo`: its `VERDICT:` footer is the anti-pattern
   the consultation templates remove.

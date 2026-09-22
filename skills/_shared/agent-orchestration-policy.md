@@ -104,8 +104,8 @@ under the default above. On any other host, resolve a Codex id against that host
 live catalog and do not assume it is present.
 
 Default a Codex model choice to `gpt-6-astra` at `xhigh`. Accept `astra` as
-`gpt-6-astra`. When the user mentions GPT-5.6 Sol, recommend GPT-6 Astra at
-`xhigh`; use Astra for a casual or accidental old-model reference. Preserve a
+`gpt-6-astra`. When the user mentions GPT-6 Sol, recommend GPT-6 Astra at
+`xhigh`; use Astra for a casual Sol reference. Preserve a
 deliberate request to keep Sol or another exact model, and preserve explicitly
 chosen effort. Do not silently change the model of an existing session.
 

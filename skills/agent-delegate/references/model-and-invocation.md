@@ -95,8 +95,8 @@ skill.
 Infer runtime only when the user's wording makes it unambiguous:
 
 - `codex`, `openai`, `gpt`, `gbt`, `astra`, `luna`, `terra`,
-  `gpt-6-astra`, `gpt-5.6-luna`, `gpt-5.6-terra`, `GPT56SOLXI`,
-  `GPT56LUNAXI`, `GPT56TERRAXI`, `gpt-5.3-codex`, `fugu high`, or
+  `gpt-6-astra`, `gpt-6-luna`, `gpt-5.6-terra`, `GPT6SOLXI`,
+  `GPT6LUNAXI`, `GPT56TERRAXI`, `gpt-5.3-codex`, `fugu high`, or
   `fugu-ultra xhigh` implies `runtime=codex`.
 - `claude fable`, `fable`, `claude opus`, or `opus` implies
   `runtime=claude`.
@@ -142,14 +142,14 @@ the recommendation; it does not infer intent.
 Treat model text as intent, not a loose alias:
 
 - Accept `astra`, `luna`, and `terra` as Codex choices. They resolve to
-  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`; compact forms such as
-  `GPT56LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
+  `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`; compact forms such as
+  `GPT6LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
   `xhigh`. If a Codex lane names no model or profile, resolve it to
   `gpt-6-astra` and report that the model came from the default. If the
   resulting Astra lane names no effort, resolve it to `xhigh` and report
   `effort_source=preference_default`.
-- Preserve model family and numeric version exactly. `gpt-5.6-luna` may normalize to
-  `gpt-5.6-luna`; it must not become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
+- Preserve model family and numeric version exactly. `gpt-6-luna` may normalize to
+  `gpt-6-luna`; it must not become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
   `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
@@ -191,7 +191,7 @@ Claude Fable 5.1 high -> runtime=claude, model=claude-fable-5-1, effort=high
 Claude Opus 4.7 xhigh -> runtime=claude, model=claude-opus-4-7, effort=xhigh
 Codex -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
 Codex high -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
-Luna xhigh -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
+Luna xhigh -> runtime=codex, model=gpt-6-luna, effort=xhigh
 Terra high -> runtime=codex, model=gpt-5.6-terra, effort=high
 Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 Grok Build high -> runtime=grok, model=grok-4.6, effort=high

@@ -101,14 +101,14 @@ Observed composer shape: the model pill beside the composer shows the current
 setting. It reads `6 Pro` with Pro selected and a power word such as `Medium`,
 `High`, `Extra High`, or `Instant` otherwise. While its menu is open the same
 button reads `Thinking effort`, so read the pill with the menu closed. The
-menu has `Select model`, whose radios are `Latest`, `GPT-5.6 Sol`, and
+menu has `Select model`, whose radios are `Latest`, `GPT-6 Sol`, and
 `GPT-5.5`, and `Power`, a slider.
 
 Pro is the top `Power` position of `Latest`. With Pro available the slider has
 five positions: `Extra High` is `4 of 5` and Pro reads `Pro, 5 of 5`. Pro is
 not an entry in the model list. Do not look for it there, and never report Pro
 missing, disabled, or rate limited because the list shows only `Latest`,
-`GPT-5.6 Sol`, and `GPT-5.5`.
+`GPT-6 Sol`, and `GPT-5.5`.
 
 When a composer cannot select Pro, the slider ends at `Extra High, 4 of 4` and
 a disabled `Pro` entry appears below the model list. Hover the disabled entry

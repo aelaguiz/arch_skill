@@ -121,7 +121,7 @@ log beside the plan is its durable memory.
   with no named model defaults to `gpt-6-astra`, and an omitted level on that
   Astra worker defaults to `xhigh`; a Kimi worker with omitted model and level
   defaults to `kimi-code/k3` at `max`. Accept `astra`, `luna`, and `terra` as
-  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`. Ask one consolidated
+  `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated
   question only for load-bearing missing values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording

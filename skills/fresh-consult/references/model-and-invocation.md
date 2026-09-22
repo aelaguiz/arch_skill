@@ -8,7 +8,7 @@ isolation, automation, or receipt benefit justifies the added process.
 
 For the external lane, use this reference to resolve what the user meant by
 "Claude", "Codex", "Cursor Agent", "Grok", "Kimi", "fable 5.1 high", "opus high",
-"gpt-6-astra xhigh", "luna xhigh", "terra high", "GPT56SOLXI", "fugu high",
+"gpt-6-astra xhigh", "luna xhigh", "terra high", "GPT6SOLXI", "fugu high",
 "fugu-ultra xhigh", "composer-2.5-fast", "grok-4.6", "kimi k3", or similar phrasing,
 and to run the selected read-only consult subprocess.
 
@@ -91,8 +91,8 @@ Add only the missing facts to the question when some values are already known.
 Infer runtime only when the user's wording makes it unambiguous:
 
 - `codex`, `openai`, `gpt`, `gbt`, `astra`, `luna`, `terra`,
-  `gpt-6-astra`, `gpt-5.6-luna`, `gpt-5.6-terra`, `GPT56SOLXI`,
-  `GPT56LUNAXI`, `GPT56TERRAXI`, `gpt-5.3-codex`, `fugu high`, or
+  `gpt-6-astra`, `gpt-6-luna`, `gpt-5.6-terra`, `GPT6SOLXI`,
+  `GPT6LUNAXI`, `GPT56TERRAXI`, `gpt-5.3-codex`, `fugu high`, or
   `fugu-ultra xhigh` implies `runtime=codex`.
 - `claude fable`, `fable`, `claude opus`, or `opus` implies
   `runtime=claude`.
@@ -132,8 +132,8 @@ other Codex models, or Fugu profiles.
 Treat model text as intent, not a loose alias:
 
 - Accept `astra`, `luna`, and `terra` as Codex choices. They resolve to
-  `gpt-6-astra`, `gpt-5.6-luna`, and `gpt-5.6-terra`; compact forms such as
-  `GPT56LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
+  `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`; compact forms such as
+  `GPT6LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
   `xhigh`. If a Codex lane names no model or profile, resolve it to
   `gpt-6-astra` and report that the model came from the default. If the
   resulting Astra lane names no effort, resolve it to `xhigh` and report
@@ -180,7 +180,7 @@ Claude Fable 5.1 high -> runtime=claude, model=claude-fable-5-1, effort=high
 Claude Opus 4.7 xhigh -> runtime=claude, model=claude-opus-4-7, effort=xhigh
 Codex -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
 Codex high -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
-Luna xhigh -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
+Luna xhigh -> runtime=codex, model=gpt-6-luna, effort=xhigh
 Terra high -> runtime=codex, model=gpt-5.6-terra, effort=high
 Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 Cursor Agent composer 2.5 -> runtime=agent, model=composer-2.5-fast, effort=encoded-in-model

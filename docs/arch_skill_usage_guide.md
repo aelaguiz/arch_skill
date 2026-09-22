@@ -69,6 +69,21 @@ policy. `browseros` is the canonical preflight before direct BrowserOS MCP
 calls. `chatgpt-web` applies it and still requires BrowserOS plus a logged-in
 ChatGPT session, and the vendored thermonuclear rubric remains unchanged.
 
+## Disk maintenance
+
+Use `$disk-cleanup` for the local developer Mac. Use
+`$mac-studio-disk-cleanup` for `agents@amirs-mac-studio`, including its nightly
+01:15 America/Chicago job. The host-specific skill covers Hermes clutter,
+AIM backups, generated build output and disposable simulator data, with current
+activity checks and measured free-space results. Its latest report is on the
+Mac Studio at `~/.local/state/mac-studio-disk-cleanup/latest/final.md`.
+
+Use `$home-disk-cleanup` on the Linux `home` server for root and mounted data
+drives, including obsolete RustAI training/test output. The two M3 developer
+Macs use `$disk-cleanup`. The Studio uses GPT-5.6 Terra high; the other three jobs use Sol medium;
+see [Nightly disk cleanup](NIGHTLY_DISK_CLEANUP.md) for schedules, saved native
+configuration, report locations and operator commands.
+
 ## Shared conventions
 
 ### Choose agent transport and context explicitly
@@ -477,7 +492,7 @@ to assess; the count alone does not trigger it. The primary is also
 available for a major unexpected blocker the agent cannot resolve through
 local reasoning and investigation. CI is the very last step, after the final
 has cleared the work. Every coordinator uses `delegated-implementation`: Astra
-assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5; any other
+assigns code and verification to GPT-6 Sol high; Fable uses Opus 5; any other
 parent uses a native child on its own model.
 The parent owns architecture, scope, integration, and direct review of every
 deliverable and changed code line. Workers handle implementation, tests, CI
@@ -627,7 +642,7 @@ same-host work uses native children directly. The adapter preserves exact model
 resolution, CLI invocation, namespaced receipts, shared-worktree reporting, and
 exact-handle resume.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6-astra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. An omitted Codex model defaults to `gpt-6-astra`, and an omitted effort on that Astra lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6-astra`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. An omitted Codex model defaults to `gpt-6-astra`, and an omitted effort on that Astra lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -734,7 +749,7 @@ Examples:
 
 - `Use $conductor to implement docs/PAYMENTS_MIGRATION_2026-07-01.md end to end`
 - `Use $conductor: here is the outcome I need — decompose it, have the fleet research, get my approval on scope, then drive it to done`
-- `Use $conductor to drive phases 2-4 of docs/example-plan.md with two Codex gpt-5.6-luna medium workers; you review everything`
+- `Use $conductor to drive phases 2-4 of docs/example-plan.md with two Codex gpt-6-luna medium workers; you review everything`
 - `Use $conductor terra on docs/example-plan.md`
 
 Practical rule:

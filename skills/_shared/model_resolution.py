@@ -28,12 +28,17 @@ PREFERRED_KIMI_MODEL = "kimi-code/k3"
 KIMI_DEFAULT_EFFORT = "max"
 KIMI_EFFORT_ENV = "KIMI_MODEL_THINKING_EFFORT"
 KIMI_NO_AUTO_UPDATE_ENV = "KIMI_CODE_NO_AUTO_UPDATE"
-CODEX_56_VARIANTS = ("sol", "luna", "terra")
+CODEX_6_VARIANTS = ("sol", "luna")
+CODEX_56_VARIANTS = ("terra",)
 BLOCKED_CODEX_MODELS = frozenset({"gpt-5.4", "gpt-5.5"})
 
 _CLAUDE_FAMILIES = {"fable", "opus"}
+_CODEX_6_VARIANT_PATTERN = "|".join(CODEX_6_VARIANTS)
 _CODEX_56_VARIANT_PATTERN = "|".join(CODEX_56_VARIANTS)
-_CODEX_SUFFIX_PATTERN = "|".join(("mini", "codex", "spark", "astra", *CODEX_56_VARIANTS))
+_CODEX_VARIANT_PATTERN = "|".join((*CODEX_6_VARIANTS, *CODEX_56_VARIANTS))
+_CODEX_SUFFIX_PATTERN = "|".join(
+    ("mini", "codex", "spark", "astra", *CODEX_6_VARIANTS, *CODEX_56_VARIANTS)
+)
 _CODEX_FAMILY_RE = re.compile(
     r"\b(?:gpt|gbt)[\s_-]*(?P<version>\d+(?:\.\d+)?)"
     rf"(?P<suffix>(?:[\s_-]*(?:{_CODEX_SUFFIX_PATTERN}))*)\b",
@@ -44,8 +49,13 @@ _CODEX_56_COMPACT_RE = re.compile(
     r"(?:[\s_-]*(?:xhigh|xi|x))?\b",
     re.IGNORECASE,
 )
-_CODEX_56_BARE_VARIANT_RE = re.compile(
-    rf"\b(?P<variant>{_CODEX_56_VARIANT_PATTERN})\b", re.IGNORECASE
+_CODEX_6_COMPACT_RE = re.compile(
+    rf"\b(?:gpt|gbt)[\s_-]*6[\s_-]*(?P<variant>{_CODEX_6_VARIANT_PATTERN})"
+    r"(?:[\s_-]*(?:xhigh|xi|x))?\b",
+    re.IGNORECASE,
+)
+_CODEX_BARE_VARIANT_RE = re.compile(
+    rf"\b(?P<variant>{_CODEX_VARIANT_PATTERN})\b", re.IGNORECASE
 )
 _BLOCKED_GPT55_COMPACT_RE = re.compile(
     r"\b(?:gpt|gbt)[\s_-]*55(?:[\s_-]*(?:xhigh|xi|x))?\b",
@@ -60,7 +70,7 @@ _FUGU_PROFILE_DEFAULT_EFFORTS = {
     "fugu": "high",
     "fugu-ultra": "xhigh",
 }
-_CODEX_ULTRA_MODELS = {"gpt-6-astra", "gpt-5.6-sol", "gpt-5.6-terra"}
+_CODEX_ULTRA_MODELS = {"gpt-6-astra", "gpt-6-sol", "gpt-5.6-terra"}
 _CLAUDE_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 _KIMI_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 _CLAUDE_FAMILY_RE = re.compile(
@@ -284,10 +294,10 @@ def resolve_execution_phrase(
     - "Claude Fable 5.1 high" -> claude / claude-fable-5-1 / high
     - "Claude Opus 4.7 xhigh" -> claude / claude-opus-4-7 / xhigh
     - "codex gpt 5.4 mini high" -> codex / gpt-5.4-mini / high
-    - "GPT56SOLXI" -> codex / gpt-5.6-sol / xhigh
+    - "GPT6SOLXI" -> codex / gpt-6-sol / xhigh
     - "codex" -> codex / gpt-6-astra / xhigh
     - "astra" -> codex / gpt-6-astra / xhigh
-    - "luna xhigh" -> codex / gpt-5.6-luna / xhigh
+    - "luna xhigh" -> codex / gpt-6-luna / xhigh
     - "GPT56TERRAXI" -> codex / gpt-5.6-terra / xhigh
     - "codex high" -> codex / gpt-6-astra / high
     - "Fugu high" -> codex / profile fugu / high
@@ -343,7 +353,7 @@ def resolve_execution_phrase(
     if (
         effort is None
         and runtime == "codex"
-        and model in {PREFERRED_CODEX_MODEL, "gpt-5.6-sol"}
+        and model in {PREFERRED_CODEX_MODEL, "gpt-6-sol"}
     ):
         effort = PREFERRED_CODEX_EFFORT
         effort_source = "preference_default"
@@ -382,9 +392,9 @@ def resolve_execution_phrase(
             f"codex_profile={codex_profile or '<none>'} "
             "with exact model family/version preservation."
             + (
-                " Recommend gpt-6-astra at xhigh instead of GPT-5.6 Sol; "
+                " Recommend gpt-6-astra at xhigh instead of GPT-6 Sol; "
                 "preserve Sol only when deliberately requested."
-                if model == "gpt-5.6-sol" else ""
+                if model == "gpt-6-sol" else ""
             )
         ),
         codex_profile=codex_profile,
@@ -494,7 +504,7 @@ def _extract_effort(lowered: str) -> str | None:
         normalized,
     )
     normalized = re.sub(
-        rf"\b(?:gpt|gbt)[\s_-]*(?:55|56[\s_-]*(?:{_CODEX_56_VARIANT_PATTERN}))"
+        rf"\b(?:gpt|gbt)[\s_-]*(?:55|56[\s_-]*(?:{_CODEX_56_VARIANT_PATTERN})|6[\s_-]*(?:{_CODEX_6_VARIANT_PATTERN}))"
         r"[\s_-]*(?:xhigh|xi|x)\b",
         " xhigh ",
         normalized,
@@ -518,7 +528,8 @@ def _infer_runtime(lowered: str) -> tuple[str | None, str]:
     has_codex = bool(
         re.search(r"\b(codex|openai|gpt|gbt|sakana|astra)\b", lowered)
         or _CODEX_56_COMPACT_RE.search(lowered)
-        or _CODEX_56_BARE_VARIANT_RE.search(lowered)
+        or _CODEX_6_COMPACT_RE.search(lowered)
+        or _CODEX_BARE_VARIANT_RE.search(lowered)
         or _BLOCKED_GPT55_COMPACT_RE.search(lowered)
         or _FUGU_MODEL_RE.search(lowered)
     )
@@ -600,11 +611,14 @@ def _resolve_codex_model(
 
     match = _CODEX_FAMILY_RE.search(raw)
     compact_variant = _CODEX_56_COMPACT_RE.search(raw)
-    bare_variant = _CODEX_56_BARE_VARIANT_RE.search(raw)
+    compact_6_variant = _CODEX_6_COMPACT_RE.search(raw)
+    bare_variant = _CODEX_BARE_VARIANT_RE.search(raw)
     blocked_compact = _BLOCKED_GPT55_COMPACT_RE.search(raw)
 
     model_source = "explicit"
-    if compact_variant:
+    if compact_6_variant:
+        candidate = f"gpt-6-{compact_6_variant.group('variant').lower()}"
+    elif compact_variant:
         candidate = f"gpt-5.6-{compact_variant.group('variant').lower()}"
     elif blocked_compact:
         candidate = "gpt-5.5"
@@ -621,7 +635,12 @@ def _resolve_codex_model(
     elif re.search(r"\bastra\b", raw, re.IGNORECASE):
         candidate = "gpt-6-astra"
     elif bare_variant:
-        candidate = f"gpt-5.6-{bare_variant.group('variant').lower()}"
+        variant = bare_variant.group("variant").lower()
+        candidate = (
+            f"gpt-6-{variant}"
+            if variant in CODEX_6_VARIANTS
+            else f"gpt-5.6-{variant}"
+        )
     else:
         candidate = PREFERRED_CODEX_MODEL
         model_source = "default"

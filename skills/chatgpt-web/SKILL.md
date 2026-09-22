@@ -49,7 +49,7 @@ else does:
    `Latest` under `Select model`, move `Power` to its top position, `Pro, 5 of
    5`, close the menu, and read the pill again. Pro is a power level of
    `Latest`, not an entry in the model list: a list showing only `Latest`,
-   `GPT-5.6 Sol`, and `GPT-5.5` is normal and never means Pro is missing. If
+   `GPT-6 Sol`, and `GPT-5.5` is normal and never means Pro is missing. If
    the control looks different, open it and read which model and power are
    selected.
 2. **After Send, the model slug on the response turn that answers your
@@ -69,7 +69,7 @@ than Pro is a wrong-model submission, stopped and resent as described below.
 
 **No Pro, no send.** When this composer's pill cannot be made to read `6 Pro`,
 do not send the consultation from it on any model. A run on `Latest`,
-`GPT-5.6 Sol`, `Extra High`, or anything else is not a weaker Pro
+`GPT-6 Sol`, `Extra High`, or anything else is not a weaker Pro
 consultation. It is a different reviewer the user did not ask for, and saying
 so afterward does not repair it: its answer, its interim notes, and its
 sign-off are not evidence, not an interpretation, and not a review. Only the
