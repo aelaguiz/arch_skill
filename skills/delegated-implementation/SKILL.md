@@ -1,6 +1,6 @@
 ---
 name: delegated-implementation
-description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr and epic-to-prs for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-6 Sol high; Fable delegates to Opus 5; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
+description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr, epic-to-prs, and milestone-to-pr for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-6 Sol high; Fable delegates to Opus 5; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
 metadata:
   short-description: "Parent judgment and review, worker implementation and tests"
 ---

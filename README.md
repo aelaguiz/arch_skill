@@ -53,6 +53,7 @@ Other shipped skills are:
 - `pr-review-followthrough` — explicit-invocation follow-through loop for an already-open GitHub PR: polls review feedback and checks, classifies comments against the approved plan scope, replies on-thread with accept/decline/escalation rationale, pushes authorized fixes to the same branch, and stops at merge-ready
 - `issue-to-pr` — explicit issue delivery through two seats the user names at invocation (a primary that writes the plan and takes the early review rounds, a final that checks the plan once and reviews the PR once; Pro holds both by default), with delegated implementation; the parent reviews every deliverable and changed code line; CI last
 - `epic-to-prs` — explicit epic delivery with the same primary and final seats shared across issues (the primary plans and reviews batches, the final checks the plan and reviews the stack), independent issue delegation, and parent-owned integration and direct review
+- `milestone-to-pr` — explicit delivery of a spec milestone (several issues) as one PR per repo: the final seat writes the milestone plan once, the verification path is proven first, issues land as commits with a cheap primary read each, and the final reviews the whole milestone once at the boundary while CI and bots run there instead of per issue; delegated implementation, never merges
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
@@ -609,8 +610,8 @@ and `stepwise` or `arch-epic` for ordered role lifecycles.
 
 ### `delegated-implementation`
 
-Use this execution contract when a coordinator runs `issue-to-pr` or
-`epic-to-prs`, or the user asks the parent to keep requirements and review while
+Use this execution contract when a coordinator runs `issue-to-pr`,
+`epic-to-prs`, or `milestone-to-pr`, or the user asks the parent to keep requirements and review while
 workers implement accepted work. Astra uses GPT-6 Sol at high; Fable uses
 Opus 5; any other parent uses a native child on its own model. The active
 harness supplies agent mechanics. Workers implement, test, and repair code; the

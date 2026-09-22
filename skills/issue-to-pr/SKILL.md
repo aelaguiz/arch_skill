@@ -105,6 +105,10 @@ coordinator's seats and shared planning and review scope. Do not add a plan revi
 and final review for every child. The coordinator can collect locally
 finished PRs for a meaningful batch checkpoint or final stack review. A
 child awaiting that review is locally ready, not yet merge-ready.
+An issue that belongs to a milestone delivered through `milestone-to-pr`,
+or whose body carries that milestone's delivery rules, follows them: its
+commits land on the milestone PR, the primary reads it as it lands, and CI
+and the final review wait for the milestone boundary.
 
 The coordinator owns routine decisions, plan refinements, dependency ordering,
 and scope checks. Workers own implementation details and code repairs under

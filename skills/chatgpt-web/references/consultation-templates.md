@@ -17,6 +17,8 @@ Sections: [the shape and the check](#the-shape-and-the-check),
 [H. Auditing content, an issue set, or a candidate list](#h-auditing-content-an-issue-set-or-a-candidate-list),
 [I. Recovery: resend the whole thing](#i-recovery-resend-the-whole-thing),
 [J. Starting a new thread or moving accounts](#j-starting-a-new-thread-or-moving-accounts),
+[K. Planning a milestone with Pro](#k-planning-a-milestone-with-pro),
+[L. Reviewing a milestone](#l-reviewing-a-milestone),
 [bugs the reviewer checks against](#bugs-the-reviewer-checks-against).
 
 ## The shape and the check
@@ -635,9 +637,186 @@ the on-track check described in the file."
 thread's rulings, exported; the user's words, quoted with dates; the current
 issues; the `@GitHub` pill.
 
+## K. Planning a milestone with Pro
+
+When: a milestone of several issues is about to be built as one delivery,
+one PR per repo, reviewed once at its boundary. Pro writes the milestone
+plan; the agent brings the context, asks the questions, goes back and forth
+until the plan is fully formed, then carries it into the plan doc and every
+issue it covers. This replaces a D per issue.
+
+**Template K**
+
+Look, I'm trying to turn [milestone name] into a really strong
+implementation plan, and I want you to write it up. The milestone covers
+[#A, #B, #C]. We're going to build it as one delivery, one PR per repo, and
+review it once when the whole milestone is done, so this plan has to carry
+everything each issue would otherwise have planned on its own. When it's
+done it will have:
+
+- a clear outcome we're after
+- top-level acceptance criteria
+- extremely clear requirements
+- a clear architectural plan, including who owns each piece of state the
+  milestone touches, decided now rather than discovered while building
+- clear do's
+- clear do not's
+- a clear test plan, including the real check at the end that tells us the
+  milestone works for the player
+- a work order for each issue: what it delivers, which requirements it owns,
+  what it depends on, and how we'll know it's done
+- how the milestone merges on its own without breaking what ships today
+
+Here's where I'm at now. We're working on [plan name]; it's for [what it
+does for the player]. The sheet we've been working out of is attached, full
+export. The plan we're working from is attached. The issues are attached as
+filed. I've been working out of branch [name]; @GitHub, read it yourself.
+What I found in the code: [what exists, what the seams are, what surprised
+me]. Here's what Amir has said about this: [his words, dated].
+
+Outline it for me. How would you structure it, and in what order would you
+build the issues? Which of them are really one piece of work, and which can
+go in parallel? Give me your first cut with all the parts, and say where
+you're unsure or where you need something from me. For a really
+well-architected but highly pragmatic solution, what are the key
+requirements, specifically? How would we know we did this well? Is there one
+owner for each truth, one abstraction instead of a web of calls? Is there an
+architectural limitation we should fix first rather than plan around? What
+would you do better? What tests should we put in up front that would
+actually tell us we succeeded, and what is the smallest set of real checks
+that proves the whole milestone rather than each issue one at a time? Name
+every constraint you're planning around and where it comes from: Amir's
+words, a real external limit, or something read in the code. If a
+constraint isn't Amir's and dropping it would give a simpler plan, say so
+and outline the simpler version too, so I can ask him to free us of it.
+
+I'll ask questions and we'll go back and forth until it's fully formed. Then
+I'll put the final version in the plan doc and each issue exactly as we
+agreed.
+
+**Anti-patterns**
+
+- Planning each issue with Pro separately, a D per issue. The milestone is
+  one plan.
+- The agent writing the plan or the work orders and asking Pro to check
+  them. Pro writes; the agent asks the questions.
+- Leaving who owns shared state for the workers to find out while they
+  build. That is where the review rounds pile up later.
+- Squeezing an issue's full scope into a one-line work order because the
+  plan is long. Every requirement of every issue lands in a work order or is
+  named as owed somewhere else.
+- "Do not expand scope" before the plan exists.
+
+Not this: "Plan milestone 2A. Issues #5961, #5962 and #5694 are attached.
+Return a numbered task list, one line per task, and do not redesign existing
+systems."
+
+**Attach**: the spreadsheet as a full export; the plan document we're
+working from; every issue in the milestone as filed; the user's words
+verbatim; the branch with the `@GitHub` pill; any prior Pro planning in the
+thread.
+
+## L. Reviewing a milestone
+
+When: every issue in the milestone has landed on the milestone's PR, or one
+PR per repo, the primary has read each issue as it landed, and the agent
+wants the final's read before calling the milestone merge-ready. CI and the
+bots started on the same push; do not wait for them before sending this.
+
+**Template L**
+
+Hey. We're working on [plan name]; it's for [what it does for the player,
+one sentence]. The [spreadsheet / spec] we've been working out of is
+attached, full export; that's the source of truth for requirements. The
+milestone plan is attached.
+
+We just finished [milestone name]. It covered [#A, #B, #C], and all of it is
+on [the PR / these PRs, one per repo]: [#N]. @GitHub, read the latest code on
+each yourself. [If an issue in the milestone was cut, split, or moved to
+another milestone, say so here: what Amir actually asked for, in his words,
+and what is still owed. If a PR also carries later milestones' unfinished
+work, say that too: read the whole PR, and judge done-ness against this
+milestone's issues.]
+
+What I did: [what the milestone changed, in plain words]. [What I ran and
+what I saw, including the real check the plan called for; raw output
+attached.] As each issue landed, [the primary's model] read it; what it found
+and what I did about it are attached as files. I think the milestone is
+done.
+
+Where I'm least sure: [one or two things, especially where the issues meet].
+
+Constraints I'm working around: [each one, and where it came from: Amir's
+words, a real external limit, or something I read in the code and assumed].
+
+What I'm looking for is two things. First, did we implement the intent
+right, and is this the cleanest, most pragmatic way to do it? Read the plan
+and the sheet first, then the PRs as a whole, not issue by issue. Second, is
+the milestone done? The issues are attached as filed; check the PRs against
+each one's full scope and requirements, and tell me what is met, what is
+still owed and which issue owes it, and where we are short. I am not done
+until you say it is implemented right, the PRs are ready, and every issue is
+complete to its scope, or what it still owes is named with the milestone
+that owes it.
+
+- Where are we introducing risk that really wasn't necessary for this
+  milestone?
+- Where did we overbuild around edge cases?
+- Where did we create new patterns where there were existing clean ones?
+- Where did we create split brain: two places that can now answer the same
+  question? Look hardest where two issues met.
+- Where did we create a web of individual calls rather than one centralized,
+  clear abstraction?
+- Where are we working around an architectural limitation that we should be
+  tackling first?
+- Did a later issue undo, duplicate, or quietly work around what an earlier
+  one built?
+- Can this merge on its own without breaking what ships today?
+
+If the plan itself got the intent wrong, or what we built will fight the
+rest of the plan, say so. Check it against the bugs we've actually shipped
+(attached). Real concerns, not pedantic ones. Whatever you find, I'll fix in
+one batch and bring back.
+
+Template A's "More to ask" questions apply here as well; ask the ones this
+milestone touches, in the same words. After fixes, the round is Template B
+with every issue re-attached as filed and the PRs read again as a whole.
+
+**The primary's read of one issue as it lands.** Use Template A as written.
+The PR is the milestone PR; the issue is the one that just landed, with its
+work order from the milestone plan attached beside it. Add one sentence
+saying which earlier issues are already on the branch and that their reads
+are attached. The completion question is asked about this issue's full
+scope, and "ready" means ready for the milestone boundary, not ready to
+merge. A primary without connectors gets the worktree path and branch in
+place of `@GitHub`.
+
+**Anti-patterns**
+
+- Reviewing the milestone as a string of per-issue fix checks, or only the
+  changes since the last issue.
+- Leaving an issue out of the attachments because the primary already read
+  it. The final reads every issue as filed.
+- Leading with the primary's approvals as the frame and asking the final to
+  confirm them. The primary's reads ride along as files, after the ask.
+- Waiting for CI before sending. CI started with the push; its results are
+  read once the final has answered, and its findings go into the same fix
+  batch.
+- Every anti-pattern listed under A.
+
+Not this: "Milestone M0 acceptance review. Issues #124, #16234 and #16210
+were each approved by the primary reviewer. Confirm the combined head is
+merge-ready; return ACCEPT or list blocking defects only."
+
+**Attach**: every milestone PR with the `@GitHub` pill; the milestone plan;
+the spreadsheet as a full export; every issue in the milestone as filed; the
+user's words verbatim; the primary's per-issue reads and what was done about
+them; raw test output, including the real check; the repo's review policy
+and incident rules when the repo has them.
+
 ## Bugs the reviewer checks against
 
-A review brief (A, B, C) points Pro at the defects this codebase has actually
+A review brief (A, B, C, L) points Pro at the defects this codebase has actually
 shipped, and attaches the list rather than restating it. Where the repo keeps
 a review policy, attach those files: for `funcountry/psmobile` they are
 `.github/claude/repo_review_policy.md` and

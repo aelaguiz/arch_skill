@@ -507,6 +507,24 @@ Examples:
 - `Use $issue-to-pr on issue 5963, primary Sol xhigh, final Pro`
 - `Use $epic-to-prs on epic 4700, primary Fable xhigh, final Pro; review meaningful batches together`
 
+### `milestone-to-pr`
+
+Invoke explicitly to deliver a spec milestone, several issues such as M0 or
+2A, as one PR per repo instead of one PR per issue. The final seat (GPT-6
+Astra Pro unless named) writes the milestone plan once with a work order per
+issue. A worker proves the verification path runs before the first issue.
+Issues land as commits, and the primary (a native child on the coordinator's
+own model unless named) reads each one as it lands. At the boundary the final
+reviews the whole milestone once while CI and the bots run there instead of
+per issue; every finding is fixed in one batch, then one more read. The milestone's delivery
+rules go into each issue, so a later `issue-to-pr` run on one of them follows
+the milestone instead of running its own CI and final review. Never merges.
+
+Examples:
+
+- `Use $milestone-to-pr on M0 in the pricing workbook`
+- `Use $milestone-to-pr on 2A, primary Opus max, final Pro`
+
 ### `delegated-implementation`
 
 Use when the parent should keep requirements, architecture, and direct review
