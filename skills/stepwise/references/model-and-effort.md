@@ -80,7 +80,7 @@ This is reasoning, not a lookup table:
   plus a version, prefer the full Claude CLI identifier:
   `claude-<family>-<version-with-hyphens>`. For example, "Claude Fable 5.1",
   "claude fable-5.1", and "fable 5.1" under a Claude runtime all resolve to
-  `claude-fable-5-1`; "opus 4.7" resolves to `claude-opus-4-7`. Family-only
+  `claude-fable-5-1`; "opus 4.7" resolves to `claude-opus-4-7`; "opus 5.5" resolves to `claude-opus-5-5`. Family-only
   aliases such as `fable` or `opus` are acceptable only when the user did not
   pin a version.
 - For ordinary Codex model ids, accept `astra`, `luna`, and `terra` as

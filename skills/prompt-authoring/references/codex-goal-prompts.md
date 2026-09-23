@@ -184,7 +184,7 @@ Use `$codex-review-yolo` as a blind review of the final diff and receipts. Do no
 Good delegated testing:
 
 ```text
-Use `$agent-delegate` with Claude Fable 5.1 high for one fresh testing/signoff pass. Give it the source truth path, final diff, artifacts, and anti-poisoning constraints; do not tell it what verdict to reach.
+Use one fresh testing/signoff pass by the adversarial post-build reviewer from the orchestration policy's routing table, in a clean session (`$agent-delegate` when that model differs from this session's). Give it the source truth path, final diff, artifacts, and anti-poisoning constraints; do not tell it what verdict to reach.
 ```
 
 ## Lightweight shapes

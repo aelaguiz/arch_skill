@@ -75,9 +75,10 @@ Code parents remain their own runtimes even when AIMgr launched them.
 
 ## Default dispatch for a parent model this repo does not name
 
-This repo names a worker for two parents: Astra and Fable. Every other parent —
-Sol, Terra, Luna, Opus, DeepSeek, GLM, Fugu, and whatever is added later — takes
-the default below, in every host. The Codex model preference below is about
+This repo names a worker for one parent: Astra. Every other parent —
+Sol, Terra, Luna, Opus, Fable, DeepSeek, GLM, Fugu, and whatever is added
+later — takes the default below, in every host. A role in the routing table
+below still gets its routed model. The Codex model preference below is about
 choosing a model for a Codex lane; it does not name a worker for a Codex parent.
 
 When the user names no model and the calling workflow names none, the child is a
@@ -94,6 +95,49 @@ or reviewer needs no justification.
 The default covers every role, including review. A review with no model named is a
 native same-model review; ask for a named reviewer when provider diversity is the
 point.
+
+## Role routing: collapse on the same model, hand off on a different one
+
+Skills name a role, such as the copy author or the independent reviewer, and
+this table says which model plays it. When the user changes models, change the
+row here, not every skill that uses the role. A model the user or calling
+workflow names for a run still wins over the table for that run.
+
+| Role | Model and effort | Session boundary |
+|---|---|---|
+| Lesson copy author (Lesson Studio) | Claude Opus 5.5 (`claude-opus-5-5`), high | Must be a Claude model |
+| Independent lesson reviewer (Lesson Studio) | Claude Opus 5.5, high | Always a clean session |
+| Charter-lane lesson author (Lesson Studio) | Claude Opus 5.5, medium | As the lane defines |
+| Puzzle final independent reviewer (Poker Skill) | Claude Opus 5.5, medium | Always a clean session |
+| Website copy verdict: the copy gate's cold read (Poker Skill) | Claude Opus 5.5, medium | Always a clean session; must be a Claude model |
+| Website page cold reader (Poker Skill) | Claude Opus 5.5, high | Always a clean session |
+| Adversarial post-build reviewer | Claude Opus 5.5, high | Always a clean session |
+| Plan reviewer before dispatch | GPT-6 Astra, xhigh, and/or Claude Opus 5.5, high | Always a clean session |
+| Replay-review workers (Poker Skill) | Claude Opus 5.5, medium | As the skill defines |
+
+Codex roles keep the preferences below: Astra for Codex work, and Sol for
+workers under an Astra parent (`delegated-implementation`).
+
+Decide the session boundary for each role when it comes up, not once for the
+whole workflow:
+
+- **Same model as the current session, no reason for a clean context: keep
+  going here.** The session that already holds the context does the role
+  itself and loads that role's skill. Starting a new agent that rereads the
+  same instructions, skills and artifacts costs time and loses nuance for no
+  gain.
+- **Different model: hand off.** Start a session on the routed model: a native
+  child when the host can run that model, otherwise an external session
+  through AIMgr.
+- **Same model, but the clean context is the point: hand off to a clean native
+  child.** That covers independence (a reviewer who did not write the work),
+  blindness (anti-anchoring stages and cold reads), context that would
+  overflow, and parallel scopes. An external session adds nothing here unless
+  the host cannot run the model or effort.
+
+When a routed effort cannot be set on a native child, say so and use the
+nearest lane that honors it, or accept the inherited level and name it in the
+receipt.
 
 ## Codex model preference
 

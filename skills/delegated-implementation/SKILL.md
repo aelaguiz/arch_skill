@@ -1,6 +1,6 @@
 ---
 name: delegated-implementation
-description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr, epic-to-prs, and milestone-to-pr for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-6 Sol high; Fable delegates to Opus 5; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
+description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr, epic-to-prs, and milestone-to-pr for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-6 Sol high; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
 metadata:
   short-description: "Parent judgment and review, worker implementation and tests"
 ---
@@ -42,11 +42,11 @@ delegate the ordinary application code work.
 ## Worker selection and harness boundary
 
 An Astra parent assigns implementation and verification to GPT-6 Sol
-(`gpt-6-sol`) at `high`. A Fable parent assigns them to Opus 5, using the
-user's effort choice or the harness's applicable default. These are deliberate
-worker selections; the general Astra preference does not replace Sol here.
-Honor a worker the user or the calling workflow named. For any other parent —
-Sol, Terra, Luna, Opus, DeepSeek, GLM, Fugu, and whatever is added later — the
+(`gpt-6-sol`) at `high`. That is a deliberate worker selection; the general
+Astra preference does not replace Sol here. Honor a worker the user or the
+calling workflow named, and a role the policy's routing table assigns. For any
+other parent — Sol, Terra, Luna, Opus, Fable, DeepSeek, GLM, Fugu, and whatever
+is added later — the
 worker is a native child of the active host that inherits the parent's model and
 thinking level; read the default in
 `../_shared/agent-orchestration-policy.md`.

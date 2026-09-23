@@ -140,7 +140,7 @@ Treat model text as intent, not a loose alias:
   `effort_source=preference_default`.
 - Preserve model family and numeric version exactly. `gpt-5.6-terra` may normalize to
   `gpt-5.6-terra`; it must not become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
-  `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`;
+  `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`, and `opus 5.5` to `claude-opus-5-5`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
@@ -151,7 +151,7 @@ Treat model text as intent, not a loose alias:
   Fugu, resolve `fugu` and `fugu-ultra` as Codex profiles, not model-list ids;
   preserve the profile names exactly and launch them with `-p`.
 - For Claude, preserve the named supported Claude family and version. Fable 5.1
-  resolves to `claude-fable-5-1`; Opus 4.7 resolves to `claude-opus-4-7`. If the
+  resolves to `claude-fable-5-1`; Opus 4.7 resolves to `claude-opus-4-7`; Opus 5.5 resolves to `claude-opus-5-5`. If the
   user names Sonnet or Haiku, fail loud and ask for a supported Claude choice.
 - For Cursor Agent, always use `composer-2.5-fast`. Accept `agent`, `cursor`,
   `cursor agent`, `cursor-agent`, `composer`, `composer 2.5`,
@@ -178,6 +178,7 @@ Always announce the raw-to-resolved mapping before execution:
 ```text
 Claude Fable 5.1 high -> runtime=claude, model=claude-fable-5-1, effort=high
 Claude Opus 4.7 xhigh -> runtime=claude, model=claude-opus-4-7, effort=xhigh
+Claude Opus 5.5 high -> runtime=claude, model=claude-opus-5-5, effort=high
 Codex -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
 Codex high -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
 Luna xhigh -> runtime=codex, model=gpt-6-luna, effort=xhigh
