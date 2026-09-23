@@ -1,79 +1,43 @@
 ---
 name: cf-share
-description: "Upload local artifact files or directories (HTML reports, screenshots, analysis bundles, any static files) to the team's Cloudflare R2 share bucket and return a public unguessable https://share.fun.country/<slug>/... URL. Use when the user says 'upload this to cloudflare somewhere I can share', wants a link to drop in Slack, or wants a local HTML report viewable by teammates. Requires a secret env file at ~/.config/cf-share/env (see references/setup.md). Not for deploying apps or product content (ps-content CDN), not for claude.ai Artifacts, and not for material that must stay private."
+description: "Share local static artifacts through public, unguessable Cloudflare R2 links with readable link previews: a specific title, description, and image for Slack and other Open Graph consumers. Use for an HTML report, screenshot, PDF, video, or static bundle when the user wants a link to send. Not for product content deployment, private material, or claude.ai Artifacts."
 metadata:
-  short-description: "Share local artifacts via a public Cloudflare URL"
+  short-description: "Share artifacts with rich public link previews"
 ---
 
 # CF Share
 
-Use this skill to put a local artifact at a public, unguessable HTTPS URL on
-the team's Cloudflare infrastructure so anyone with the link can view it.
+Publish a local artifact at `https://share.fun.country/<slug>/...` so a recipient can recognize it from the URL and link preview, then open the content. New slugs include a short title label plus random bytes. A share is unlisted but **public to anyone with its URL**. Check the artifact and its proposed preview text/image for secrets or private data before upload; confirm with the user if exposure is plausible.
 
-One upload = one immutable share under `https://share.fun.country/<slug>/`.
-The slug contains random bytes, so links are unlisted: only people given the
-URL can find it, but anyone with the URL can open it. Treat every share as
-public.
+The headline URL must be an HTML page with a useful title, one-sentence description, and distinct image. The upload script makes a 1200×630 PNG card and adds Open Graph and X Card tags. An HTML report keeps its direct URL and relative assets. For an image, PDF, video, or other file, the headline URL opens a share page with inline media when appropriate and a direct file link.
 
 ## When to use
 
-- The user wants a local file or directory shared by link with the team.
-- The deliverable is a report, analysis page, screenshot set, video, PDF, or
-  any static bundle a browser can render.
-- Another workflow produced an artifact and the user asks for "a link I can
-  send".
+- The user wants a local report, screenshot, PDF, video, or static bundle shared by link.
+- Another workflow produced an artifact and the user wants a URL to send in Slack or elsewhere.
 
-## When not to use
+Do not use this bucket for app or product content (such as the `ps-content` CDN), material that must stay private, or a claude.ai Artifact.
 
-- Product or app content belongs on its own pipeline (for example the
-  `ps-content` CDN); this bucket is for ad-hoc team artifacts only.
-- The content is sensitive (credentials, customer data, unreleased financials)
-  and must not sit at a public URL. Say so and offer a private channel instead.
-- The user wants a claude.ai Artifact or an in-app preview, not a hosted URL.
+## Publish
 
-## Requirements
-
-- `curl` and `python3` on PATH.
-- A secret env file at `~/.config/cf-share/env` (override with `CF_SHARE_ENV`)
-  containing `CF_SHARE_API_TOKEN`, `CF_SHARE_ACCOUNT_ID`, `CF_SHARE_BUCKET`,
-  and `CF_SHARE_BASE_URL`. If it is missing, point the user at
-  `references/setup.md` for the token scopes and file format instead of
-  hunting for other Cloudflare credentials.
-
-## Workflow
-
-1. Identify exactly what needs to be shared. Open an HTML artifact and check
-   whether it references sibling assets (`./img/...`, `./shots/...`); if it
-   does, share the whole directory so relative links keep working. If it is
-   self-contained, share just the file.
-2. Think before publishing: the URL is public. If the artifact plausibly
-   contains secrets or private data, confirm with the user first.
-3. Upload:
+1. Inspect the artifact. If HTML references sibling CSS, images, scripts, or documents, upload the containing directory so relative links work. Pick the intended entry with `--entry` when the default `index.html` or first HTML file is wrong.
+2. Write the preview as a recipient would read it: identify the actual subject in `--title`, give the reason to open it in `--description`, and use `--image` for a relevant local screenshot or figure when one exists. The script can infer fields from HTML and filenames, but requires `--description` when the page has no descriptive text. Inspect its printed `preview:` and `summary:` lines; replace generic or misleading inference. The chosen image is composited into the card and need not be a separate uploaded artifact.
+3. Upload and use the printed `URL:` as the headline link:
 
 ```bash
-bash "{baseDir}/scripts/cf_share.sh" <file-or-dir> [more paths...]
+bash "{baseDir}/scripts/cf_share.sh" \
+  --title "Specific artifact title" \
+  --description "One sentence about what a reader will find." \
+  --image /path/to/representative.png \
+  /path/to/report-or-directory
 ```
 
-   Useful flags: `--entry <name>` to pick which file the headline URL points
-   at, `--slug <slug>` to reuse a slug you already told the user about.
-   The script picks an unguessable slug, sets correct content types, uploads
-   via the Cloudflare R2 REST API, and verifies the entry URL returns HTTP 200.
-4. Give the user the entry URL as the answer. If they wanted it posted
-   somewhere (for example Slack), hand off to that workflow with the URL.
-5. To take a share down later:
+The editorial flags are optional when the inferred preview is already accurate. `--entry <relative-name>` selects the main artifact; `--slug <slug>` republishes at an existing path. A republished URL may show an older card in services that cache previews, so use a fresh slug when an immediately updated preview matters. `--delete <slug>` removes a share when requested.
 
-```bash
-bash "{baseDir}/scripts/cf_share.sh" --delete <slug>
-```
+4. Give the recipient the headline URL with its title. For a non-HTML artifact, provide the printed `file:` URL only when direct download or embedding is specifically useful. If the user asked you to post it somewhere, use the appropriate messaging workflow after verifying the URL.
 
-## Verification
+## Completion check
 
-The script HEAD-checks the entry URL and prints the HTTP status. If it did not
-print `verified HTTP 200`, do not hand the link to the user; read the error,
-fix (usually a stale token or missing env file), and re-run.
+The script verifies HTTP 200 for the headline HTML page, the original artifact, and the card; it also checks the served Open Graph/X Card values and the PNG dimensions. Do not hand out a URL if verification fails. A successful technical check cannot force every client to display a preview: Slack can suppress repeated links in one conversation, and workspace or user settings can hide previews. For a requested Slack share, inspect the posted message's actual unfurl when possible.
 
-## Reference map
-
-- `references/setup.md` - one-time setup for a new machine or teammate: token
-  scopes, secret file format, what infrastructure exists, and how it was
-  created.
+For credentials, the optional Python environment, and troubleshooting, read [references/setup.md](references/setup.md). The secret env file is `~/.config/cf-share/env` by default (`CF_SHARE_ENV` overrides it); do not hunt for other Cloudflare credentials if it is missing.

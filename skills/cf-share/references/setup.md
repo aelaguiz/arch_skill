@@ -16,7 +16,18 @@ infrastructure exists so it never has to be re-derived.
 
 ## Requirements
 
-- `curl` and `python3` on PATH (stock macOS and Linux both qualify).
+- `curl` and `python3` on PATH, plus Pillow in the Python environment used by
+  `cf_share.sh`. The script uses Pillow to render a distinct 1200×630 PNG
+  preview card for each share. Check with `python3 -c 'from PIL import Image'`.
+  If it is missing, create a small dedicated environment:
+
+```bash
+python3 -m venv ~/.config/cf-share/venv
+~/.config/cf-share/venv/bin/python -m pip install Pillow
+```
+
+  Then put `CF_SHARE_PYTHON="$HOME/.config/cf-share/venv/bin/python"` in the
+  secret env file below. An existing Python with Pillow needs no override.
 - A Cloudflare API token with permission **Account -> Workers R2 Storage:
   Edit** on the FunCountry account. Nothing else is needed for upload,
   delete, and list.
@@ -40,6 +51,8 @@ CF_SHARE_API_TOKEN=<token value>
 CF_SHARE_ACCOUNT_ID=cec2277a8b3429743f0ea1ddc3c1b72f
 CF_SHARE_BUCKET=fc-share
 CF_SHARE_BASE_URL=https://share.fun.country
+# Optional if Pillow is installed in the dedicated environment:
+# CF_SHARE_PYTHON="$HOME/.config/cf-share/venv/bin/python"
 EOF
 chmod 600 ~/.config/cf-share/env
 ```
@@ -49,12 +62,15 @@ The script also honors `CF_SHARE_ENV=<path>` if the file must live elsewhere.
 ## Verify the setup
 
 ```bash
-echo '<h1>hello</h1>' > /tmp/cf-share-test.html
-bash scripts/cf_share.sh /tmp/cf-share-test.html
+echo '<html><head><title>CF Share preview test</title></head><body><h1>CF Share preview test</h1></body></html>' > /tmp/cf-share-test.html
+bash scripts/cf_share.sh --description 'A harmless test of rich share links.' /tmp/cf-share-test.html
 ```
 
 Expect `URL: https://share.fun.country/<slug>/cf-share-test.html` and
-`verified HTTP 200`. Clean up with the printed `--delete <slug>` command.
+`verified HTTP 200: share page, Open Graph, X Card, 1200x630 PNG, artifact`.
+The URL opens the original HTML with preview tags added in the uploaded copy.
+Clean up with the printed `--delete <slug>` command when the test is no longer
+needed.
 
 ## Troubleshooting
 
@@ -63,6 +79,12 @@ Expect `URL: https://share.fun.country/<slug>/cf-share-test.html` and
 - HTML downloads instead of rendering: the object was uploaded without a
   Content-Type. Re-upload through the script; never PUT objects by hand
   without `-H "Content-Type: ..."`.
+- A link shows an old preview after reusing `--slug`: Slack and other sharing
+  services may cache the URL. Use a new slug for a fresh card, or use the
+  service's preview debugger or refresh tool when available. Reposting the
+  same URL in the same Slack conversation may not expand for an hour.
+- `Pillow is required`: run the dedicated-environment commands above and set
+  `CF_SHARE_PYTHON` in the env file.
 - curl exit 56 on files over ~1 MB: something dropped the `-H "Expect:"`
   header the script sends; api.cloudflare.com resets 100-continue uploads.
 - Files over ~250 MB: the REST endpoint caps object size around 300 MB. Use
