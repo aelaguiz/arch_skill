@@ -62,21 +62,21 @@ Read `../../_shared/agent-orchestration-policy.md` first; it owns native
 versus external transport, starting context, isolation, and the return
 contract.
 
-Astra and Fable parents have their own rules, below. If you are not one of
-them, or you are not sure, use your own native subagents on your own model
-for every worker, reviewer, and seat except Pro, including a seat named for
-another model, and say which model it ran on. Do not start an external agent
-unless the user asks for an external one.
+For every seat other than Pro, whoever the parent, follow the policy's
+collapse-or-hand-off rule:
 
-For an Astra or a Fable parent:
+- A seat on your own model runs as your native subagent. A review round still
+  gets a clean context. Do not start an external agent for it.
+- A seat on a different model is a handoff to that model. A Claude model on a
+  Claude host is a native child at the named model and effort; on any other
+  host it is an external Claude process through `$agent-delegate` at the exact
+  model and effort.
+- A Codex model (GPT-6 Sol, or GPT-6 Astra at an effort other than Pro) on a
+  non-Codex host is an external Codex process through `$agent-delegate` at the
+  exact model and effort. Not `$codex-review-yolo`: its `VERDICT:` footer is the
+  anti-pattern the consultation templates remove.
 
-- A Claude model (Fable 5.1, Opus 5) on a Claude host is a native child at
-  the named model and effort. On any other host it is an external Claude
-  process through `$agent-delegate` at the exact model and effort.
-- A Codex model (GPT-6 Sol, or GPT-6 Astra at an effort other than Pro) is
-  an external Codex process through `$agent-delegate` at the exact model and
-  effort. Not `$codex-review-yolo`: its `VERDICT:` footer is the anti-pattern
-  the consultation templates remove.
+Say which model each seat ran on.
 
 Whatever the seat and whoever the parent, the brief is the family template
 from `../../chatgpt-web/references/consultation-templates.md`, in the user's
