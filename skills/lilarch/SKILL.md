@@ -93,6 +93,8 @@ binding task instruction requiring it.
 - Write the current architecture, target architecture, call-site audit, and a 1-3 phase plan.
 - Run the internal lilarch plan audit, directly or through a clean native
   read-only reviewer, and let the parent tighten the doc before implementation.
+- Run `$overbuild-audit` on the phase plan and cut what does not trace to the
+  human outcome.
 - Sign off the compact scope contract before entering finish mode.
 
 ### 3) Finish mode
@@ -102,6 +104,7 @@ binding task instruction requiring it.
 - Keep a lightweight `WORKLOG_PATH`.
 - Self-audit for completeness and mark the doc complete only when the code is actually complete.
 - Subtract unauthorized built scope; do not rewrite the compact doc to bless it.
+  Run `$overbuild-audit` on the diff to find it.
 
 ## Output expectations
 

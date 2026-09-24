@@ -1,0 +1,7 @@
+interface:
+  display_name: "Overbuild Audit"
+  short_description: "Cut list for a plan or change measured against the ask"
+  default_prompt: "Use $overbuild-audit on the plan or change in front of you. Quote the user's ask first. Inventory every piece, trace each to the ask, and weigh the rest against the six families (scope, size and shape, old stuff kept alive, hiding failure, proof and tests, process and prose). Return: ask, verdict (lean, overbuilt, or needs-decision), size against the simple version, a cut list with the simple version and savings for each piece, and one question per item that needs the user. Subtraction only: never cut what the user asked for, never add gates, tests, or reviews as the fix, and stop after one pass."
+
+policy:
+  allow_implicit_invocation: true

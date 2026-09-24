@@ -26,6 +26,9 @@ work and force `NOT COMPLETE` even when they work or tests pass. A new
 same-contract path discovered by this audit may block approval, but it cannot be
 added to repair scope without a human decision and re-approval.
 
+Run `$overbuild-audit` on the implementation against the same anchors. Its cuts
+are subtraction findings.
+
 ## Shared references to carry in
 
 - `artifact-contract.md`

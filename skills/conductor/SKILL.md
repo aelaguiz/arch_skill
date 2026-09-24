@@ -324,7 +324,9 @@ log beside the plan is its durable memory.
    per `references/shaping-and-outcome-map.md`: worker research as evidence,
    parent trim to the smallest sufficient solution, the outcome map written
    beside the work, one scope approval, sign-off. The approved map is the
-   conducted artifact everywhere "the plan" appears below.
+   conducted artifact everywhere "the plan" appears below. Trim with
+   `$overbuild-audit`; for a finished plan, run it once at intake and take
+   any cut that touches approved scope to the user before dispatch.
 2. Extract the plan into the conductor log: requirements, non-goals, phases
    with dependency order, per-phase checklist, verification, exit criteria,
    and cleanup/delete obligations — as anchors into the plan, not copied
@@ -343,7 +345,8 @@ log beside the plan is its durable memory.
    claims to falsify, check them against git, trace the authority path
    beyond the diff, personally load and verify every claimed work product,
    falsify analytical conclusions at their anchors, apply the three lens
-   groups, and require decisive proof to be independently reproduced. Judge
+   groups and `$overbuild-audit`'s intent to anything built beyond the slice,
+   and require decisive proof to be independently reproduced. Judge
    factual validity separately from scope disposition. Only factually valid
    findings already inside the approved contract become repair work.
 7. Route: batch accepted findings into one resume prompt and send the session
@@ -353,8 +356,9 @@ log beside the plan is its durable memory.
    verification, record proof in the log, and record phase completion in the
    plan's own format.
 9. Repeat until the execution map is clean or a hard stop triggers.
-10. Run the final gate: whole-plan cynical audit sweep, then the fleet cold
-   verifier unless disabled. Triage and repair findings through the same
+10. Run the final gate: whole-plan cynical audit sweep, including one
+   `$overbuild-audit` pass on the whole diff against the human baseline,
+   then the fleet cold verifier unless disabled. Triage and repair findings through the same
    send-back machinery. Run a cynical review skill only when the user asked
    for it — each requested one as its own clean session on the fleet profile,
    never an unpinned native child — and treat its return as advice, not a

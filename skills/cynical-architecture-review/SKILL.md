@@ -162,6 +162,7 @@ user's broader workflow.
 7. Challenge every abstraction, layer, flag, wrapper, registry, adapter,
    compatibility path, state surface, generated truth, and owner boundary with:
    what requirement forces this to exist, and what breaks if it disappears?
+   Calibrate with `$overbuild-audit`'s intent and type catalog.
 8. Prefer deletion, consolidation, ownership repair, single state models,
    deeper modules, and clearer boundaries before proposing new abstractions.
 9. Review QA/tests/docs/proof surfaces only when they are architecture evidence:

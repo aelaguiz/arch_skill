@@ -109,6 +109,9 @@ binding task instruction requiring it.
 - Write or tighten the candidate fix plan in the doc without making it the
   only permissible implementation path.
 - Implement the smallest credible fix locally.
+- Before calling the fix done, run `$overbuild-audit` on the diff and remove
+  speculative fixes, no-effect edits, fallbacks, and debug residue that do not
+  serve the diagnosed cause.
 - If an implementer child owns the fix, preserve its exact handle so accepted
   review repairs resume that same role and scope.
 - Update verification, risk level, and outcome in the doc.

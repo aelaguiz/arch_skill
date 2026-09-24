@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR through two seats the user names at invocation: a primary that writes the plan with the coordinator and takes the early review rounds, and a final that checks the plan once and reviews the PR once; GPT-6 Astra Pro holds both when none is named. Plan on disk, startup-pragmatism, PR authoring, CI last. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
+description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR through two seats the user names at invocation: a primary that writes the plan with the coordinator and takes the early review rounds, and a final that checks the plan once and reviews the PR once; GPT-6 Astra Pro holds both when none is named. Plan on disk, startup-pragmatism, overbuild-audit on plan and diff, PR authoring, CI last. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
 metadata:
   short-description: "Issue delivery with delegated code and parent review"
 ---
@@ -57,6 +57,11 @@ a GitHub issue, use the requested workflow instead.
   the final read it once against the code before implementation. Keep that judgment during delivery: enough investigation
   and verification for the actual change, without invented approval gates or
   proof machinery.
+- Hold the work to `$overbuild-audit`'s intent: build exactly what the issue
+  asks, the simplest way that works. The coordinator runs that audit itself,
+  once on the written plan before the final's plan check and once on the diff
+  before publishing, and applies the cuts. It adds no consultation or review
+  round.
 - The run starts authorized for accepted in-scope work. Work in a dedicated
   worktree under the target repo's AGENTS.md. Require self-documenting code
   with clear comments at boundaries and role seams, relevant tests, and
@@ -222,15 +227,19 @@ the coordinator's and stay open until the epic's last shared review.
    the primary with family D so it writes the plan (outcome, acceptance
    criteria, requirements, architecture, do's, do not's, test plan); ask
    questions until it is fully formed, then carry it onto disk verbatim and
-   into the issue. Have the final read the written-up plan once against the
-   code (family C) before anyone builds. A plan the primary already wrote
+   into the issue. Run `$overbuild-audit` on the written plan against the
+   accepted scope and cut what does not trace to it; anything that traces to
+   the ask but looks heavy goes to the user once. Have the final read the
+   written-up plan once against the code (family C) before anyone builds. A plan the primary already wrote
    that still covers the accepted scope satisfies this step.
 2. **Implement and verify.** Deliver the smallest coherent change in the
    worktree under the execution contract. Give workers tight requirements and
    appropriate checks, review every deliverable and changed code line, and
    return code findings for repair. Author skill content directly. Resolve
    ordinary decisions locally, consult the run's unblocker when needed, and
-   use the primary at the cadence above.
+   use the primary at the cadence above. Before publishing, run
+   `$overbuild-audit` on the full diff against the accepted scope and have
+   workers make its cuts.
 3. **Publish.** Publish the PR with `$pr-authoring` and go straight to the
    primary. Do not wait on CI, and do not start review-thread or CI
    follow-through.
@@ -285,7 +294,8 @@ recommendation. Continue independent scope while the answer pends; a
 continuation or wake-up is not an answer or a reason to ask again.
 
 For a persistent run, author its goal prompt with `$prompt-authoring` and
-`$startup-pragmatism`, naming both seats with exact model and effort, their
+`$startup-pragmatism`, carrying `$overbuild-audit`'s commander's intent and
+naming both seats with exact model and effort, their
 threads, review scope and cadence, unblocker per `$unblocker`, accepted
 scope, execution responsibilities including
 parent-owned skill authorship, and merge-ready completion condition. Arm the

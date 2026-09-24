@@ -1,6 +1,6 @@
 ---
 name: startup-pragmatism
-description: "Install the early-stage startup operating frame when invoked: reality-check the current plan, answer, or behavior away from proof-maximizing, receipt-building, scope expansion, and decision avoidance, and toward the smallest useful move, decisions at 50-70% of desired information, and rigor spent only where wrongness is expensive. Use when the user invokes startup pragmatism, says the agent is overbuilding, over-proving, being pedantic, or perfection-maximizing, or wants a plan, recommendation, or in-flight work re-checked through the early-stage lens. Output is subtraction and a forced decision: name what gets cut, what gets decided now at current information, and where rigor is still owed. Not for code-defect review, plan-readiness audit, intent drift policing, or genuinely irreversible high-blast-radius moves (prod data mutation, external sends, money, app-store releases), which keep full rigor."
+description: "Install the early-stage startup operating frame when invoked: reality-check the current plan, answer, or behavior away from proof-maximizing, receipt-building, scope expansion, and decision avoidance, and toward the smallest useful move, decisions at 50-70% of desired information, and rigor spent only where wrongness is expensive. Use when the user invokes startup pragmatism, says the agent is overbuilding, over-proving, being pedantic, or perfection-maximizing, or wants a plan, recommendation, or in-flight work re-checked through the early-stage lens. Output is subtraction and a forced decision: name what gets cut, what gets decided now at current information, and where rigor is still owed. Not for code-defect review, a piece-by-piece overbuild audit of a plan or change against its ask (overbuild-audit), plan-readiness audit, intent drift policing, or genuinely irreversible high-blast-radius moves (prod data mutation, external sends, money, app-store releases), which keep full rigor."
 metadata:
   short-description: "Early-stage startup reality check"
 ---
@@ -59,6 +59,8 @@ Hold this frame for everything below:
 - The ask is a code-defect hunt: use `$cynical-code-review` or normal review.
 - The ask is plan-readiness quality: use `$plan-audit`.
 - The ask is drift from stated intent over a long run: use `$intent-police`.
+- The ask is a piece-by-piece audit of a plan or change against what the user
+  asked for, with a cut list: use `$overbuild-audit`.
 - The move at hand is genuinely irreversible or high-blast-radius: production
   data mutation, external sends, money movement, schema migrations with data
   loss potential, app-store releases. Those keep full rigor - this skill's

@@ -1,6 +1,6 @@
 ---
 name: epic-to-prs
-description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared planning and review through two seats the user names at invocation: the primary writes the epic plan and reviews batches, the final checks the plan once and reviews the stack once; GPT-6 Astra Pro holds both when none is named. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, open-ended optimization, or a spec milestone delivered as one PR per repo (milestone-to-pr)."
+description: "Explicit-invocation epic loop, fired only by name or direct command; never self-select it. Works an epic or milestone most-important-first through issue-to-pr to merge-ready PRs. Owns the live queue, persistent goal, unblocker, and shared planning and review through two seats the user names at invocation: the primary writes the epic plan and reviews batches, the final checks the plan once and reviews the stack once; GPT-6 Astra Pro holds both when none is named. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns direct review of every deliverable and all skill authorship. Preserve accepted scope and honest receipts; overbuild-audit cuts the epic plan and the stack; continue independent work around blockers. Never merge or release. Not for status reads, decomposition via arch-epic, open-ended optimization, or a spec milestone delivered as one PR per repo (milestone-to-pr)."
 metadata:
   short-description: "Epic delivery with delegated code and shared Pro reviews"
 ---
@@ -49,6 +49,11 @@ without an issue queue belongs to native goal mode.
 - Preserve the user's accepted scope. Agents, reviewers, and bots cannot
   expand it or quietly deliver less. Decide routine ordering, dependencies,
   and scope interpretation locally with `$startup-pragmatism`.
+- Hold the epic to `$overbuild-audit`'s intent: build exactly what its issues
+  ask, the simplest way that works. The coordinator runs that audit itself,
+  once on the epic plan before the final's plan check and once on the
+  completed stack before the final's stack review, and applies the cuts.
+  Each child's `issue-to-pr` run audits its own plan and diff the same way.
 - The run starts authorized for in-scope work. The armed `$unblocker`
   resolves self-imposed approval gates and real blockers from intent. Pro
   consultation follows the cadence below; user authority, access, or a
@@ -185,8 +190,9 @@ passed.
    take the epic to the primary with family D, so it writes the plan and the
    coordinator asks the questions until it is fully formed, bringing
    `$startup-pragmatism` into that back-and-forth; carry the agreed plan
-   onto disk verbatim and have the final read it once against the code
-   (family C). Reuse a plan the primary already wrote when it still covers
+   onto disk verbatim, run `$overbuild-audit` on it against the accepted
+   scope and cut what does not trace, and have the final read it once
+   against the code (family C). Reuse a plan the primary already wrote when it still covers
    the scope. Identify useful reviewable batches where the work calls for
    them.
 2. **Arm the run.** Stand up `$unblocker` with the user's ask, scope,
@@ -195,7 +201,8 @@ passed.
    effort, their threads, unblocker contact, queue,
    shared review scope, execution responsibilities including parent-owned
    skill authorship, and completion condition. Arm the goal and unblocker
-   using the active harness's supported mechanisms. Carry user-directed
+   using the active harness's supported mechanisms. Carry `$overbuild-audit`'s
+   commander's intent into the goal. Carry user-directed
    cadence changes into the goal,
    charter, and active dispatch briefs during a run.
 3. **Deliver issues.** Refresh the queue and run dependency-ready `issue-to-pr`
@@ -209,8 +216,10 @@ passed.
    scope while any real user question pends. Ask once; continuations do not
    supply an answer or justify repeated questions.
 4. **Review and finish.** Take batches to the primary until it finds nothing
-   material, then obtain the final's one review of the completed stack with
-   the primary's findings and the fixes attached. Resolve material findings
+   material. Run `$overbuild-audit` on the completed stack against the epic's
+   accepted scope and have workers make its cuts, then obtain the final's one
+   review of the completed stack with the primary's findings and the fixes
+   attached. Resolve material findings
    through the same execution contract and personally review fixes. Only
    then run CI and bot follow-through, once, as the very last step. Every
    delivered issue needs the coordinator's direct review, the primary's plan

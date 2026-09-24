@@ -67,7 +67,10 @@ layer of delegation. Keep skill authorship out of worker assignments.
 Give each worker the accepted outcome, relevant plan and source paths, owned
 scope, dependencies, architectural constraints, acceptance criteria, and
 required verification under the repo's instructions. Include inherited review
-coverage and the expected handoff when the caller has them. Distinguish binding
+coverage and the expected handoff when the caller has them. Carry the plan's
+do-not-build boundary and `$overbuild-audit`'s intent in plain words: build
+exactly the brief, the simplest way that works, with no fallbacks, flags,
+harnesses, or extra tests it did not ask for. Distinguish binding
 decisions from hypotheses the worker should investigate.
 
 Choose coherent assignments large enough for implementation judgment and small
@@ -93,7 +96,10 @@ watches for the answer and reads all of it.
 
 Personally inspect every deliverable and every changed line of code, including
 tests and later repair or integration changes. Read surrounding code as needed
-to judge behavior, architecture, maintainability, and scope. Open other work
+to judge behavior, architecture, maintainability, and scope. Judge scope with
+`$overbuild-audit`'s intent and types: anything a worker built beyond the
+brief goes back as a cut in the next repair brief. This is part of the
+parent's own review, not a separate gate. Open other work
 products and assess their substance. Worker summaries, passing tests, bots,
 and external reviewers supply evidence; none replaces the parent's own review.
 

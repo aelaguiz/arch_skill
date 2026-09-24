@@ -128,7 +128,9 @@ state machine, or script-backed completion judge.
    file-backed implementation scopes.
 4. Implement the smallest useful depth-first slice using the repo's existing
    patterns and owner paths.
-5. Review while the work is warm using plan-audit implementation-audit lenses.
+5. Review while the work is warm using plan-audit implementation-audit lenses
+   and `$overbuild-audit`'s intent: cut anything the slice built beyond the
+   plan.
    When children save time, use new clean native critics for independent
    read-only lenses. Send accepted repairs back to the exact implementer that
    owns the code, then use a different new clean critic for an independent
@@ -141,7 +143,8 @@ state machine, or script-backed completion judge.
    code, plan, review, and proof state agree. New breadth requires human approval
    and re-approval.
 9. At the requested stop boundary, perform a final lightweight plan-backed
-   implementation check and report remaining gaps plainly.
+   implementation check, including one `$overbuild-audit` pass on the whole
+   diff, and report remaining gaps plainly.
 
 ## Output Expectations
 

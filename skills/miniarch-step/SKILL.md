@@ -41,7 +41,7 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
   `references/artifact-contract.md`: human authorization, smallest sufficient
   solution, initial convergence closure or `none`, scope sign-off, enough proof,
   do-not-build boundary, and accepted residual risk.
-- Treat overbuilding as a known default failure mode. Agents often confuse thoroughness with quality and keep adding abstractions, harnesses, edge cases, and proof after the real fix is already sufficient. Assume that bias is active; before adding machinery, try to reuse, delete, or simplify.
+- Treat overbuilding as a known default failure mode. Agents often confuse thoroughness with quality and keep adding abstractions, harnesses, edge cases, and proof after the real fix is already sufficient. Assume that bias is active; before adding machinery, try to reuse, delete, or simplify. Run `$overbuild-audit` on the phase plan before calling it implementation-ready and on the code in `audit-implementation`; its cuts remove unauthorized or excess work only.
 - Match the size of the solution and its proof to the demonstrated failure and blast radius. A systemic fix belongs at the narrowest shared boundary that eliminates the failure class; "systemic" does not mean "build a framework around the incident."
 - Every Section 7 item must directly serve the human outcome, the pre-approval
   minimal convergence closure, or enough proof. Remove items that serve none

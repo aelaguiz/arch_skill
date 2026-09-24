@@ -1,6 +1,6 @@
 ---
 name: milestone-to-pr
-description: "Explicit-invocation milestone delivery, fired only by name or direct command; never self-select it. Takes a spec milestone (several issues, such as M0 or 2A in a plan or sheet) to merge-ready as one PR per repo: Pro writes the milestone plan once, the verification path is proven first, issues land as commits with a cheap primary read each, and the final (Pro by default) reviews the whole milestone once at the boundary while CI and bots run there, not per issue. Every coordinator uses delegated-implementation. Never merge or release. Not for a single issue (issue-to-pr) or an epic worked issue by issue into separate PRs (epic-to-prs)."
+description: "Explicit-invocation milestone delivery, fired only by name or direct command; never self-select it. Takes a spec milestone (several issues, such as M0 or 2A in a plan or sheet) to merge-ready as one PR per repo: Pro writes the milestone plan once, the verification path is proven first, overbuild-audit cuts the plan and the milestone diff, issues land as commits with a cheap primary read each, and the final (Pro by default) reviews the whole milestone once at the boundary while CI and bots run there, not per issue. Every coordinator uses delegated-implementation. Never merge or release. Not for a single issue (issue-to-pr) or an epic worked issue by issue into separate PRs (epic-to-prs)."
 metadata:
   short-description: "Spec milestone delivered as one PR, reviewed once"
 ---
@@ -63,6 +63,11 @@ and work without GitHub issues use the requested workflow instead.
   AGENTS.md.
 - **Quality.** Code is self-documenting, with clear comments at boundaries
   and role seams. Use `$startup-pragmatism` in planning and in decisions.
+- **No overbuild.** Hold the milestone to `$overbuild-audit`'s intent: build
+  exactly what its issues ask, the simplest way that works. The coordinator
+  runs that audit itself, once on the written plan and once on the milestone
+  diff before the boundary review, and applies the cuts. It adds no seat
+  consultation.
 - **Limits.** Never merge, release, apply approval labels such as
   `ufc-approved`, or touch production surfaces. A requirement that needs
   one of those is named as still owed, with who owes it. Stop at
@@ -174,6 +179,9 @@ Count retries. Polling is not a new submission.
    - Ask questions until it is fully formed.
    - Carry it onto disk verbatim as the one canonical plan. Each issue gets
      its work order; the tracker, when there is one, gets a reference.
+   - Run `$overbuild-audit` on the written plan against the milestone's
+     accepted scope. Cut what does not trace to it; take anything that traces
+     to the ask but looks heavy to the user once.
    - Comment the milestone's delivery rules on each issue it covers: it
      lands on the milestone PR, and CI and the final review happen at the
      milestone boundary, so CI may be red while the issue is done. Then a
@@ -205,7 +213,8 @@ Count retries. Polling is not a new submission.
      that local investigation cannot resolve to the final with family G.
 5. **Reach the boundary.**
    - When every issue has landed and the primary's findings are fixed, run
-     the plan's real check.
+     `$overbuild-audit` on the whole milestone diff against its accepted
+     scope, have workers make the cuts, then run the plan's real check.
    - Push the commit that completes the milestone without the skip marker,
      so CI and the bots start on their own. A repo whose head already
      skipped CI gets its PR's own pipeline rerun on that head. Never use an
@@ -249,7 +258,8 @@ close.
 ## Unblocking and persistent goals
 
 For a persistent run, author the goal prompt with `$prompt-authoring` and
-`$startup-pragmatism`. Name in it:
+`$startup-pragmatism`, carrying `$overbuild-audit`'s commander's intent. Name
+in it:
 - both seats with their exact model and effort, and their threads
 - the milestone, its issues, and its boundary
 - this lane's review and CI cadence

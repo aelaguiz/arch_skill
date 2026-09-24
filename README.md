@@ -83,6 +83,7 @@ Other shipped skills are:
 - `exhaustive-code-review` — prompt-only exhaustive review driven by a bundled catalog of specific checks; when the user names a worker type or count, deals the catalog slices across that many clean native review children while the parent verifies every finding and owns the verdict; approved-scope discipline and a saved artifact under `/tmp/exhaustive-code-review/`
 - `thermo-nuclear-code-quality-review` — vendored Cursor Team Kit rubric for unusually strict maintainability reviews focused on code-judo simplification, 1k-line file growth, spaghetti branching, abstraction boundaries, and structural quality
 - `startup-pragmatism` — invokable early-stage startup reality check that snaps an agent out of proof/receipt/perfection-maximizing behavior and into 3-person seed-stage operating mode: self-check against eight trace-mined anti-patterns, run the four-question rigor budget (reversibility, cost of wrong vs slow, information available, learning per unit time), and reply with a cut list, a forced decision at current information, and where rigor is still owed
+- `overbuild-audit` — one-pass audit of a plan or an implementation against what the user actually asked for: quotes the ask, traces every piece to it, weighs the rest against six families of overbuild (scope, size and shape, old stuff kept alive, hiding failure, proof and tests, process and prose), and returns a cut list with the simple version of each piece; subtraction only, never cuts asked-for scope. issue-to-pr, milestone-to-pr, epic-to-prs, conductor, the arch planners, plan-implement, and bugs-flow run it on their plan and diff; the review skills use its type catalog
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; uses a new clean same-host native worker and critic when capable, resumes the exact worker for repair, and retains its subprocess machinery as the deliberate external lane
 - `spreadsheet-formatting` — makes Google Sheets and Excel workbooks readable, consistent, and formula-driven for a human reader
 - `readable-reports` — writes, rewrites, or audits reports, status updates, decks, sheet notes, and status answers so a smart, busy expert can parse them in one pass: full sentences, every thing named with its code after it, every PR or issue a labeled link, every status with its cause and next step, numbers with their comparison, answer first, no report-about-itself
@@ -898,6 +899,8 @@ Examples:
 - `Use $cynical-code-review to audit this implemented plan and assume we missed the point`
 - `Use $cynical-architecture-review to find accidental architecture and simplify it without changing the UX`
 - `Use $cynical-cruft-removal to find low-value code, tests, docs, configs, and generated artifacts that should go away`
+- `Use $overbuild-audit on this plan: where are we overbuilding?`
+- `Is this PR overbuilt relative to what I asked for? What do we rip out?`
 - `Use $exhaustive-code-review on this full branch`
 - `Use $thermo-nuclear-code-quality-review on this diff`
 

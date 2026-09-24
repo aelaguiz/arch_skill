@@ -938,6 +938,36 @@ Practical rule:
   subtraction are the job.
 - Use `arch-docs` for docs-only cleanup.
 
+### `overbuild-audit`
+
+Use when the user asks whether a plan, PR, branch, diff, or in-flight work is
+overbuilt, where we are overbuilding, what to rip out, or whether scope crept.
+It quotes the user's ask, traces every planned or built piece to it, weighs
+the rest against six families of overbuild, and returns a cut list with the
+simple version of each piece and what cutting saves. It is one pass,
+subtraction only, and never cuts asked-for scope; those items go to the user
+as questions.
+
+Delivery and planning lanes run it themselves: `issue-to-pr`,
+`milestone-to-pr`, `epic-to-prs`, `conductor`, `arch-step`, `miniarch-step`,
+`arch-mini-plan`, `lilarch`, `plan-implement`, and `bugs-flow` audit their
+written plan before building and their diff before the final review. The
+review skills use its type catalog for their overbuild and subtraction lenses.
+
+Examples:
+
+- `Use $overbuild-audit on docs/PLAN.md: where are we overbuilding?`
+- `Is this PR overbuilt relative to what I asked for? What do we rip out?`
+- `What did we build here that I didn't ask for?`
+
+Practical rule:
+
+- Use `overbuild-audit` when there is a plan or change to measure against an
+  ask.
+- Use `startup-pragmatism` when the agent's decision frame needs a reset.
+- Use `cynical-cruft-removal` for a repo-wide low-value artifact sweep with
+  no particular ask.
+
 ### `exhaustive-code-review`
 
 When explicitly selected, use when the user wants a prompt-only exhaustive code review over a branch,
