@@ -18,16 +18,18 @@ stop at an inventory or preserve unwanted garbage in another large archive.
   home and machine before any mutation. Never apply these paths to the laptop.
 - Amir authorized recurring cleanup of obsolete Hermes copies and logs,
   old AIM backups, reproducible development output, stale Git worktrees and
-  orphaned checkout directories,
-  and disposable simulators. His September 23 request set a rolling 48-hour
+  orphaned checkout directories, and disposable simulators. His September 23
+  request set a rolling 48-hour
   inactivity limit for development worktrees, including dirty worktrees, while
   retaining one PS Mobile and one RustAI primary checkout.
+  Detached idle shells whose only use of an old worktree is their working
+  directory may be stopped so they do not block that cleanup.
   Routine actions within that scope need no repeated approval. His explicit
   September 21 request also authorized stopping and erasing all then-active
   simulators. During unattended runs, defer a device or directory being used by
   a current build/test; an old process alone is not proof of useful work.
-- Preserve the chosen primary source checkouts, Git branches and unique commits, worktrees
-  active within the last 48 hours, live sessions, agent databases/memories,
+- Preserve the chosen primary source checkouts, Git branches and unique commits,
+  worktrees active within the last 48 hours, live agent sessions, agent databases/memories,
   current credentials and configuration, and persistent service volumes.
   Old inactive linked worktrees are explicitly eligible even when dirty;
   record what is discarded. Do not rotate credentials. Never remove an entire
@@ -59,9 +61,9 @@ stop at an inventory or preserve unwanted garbage in another large archive.
    status, unique commits, and live process/session references; remove it with
    `git worktree remove --force` after preserving unique Git history. A directory
    with a broken `.git` link to a deleted parent repository needs the separate
-   orphan procedure in the host map. Stop only
-   exact abandoned worktree-owned processes whose role is established; defer
-   live sessions or uncertain owners. Preserve the PS Mobile and RustAI primary
+   orphan procedure in the host map. Stop exact abandoned worktree-owned
+   processes and detached idle shells after establishing their role; defer
+   active sessions or uncertain owners. Preserve the PS Mobile and RustAI primary
    checkouts. See the worktree procedure in the host map.
    A failed, timed-out, partial or suppressed activity probe never clears a
    deletion candidate. Defer that candidate. Inspect process working directories

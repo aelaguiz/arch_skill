@@ -44,8 +44,14 @@ Amir requested. Keep branch refs; preserve an otherwise unreferenced detached
 tip under a named archive ref before removing its worktree. Check process
 working directories, open files and live agent sessions. If only abandoned
 test/build/probe workers hold it, identify their exact PIDs, terminate them,
-wait, and repeat the activity check. Never kill Prime, Hermes, a current agent
-session, or an uncertain process solely because the worktree is old; defer it
+wait, and repeat the activity check. A detached tmux shell that only holds the
+old checkout as its working directory is also disposable when its session has
+no attached client, the shell has no child or foreground command, and there is
+no recent source activity. Close only that exact idle pane or single-pane
+session, then confirm its PID exited and repeat the open-file check. A stale
+shell alone must not preserve a large old worktree. Never kill Prime, Hermes,
+an active agent session, an attached terminal, or an uncertain process solely
+because the worktree is old; defer it
 with its owner and reason. Skip locked worktrees until their owner and lock
 purpose are established. Immediately recheck source activity and references,
 then use `git worktree remove --force <exact-path>` and verify the registration
