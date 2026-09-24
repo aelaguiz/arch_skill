@@ -146,9 +146,13 @@ context switch for something you could have finished, so try before you ask:
   mail CLI), or an authenticator secret the user keeps for agents. Read the
   code, enter it, go on.
 - **CAPTCHA.** Try it. A checkbox or a simple challenge usually passes in the
-  user's own signed-in browser. Use a screenshot to see it, and take brief
-  foreground only if the widget will not render in a background tab.
+  user's own signed-in browser. Use a screenshot to see it. If the widget does
+  not render in the background tab, turn on focus emulation for that page
+  (`profiles-and-focus.md`).
 - **Consent, terms, and account choosers.** Read the screen and click through.
+  A consent button that stays disabled in the background waits for page focus;
+  GitHub's OAuth Authorize button does this. Turn on focus emulation, reload
+  the page, and click it.
 - **Workspace policy block ("This app is blocked").** Try the other account
   that fits the site. If every fitting account is blocked, report the exact
   block text and go on with work that does not need the site.

@@ -129,8 +129,10 @@ ChatGPT project file mechanics (verify against live behavior):
   clicks on background tabs. Dispatch synthetic `PointerEvent`
   `pointerdown`/`pointerup` plus `.click()` via `evaluate` on the resolved
   element, then verify the menu or dialog actually mounted before acting on
-  it. React inputs need the native value setter plus an `input` event;
-  `element.value = x` alone is ignored.
+  it. A menu closed in a background tab stays half-closed until focus
+  emulation or a reload (`profiles-and-focus.md`). React inputs need the
+  native value setter plus an `input` event; `element.value = x` alone is
+  ignored.
 - Project file uploads go through the visible file input on the project
   Sources tab (`upload` with that ref, batches of 10 work). Verify server
   registration by re-fetching the gizmo file list and comparing byte sizes;

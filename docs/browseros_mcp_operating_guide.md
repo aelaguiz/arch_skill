@@ -61,15 +61,14 @@ Every BrowserOS run should obey these rules:
    new page is justified, use `hidden=false` and `background=true`. Never
    create or work from hidden tabs or windows.
 2. **List before opening.** Inspect tabs first. Inspect windows first when
-   profile, account, visibility, or recording context matters. Before any
-   focus-capable phase, also record the current BrowserOS active page/window
-   and relevant window visibility.
+   profile, account, visibility, or recording context matters.
 3. **Navigate for retries.** A wrong URL, redirect, stale page, retry, poll,
    attachment, or readback is not a reason to open another tab.
 4. **Keep a task-local page ledger.** Record which pages existed before the
    task, which pre-existing page was explicitly adopted, which pages the task
    created, any task-caused hidden surface, relevant active/visibility state,
-   foreground takeovers, and the final lifecycle state of each created page.
+   pages with focus emulation on, and the final lifecycle state of each
+   created page.
    Do not rely on BrowserOS to return ownership metadata consistently.
 5. **Validate identity before mutation.** Page number alone is never enough.
    Verify ownership, window/profile, origin and path, title, account marker,
@@ -82,10 +81,10 @@ Every BrowserOS run should obey these rules:
    failed or repeat it until read-only reconciliation proves what happened.
 8. **Use the cheapest sufficient proof.** Prefer `diff`, `grep`, or a bounded
    `read`; use a screenshot only when pixels are part of the claim.
-9. **Serialize page and foreground ownership.** Parallel agents may use
-   independent pages, but must not act concurrently on the same page or flood
-   the shared browser with heavy screenshots and long evaluations. One focus
-   owner serializes every foreground-capable phase.
+9. **Serialize page ownership.** Parallel agents may use independent pages,
+   but must not act concurrently on the same page or flood the shared browser
+   with heavy screenshots and long evaluations. No agent takes foreground
+   focus, so there is no focus phase to serialize.
 10. **Clean up before returning.** Close verified task-created pages that no
     longer serve the user. Never navigate away from, group, mutate beyond the
     requested workflow, or close a pre-existing page merely because the tool
@@ -133,25 +132,19 @@ At the beginning of browser work:
 1. Call `tabs` with `action="list"`.
 2. If profile, account, visible-window, or recording context matters, call
    `windows` with `action="list"` as well.
-3. Before an action that can activate a window, foreground-create a tab,
-   expose-and-activate a window, or close the selected page, also call `tabs`
-   with `action="active"` when available and record BrowserOS active-window
-   and visibility state. Record that the previously focused non-BrowserOS
-   desktop application is not observable or restorable through BrowserOS MCP.
-4. Record sanitized baseline page identities. A page identity is more than its
+3. Record sanitized baseline page identities. A page identity is more than its
    number: keep only origin plus a stable relevant path, title, any
    window/profile evidence the live result actually returns, and intended use.
    Never put query strings or URL fragments in the ledger. Require richer
    window/profile proof only for the selected page when the workflow needs it.
-5. Select one compatible page and classify it as task-created, task-adopted,
+4. Select one compatible page and classify it as task-created, task-adopted,
    or pre-existing/unknown before acting.
-6. Open a page only if no compatible task-designated page exists or the task
+5. Open a page only if no compatible task-designated page exists or the task
    genuinely requires simultaneous state. Use a regular tab with
    `hidden=false` and `background=true`, then verify its actual containing
-   window, visibility, and active state. If no visible target window existed,
-   treat any implicit visible-window creation as focus-capable. If the result
-   cannot be established or is hidden, do not work through it; reconcile or
-   report it.
+   window, visibility, and active state. Always pass a `windowId`, so no call
+   creates a window implicitly. If the result cannot be established or is
+   hidden, do not work through it; reconcile or report it.
 
 Current BrowserOS tool descriptions distinguish `Your tabs`, `User's tabs`,
 and `Other agents' tabs`. Respect those categories when they are returned,
@@ -228,9 +221,9 @@ particular, do not open another tab for:
 
 ### Visibility and focus
 
-For the focused audit of foreground takeover, active-tab/window restoration,
-profile targeting, parallel focus ownership, and the current compact MCP gaps,
-see [BrowserOS Focus, Profile, and Window Analysis](BROWSEROS_FOCUS_PROFILE_WINDOW_ANALYSIS_2026-07-19.md).
+For the July 2026 audit of profile targeting and the compact MCP gaps, see
+[BrowserOS Focus, Profile, and Window Analysis](BROWSEROS_FOCUS_PROFILE_WINDOW_ANALYSIS_2026-07-19.md).
+Its foreground-takeover guidance is superseded by the no-focus policy below.
 
 For user-requested work, request a normal non-hidden tab with
 `background=true`. When routed into an existing visible window, this creates a
@@ -248,16 +241,40 @@ a normal non-hidden tab.
 
 Routine page-targeted reads, navigation, interaction, screenshots, uploads,
 downloads, waits, and verification use the page ID and do not require tab or
-window activation. Protect the user's foreground focus as a primary concern
-on this shared machine: interruptions can redirect their typing and disrupt
-other work. Work through viable background methods before taking focus. Do not
-use `windows activate`, `tabs new` with `background=false`, or
-`windows set_visibility` with `activate=true` merely to target, observe,
-poll, retry, screenshot, or guess a profile. When the required operation needs
-foreground behavior, a brief takeover is allowed without separate approval.
-Explain the need once, keep the interruption short, and promptly return to
-background work. Restore prior browser focus where supported and appropriate,
-without overriding a newer focus choice by the user.
+window activation. Agents never take the user's foreground focus on this shared
+machine. That rules out:
+- `windows activate` and `Browser.activateWindow`;
+- `tabs new` or `newPage` with `background=false`;
+- `Page.bringToFront`, `Target.activateTarget`, and `Browser.activateTab`;
+- `windows set_visibility` with `activate=true`;
+- activating another app;
+- any of these used to "restore" focus afterward.
+
+A hidden page that will not render or respond gets
+`Emulation.setFocusEmulationEnabled({enabled: true})` on that page.
+`profiles-and-focus.md` in the skill has the recipe. A required step that still
+cannot be done in the background goes to the user by profile, tab title, and
+step while other work continues.
+
+Why focus emulation: an unselected tab reports `visibilityState` `hidden` and
+`hasFocus()` false, and runs no animation frames. Radix menus then stay
+half-closed, dialogs stay blank, save bars never mount, and focus-gated buttons
+stay disabled. Enabling emulation on the page makes it report `visible` and
+focused and resume rendering, while the tab stays unselected and the desktop is
+untouched.
+
+Evidence, September 2026:
+- **What agents did:** Codex agents took focus 165 times in 81 episodes. An
+  episode-by-episode review found none strictly required. The only three
+  defensible grabs (GitHub OAuth Authorize, a Shopify Admin save bar, a Google
+  share dialog) each had this untried fix.
+- **Sep 23 live tests:** emulation made a Shopify Admin save bar and a Google
+  share dialog appear within 1 to 2 seconds. A replica of GitHub's
+  focus-gated Authorize logic enabled. A half-closed ChatGPT menu cleared.
+  Through all of it the tab stayed unselected and the frontmost app never
+  changed.
+- **What did not work:** `document.getAnimations()` plus `finish()` does not
+  clear a stuck menu in a hidden tab.
 
 Expect one `Work` profile and a variable number of Pro profiles with windows
 already open. Discover the live profile/window/page mapping and keep checking
@@ -275,14 +292,12 @@ does not satisfy that requirement. Expose a hidden window with
 `activate=false` only when the containing window is task-controlled and its
 current membership and profile context are proved safe to reveal. Page
 ownership alone is insufficient because visibility is window-scoped. This
-does not select an existing background tab. Activate the window—and say
-briefly that focus will move—only when a selected-page or foreground handoff
-is actually required.
+does not select an existing background tab. Do not activate the window; tell
+the user which profile and tab title to switch to.
 
 For CAPTCHA, 2FA, login, secure-field entry, consent, or another manual gate,
 identify the safe page/window without sensitive details and ask the user to
-switch to BrowserOS when ready. A manual input requirement does not itself
-justify taking focus while the user is doing other work. After the user
+switch to BrowserOS when ready. Agents do not take focus for these steps. After the user
 finishes, relist and revalidate the page,
 profile/account, and target before continuing.
 
@@ -303,7 +318,8 @@ created_windows: each window created by this task, with purpose and lifecycle st
 created_groups: each group created by this task, with member pages and lifecycle status
 created_artifacts: each local output created by this task, with exact returned path, purpose, sensitivity, and lifecycle status
 created_hidden_surfaces: expected 0; task-caused observations and attribution
-foreground_takeovers: deliberate, unexpected, and provable browser-state restoration
+focus_emulation: pages where this task turned it on, and whether it is off again
+site_caused_focus_changes: popups or new tabs a site action selected, reported, not undone
 window_visibility_changes: change, restoration requirement, and verified final state
 transient_pages: callbacks, popups, previews, and downloads to close promptly
 retained_pages: task-created pages intentionally kept, with reason
@@ -798,13 +814,9 @@ stateful resource.
 - Never have two agents mutate or poll the same page concurrently.
 - Assign independent browser tasks only when the work is genuinely
   independent; each owning agent selects or creates its own page.
-- Designate one focus owner for any phase that can activate a window,
-  foreground-create a tab, create a visible window directly or implicitly,
-  show-and-activate a window, or close the selected page. Serialize those
-  calls. Other workers may continue independent background work but must not
-  make foreground-capable calls.
-- Focus ownership does not transfer page ownership or authorize one worker to
-  act on or clean another worker's page.
+- No worker takes foreground focus. Focus emulation is set per page by the
+  worker that owns that page and does not authorize acting on or cleaning
+  another worker's page.
 - Serialize screenshots and other large responses unless there is a strong
   reason not to.
 - Give every child a target specification, allowed actions, proof goal, page
@@ -893,7 +905,7 @@ encodes.
 | Replacement leaves the old page open | Open and verify exactly one replacement, then close the verified task-created old page. |
 | Task finishes with callback, preview, or source tabs open | Run ledger-based cleanup before returning. |
 | Hidden page or window is created or used for task work | Do not use hidden browser surfaces; use a normal non-hidden background page. |
-| Automation steals focus or cursor | Protect the user's focus: work through viable background methods, then use only a necessary brief foreground phase without a separate approval question. |
+| Automation steals focus or cursor | Never activate a tab, window, or app. Turn on focus emulation for the hidden page that will not render or respond; if a required step still fails, tell the user the profile, tab title, and step. |
 | Agent closes an unrelated user tab during cleanup | Close only verified task-created pages. |
 | Parent cannot close a child-owned page | Resume the exact child for cleanup. |
 | Parent-created page is handed to a child as if ownership transfers | Give the child a target specification; the child must own its own page. |
@@ -953,7 +965,7 @@ For page work, add:
 Pre-existing tabs adopted/reused: <unique count>
 Tabs: created <count> = closed <count> + retained <count> + unknown/orphan <count>
 Hidden browser surfaces: deliberately created 0; task-caused observed <count>; unknown <count or not inventoried>
-Foreground takeover: <none deliberately made, intentional, unexpected, or unknown>
+Focus: none taken; site-caused tab or window changes <none, or which>
 ```
 
 Add only the applicable optional lines:
@@ -964,13 +976,12 @@ Tab groups: created <count> = removed <count> + retained <count> + unknown <coun
 Artifacts: created <count> = removed <count> + retained <count> + unknown <count>
 Browser window/tab state: <unchanged, restored, changed/unrestored, intentionally retained, or unknown>
 Window visibility: <unchanged, restored, changed/unrestored, intentionally retained, or unknown>
-Desktop app focus: <not changed deliberately, user-controlled, or not observable>
 Retained or unknown state: <safe identity, reason, and risk>
 ```
 
 Use window/group/artifact lines only when those resources were touched. Use
-the browser-state, visibility, and desktop-focus lines when focus- or
-visibility-capable work occurred or those states were inventoried. Do not
+the browser-state and visibility lines when a site action changed them,
+visibility work occurred, or those states were inventoried. Do not
 fabricate zeroes for unobserved shared state. For connector-only work, omit
 browser lifecycle fields and report the BrowserOS-managed connector/service,
 exact safe action or query, structured outcome, and readback limitation.
@@ -1110,8 +1121,8 @@ do not copy machine-specific or secret-adjacent details into a general skill.
 
 The shipped skill keeps the runtime contract lean:
 
-- Non-negotiables: one normal non-hidden tab, zero routine foreground
-  takeover, task ledger, target identity, mutation safety, honest proof,
+- Non-negotiables: one normal non-hidden tab, no foreground focus ever (focus
+  emulation for hidden pages), task ledger, target identity, mutation safety, honest proof,
   secrets boundary, and child-owned cleanup.
 - First move: resolve target/profile/proof, inventory tabs and relevant
   active/window state, choose one task-authorized page, and verify any new
@@ -1119,10 +1130,9 @@ The shipped skill keeps the runtime contract lean:
 - Main loop: snapshot, act once, inspect diff, verify.
 - Recovery: classify, bounded retry, unknown-outcome readback, final-rung
   restart only.
-- Parallel work: independent page owners and one serialized focus owner.
+- Parallel work: independent page owners; no focus phase to serialize.
 - Output: result and proof for every lane; applicable lifecycle, hidden,
-  foreground, browser-state, visibility, and desktop-focus fields for page
-  work; connector/action/readback fields for connector-only work.
+  focus, browser-state, and visibility fields for page work; connector/action/readback fields for connector-only work.
 
 Keep this sanitized evidence census in docs, not in always-on skill context.
 Keep machine-specific security investigations in an appropriately private

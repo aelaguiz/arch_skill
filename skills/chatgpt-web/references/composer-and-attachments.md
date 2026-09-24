@@ -41,12 +41,15 @@ every send path, including after a reload, a clear, or a retry; a reload
 keeps the text draft and drops the attachments. A paste that timed out may
 have landed: read the editor's text length before repeating it, and if the
 brief appears twice, clear the editor and paste once. Click
-`button[data-testid="send-button"]` (accessible name `Send prompt`), then
-verify the submitted turn as described below. If a mention did not resolve
-into a pill, delete it, insert `@` with `document.execCommand('insertText',
-false, '@')`, which opens the picker, and pick the connector with a real
-click at the item's viewport coordinates (`act` `click_at`); synthetic DOM
-clicks on picker items do not register. Then paste the rest of the brief.
+`button[data-testid="send-button"]` (accessible name `Send prompt`) with a
+page-JS `click()`, which works in a background tab, then verify the submitted
+turn as described below. If a mention did not resolve into a pill, delete it,
+insert `@` with `document.execCommand('insertText', false, '@')`, which opens
+the picker, turn on focus emulation for the page (`$browseros`), and pick the
+connector with a real click at the item's viewport coordinates (`act`
+`click_at`). Without emulation that click does not register in a background
+tab, and synthetic DOM clicks on picker items never do. Then paste the rest of
+the brief.
 
 ## Attach the actual connectors
 
@@ -152,11 +155,18 @@ argument validation failed, fix that call and verify the intended text; do not
 continue to Send with an old draft still present.
 
 If a normal background interaction is acknowledged but the UI does not change,
-read the live element and verify the postcondition. Some React inputs require
-the native value setter plus an `input` event. Some menus require supported
-pointer events before a click. Use the BrowserOS background methods for the
-observed control before deciding foreground focus is necessary; verify any menu
-or dialog actually mounted before interacting with it.
+read the live element and verify the postcondition. Foreground focus is never
+the fix.
+- Some React inputs require the native value setter plus an `input` event.
+- Menus open with a dispatched `pointerdown`, not `.click()`.
+- A menu opened and closed in a background tab stays half-closed on the page.
+  It blocks typing and the @ picker until you turn on focus emulation for the
+  page (`$browseros`) or reload it. A reload keeps the text draft and drops
+  attachments.
+- A modal left open, such as the temporary-chat explainer, holds keyboard
+  focus until it is dismissed.
+
+Verify any menu or dialog actually mounted before interacting with it.
 
 ## Verify delivery on every submission
 

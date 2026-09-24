@@ -1,12 +1,13 @@
 # BrowserOS Profiles and Focus
 
-Read before selecting a profile, creating a page, changing focus or visibility,
-or arranging manual browser input.
+Read before selecting a profile, creating a page, working a page that
+misbehaves while hidden, changing window visibility, or arranging manual
+browser input.
 
 ## Contents
 
 - Target an existing profile window
-- Focus, visibility, and hidden surfaces
+- Background work and hidden pages
 - Identity and profile constraints
 
 ## Target an existing profile window
@@ -27,30 +28,73 @@ Keep the working profile label, window, page, and safe application marker in
 the current task notes. Verify the site's authenticated context independently
 of the browser profile. Do not navigate a preserved page away for diagnostics.
 
-## Focus, visibility, and hidden surfaces
+## Background work and hidden pages
 
-Routine page work is background-targetable. `snapshot`, `diff`, `grep`,
+Routine page work runs on an unselected tab. `snapshot`, `diff`, `grep`,
 `read`, `navigate`, `act`, `evaluate`, `screenshot`, `upload`, `download`,
-`pdf`, and `wait` address a verified page ID and normally do not need its tab
-selected or its window activated. `act` with `kind="focus"` focuses a DOM
-element inside that page; it does not mean the BrowserOS window or desktop
-application needs foreground focus.
+`pdf`, and `wait` address a page ID and never need the tab selected or its
+window activated. `act` with `kind="focus"` focuses an element inside the page,
+not the window.
 
-Protecting the user's focus is a primary requirement on this shared machine.
-An unexpected activation can interrupt typing or redirect input. Judge the
-actual operation and work through viable background methods, including supported
-page-targeted interaction, extraction, and file transfer, before taking focus.
-This is not a fixed retry count or a checkbox satisfied by one failed call.
+### When a hidden page misbehaves
 
-Background-targetable does not promise identical foreground semantics. A page
-that is not selected may report a different visibility state, throttle timers
-or media, defer paint, or need browser-chrome permission UI. Verify the real
-postcondition and investigate whether supported background methods can complete
-the operation. If it needs foreground behavior, use the minimum necessary
-takeover without a separate approval question. Say why once, keep the work in
-one brief phase, and return to background operation. Restore prior browser
-focus when the tools support it and the user has not since chosen another
-target. Do not claim to restore desktop focus the tools cannot observe.
+An unselected tab reports `document.visibilityState === 'hidden'` and
+`document.hasFocus() === false`, and runs no animation frames. Pages react in
+recognizable ways:
+
+- a menu or popover is marked closed but stays in the DOM, blocking clicks and
+  typing behind it;
+- a dialog or iframe loads but stays empty;
+- a Save/Discard bar never appears after an edit;
+- a button waits for page focus before enabling, as GitHub's OAuth Authorize
+  button does;
+- a picker lists its items, but a coordinate click on an item does nothing.
+
+Turn on focus emulation for that page, confirm it took effect, retry the step,
+and turn it off when the step is done:
+
+```js
+const P = PAGE_ID;
+await browser.cdpJsonForPage(P, 'Emulation.setFocusEmulationEnabled', JSON.stringify({enabled: true}));
+const r = await browser.cdpJsonForPage(P, 'Runtime.evaluate', JSON.stringify({
+  expression: 'JSON.stringify({vis: document.visibilityState, focus: document.hasFocus()})', returnByValue: true}));
+return {page: JSON.parse(r.result.value), tabSelected: (await browser.pages.getInfo(P)).isActive};
+// expect {vis: 'visible', focus: true} and tabSelected false; after the step:
+// await browser.cdpJsonForPage(P, 'Emulation.setFocusEmulationEnabled', JSON.stringify({enabled: false}));
+```
+
+Emulation stays on across a reload of that page. Reload after enabling it when
+the page settled its state at load, such as a button that enables only once
+the page has focus. Finishing animations from script
+(`document.getAnimations()` then `finish()`) does not help a hidden page,
+because the animation's end event still waits for a rendered frame.
+
+A failure that persists with emulation on is usually in your own call. Common
+causes:
+- a selector that does not match;
+- the wrong element, such as a hidden fallback textarea;
+- a stale ref;
+- a menu you opened and left half-closed (a reload clears it);
+- an input method the page ignores.
+
+Read the live element and fix the call.
+
+### Calls that take focus, and what to use instead
+
+| Never | Use instead |
+| --- | --- |
+| `newPage` or `tabs new` with `background: false` | `newPage(url, {background: true, windowId})` |
+| `windows activate` or `Browser.activateWindow`, including to target or inspect a window | `windowId` on `newPage`; `Browser.getWindows` and `pages.list` for window and tab state |
+| `Page.bringToFront`, `Target.activateTarget`, `Browser.activateTab` | Focus emulation on that page |
+| `windows create` | An existing window of the right profile; a new window only when the user asks for one |
+| `windows set_visibility` with `activate=true` | `activate=false` |
+| `osascript` or `open -a` activating any app | Nothing; leave desktop focus alone |
+
+Close only tabs this task created. They are unselected, so closing them moves
+no selection. A site action can still change the selected tab or open a
+window, for example a popup, a link that opens a tab, or a "branch in new chat"
+control. When that happens, relist, report it, and leave it. Activating
+something to undo it would interrupt the user a second time.
 
 `background` and `hidden` are different:
 
@@ -70,17 +114,6 @@ target. Do not claim to restore desktop focus the tools cannot observe.
 - If no visible target window exists, report the missing prerequisite.
   Do not let a tab call implicitly create one without the user's request.
 
-Treat these operations as foreground-capable shared-state changes:
-
-| Operation | Contract |
-| --- | --- |
-| `newPage` with `background: false` | Selects the new page in the target window; use only when the operation needs foreground behavior after viable background methods. No separate focus approval is required. |
-| `windows activate` | Focuses a BrowserOS window; never use for routine targeting, observation, polling, screenshots, or profile guessing. |
-| `windows set_visibility` with `activate=true` | Shows and activates a window; use `activate=false` when visibility alone is sufficient. |
-| `windows create` | Requires an explicit user request; ordinary work reuses existing windows. |
-| Closing the selected task page | May select another tab; treat it as focus-capable cleanup. |
-| Site-created popup or window | May change active state; relist, attribute, and avoid reinforcing the takeover. |
-
 To expose a uniquely task-owned containing window without focusing it, use
 the live equivalent of:
 
@@ -92,20 +125,13 @@ windows action="set_visibility" windowId=<current-window-id> visible=true activa
 background tab. Its result may supply a replacement window ID, so track the
 returned ID instead of reusing a stale handle.
 
-Before a focus-capable task phase, record `tabs active` when available and the
-BrowserOS active/visible window state. BrowserOS can prove only the
-browser-internal state exposed by its current tools. It cannot observe or
-restore the previously focused non-BrowserOS desktop application. The compact
-surface may also lack a symmetrical action to reselect the exact baseline
-tab. Report only the restoration current state proves.
-
 For a sign-in gate (password, code prompt, CAPTCHA, consent), first prove the
 page is in `Work`; a gate elsewhere is the wrong window, not a gate. Then work
-it yourself in the background tab as `logins-and-oauth.md` says. When a step
-truly needs the user (their phone, a passkey, a secret only they hold), keep
-the page as a background tab, name the profile and tab title, and let them
-switch to BrowserOS when ready; a step the user takes does not itself justify
-taking focus while they are doing other work. After the user finishes, relist
+it yourself in the background tab as `logins-and-oauth.md` says, with focus
+emulation when the page misbehaves hidden. When a step truly needs the user
+(their phone, a passkey, a secret only they hold), keep the page as a
+background tab, name the profile and tab title, and let them switch to
+BrowserOS when ready. After the user finishes, relist
 and revalidate the page, profile/account, and target before continuing.
 `logins-and-oauth.md` owns the sign-in mechanics.
 

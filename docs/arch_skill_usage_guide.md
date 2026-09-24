@@ -412,10 +412,12 @@ consultation profiles, labeled `Pro 1`, `Pro2`, and so on,
 with many windows already open. A profile label names a browser profile and
 never proves the ChatGPT model. For ChatGPT, only consultation profiles are
 eligible; `Work` is reserved for the user and is never a fallback. The skill
-requires continual verification of the working profile/window/page. Protecting the user's foreground focus is a
-primary concern: work through viable background methods first. Necessary brief
-foreground use needs no separate approval; explain the need and promptly return
-to background work.
+requires continual verification of the working profile/window/page. Agents never
+take the user's foreground focus: all work runs in unselected background tabs,
+and a hidden page that will not render or respond gets Chromium focus emulation
+on that page instead of a tab or window activation. A required step that still
+cannot be done in the background goes to the user by name while other work
+continues.
 
 Examples:
 

@@ -132,7 +132,7 @@ the consultation autonomously as described below.
 
 - **Apply `$browseros` before every browser phase.** Read
   [the BrowserOS skill](../browseros/SKILL.md) before the first call and obey it
-  throughout. Protect the user's foreground focus and continually verify the
+  throughout. Never take foreground focus, and continually verify the
   working profile/window/page. Use existing windows and one eligible ChatGPT
   tab at a time. Never substitute another browser, the API, shell browser
   scripts, cookie handling, or automated login.
