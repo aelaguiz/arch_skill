@@ -1,6 +1,6 @@
 ---
 name: mac-studio-disk-cleanup
-description: "Reclaim and maintain disk headroom on agents@amirs-mac-studio. Use for Mac Studio disk investigations, cleaning Hermes clutter and development artifacts, or its nightly disk maintenance. Includes host-specific locations, retention, simulator handling, and measured results. Use disk-cleanup for the local developer Mac instead."
+description: "Reclaim and maintain disk headroom on agents@amirs-mac-studio. Use for Mac Studio disk investigations, stale development worktree removal, Hermes clutter, or nightly disk maintenance. Includes host-specific retention, simulator handling, and measured results. Use disk-cleanup for the local developer Mac instead."
 metadata:
   short-description: "Clean the agents Mac Studio and prevent recurring disk exhaustion"
 ---
@@ -17,15 +17,20 @@ stop at an inventory or preserve unwanted garbage in another large archive.
   use `ssh -o BatchMode=yes agents@amirs-mac-studio`; confirm the remote user,
   home and machine before any mutation. Never apply these paths to the laptop.
 - Amir authorized recurring cleanup of obsolete Hermes copies and logs,
-  old AIM backups, reproducible development output, and disposable simulators.
+  old AIM backups, reproducible development output, stale linked Git worktrees,
+  and disposable simulators. His September 23 request set a rolling 48-hour
+  inactivity limit for development worktrees, including dirty worktrees, while
+  retaining one PS Mobile and one RustAI primary checkout.
   Routine actions within that scope need no repeated approval. His explicit
   September 21 request also authorized stopping and erasing all then-active
   simulators. During unattended runs, defer a device or directory being used by
   a current build/test; an old process alone is not proof of useful work.
-- Preserve source checkouts, worktrees, branches, dirty changes, unique files,
-  live agent databases/memories, current credentials and configuration, and
-  persistent service volumes. Do not rotate credentials. Never remove an
-  entire live Hermes home or Docker/Colima disk to reclaim space.
+- Preserve primary source checkouts, Git branches and unique commits, worktrees
+  active within the last 48 hours, live sessions, agent databases/memories,
+  current credentials and configuration, and persistent service volumes.
+  Old inactive linked worktrees are explicitly eligible even when dirty;
+  record what is discarded. Do not rotate credentials. Never remove an entire
+  live Hermes home or Docker/Colima disk to reclaim space.
 - A filename or old modification date identifies a candidate, not its owner
   or disposability. Inspect current process/open-file references and the
   candidate's purpose. Skip uncertain unique data and keep cleaning elsewhere.
@@ -38,8 +43,9 @@ stop at an inventory or preserve unwanted garbage in another large archive.
    Record available bytes from the Data volume. Read the last compact report
    if present, then inspect the largest known owners using bounded `du -x`
    calls. Reuse inventories; do not repeatedly traverse the entire disk.
-2. **Choose useful cleanup.** Check recurring log/backup accumulation every
-   run, even when free space is healthy. Aim for at least **150 GB free**;
+2. **Choose useful cleanup.** Check the rolling 48-hour linked-worktree
+   retention and recurring log/backup accumulation every run, even when free
+   space is healthy. Aim for at least **150 GB free**;
    **under 100 GB** after cleanup is a warning requiring a clear remaining
    owner breakdown. These are maintenance targets, not permission to delete
    unique data. If the disk is healthy, finish after routine housekeeping.
@@ -48,6 +54,12 @@ stop at an inventory or preserve unwanted garbage in another large archive.
    activity checks immediately before deletion. Record each action and its
    reason. Preserve Git status when deleting generated output in a checkout.
    Keep short recent log tails; discard obsolete bulk rather than archiving it.
+   For an old linked worktree, inspect Git registration, source activity,
+   status, unique commits, and live process/session references; remove it with
+   `git worktree remove --force` after preserving unique Git history. Stop only
+   exact abandoned worktree-owned processes whose role is established; defer
+   live sessions or uncertain owners. Preserve the PS Mobile and RustAI primary
+   checkouts. See the worktree procedure in the host map.
    A failed, timed-out, partial or suppressed activity probe never clears a
    deletion candidate. Defer that candidate. Inspect process working directories
    and loaded files too; a plain `node server.js` can use an old Hermes copy.
@@ -59,7 +71,8 @@ stop at an inventory or preserve unwanted garbage in another large archive.
    into the run directory supplied by the scheduler, or a timestamped directory
    under `~/.local/state/mac-studio-disk-cleanup/runs/` for an interactive run.
    Include before/after available bytes, actual net change, actions and paths,
-   deferred owners with reasons, checks, and any remaining capacity warning.
+   deferred owners with reasons, checks, the worktree cutoff and counts
+   examined/removed/deferred, and any remaining capacity warning.
    Keep detailed action manifests private. Report success only for observed
    results; a successful command is not proof that APFS released its blocks.
 
