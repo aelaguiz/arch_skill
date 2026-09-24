@@ -17,7 +17,8 @@ stop at an inventory or preserve unwanted garbage in another large archive.
   use `ssh -o BatchMode=yes agents@amirs-mac-studio`; confirm the remote user,
   home and machine before any mutation. Never apply these paths to the laptop.
 - Amir authorized recurring cleanup of obsolete Hermes copies and logs,
-  old AIM backups, reproducible development output, stale linked Git worktrees,
+  old AIM backups, reproducible development output, stale Git worktrees and
+  orphaned checkout directories,
   and disposable simulators. His September 23 request set a rolling 48-hour
   inactivity limit for development worktrees, including dirty worktrees, while
   retaining one PS Mobile and one RustAI primary checkout.
@@ -25,7 +26,7 @@ stop at an inventory or preserve unwanted garbage in another large archive.
   September 21 request also authorized stopping and erasing all then-active
   simulators. During unattended runs, defer a device or directory being used by
   a current build/test; an old process alone is not proof of useful work.
-- Preserve primary source checkouts, Git branches and unique commits, worktrees
+- Preserve the chosen primary source checkouts, Git branches and unique commits, worktrees
   active within the last 48 hours, live sessions, agent databases/memories,
   current credentials and configuration, and persistent service volumes.
   Old inactive linked worktrees are explicitly eligible even when dirty;
@@ -43,7 +44,7 @@ stop at an inventory or preserve unwanted garbage in another large archive.
    Record available bytes from the Data volume. Read the last compact report
    if present, then inspect the largest known owners using bounded `du -x`
    calls. Reuse inventories; do not repeatedly traverse the entire disk.
-2. **Choose useful cleanup.** Check the rolling 48-hour linked-worktree
+2. **Choose useful cleanup.** Check the rolling 48-hour worktree
    retention and recurring log/backup accumulation every run, even when free
    space is healthy. Aim for at least **150 GB free**;
    **under 100 GB** after cleanup is a warning requiring a clear remaining
@@ -54,9 +55,11 @@ stop at an inventory or preserve unwanted garbage in another large archive.
    activity checks immediately before deletion. Record each action and its
    reason. Preserve Git status when deleting generated output in a checkout.
    Keep short recent log tails; discard obsolete bulk rather than archiving it.
-   For an old linked worktree, inspect Git registration, source activity,
+   For an old worktree, inspect Git registration, source activity,
    status, unique commits, and live process/session references; remove it with
-   `git worktree remove --force` after preserving unique Git history. Stop only
+   `git worktree remove --force` after preserving unique Git history. A directory
+   with a broken `.git` link to a deleted parent repository needs the separate
+   orphan procedure in the host map. Stop only
    exact abandoned worktree-owned processes whose role is established; defer
    live sessions or uncertain owners. Preserve the PS Mobile and RustAI primary
    checkouts. See the worktree procedure in the host map.

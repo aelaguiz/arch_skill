@@ -1,7 +1,7 @@
 interface:
   display_name: "Mac Studio Disk Cleanup"
   short_description: "Reclaim disk space on agents@amirs-mac-studio"
-  default_prompt: "Use $mac-studio-disk-cleanup to inspect agents@amirs-mac-studio, remove stale linked worktrees and authorized disposable clutter, and verify actual disk headroom. Save the actions and remaining large owners in its cleanup report."
+  default_prompt: "Use $mac-studio-disk-cleanup to inspect agents@amirs-mac-studio, remove stale worktrees, verified orphaned checkouts, and authorized disposable clutter, then verify actual disk headroom. Save the actions and remaining large owners in its cleanup report."
 
 policy:
   allow_implicit_invocation: true

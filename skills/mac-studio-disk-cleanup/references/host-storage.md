@@ -25,7 +25,8 @@ branches or unique commits.
 
 ## Rolling 48-hour worktree retention
 
-Every nightly run audits linked Git worktrees under `~/work/`, `~/worktrees/`,
+Every nightly run audits linked Git worktrees and orphaned checkout directories
+under `~/work/`, `~/worktrees/`,
 `~/workspace/prime-agent-worktrees/`, `~/workspace/work/**/worktrees/`, and
 `~/workspace/agents/work/**/worktrees/`. Use Git's registration (`git worktree
 list --porcelain`) to distinguish a linked worktree from a primary checkout.
@@ -34,7 +35,8 @@ directory, any source file (tracked or untracked), or HEAD commit was modified
 after the cutoff. Exclude generated build/cache output and Git administrative
 files from source activity; those can be written by orphaned workers. Record
 the cutoff, all registrations examined, removed paths, and deferrals in the
-private report. A healthy free-space number does not skip this audit.
+private report. Count linked and orphaned candidates in the worktree audit. A
+healthy free-space number does not skip this audit.
 
 For each old linked worktree, capture Git status and the branch/detached tip.
 Dirty changes and ignored build data older than the cutoff may be discarded as
@@ -49,6 +51,17 @@ purpose are established. Immediately recheck source activity and references,
 then use `git worktree remove --force <exact-path>` and verify the registration
 and path disappeared. Do not use raw recursive deletion for a registered
 worktree or follow a symlink outside the guarded roots.
+
+An orphaned checkout can retain a `.git` file pointing to administrative data
+inside a primary repository that has since been removed. Git cannot operate on
+that directory. If its parent repository and admin target are both missing,
+confirm the path is a real directory under a guarded worktree root, all source
+files are older than the cutoff, and no process or session references it.
+Record the broken Git target and lost-history limitation; an inaccessible Git
+tip cannot be archived. Only then remove that exact orphaned directory without
+following symlinks, and verify it disappeared. If the parent repo still exists
+or the Git target is only temporarily inaccessible, defer it for repair rather
+than treating it as garbage.
 
 Keep `/Users/agents/workspace/work/agent_coder/repos/psmobile` as the PS Mobile
 primary checkout and `/Users/agents/workspace/work/agent_ops/repos/rustai` as
@@ -74,7 +87,7 @@ make the backup folder eligible.
 | --- | --- | --- |
 | Hermes | `~/.hermes/profiles/*/logs/`, root logs, `~/.hermes/backups/`, old staging/copy directories | Compact text logs over 128 MiB to the last 4 MiB in place; remove rotated logs older than 7 days. Remove obsolete migration/staging/runtime copies only after checking processes, open files and launch configuration. Keep live databases, memories, sessions, skills, auth and configuration. |
 | AIM | Direct children of `~/.aimgr/` | Delete timestamped `secrets.json.bak.*` and `local-state.json.bak.*` snapshots older than 7 days by both name timestamp and mtime. Preserve current files, recent snapshots and open files. Never read or print their values. |
-| Development | `~/work/`, `~/worktrees/`, `~/workspace/prime-agent-worktrees/`, `~/workspace/work/**/worktrees/`, `~/workspace/agents/work/**/worktrees/` | Remove linked worktrees after 48 hours of source inactivity using the procedure above. For retained checkouts, remove ignored, untracked `apps/flutter/build` and generated `.dart_tool` output when inactive and older than 24 hours. Under capacity pressure, recent reproducible output is also eligible once current activity is ruled out. Preserve primary checkouts and Git history. |
+| Development | `~/work/`, `~/worktrees/`, `~/workspace/prime-agent-worktrees/`, `~/workspace/work/**/worktrees/`, `~/workspace/agents/work/**/worktrees/` | Remove linked worktrees and verified orphaned checkout directories after 48 hours of source inactivity using the procedures above. For retained checkouts, remove ignored, untracked `apps/flutter/build` and generated `.dart_tool` output when inactive and older than 24 hours. Under capacity pressure, recent reproducible output is also eligible once current activity is ruled out. Preserve chosen primary checkouts and accessible Git history. |
 | Developer caches | `~/.gradle/caches`, `~/Library/Developer/Xcode/DerivedData`, package/build caches identified by owner | Clear stale reproducible output when no current build/open files use it. Prefer old entries; do not repeatedly evict healthy hot caches simply to increase the reclaimed counter. |
 | Figma updater | `~/Library/Caches/com.figma.Desktop.ShipIt/ShipIt_stderr.log` | Use the same 128 MiB trigger and 4 MiB recent tail as Hermes logs. |
 
