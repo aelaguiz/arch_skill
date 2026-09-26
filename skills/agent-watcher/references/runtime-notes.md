@@ -1,128 +1,50 @@
 # Runtime Notes
 
-Facts a watcher or master needs about each runtime's store, where Amir's
-words live, what is and is not readable, and how each host dispatches and
-wakes. Verified 2026-09-15 on Amir's Mac. Stores change; believe the file over
-this note when they disagree.
+Where each runtime keeps its transcripts, how to go from a Herdr pane to the session and its chain, and what the records look like, so you can read them with your own judgment and ordinary tools. Checked on Amir's machines in September 2026. Stores change; believe the files over this note when they disagree.
 
-## Codex CLI
+## From a Herdr pane to its session
 
-- Store: `~/.codex/sessions/YYYY/MM/DD/rollout-*-<thread_id>.jsonl`;
-  metadata in `~/.codex/state_5.sqlite` (`threads`, `thread_spawn_edges`);
-  goals in `goals_1.sqlite` (current state only, `/goal clear` destroys
-  history).
-- Amir's typed prompts appear as `event_msg` `item_completed` with
-  `item.type = UserMessage`, and again as `response_item` messages with
-  `role = user`. The scripts dedup the pair. `response_item` user records
-  that start with `# AGENTS.md instructions` or contain
-  `<codex_internal_context` are injected instructions, not Amir; the ones
-  with `source="goal"` are the armed goal text and are emitted as `GOAL`.
-- `turn_context` carries `approval_policy` and `sandbox_policy`. In the
-  corpus this was `never` and `danger-full-access` in 3,655 of 3,697
-  threads. An approval request under that policy is self-generated.
-- Sub-agent payloads (`spawn_agent`, `send_message`, `followup_task`,
-  `NEW_TASK`, `FINAL_ANSWER`) are encrypted in the rollout. The brief text
-  is unreadable. Read the parent's narration of what it delegated and any
-  brief files it wrote to disk. Children inherit the parent's user messages
-  verbatim, so a child rollout does show Amir's words.
-- Compaction (`compacted` records) retains the opening user turns verbatim
-  and re-injects a block telling the agent not to spawn sub-agents unless
-  asked. Mid-session corrections drop out of the retained window. This is
-  why delegation collapses after many compactions; it is not why scope
-  drifts.
-- Most rollout files on a busy day are spawned children.
-  `discover_sessions.py` excludes them unless `--include-children`.
-- Single files reach 1.8 GB. Never read them directly.
+1. `herdr session list --json` lists the Herdr sessions; for each running one, `herdr --session <s> workspace list` and `herdr --session <s> pane list --workspace <w>` give each pane's id, cwd and title. Herdr rarely detects the agent in a pane itself, so the pane is the place and the transcript is the truth. Amir names work by its Herdr space; use those names when you talk to him.
+2. **Claude Code:** `aim claude list --json` lists managed sessions with account, thread name, thread id and cwd. The transcript is `~/.aimgr/claude-homes/<account>/.claude/projects/<cwd with / replaced by ->/<thread id>.jsonl`. Match a pane by cwd and thread name (the pane title usually carries it) and by the transcript being written while the pane is busy.
+3. **Codex:** `~/.codex/state_5.sqlite`, table `threads` (id, cwd, title, updated_at, rollout_path; `agent_role` or `agent_nickname` set on children), opened read-only; rollouts under `~/.codex/sessions/YYYY/MM/DD/`. Match by cwd and recency; the pane's footer shows the thread name.
+4. **A pane whose prompt shows `amir-server`** runs over ssh: its transcripts are on that host (`ssh home`), under `/home/aelaguiz/...` with the same layouts. Read them there and bring back only what you need.
+5. When the mapping is ambiguous, read the pane's scrollback: an exit prints `claude --resume <id>`, and an account switch prints "Switching session from <account> to <account>".
 
-## Claude Code
+## Following the chain
 
-- Stores: `~/.claude/projects/<key>/<session>.jsonl` and, for every AI
-  Manager label, `~/.aimgr/claude-homes/<label>/.claude/projects/...`.
-  Subagent transcripts sit under `<session>/subagents/agent-*.jsonl`.
-- Amir's sharpest corrections are not ordinary user records. They are
-  `queue-operation` records with `reason: "absorbed_mid_turn"` and synthetic
-  user records reading `[Request interrupted by user for tool use]`. The
-  scripts emit these as `USER_QUEUED` and `USER_INTERRUPT`. The tool call the
-  interrupt killed is usually the drift artifact.
-- `permission-mode` records show `bypassPermissions` when present. Headless
-  workers (`claude -p`) record no mode at all; absence means unattended.
-- `system` records with `subtype: away_summary` are Claude Code's own
-  one-line recap and often state a self-declared block in plain words.
-- `AskUserQuestion` and `ExitPlanMode` were never used in the corpus. Halts
-  are plain turn-final text.
-- Delegated workers whose first message starts "You are an externally
-  delegated worker" are excluded by default. Amir never speaks in them;
-  drift there is found by comparing the brief to the output, which is a
-  different job.
-- Amir's voice-to-text produces curly apostrophes (U+2019). Normalize before
-  matching his words.
-- Thinking blocks are frequently empty. Judge from text and tool inputs.
+A piece of work outlives its sessions. Before building a model, walk back to the first session:
 
-## Prime Agent
+- **Restarts and account switches** create a new session id, often in another account's home. The pane scrollback shows the old and new ids; `aim claude list` shows the new one; the new transcript may begin by replaying the old one's lines or with a continuation summary.
+- **Forks** carry the same thread name across several ids and accounts. Take all of them, oldest first, and skip exact replays.
+- **A continuation summary** ("This session is being continued from a previous conversation…") is the agent's summary, not Amir's words; his words are in the earlier transcript.
+- **"Ramp up on session X" or "read this session"** in his words pulls session X into the chain.
 
-- Store: `~/.prime/agent/sessions/<uuid>.jsonl` for roots. Children live
-  under `session-artifacts/<root>/sub-<child>/` with the brief in a per-child
-  `rlm-subagent.json` (`prompt`, `spawnCode`, `model`, `status`). The
-  root-level `rlm-subagents.jsonl` index is obsolete.
-- Child transcripts contain no `role: user` messages. The brief arrives as a
-  `custom_message` of type `agent_message` with `id: spawn:<childId>`.
-- Three surfaces restate the ask and are readable: `heartbeat_prompt`
-  events (self-authored standing orders that re-fire every few minutes),
-  `compaction` summaries with a structured `## Goal` block, and child
-  briefs. The scripts emit `HEARTBEAT`, `COMPACTION` (goal block only), and
-  `AGENT_MSG`. A goal bullet with no user-message ancestor is drift.
-- `agent_status.taskState` is always `needs_input` with an empty summary.
-  Only run length and cadence carry signal. Idle roots emit it every ~25
-  seconds; more than twenty in a row with no message between means parked.
-- Automated routines ("AIM routine binding check. Do not use tools.") appear
-  as roots. Recognize and skip them; they are not Amir's sessions.
-- Session id prefixes collide (five sessions begin `01a0671b`). Use full
-  ids and paths.
-- Pi (`~/.pi/agent/`) has had no real activity since 2026-08-09.
+## Reading transcripts
 
-## Herdr
+Transcripts are JSONL, one record per line, and reach hundreds of megabytes (Codex rollouts, gigabytes). Never load or print a whole file, and never search across `~`, `~/.aimgr/claude-homes`, `~/.codex/sessions` or `/`: that has pinned Amir's machine before. Pick the file, then stream it line by line with a few lines of Python, keeping only the records you need. Amir's own words are small (about 3,000 tokens in a 78 MB transcript), so reading all of them is cheap once you filter. For current activity, read the last few megabytes (`tail -c`) and parse the complete lines. Every record has a `timestamp` (UTC); remember the time of the last record you read, and start there next time. For a replay or dry run "as of" a past moment, stop at the first record after it.
 
-- MCP tools `list_agents`, `get_agent`, `read_pane` report live pane status
-  (idle, working, blocked, done) for panes Herdr detects as agents. On
-  2026-09-15 it detected one pane while AI Manager listed five live Claude
-  sessions, so it corroborates rather than replaces transcript discovery.
-- `read_pane` is the cheapest way to confirm a session is truly idle at a
-  prompt versus mid-tool-call when the transcript is ambiguous.
+**Claude Code records:**
 
-## Discovery sources, in order
+- Amir's typed message: `type` `user` with `origin.kind` `human`; the text is `message.content` (a string, or blocks of `type` `text`).
+- A message he typed while the agent was busy: `type` `queue-operation` with `operation` `enqueue` (text in `content`), and `type` `attachment` whose `attachment.type` is `queued_command` (text in `attachment.prompt`). The same text can appear in both and again later as a user record; count it once. About one in six of his corrections arrives this way.
+- Not his, though shaped like his: records with `isMeta` true (scheduled and injected prompts), and text that begins `<task-notification>`, `<agent-message`, `<system-reminder>`, `<command-name>`, "Base directory for this skill:", or "This session is being continued from a previous conversation".
+- The agent: `type` `assistant`, content blocks of `text` and `tool_use` (the tool's name and full input: the file it wrote, the command it ran, the brief it gave a sub-agent). A blocking question is a `tool_use` named `AskUserQuestion`. Plain turn-final text is the more common way a Claude agent stops to ask.
+- Compaction: `type` `system` with `subtype` `compact_boundary`. Sub-agent transcripts sit under `<session>/subagents/`; Amir never speaks there.
+- His voice-to-text uses curly apostrophes; normalize before comparing text.
 
-1. `discover_sessions.py` over the three stores (default window 6 hours).
-2. `aim claude list` for managed Claude sessions and their labels.
-3. Herdr `list_agents` for pane status.
+**Codex records** (each line has `type` and a `payload`):
 
-## Host dispatch matrix
+- Amir's prompt: `event_msg` whose item is a `UserMessage`, and again as `response_item` `message` with `role` `user`; count it once. User-role text that starts `# AGENTS.md instructions` or contains `<codex_internal_context` is injected, not his.
+- The agent: `response_item` `message` with `role` `assistant`, and `function_call` or `custom_tool_call` records with the tool name and arguments. `request_user_input_async` shows "? 1 question" in the pane and the agent usually keeps working; `request_user_input` waits.
+- Sub-agent payloads are encrypted; read the parent's narration and any brief files it wrote. Children inherit his messages verbatim.
+- `compacted` records keep his opening turns verbatim; mid-session corrections can drop out of the agent's view, which is when Codex agents ask him things he already answered.
 
-| Host running the master | Watcher dispatch | Model pin | Wake for the tick |
-| --- | --- | --- | --- |
-| Claude Code | Agent tool, clean subagent | `model` alias per call (`opus`, `sonnet`); effort cannot be pinned per call and inherits the parent | Session cron on an off-minute (`3-59/10 * * * *`), session-only, expires after 7 days; or a scheduled wakeup |
-| Codex | `spawn_agent` with `fork_turns: "none"` | `model` and `reasoning_effort` per spawn; pins can expire when a child is unloaded, so keep checks short | Goal loop or timed follow-up whose turns do bookkeeping only |
-| Prime Agent | Native child | `model` and `thinking` per spawn | Heartbeat prompt |
+**Prime Agent:** roots at `~/.prime/agent/sessions/<uuid>.jsonl`, children under `session-artifacts/<root>/sub-<child>/`. Heartbeat prompts and compaction goal blocks restate the ask and are worth reading; a goal line with no ancestor in his words is drift. Automated routines appear as roots; skip them.
 
-See `../../_shared/native-child-capabilities.md` for the current facts and
-sharp edges before promising a pin.
+## What the session produced
 
-## Script usage
+The transcript tells you where to look; the work itself is the evidence. In the session's working directory or worktree: `git log`, `git diff`, and the files it wrote (named in its tool calls). On GitHub: `gh pr view` and `gh pr diff` for its PRs, `gh issue view` for issues it wrote. For sheets and docs it edited, read the cells or sections it touched.
 
-```bash
-S=~/.claude/skills/agent-watcher/scripts   # or the installed path on this host
-python3 $S/discover_sessions.py --since 6h
-python3 $S/session_events.py anchor --path <transcript>
-python3 $S/session_events.py work   --path <transcript> [--cursor <n>] [--until HH:MM]
-python3 $S/discover_sessions.py --children-of <codex key>
-python3 $S/discover_sessions.py --find <session id he named>
-python3 $S/session_events.py since  --path <transcript> --cursor <n> --full-args
-python3 $S/session_events.py tail   --path <transcript> --tail-events 40
-python3 $S/notify.py --message "..." --detail <packet> --session <key> --dedup-key <key>
-```
+## Waking up and notifying
 
-Each prints one header line and bounded rows and writes the full result to
-disk. `--help` documents the caps. Slack delivery needs
-`AGENT_WATCHER_SLACK_TARGET` in `~/.config/agent-watcher/env` and the
-`ops_bot` token file the `slack-post-engineering` skill documents; without
-them `notify.py` reports Slack as skipped and still sends the desktop
-notification and sound.
+In Claude Code, pace your own wake-ups with the session's loop or scheduled wake-up. In Codex, use a goal loop or a timed follow-up. Readers are native children: in Claude Code they inherit your effort, which is the profile Amir chose for the watcher. For a desktop notification when something is badly wrong, use the host's own notification tool, or `osascript -e 'display notification "<text>" with title "Watcher" sound name "Glass"'` on the Mac.

@@ -587,25 +587,27 @@ Examples:
 
 ### `agent-watcher`
 
-Explicitly selected out-of-loop monitor for Amir's live coding-agent sessions.
-The parent (Fable or Astra) discovers active Codex, Claude Code, and Prime
-sessions, dispatches one watcher sub-agent per session on the cheap model Amir
-names, and adjudicates escalations with the surprise test before alerting him.
-Watchers keep an intent artifact and provenance ledger per session under
-`~/.agent-watcher/`, check only new events since their cursor, and skip
-sessions with no new bytes. Read-only; it never messages the watched sessions.
-On the 2026-09-15 regression against real traces, Opus watchers found nine of
-nine planted drifts (including a new screen 37 minutes after an agent built
-it) and Sonnet six of nine, missing new user-facing surfaces; name Opus when
-screens and inherited scope matter. Results are in
-`docs/agent-watcher-rewrite-plan-2026-09-15.md`.
+Amir's watcher, started by saying "Run the watcher" in an ordinary Chief
+session (psbrain). That session watches every live coding-agent session in his
+Herdr spaces on the Mac and `amir-server` (Claude Code, Codex, Prime). For each
+piece of work it builds an intent model from Amir's own words across the whole
+session chain, his decision records, psbrain's business context and a lessons
+ledger, then judges the work (not the agent's narration) against it. It
+corrects the lead agent directly with the why, answers questions the model
+covers, brings Amir only real decisions, adds every correction he gives to the
+ledger, and reports in chat. Memory lives in psbrain `operations/watcher/`.
+No harness and no scripts: the session's own wake-up loop, fresh read-only
+reader sub-agents that read transcripts and work with judgment, and the Herdr
+CLI. Rewritten on
+2026-09-26 after the alert-only version (2026-09-15) missed the drift Amir
+cared about; research in psbrain `projects/agent-watcher/`.
 `intent-police` and `unblocker` are the in-loop companions a coding agent
 consults; `check-my-agents` is the one-shot debrief.
 
 Examples:
 
-- `Run the agent-watcher skill, use Opus subagents`
-- `Watch all my sessions for scope creep and self-blocking, Sol xhigh for the watchers`
+- `Run the watcher`
+- `Run the watcher, dry run: send nothing, tell me what you would do`
 
 ### `fresh-consult`
 
