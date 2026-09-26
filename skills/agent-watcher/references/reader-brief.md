@@ -40,6 +40,6 @@ Under 400 words, in this order:
 
 ## Limits
 
-- Read-only everywhere. Never message the session, send keys, answer a prompt, stop a process, or run a git write.
+- Read-only everywhere. Never message the session, send keys, answer a prompt, or stop a process. In repos, read only: `git log`, `git show`, `git diff`; no fetch, pull, checkout or write. Keep any scratch notes in the watcher's memory folder.
 - Read transcripts as [runtime-notes.md](runtime-notes.md) describes: pick the file, stream it, keep only what you need. Never grep or find across `~`, `~/.aimgr/claude-homes`, `~/.codex/sessions` or `/`: that has pinned Amir's machine before. On `amir-server`, read over `ssh home` and bring back only what you need.
 - One heavy read at a time. Quote briefly; never paste raw transcript into your return.
