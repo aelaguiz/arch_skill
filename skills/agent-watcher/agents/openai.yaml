@@ -1,6 +1,6 @@
 interface:
   display_name: "Agent Watcher"
-  short_description: "Watch Amir's agent sessions against his intent and correct them"
+  short_description: "Watch Amir's agents and make the calls from his why"
   default_prompt: "Run the watcher."
 policy:
   allow_implicit_invocation: true

@@ -588,26 +588,25 @@ Examples:
 ### `agent-watcher`
 
 Amir's watcher, started by saying "Run the watcher" in an ordinary Chief
-session (psbrain). That session watches every live coding-agent session in his
-Herdr spaces on the Mac and `amir-server` (Claude Code, Codex, Prime). For each
-piece of work it builds an intent model from Amir's own words across the whole
-session chain, his decision records, psbrain's business context and a lessons
-ledger, then judges the work (not the agent's narration) against it. It
-corrects the lead agent directly with the why, answers questions the model
-covers, brings Amir only real decisions, adds every correction he gives to the
-ledger, and reports in chat. Memory lives in psbrain `operations/watcher/`.
-No harness and no scripts: the session's own wake-up loop, fresh read-only
-reader sub-agents that read transcripts and work with judgment, and the Herdr
-CLI. Rewritten on
-2026-09-26 after the alert-only version (2026-09-15) missed the drift Amir
-cared about; research in psbrain `projects/agent-watcher/`.
+session (psbrain). That session watches his live coding-agent sessions in his
+Herdr spaces (Mac and `amir-server`) and makes the calls he would otherwise have
+to make. It holds his intent and the business why for each piece of work, built
+from his own words across the work's whole history, his decision records,
+psbrain and a lessons ledger. It judges what the agents actually do against
+that intent, corrects the lead agent with the why, learns every correction he
+gives, and tells him afterwards what it changed. It never asks him questions:
+only what needs his own hands (logins, money, a production go his repos
+reserve, sending as him) stays with the agent that owns the work. The skill
+states the job and the judgment and leaves the mechanics to the agent: no
+scripts, no procedures, no wake-up mechanism. Memory lives in psbrain
+`operations/watcher/`; research in psbrain `projects/agent-watcher/`.
 `intent-police` and `unblocker` are the in-loop companions a coding agent
 consults; `check-my-agents` is the one-shot debrief.
 
 Examples:
 
 - `Run the watcher`
-- `Run the watcher, dry run: send nothing, tell me what you would do`
+- `Run the watcher, dry run: touch nothing, tell me what you would have done`
 
 ### `fresh-consult`
 
