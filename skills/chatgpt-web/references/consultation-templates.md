@@ -31,7 +31,7 @@ moves, in this order:
 2. **Hand over the sources whole.** The canonical requirements source (the
    workbook, the spec, the design record) as a full export, the plan, the
    issue as filed, the user's words verbatim, raw evidence, and the PR or
-   branch with the `@GitHub` pill in the composer. Never a link in place of the file,
+   branch with the GitHub connector pill in the composer. Never a link in place of the file,
    never the rows the agent picked, never the agent's summary.
 3. **Say what was done and what was seen**, in three to five plain sentences.
 4. **Offer the status as a belief.** "I think I'm done." "Where I'm least
@@ -45,12 +45,13 @@ again, even when the words under the labels are right. The brief goes into
 the composer as written, paragraphs and bullets intact, with the paste method
 in the composer reference. Files carry the sources, never the ask.
 
-`@GitHub` and `@BigQuery` are written literally in the brief. Entered with
-the paste method in the composer reference, each becomes the connector pill,
-and the pill is what gives Pro the repo or the data. The words "GitHub
-connector" in a message attach nothing. Every template below writes `@GitHub`
-where the PR or branch is handed over: keep it, and verify the pill before
-Send.
+The connector pill is what gives Pro the repo or the data. Attach it by
+pasting the connector's app token (`[$github](app://connector_…)`, per the
+composer reference). As observed 2026-09-26, a literal `@GitHub` or
+`@BigQuery` in the pasted brief stays plain text, and so do the words "GitHub
+connector". Every template below writes `@GitHub` where the PR or branch is
+handed over. Keep it as prose, paste the token as well, and verify the pill
+before Send.
 
 Wherever something is being authored, Pro writes it. The agent brings the
 context, asks questions, goes back and forth until it is fully formed, then
