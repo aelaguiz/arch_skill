@@ -588,25 +588,23 @@ Examples:
 ### `agent-watcher`
 
 Amir's watcher, started by saying "Run the watcher" in an ordinary Chief
-session (psbrain). That session watches his live coding-agent sessions in his
-Herdr spaces (Mac and `amir-server`) and makes the calls he would otherwise have
-to make. It holds his intent and the business why for each piece of work, built
-from his own words across the work's whole history, his decision records,
-psbrain and a lessons ledger. It judges what the agents actually do against
-that intent, corrects the lead agent with the why, learns every correction he
-gives, and tells him afterwards what it changed. It never asks him questions:
-only what needs his own hands (logins, money, a production go his repos
-reserve, sending as him) stays with the agent that owns the work. The skill
-states the job and the judgment and leaves the mechanics to the agent: no
-scripts, no procedures, no wake-up mechanism. Memory lives in psbrain
-`operations/watcher/`; research in psbrain `projects/agent-watcher/`.
+session (psbrain). The agent becomes his second set of eyes and ears over the
+coding-agent work in his Herdr spaces (Mac and `amir-server`): it gets current
+on his intent and the business why, notices work going off track or stalling,
+steps in on his behalf the way a trusted chief of staff would, and keeps him
+apprised. The skill is a short brief that carries the mission, the why and his
+own words, plus one background file of what September 2026's research showed
+about how his agents go off track, told as stories. It gives the agent no
+rules, procedures, timers or scripts; the judgment is the agent's. It suggests
+keeping an ongoing mental model on disk (psbrain `operations/watcher/`) in
+whatever shape the agent finds useful. Research and history: psbrain
+`projects/agent-watcher/`.
 `intent-police` and `unblocker` are the in-loop companions a coding agent
 consults; `check-my-agents` is the one-shot debrief.
 
 Examples:
 
 - `Run the watcher`
-- `Run the watcher, dry run: touch nothing, tell me what you would have done`
 
 ### `fresh-consult`
 

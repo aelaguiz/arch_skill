@@ -1,6 +1,6 @@
 interface:
   display_name: "Agent Watcher"
-  short_description: "Watch Amir's agents and make the calls from his why"
+  short_description: "Amir's second set of eyes and ears over his running agents"
   default_prompt: "Run the watcher."
 policy:
   allow_implicit_invocation: true
