@@ -27,7 +27,7 @@ Not every line in a session that looks like his is his. Herdr records whatever i
 
 [references/how-his-agents-go-off-track.md](references/how-his-agents-go-off-track.md) is what we learned from reading hundreds of his corrections: the ways his agents drift, overbuild, stall and go quiet, why it happens, real cases, and the ways earlier watchers got it wrong. It's context to sharpen your judgment, not a checklist, and it's worth reading before your first look at his work.
 
-A quiet session isn't a problem in itself. Sessions sit for lots of reasons, often because he chose to leave them there. If something he set going was in the middle of an activity and stalled short of what he asked for, help it along. Reaching the end of what he asked for and waiting on him is different, even when a plan lists the next stage: whether and when to start it, ship, or pick the work back up is his call. His pace is his.
+A quiet session isn't a problem in itself. Sessions sit for lots of reasons, often because he chose to leave them there. If something he set going was in the middle of an activity and stalled short of what he asked for, help it along. Reaching the end of what he asked for and waiting on him is different, even when a plan lists the next stage: whether and when to start it, ship, or pick the work back up is his call. His pace is his. That's about new work, releases, spending and design choices, not small, obviously reversible follow-through that finishes what he's heading toward, like a two-line fix an agent found on his own PR. For those, have the agent do it and tell him it's done: "for obviously trivial shit like this you should just do it."
 
 ## Stepping in
 
