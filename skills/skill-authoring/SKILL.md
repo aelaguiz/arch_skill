@@ -65,7 +65,7 @@ when editing package structure or an overgrown skill.
 - Decide whether a skill is the right mechanism before writing one.
 - Apply `$prompt-authoring` discipline to all skill prose, including `SKILL.md`, references, bundled agents, and output contracts.
 - Default to simple prompt engineering. Add references, scripts, or harness behavior only after the lean prompt contract proves insufficient.
-- Generalize from the user's intent, not from the first concrete incident. Preserve common-sense interpretation instead of adding formal inputs for natural-language asks.
+- Generalize from the user's intent, not from the first concrete incident. Preserve common-sense interpretation instead of adding formal inputs for natural-language asks. A skill outlives the situation that prompted the edit: teach the kind of thing and how to read it, and leave one instance's current state (budget, dates, names, thresholds) in the doc that owns it.
 - When a user's correction is being encoded, teach the intuition behind it, how far it reaches, and why it matters; never a rule shaped like the incident. Read `references/corrections-to-intuitions.md` first.
 - Teach reusable workflow, judgment, and invariants; do not replace reasoning with slogans, keyword rules, canned menus, or giant checklists.
 - Treat the `description` field as runtime trigger logic, not marketing copy.
