@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: "Write, edit, refactor, or audit prompt-first agent skills so they stay simple by default, self-contained, anti-heuristic, and distinct from nearby peers. Use when a Codex, OpenClaw, OpenAI, Anthropic, or repo-local skill needs stronger intent, trigger boundaries, packaging, references, runtime metadata, or validation before shipping."
+description: "Write, edit, refactor, or audit prompt-first agent skills so they stay simple by default, self-contained, anti-heuristic, and distinct from nearby peers. Use when a Codex, OpenClaw, OpenAI, Anthropic, or repo-local skill needs stronger intent, trigger boundaries, packaging, references, runtime metadata, or validation before shipping. Also use when a user's correction should change how future agents work, so it is taught as a generalized intuition rather than a rule shaped like the incident."
 metadata:
   short-description: "Author prompt-first reusable skills"
 ---
@@ -48,6 +48,7 @@ when editing package structure or an overgrown skill.
 - The user wants a findings-first audit of a skill's leverage, progressive disclosure, self-containment, or validation plan.
 - The user wants to refactor an overgrown or heuristic skill without losing useful workflow knowledge.
 - The user wants to remove accidental scripts, parameters, fake blockers, or harness behavior from a skill that should be simple prompt guidance.
+- The user corrects an agent's work and the correction should change how future agents work: a ledger entry, skill or prompt edit, `AGENTS.md` rule, memory, or worker brief.
 - The target runtime is OpenClaw and the skill needs slash-command behavior, loader gating, metadata rules, or per-agent/shared installation guidance.
 
 ## When not to use
@@ -65,6 +66,7 @@ when editing package structure or an overgrown skill.
 - Apply `$prompt-authoring` discipline to all skill prose, including `SKILL.md`, references, bundled agents, and output contracts.
 - Default to simple prompt engineering. Add references, scripts, or harness behavior only after the lean prompt contract proves insufficient.
 - Generalize from the user's intent, not from the first concrete incident. Preserve common-sense interpretation instead of adding formal inputs for natural-language asks.
+- When a user's correction is being encoded, teach the intuition behind it, how far it reaches, and why it matters; never a rule shaped like the incident. Read `references/corrections-to-intuitions.md` first.
 - Teach reusable workflow, judgment, and invariants; do not replace reasoning with slogans, keyword rules, canned menus, or giant checklists.
 - Treat the `description` field as runtime trigger logic, not marketing copy.
 - Keep the frontmatter `description` inside the runtime length cap; treat over-1024-character descriptions as invalid unless the target runtime documents a stricter cap.
@@ -97,6 +99,7 @@ when editing package structure or an overgrown skill.
    - `references/openclaw-skills.md` when the target runtime is OpenClaw or mirrors OpenClaw skill semantics
    - `references/script-output-economy.md` when the skill ships a script, command wrapper, or tool whose stdout the agent will read
    - `references/examples-and-anti-examples.md` when you need grounded examples or want to sanity-check framing
+   - `references/corrections-to-intuitions.md` when a user's correction should change how future agents work
 
 ## Workflow
 
@@ -136,4 +139,5 @@ when editing package structure or an overgrown skill.
 - `references/openclaw-skills.md` - OpenClaw-only frontmatter, gating, slash-command, fleet-isolation, and security rules
 - `references/script-output-economy.md` - design the stdout of skill-shipped scripts as a prompt fragment, not a developer console
 - `references/examples-and-anti-examples.md` - grounded good and bad patterns; use them to teach, not to cargo-cult
+- `references/corrections-to-intuitions.md` - turn a user's correction into a taught, generalized intuition, and check that it transferred
 - `../_shared/agent-orchestration-policy.md` - required shared semantics for skills that create, resume, replace, or coordinate model agents
