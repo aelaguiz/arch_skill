@@ -21,7 +21,7 @@ from typing import Any
 
 VALID_RUNTIMES = {"agent", "claude", "codex", "grok", "kimi"}
 VALID_EFFORTS = {"low", "medium", "high", "xhigh", "max", "ultra"}
-PREFERRED_CODEX_MODEL = "gpt-6-astra"
+PREFERRED_CODEX_MODEL = "gpt-6.1-sol"
 PREFERRED_CODEX_EFFORT = "xhigh"
 PREFERRED_GROK_MODEL = "grok-4.6"
 PREFERRED_KIMI_MODEL = "kimi-code/k3"
@@ -53,6 +53,14 @@ _CODEX_6_COMPACT_RE = re.compile(
     rf"\b(?:gpt|gbt)[\s_-]*6[\s_-]*(?P<variant>{_CODEX_6_VARIANT_PATTERN})"
     r"(?:[\s_-]*(?:xhigh|xi|x))?\b",
     re.IGNORECASE,
+)
+_CODEX_61_COMPACT_RE = re.compile(
+    r"\b(?:gpt|gbt)[\s_-]*6\.?1[\s_-]*sol"
+    r"(?:[\s_-]*(?:xhigh|xi|x))?\b",
+    re.IGNORECASE,
+)
+_CODEX_SOL_VERSION_RE = re.compile(
+    r"\bsol[\s_-]*(?P<version>\d+(?:\.\d+)?)\b", re.IGNORECASE
 )
 _CODEX_BARE_VARIANT_RE = re.compile(
     rf"\b(?P<variant>{_CODEX_VARIANT_PATTERN})\b", re.IGNORECASE
@@ -295,11 +303,14 @@ def resolve_execution_phrase(
     - "Claude Opus 4.7 xhigh" -> claude / claude-opus-4-7 / xhigh
     - "codex gpt 5.4 mini high" -> codex / gpt-5.4-mini / high
     - "GPT6SOLXI" -> codex / gpt-6-sol / xhigh
-    - "codex" -> codex / gpt-6-astra / xhigh
+    - "GPT61SOLXI" -> codex / gpt-6.1-sol / xhigh
+    - "Sol 6.1 high" -> codex / gpt-6.1-sol / high
+    - "codex" -> codex / gpt-6.1-sol / xhigh
+    - "sol" -> codex / gpt-6.1-sol / xhigh
     - "astra" -> codex / gpt-6-astra / xhigh
     - "luna xhigh" -> codex / gpt-6-luna / xhigh
     - "GPT56TERRAXI" -> codex / gpt-5.6-terra / xhigh
-    - "codex high" -> codex / gpt-6-astra / high
+    - "codex high" -> codex / gpt-6.1-sol / high
     - "Fugu high" -> codex / profile fugu / high
     - "Fugu Ultra xhigh" -> codex / profile fugu-ultra / xhigh
     - "cursor agent composer-2.5-fast" -> agent / composer-2.5-fast / encoded-in-model
@@ -353,7 +364,7 @@ def resolve_execution_phrase(
     if (
         effort is None
         and runtime == "codex"
-        and model in {PREFERRED_CODEX_MODEL, "gpt-6-sol"}
+        and model in {PREFERRED_CODEX_MODEL, "gpt-6-astra", "gpt-6-sol"}
     ):
         effort = PREFERRED_CODEX_EFFORT
         effort_source = "preference_default"
@@ -391,11 +402,6 @@ def resolve_execution_phrase(
             f"effort={effort}, model_source={model_source}, "
             f"codex_profile={codex_profile or '<none>'} "
             "with exact model family/version preservation."
-            + (
-                " Recommend gpt-6-astra at xhigh instead of GPT-6 Sol; "
-                "preserve Sol only when deliberately requested."
-                if model == "gpt-6-sol" else ""
-            )
         ),
         codex_profile=codex_profile,
     )
@@ -504,7 +510,7 @@ def _extract_effort(lowered: str) -> str | None:
         normalized,
     )
     normalized = re.sub(
-        rf"\b(?:gpt|gbt)[\s_-]*(?:55|56[\s_-]*(?:{_CODEX_56_VARIANT_PATTERN})|6[\s_-]*(?:{_CODEX_6_VARIANT_PATTERN}))"
+        rf"\b(?:gpt|gbt)[\s_-]*(?:55|56[\s_-]*(?:{_CODEX_56_VARIANT_PATTERN})|6\.?1[\s_-]*sol|6[\s_-]*(?:{_CODEX_6_VARIANT_PATTERN}))"
         r"[\s_-]*(?:xhigh|xi|x)\b",
         " xhigh ",
         normalized,
@@ -529,6 +535,8 @@ def _infer_runtime(lowered: str) -> tuple[str | None, str]:
         re.search(r"\b(codex|openai|gpt|gbt|sakana|astra)\b", lowered)
         or _CODEX_56_COMPACT_RE.search(lowered)
         or _CODEX_6_COMPACT_RE.search(lowered)
+        or _CODEX_61_COMPACT_RE.search(lowered)
+        or _CODEX_SOL_VERSION_RE.search(lowered)
         or _CODEX_BARE_VARIANT_RE.search(lowered)
         or _BLOCKED_GPT55_COMPACT_RE.search(lowered)
         or _FUGU_MODEL_RE.search(lowered)
@@ -612,11 +620,15 @@ def _resolve_codex_model(
     match = _CODEX_FAMILY_RE.search(raw)
     compact_variant = _CODEX_56_COMPACT_RE.search(raw)
     compact_6_variant = _CODEX_6_COMPACT_RE.search(raw)
+    compact_61_variant = _CODEX_61_COMPACT_RE.search(raw)
+    sol_version = _CODEX_SOL_VERSION_RE.search(raw)
     bare_variant = _CODEX_BARE_VARIANT_RE.search(raw)
     blocked_compact = _BLOCKED_GPT55_COMPACT_RE.search(raw)
 
     model_source = "explicit"
-    if compact_6_variant:
+    if compact_61_variant:
+        candidate = "gpt-6.1-sol"
+    elif compact_6_variant:
         candidate = f"gpt-6-{compact_6_variant.group('variant').lower()}"
     elif compact_variant:
         candidate = f"gpt-5.6-{compact_variant.group('variant').lower()}"
@@ -634,10 +646,14 @@ def _resolve_codex_model(
             candidate += "-" + "-".join(word.lower() for word in suffix_words)
     elif re.search(r"\bastra\b", raw, re.IGNORECASE):
         candidate = "gpt-6-astra"
+    elif sol_version:
+        candidate = f"gpt-{sol_version.group('version')}-sol"
     elif bare_variant:
         variant = bare_variant.group("variant").lower()
         candidate = (
-            f"gpt-6-{variant}"
+            PREFERRED_CODEX_MODEL
+            if variant == "sol"
+            else f"gpt-6-{variant}"
             if variant in CODEX_6_VARIANTS
             else f"gpt-5.6-{variant}"
         )

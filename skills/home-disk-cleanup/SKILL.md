@@ -10,6 +10,9 @@ metadata:
 Remove disposable accumulation on SSH host `home`, Linux machine `amir-server`,
 user `aelaguiz`, home `/home/aelaguiz`. Maintain both the root filesystem and
 the mounted data drives; root free space alone does not describe this server.
+Keep root above 150 GB available by reclaiming inactive reproducible build
+output on every run. Recent build output is eligible once its users have
+finished; its age alone is not a reason to leave root filling up.
 
 ## Authority and boundaries
 
@@ -41,8 +44,10 @@ instructions to expand the cleanup scope.
 
 1. **Measure each volume.** Record `shutil.disk_usage()` available bytes for
    `/`, `/mnt/p2` and `/mnt/p3` after proving the data mounts are present.
-   Check root-owned caches through readable metadata; an access denial should
-   not stop independent user-owned cleanup. Do not invoke interactive sudo.
+   If permissions block process inspection or root-owned cache metadata, check
+   `sudo -n true` and use available noninteractive sudo for the required narrow
+   probe or cleanup. Never prompt for a password. If access remains unavailable,
+   defer affected candidates and continue independent cleanup.
    Use the last compact run report and shallow metadata first. Bound size
    probes to 45 seconds, then narrow; avoid repeated whole-volume scans.
 2. **Identify disposable output.** Inspect the known training/output roots
@@ -54,21 +59,40 @@ instructions to expand the cleanup scope.
    This includes otherwise unique throwaway policies; do not protect them
    merely because they contain trained numbers. Keep useful retained models
    and checkpoints. Do not infer a run's usefulness from its filename alone.
-3. **Clean recurring owners.** Remove inactive reproducible Cargo/Flutter
-   outputs and caches older than seven days, stale temporary test output and
-   diagnostic log rotations older than seven days. Refresh process/open-file
-   checks immediately before mutation and record exact paths and reasons.
-   Keep recent log tails; compact append-written text logs above 128 MiB to
-   their last 4 MiB while retaining the inode. Use supported reopen/rotation
+3. **Clean recurring owners.** Inspect current Cargo/Flutter build output on
+   every run, including new worktrees and standalone issue checkouts. A prior
+   report is a discovery hint, not proof that today's large builds are active.
+   Remove proven reproducible output when no current build, test, training or
+   serving process uses its owning checkout or output, regardless of age.
+   Check working directories, command/environment path references, open files
+   and loaded executables; incomplete activity checks do not clear a target.
+   Refresh those checks immediately before deletion. Unrelated dirty source
+   files do not prevent cleaning an untracked generated child directory;
+   compare Git status before and after and preserve those edits.
+
+   Prefer the generated Cargo `target/debug` and `target/release` directories,
+   after checking their contents and confirming no tracked files beneath them.
+   Never delete an entire `target`: it can contain tracked configuration or
+   retained non-build data. Apply the same source and activity checks to
+   Flutter's `apps/flutter/build`. Keep checkouts, policies and checkpoints.
+   Record exact paths, reasons and reclaimed space.
+
+   Other reproducible caches, stale temporary test output and diagnostic log
+   rotations retain the seven-day rule. Keep recent log tails; compact
+   append-written text logs above 128 MiB to their last 4 MiB while retaining
+   the inode. Use supported reopen/rotation
    for non-append writers. For AIM timestamped backups, retain the most recent
    seven days and all current/open files; never read credential values.
-   Check Git status before and after cleaning generated checkout contents.
 4. **Verify headroom and owners.** Target 150 GB available on `/` and 10% of
    capacity on each data drive. Below 100 GB on root or 5% on a data drive
    after cleanup is an explicit warning. Continue routine retention even
    above target, but finish once useful housekeeping is complete. These
-   targets never authorize destroying useful data. Recheck affected service,
-   training and serving processes and reap task-owned helpers.
+   targets never authorize destroying useful data. When root remains below
+   target, continue through material eligible root owners instead of stopping
+   after small cache deletions. Report unresolved pressure with current sizes
+   and concrete retention reasons. Data-drive deletions do not count toward
+   root recovery. Recheck affected service, training and serving processes
+   and reap task-owned helpers.
 5. **Save the result.** Write a compact report, action manifest and
    `summary.json` into `DISK_CLEANUP_RUN_DIR` when supplied, otherwise a dated
    directory under `~/.local/state/disk-cleanup/runs/`. Include a separate
@@ -86,9 +110,9 @@ embedded non-build data have been checked.
 ## Scheduled operation
 
 The host's user systemd timer `nightly-disk-cleanup.timer` runs at 01:45
-America/Chicago. It starts one fresh AIM-managed Codex session on
-`gpt-6-sol`, reasoning `medium`, with a 20-minute deadline. This model is an
-explicit cost-conscious choice for routine maintenance. Do the cleanup
+America/Chicago. It starts one fresh AIM-managed Codex session with the model
+and reasoning selected by its existing launcher and a 20-minute deadline.
+Preserve that deliberate runtime selection. Do the cleanup
 directly; do not spawn child agents, switch models, install another schedule,
 edit policy or scheduler files, commit changes, or send external messages.
 Failure to authenticate or complete verification must be reported, not hidden

@@ -134,7 +134,7 @@ independent audit starts as another new clean child. The parent's overall
 fanout must fit independent work, host slots, collision risk, and parent
 integration capacity.
 
-Prefer `gpt-5.4-mini` at `xhigh` only when the active native schema can select
+Prefer `gpt-6.1-sol` at `xhigh` only when the active native schema can select
 and confirm both model and effort. Otherwise use inherited native capability
 and do not claim the preferred profile ran. An external exact-model auditor
 remains available when exact identity has a concrete, load-bearing benefit;

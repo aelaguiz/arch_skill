@@ -112,11 +112,11 @@ workflow names for a run still wins over the table for that run.
 | Website copy verdict: the copy gate's cold read (Poker Skill) | Claude Opus 5.5, medium | Always a clean session; must be a Claude model |
 | Website page cold reader (Poker Skill) | Claude Opus 5.5, high | Always a clean session |
 | Adversarial post-build reviewer | Claude Opus 5.5, high | Always a clean session |
-| Plan reviewer before dispatch | GPT-6 Astra, xhigh, and/or Claude Opus 5.5, high | Always a clean session |
+| Plan reviewer before dispatch | GPT-6.1 Sol, xhigh, and/or Claude Opus 5.5, high | Always a clean session |
 | Replay-review workers (Poker Skill) | Claude Opus 5.5, medium | As the skill defines |
 
-Codex roles keep the preferences below: Astra for Codex work, and Sol for
-workers under an Astra parent (`delegated-implementation`).
+Codex roles default to GPT-6.1 Sol. Workers under an Astra parent use it at
+`high` (`delegated-implementation`); other Codex model choices default to `xhigh`.
 
 Decide the session boundary for each role when it comes up, not once for the
 whole workflow:
@@ -147,11 +147,11 @@ user or workflow is pinning. An unpinned native child of a Codex parent inherits
 under the default above. On any other host, resolve a Codex id against that host's
 live catalog and do not assume it is present.
 
-Default a Codex model choice to `gpt-6-astra` at `xhigh`. Accept `astra` as
-`gpt-6-astra`. When the user mentions GPT-6 Sol, recommend GPT-6 Astra at
-`xhigh`; use Astra for a casual Sol reference. Preserve a
-deliberate request to keep Sol or another exact model, and preserve explicitly
-chosen effort. Do not silently change the model of an existing session.
+Default a Codex model choice to `gpt-6.1-sol` at `xhigh`. Bare `sol` selects
+`gpt-6.1-sol`; `astra` still selects `gpt-6-astra`. Preserve an explicitly named
+model version and reasoning effort, including older Sol versions. Defaults fill
+omitted choices; they do not replace an exact user selection or silently change
+the model of an existing session.
 
 ## Pin model and thinking level, or inherit knowingly
 

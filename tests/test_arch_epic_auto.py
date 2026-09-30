@@ -101,16 +101,34 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 self.assertEqual(resolved.model, "gpt-6-luna")
                 self.assertEqual(resolved.effort, "xhigh")
 
-    def test_codex_defaults_to_astra_xhigh_and_accepts_natural_names(self):
-        for phrase, source in [("codex", "default"), ("astra", "explicit"),
-                               ("gpt 6 astra", "explicit"), ("gpt-6-astra", "explicit")]:
+    def test_codex_defaults_to_sol_61_xhigh_and_accepts_natural_names(self):
+        for phrase, source in [("codex", "default"), ("sol", "explicit"),
+                               ("gpt 6.1 sol", "explicit"), ("gpt-6.1-sol", "explicit"),
+                               ("Sol 6.1", "explicit"), ("Sol6.1", "explicit"),
+                               ("GPT61SOLXI", "explicit"),
+                               ("GPT6.1SOLXI", "explicit")]:
             with self.subTest(phrase=phrase):
                 result = self.model_resolution.resolve_execution_phrase(
-                    phrase, codex_models=["gpt-6-astra", "gpt-6-sol"])
+                    phrase, codex_models=["gpt-6.1-sol", "gpt-6-astra", "gpt-6-sol"])
                 self.assertEqual((result.runtime, result.model, result.effort),
-                                 ("codex", "gpt-6-astra", "xhigh"))
+                                 ("codex", "gpt-6.1-sol", "xhigh"))
                 self.assertEqual(result.model_source, source)
-                self.assertEqual(result.effort_source, "preference_default")
+                expected_effort_source = "explicit" if phrase.endswith("XI") else "preference_default"
+                self.assertEqual(result.effort_source, expected_effort_source)
+
+    def test_sol_61_preserves_explicit_effort_and_requires_exact_availability(self):
+        for effort in ("low", "medium", "high", "xhigh", "max"):
+            with self.subTest(effort=effort):
+                result = self.model_resolution.resolve_execution_phrase(
+                    f"Sol 6.1 {effort}", codex_models=["gpt-6.1-sol"])
+                self.assertEqual(result.effort, effort)
+                self.assertEqual(result.effort_source, "explicit")
+                self.assertEqual(
+                    self.model_resolution.codex_model_or_profile_args(result.model, result.effort),
+                    ["--model", "gpt-6.1-sol", "-c", f'model_reasoning_effort="{effort}"'])
+        with self.assertRaises(self.model_resolution.ModelResolutionError):
+            self.model_resolution.resolve_execution_phrase(
+                "gpt-6.1-sol ultra", codex_models=["gpt-6.1-sol"])
 
     def test_astra_preserves_explicit_effort_and_requires_exact_availability(self):
         for effort in ("high", "max", "ultra"):
@@ -122,13 +140,18 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             self.model_resolution.resolve_execution_phrase(
                 "codex", codex_models=["gpt-6-sol"])
 
-    def test_explicit_sol_is_preserved_with_astra_recommendation(self):
-        for phrase in ("sol", "gpt-6-sol", "GPT6SOLXI"):
-            result = self.model_resolution.resolve_execution_phrase(
-                phrase, codex_models=["gpt-6-sol", "gpt-6-astra"])
-            self.assertEqual(result.model, "gpt-6-sol")
-            self.assertEqual(result.effort, "xhigh")
-            self.assertIn("Recommend gpt-6-astra", result.resolution_reason)
+    def test_explicit_older_models_are_preserved_without_astra_recommendation(self):
+        cases = [("gpt-6-sol", "gpt-6-sol"), ("Sol 6", "gpt-6-sol"),
+                 ("GPT6SOLXI", "gpt-6-sol"), ("astra", "gpt-6-astra"),
+                 ("gpt 6 astra", "gpt-6-astra"), ("gpt-6-astra", "gpt-6-astra")]
+        for phrase, model in cases:
+            with self.subTest(phrase=phrase):
+                result = self.model_resolution.resolve_execution_phrase(
+                    phrase, codex_models=["gpt-6.1-sol", "gpt-6-sol", "gpt-6-astra"])
+                self.assertEqual(result.model, model)
+                self.assertEqual(result.effort, "xhigh")
+                self.assertEqual(result.model_source, "explicit")
+                self.assertNotIn("Recommend", result.resolution_reason)
 
     def test_codex_sol_preserves_explicit_xhigh_override(self):
         resolved = self.model_resolution.resolve_execution_phrase(

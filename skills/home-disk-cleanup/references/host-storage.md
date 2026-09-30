@@ -24,6 +24,15 @@ checks. Never touch EFI, system pseudo-filesystems or unrelated mounted data.
   collections, `~/workspace/checkpoints`, experiment output roots and normal
   developer caches. Catalogs live at each relevant checkout's
   `config/catalog.toml`; also inspect registry/run metadata when applicable.
+- Root build accumulation: inspect `~/workspace/rustai-worktrees/*/target/debug`
+  and `target/release`, standalone issue checkouts such as
+  `~/workspace/rustai-issue-760/target`, and
+  `~/workspace/psmobile-worktrees/*/apps/flutter/build`. These are discovery
+  examples, not a fixed allowlist. Use current Git registrations and shallow
+  workspace metadata to find new owners. Only remove verified generated child
+  directories; worktree names, recent mtimes and unrelated source edits do not
+  establish that build output is needed. Cargo `target/codex_research_configs`
+  can contain tracked source, so a whole-target deletion is unsafe.
 - `/mnt/p2/rustai_local/` contains `target`,
   `target_relocated_from_root_20260806`, `handbuilder_serving_main_target`,
   `runs`, `artifacts`, `cardabs`, `policies_blueprint`, and `policies_archive`.
@@ -56,6 +65,12 @@ Docker persistent data and real retained datasets likewise need their own
 owner-aware treatment, not broad pruning.
 
 ## Runtime operations
+
+Process inspection may require `sudo -n` even for another process owned by
+`aelaguiz`. Test noninteractive access before treating a permission error as a
+blocker. Inspect root and user processes without printing secret-bearing
+arguments or environment values. Preserve serving executables wherever they
+live, including binaries reached through aliases on `/mnt`.
 
 The user systemd manager has lingering enabled, so the timer can run without
 an interactive SSH login. Inspect with

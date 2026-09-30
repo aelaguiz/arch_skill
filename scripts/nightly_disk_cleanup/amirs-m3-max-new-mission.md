@@ -3,10 +3,10 @@ Read /Users/aelaguiz/.agents/skills/disk-cleanup/SKILL.md and its references.
 Verify user aelaguiz, home /Users/aelaguiz and short hostname Amirs-M3-Max-2.
 Amir requested this recurring cleanup after the Mac Studio cleanup. Remove
 verified disposable developer buildup: inactive generated build/dependency
-output, old caches/logs and clean inactive worktrees only when source changes
-and Git commits are retained under the skill's rules. Preserve canonical
-checkouts, dirty/unique data, active work, credentials, model stores and device
-state. Do not stop active simulators, physical devices or unrelated processes.
+output, old caches/logs, and old task checkouts and worktrees after pushing
+their unsaved work to salvage branches under the skill's rules. Preserve
+canonical checkouts, active or recent work, credentials, model stores and
+device state. Do not stop active simulators, physical devices or unrelated processes.
 Never load, hash, expand or fetch RustAI policy payloads for disk inspection.
 
 Target 150 GB available on /System/Volumes/Data. Check recurring retention
@@ -23,9 +23,9 @@ inventories and actual available bytes; APFS directory totals are not reclaimed
 space. Bound unfamiliar probes to 45 seconds, narrow on timeout, and finish
 useful routine work instead of repeatedly scanning the whole filesystem.
 
-Run directly on GPT-5.6 Sol medium. Do not spawn children or external model
-sessions, change models, edit the schedule/skill, commit source changes, send
-messages or invoke interactive sudo. The scheduler stops this run after
+Run directly on GPT-6.1 Sol medium. Do not spawn children or external model
+sessions, change models, edit the schedule/skill, commit source changes other than the
+skill's salvage commits, send messages or invoke interactive sudo. The scheduler stops this run after
 20 minutes; approximately 5 to 10 minutes is expected. Reserve the final three
 minutes for verification and report writing; stop new discovery in that window.
 
