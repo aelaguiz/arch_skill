@@ -132,6 +132,10 @@ Pro; the scoped DOM read in
 returns it. Note that too. Take both readings again after a new chat, reload,
 project change, or account switch.
 
+In the layout observed 2026-09-26, two things differ.
+- **Before Send:** the closed pill reads just `Pro`, and the open menu's heading reads `6 Pro` with `Pro, 5 of 5.` under it.
+- **After Send:** no element carries `data-message-model-slug`. Read the answering turn's own menu instead: open its `Regenerate response` button (aria-label) with a dispatched `pointerdown`, read the menu, and close it with Escape. It reads `Try again • 6 Pro` when Pro served that turn. That is the page's label for this turn's model, not an earlier turn's footer. Record it, and say that the slug attribute was absent.
+
 None of these is a reading of this conversation's model: the profile label;
 the account button, whose text such as `Pro 1 Pro, open profile menu` is the
 account's display name and plan badge; a `Used GPT-6 Pro` footer, model tag,

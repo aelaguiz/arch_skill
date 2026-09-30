@@ -17,60 +17,91 @@ The composer is a ProseMirror editor in which Enter sends. Never `fill` or
 `type` the brief: keystroke fills turn every newline into Enter and submit a
 fragment mid-fill, which is what drove agents to put the ask in a file. Enter
 the brief with a synthetic paste in page context instead. It keeps paragraphs,
-blank lines, and bullet lines exactly, never submits, and turns a literal
-`@GitHub` or `@BigQuery` in the text into the connector pill. Verified
-2026-09-17 on a 540-word Template A brief with two mentions.
+blank lines, and bullet lines, and never submits.
 
-```javascript
-// page-context JS (evaluate), TEXT = the full brief as written
-const ed = document.querySelector('#prompt-textarea');   // the visible ProseMirror div
-ed.focus();
-const dt = new DataTransfer(); dt.setData('text/plain', TEXT);
-ed.dispatchEvent(new ClipboardEvent('paste', {clipboardData: dt, bubbles: true, cancelable: true}));
-// verify before Send: pills resolved, and the draft equals TEXT with pills read back as @Keyword
-const c = ed.cloneNode(true);
-c.querySelectorAll('[data-inline-selection-pill]').forEach(p => p.replaceWith('@' + p.getAttribute('data-keyword')));
-return JSON.stringify({pills: [...ed.querySelectorAll('[data-inline-selection-pill]')].map(p => p.getAttribute('data-keyword')),
-  matches: c.innerText.trim() === TEXT.trim(), userTurns: document.querySelectorAll('[data-message-author-role="user"]').length});
+**A literal `@GitHub` no longer becomes the connector pill.** As observed
+2026-09-26, the composer treats a plain-text paste literally
+(`data-prompt-literal-paste`), so `@GitHub` or `@BigQuery` in the pasted brief
+stays ordinary text and attaches nothing. The `@` picker also stays shut in a
+background tab: neither `document.execCommand('insertText', false, '@')` nor
+BrowserOS `press_key` opens it or even types into a hidden page. Do not wait on
+the user for this step. **Paste the connector's app token instead**:
+
+```
+[$github](app://connector_76869538009648d5b282a4bb21c3d157)
 ```
 
-Send only when `matches` is true, every required pill is listed, every
-required attachment chip is present, and the user-turn count has not changed
-since before the paste. Run this check immediately before the click, on
-every send path, including after a reload, a clear, or a retry; a reload
-keeps the text draft and drops the attachments. A paste that timed out may
-have landed: read the editor's text length before repeating it, and if the
-brief appears twice, clear the editor and paste once. Click
-`button[data-testid="send-button"]` (accessible name `Send prompt`) with a
-page-JS `click()`, which works in a background tab, then verify the submitted
-turn as described below. If a mention did not resolve into a pill, delete it,
-insert `@` with `document.execCommand('insertText', false, '@')`, which opens
-the picker, turn on focus emulation for the page (`$browseros`), and pick the
-connector with a real click at the item's viewport coordinates (`act`
-`click_at`). Without emulation that click does not register in a background
-tab, and synthetic DOM clicks on picker items never do. Then paste the rest of
-the brief.
+This is how sent messages store the GitHub connector: the sidebar and project
+chat previews show it at the start of earlier agents' prompts. Paste the token
+on its own, with the caret at the start of the brief, and the composer turns it
+into the connector pill, a
+`span[app-mention-name="github"][app-mention-path="app://connector_…"]`.
+Verified 2026-09-26 in the `pro3` account on a Template A final review, from a
+background tab, with seven attachments. The connector id above was read in that
+account. Before relying on it in another account, confirm the id there from an
+earlier message's preview in the sidebar, or from `app-mention-path` on a sent
+turn. Find the BigQuery token the same way, from an earlier BigQuery prompt's
+preview (`[$bigquery](app://connector_…)`); it has not been verified here.
+The words `@GitHub` can stay in the brief as prose; the pill is what gives
+Pro the repository.
+
+```javascript
+// page-context JS (evaluate). TEXT = the full brief as written;
+// TOKEN = the connector token plus a trailing space, e.g.
+// '[$github](app://connector_76869538009648d5b282a4bb21c3d157) '
+// The visible editor: #prompt-textarea on a chat page; on a project page it has
+// no id and its aria-label is "New chat in <project>".
+const ed = [...document.querySelectorAll('[contenteditable="true"]')].find(e => e.offsetParent !== null);
+ed.focus();
+const paste = s => { const dt = new DataTransfer(); dt.setData('text/plain', s);
+  ed.dispatchEvent(new ClipboardEvent('paste', {clipboardData: dt, bubbles: true, cancelable: true})); };
+paste(TEXT);
+// then the connector token, pasted with the caret collapsed at the start of the brief
+const first = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT).nextNode();
+const r = document.createRange(); r.setStart(first, 0); r.collapse(true);
+getSelection().removeAllRanges(); getSelection().addRange(r);
+paste(TOKEN);
+// verify before Send. Pasted URLs become link chips, and <br> line breaks carry
+// no textContent, so compare with all whitespace removed.
+const c = ed.cloneNode(true);
+c.querySelectorAll('[app-mention-name], [aria-hidden="true"]').forEach(p => p.remove());
+const strip = s => s.replace(/\s+/g, '');
+return JSON.stringify({pills: [...ed.querySelectorAll('[app-mention-name]')].map(p => p.getAttribute('app-mention-name') + ' ' + p.getAttribute('app-mention-path')),
+  matches: strip(c.textContent) === strip(TEXT)});
+```
+
+Send only when `matches` is true, every required pill is listed with the
+expected `app://connector_…` path, every required attachment chip is present,
+and no new user turn has appeared since before the paste. Run this check
+immediately before the click, on every send path, including after a reload, a
+clear, or a retry; a reload keeps the text draft and drops the attachments. A
+paste that timed out may have landed: read the editor's text length before
+repeating it, and if the brief appears twice, clear the editor and paste once.
+Click the send button with a page-JS `click()`, which works in a background
+tab. As observed 2026-09-26 it is `button[aria-label="Send"]`, with no test
+id; older layouts used `button[data-testid="send-button"]`. Then verify the
+submitted turn as described below.
 
 ## Attach the actual connectors
 
-For data questions the brief carries `@BigQuery`; for GitHub or repository
-questions it carries `@GitHub`; both when both kinds of sources are required.
-The paste in the section above resolves each into a pill; confirm the pills
-in the draft and again on the submitted turn before accepting an answer.
-Plain text naming a connector, such as "GitHub connector attached", attaches
-nothing.
+For data questions the prompt carries the BigQuery connector; for GitHub or
+repository questions it carries the GitHub connector; both when both kinds of
+sources are required. Each is attached by pasting its app token as described
+in the section above. Confirm the pills in the draft and again on the
+submitted turn before accepting an answer. Plain text naming a connector, such
+as "GitHub connector attached" or a literal `@GitHub`, attaches nothing.
 
 Name the relevant data scope or repository in the ask. For code review, include
-the exact pushed PR URL with the GitHub mention; file dumps and pasted diffs do
-not replace repository access. Before accepting the result, inspect visible
+the exact pushed PR URL with the GitHub connector; file dumps and pasted diffs
+do not replace repository access. Before accepting the result, inspect visible
 connector activity and retrieved source material for successful access to the
 specific data or code needed. A connected badge or Pro's claim of access alone
 is insufficient.
 
 If a required connector is missing or fails, switch to another suitable Pro
 account or stop and tell the user the precise access failure. Reattach and verify
-all required mentions after switching. Do not automate authorization or accept
-an answer based on guessed data or imagined code.
+all required connector pills after switching. Do not automate authorization or
+accept an answer based on guessed data or imagined code.
 
 ## Attach plans and longer bodies
 
@@ -132,9 +163,10 @@ opening the composer:
 Pack within the 10-attachment limit by concatenating related items into one
 file with clear headings (for example the user's words and the issue as filed)
 rather than dropping any source. Name each file for what it is. Point Pro at
-the PR or branch with `@GitHub` in the brief, and at data with `@BigQuery`;
-the paste resolves them into pills, and the words "GitHub connector" attach
-nothing. Never pin a commit SHA in the ask.
+the PR or branch with the GitHub connector pill, and at data with the BigQuery
+one, each pasted as its app token (see "Enter the brief"); a literal
+`@GitHub` and the words "GitHub connector" attach nothing. Never pin a commit
+SHA in the ask.
 When continuing a thread, re-attach the sources on every round rather than
 telling Pro to scroll up.
 
@@ -175,8 +207,12 @@ Keep the observations separate: intended input, current draft, submitted user
 turn, and the response following that turn. Read these through BrowserOS in the
 verified page; do not infer one from another.
 
-Submitted text currently lives under `[data-message-author-role="user"]`,
-with `data-message-id` identifying the message. Record the prior latest message
+Submitted text has lived under `[data-message-author-role="user"]`, with
+`data-message-id` identifying the message. In the layout observed 2026-09-26
+neither attribute was present. The user bubble carried
+`data-user-message-bubble`, its turn carried `data-turn-key` set to the
+message id, and a hidden tab's `main` text read "You said:", then each
+attachment chip, then the connector pill's label, then the prompt. Record the prior latest message
 before filling, then identify the new message after submission. A scoped full
 read of its body must match the intended ask, including its ending. Inspect
 `[data-testid="collapsible-user-message-content"]` when present or expand the

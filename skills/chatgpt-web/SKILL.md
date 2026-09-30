@@ -197,8 +197,10 @@ user's phrasing disagree, the phrasing wins.
 
 Hand over the sources whole: the canonical requirements source as a full
 export, the plan, the user's own words verbatim, raw evidence, and the PR or
-branch with `@GitHub` written in the brief so it becomes the connector pill
-(the words "GitHub connector" attach nothing). Offer the agent's status as a
+branch with the GitHub connector pill, which is attached by pasting the
+connector's app token (`[$github](app://connector_…)`, see the composer
+reference). A literal `@GitHub` and the words "GitHub connector" attach
+nothing. Offer the agent's status as a
 belief and ask
 about intent. Wherever something is being authored (a plan, a design, a
 diagnosis, an issue set) Pro writes it; the agent brings context, asks
@@ -241,8 +243,11 @@ serially unless simultaneity is mandatory, in which case report the mismatch.
 ## Supply the inputs and send
 
 Enter the brief into the composer with the paste method in the composer
-reference: it keeps paragraphs and bullets as written, never submits on its
-own, and turns a literal `@GitHub` or `@BigQuery` into the connector pill.
+reference: it keeps paragraphs and bullets as written and never submits on its
+own. Attach each required connector by pasting its app token
+(`[$github](app://connector_…)`), which the composer turns into the connector
+pill. A literal `@GitHub` or `@BigQuery` stays plain text (observed
+2026-09-26), and the `@` picker does not open in a background tab.
 Never `fill` or `type` the brief; keystroke newlines are Enter and submit a
 fragment mid-fill. Plans, exports, evidence, and any other source go in files
 the brief names; a one-line composer message pointing at an "ask file" is not
