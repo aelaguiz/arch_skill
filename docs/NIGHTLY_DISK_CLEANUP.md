@@ -1,7 +1,8 @@
 # Nightly disk cleanup
 
-Each job runs one AIM-managed Codex session. **Studio: GPT-5.6 Terra, high.**
-**Home and both M3 Macs: GPT-5.6 Sol, medium.**
+Each job runs one AIM-managed Codex session. **Default model: GPT-6.1 Sol.**
+The shared launcher for home and both M3 Macs selects `gpt-6.1-sol` at `medium`.
+The Studio's separately owned launcher selects `gpt-6.1-sol` at `high`.
 This is routine filesystem housekeeping with host-specific instructions. There
 is no child-agent fan-out or automatic switch to Astra. Computer-use is disabled
 for these shell maintenance jobs to prevent an unrelated desktop helper from
@@ -90,9 +91,9 @@ routine model, all jobs were configured for Sol medium. Two Studio Sol runs
 ended with model-capacity errors. A Terra medium check proposed removing a
 live Camofox runtime after an inconclusive activity probe and was stopped
 before that deletion. Its known live owner is now explicit in the host map,
-incomplete probes must defer deletion, and the Studio uses Terra high for this
-more complex service host. These are explicit deployment choices, not automatic
-fallbacks. Other hosts remain on Sol medium.
+incomplete probes must defer deletion, and that deployment used Terra high for
+this more complex service host while the other hosts used Sol medium. The current
+launchers now select GPT-6.1 Sol, preserving those host-specific efforts.
 
 Stopping the original Studio launcher exposed a cancellation gap: its timeout
 child could outlive the shell. Both launchers now forward termination to that

@@ -26,7 +26,7 @@ quality bar to finish faster.
 1. Intake: plan path, boundary (whole plan default), per-role transport and
    starting context, any external runtime/model/effort, max parallelism, wave
    cap, and cold-verifier toggle. An external Codex worker with no named model
-   uses `gpt-6-astra`; that Astra worker uses `xhigh` when effort is omitted.
+   uses `gpt-6.1-sol`; that Sol worker uses `xhigh` when effort is omitted.
 2. Plan read and extraction in context; capture the start commit and inherited
    worktree state before writing the conductor log.
 3. Write the log, recording the start commit, then apply and record the

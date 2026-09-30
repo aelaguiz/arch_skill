@@ -69,7 +69,7 @@ Frontmatter rules:
   critic leaves them null and records its clean child handle in the
   Orchestration Log. For an external critic, values are user-supplied per
   `model-and-effort.md`, except an omitted Codex model defaults to
-  `gpt-6-astra`, an omitted effort on that Astra role defaults to `xhigh`, and
+  `gpt-6.1-sol`, an omitted effort on that Sol role defaults to `xhigh`, and
   Kimi defaults to `kimi-code/k3` at `max`; store the resolved runnable
   identifier and default provenance, not raw shorthand. Natural Grok wording
   resolves to `grok-4.6`; explicit legacy Grok ids remain exact.
@@ -99,8 +99,8 @@ auto_execution:
   auto_run_dir: .arch_skill/arch-epic/auto/<epic-slug>/run-<ts>
   source_quotes:
     epic_planner: claude fable 5.1 high
-    implementation_worker: codex gpt-6-astra xhigh
-    critic: codex gpt-6-astra xhigh
+    implementation_worker: codex gpt-6.1-sol xhigh
+    critic: codex gpt-6.1-sol xhigh
   roles:
     epic_planner:
       runtime: claude
@@ -109,12 +109,12 @@ auto_execution:
       source: user_table
     implementation_worker:
       runtime: codex
-      model: gpt-6-astra
+      model: gpt-6.1-sol
       effort: xhigh
       source: user_table
     critic:
       runtime: codex
-      model: gpt-6-astra
+      model: gpt-6.1-sol
       effort: xhigh
       source: user_table
   execution_sha256: <hex digest of the normalized policy>

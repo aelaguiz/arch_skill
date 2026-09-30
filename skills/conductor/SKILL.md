@@ -118,10 +118,10 @@ log beside the plan is its durable memory.
   profile, so pin the selected model and effort before assigning bulk reading. Honor explicit user choices in both directions.
 - Model and thinking level are first-class worker values on both lanes, drawn
   from one vocabulary, and the user normally supplies them. A Codex worker
-  with no named model defaults to `gpt-6-astra`, and an omitted level on that
-  Astra worker defaults to `xhigh`; a Kimi worker with omitted model and level
-  defaults to `kimi-code/k3` at `max`. Accept `astra`, `luna`, and `terra` as
-  `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated
+  with no named model defaults to `gpt-6.1-sol`, and an omitted level on that
+  Sol worker defaults to `xhigh`; a Kimi worker with omitted model and level
+  defaults to `kimi-code/k3` at `max`. Accept `sol`, `astra`, `luna`, and `terra` as
+  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated
   question only for load-bearing missing values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording
@@ -297,7 +297,7 @@ log beside the plan is its durable memory.
    parallelism, wave cap, and cold-verifier toggle. When the parent is a model
    this repo does not name, the fleet profile is the parent's own model and
    thinking level; `../_shared/agent-orchestration-policy.md` owns what "name"
-   means here. Otherwise the fleet profile defaults to Codex `gpt-6-astra` at
+   means here. Otherwise the fleet profile defaults to Codex `gpt-6.1-sol` at
    `xhigh`; a user-named provider swaps the whole fleet — Kimi to `kimi-code/k3`
    at `max`, Grok to `grok-4.6`, Cursor to `composer-2.5-fast`, Claude to a
    supported Claude model. Then pick the lane per

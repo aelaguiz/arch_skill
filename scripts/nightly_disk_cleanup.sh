@@ -31,7 +31,7 @@ else
   }
   "${TIMEOUT}" --signal=TERM --kill-after=30s 20m \
     "${HOME}/.local/bin/aim" codex run -- exec \
-    --model gpt-5.6-sol -c 'model_reasoning_effort="medium"' -c 'features.computer_use=false' \
+    --model gpt-6.1-sol -c 'model_reasoning_effort="medium"' -c 'features.computer_use=false' \
     --dangerously-bypass-approvals-and-sandbox --ephemeral \
     --skip-git-repo-check --cd "${STATE_DIR}" --json \
     --output-last-message "${RUN_DIR}/final.md" - \

@@ -106,12 +106,13 @@ provider, the fleet profile is the parent's own model and thinking level.
 
 The user supplies the runtime and normally the thinking level plus a
 model/profile outside the defaults. When the fleet is Codex and the model is
-omitted, use `gpt-6-astra`; when that Astra lane also omits the level, use
+omitted, use `gpt-6.1-sol`; when that Sol lane also omits the level, use
 `xhigh`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
-`max`. For Codex, accept explicit `astra`, `luna`, and `terra` as `gpt-6-astra`,
+`max`. For Codex, accept `sol`, `astra`, `luna`, and `terra` as
+`gpt-6.1-sol`, `gpt-6-astra`,
 `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
 missing execution values. For a parent this repo names, the default fleet is
-Astra at xhigh; do not assume it is cheaper than the parent. Announce the
+GPT-6.1 Sol at xhigh; do not assume it is cheaper than the parent. Announce the
 raw-to-resolved model mapping and the selected lane before
 the first launch, per agent-delegate's resolution doctrine. Do not silently
 change runtime, model, or thinking level mid-run; if a worker model is clearly

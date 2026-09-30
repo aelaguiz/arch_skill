@@ -81,7 +81,7 @@ The primary object is one canonical full-arch plan doc. `miniarch-step` keeps th
   on their own host and may not start external agents; the parent's fanout stays
   proportional to independent work, host slots, collision risk, and parent
   integration capacity.
-- For miniarch planner and auditor roles, prefer `gpt-5.4-mini` with `xhigh`
+- For miniarch planner and auditor roles, prefer `gpt-6.1-sol` with `xhigh`
   reasoning only when the active native tool schema can select and confirm
   both. Otherwise use the inherited native capability and do not claim the
   child used an unconfirmed model or effort. If exact identity is genuinely

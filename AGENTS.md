@@ -90,8 +90,8 @@ Claude Code, and Gemini.
 
 ## Skill Routing
 
-- Default Codex to `gpt-6-astra` at `xhigh`. Redirect casual Sol references
-  to that default; honor deliberate exact model and effort choices.
+- Default Codex to `gpt-6.1-sol` at `xhigh`. Bare `sol` selects that model;
+  preserve explicit model versions and effort choices.
 - Elective lifecycles, persistent loops, and specialist reviews run only when
   explicitly selected or required by binding task instructions. Ordinary bug
   fixes, features, plan implementation, and code review stay ordinary. Do not

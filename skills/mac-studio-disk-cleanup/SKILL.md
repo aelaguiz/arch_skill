@@ -94,8 +94,9 @@ can be rebuilt; an ignored source asset cannot be assumed replaceable.
 
 The host's existing `com.funcountry.agents_host.nightly_disk_cleanup` LaunchAgent
 runs at **01:15 America/Chicago**. Its launcher loads this skill in a fresh
-Codex session through AIM, using `gpt-5.6-terra` with `high` reasoning. It owns
-scheduling and a 20-minute deadline; this skill owns cleanup judgment.
+Codex session through AIM and owns scheduling, the runtime model, and a
+20-minute deadline. Prefer `gpt-6.1-sol` with `high` reasoning when configuring
+that launcher; this skill owns cleanup judgment.
 
 Run the work directly. Do not spawn additional agents, install another timer,
 modify this skill or the scheduler during maintenance, or send Slack/email.
