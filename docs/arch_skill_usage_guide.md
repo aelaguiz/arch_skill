@@ -512,15 +512,18 @@ Examples:
 ### `milestone-to-pr`
 
 Invoke explicitly to deliver a spec milestone, several issues such as M0 or
-2A, as one PR per repo instead of one PR per issue. The final seat (GPT-6
-Astra Pro unless named) writes the milestone plan once with a work order per
-issue. A worker proves the verification path runs before the first issue.
+2A, as one PR per repo instead of one PR per issue. Its north star: the user
+gets what they asked for, working, as soon as it can be done; anything that
+does not bring that closer is spin, however responsible it looks. The final
+seat (GPT-6 Astra Pro unless named) writes the milestone plan in one round
+with a work order per issue, while a worker proves the verification path.
 Issues land as commits, and the primary (a native child on the coordinator's
 own model unless named) reads each one as it lands. At the boundary the final
-reviews the whole milestone once while CI and the bots run there instead of
-per issue; every finding is fixed in one batch, then one more read. The milestone's delivery
-rules go into each issue, so a later `issue-to-pr` run on one of them follows
-the milestone instead of running its own CI and final review. Never merges.
+reviews the whole milestone once, beside the real check and CI; warranted
+findings are fixed in one batch and the primary confirms them. An
+`intent-police` child holds the user's words against the plan, review
+findings, and done-claims, so the run decides from the user's intent instead
+of stopping to ask. Never merges.
 
 Examples:
 
@@ -948,7 +951,7 @@ subtraction only, and never cuts asked-for scope; those items go to the user
 as questions.
 
 Delivery and planning lanes run it themselves: `issue-to-pr`,
-`milestone-to-pr`, `epic-to-prs`, `conductor`, `arch-step`, `miniarch-step`,
+`epic-to-prs`, `conductor`, `arch-step`, `miniarch-step`,
 `arch-mini-plan`, `lilarch`, `plan-implement`, and `bugs-flow` audit their
 written plan before building and their diff before the final review. The
 review skills use its type catalog for their overbuild and subtraction lenses.

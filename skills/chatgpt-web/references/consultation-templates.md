@@ -54,8 +54,8 @@ handed over. Keep it as prose, paste the token as well, and verify the pill
 before Send.
 
 Wherever something is being authored, Pro writes it. The agent brings the
-context, asks questions, goes back and forth until it is fully formed, then
-carries the agreed result into the issue or the document verbatim.
+context and asks the questions, then carries the result into the issue or
+the document. Each template says whether it expects a round trip.
 
 Every review brief, whether the first read (A), the read after fixes (B), or
 the final read before the work is put down, hands over the original issue as
@@ -642,9 +642,9 @@ issues; the `@GitHub` pill.
 
 When: a milestone of several issues is about to be built as one delivery,
 one PR per repo, reviewed once at its boundary. Pro writes the milestone
-plan; the agent brings the context, asks the questions, goes back and forth
-until the plan is fully formed, then carries it into the plan doc and every
-issue it covers. This replaces a D per issue.
+plan in one answer; the agent brings the context and the questions in one
+message, then carries the plan into the plan doc and every issue it covers.
+This replaces a D per issue.
 
 **Template K**
 
@@ -675,9 +675,9 @@ filed. I've been working out of branch [name]; @GitHub, read it yourself.
 What I found in the code: [what exists, what the seams are, what surprised
 me]. Here's what Amir has said about this: [his words, dated].
 
-Outline it for me. How would you structure it, and in what order would you
+Write it up for me. How would you structure it, and in what order would you
 build the issues? Which of them are really one piece of work, and which can
-go in parallel? Give me your first cut with all the parts, and say where
+go in parallel? Give me the full plan with all the parts, and say where
 you're unsure or where you need something from me. For a really
 well-architected but highly pragmatic solution, what are the key
 requirements, specifically? How would we know we did this well? Is there one
@@ -691,9 +691,9 @@ words, a real external limit, or something read in the code. If a
 constraint isn't Amir's and dropping it would give a simpler plan, say so
 and outline the simpler version too, so I can ask him to free us of it.
 
-I'll ask questions and we'll go back and forth until it's fully formed. Then
-I'll put the final version in the plan doc and each issue exactly as we
-agreed.
+If a real architectural question is still open after this, I'll come back
+with just that question. Otherwise this is the plan we build from, and I'll
+put it in the plan doc and each issue.
 
 **Anti-patterns**
 

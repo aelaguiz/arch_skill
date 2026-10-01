@@ -1,6 +1,6 @@
 ---
 name: milestone-to-pr
-description: "Explicit-invocation milestone delivery, fired only by name or direct command; never self-select it. Takes a spec milestone (several issues, such as M0 or 2A in a plan or sheet) to merge-ready as one PR per repo: Pro writes the milestone plan once, the verification path is proven first, overbuild-audit cuts the plan and the milestone diff, issues land as commits with a cheap primary read each, and the final (Pro by default) reviews the whole milestone once at the boundary while CI and bots run there, not per issue. Every coordinator uses delegated-implementation. Never merge or release. Not for a single issue (issue-to-pr) or an epic worked issue by issue into separate PRs (epic-to-prs)."
+description: "Explicit-invocation milestone delivery, fired only by name or direct command; never self-select it. Takes a spec milestone (several issues, such as M0 or 2A in a plan or sheet) to merge-ready as one PR per repo, held to one north star: the user gets what they asked for, working, as soon as it can be done. The final seat (Pro by default) writes the milestone plan in one round and reviews the whole milestone once at the boundary, beside the real check and CI; issues land as commits with a clean primary read each; an intent-police child holds the user's words against the plan, review findings and done-claims. Every coordinator uses delegated-implementation. Never merge or release. Not for a single issue (issue-to-pr) or an epic worked issue by issue into separate PRs (epic-to-prs)."
 metadata:
   short-description: "Spec milestone delivered as one PR, reviewed once"
 ---
@@ -11,17 +11,25 @@ Use only when the user explicitly invokes this lane by name or directly
 commands this exact job: deliver a named milestone of a spec, several issues
 built as one delivery, to merge-ready.
 
-The point of this lane is throughput without losing quality. A milestone
-pays for planning, review, CI, and closeout once, not once per issue. Pro
-writes the plan once. Each issue gets a cheap read as it lands. The final
-reviews the whole milestone once. CI runs at the boundary, not per issue.
-Hours go into building and checking the work, not into waiting on repeated
-ceremony.
+## North star
 
-Apply `$delegated-implementation` throughout. Workers implement, test, and
-repair. The coordinator owns decisions, integration, and direct review of
-every deliverable and changed code line. All skill authorship stays with the
-coordinator.
+**The user gets what they asked for, working, as soon as it can be done.**
+
+Before anything takes calendar time, whether a plan round, a review, a check,
+a question, a wait or a piece of work, ask whether it brings what the user
+asked for closer to working. If it does not, it is spin, however responsible
+it looks. Spin passes for diligence: one more review, more proof, a question
+asked to be safe, a reviewer's hardening fix, careful bookkeeping. Each looks
+careful up close; together they are where a milestone's hours go.
+
+"What they asked for" keeps the work to the user's words. "Working" keeps the
+checks that prove it: the real check and the first boundary review find the
+bugs that matter. "As soon as it can be done" keeps the calendar honest. The
+judgments below apply this test where milestone runs most often lose time.
+
+Apply `$delegated-implementation` throughout: workers implement, test, and
+repair; the coordinator owns decisions, integration, and direct review of
+every deliverable and changed line, and writes all skill content itself.
 
 ## Install
 
@@ -35,7 +43,7 @@ make install
 
 - "milestone-to-pr on M0 in the pricing workbook."
 - "milestone-to-pr on 2A, primary Opus max, final Pro."
-- "Use $milestone-to-pr on milestone #5694 and stop at the boundary."
+- "Use $milestone-to-pr to finish the cleanup milestone, then stop."
 
 A single issue with its own PR is `issue-to-pr`. An epic worked issue by
 issue into separate PRs is `epic-to-prs`. Status reads, planning-only asks,
@@ -43,281 +51,194 @@ and work without GitHub issues use the requested workflow instead.
 
 ## Delivery contract
 
-- **Scope.** Freeze the milestone's accepted scope and non-goals from its
-  issues, the plan or sheet it comes from, and the user's words. Reviewers
-  and bots cannot expand it or quietly deliver less. A change to what the
-  user asked for belongs to the user. Delivery rules the user already wrote
-  on the issues or in the plan outrank this skill's defaults.
-- **One branch and one PR per code repo per milestone,** wherever the
-  issues are filed.
-  - Issues land as commits on it.
-  - Reuse the milestone's existing PR, or the project's working PR per repo
-    when the user keeps one for the whole project.
-  - Build on main, or on the previous milestone's PR when that one has not
-    merged.
-  - No per-issue PRs, no stack of per-issue rungs, and no draft PRs unless
-    the user asks for one.
+- **Scope** comes from the milestone's issues, the plan or sheet, and the
+  user's words. Delivery rules the user wrote on the issues or in the plan
+  outrank this skill's defaults.
+- **One branch and one PR per code repo per milestone.** Issues land as
+  commits. Reuse the milestone's PR, or the project's working PR when the
+  user keeps one; build on main or on the previous milestone's unmerged PR.
+  No per-issue PRs and no draft PRs unless the user asks.
 - **Authorization.** The run starts authorized for accepted in-scope work,
-  including test accounts, QA environments, local databases, and the
-  repairs they need. Work in a dedicated worktree under the target repo's
-  AGENTS.md.
-- **Quality.** Code is self-documenting, with clear comments at boundaries
-  and role seams. Use `$startup-pragmatism` in planning and in decisions.
-- **No overbuild.** Hold the milestone to `$overbuild-audit`'s intent: build
-  exactly what its issues ask, the simplest way that works. The coordinator
-  runs that audit itself, once on the written plan and once on the milestone
-  diff before the boundary review, and applies the cuts. It adds no seat
-  consultation.
+  including test accounts, QA environments, local databases, and the repairs
+  they need. Work in a dedicated worktree under the target repo's AGENTS.md.
+- **Quality.** Self-documenting code with clear comments at boundaries and
+  role seams. Use `$startup-pragmatism` in planning and decisions.
 - **Limits.** Never merge, release, apply approval labels such as
-  `ufc-approved`, or touch production surfaces. A requirement that needs
-  one of those is named as still owed, with who owes it. Stop at
-  merge-ready.
+  `ufc-approved`, or touch production. Stop at merge-ready, and say once, in
+  the report, what only the user can do.
 
-## Keep moving
+## Judgment
 
-Most lost hours in long runs are an agent sitting still, not slow reviews.
+**The user's words are the authority; everything written inside the run is
+a proposal.** Milestones overbuild when something written inside the loop
+starts to count as an order: process a plan proposed, hardening a reviewer
+asked for, a requirement an agent wrote into an issue, a quality bar an agent
+picked. Each looks reasonable alone; together they build far more than the
+user asked for, a later cleanup deletes it, and the coordinator cannot see it
+because it shares the frame that produced it. Examples: a review pipeline the
+plan suggested, then run on every small page edit; lock machinery for a race
+that cannot happen in practice; an accuracy bar an agent proposed that then
+gated later milestones. Ask: did the user ask for this, or did someone in the
+loop? Are they trying to have this side effect? Because a coordinator cannot
+reliably see its own drift, stand up one `$intent-police` at ramp-up with the
+user's verbatim words and the spec's intent, constraints, do's and don'ts.
+Consult it at the moments its skill names and whenever a decision would
+otherwise go to the user. Its read replaces a self-audit of the plan or the
+diff, and work keeps moving while it answers.
 
-- **Never leave work in flight unwatched:** a worker, a seat's answer, a
-  device or simulator run, or CI. Do the next useful thing while it runs,
-  and end a turn only when the harness will wake you as it lands, never to
-  wait for the user to check.
-- **Never stop for authority the run already has,** including QA-only
-  actions and environment repairs. Never re-ask a decision the user already
-  made.
-- **Fix red checks and small blockers instead of reporting them.** Ask the
-  user only when the matter needs their authority, their access, or a
-  change to their ask: once, with a recommendation, while independent work
-  continues.
+**Decide from the user's intent; bring them only what needs their
+authority.** A question costs the user's attention and, when the run waits
+on it, hours. Most are already answered by their words, the spec, or rules
+they keep restating. Answer from their intent, not from whichever option is
+easiest to defend: what they are trying to get, their constraints, their do's
+and don'ts, and which side effects they want. Decide, record the decision
+with the words that decided it, and keep building. Examples: what to do with
+an input nobody expected, when the user wants failures loud; whether to
+repair the QA copy you test on; a layout detail the spec's mock settles. Only
+the user decides merging, spending money, production, and changes to what
+they asked for; ask those once, with a recommendation reasoned from their
+intent, and keep working. A question never ends the turn or stops the run. A
+watcher or chief of staff speaking for the user speaks with their authority.
+
+**A round is worth running only if its answer could change what ships.**
+Every plan or review round costs calendar time and invites the reviewer to
+find one more thing, and a reviewer can always find one more. Before sending
+a round, ask what answer would make you do something different. The first
+boundary review of newly built code finds real bugs and earns its time. An
+after-fixes round on small fixes rarely does. A second plan round that
+carries your own decisions back for agreement never does; one that settles
+who owns shared state might. Review findings are proposals too: fix what
+keeps the milestone from being what the user asked for, working (a broken
+flow, lost money or data, a crash), and decline the rest with a reason or
+file it for later. The milestone is done when the material
+findings are resolved, not when the reviewer has nothing left to say.
+
+**Keep the work moving.** The expensive minutes are the ones spent waiting
+on something the run could have done itself or done alongside. Never leave a
+worker, a seat's answer, a device run or CI unwatched; do the next useful
+thing while it runs, and end a turn only when the harness will wake you as it
+lands. Examples: the boundary review goes out when the code is complete, with
+the real check and CI running beside it; when CI did not start, start it;
+when red CI blocks the milestone, fix it wherever it came from; run a check
+now rather than at a chosen hour; merging main each time it moves reruns CI
+and review without changing what ships. Ask: what could be moving right now,
+and what is this wait buying?
 
 ## Seats
 
-Two seats do the consulting, named by the user at invocation and read
-exactly as named: "primary Opus max, final Pro."
+Two seats consult, named by the user at invocation and read exactly as
+named: "primary Opus max, final Pro."
 - **The final** writes the milestone plan and reviews the milestone at its
-  boundary. With none named, the final is GPT-6 Astra Pro.
-- **The primary** reads each issue as it lands. With none named, the primary
-  is a native child on the coordinator's own model, in a clean context.
+  boundary. With none named, it is GPT-6 Astra Pro.
+- **The primary** reads each issue as it lands. With none named, it is a
+  native child on the coordinator's own model, in a clean context.
 
-These defaults replace the "Pro holds both" default in `issue-to-pr`.
-Neither seat clears anything by token; the coordinator judges each answer.
-Seats are consultants: a seat never edits the worktree, and a worker never
-fills a seat.
-
-Read `issue-to-pr`'s
+These defaults replace the "Pro holds both" default in `issue-to-pr`. Seats
+are consultants: they never edit the worktree or act on GitHub, a worker
+never fills a seat, and the coordinator judges every answer. Read
+`issue-to-pr`'s
 [primary-and-final reference](../issue-to-pr/references/primary-and-final.md)
-before the first consultation, and again if the user renames a seat. It says
-how to reach Pro and other models, how to hand sources to a seat without
-connectors, and what to record; its transport rules apply to a seat the user
-named, not to the default primary. For a Pro seat, Pro is literal `Pro` in
-the `Chat` surface's model picker, read back before every Send, in the
-consultation profiles only, never the `Work` profile. Being in a profile
-labeled Pro never makes a consultation Pro.
+before the first consultation and again if the user renames a seat; its
+transport rules apply to a seat the user named, not to the default primary.
+A Pro seat means literal `Pro` read back from the `Chat` picker before Send,
+in the consultation profiles only, never `Work`; `$chatgpt-web` owns how to
+confirm Pro answered.
 
 ## Consulting the seats
 
-**Templates.** Every consultation, in either seat, is written from the
-matching family in `$chatgpt-web`'s
+Write every consultation from the matching family in `$chatgpt-web`'s
 [consultation templates](../chatgpt-web/references/consultation-templates.md),
-in the user's voice:
-- K for the milestone plan
-- A for the primary's read of one issue as it lands, as family L describes
-- L for the final's milestone review
-- B for one round after fixes
-- G for diagnosing a bug that local work cannot crack
-- E for an on-track check
-- I for a retry
-- J for a new thread or account
+in the user's voice: K for the plan, A for the primary's read of an issue as
+family L describes, L for the milestone review, B after fixes, G for a bug
+local work cannot crack, E for an on-track check, I for a retry, J for a new
+thread or account. Write from the template's own sentences: fill its
+brackets and keep every question it asks, in its words; add what the
+milestone needs; never shorten, paraphrase, or drop a question. Where a
+template says Pro, read the model holding the seat.
 
-Write from the template's own sentences: fill its brackets and keep every
-question it asks, in its words. Add what this milestone needs; never
-shorten, paraphrase, or drop a question. Where a template says Pro, read the
-model holding the seat. The plan is one continuing thread; the final's
-boundary review starts clean in the same project, with the plan and its
-thread's rulings attached.
-
-**Sources.** Attach them whole:
-- the canonical requirements source as a full export
-- the plan
-- every issue as filed
-- the user's words verbatim
-- raw test output
-- the PRs with the `@GitHub` pill
-
-Leave secret values out of everything attached. Let the seat read the
-latest. Never ask for a verdict token, cap the answer, fence what the seat
-may conclude, or pin a commit SHA.
-
-**Waiting.** The coordinator watches for each answer and acts on it; it
-never ends a turn saying a review is running or pending. How it waits is the
-harness's business; that it waits is not. Pro regularly takes around 30
-minutes. Let it finish, and do other milestone work meanwhile.
-
-**Worklog.** Record each actual submission once in the plan doc's worklog:
-- the seat
-- the exact model and effort (for Pro, the picker text read from the page,
-  never the profile label)
-- the purpose, the thread or session, and the revision it read
-- the running count for that seat
-
-Count retries. Polling is not a new submission.
+Attach sources whole: the requirements source as a full export, the plan,
+every issue as filed, the user's words verbatim, raw test output, and the PRs
+with the `@GitHub` pill. Leave secret values out. Never ask for a verdict
+token, cap the answer, fence what the seat may conclude, or pin a commit SHA.
+Pro often takes around 30 minutes; keep working until it lands. Record each
+submission once in the plan doc: seat, model as read from the page, purpose,
+thread.
 
 ## Workflow
 
-1. **Ramp up.** Read the plan or sheet the milestone comes from, every
-   issue in it, linked PRs, and the user's words. Confirm which issues are
-   open, still needed, and not already done. Settle the accepted scope.
-   Name the milestone boundary. A milestone the plan splits into separately
-   mergeable parts is one boundary per part. When earlier runs already built
-   part of the milestone or have a consultation still answering, adopt that
-   state and record it: an issue that landed without a primary read gets
-   one now, and nothing still answering is sent again.
-2. **Plan with the final.**
-   - The final writes the milestone plan with family K in the milestone's
-     thread: every part family K lists, including a work order per issue,
-     who owns each piece of state, the real check that proves the
-     milestone, and how it merges on its own without breaking what ships.
-   - Ask questions until it is fully formed.
-   - Carry it onto disk verbatim as the one canonical plan. Each issue gets
-     its work order; the tracker, when there is one, gets a reference.
-   - Run `$overbuild-audit` on the written plan against the milestone's
-     accepted scope. Cut what does not trace to it; take anything that traces
-     to the ask but looks heavy to the user once.
-   - Comment the milestone's delivery rules on each issue it covers: it
-     lands on the milestone PR, and CI and the final review happen at the
-     milestone boundary, so CI may be red while the issue is done. Then a
-     later single-issue run follows them instead of habit.
-   - A plan the final already wrote that still covers the milestone
-     satisfies this step; do not plan again because the skill was invoked or
-     a session resumed.
-3. **Prove the verification path first.**
-   - Before the first issue, have a worker show that the checks the plan
-     relies on actually run: the local test commands start, the QA, device,
-     or simulator lane the plan needs boots with the right toolchain, and
-     any CI prerequisites the plan names (services, fixtures, credentials)
-     are in place. A test command counts when it exercises behavior, not
-     only style.
-   - Anything broken is fixed now, as the milestone's first work; when
-     building that path is itself one of the milestone's issues, that issue
-     goes first. Reviews are not a substitute for tests that cannot run.
-4. **Build the issues.**
-   - Workers implement work orders in the plan's order, in parallel where
-     the plan allows, and run the focused checks for their change.
-   - The coordinator reviews every changed line.
-   - As each issue lands, the primary reads it with family A in a clean
-     context. The next independent issue keeps moving during that read, and
-     its findings go into the next repair or worker brief.
-   - Intermediate pushes do not trigger CI where the repo allows it, for
-     example `[skip ci]` in the commit message. Where CI runs anyway, nobody
-     waits on it or reads it before the boundary.
-   - Resolve ordinary decisions locally. Take a major unexpected blocker
-     that local investigation cannot resolve to the final with family G.
-5. **Reach the boundary.**
-   - When every issue has landed and the primary's findings are fixed, run
-     `$overbuild-audit` on the whole milestone diff against its accepted
-     scope, have workers make the cuts, then run the plan's real check.
-   - Push the commit that completes the milestone without the skip marker,
-     so CI and the bots start on their own. A repo whose head already
-     skipped CI gets its PR's own pipeline rerun on that head. Never use an
-     empty commit or a manual build outside the PR.
-   - Send the final family L right away; do not wait for CI. In this lane CI
-     starts with the boundary push; that replaces `issue-to-pr`'s
-     CI-after-review order.
-6. **Fix once, then one more read.**
-   - When the final answers, read the CI and bot results once as well.
-     Assess every finding from all three against the milestone's scope and
-     real risk. CI red that comes from work outside this milestone is named
-     with its cause, not fixed here.
-   - Batch the warranted fixes into one repair round. Workers repair and
-     rerun the affected checks; the coordinator reviews the changes.
-   - Run one B round with the final on the repaired milestone.
-   - After that, a further fix inside the same design is confirmed by the
-     primary, not by another round with the final. Start a fresh L only when
-     a fix changed the design the review rested on.
-   - A finding the coordinator declines is recorded with its reason.
-   - The repair push runs CI again; read it once. Red in this milestone's
-     own changes is fixed like any other finding.
-7. **Report and close out once.**
-   - Update the tracker, the issues, and any announcement once for the
-     milestone.
-   - Then close the run's browser pages.
+1. **Ramp up.** Read the plan or sheet, every issue in the milestone, linked
+   PRs, and the user's words. Confirm which issues are still open and needed,
+   and name the boundary. Adopt what earlier runs left: an issue that landed
+   without a primary read gets one, and nothing still answering is resent.
+   Stand up the intent police.
+2. **Plan with the final, in one round.** Send K and ask for the full plan in
+   one answer. Go back only with an open architectural question that would
+   change what gets built, and ask just that. Save the plan in the plan doc
+   and give each issue its work order. Process or gates the plan proposes are
+   advice to weigh against the user's intent. A plan the final already wrote
+   that still covers the milestone satisfies this step.
+3. **Prove the verification path while the plan is written.** A worker shows
+   that every lane the real check uses boots and that one existing journey
+   passes on it. Fix what is broken first. A test command counts when it
+   exercises behavior, not only style.
+4. **Build.** Workers implement work orders in the plan's order, in parallel
+   where it allows, and run focused checks. The coordinator reviews every
+   changed line. The primary reads each landed issue with A in a clean
+   context while the next issue keeps moving. Intermediate pushes skip CI
+   where the repo allows it. Take a blocker local work cannot crack to the
+   final with G.
+5. **Boundary.** When every issue has landed and the primary's warranted
+   findings are fixed, push the commit that completes the milestone and check
+   that CI and the bots started. Send L at once and run the real check on
+   the same head alongside it.
+6. **Repair once.** Sort the final's findings, CI and the bots against the
+   user's intent with the intent police. Workers make the warranted fixes in
+   one batch; the coordinator reviews them; the primary confirms the fixes
+   the review named. Send B only when the repair changed the design the
+   review rested on. Record each declined finding with its reason.
+7. **Close out.** Update the tracker, the issues, and any announcement once,
+   then close the run's browser pages.
 
 ## Browser pages
 
 Many runs share one BrowserOS, so each page this run opens is this run's to
-close.
-- Note each page in the worklog as it opens.
-- Keep a seat's thread page open while the milestone is in flight.
-- When moving to another consultation profile, verify the new page first,
-  then close the pages this run created in the profile it left.
-- When the run ends, is cancelled, or is handed off, close every page
-  this run created.
-- Never close a page this run did not create, however idle it looks.
+close. Keep a seat's thread page open while the milestone is in flight; when
+moving profiles, verify the new page first, then close this run's pages in
+the old one; when the run ends or is handed off, close every page it created
+and none it did not. `$browseros` owns the mechanics.
 
-`$browseros` owns the mechanics.
-
-## Unblocking and persistent goals
+## Persistent runs and delegation
 
 For a persistent run, author the goal prompt with `$prompt-authoring` and
-`$startup-pragmatism`, carrying `$overbuild-audit`'s commander's intent. Name
-in it:
-- both seats with their exact model and effort, and their threads
-- the milestone, its issues, and its boundary
-- this lane's review and CI cadence
-- the unblocker, per `$unblocker`
-- the execution responsibilities, including coordinator-owned skill
-  authorship
-- the merge-ready condition
+`$startup-pragmatism`, carrying this north star. Name both seats with their
+exact model, effort and threads, the milestone and its boundary, the
+unblocker per `$unblocker`, the coordinator's ownership of decisions and
+skill authorship, and the merge-ready condition. Arm the goal and unblocker
+with the harness's supported mechanisms, and carry any change of direction
+into the goal, the unblocker charter, and active briefs.
 
-Arm the goal and unblocker using the active harness's supported mechanisms.
-When the user changes the cadence mid-run, carry the change into the goal,
-the unblocker charter, and active briefs.
-
-## Delegation
-
-`$delegated-implementation` owns worker selection, briefs, direct review, and
-repair. Read the installed `../_shared/agent-orchestration-policy.md` before
-dispatch and apply `$prompt-authoring` to each populated brief.
-
-Each brief carries:
-- the issue's work order and the milestone plan
-- the milestone branch
-- the checks to run
-- the delivery rules: no PR, no CI waits
-- the unblocker contact
-- the expected handoff
-
-The coordinator owns every seat submission; workers never consult seats.
+`$delegated-implementation` owns worker selection, briefs, direct review,
+and repair. Read the installed `../_shared/agent-orchestration-policy.md`
+before dispatch and apply `$prompt-authoring` to each populated brief. A
+brief carries the issue's work order and the plan, the milestone branch, the
+checks to run, the delivery rules (no PR, no CI waits), the unblocker
+contact, and the expected handoff. Workers never consult seats.
 
 ## Merge-ready
 
-The milestone is merge-ready when all of these hold. When its PR also
-carries later milestones' unfinished work, the same bar makes the milestone
-accepted rather than merge-ready; the PR merges when the user decides.
+The milestone is merge-ready when the final reviewed it at the boundary;
+the primary read each issue that changed code and the coordinator reviewed
+every changed line; the material findings are fixed, or declined against
+the user's intent with the reason recorded; the real check passed on the
+head being called ready; and CI ran on that head and is green, or its red is
+fixed or named with its cause when it comes from outside the milestone and
+is out of reach. A repo without CI is reported as having none. When the PR
+also carries later milestones' work, the same bar makes the milestone
+accepted; the PR merges when the user decides.
 
-- **The final.** It wrote the plan, reviewed the milestone at its boundary,
-  and said all three: it is implemented right, the PRs are ready, and each
-  issue's part in this milestone is complete to its scope and
-  requirements, with anything owed later named with the issue or milestone
-  that owes it.
-- **The primary.** It read each issue.
-- **The coordinator.** It reviewed every deliverable and changed line
-  directly.
-- **Findings.** Material findings are resolved.
-- **The real check.** It passed.
-- **CI.** It ran at the boundary and on the repaired head and is green,
-  except red named as coming from work outside this milestone. A repo
-  without CI is reported as having none.
-
-**Report** the PR URLs, what the milestone delivered per issue, current heads
-and CI, and the revision each seat actually reviewed, with any later changes
-that only the primary confirmed named separately. For each seat, name the
-exact model, effort, thread, and submission count. For each review, keep
-three things separate: what it was shown, what it said, and the
-coordinator's conclusion.
-
-**Pro evidence.** For every Pro consultation, quote the composer pill read
-before Send (`6 Pro`) and the served-model slug on the answer
-(`gpt-6-pro`). A review without both is reported as "model not verified" and
-does not make the milestone merge-ready.
-
+**Report** what the user can now do, or the result they asked for, first.
+Then the PR links, what each issue delivered, current heads and CI, and what
+only the user can do, said once. Seat detail goes in the PR body: each seat's
+model, the revision it reviewed, what it said, and the coordinator's
+conclusion, with later changes only the primary confirmed named separately.
 Never imply a seat reviewed a revision it did not see.
