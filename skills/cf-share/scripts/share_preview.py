@@ -2,9 +2,11 @@
 """Build and verify crawler-readable previews for cf-share uploads."""
 
 import argparse
+import hashlib
 import html
 import io
 import json
+import os
 import re
 import sys
 import urllib.parse
@@ -17,6 +19,14 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 CARD_SIZE = (1200, 630)
 RESERVED = "__cf_share"
+
+
+def file_digest(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        while chunk := stream.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def clean(value):
@@ -233,6 +243,64 @@ def object_url(base, slug, relative):
     return f"{base.rstrip('/')}/{urllib.parse.quote(slug, safe='')}/{path}"
 
 
+def version_media(source, page_url, digests, embeds=None):
+    """Version local embeds without changing headline or download URLs.
+
+    Some browsers retain decoded media across reloads despite no-store. Only
+    known uploaded files are rewritten; external and dynamic URLs stay intact.
+    """
+    def key(url):
+        parts = urllib.parse.urlsplit(url)
+        return parts.scheme, parts.netloc, urllib.parse.unquote(parts.path)
+
+    known = {key(url): digest for url, digest in digests.items()}
+    offsets = [0]
+    for line in source.splitlines(keepends=True):
+        offsets.append(offsets[-1] + len(line))
+    replacements = []
+
+    class Embeds(HTMLParser):
+        base_url = page_url
+
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            if tag == "base" and attrs.get("href"):
+                self.base_url = urllib.parse.urljoin(page_url, attrs["href"])
+            attribute = "data" if tag == "object" else "src"
+            if tag not in {"video", "audio", "source", "track", "iframe", "embed", "object"}:
+                return
+            raw = self.get_starttag_text()
+            value = attrs.get(attribute)
+            if not value:
+                return
+            digest = known.get(key(urllib.parse.urljoin(self.base_url, value)))
+            if not digest:
+                return
+            parts = urllib.parse.urlsplit(value)
+            query = [(k, v) for k, v in urllib.parse.parse_qsl(parts.query, keep_blank_values=True) if k != "cf_share_v"]
+            query.append(("cf_share_v", digest[:20]))
+            versioned = urllib.parse.urlunsplit(parts._replace(query=urllib.parse.urlencode(query)))
+            if embeds is not None:
+                # Fragments do not travel in HTTP requests.
+                absolute = urllib.parse.urlsplit(urllib.parse.urljoin(self.base_url, versioned))
+                embeds[urllib.parse.urlunsplit(absolute._replace(fragment=""))] = digest
+            # Preserve the surrounding document and replace only this attribute.
+            updated = re.sub(
+                rf"(\s{attribute}\s*=\s*)(?:\"[^\"]*\"|'[^']*'|[^\s>]+)",
+                lambda match: match.group(1) + '"' + html.escape(versioned, quote=True) + '"',
+                raw, count=1, flags=re.I,
+            )
+            line, column = self.getpos()
+            start = offsets[line - 1] + column
+            replacements.append((start, start + len(raw), updated))
+
+    parser = Embeds()
+    parser.feed(source)
+    for start, end, updated in reversed(replacements):
+        source = source[:start] + updated + source[end:]
+    return source
+
+
 def share_page(title, description, url, card_url, direct_url, relative, files, base, slug):
     esc = lambda value: html.escape(value, quote=True)
     ext = Path(relative).suffix.lower()
@@ -293,33 +361,100 @@ def prepare(args):
     if image_path is None and source_path.suffix.lower() in (".png", ".jpg", ".jpeg", ".gif", ".webp"):
         image_path = source_path
     render_card(title, description, image_path, output / "card.png")
+    # A new image path also avoids image caches maintained by preview services.
+    card_name = f"card-{file_digest(output / 'card.png')[:20]}.png"
+    card_relative = f"{RESERVED}/{card_name}"
+    card_url = object_url(args.base_url, args.slug, card_relative)
+    files = [relative for _, relative in args.file]
+    digests = {object_url(args.base_url, args.slug, relative): file_digest(local) for local, relative in args.file}
+    # Embedded HTML can depend on other files (and contain cyclic iframe links).
+    # Version those documents by the bundle, without recursive hash rewriting.
+    bundle_version = hashlib.sha256(json.dumps([sorted(digests.items()), title, description, card_relative]).encode()).hexdigest()
+    digests = {url: bundle_version if Path(urllib.parse.urlsplit(url).path).suffix.lower() in {".html", ".htm"} else digest
+               for url, digest in digests.items()}
+    embeds = {}
 
     if args.mode == "html":
-        transformed = add_metadata(source, title, description, args.url, args.card_url)
+        transformed = add_metadata(source, title, description, args.url, card_url)
+        transformed = version_media(transformed, args.url, digests, embeds)
         (output / "entry.html").write_text(transformed, encoding="utf-8")
     else:
-        page = share_page(title, description, args.url, args.card_url, args.direct_url, args.relative, args.file, args.base_url, args.slug)
+        page = share_page(title, description, args.url, card_url, args.direct_url, args.relative, files, args.base_url, args.slug)
+        page = version_media(page, args.url, digests, embeds)
         (output / "share.html").write_text(page, encoding="utf-8")
+    uploads = [
+        (output / "entry.html" if args.mode == "html" and relative == args.relative else Path(local), relative)
+        for local, relative in args.file
+    ]
+    uploads.append((output / "card.png", card_relative))
+    if args.mode != "html":
+        uploads.append((output / "share.html", f"{RESERVED}/index.html"))
+    for index, (local, relative) in enumerate(uploads):
+        if local == output / "entry.html" or Path(relative).suffix.lower() not in {".html", ".htm"}:
+            continue
+        document = Path(local).read_text(encoding="utf-8", errors="replace")
+        rewritten = version_media(document, object_url(args.base_url, args.slug, relative), digests, embeds)
+        if rewritten != document:
+            generated = output / "html" / relative
+            generated.parent.mkdir(parents=True, exist_ok=True)
+            generated.write_text(rewritten, encoding="utf-8")
+            uploads[index] = (generated, relative)
+    objects = [
+        {"url": object_url(args.base_url, args.slug, relative), "sha256": file_digest(local)}
+        for local, relative in uploads
+    ]
+    served_digests = {item["url"]: item["sha256"] for item in objects}
+    embed_objects = []
+    for url in embeds:
+        parts = urllib.parse.urlsplit(url)
+        # Normalize URL encoding just as the embed matcher does.
+        path = "/".join(urllib.parse.quote(piece, safe="") for piece in urllib.parse.unquote(parts.path).split("/"))
+        url = urllib.parse.urlunsplit(parts._replace(path=path, fragment=""))
+        unversioned = urllib.parse.urlunsplit(parts._replace(path=path, query="", fragment=""))
+        embed_objects.append({"url": url, "sha256": served_digests[unversioned]})
     (output / "info.json").write_text(
-        json.dumps({"title": title, "description": description, "url": args.url, "card_url": args.card_url, "direct_url": args.direct_url}, ensure_ascii=False),
+        json.dumps({"title": title, "description": description, "url": args.url, "card_url": card_url,
+                    "card_relative": card_relative, "direct_url": args.direct_url, "objects": objects,
+                    "embeds": embed_objects}, ensure_ascii=False),
         encoding="utf-8",
     )
     print(f"preview: {title}")
     print(f"summary: {description}")
 
 
-def fetch(url, method="GET", limit=None):
-    request = urllib.request.Request(url, method=method, headers={"User-Agent": "cf-share-preview-check/1.0"})
+def fetch_object(expected, keep_body=False):
+    url = expected["url"]
+    # Check the same URL a recipient opens, without request cache bypasses.
+    request = urllib.request.Request(url, headers={"User-Agent": "cf-share-preview-check/1.0", "Accept-Encoding": "identity"})
     with urllib.request.urlopen(request, timeout=20) as response:
-        data = response.read(limit) if method == "GET" else b""
-        return response.status, response.headers.get_content_type(), data
+        if response.status != 200 or response.url != url:
+            raise ValueError(f"{url}: HTTP {response.status}, final URL {response.url}")
+        directives = {part.strip().lower() for part in response.headers.get("Cache-Control", "").split(",")}
+        cache_status = response.headers.get("CF-Cache-Status", "").upper()
+        if "no-store" not in directives or cache_status in {"HIT", "STALE", "UPDATING", "REVALIDATED"}:
+            raise ValueError(f"{url}: caching still active (Cache-Control={response.headers.get('Cache-Control')!r}, CF-Cache-Status={cache_status!r}); see references/setup.md for legacy cache repair")
+        digest = hashlib.sha256()
+        pieces = []
+        while chunk := response.read(1024 * 1024):
+            digest.update(chunk)
+            if keep_body:
+                pieces.append(chunk)
+        if digest.hexdigest() != expected["sha256"]:
+            raise ValueError(f"{url}: served bytes differ from this upload; stale cache or content transformation, see references/setup.md")
+        return response.headers.get_content_type(), b"".join(pieces)
 
 
 def verify(args):
     info = json.loads(Path(args.info).read_text(encoding="utf-8"))
-    status, content_type, body = fetch(info["url"], limit=512 * 1024)
-    if status != 200 or content_type != "text/html":
-        raise ValueError(f"share page: HTTP {status}, {content_type}")
+    fetched = {}
+    for expected in info["objects"] + info.get("embeds", []):
+        keep = expected["url"] in (info["url"], info["card_url"])
+        content_type, body = fetch_object(expected, keep_body=keep)
+        if keep:
+            fetched[expected["url"]] = (content_type, body)
+    content_type, body = fetched[info["url"]]
+    if content_type != "text/html":
+        raise ValueError(f"share page: {content_type}")
     parsed = parse_page(body.decode("utf-8", errors="replace"))
     required = {
         "og:title": info["title"],
@@ -333,33 +468,65 @@ def verify(args):
     for key, expected in required.items():
         if parsed.meta.get(key) != expected:
             raise ValueError(f"share page {key}: expected {expected!r}, got {parsed.meta.get(key)!r}")
-    status, content_type, card = fetch(info["card_url"])
-    if status != 200 or content_type != "image/png":
-        raise ValueError(f"preview card: HTTP {status}, {content_type}")
+    content_type, card = fetched[info["card_url"]]
+    if content_type != "image/png":
+        raise ValueError(f"preview card: {content_type}")
     with Image.open(io.BytesIO(card)) as image:
         if image.size != CARD_SIZE:
             raise ValueError(f"preview card size: {image.size}, expected {CARD_SIZE}")
-    status, _, _ = fetch(info["direct_url"], method="HEAD")
-    if status != 200:
-        raise ValueError(f"artifact: HTTP {status}")
-    print("verified HTTP 200: share page, Open Graph, X Card, 1200x630 PNG, artifact")
+    print(f"verified HTTP 200, no-store, matching bytes: all {len(info['objects'])} objects; {len(info.get('embeds', []))} media URLs; Open Graph, X Card, 1200x630 PNG")
+
+
+def api_json(path, token, payload=None):
+    request = urllib.request.Request(
+        f"https://api.cloudflare.com/client/v4/{path}",
+        data=json.dumps(payload).encode() if payload is not None else None,
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(request, timeout=30) as response:
+        result = json.load(response)
+    if result.get("success") is not True:
+        raise ValueError(f"Cloudflare API failed: {result.get('errors')}")
+    return result["result"]
+
+
+def purge(args):
+    info = json.loads(Path(args.info).read_text(encoding="utf-8"))
+    zone = args.zone
+    if not zone:
+        hostname = urllib.parse.urlsplit(info["url"]).hostname
+        domain = api_json(
+            f"accounts/{args.account}/r2/buckets/{args.bucket}/domains/custom/{hostname}",
+            os.environ["CF_SHARE_API_TOKEN"],
+        )
+        zone = domain["zoneId"]
+    token = os.environ.get("CF_SHARE_PURGE_API_TOKEN") or os.environ["CF_SHARE_API_TOKEN"]
+    urls = list(dict.fromkeys(item["url"] for item in info["objects"] + info.get("embeds", [])))
+    for start in range(0, len(urls), 100):
+        api_json(f"zones/{zone}/purge_cache", token, {"files": urls[start:start + 100]})
+    print(f"purged CDN cache: {len(urls)} URLs in this upload")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     prep = commands.add_parser("prepare")
-    for name in ("entry", "relative", "url", "card-url", "direct-url", "base-url", "slug", "output-dir", "mode"):
+    for name in ("entry", "relative", "url", "direct-url", "base-url", "slug", "output-dir", "mode"):
         prep.add_argument("--" + name, required=True)
     prep.add_argument("--title", default="")
     prep.add_argument("--description", default="")
     prep.add_argument("--image", default="")
-    prep.add_argument("--file", action="append", default=[])
+    prep.add_argument("--file", action="append", nargs=2, metavar=("LOCAL", "RELATIVE"), required=True)
     check = commands.add_parser("verify")
     check.add_argument("--info", required=True)
+    cache = commands.add_parser("purge")
+    cache.add_argument("--info", required=True)
+    cache.add_argument("--account", required=True)
+    cache.add_argument("--bucket", required=True)
+    cache.add_argument("--zone", default="")
     args = parser.parse_args()
     try:
-        prepare(args) if args.command == "prepare" else verify(args)
+        {"prepare": prepare, "verify": verify, "purge": purge}[args.command](args)
     except Exception as exc:
         print(f"cf-share preview error: {exc}", file=sys.stderr)
         return 1

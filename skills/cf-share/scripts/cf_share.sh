@@ -12,6 +12,8 @@
 #   CF_SHARE_ACCOUNT_ID  Cloudflare account id
 #   CF_SHARE_BUCKET      R2 bucket name (fc-share)
 #   CF_SHARE_BASE_URL    public base URL (https://share.fun.country)
+# Reusing --slug also needs Zone: Cache Purge on the public domain's zone.
+# CF_SHARE_ZONE_ID and CF_SHARE_PURGE_API_TOKEN optionally override discovery/auth.
 # Requires Pillow for a distinct 1200x630 social card (see references/setup.md).
 #
 # Known gotchas handled here (do not "simplify" them away):
@@ -27,6 +29,7 @@ MAX_BYTES=$((250 * 1024 * 1024))
 API="https://api.cloudflare.com/client/v4"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RESERVED="__cf_share"
+CACHE_CONTROL="no-store, no-cache, max-age=0, must-revalidate, no-transform"
 
 die() { echo "cf-share error: $*" >&2; exit 1; }
 
@@ -193,6 +196,8 @@ if [ -z "$ENTRY_REL" ]; then
   ENTRY_REL="${PAIRS[0]#*$'\t'}"
 fi
 
+REUSE_SLUG=0
+[ -z "$SLUG" ] || REUSE_SLUG=1
 if [ -z "$SLUG" ]; then
   slug_source="$TITLE"
   if [ -z "$slug_source" ]; then
@@ -205,7 +210,6 @@ fi
 [[ "$SLUG" =~ ^[a-zA-Z0-9][a-zA-Z0-9_-]*$ ]] || die "invalid share slug '$SLUG'"
 
 DIRECT_URL="$CF_SHARE_BASE_URL/$(urlencode_path "$SLUG/$ENTRY_REL")"
-CARD_URL="$CF_SHARE_BASE_URL/$SLUG/$RESERVED/card.png"
 entry_lower="$(printf '%s' "$ENTRY_REL" | tr '[:upper:]' '[:lower:]')"
 case "$entry_lower" in
   *.html|*.htm) MODE=html; SHARE_URL="$DIRECT_URL" ;;
@@ -215,11 +219,12 @@ esac
 TMP_SHARE="$(mktemp -d "${TMPDIR:-/tmp}/cf-share.XXXXXX")"
 trap 'rm -rf "$TMP_SHARE"' EXIT
 PREP_ARGS=(prepare --entry "$ENTRY_FILE" --relative "$ENTRY_REL" --url "$SHARE_URL"
-  --card-url "$CARD_URL" --direct-url "$DIRECT_URL" --base-url "$CF_SHARE_BASE_URL"
+  --direct-url "$DIRECT_URL" --base-url "$CF_SHARE_BASE_URL"
   --slug "$SLUG" --output-dir "$TMP_SHARE" --mode "$MODE"
   --title "$TITLE" --description "$DESCRIPTION" --image "$IMAGE")
-for pair in "${PAIRS[@]}"; do PREP_ARGS+=(--file "${pair#*$'\t'}"); done
+for pair in "${PAIRS[@]}"; do PREP_ARGS+=(--file "${pair%%$'\t'*}" "${pair#*$'\t'}"); done
 "$CF_SHARE_PYTHON" "$SCRIPT_DIR/share_preview.py" "${PREP_ARGS[@]}" || die "could not prepare preview"
+CARD_REL="$("$CF_SHARE_PYTHON" -c 'import json,sys; print(json.load(open(sys.argv[1]))["card_relative"])' "$TMP_SHARE/info.json")"
 
 uploaded=0
 failed=0
@@ -233,7 +238,7 @@ upload_one() {
   key="$SLUG/$rel"
   ct="$(content_type "$f")"
   for _ in 1 2; do
-    resp=$(curl -sS -X PUT "${AUTH[@]}" -H "Content-Type: $ct" -H "Expect:" \
+    resp=$(curl -sS -X PUT "${AUTH[@]}" -H "Content-Type: $ct" -H "Cache-Control: $CACHE_CONTROL" -H "Expect:" \
       --data-binary @"$f" "$OBJ_BASE/$(urlencode_path "$key")" 2>&1) || { sleep 1; continue; }
     if printf '%s' "$resp" | grep -q '"success": *true'; then ok=1; break; fi
     sleep 1
@@ -245,16 +250,27 @@ upload_one() {
 
 for pair in "${PAIRS[@]}"; do
   f="${pair%%$'\t'*}"; rel="${pair#*$'\t'}"
-  if [ "$MODE" = html ] && [ "$rel" = "$ENTRY_REL" ]; then f="$TMP_SHARE/entry.html"; fi
+  # Publish the headline after its assets and card are ready.
+  if [ "$MODE" = html ] && [ "$rel" = "$ENTRY_REL" ]; then continue; fi
+  if [ -f "$TMP_SHARE/html/$rel" ]; then f="$TMP_SHARE/html/$rel"; fi
   if upload_one "$f" "$rel"; then uploaded=$((uploaded + 1)); else failed=$((failed + 1)); fi
 done
 [ "$failed" -eq 0 ] || die "$failed artifact file(s) failed under slug '$SLUG'; preview not verified"
-[ "$uploaded" -ge 1 ] || die "all uploads failed"
-upload_one "$TMP_SHARE/card.png" "$RESERVED/card.png" || die "preview card upload failed under slug '$SLUG'"
-if [ "$MODE" = page ]; then
+upload_one "$TMP_SHARE/card.png" "$CARD_REL" || die "preview card upload failed under slug '$SLUG'"
+if [ "$MODE" = html ]; then
+  upload_one "$TMP_SHARE/entry.html" "$ENTRY_REL" || die "headline upload failed under slug '$SLUG'"
+  uploaded=$((uploaded + 1))
+else
   upload_one "$TMP_SHARE/share.html" "$RESERVED/index.html" || die "share page upload failed under slug '$SLUG'"
 fi
 
+# Old CDN entries keep their old policy until purged. Purge only this upload's URLs.
+if [ "$REUSE_SLUG" = 1 ]; then
+  CF_SHARE_API_TOKEN="$CF_SHARE_API_TOKEN" CF_SHARE_PURGE_API_TOKEN="${CF_SHARE_PURGE_API_TOKEN:-}" \
+    "$CF_SHARE_PYTHON" "$SCRIPT_DIR/share_preview.py" purge --info "$TMP_SHARE/info.json" \
+    --account "$CF_SHARE_ACCOUNT_ID" --bucket "$CF_SHARE_BUCKET" --zone "${CF_SHARE_ZONE_ID:-}" \
+    || die "cache purge failed under slug '$SLUG'; see references/setup.md; keep the requested URL"
+fi
 "$CF_SHARE_PYTHON" "$SCRIPT_DIR/share_preview.py" verify --info "$TMP_SHARE/info.json" || die "live preview verification failed under slug '$SLUG'"
 echo "URL: $SHARE_URL"
 echo "shared $uploaded artifact file(s) under $CF_SHARE_BASE_URL/$SLUG/"

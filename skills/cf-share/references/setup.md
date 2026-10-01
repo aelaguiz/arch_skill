@@ -3,6 +3,13 @@
 One-time setup for a new machine or teammate, plus a receipt of what
 infrastructure exists so it never has to be re-derived.
 
+## Contents
+
+- [Infrastructure and requirements](#what-exists)
+- [Credentials](#get-a-token)
+- [Verify and troubleshoot](#verify-the-setup)
+- [Infrastructure recreation](#infra-receipt-how-this-was-created-2026-07-16)
+
 ## What exists
 
 - Cloudflare account: FunCountry, account id `cec2277a8b3429743f0ea1ddc3c1b72f`.
@@ -11,8 +18,16 @@ infrastructure exists so it never has to be re-derived.
 - Public custom domain: `share.fun.country` (zone `fun.country`), attached to
   the bucket as an R2 custom domain. Objects are readable by anyone with the
   URL; there is no directory listing and unknown keys return 404.
-- Shares are keyed `slug/relative-path` where the slug embeds random bytes
-  (`YYYYMMDD-<12 hex>`), so links are unlisted but public.
+- Shares are keyed `slug/relative-path`; new slugs use
+  `YYYYMMDD-<title-label>-<12 hex>`, so links are unlisted but public.
+- Every upload, including HTML, assets, downloads, and generated previews,
+  sets `Cache-Control: no-store, no-cache, max-age=0, must-revalidate, no-transform`.
+  The helper verifies the public headers and bytes for every uploaded object.
+- The uploaded HTML copy versions local video, audio, source, track, iframe,
+  embed, and object references with `cf_share_v=<content hash>`. This also
+  covers media in secondary HTML pages and generated PDF/media share pages.
+  It preserves existing query parameters and fragments, leaves external
+  resources alone, and does not change source files or direct download URLs.
 
 ## Requirements
 
@@ -30,7 +45,11 @@ python3 -m venv ~/.config/cf-share/venv
   secret env file below. An existing Python with Pillow needs no override.
 - A Cloudflare API token with permission **Account -> Workers R2 Storage:
   Edit** on the FunCountry account. Nothing else is needed for upload,
-  delete, and list.
+  delete, and list. Reusing `--slug` also requires **Zone -> Cache Purge**
+  on `fun.country`, because previously cached objects keep their old policy
+  until purged. The helper discovers the zone through the R2 custom-domain
+  API and purges only the URLs in the current upload, in batches of 100.
+  It never purges the whole zone or changes cache rules.
 
 ## Get a token
 
@@ -41,6 +60,12 @@ Either:
   -> My Profile -> API Tokens -> Create Token -> Custom token -> add
   permission `Account / Workers R2 Storage / Edit`, scope it to the FunCountry
   account. Copy the token value once; Cloudflare will not show it again.
+
+For stable republishes, add `Zone / Cache Purge` scoped to `fun.country`.
+Alternatively put a separate token in `CF_SHARE_PURGE_API_TOKEN` in the same
+env file. `CF_SHARE_ZONE_ID` can supply the zone ID when automatic domain
+discovery is unavailable; the current `fun.country` ID is
+`c94ba2b681131ff686bdd6bf3b9ad926`.
 
 ## Create the secret file
 
@@ -53,6 +78,9 @@ CF_SHARE_BUCKET=fc-share
 CF_SHARE_BASE_URL=https://share.fun.country
 # Optional if Pillow is installed in the dedicated environment:
 # CF_SHARE_PYTHON="$HOME/.config/cf-share/venv/bin/python"
+# Optional overrides for stable republishes:
+# CF_SHARE_PURGE_API_TOKEN=<zone-scoped Cache Purge token>
+# CF_SHARE_ZONE_ID=c94ba2b681131ff686bdd6bf3b9ad926
 EOF
 chmod 600 ~/.config/cf-share/env
 ```
@@ -63,14 +91,22 @@ The script also honors `CF_SHARE_ENV=<path>` if the file must live elsewhere.
 
 ```bash
 echo '<html><head><title>CF Share preview test</title></head><body><h1>CF Share preview test</h1></body></html>' > /tmp/cf-share-test.html
-bash scripts/cf_share.sh --description 'A harmless test of rich share links.' /tmp/cf-share-test.html
+bash skills/cf-share/scripts/cf_share.sh --description 'A harmless test of rich share links.' /tmp/cf-share-test.html
 ```
 
 Expect `URL: https://share.fun.country/<slug>/cf-share-test.html` and
-`verified HTTP 200: share page, Open Graph, X Card, 1200x630 PNG, artifact`.
+`verified HTTP 200, no-store, matching bytes: all 2 objects; 0 media URLs; Open Graph, X Card, 1200x630 PNG`.
 The URL opens the original HTML with preview tags added in the uploaded copy.
 Clean up with the printed `--delete <slug>` command when the test is no longer
 needed.
+
+To test stable updates, fetch the page and its assets normally, change them,
+then run the helper again with the printed slug and the same `--entry`.
+The `URL:` must be identical. Repeated ordinary GETs must serve the new bytes
+with `no-store`, without `CF-Cache-Status: HIT`, `STALE`, `UPDATING`, or
+`REVALIDATED`. Inspect the same page in a browser after a normal reload.
+Request cache-bypass headers and random query strings hide the problem and
+are not evidence that the recipient's URL works.
 
 ## Troubleshooting
 
@@ -79,10 +115,32 @@ needed.
 - HTML downloads instead of rendering: the object was uploaded without a
   Content-Type. Re-upload through the script; never PUT objects by hand
   without `-H "Content-Type: ..."`.
-- A link shows an old preview after reusing `--slug`: Slack and other sharing
-  services may cache the URL. Use a new slug for a fresh card, or use the
-  service's preview debugger or refresh tool when available. Reposting the
-  same URL in the same Slack conversation may not expand for an hour.
+- Stable publish fails at cache purge with 403: add the zone-scoped Cache
+  Purge permission or separate token above, then rerun at the same slug and
+  entry path. An upload token with only R2 Storage Edit cannot purge CDN
+  entries. Do not replace a requested stable URL to conceal this failure.
+- Verification reports caching active or stale bytes after purge: inspect
+  the exact public URL and any Cache Rules that override origin headers or
+  use a custom cache key. A host-specific bypass for `share.fun.country`
+  can repair an overriding rule; obtain authorization for infrastructure
+  changes. Keep the stable URL and rerun verification after repair.
+- A browser still shows a version fetched before `no-store` was introduced:
+  the old browser copy cannot receive the new headers until it contacts the
+  server. A one-time hard reload or clearing that site's cached files fixes
+  the migration. Later uploads use `no-store`; no repeated hard reload is
+  needed. A service worker or application cache in the artifact is a
+  separate source of stored content and needs its own repair.
+- A media player retains an old frame: use the content-versioned embed
+  URL, which changes when the uploaded file changes. Chromium can retain a
+  decoded media buffer even when network responses have `no-store`.
+  Dynamically assigned player URLs must be versioned in the artifact's own
+  script; the helper rewrites static HTML embeds, not arbitrary JavaScript.
+- A link's Slack preview stays old while the page and card verify: the
+  changed card has a new path, but the service may retain the old page
+  metadata. Use its preview refresh/debugger when available; keep a
+  requested stable headline URL. Only offer a new share if the user prefers
+  a fresh unfurl over keeping the link. HTTP headers cannot force that
+  third-party refresh, and repeated Slack links may suppress an unfurl.
 - `Pillow is required`: run the dedicated-environment commands above and set
   `CF_SHARE_PYTHON` in the env file.
 - curl exit 56 on files over ~1 MB: something dropped the `-H "Expect:"`
