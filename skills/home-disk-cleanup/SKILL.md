@@ -14,6 +14,14 @@ Keep root above 150 GB available by reclaiming inactive reproducible build
 output on every run. Recent build output is eligible once its users have
 finished; its age alone is not a reason to leave root filling up.
 
+**Delete only what you know is safe to lose.** Every check before a deletion,
+such as nothing using the output or the policy being unreferenced, has to come
+back with an answer you have seen for that path. A check that errors, times
+out, hits a permission boundary, or fails inside your own batch script has not
+answered; keep that path, record why, and keep cleaning elsewhere. Before the
+first deletion, read [irreversible-deletion.md](../_shared/irreversible-deletion.md):
+its examples show how a failed check turns into lost work or a broken job.
+
 ## Authority and boundaries
 
 Amir authorized this recurring cleanup, explicitly including obsolete small
@@ -110,9 +118,9 @@ embedded non-build data have been checked.
 ## Scheduled operation
 
 The host's user systemd timer `nightly-disk-cleanup.timer` runs at 01:45
-America/Chicago. It starts one fresh AIM-managed Codex session with the model
-and reasoning selected by its existing launcher and a 20-minute deadline.
-Preserve that deliberate runtime selection. Do the cleanup
+America/Chicago. It starts one fresh Codex session with the model, reasoning
+and deadline selected by its existing launcher. Preserve that deliberate
+runtime selection. Do the cleanup
 directly; do not spawn child agents, switch models, install another schedule,
 edit policy or scheduler files, commit changes, or send external messages.
 Failure to authenticate or complete verification must be reported, not hidden

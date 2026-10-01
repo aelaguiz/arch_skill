@@ -11,6 +11,14 @@ Keep `agents@amirs-mac-studio` usable by removing accumulated disposable data.
 Act on verified cleanup opportunities and measure actual free space. Do not
 stop at an inventory or preserve unwanted garbage in another large archive.
 
+**Delete only what you know is safe to lose.** Every check before a deletion,
+such as unique commits being preserved or nothing using the path, has to come
+back with an answer you have seen for that path. A check that errors, times
+out, prints nothing, or fails inside your own batch script has not answered;
+keep that path, record why, and keep cleaning elsewhere. Before the first
+deletion, read [irreversible-deletion.md](../_shared/irreversible-deletion.md):
+its examples show how a failed check turns into lost work.
+
 ## Scope and authority
 
 - This skill operates on `/Users/agents` on the Mac Studio. From another host,
@@ -94,15 +102,13 @@ can be rebuilt; an ignored source asset cannot be assumed replaceable.
 
 The host's existing `com.funcountry.agents_host.nightly_disk_cleanup` LaunchAgent
 runs at **01:15 America/Chicago**. Its launcher loads this skill in a fresh
-Codex session through AIM and owns scheduling, the runtime model, and a
-20-minute deadline. Prefer `gpt-6.1-sol` with `high` reasoning when configuring
-that launcher; this skill owns cleanup judgment.
+Codex session and owns scheduling, the runtime model and the deadline; this
+skill owns cleanup judgment.
 
 Run the work directly. Do not spawn additional agents, install another timer,
 modify this skill or the scheduler during maintenance, or send Slack/email.
-An unavailable credential service or missing tool is a recorded failure, not
-a reason to retry indefinitely or silently switch accounts/providers outside
-AIM. The scheduler's exit record and final report must make failures visible.
+An unavailable credential or missing tool is a recorded failure, not a reason
+to retry indefinitely or silently switch credentials, accounts or providers. The scheduler's exit record and final report must make failures visible.
 
 Return the available space, net reclaimed space, main actions and remaining
 blockers in plain English. No approval question for already authorized clutter.

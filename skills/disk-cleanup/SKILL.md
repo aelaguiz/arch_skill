@@ -22,6 +22,14 @@ machine. That is the harm this skill exists to prevent. What stays: canonical
 checkouts, anything in live use, work someone did recently, and data that is
 not a copy of anything (credentials, model policies, VM volumes).
 
+**Delete only what you know is safe to lose.** Every check before a deletion,
+such as the salvage reaching the remote or nothing using the path, has to come
+back with an answer you have seen for that path. A check that errors, times
+out, prints nothing, or fails inside your own batch script has not answered;
+keep that path, record why, and keep cleaning elsewhere. Before the first
+deletion, read [irreversible-deletion.md](../_shared/irreversible-deletion.md):
+its examples show how a failed check turns into lost work.
+
 For routine or unattended runs without a numeric target, remove the obvious
 authorized accumulation and identify the largest remaining opportunities. Reuse recent
 inventories and inspect likely owners; do not repeat an exhaustive whole-disk

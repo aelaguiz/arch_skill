@@ -1,7 +1,7 @@
 interface:
   display_name: "Disk Cleanup"
   short_description: "Reclaim developer disk space using known storage locations"
-  default_prompt: "Use $disk-cleanup to reclaim requested disk headroom or handle authorized daily housekeeping. Reuse saved inventories, refresh current Git registrations and activity, and delete old task checkouts and worktrees after pushing any unsaved work to a salvage branch, whatever their submodules, dirty state, or ignored files. Also remove reproducible build/cache output, confirmed unused task simulators and emulators, and inactive Prime session/recovery state under the skill's authorization. Preserve canonical checkouts, work in live or recent use, credentials, model policies, and VM volumes. Verify actual free space and save the removal/salvage report. Leave anything outside the authorization intact."
+  default_prompt: "Use $disk-cleanup to reclaim requested disk headroom or handle authorized daily housekeeping. Reuse saved inventories, refresh current Git registrations and activity, and delete old task checkouts and worktrees after pushing any unsaved work to a salvage branch and seeing it on the remote, whatever their submodules, dirty state, or ignored files; keep any checkout whose work could not be saved. Also remove reproducible build/cache output, confirmed unused task simulators and emulators, and inactive Prime session/recovery state under the skill's authorization. Preserve canonical checkouts, work in live or recent use, credentials, model policies, and VM volumes. Verify actual free space and save the removal/salvage report. Leave anything outside the authorization intact."
 
 policy:
   allow_implicit_invocation: true

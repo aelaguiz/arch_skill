@@ -95,11 +95,16 @@ git -C "$wt" fetch --quiet origin         # fresh remote refs for the check belo
 git -C "$wt" add -A -- . ':(exclude)<nested-repo-path>'   # .gitignore keeps ignored files out
 tree=$(git -C "$wt" write-tree)
 commit=$(git -C "$wt" commit-tree "$tree" -p HEAD -m "salvage: unsaved work from $wt")
+# no commits yet (HEAD does not resolve): omit -p HEAD to build a root commit
 # clean checkout: commit=$(git -C "$wt" rev-parse HEAD)
 git -C "$wt" rev-list --count "$commit" --not --remotes   # 0 means already on the remote
 git -C "$wt" push --no-verify origin "$commit:refs/heads/$name"
 git -C "$wt" ls-remote origin "refs/heads/$name"          # must print $commit
 ```
+
+The checkout's deletion depends on that last line printing `$commit`. An empty
+`$commit`, a count computed from an empty value, a rejected push, or an empty
+`ls-remote` means nothing was saved, and the checkout stays.
 
 Before committing, look at the staged file list for credentials and for large
 generated binaries (APKs, videos, archives, model files). Unstage them with
@@ -139,7 +144,9 @@ canonical repository instead:
 git -C "$canonical" fetch "$wt" "$commit:refs/salvage/$(basename "$wt")"
 ```
 
-Only when neither works, keep the checkout and report the reason.
+Only when neither works, keep the checkout and report the reason. A standalone
+repository with no remote and no related canonical repository is such a case:
+everything in it exists only on this disk.
 
 ## Remove the checkout
 
@@ -148,7 +155,10 @@ git --git-dir="$common_gitdir" worktree remove --force "$wt"
 # stale lock: add a second --force
 ```
 
-If Git still refuses, delete the resolved path after the protected-set check,
+If Git still refuses, find out why before deleting anything. A path that
+`git worktree list` does not show is a standalone clone, not a linked worktree,
+and needs the standalone salvage above first. Once the reason is understood
+and the work is saved, delete the resolved path after the protected-set check,
 then run `git --git-dir="$common_gitdir" worktree prune`. Remove a standalone
 clone by deleting its resolved path after the same check. Do not delete
 branches, reset refs, or rewrite commits.
