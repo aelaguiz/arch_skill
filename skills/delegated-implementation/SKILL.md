@@ -1,6 +1,6 @@
 ---
 name: delegated-implementation
-description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr and epic-to-prs for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-5.6 Sol high; Fable delegates to Opus 5; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
+description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr, epic-to-prs, and milestone-to-pr for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-6.1 Sol high; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
 metadata:
   short-description: "Parent judgment and review, worker implementation and tests"
 ---
@@ -41,12 +41,12 @@ delegate the ordinary application code work.
 
 ## Worker selection and harness boundary
 
-An Astra parent assigns implementation and verification to GPT-5.6 Sol
-(`gpt-5.6-sol`) at `high`. A Fable parent assigns them to Opus 5, using the
-user's effort choice or the harness's applicable default. These are deliberate
-worker selections; the general Astra preference does not replace Sol here.
-Honor a worker the user or the calling workflow named. For any other parent —
-Sol, Terra, Luna, Opus, DeepSeek, GLM, Fugu, and whatever is added later — the
+An Astra parent assigns implementation and verification to GPT-6.1 Sol
+(`gpt-6.1-sol`) at `high`. Preserve this role's effort rather than applying the
+general `xhigh` default. Honor a worker the user or the
+calling workflow named, and a role the policy's routing table assigns. For any
+other parent — Sol, Terra, Luna, Opus, Fable, DeepSeek, GLM, Fugu, and whatever
+is added later — the
 worker is a native child of the active host that inherits the parent's model and
 thinking level; read the default in
 `../_shared/agent-orchestration-policy.md`.
@@ -67,7 +67,10 @@ layer of delegation. Keep skill authorship out of worker assignments.
 Give each worker the accepted outcome, relevant plan and source paths, owned
 scope, dependencies, architectural constraints, acceptance criteria, and
 required verification under the repo's instructions. Include inherited review
-coverage and the expected handoff when the caller has them. Distinguish binding
+coverage and the expected handoff when the caller has them. Carry the plan's
+do-not-build boundary and `$overbuild-audit`'s intent in plain words: build
+exactly the brief, the simplest way that works, with no fallbacks, flags,
+harnesses, or extra tests it did not ask for. Distinguish binding
 decisions from hypotheses the worker should investigate.
 
 Choose coherent assignments large enough for implementation judgment and small
@@ -93,7 +96,10 @@ watches for the answer and reads all of it.
 
 Personally inspect every deliverable and every changed line of code, including
 tests and later repair or integration changes. Read surrounding code as needed
-to judge behavior, architecture, maintainability, and scope. Open other work
+to judge behavior, architecture, maintainability, and scope. Judge scope with
+`$overbuild-audit`'s intent and types: anything a worker built beyond the
+brief goes back as a cut in the next repair brief. This is part of the
+parent's own review, not a separate gate. Open other work
 products and assess their substance. Worker summaries, passing tests, bots,
 and external reviewers supply evidence; none replaces the parent's own review.
 

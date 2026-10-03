@@ -13,7 +13,7 @@ Common failure modes when invoking codex exec for review, and what to do.
   this standalone V2 profile on top of the base config.
 - Inspect it with
   `rg -n '^(model|model_reasoning_effort|service_tier|sandbox_mode)[[:space:]]*=' "${CODEX_HOME:-$HOME/.codex}/yolo.config.toml"`.
-- If it is missing or does not select `gpt-6-astra`, `xhigh`, `fast`, and
+- If it is missing or does not select `gpt-6.1-sol`, `xhigh`, `fast`, and
   `danger-full-access`, the user needs to configure it before this skill is
   usable. Do not invent a substitute profile; that exact contract is the point
   of this skill.

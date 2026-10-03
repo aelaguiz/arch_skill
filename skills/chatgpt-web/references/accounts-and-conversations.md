@@ -101,14 +101,14 @@ Observed composer shape: the model pill beside the composer shows the current
 setting. It reads `6 Pro` with Pro selected and a power word such as `Medium`,
 `High`, `Extra High`, or `Instant` otherwise. While its menu is open the same
 button reads `Thinking effort`, so read the pill with the menu closed. The
-menu has `Select model`, whose radios are `Latest`, `GPT-5.6 Sol`, and
+menu has `Select model`, whose radios are `Latest`, `GPT-6 Sol`, and
 `GPT-5.5`, and `Power`, a slider.
 
 Pro is the top `Power` position of `Latest`. With Pro available the slider has
 five positions: `Extra High` is `4 of 5` and Pro reads `Pro, 5 of 5`. Pro is
 not an entry in the model list. Do not look for it there, and never report Pro
 missing, disabled, or rate limited because the list shows only `Latest`,
-`GPT-5.6 Sol`, and `GPT-5.5`.
+`GPT-6 Sol`, and `GPT-5.5`.
 
 When a composer cannot select Pro, the slider ends at `Extra High, 4 of 4` and
 a disabled `Pro` entry appears below the model list. Hover the disabled entry
@@ -131,6 +131,10 @@ Pro; the scoped DOM read in
 [generation-progress-and-recovery.md](generation-progress-and-recovery.md)
 returns it. Note that too. Take both readings again after a new chat, reload,
 project change, or account switch.
+
+In the layout observed 2026-09-26, two things differ.
+- **Before Send:** the closed pill reads just `Pro`, and the open menu's heading reads `6 Pro` with `Pro, 5 of 5.` under it.
+- **After Send:** no element carries `data-message-model-slug`. Read the answering turn's own menu instead: open its `Regenerate response` button (aria-label) with a dispatched `pointerdown`, read the menu, and close it with Escape. It reads `Try again • 6 Pro` when Pro served that turn. That is the page's label for this turn's model, not an earlier turn's footer. Record it, and say that the slug attribute was absent.
 
 None of these is a reading of this conversation's model: the profile label;
 the account button, whose text such as `Pro 1 Pro, open profile menu` is the

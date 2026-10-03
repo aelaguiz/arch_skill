@@ -13,6 +13,8 @@
 - `shared-doctrine.md`
 - `../../_shared/scope-and-convergence.md`
 - `section-quality.md` for Section 0, Section 7, and helper-block expectations
+- `$overbuild-audit`: its commander's intent and type catalog are the judgment
+  behind buckets `F` and `G`
 
 ## Inputs and knobs
 

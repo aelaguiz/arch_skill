@@ -1,6 +1,6 @@
 ---
 name: issue-to-pr
-description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR through two seats the user names at invocation: a primary that writes the plan with the coordinator and takes the early review rounds, and a final that checks the plan once and reviews the PR once; GPT-6 Astra Pro holds both when none is named. Plan on disk, startup-pragmatism, PR authoring, CI last. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
+description: "Explicit-invocation issue delivery, fired by name or by user-invoked epic-to-prs; never self-select it. Takes a GitHub issue to a merge-ready PR through two seats the user names at invocation: a primary that writes the plan with the coordinator and takes the early review rounds, and a final that checks the plan once and reviews the PR once; GPT-6 Astra Pro holds both when none is named. Plan on disk, startup-pragmatism, overbuild-audit on plan and diff, PR authoring, CI last. Every coordinator uses delegated-implementation: workers code, test, and repair; the parent owns decisions, every deliverable's direct review, and all skill authorship. Related issues can share Pro coverage. Preserve accepted scope and review receipts; never merge or release. Not for investigation-only asks, standalone planning, or work without a GitHub issue."
 metadata:
   short-description: "Issue delivery with delegated code and parent review"
 ---
@@ -57,6 +57,11 @@ a GitHub issue, use the requested workflow instead.
   the final read it once against the code before implementation. Keep that judgment during delivery: enough investigation
   and verification for the actual change, without invented approval gates or
   proof machinery.
+- Hold the work to `$overbuild-audit`'s intent: build exactly what the issue
+  asks, the simplest way that works. The coordinator runs that audit itself,
+  once on the written plan before the final's plan check and once on the diff
+  before publishing, and applies the cuts. It adds no consultation or review
+  round.
 - The run starts authorized for accepted in-scope work. Work in a dedicated
   worktree under the target repo's AGENTS.md. Require self-documenting code
   with clear comments at boundaries and role seams, relevant tests, and
@@ -67,8 +72,9 @@ a GitHub issue, use the requested workflow instead.
   it, or reports it until the final has cleared the PR. PR Agent and other bots are
   advisory; assess findings against the issue and code rather than treating
   them as orders to expand scope.
-- Stop at merge-ready with receipts. Never merge, release, apply approval
-  labels such as `ufc-approved`, or touch production surfaces.
+- Stop at merge-ready with receipts and the run's own browser pages closed.
+  Never merge, release, apply approval labels such as `ufc-approved`, or
+  touch production surfaces.
 
 ## Primary and final
 
@@ -104,6 +110,10 @@ coordinator's seats and shared planning and review scope. Do not add a plan revi
 and final review for every child. The coordinator can collect locally
 finished PRs for a meaningful batch checkpoint or final stack review. A
 child awaiting that review is locally ready, not yet merge-ready.
+An issue that belongs to a milestone delivered through `milestone-to-pr`,
+or whose body carries that milestone's delivery rules, follows them: its
+commits land on the milestone PR, the primary reads it as it lands, and CI
+and the final review wait for the milestone boundary.
 
 The coordinator owns routine decisions, plan refinements, dependency ordering,
 and scope checks. Workers own implementation details and code repairs under
@@ -163,12 +173,10 @@ surface and read back from the page before every Send, in the consultation
 profiles only (the BrowserOS profiles labeled `Pro 1`, `Pro2`, and so on),
 never the `Work` profile, with `$chatgpt-web`'s rate-limit and
 account-switching rules. Those profile labels name browser profiles; being
-in one never makes a review a Pro review. For any other model, Astra and
-Fable parents have their own rules in that reference. If you are not one of
-them, or you are not sure, use your own native subagents on your own model
-for every worker, reviewer, and seat except Pro, including a seat named for
-another model, and say which model it ran on. Do not start an external agent
-unless the user asks for an external one. A planning collaborator keeps one
+in one never makes a review a Pro review. For any other model, that reference's
+collapse-or-hand-off rule applies to every parent: a seat on your own model is
+your native subagent, and a seat on a different model is a handoff to that
+model. Say which model each seat ran on. A planning collaborator keeps one
 continuing session for the D back-and-forth; a review round starts clean.
 Otherwise do not substitute another model for a named seat, and never claim
 a pending review passed.
@@ -181,6 +189,35 @@ that seat. A D exchange is one consultation; note its turn count. Include retrie
 polling an existing response is not a new consultation. Keep this a short
 entry, not a separate tracking system.
 
+## Browser pages
+
+Many runs of this skill share one BrowserOS at the same time, so pages a run
+leaves open pile up in the user's browser. Each page a run opens is that
+run's to close. Note each one in the worklog as it opens, the way
+`$browseros` tracks task-created pages.
+
+The test for closing a page is whether this run will come back to it. While
+the issue is in flight, a seat's thread page is working context through
+every round, wait, and rate-limit pause, and closing it early loses that
+context; when unsure mid-run, keep the page. A page whose one purpose is
+finished, such as a sign-in popup or a single lookup, can close then. The
+rest close at two points:
+
+- **Leaving a profile.** When a consultation moves to another consultation
+  profile or account, verify the new page first, then close the pages this
+  run created in the profile it left.
+- **The run ends.** At merge-ready, or when the run is cancelled, handed
+  off, or abandoned, check that each seat's thread is in the worklog, then
+  close every page this run created, in every profile. The conversation
+  stays in ChatGPT, and the worklog entry reopens it if the issue comes back.
+
+`$browseros` owns the closing mechanics and the ownership proof. Close only
+pages this run created and recorded, by their recorded identity. Another
+run's thread page looks just like this one's, so a title, project name, or
+idle look never makes a page closable; adopted pages, the user's pages, and
+other agents' pages stay open. Inside an epic, the shared thread pages are
+the coordinator's and stay open until the epic's last shared review.
+
 ## Workflow
 
 1. **Ramp up and plan.** Read live issue, parent, linked PRs, and discussion.
@@ -190,15 +227,19 @@ entry, not a separate tracking system.
    the primary with family D so it writes the plan (outcome, acceptance
    criteria, requirements, architecture, do's, do not's, test plan); ask
    questions until it is fully formed, then carry it onto disk verbatim and
-   into the issue. Have the final read the written-up plan once against the
-   code (family C) before anyone builds. A plan the primary already wrote
+   into the issue. Run `$overbuild-audit` on the written plan against the
+   accepted scope and cut what does not trace to it; anything that traces to
+   the ask but looks heavy goes to the user once. Have the final read the
+   written-up plan once against the code (family C) before anyone builds. A plan the primary already wrote
    that still covers the accepted scope satisfies this step.
 2. **Implement and verify.** Deliver the smallest coherent change in the
    worktree under the execution contract. Give workers tight requirements and
    appropriate checks, review every deliverable and changed code line, and
    return code findings for repair. Author skill content directly. Resolve
    ordinary decisions locally, consult the run's unblocker when needed, and
-   use the primary at the cadence above.
+   use the primary at the cadence above. Before publishing, run
+   `$overbuild-audit` on the full diff against the accepted scope and have
+   workers make its cuts.
 3. **Publish.** Publish the PR with `$pr-authoring` and go straight to the
    primary. Do not wait on CI, and do not start review-thread or CI
    follow-through.
@@ -236,7 +277,9 @@ entry, not a separate tracking system.
    the two model readings `$chatgpt-web` requires: the composer pill before
    Send (`6 Pro`) and the served-model slug on that answer (`gpt-6-pro`). A
    review without both readings is reported as "model not verified", is not a
-   Pro review, and the PR is not merge-ready.
+   Pro review, and the PR is not merge-ready. Once those receipts are in the
+   worklog, close the run's pages as Browser pages says, and name any page
+   kept open and why.
 
 ## Unblocking and persistent goals
 
@@ -251,7 +294,8 @@ recommendation. Continue independent scope while the answer pends; a
 continuation or wake-up is not an answer or a reason to ask again.
 
 For a persistent run, author its goal prompt with `$prompt-authoring` and
-`$startup-pragmatism`, naming both seats with exact model and effort, their
+`$startup-pragmatism`, carrying `$overbuild-audit`'s commander's intent and
+naming both seats with exact model and effort, their
 threads, review scope and cadence, unblocker per `$unblocker`, accepted
 scope, execution responsibilities including
 parent-owned skill authorship, and merge-ready completion condition. Arm the

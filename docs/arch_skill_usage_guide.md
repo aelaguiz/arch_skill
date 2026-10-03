@@ -69,6 +69,21 @@ policy. `browseros` is the canonical preflight before direct BrowserOS MCP
 calls. `chatgpt-web` applies it and still requires BrowserOS plus a logged-in
 ChatGPT session, and the vendored thermonuclear rubric remains unchanged.
 
+## Disk maintenance
+
+Use `$disk-cleanup` for the local developer Mac. Use
+`$mac-studio-disk-cleanup` for `agents@amirs-mac-studio`, including its nightly
+01:15 America/Chicago job. The host-specific skill covers Hermes clutter,
+AIM backups, generated build output and disposable simulator data, with current
+activity checks and measured free-space results. Its latest report is on the
+Mac Studio at `~/.local/state/mac-studio-disk-cleanup/latest/final.md`.
+
+Use `$home-disk-cleanup` on the Linux `home` server for root and mounted data
+drives, including obsolete RustAI training/test output. The two M3 developer
+Macs use `$disk-cleanup`. The Studio uses GPT-6.1 Sol high; the other three jobs use Sol medium;
+see [Nightly disk cleanup](NIGHTLY_DISK_CLEANUP.md) for schedules, saved native
+configuration, report locations and operator commands.
+
 ## Shared conventions
 
 ### Choose agent transport and context explicitly
@@ -218,7 +233,7 @@ Practical rule:
 - `miniarch-step auto-implement` is an exact user-facing synonym for `implement-loop`.
 - In that command, implementation scope is the current approved ordered
   implementation frontier. It hands control to a new clean independent audit
-  only after that frontier is done or genuinely blocked. `gpt-5.4-mini` with
+  only after that frontier is done or genuinely blocked. `gpt-6.1-sol` with
   `xhigh` is used only when the active native schema can select and confirm it;
   otherwise the auditor uses inherited native capability. An external exact
   model is a deliberate lane only when that identity is load-bearing.
@@ -249,7 +264,7 @@ Practical rule:
   Same-host planner, implementation-worker, and critic roles prefer clean
   native children; the separate external harness is selected only for a
   deliberate external benefit.
-- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5.1 high` becomes `claude-fable-5-1`; bare `Codex` becomes `gpt-6-astra` at `xhigh`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-6-astra` before launching children.
+- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5.1 high` becomes `claude-fable-5-1`; bare `Codex` becomes `gpt-6.1-sol` at `xhigh`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-6.1-sol` before launching children.
 - Role-based automatic mode drives sub-plans depth-first. Planner and
   implementation roles are resumable by exact handle; a new clean critic's
   accepted findings return to the owning role instead of creating a repair
@@ -397,10 +412,12 @@ consultation profiles, labeled `Pro 1`, `Pro2`, and so on,
 with many windows already open. A profile label names a browser profile and
 never proves the ChatGPT model. For ChatGPT, only consultation profiles are
 eligible; `Work` is reserved for the user and is never a fallback. The skill
-requires continual verification of the working profile/window/page. Protecting the user's foreground focus is a
-primary concern: work through viable background methods first. Necessary brief
-foreground use needs no separate approval; explain the need and promptly return
-to background work.
+requires continual verification of the working profile/window/page. Agents never
+take the user's foreground focus: all work runs in unselected background tabs,
+and a hidden page that will not render or respond gets Chromium focus emulation
+on that page instead of a tab or window activation. A required step that still
+cannot be done in the background goes to the user by name while other work
+continues.
 
 Examples:
 
@@ -477,7 +494,7 @@ to assess; the count alone does not trigger it. The primary is also
 available for a major unexpected blocker the agent cannot resolve through
 local reasoning and investigation. CI is the very last step, after the final
 has cleared the work. Every coordinator uses `delegated-implementation`: Astra
-assigns code and verification to GPT-5.6 Sol high; Fable uses Opus 5; any other
+assigns code and verification to GPT-6.1 Sol high; Fable uses Opus 5; any other
 parent uses a native child on its own model.
 The parent owns architecture, scope, integration, and direct review of every
 deliverable and changed code line. Workers handle implementation, tests, CI
@@ -491,6 +508,27 @@ Examples:
 - `Use $issue-to-pr on issue 4484`
 - `Use $issue-to-pr on issue 5963, primary Sol xhigh, final Pro`
 - `Use $epic-to-prs on epic 4700, primary Fable xhigh, final Pro; review meaningful batches together`
+
+### `milestone-to-pr`
+
+Invoke explicitly to deliver a spec milestone, several issues such as M0 or
+2A, as one PR per repo instead of one PR per issue. Its north star: the user
+gets what they asked for, working, as soon as it can be done; anything that
+does not bring that closer is spin, however responsible it looks. The final
+seat (GPT-6 Astra Pro unless named) writes the milestone plan in one round
+with a work order per issue, while a worker proves the verification path.
+Issues land as commits, and the primary (a native child on the coordinator's
+own model unless named) reads each one as it lands. At the boundary the final
+reviews the whole milestone once, beside the real check and CI; warranted
+findings are fixed in one batch and the primary confirms them. An
+`intent-police` child holds the user's words against the plan, review
+findings, and done-claims, so the run decides from the user's intent instead
+of stopping to ask. Never merges.
+
+Examples:
+
+- `Use $milestone-to-pr on M0 in the pricing workbook`
+- `Use $milestone-to-pr on 2A, primary Opus max, final Pro`
 
 ### `delegated-implementation`
 
@@ -552,25 +590,24 @@ Examples:
 
 ### `agent-watcher`
 
-Explicitly selected out-of-loop monitor for Amir's live coding-agent sessions.
-The parent (Fable or Astra) discovers active Codex, Claude Code, and Prime
-sessions, dispatches one watcher sub-agent per session on the cheap model Amir
-names, and adjudicates escalations with the surprise test before alerting him.
-Watchers keep an intent artifact and provenance ledger per session under
-`~/.agent-watcher/`, check only new events since their cursor, and skip
-sessions with no new bytes. Read-only; it never messages the watched sessions.
-On the 2026-09-15 regression against real traces, Opus watchers found nine of
-nine planted drifts (including a new screen 37 minutes after an agent built
-it) and Sonnet six of nine, missing new user-facing surfaces; name Opus when
-screens and inherited scope matter. Results are in
-`docs/agent-watcher-rewrite-plan-2026-09-15.md`.
+Amir's watcher, started by saying "Run the watcher" in an ordinary Chief
+session (psbrain). The agent becomes his second set of eyes and ears over the
+coding-agent work in his Herdr spaces (Mac and `amir-server`): it gets current
+on his intent and the business why, notices work going off track or stalling,
+steps in on his behalf the way a trusted chief of staff would, and keeps him
+apprised. The skill is a short brief that carries the mission, the why and his
+own words, plus one background file of what September 2026's research showed
+about how his agents go off track, told as stories. It gives the agent no
+rules, procedures, timers or scripts; the judgment is the agent's. It suggests
+keeping an ongoing mental model on disk (psbrain `operations/watcher/`) in
+whatever shape the agent finds useful. Research and history: psbrain
+`projects/agent-watcher/`.
 `intent-police` and `unblocker` are the in-loop companions a coding agent
 consults; `check-my-agents` is the one-shot debrief.
 
 Examples:
 
-- `Run the agent-watcher skill, use Opus subagents`
-- `Watch all my sessions for scope creep and self-blocking, Sol xhigh for the watchers`
+- `Run the watcher`
 
 ### `fresh-consult`
 
@@ -584,7 +621,7 @@ workspace-state checks, and synthesis.
 
 For an external consult, the user supplies enough information to resolve the
 runtime, model/profile, and effort, or the skill asks once. An omitted Codex
-model defaults to `gpt-6-astra`, and an omitted effort on that Astra lane
+model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane
 defaults to `xhigh`. Bare Kimi defaults to `kimi-code/k3` at `max`; natural
 Grok wording selects `grok-4.6` and still requires an explicit effort. Exact
 versions and profiles are preserved without silent downgrade or provider
@@ -602,7 +639,7 @@ host child handle and return contract. Monitor long work patiently.
 
 Examples:
 
-- `Use $fresh-consult with Codex gpt-6-astra xhigh to audit whether this plan is complete`
+- `Use $fresh-consult with Codex gpt-6.1-sol xhigh to audit whether this plan is complete`
 - `Use $fresh-consult with Fugu Ultra xhigh to audit whether this plan is complete`
 - `Use $fresh-consult with Claude Fable 5.1 high for a cold read of this skill flow`
 - `Use $fresh-consult with Kimi K3 max for a cold read of this skill flow`
@@ -627,13 +664,13 @@ same-host work uses native children directly. The adapter preserves exact model
 resolution, CLI invocation, namespaced receipts, shared-worktree reporting, and
 exact-handle resume.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6-astra`, `GPT56SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. An omitted Codex model defaults to `gpt-6-astra`, and an omitted effort on that Astra lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6.1-sol`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. An omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
 Examples:
 
-- `Use $agent-delegate with Codex gpt-6-astra xhigh to implement this README and Makefile update`
+- `Use $agent-delegate with Codex gpt-6.1-sol xhigh to implement this README and Makefile update`
 - `Use $agent-delegate with Fugu high to implement this README and Makefile update`
 - `Use $agent-delegate with Claude Fable 5.1 high to fix this failing test`
 - `Use $agent-delegate with Kimi K3 max to fix this failing test`
@@ -698,7 +735,7 @@ before dispatch when done-state or frozen scope is not defensible; the
 readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is Codex
-`gpt-6-astra` at `xhigh`, with one-word swaps to Kimi, Grok, Cursor, or
+`gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi, Grok, Cursor, or
 Claude, and it covers every heavy role: implementation, research,
 verification, any requested cynical review, and the cold verifier. That
 profile runs on a native child when the host can reach the model in its child
@@ -734,7 +771,7 @@ Examples:
 
 - `Use $conductor to implement docs/PAYMENTS_MIGRATION_2026-07-01.md end to end`
 - `Use $conductor: here is the outcome I need — decompose it, have the fleet research, get my approval on scope, then drive it to done`
-- `Use $conductor to drive phases 2-4 of docs/example-plan.md with two Codex gpt-5.6-luna medium workers; you review everything`
+- `Use $conductor to drive phases 2-4 of docs/example-plan.md with two Codex gpt-6-luna medium workers; you review everything`
 - `Use $conductor terra on docs/example-plan.md`
 
 Practical rule:
@@ -756,7 +793,7 @@ default topology, and no deterministic runner or controller is added.
 The user names the participant identities. Native roles use only model
 capabilities the host can confirm; an unavailable load-bearing identity selects
 the external lane. External shorthand follows the shared exact model resolver:
-bare Codex selects `gpt-6-astra` at `xhigh`, bare Kimi selects `kimi-code/k3`
+bare Codex selects `gpt-6.1-sol` at `xhigh`, bare Kimi selects `kimi-code/k3`
 at `max`, and natural Grok wording selects `grok-4.6` while retaining Grok's
 explicit-effort requirement.
 
@@ -769,11 +806,11 @@ preserve exact host child handles. Both are read-only and parent-integrated.
 
 Examples:
 
-- `Use $model-consensus with Claude Fable 5.1 high and Codex gpt-6-astra xhigh to find the simplest architecture for this repo change`
+- `Use $model-consensus with Claude Fable 5.1 high and Codex gpt-6.1-sol xhigh to find the simplest architecture for this repo change`
 - `Use $model-consensus with Fugu Ultra xhigh and Claude Fable 5.1 high to test this plan`
 - `Use $model-consensus with Kimi K3 max and Grok 4.6 high to test this plan`
-- `Use $model-consensus with Codex gpt-6-astra xhigh in adversarial mode against Claude Sonnet 4.6 high; use an external Claude participant if the active host cannot confirm that exact native model`
-- `Use $model-consensus with gpt-6-astra xhigh and Opus 4.7 max to read everything and figure out why this training path is failing`
+- `Use $model-consensus with Codex gpt-6.1-sol xhigh in adversarial mode against Claude Sonnet 4.6 high; use an external Claude participant if the active host cannot confirm that exact native model`
+- `Use $model-consensus with gpt-6.1-sol xhigh and Opus 4.7 max to read everything and figure out why this training path is failing`
 - `Use $model-consensus to have two models iterate on this concept until they agree or name the unresolved tradeoff`
 
 Practical rule:
@@ -902,6 +939,36 @@ Practical rule:
 - Use `cynical-architecture-review` when accidental architecture and
   subtraction are the job.
 - Use `arch-docs` for docs-only cleanup.
+
+### `overbuild-audit`
+
+Use when the user asks whether a plan, PR, branch, diff, or in-flight work is
+overbuilt, where we are overbuilding, what to rip out, or whether scope crept.
+It quotes the user's ask, traces every planned or built piece to it, weighs
+the rest against six families of overbuild, and returns a cut list with the
+simple version of each piece and what cutting saves. It is one pass,
+subtraction only, and never cuts asked-for scope; those items go to the user
+as questions.
+
+Delivery and planning lanes run it themselves: `issue-to-pr`,
+`epic-to-prs`, `conductor`, `arch-step`, `miniarch-step`,
+`arch-mini-plan`, `lilarch`, `plan-implement`, and `bugs-flow` audit their
+written plan before building and their diff before the final review. The
+review skills use its type catalog for their overbuild and subtraction lenses.
+
+Examples:
+
+- `Use $overbuild-audit on docs/PLAN.md: where are we overbuilding?`
+- `Is this PR overbuilt relative to what I asked for? What do we rip out?`
+- `What did we build here that I didn't ask for?`
+
+Practical rule:
+
+- Use `overbuild-audit` when there is a plan or change to measure against an
+  ask.
+- Use `startup-pragmatism` when the agent's decision frame needs a reset.
+- Use `cynical-cruft-removal` for a repo-wide low-value artifact sweep with
+  no particular ask.
 
 ### `exhaustive-code-review`
 

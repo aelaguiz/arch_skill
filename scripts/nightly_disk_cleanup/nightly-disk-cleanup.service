@@ -1,0 +1,10 @@
+[Unit]
+Description=Nightly home server disk cleanup with Sol medium
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/aelaguiz/.local/bin/nightly-disk-cleanup home amir-server /home/aelaguiz/.config/disk-cleanup/mission.md
+TimeoutStartSec=21min
+TimeoutStopSec=30s
+KillMode=control-group
+Nice=10

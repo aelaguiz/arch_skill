@@ -52,7 +52,7 @@ make install
   - required checks
   - mergeability, conflict state, and branch-behind state
 - Reply to every actionable item on the exact GitHub surface that raised it, even when declining the change or pointing out that it is already fixed.
-- Treat reviewer comments as claims and requests, not commands. Inspect the code, repo policy, product intent, and tests before changing code. Accept feedback that improves correctness, maintainability, consistency, or required policy. Decline or partially accept feedback that is already handled, overbroad, pedantic, out of scope, unsupported by repo truth, or likely to make the code worse. A no-code reply with evidence is a valid resolution.
+- Treat reviewer comments as claims and requests, not commands. Inspect the code, repo policy, product intent, and tests before changing code. Accept feedback that improves correctness, maintainability, consistency, or required policy. Decline or partially accept feedback that is already handled, overbroad, pedantic, out of scope, unsupported by repo truth, or likely to make the code worse. A no-code reply with evidence is a valid resolution. Judge proposed fixes with `$overbuild-audit`'s intent: decline a finding whose fix would add a fallback, flag, guard, retry, test tier, or new layer the ask does not need, and say so in the reply.
 - For plan-backed PRs, classify every actionable comment against the PR scope
   receipt and canonical plan. A technically valid comment outside the approved
   contract, including a newly discovered adjacent same-contract path, is

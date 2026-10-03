@@ -84,7 +84,7 @@ facts decide what its children can do:
   support from a registry map: `anthropic/claude-fable-5-1` accepts `high`
   although its registry entry does not list it.
 - **Reach is still per-installation.** A Prime Agent parent on an open-source
-  model was observed admitting native children on `openai-codex/gpt-5.6-luna` and
+  model was observed admitting native children on `openai-codex/gpt-6-luna` and
   `sakana/fugu-max`, because that installation is authenticated for those
   providers. The same request on another installation may fail.
 

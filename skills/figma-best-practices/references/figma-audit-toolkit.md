@@ -27,6 +27,22 @@ First classify what is knowable:
   state, tokens/assets, Code Connect/Dev Resources, or user-provided intent
 - blocked evidence: what is missing and how that limits the verdict
 
+Resolve scope from the user's intended result and the supplied artifacts
+together. Casual format names and rough counts help locate the work; they do
+not outweigh a concrete source that shows what the result must contain.
+Inspect the source set before deciding which artifacts belong. Otherwise a
+tidy classification can quietly omit work, and the user has to discover the
+gap after the agent calls the set complete.
+
+For example, a deck described as a few pop-ups may also introduce a plan
+screen that explains the same offer. A request to repair a checkout flow may
+include a payment confirmation even though it appears after payment. A component
+audit may include a responsive variant shown only in a handoff attachment.
+Judge each by its role in the requested result, while keeping existing
+screens and competitor research distinct from new target work. Ask yourself:
+would leaving this artifact out make the delivered result incomplete for the
+person who requested it?
+
 Ask only when missing information blocks the requested confidence level. If the
 task can proceed at a lower confidence, proceed and name the boundary.
 

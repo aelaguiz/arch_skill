@@ -31,7 +31,8 @@ make install
 - The user asks for an unblocker, authorizer, or end-blocker over a long,
   delegated, or overnight run.
 - A skill authoring a persistent goal for a long run (`epic-to-prs`,
-  `issue-to-pr`, goal loops) arms one into the goal prompt.
+  `issue-to-pr`, `milestone-to-pr`, goal loops) arms one into the goal
+  prompt.
 - Within the selected workflow, workers need an existing-authority check.
 
 ## When not to use

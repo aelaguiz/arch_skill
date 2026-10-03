@@ -90,8 +90,8 @@ Claude Code, and Gemini.
 
 ## Skill Routing
 
-- Default Codex to `gpt-6-astra` at `xhigh`. Redirect casual Sol references
-  to that default; honor deliberate exact model and effort choices.
+- Default Codex to `gpt-6.1-sol` at `xhigh`. Bare `sol` selects that model;
+  preserve explicit model versions and effort choices.
 - Elective lifecycles, persistent loops, and specialist reviews run only when
   explicitly selected or required by binding task instructions. Ordinary bug
   fixes, features, plan implementation, and code review stay ordinary. Do not
@@ -104,9 +104,9 @@ Claude Code, and Gemini.
 - Use `$skill-authoring` for skill packages, `$agents-md-authoring` for
   AGENTS files, and `$prompt-authoring` for actual model-facing prompts.
 - Use `$browseros` before BrowserOS calls; Codex CLI browser work uses only
-  BrowserOS and existing windows. Protect the user's foreground focus: work
-  through viable background methods first; necessary brief foreground use
-  needs no separate approval. Keep verifying the target profile and window.
+  BrowserOS and existing windows. Never take the user's foreground focus: a
+  hidden page that will not render or respond gets focus emulation, not a tab
+  or window activation. Keep verifying the target profile and window.
 - Use `$herdr` for requested live Herdr control and `$herdr-helper` for
   cross-session migration. Use `$agent-history` for past session evidence,
   never as the default for live status or streaming.

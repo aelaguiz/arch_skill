@@ -17,7 +17,8 @@ outcome, or browser work divided among agents.
 Use the existing task notes; no new tracking system is needed. Record baseline
 resources, the verified profile/window/page, adopted pages and allowed use,
 created resources and exact local artifact paths, and retained or unknown state.
-When focus changes, record only browser state the tools can actually observe.
+When a site action changes the selected tab or opens a window, record only the
+browser state the tools can actually observe.
 
 At completion reconcile unique resources, not the number of calls:
 
@@ -49,8 +50,8 @@ concurrent user or agent page merely because it appeared after the baseline;
 record a possibly task-caused but unattributable resource as unknown/orphan.
 
 Browser lifecycle calls change shared state. A timeout during `tabs new` or
-`close`, navigation, `windows create`, `close`, `activate`, or
-`set_visibility`, or a tab-group change has an unknown outcome:
+`close`, navigation, `windows close`, `set_visibility`, or a tab-group
+change has an unknown outcome:
 
 - after a timed-out open, relist before opening another page;
 - after a timed-out close, prove whether the page disappeared and never reuse
@@ -69,9 +70,10 @@ task-created and intended to close. If the live schema cannot establish page
 membership, close only individually verified task-created pages and retain or
 report the window rather than risking a user or other-agent page.
 
-Track temporary focus and visibility changes. Restore a pre-existing window's
-visibility when safe unless the user requested the final visible state. Never
-close a pre-existing window.
+Track visibility changes and focus emulation you turn on. Restore a
+pre-existing window's visibility when safe unless the user requested the final
+visible state, and turn emulation off on pages you keep. Never close a
+pre-existing window.
 
 Task calls should deliberately create zero hidden surfaces. If a task action
 unexpectedly causes one, attribute it from the action receipt and current
@@ -80,9 +82,9 @@ when that window is task-controlled and its current page membership and
 profile context are proved safe to reveal. If only the page is proved or
 window membership is unknown, close only the verified page when safe or retain
 and report it; do not expose the whole window.
-Keep window visibility, selected/active BrowserOS state, and desktop
-application focus separate: restore and report each only when the applicable
-tool evidence proves it.
+Report window visibility and site-caused changes to the selected tab or window
+separately, each only as the tool evidence shows it. Do not activate anything
+to restore them.
 
 ## Mutation safety
 
@@ -118,7 +120,7 @@ change another user-visible choice merely because it simplifies recovery.
 | One page hangs after a long evaluation | Execution still running | Stop stacking calls on that target. |
 | HTTP 500/503 or closed channel | Transport/server lifecycle | Wait once, rediscover, and issue one small read-only tab probe. |
 | Login page or account chooser | Wrong window until proved otherwise | Prove the profile; outside `Work`, reopen the site in `Work` (`SKILL.md`, "Logins, SSO, and OAuth"). |
-| CAPTCHA or 2FA | Manual security gate | Pause for the user. |
+| CAPTCHA, code prompt, or password | Sign-in gate | Work it yourself (`logins-and-oauth.md`, "Gates: work them yourself"). Only a step that needs the user's body or a secret only they hold goes to the user, after everything else is done. |
 
 Use this recovery order:
 
@@ -147,20 +149,17 @@ or creates its own page, records exact paths for its own local outputs, and
 returns created, closed or removed, retained, and unknown resource counts.
 Never let two agents act or poll the same page concurrently.
 
-Designate one focus owner for any phase that can activate a window,
-foreground-create a tab, create a visible window directly or implicitly,
-show-and-activate a window, or close a selected page. Serialize those
-operations. Other agents may continue independent background work, but must
-not make foreground-capable calls. Focus ownership does not transfer page
-ownership.
+No agent takes foreground focus (`SKILL.md`), so there is no focus phase to
+coordinate. Focus emulation is set per page by the agent that owns that page.
 
 Saved-artifact analysis can be parallel only after authorization and
 sanitization. Serialize large screenshots and long evaluations so agents do
 not overload the shared BrowserOS transport.
 
 If a child leaves a page open, resume that exact child for cleanup. If it
-cannot be resumed, report the page as an orphan for manual cleanup. A fresh
-agent or deeper rail must not defeat the ownership boundary.
+cannot be resumed, the parent closes the pages that child's receipt records
+creating, after matching each live page to the receipt. A page no receipt
+explains stays an orphan to report; nobody closes a page on a guess.
 
 ## Completion receipt
 
@@ -180,22 +179,21 @@ Pre-existing pages adopted/reused: <unique count>
 Working profile/window/page: <verified safe profile label and current handles>
 Pages: created <n> = closed <n> + retained <n> + unknown/orphan <n>
 Hidden browser surfaces: deliberately created 0; task-caused observed <n>; unknown <n or not inventoried>
-Foreground takeover: <none deliberately made, intentional, unexpected, or unknown>
+Focus: none taken; site-caused tab or window changes <none, or which>
 ```
 
 Add resource reconciliation for windows, groups, or artifacts only when the
-task touched them. Add browser window/tab state, window visibility, and
-desktop app focus when focus- or visibility-capable work occurred or those
-states were inventoried. Add retained-state or unknown/orphan detail only when
+task touched them. Add browser window/tab state and window visibility when a
+site action changed them, visibility work occurred, or those states were
+inventoried. Add retained-state or unknown/orphan detail only when
 nonempty. Never fabricate a zero for shared state that was not inventoried.
 
 ```text
 Windows: created <n> = closed <n> + retained <n> + unknown/orphan <n>
 Groups: created <n> = removed <n> + retained <n> + unknown <n>
 Artifacts: created <n> = removed <n> + retained <n> + unknown <n>
-Browser window/tab state: <unchanged, restored, changed/unrestored, intentionally retained, or unknown>
+Browser window/tab state: <unchanged, changed by a site action, intentionally retained, or unknown>
 Window visibility: <unchanged, restored, changed/unrestored, intentionally retained, or unknown>
-Desktop app focus: <not changed deliberately, user-controlled, or not observable>
 Retained or unknown state: <safe identity, reason, and risk>
 ```
 

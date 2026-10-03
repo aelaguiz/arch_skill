@@ -86,6 +86,7 @@ make install
 - Treat skill prose as prompt prose. Keep it intent-driven and anti-heuristic; leave packaging, trigger metadata, and runtime boundaries to `$skill-authoring`.
 - Fix the right section instead of smearing new guidance across the whole prompt.
 - Preserve useful prompt magic during refactors by extracting the durable principle and demoting brittle heuristics into examples, rationale, or litmus tests.
+- When a user's correction is being turned into prompt, skill, or brief text, follow `$skill-authoring`'s `references/corrections-to-intuitions.md`: teach the intuition and how far it reaches, not a rule shaped like the incident.
 - Work only from the prompt and the references listed here; do not assume hidden supporting material.
 - If an edit or audit needs missing prompt text, ask for that text. If a creation ask gives a useful brief, proceed from the brief instead of inventing prerequisites.
 

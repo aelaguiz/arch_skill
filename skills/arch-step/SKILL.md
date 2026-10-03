@@ -44,6 +44,11 @@ The primary object is one canonical full-arch plan doc. Commands exist to move t
   evidenced minimal same-contract convergence closure; sign off that closure
   before implementation. After sign-off, only explicit human approval expands
   scope. Apply `../_shared/scope-and-convergence.md`.
+- Hold every plan and implementation to `$overbuild-audit`'s intent: exactly
+  the human outcome, the simplest way that works. Run it on the phase plan
+  before calling Section 7 implementation-ready, and on the code in
+  `audit-implementation`. Its cuts remove unauthorized or excess work only;
+  a cut that touches approved behavior follows the hard stop below.
 - Correctness and approved intent outrank speed, scope trimming, or "minimum implementation."
 - The agent has no authority to cut requested behavior, acceptance criteria, or required implementation work unless the user or the governing plan already marked that item out of scope.
 - Cutting, downgrading, deferring, or "simplifying away" approved behavior, acceptance criteria, or phase obligations is a hard stop. Surface to the user with what you want to cut, why, what Section 0 / TL;DR / Section 7 say about it, and the exact approval you need. Do not proceed until the user explicitly approves; record the approved cut in the Decision Log using the `Scope cut (user-approved)` shape.

@@ -41,8 +41,8 @@ Example table:
 
 ```text
 epic_planner: claude fable 5.1 high
-implementation_worker: codex gpt-6-astra xhigh
-critic: codex gpt-6-astra xhigh
+implementation_worker: codex gpt-6.1-sol xhigh
+critic: codex gpt-6.1-sol xhigh
 poll_seconds: 180
 quiet_floor_seconds: 900
 stuck_floor_seconds: 1800
@@ -77,7 +77,7 @@ the same doctrine used by Stepwise and fresh-consult:
 - preserve model family and numeric version exactly
 - infer runtime only from unambiguous family evidence
 - accept `astra`, `luna`, and `terra` as exact Codex models and use
-  `gpt-6-astra` when a Codex role omits its model; use `xhigh` when that Astra
+  `gpt-6.1-sol` when a Codex role omits its model; use `xhigh` when that Sol
   role also omits effort
 - inspect `codex debug models` when ordinary Codex model availability matters
 - resolve `fugu` and `fugu-xhigh` as Codex profiles, not model-list ids
@@ -103,14 +103,14 @@ that deliberate value selects the external harness. They are valid when they
 include a role:
 
 - "planner on Claude Fable 5.1 high"
-- "implementation worker on Codex gpt-6-astra xhigh"
+- "implementation worker on Codex gpt-6.1-sol xhigh"
 - "implementation worker on Luna xhigh"
 - "critic on Terra high"
 - "implementation worker on Codex Fugu Ultra xhigh"
 - "planner on Grok Build high"
 - "implementation worker on Kimi K3 max"
-- "critics on gpt-6-astra xhigh"
-- "codex gpt-6-astra high everywhere"
+- "critics on gpt-6.1-sol xhigh"
+- "codex gpt-6.1-sol high everywhere"
 
 If the user gives one complete "everywhere" value, the orchestrator may fill
 all three required roles with that value, but it must announce the interpretation before
@@ -120,14 +120,14 @@ running.
 
 Treat model text as intent, not a loose alias:
 
-- `astra`, `luna`, and `terra` normalize to `gpt-6-astra`, `gpt-5.6-luna`, and
-  `gpt-5.6-terra`. Compact forms such as `GPT56LUNAXI` and `GPT56TERRAXI`
+- `sol`, `astra`, `luna`, and `terra` normalize to `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and
+  `gpt-5.6-terra`. Compact forms such as `GPT6LUNAXI` and `GPT56TERRAXI`
   preserve the named variant and imply `xhigh`. A Codex role with no model or
-  profile uses `gpt-6-astra`, reported with `model_source=default`. If that Astra
+  profile uses `gpt-6.1-sol`, reported with `model_source=default`. If that Sol
   role also omits effort, use `xhigh` and report
   `effort_source=preference_default`.
-- An explicit `gpt-5.6-luna` may normalize to `gpt-5.6-luna`; it must not
-  become `gpt-6-astra`, `gpt-5.4`, or `gpt-5.5`.
+- An explicit `gpt-6-luna` may normalize to `gpt-6-luna`; it must not
+  become `gpt-6.1-sol`, `gpt-5.4`, or `gpt-5.5`.
 - `gpt 5.3 codex` may normalize to `gpt-5.3-codex`.
 - `fugu` and `fugu-ultra` are Codex profile names; preserve them as `fugu` and
   `fugu-ultra` and launch them with `codex exec -p`.
@@ -147,7 +147,7 @@ Treat model text as intent, not a loose alias:
   explicitly names Cursor Agent or Grok in the same execution choice.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-6-astra`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6.1-sol`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - Family-only supported Claude aliases such as `fable` or `opus` are allowed
   only when the user did not pin a version.
@@ -179,10 +179,10 @@ fallback. Kimi critics receive the verdict schema inline in their prompt.
 Always print the raw-to-resolved mapping before execution:
 
 ```text
-planner: "codex" -> runtime=codex, model=gpt-6-astra, effort=xhigh, model_source=default, effort_source=preference_default
-critic: "codex gpt-6-astra xhigh" -> runtime=codex, model=gpt-6-astra, effort=xhigh
-implementation_worker: "codex high" -> runtime=codex, model=gpt-6-astra, effort=high, model_source=default
-implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-5.6-luna, effort=xhigh
+planner: "codex" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh, model_source=default, effort_source=preference_default
+critic: "codex gpt-6.1-sol xhigh" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh
+implementation_worker: "codex high" -> runtime=codex, model=gpt-6.1-sol, effort=high, model_source=default
+implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-6-luna, effort=xhigh
 critic: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
 critic: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 planner: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high
@@ -210,8 +210,8 @@ choices control real external processes and model budget.
 
 Please give runtime plus any non-default effort for each role and a
 model/profile outside the Codex and Kimi defaults, or say which roles should be
-"same as" another role. A Codex role with no model uses gpt-6-astra, and that
-Astra role uses xhigh when effort is omitted; a Kimi role uses kimi-code/k3 and
+"same as" another role. A Codex role with no model uses gpt-6.1-sol, and that
+Sol role uses xhigh when effort is omitted; a Kimi role uses kimi-code/k3 and
 defaults an omitted effort to max. Ordinary critic failures resume the exact
 relevant planner or implementation worker session; there is no separate
 repair-worker choice in new external-harness policies.
@@ -239,4 +239,4 @@ Changing any role mid-run creates a new policy hash. The orchestrator must log
 the change in the epic Decision Log and apply it only to future child runs.
 Past worker and critic artifacts keep the invocation they actually used.
 
-Apply the Codex preference in `../../_shared/agent-orchestration-policy.md` before resolving a Sol request: recommend Astra, use it for an accidental reference, and retain Sol only for a deliberate selection. The resolver preserves explicit Sol ids and reports the recommendation; it does not infer intent.
+Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: default omitted Codex models and bare `sol` to `gpt-6.1-sol` at `xhigh`. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.

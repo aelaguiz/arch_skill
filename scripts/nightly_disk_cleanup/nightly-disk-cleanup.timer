@@ -1,0 +1,10 @@
+[Unit]
+Description=Clean home root and data drives every night
+
+[Timer]
+OnCalendar=*-*-* 01:45:00 America/Chicago
+Persistent=true
+Unit=nightly-disk-cleanup.service
+
+[Install]
+WantedBy=timers.target

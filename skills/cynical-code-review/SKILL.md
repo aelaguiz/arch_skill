@@ -153,7 +153,8 @@ waves, run external review subprocesses, or decide the user's broader workflow.
 9. Check whether the implementation created machinery that hides the old
    problem: harnesses, policy layers, flag matrices, wrappers, fake
    abstractions, process receipts, or proof systems that add concepts without
-   making the intended code behavior true.
+   making the intended code behavior true. Use `$overbuild-audit`'s intent and
+   type catalog for this and for the overbuild/scope slice.
 10. Review proof surfaces only as code-reality claims. Changed tests, fixtures,
     docs, worklogs, examples, comments, prompts, logs, and status blocks matter
     when they prove the wrong thing, mask code gaps, keep old paths alive, or

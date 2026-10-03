@@ -1,0 +1,6 @@
+interface:
+  display_name: "Milestone To PR"
+  short_description: "Spec milestone delivered as one PR, reviewed once"
+  default_prompt: "Use $milestone-to-pr on the named milestone. Hold its north star: the user gets what they asked for, working, as soon as it can be done. Read seats exactly as the user names them; with none named, the final is GPT-6 Astra Pro and the primary is a native child on your own model in a clean context. Never merge or release."
+policy:
+  allow_implicit_invocation: false

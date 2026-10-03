@@ -128,6 +128,7 @@ resolved or required code cannot be read.
 For plan-backed work with recoverable scope history, compare the initial human
 scope and pre-approval convergence closure with plan revisions, findings,
 worklogs, and final code. A later plan edit cannot retroactively authorize code.
+Use `$overbuild-audit`'s intent and type catalog to find built excess.
 Treat unauthorized built scope as a required `IMP-*` subtraction repair and
 force `not-approved`, even if it works or tests pass. A new adjacent path found
 by this audit may block approval but cannot be added to repair scope without a

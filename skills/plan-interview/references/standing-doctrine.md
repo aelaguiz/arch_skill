@@ -38,17 +38,16 @@ are never re-interviewed.
 
 | Role | Default |
 |---|---|
-| Implementation | Codex `gpt-6-astra` at `xhigh`, conducted via `$conductor` |
-| Three cynical reviews | Terra (`gpt-5.6-terra`) xhigh, new clean sessions |
-| Adversarial implementation reviewer (post-build) | Fable 5.1 xhigh, at most 2 rounds |
-| Optional extra cheap reviewer | Luna Max |
-| PR authoring + follow-through | Astra xhigh delivery worker, never the parent |
-| Secrets, keys, credentials | An Opus 5 sub-agent scoped to that step only |
+| Implementation | Codex `gpt-6.1-sol` at `xhigh`, conducted via `$conductor` |
+| Three cynical reviews | GPT-6.1 Sol (`gpt-6.1-sol`) xhigh, new clean sessions |
+| Adversarial implementation reviewer (post-build) | The adversarial post-build reviewer from the routing table in `../../_shared/agent-orchestration-policy.md`, at most 2 rounds |
+| Optional extra cheap reviewer | GPT-6.1 Sol high |
+| PR authoring + follow-through | GPT-6.1 Sol xhigh delivery worker, never the parent |
 | Usage limits | `aim codex use` rotation + exact-session resume, never a model swap |
 | Worktree | Cut off origin/main; path pinned in the plan document |
 | Simulator (mobile work) | A new, renamed, dedicated sim pinned in the document — never a booted one taken over |
 | Branching | One branch, one PR; the PR happens when the work is fully done |
-| Plan review before dispatch | Astra xhigh and/or Fable 5.1 xhigh, 1–3 rounds hard cap |
+| Plan review before dispatch | The plan reviewer from the same routing table, 1–3 rounds hard cap |
 
 ## Autonomy defaults (attendance + one question)
 

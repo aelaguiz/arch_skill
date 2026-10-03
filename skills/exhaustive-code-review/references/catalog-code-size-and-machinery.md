@@ -13,7 +13,8 @@ verification machinery. C-40 owns the risk the change carries against how often
 the defect it answers occurs and what one occurrence costs. Report each defect
 once, under the check whose comparison found it. The output of every check here
 is a cut list naming the smaller sufficient change, never a verdict on how much
-work was done.
+work was done. Calibrate these checks with `$overbuild-audit`'s intent and type
+catalog.
 
 ## C-08 Change size against the ask
 

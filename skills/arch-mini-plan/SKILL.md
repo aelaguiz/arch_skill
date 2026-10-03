@@ -72,7 +72,9 @@ binding task instruction requiring it.
    - target architecture
    - call-site audit
    - phase plan
-4. Stop with a clear "ready to implement" verdict and the recommended next move.
+4. Run `$overbuild-audit` on the phase plan against the North Star and the
+   human anchors, and remove what does not trace to them.
+5. Stop with a clear "ready to implement" verdict and the recommended next move.
 
 ## Output expectations
 

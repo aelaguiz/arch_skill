@@ -187,7 +187,7 @@ Must happen every run:
   explicit external harness, the user supplies role execution for
   `epic_planner`, `implementation_worker`, and `critic`; ask once for missing
   load-bearing values. An omitted model on an external Codex role defaults to
-  `gpt-6-astra`, and an omitted effort on that Astra role defaults to `xhigh`.
+  `gpt-6.1-sol`, and an omitted effort on that Sol role defaults to `xhigh`.
   An external Kimi role defaults to `kimi-code/k3` and the model-default `max`
   effort; other runtimes, Codex models, and efforts never silently default.
   Natural Grok wording resolves to `grok-4.6`, while explicitly named legacy

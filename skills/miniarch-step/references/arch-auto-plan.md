@@ -93,7 +93,7 @@ performed, unresolved assumptions, and confirmation that it made no writes and
 started no external agents. Keep the parent's fanout proportional to independent
 lenses, host slots, collision risk, and its capacity to inspect every return.
 
-`gpt-5.4-mini` with `xhigh` reasoning is the preferred miniarch planning
+`gpt-6.1-sol` with `xhigh` reasoning is the preferred miniarch planning
 profile only when the active native schema can select and confirm both. If it
 cannot, use the inherited native capability and report only what the host can
 confirm. When exact model identity is load-bearing, an external exact-model

@@ -63,9 +63,9 @@ repeat it; retain only a safe title or origin/path marker. Close a
 task-created callback page only after consumption is proved.
 
 Secure password, payment, recovery-code, and API-key fields may reject normal
-fill. Never put the secret into `evaluate`, `run`, CDP, shell, logs, or a
-receipt. Ask for manual entry or use an explicitly approved opaque mechanism;
-verify only masked presence or application success.
+fill. Enter the value through `act`, with its keystroke input when `fill` is
+rejected, and verify only masked presence or application success. Never put
+the secret into `evaluate`, `run`, CDP, shell, logs, or a receipt.
 
 BrowserOS output files can contain raw HTML, account data, signed resource
 URLs, or tokens. Record each task-created output's exact returned path,
@@ -129,8 +129,10 @@ ChatGPT project file mechanics (verify against live behavior):
   clicks on background tabs. Dispatch synthetic `PointerEvent`
   `pointerdown`/`pointerup` plus `.click()` via `evaluate` on the resolved
   element, then verify the menu or dialog actually mounted before acting on
-  it. React inputs need the native value setter plus an `input` event;
-  `element.value = x` alone is ignored.
+  it. A menu closed in a background tab stays half-closed until focus
+  emulation or a reload (`profiles-and-focus.md`). React inputs need the
+  native value setter plus an `input` event; `element.value = x` alone is
+  ignored.
 - Project file uploads go through the visible file input on the project
   Sources tab (`upload` with that ref, batches of 10 work). Verify server
   registration by re-fetching the gizmo file list and comparing byte sizes;
@@ -153,8 +155,9 @@ Follow live discovery instead of guessing an action:
 6. Use connector documentation search only when discovery is insufficient.
 
 Request a fresh authentication URL only when the failure is specifically an
-authentication failure, then wait for explicit user confirmation before
-retrying. A 404, 500, schema error, or application error is not proof that
+authentication failure. Open it yourself in `Work` with `newPage`, complete
+the consent under `logins-and-oauth.md`, confirm with the connector inventory
+tool, and retry. A 404, 500, schema error, or application error is not proof that
 authentication is stale. Connector mutations follow the same exact-target,
 unknown-outcome, readback, secret, and independent-verification rules as page
 mutations.

@@ -151,7 +151,8 @@ workflow below.
    or path families and integrate every result in the parent.
 5. Run the required lenses from `references/review-lenses.md`.
 6. Challenge the plan for simpler architecture, fewer live concepts, better
-   ownership, depth-first proof, delete work, and drift-proof coupling.
+   ownership, depth-first proof, delete work, and drift-proof coupling. Use
+   `$overbuild-audit`'s intent and type catalog for the subtraction findings.
 7. Update the audit log when applicable.
 8. Return a findings-first verdict using `references/output-contract.md`.
 

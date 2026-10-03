@@ -1053,7 +1053,7 @@ class CodexSchemaNormalization(unittest.TestCase):
                     "--prompt-file",
                     str(prompt),
                     "--model",
-                    "gpt-5.6-sol",
+                    "gpt-6-sol",
                     "--effort",
                     "high",
                     "--schema-file",
@@ -1095,7 +1095,7 @@ class InitRunAndPromptArtifacts(unittest.TestCase):
                 "execution_defaults": {
                     "step": {
                         "runtime": "codex",
-                        "model": "gpt-5.6-sol",
+                        "model": "gpt-6-sol",
                         "effort": "high",
                         "source": "user",
                     },
@@ -1428,7 +1428,7 @@ class DiagnosticCommand(unittest.TestCase):
                     "--prompt-file",
                     str(prompt),
                     "--model",
-                    "gpt-5.6-sol",
+                    "gpt-6-sol",
                     "--effort",
                     "high",
                     "--session-id",
