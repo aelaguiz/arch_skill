@@ -50,6 +50,13 @@ class NoArchSkillHooksInstallTests(unittest.TestCase):
         self.assertIn("delay-poll", removed)
         self.assertIn("wait", removed)
 
+    def test_utility_owned_eli10_is_neither_installed_nor_purged(self) -> None:
+        makefile = read(REPO_ROOT / "Makefile")
+
+        for variable in ["SKILLS", "CLAUDE_SKILLS", "GEMINI_SKILLS"]:
+            self.assertNotIn("eli10", make_var_words(makefile, variable))
+        self.assertNotIn("eli10", make_var_words(makefile, "REMOVED_SKILLS"))
+
     def test_codex_cleanup_removes_only_arch_skill_stop_hooks(self) -> None:
         module = load_script(
             REPO_ROOT / "skills/arch-step/scripts/upsert_codex_stop_hook.py"

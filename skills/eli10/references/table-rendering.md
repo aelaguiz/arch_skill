@@ -41,7 +41,7 @@ The table looks organized, but the reader still has to untangle wrapped prose.
 ```markdown
 | Area | File / Symbol | Pattern to adopt | Why | Scope |
 |---|---|---|---|---|
-| Shared per-kind doctrine | shared/prompts/playable_kind_selection_contract/AGENTS.prompt | One shared contract emitted into every kind skill | Prevents 32 packages from drifting on evidence posture, label-shim language, and "not good for" semantics | include |
+| Shared validation rules | docs/validation-policy.md | One contract used by every package | Prevents packages from inventing different evidence and failure rules | include |
 ```
 
 Why it fails:
@@ -55,17 +55,18 @@ Why it fails:
 Better ELI10 shape:
 
 ```text
-Pattern Consolidation Sweep
+Package Validation Cleanup
 
 ✅ Include now
-- Shared per-kind doctrine: emit one shared contract into every kind skill.
-  Why: prevents 32 packages from drifting on evidence posture and label-shim language.
+- Shared validation rules: keep one contract for every package.
+  Why: prevents evidence and failure rules from drifting between packages.
 
-- Existing hard-kind skills: add selection-fit sections without changing proof-owner flow.
-  Why: prevents duplicate selection packages from competing with proof specialists.
+- Existing package guides: point them to the shared contract without changing
+  each package's individual job.
+  Why: prevents duplicated rules from competing with the shared contract.
 
 ⚠️ Defer
-- MCP playable-author contexts: read as adjacent evidence only.
+- Runtime-specific adapters: inspect them as adjacent evidence only.
   Why: useful for contradictions, but too wide for this pass.
 
 Proof:
@@ -106,7 +107,7 @@ Bad:
 ```markdown
 | Step | Command | Why |
 |---|---|---|
-| Verify | npx skills check | Confirms the skill package still validates |
+| Verify | make check | Confirms the skill package still validates |
 ```
 
 Better:
@@ -114,7 +115,7 @@ Better:
 Verify the skill package:
 
 ```bash
-npx skills check
+make check
 ```
 
 Why: confirms the changed skill surface still validates.

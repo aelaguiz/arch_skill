@@ -78,8 +78,8 @@ Weak `eli10` output:
 - Spend the reader's attention carefully. Unstack dense nouns, unbury verbs,
   name actors, and put proof after meaning.
 - Define jargon deliberately. If the term matters, give a concrete explanation
-  and then keep the real term. Example: "AIVAT is the noise reducer; it tries
-  to separate poker skill from card luck."
+  and then keep the real term. Example: "A cache stampede is the surge that
+  happens when many requests rebuild the same expired value at once."
 - Use examples to teach the concept. Do not treat examples as a lookup table or
   a shape the next answer must copy.
 - Use emoji markers as scan markers, not decoration. Never put them inside
