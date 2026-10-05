@@ -1,0 +1,7 @@
+interface:
+  display_name: "Deck Authoring"
+  short_description: "Build decks Amir can flip through and understand cold"
+  default_prompt: "Use $deck-authoring to build this, fast, as a Google Slides deck in the Poker Skill Cobalt template that Amir can flip through and understand cold: the answer first, parts opened by section dividers, one point per slide, the real screen, chart, or mock on each slide, today beside every proposal, plain words, only checked facts, rendered and read once by a clean cold reader, then send the link without further rounds."
+
+policy:
+  allow_implicit_invocation: true

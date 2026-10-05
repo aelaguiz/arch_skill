@@ -87,6 +87,7 @@ Other shipped skills are:
 - `stepwise` — diagnostic orchestrator for ordered multi-step processes defined in another repo's doctrine; uses a new clean same-host native worker and critic when capable, resumes the exact worker for repair, and retains its subprocess machinery as the deliberate external lane
 - `spreadsheet-formatting` — makes Google Sheets and Excel workbooks readable, consistent, and formula-driven for a human reader
 - `readable-reports` — writes, rewrites, or audits reports, status updates, decks, sheet notes, and status answers so a smart, busy expert can parse them in one pass: full sentences, every thing named with its code after it, every PR or issue a labeled link, every status with its cause and next step, numbers with their comparison, answer first, no report-about-itself
+- `deck-authoring` — builds and revises Google Slides decks for Amir in the Poker Skill Cobalt template that he can flip through and understand cold: the answer first, parts opened by section dividers, one point per slide, the real screen, chart, or mock on the slide, today beside every proposal, plain words, only checked facts; it sends a usable draft fast instead of polishing, after one render-and-look pass and one clean cold read, and `readable-reports` does the words pass
 
 Examples in this repo use Codex `$skill` notation. In Claude Code, invoke the same skill as `/skill`.
 
