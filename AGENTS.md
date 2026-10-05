@@ -121,6 +121,9 @@ Claude Code, and Gemini.
   pass, or when the user says an artifact is confusing, dense, jargon-heavy,
   or a wall of text but must not be dumbed down. It owns the words, not the
   HTML theme, the spreadsheet grid, or the public-copy voice gate.
+- Use `$deck-authoring` to build or revise a slide deck: the flow, section
+  dividers, one point per slide, the visuals, the Cobalt build, and the cold
+  read. It calls `$readable-reports` for the words on each slide.
 
 ## Writing And Replies
 

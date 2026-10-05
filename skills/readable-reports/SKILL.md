@@ -44,6 +44,8 @@ This is a prompt-only skill. It ships doctrine and worked repairs; no scripts.
 - The HTML theme, CSS, or page chrome of a report: the report theme skill.
 - Spreadsheet layout, freeze panes, cell formats: `$spreadsheet-formatting`.
   This skill owns the words in a notes cell, not the grid.
+- Building or restructuring a slide deck: `$deck-authoring`. It owns the
+  deck's flow, slides, and visuals and calls this skill for the words.
 - Writing a prompt or a skill: `$prompt-authoring`, `$skill-authoring`.
 - Deciding what the report should find or recommend. Resolve the substance
   first; bring the result here.

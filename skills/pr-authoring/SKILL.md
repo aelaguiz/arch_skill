@@ -35,6 +35,21 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
 - Delete every placeholder and omit irrelevant sections. Never include template notes, old heading instructions, or empty checklist items.
 - Explain why the change exists and how it works. The code already shows what changed; the PR should make review faster and safer.
 - Do not invent verification, rollout, rollback, blast radius, metrics, or architecture facts. If evidence is missing, say what is known and what was not verified.
+  Check the substance of evidence before repeating its claim. A reviewer uses
+  a screenshot to judge what a user will experience, so inspect the image and
+  the capture's relationship to the real build, state and device. A working
+  URL, a decodable PNG or a passing test says nothing about that relationship.
+  A widget-test image with broken font glyphs cannot demonstrate the finished
+  screen; a polished admin preview can hide the customer's surrounding flow;
+  a desktop capture can miss the mobile layout the change affects. Seeded
+  account facts can make a real app state reachable, but explain the seed and
+  preserve the app's rendering and context. The reviewer may never have seen
+  the original screen. A clean after image can still make a restored layout
+  look like a redesign when the original is absent. When the evidence claims
+  a visible difference, show matching before and after states and explain
+  the difference beside them. Preserve shared context so a different account,
+  viewport or capture setup does not masquerade as a product change. Ask:
+  can this reader see what changed, and what can these artifacts substantiate?
 - For plan-backed work, include a compact scope receipt: canonical plan path,
   one-line human-authorized outcome, approved initial convergence closure or
   `none`, explicit human-approved expansions or `none`, and material
@@ -91,7 +106,7 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
 2. **Choose the PR shape.** Use the vendored scaffold to pick the minimum set of sections that fit the change. Prefer a shorter precise PR over a comprehensive but noisy one.
 3. **Write the title.** Make it specific and reviewable. Avoid template headings, vague verbs, and implementation-only titles when the user impact is clearer.
 4. **Write the body.** Include the real problem or motivation, approach, notable implementation details, blast radius, verification, and follow-up boundaries that matter for this PR.
-5. **Validate the body.** Remove placeholders, unsupported claims, irrelevant template sections, stale file names, and any text that could have been written without reading the diff. Confirm the `## User-Facing Changes` section is present and truthful, and fetch every embedded image URL to confirm it renders.
+5. **Validate the body.** Remove placeholders, unsupported claims, irrelevant template sections, stale file names, and any text that could have been written without reading the diff. Confirm the `## User-Facing Changes` section is present and truthful, and open every embedded image to judge what it shows before verifying its published URL.
    Confirm the diff does not exceed the scope receipt. If it does, stop for
    subtraction or a human approval/re-approval instead of publishing a laundered
    scope story.
