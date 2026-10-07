@@ -140,6 +140,14 @@ pdftoppm -r 110 -png render/deck.pdf render/p
   adds, edits, and reorders slides by hand: keep any slide your builder did not
   make, copy his order into your slide list, and never let a build delete or
   overwrite his work.
+- A slide your builder made can carry his edits too. Store a fingerprint of each
+  slide the builder writes (its elements, text, and notes), and compare it with
+  the live slide before rebuilding. If they differ, a rebuild would wipe his
+  edits: make any change that slide needs on the live slide instead, and leave
+  its notes as they are. Pass the revision ID from the pre-build read as
+  `writeControl.requiredRevisionId` on the first `batchUpdate`, and the one each
+  response returns on the next, so a build fails instead of landing on an edit
+  made while it ran.
 - Rebuild only the slides that changed. Inserting or removing a slide shifts
   every later page number: rewrite the other footers in place with one
   page-scoped `replaceAllText` each instead of rebuilding the deck. A small
