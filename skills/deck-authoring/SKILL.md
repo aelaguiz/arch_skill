@@ -229,9 +229,10 @@ you.
    `/Users/aelaguiz/workspace/psbrain/knowledge/ai-mock-style-guide.md`.
 3. **Write the headline outline.** The cover, the short version, the parts with
    their dividers, and one headline per slide. Read only the headlines, in
-   order, and fix them so they tell the story. On a deck he is co-authoring,
-   build the front well and leave later slides as titled placeholders until he
-   has settled it.
+   order, and fix them so they tell the story. Make each content slide's
+   headline something that slide can prove on its own. On a deck he is
+   co-authoring, build the front well and leave later slides as titled
+   placeholders until he has settled it.
 4. **Make each slide.** Choose its visual by the meaning, write its words, and
    put sources in its notes. Run `$readable-reports` on the words. When a slide
    is hard to get right, compare it with the pairs in
