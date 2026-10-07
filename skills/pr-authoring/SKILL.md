@@ -50,6 +50,12 @@ This is a prompt-only skill. Do not add scripts, controller state, or test harne
   the difference beside them. Preserve shared context so a different account,
   viewport or capture setup does not masquerade as a product change. Ask:
   can this reader see what changed, and what can these artifacts substantiate?
+  Copy works the same way: just as screenshots show the screen before and
+  after, a particularly copy-heavy change shows the copy before and after,
+  side by side, so the reviewer reads what changed instead of a summary of
+  it. That includes rewritten lesson lines, glossary cards, notifications
+  and store text, and a skill or prompt change whose output is copy: show
+  what it wrote before and after on the same input.
 - For plan-backed work, include a compact scope receipt: canonical plan path,
   one-line human-authorized outcome, approved initial convergence closure or
   `none`, explicit human-approved expansions or `none`, and material
