@@ -171,7 +171,8 @@ pdftoppm -r 110 -png render/deck.pdf render/p
 - **Native tables:** columns at least 32 points wide, and rows grow with
   padding (a two-line 7.5-point cell is about 33 points tall). Budget about 16
   points per text line plus 10 per row, or split the table. For a dense data
-  table, draw a grid of text boxes instead.
+  table, draw a grid of text boxes instead. Set the header row as bold labels
+  over a thin rule, with no fill.
 - **Empty text:** an empty text box can't be styled and fails the batch; use a
   placeholder such as "·".
 - **Image fetches fail now and then** ("There was a problem retrieving the
