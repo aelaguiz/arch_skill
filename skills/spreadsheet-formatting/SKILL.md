@@ -1,6 +1,6 @@
 ---
 name: spreadsheet-formatting
-description: "Build, restyle, or audit Google Sheets (and Excel) workbooks so a human can read, scan, change and trust them: header-only frozen rows, one line per cell, merges only for group headers, numbers right and text left, consistent number formats, one documented colour key, and every number owned: observations shown as data, assumptions styled as inputs, everything derived as formulas. Use when the user asks to make a spreadsheet readable, consistent, presentable or user-friendly, to fix freeze panes, paragraphs in cells, hardcoded numbers or inconsistent formatting, to apply a house style through the Sheets API or gws CLI, or to audit a sheet's formatting. Not for choosing the analysis or metrics, data cleaning or statistics, chart or dashboard design outside the grid, or HTML/PDF report styling."
+description: "Build, restyle, or audit Google Sheets (and Excel) workbooks so a human can read, scan, change and trust them: header-only frozen rows, one line per cell, merges only for group headers, numbers right and text left, consistent number formats, one documented colour key, and every number owned: observations shown as data, assumptions styled as inputs, everything derived as formulas, anything unprovable flagged unverified. Use when the user asks to make a spreadsheet readable, consistent, presentable or user-friendly, to fix freeze panes, paragraphs in cells, hardcoded numbers or inconsistent formatting, to apply a house style through the Sheets API or gws CLI, or to audit a sheet's formatting. Not for choosing the analysis or metrics, data cleaning or statistics, chart or dashboard design outside the grid, or HTML/PDF report styling."
 metadata:
   short-description: "Make spreadsheets readable, consistent and formula-driven"
 ---
@@ -10,11 +10,23 @@ metadata:
 Use this skill when the work is the shape of a spreadsheet a person will
 read: layout, freeze panes, text length, alignment, number formats, colour,
 fonts, tab structure, and who owns each number (observation, assumption, or formula).
-The data stays exactly as rich as it was; only its presentation changes.
+The data stays exactly as rich as it was. Two classes of change carry two
+authorisations: a request to make a sheet readable authorises presentation
+changes (formats, widths, freeze, borders, colour, and text splitting that
+touches no cell a formula references); model changes (constants extracted
+from formulas, typed values replaced by formulas, inputs relocated, rows or
+columns inserted or moved where formulas point, tabs restructured) alter
+lineage and references, so they are listed as a proposal with cell
+addresses and applied only when the user approves that list.
 
 The reader's complaints this skill exists to end: five frozen rows eating the
 screen, paragraphs typed into single cells, formatting that differs from tab
 to tab, and numbers hard-coded where a formula belongs.
+
+The doctrine applies to Excel as well, but the recipes below are Sheets API
+shapes; an Excel workbook needs its own execution route (a file library such
+as openpyxl for values and formatting, and the Excel application itself for
+recalculation and the rendered look), and the same look-before-done rule.
 
 This is a prompt-only skill. It ships doctrine, a concrete house style, and
 API request shapes; it ships no scripts or runners.
@@ -88,7 +100,12 @@ covered, reason from these (section 0 of the guide expands each one):
   series, totals whose components are present, shares, multiples and
   status sentences. A constant inside a formula is an assumption to
   extract unless it is syntax (unit conversions, 0 and 1, a precision, an
-  offset, a link id): meaning decides, not the numeral.
+  offset, a link id): meaning decides, not the numeral. A literal whose
+  owner the grid cannot prove (a reported figure, an external snapshot, a
+  business rule, or a lever could all look alike) is `unverified`: keep its
+  value and any formula exactly, give it the neutral body baseline and its
+  column's number format but no owner styling, and list it for the user to
+  classify rather than manufacturing a formula or painting it as a lever.
 - Assumptions look like assumptions everywhere: distinct font colour plus a
   light fill or border, identical on every tab, documented in a key.
 - One idea per cell, and the cell fits its window. Labels are names, not
@@ -161,12 +178,17 @@ covered, reason from these (section 0 of the guide expands each one):
    notes area, one role per column letter, widths decided against the
    longest real content, freeze rule, and the room the tab needs (row
    height, padding, blank rows between blocks).
-2. **Classify and extract**: decide the owner of every literal
-   (observation, assumption, derived). Extract assumptions hiding in
-   formulas, turn typed derived values (date series, totals with present
-   components, shares, status text) into formulas, leave observations as
-   plain data with a named source. Save a grid dump first; keep the numbers
-   identical and verify every output matches before and after.
+2. **Classify and propose**: decide the owner of every literal
+   (observation, assumption, derived, or `unverified`). Write the
+   model-change proposal with cell addresses: assumptions hiding in
+   formulas to extract, typed derived values (date series, totals with
+   present components, shares, status text) to turn into formulas, inputs
+   to relocate, rows or columns to move, plus the `unverified` list.
+   Observations stay as plain data with a named source. A restyle request
+   applies none of the proposal; present it and continue with presentation
+   work. Apply it only after the user approves it: save a grid dump first,
+   keep the numbers identical, and verify every output matches before and
+   after.
 3. **Rewrite text**: split paragraphs into label + value rows or notes lines,
    shorten labels, sentence case, units into headers, headers that stand
    alone.
@@ -174,7 +196,11 @@ covered, reason from these (section 0 of the guide expands each one):
 5. **Apply the house style by range** in the order given in
    `references/house-style.md`: baseline, roles, borders, dimensions, sheet
    properties, validation, conditional formats, protection, notes.
-6. **Look, then verify**: open the tab in BrowserOS (`$browseros`),
+6. **Look, then verify**: when a PDF rasteriser is available, export the
+   tab to PDF first (`gws drive files export`, no browser session needed)
+   and read the page for fit, wrap, alignment, formats, colours and fonts;
+   in every case open the tab in BrowserOS (`$browseros`), which alone
+   shows frozen panes, scrolling identity and on-screen widths,
    screenshot it, and read it at laptop width for anything cut off,
    spilling, colliding, repeated, loud or cramped; then read the grid back and run the readback checklist
    (fit, alignment, formats, constants, input style, signal budget);

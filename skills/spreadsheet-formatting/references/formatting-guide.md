@@ -20,6 +20,10 @@ verified live in 2026-09).
 
 ## Table of contents
 
+Read one section per complaint, not the file. Sizes: § 0 about 600 words,
+§ 1 about 1,000, § 2 to § 10 between 170 and 1,300 each, § 11 about 1,100;
+§ 12 and § 13 are background for a disputed rule or a repeated failure.
+
 0. How to think about a sheet (read this first)
 1. The ten laws
 2. Screen budget: freeze panes and the title block
@@ -351,6 +355,14 @@ components live in a warehouse is an observation.
 - **Flex cells for sensitivities.** A base-case input times a sensitivity
   multiplier (default 1.0) preserves the base case while the reader plays
   (`FAST` 3.04, `SMART`).
+- **Unverified owners stay untouched.** A grid alone often cannot prove
+  whether a literal is a reported observation, an externally calculated
+  snapshot, a business rule, or an editable assumption. Forcing one of the
+  three classes onto it manufactures a formula or misstyles source data.
+  Classify it `unverified`: keep its value or formula exactly, give it the
+  neutral baseline and its column's format but no owner styling, and hand
+  the user the list with cell addresses; the owner decides, not the
+  formatter.
 - **Checks.** Every identity the model implies gets a check row: mixes sum
   to 100 percent, quarters sum to years, shares of a total sum to the total,
   a lookup returns something. Display the check as a word (`OK` / `CHECK`),
