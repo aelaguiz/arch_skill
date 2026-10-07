@@ -136,6 +136,8 @@ make one argument.
 - **Open with the answer.** After the cover, a short version: the answer, the
   recommendation, or his goals as you read them ("correct it if we read you
   wrong"), simple enough to act on. "It should be really fucking simple."
+  When the deck has parts, the short version lists each part's one-sentence
+  answer, in divider order.
 - **Group the rest by the question each part answers, and open every part with
   a divider slide**: its number, its name in plain words, one sentence on what
   the part answers, and the slides inside it with their page numbers. A long
