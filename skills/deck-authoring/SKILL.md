@@ -136,6 +136,8 @@ make one argument.
 - **Open with the answer.** After the cover, a short version: the answer, the
   recommendation, or his goals as you read them ("correct it if we read you
   wrong"), simple enough to act on. "It should be really fucking simple."
+  When the deck has parts, the short version lists each part's one-sentence
+  answer, in divider order.
 - **Group the rest by the question each part answers, and open every part with
   a divider slide**: its number, its name in plain words, one sentence on what
   the part answers, and the slides inside it with their page numbers. A long
@@ -229,9 +231,10 @@ you.
    `/Users/aelaguiz/workspace/psbrain/knowledge/ai-mock-style-guide.md`.
 3. **Write the headline outline.** The cover, the short version, the parts with
    their dividers, and one headline per slide. Read only the headlines, in
-   order, and fix them so they tell the story. On a deck he is co-authoring,
-   build the front well and leave later slides as titled placeholders until he
-   has settled it.
+   order, and fix them so they tell the story. Make each content slide's
+   headline something that slide can prove on its own. On a deck he is
+   co-authoring, build the front well and leave later slides as titled
+   placeholders until he has settled it.
 4. **Make each slide.** Choose its visual by the meaning, write its words, and
    put sources in its notes. Run `$readable-reports` on the words. When a slide
    is hard to get right, compare it with the pairs in

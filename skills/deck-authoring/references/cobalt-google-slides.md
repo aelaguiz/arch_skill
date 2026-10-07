@@ -140,6 +140,14 @@ pdftoppm -r 110 -png render/deck.pdf render/p
   adds, edits, and reorders slides by hand: keep any slide your builder did not
   make, copy his order into your slide list, and never let a build delete or
   overwrite his work.
+- A slide your builder made can carry his edits too. Store a fingerprint of each
+  slide the builder writes (its elements, text, and notes), and compare it with
+  the live slide before rebuilding. If they differ, a rebuild would wipe his
+  edits: make any change that slide needs on the live slide instead, and leave
+  its notes as they are. Pass the revision ID from the pre-build read as
+  `writeControl.requiredRevisionId` on the first `batchUpdate`, and the one each
+  response returns on the next, so a build fails instead of landing on an edit
+  made while it ran.
 - Rebuild only the slides that changed. Inserting or removing a slide shifts
   every later page number: rewrite the other footers in place with one
   page-scoped `replaceAllText` each instead of rebuilding the deck. A small
@@ -163,7 +171,8 @@ pdftoppm -r 110 -png render/deck.pdf render/p
 - **Native tables:** columns at least 32 points wide, and rows grow with
   padding (a two-line 7.5-point cell is about 33 points tall). Budget about 16
   points per text line plus 10 per row, or split the table. For a dense data
-  table, draw a grid of text boxes instead.
+  table, draw a grid of text boxes instead. Set the header row as bold labels
+  over a thin rule, with no fill.
 - **Empty text:** an empty text box can't be styled and fails the batch; use a
   placeholder such as "·".
 - **Image fetches fail now and then** ("There was a problem retrieving the
