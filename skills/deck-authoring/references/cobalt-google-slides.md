@@ -69,7 +69,11 @@ slides exist and look right.
   footer), `Slide.divider` (number, title, one sentence, the part's slides),
   `text`, `table`, `image`, `box` and `line` for native diagrams, `callout`,
   `pill`, `numbered`, and `batch` for the API call with retries. Its footer
-  label is hard-coded; set your own.
+  label is hard-coded; set your own. The psbrain house footer
+  (`/Users/aelaguiz/workspace/psbrain/projects/milkshake/pricing-comps/deck/helpers.py`)
+  prints each slide's number when the builder sets `helpers.PAGE` to a function
+  from slide id to slide number before building; a builder without it must draw
+  the number itself.
 - **A complete builder to copy from:**
   `/Users/aelaguiz/workspace/psagentspace/research/2026-10-02-energy-lesson-start/deck/build.py`
   creates the deck from the template, keeps the deck ID in `deck.json`,

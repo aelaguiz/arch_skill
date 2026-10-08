@@ -43,6 +43,10 @@ not, keep working on the explanation."
   grouped into parts by the question each part answers, and every part opens
   with a divider slide. Read only the headlines, in order, and they tell the
   whole story.
+- **Every slide is numbered.** The number shows on every slide, cover and
+  dividers included, so he can say "slide 14" while he reads and his feedback
+  names the slide it is about. Without numbers he has to count to point at the
+  slide that lost him. "Slides are always numbered."
 - **Compared to what.** Every number carries its unit, period, population, and
   the thing it is compared with. Every proposal shows today beside it.
 - **Only what he asked for, and only what he doesn't already know.** No process
