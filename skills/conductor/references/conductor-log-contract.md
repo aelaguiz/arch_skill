@@ -96,7 +96,8 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 ## Update Cadence
 
 Update at meaningful boundaries — dispatch, return, triage, acceptance,
-checkpoint, escalation — not after every micro-step. Keep the log short
+checkpoint, escalation — not after every micro-step. Read any time you write
+from the clock at that moment; never estimate it. Keep the log short
 enough that a resumed conductor can read it quickly; the Resume Snapshot is
 the first thing a post-compaction parent reads.
 
