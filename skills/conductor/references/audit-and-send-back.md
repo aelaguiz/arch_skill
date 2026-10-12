@@ -289,8 +289,14 @@ After all phases:
    structural, or the completion story could not be fully verified, offer
    these reviews in the final report rather than running them unasked.
 4. Triage findings from any of these like any others; repair through
-   send-backs (resuming the owning sessions where healthy); re-run an
-   affected review on material repairs.
+   send-backs (resuming the owning sessions where healthy), and audit each
+   repair like any send-back return. Re-run a review or the cold verifier in
+   full only when the repairs touched surface it did not see or a repair
+   failed its audit. Record in the log the commit range each one reviewed.
+   A defect that spans accepted slices gets one seam repair: its own
+   Execution Map row, a repair contract naming each affected slice's anchors
+   and commits, the normal caps, and a new clean worker. The accepted slices'
+   rows stay accepted.
 
 ## Escalation
 
