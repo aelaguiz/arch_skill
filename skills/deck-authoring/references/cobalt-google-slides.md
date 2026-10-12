@@ -117,6 +117,9 @@ slides exist and look right.
   on-screen copy, and keep rejected drafts. Label each mock on the slide.
 - **Marking a real screenshot:** draw native outlines and arrows over the
   placed image; never edit its pixels by hand.
+- **Alt text:** `createImage` sets none. Follow each one with an
+  `updatePageElementAltText` request on the same object ID whose description
+  says what the image shows.
 
 ## Rendering and looking
 
