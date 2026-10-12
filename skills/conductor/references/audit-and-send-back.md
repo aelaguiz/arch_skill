@@ -234,7 +234,11 @@ or review evidence) makes it stale. Record results in the proof ledger, then
 record completion in the plan's own format. A closure failure reopens the
 slices it implicates: each row returns to `sent-back` through the normal
 send-back machinery and counts against its caps, and the phase stays open
-until the verification passes.
+until the verification passes. At the first phase able to measure a
+quantitative target from intake, compare it with that phase's proof. When
+the proof shows the target will be missed, or that the figure it rests on was
+wrong, ask the user whether to keep or replace it; it stays binding until the
+user answers.
 
 When a proof run at any gate fails in a way the diff does not explain, the
 proof worker reruns the failing tests once on the tree and once on a separate
