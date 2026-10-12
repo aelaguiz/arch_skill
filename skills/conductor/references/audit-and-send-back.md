@@ -151,7 +151,9 @@ Batch all factually accepted findings dispositioned `authorized` or
 or external session (shape in `worker-prompt-contract.md`). Repair directions are
 advisory hints — the worker owns implementation judgment; conductor diagnosis
 is context, not a script. The original slice contract stays binding and is
-restated by reference, not re-pasted.
+restated by reference, not re-pasted. Only its verification line changes:
+recompute it for the slice's cumulative diff across every attempt so far and
+put it in the resume prompt.
 
 **Worker rebuttals do not close findings.** When a send-back response disputes
 a finding, the conductor verifies the worker's cited evidence directly in the
@@ -219,6 +221,8 @@ A slice is `accepted` only when:
   enough that a later reader can distinguish "audited" from "skimmed".
 
 Record the evidence anchors in the log and commit a local checkpoint.
+Acceptance stays provisional until the phase's closure verification passes on
+the combined tree.
 
 ## Phase Closure
 
@@ -227,7 +231,10 @@ verification — impact-aware: the plan's named obligations plus changed and
 plausibly impacted surfaces, not "run everything." Reuse fresh passing proof
 until a real invalidator (new changes touching it, an explicit plan demand,
 or review evidence) makes it stale. Record results in the proof ledger, then
-record completion in the plan's own format.
+record completion in the plan's own format. A closure failure reopens the
+slices it implicates: each row returns to `sent-back` through the normal
+send-back machinery and counts against its caps, and the phase stays open
+until the verification passes.
 
 When a proof run at any gate fails in a way the diff does not explain, the
 proof worker reruns the failing tests once on the tree and once on a separate

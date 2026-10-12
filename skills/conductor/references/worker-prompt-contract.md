@@ -129,8 +129,12 @@ For resume rounds against the exact same child or external session:
 
 ```markdown
 Continue the same slice using your existing session history. The original
-slice contract — goal, checklist, scope, constraints, verification, report
-footer — is unchanged. Your previous result was audited and is NOT accepted.
+slice contract — goal, checklist, scope, constraints, report footer — is
+unchanged. Your previous result was audited and is NOT accepted.
+
+# Verification For This Pass
+<the verification list recomputed for the slice's cumulative diff; it
+replaces the original contract's verification line>
 
 # Audit Findings (all must be resolved)
 <one block per finding:>
@@ -143,8 +147,7 @@ footer — is unchanged. Your previous result was audited and is NOT accepted.
 # Rules for this repair pass
 - Fix root causes, not symptoms; do not weaken tests or the contract to
   pass.
-- Re-run the verification commands named in the original contract after
-  repairs and quote real output.
+- Run the verification for this pass after repairs and quote real output.
 - If you believe a finding is wrong, say so with code evidence in your
   report instead of silently ignoring it.
 - Do not implement observations or `new-scope-needs-human` findings. The
