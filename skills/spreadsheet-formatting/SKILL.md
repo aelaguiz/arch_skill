@@ -198,7 +198,9 @@ covered, reason from these (section 0 of the guide expands each one):
    alone. Keep lookup keys, schema headers, dropdown values and any label a
    formula or named range references exactly as they are; renaming one is a
    model change and goes in the step 2 proposal.
-4. **Write values and formulas**, numbers as numbers, `USER_ENTERED`.
+4. **Write values and formulas**, numbers as numbers, `USER_ENTERED` for
+   anything Sheets should parse and `RAW` for literals that must stay exact
+   (`references/sheets-api-recipes.md`, Gotchas).
 5. **Apply the house style by range** in the order given in
    `references/house-style.md`: baseline, roles, borders, dimensions, sheet
    properties, validation, conditional formats, protection, notes.
