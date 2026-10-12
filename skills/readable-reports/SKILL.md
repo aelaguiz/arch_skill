@@ -115,9 +115,11 @@ Always name the thing.
   words, quoted, with the message linked, or it is cut. "Your later
   assessment credits the partnership" with no quote is invented framing.
 - Tool states and system words become sentences about the work as the
-  reader would see it. "CLEAN" becomes "can merge now"; "BLOCKED" becomes
-  "cannot merge until the base merges"; a flag name becomes what the user
-  now sees; a Sentry group id becomes the error it is.
+  reader would see it. "CLEAN" becomes "can merge now", not "approved" or
+  "shipped"; "BLOCKED" becomes "cannot merge until the base merges" when the
+  source shows the base is what blocks it; a flag name becomes what the user
+  now sees; a Sentry group id becomes the error it is. The sentence never
+  adds a cause, approval, or deployment the evidence does not show.
 - Every status carries the named subject, what is true now, why (the cause
   or the blocker), and what happens next or who acts. Make the state visible
   without reading the cell: lead with the state and its cause in a few
