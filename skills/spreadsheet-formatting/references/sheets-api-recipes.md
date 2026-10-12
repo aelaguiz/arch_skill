@@ -35,6 +35,9 @@ Gotchas that cost time:
   `"fields": "userEnteredFormat"` resets every unlisted format property on
   the range to default; that is useful once when rebuilding a tab and
   destructive otherwise.
+- `spreadsheets.batchUpdate` is atomic: an HTTP 400 means nothing was
+  applied. Check the field mask and the zero-based, end-exclusive indices
+  of the failing request, then resend the whole batch.
 - `padding` requires all four sides in one object.
 - `autoResizeDimensions` sizes to content only (45 px for `12.3%`); use it
   as a measurement step and then set widths by column type.
