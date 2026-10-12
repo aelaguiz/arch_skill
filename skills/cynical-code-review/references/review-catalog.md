@@ -296,6 +296,32 @@ report the gain as unverified instead.
 Do not block when the request asked for the measurement change and the claim
 does not count it as a gain in the code being measured.
 
+## Success Right After Failure
+
+Flag when work visibly failed, then suddenly reports success. Re-derive the
+result from artifacts instead of accepting it from the summary.
+
+Common lies:
+
+- a defect that could not be found is reported found, with no trace of how
+- a failing check is reported passing, but the passing run used a different
+  command, target, or input
+- the later summary drops the failure and reports only the success
+
+Read:
+
+- the failed attempt and the success claim side by side
+- the diff, command, or log between them that explains the turn
+- the success artifact itself: the rerun output, the defect in current code, or
+  the produced file
+
+Block when the success claim is required and current code and artifacts do
+not reproduce it. When they do, a turn nothing explains is a note for the
+author, not a blocker.
+
+Do not block when the artifacts show the change that turned the failure into
+success.
+
 ## Docs, Tests, Prompts, Or Comments As Misdirection
 
 Flag when instruction or proof surfaces contradict code reality, preserve old
