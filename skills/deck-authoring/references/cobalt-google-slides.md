@@ -42,7 +42,9 @@ slides exist and look right.
 - **Charts:** the palette in fixed order starting at `#0D89AB` (then
   `#9A8409`, `#CF4672`, `#1E852C`, `#AF46A3`, `#C05A0C`, `#4562D9`, `#E25C50`).
   One question and one y-axis per chart. Status colors only with a status
-  label beside them.
+  label beside them. A chart image has no title or source of its own, since
+  the headline and the notes carry them, and is drawn at the size of the box
+  it fills so its labels are not shrunk below the slide's text.
 - **Copy rules:** "Poker Skill" is two words. No em dashes in slide text.
 
 ## Making a new deck
