@@ -268,6 +268,34 @@ or lets old behavior remain reachable.
 Do not block merely because no proof was run unless the review target requires
 that proof and the absence masks a current-code risk.
 
+## Metric Instrument Edited With The Improvement
+
+Flag when the change that claims a gain in speed, accuracy, quality, coverage,
+or score also changes the scorer, score file, threshold, input set, or test
+that measures it. Ask whether the gain survives with the measurement held fixed.
+
+Common lies:
+
+- the scoring script changed in the same diff as the code it scores
+- a stored score, baseline, or golden file was edited instead of regenerated
+- the benchmark inputs lost the cases that scored worst
+- the threshold moved in the change that claims to meet it
+
+Read:
+
+- the claimed gain and the command or run that produced it
+- the base and changed versions of every scorer, score file, threshold, input
+  set, and test behind the number
+- the code change the gain is attributed to
+
+Block when the change must prove the gain and it disappears, or was never
+shown, with the measurement held fixed: its base version, or a corrected
+version run on both the old and the new code. When proof is not required,
+report the gain as unverified instead.
+
+Do not block when the request asked for the measurement change and the claim
+does not count it as a gain in the code being measured.
+
 ## Docs, Tests, Prompts, Or Comments As Misdirection
 
 Flag when instruction or proof surfaces contradict code reality, preserve old
