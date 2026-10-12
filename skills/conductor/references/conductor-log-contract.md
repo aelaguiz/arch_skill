@@ -103,7 +103,7 @@ the first thing a post-compaction parent reads.
 
 ## Exit Probe
 
-The run is complete when all three hold:
+The run is complete when all four hold:
 
 1. Zero Execution Map rows outside `accepted`/`deferred`, and every
    `deferred` row carries prior plan authority or explicit human approval.
