@@ -137,7 +137,8 @@ make one argument.
   recommendation, or his goals as you read them ("correct it if we read you
   wrong"), simple enough to act on. "It should be really fucking simple."
   When the deck has parts, the short version lists each part's one-sentence
-  answer, in divider order.
+  answer, in divider order: what that part achieves, never a count of what it
+  holds ("two sets of actions").
 - **Group the rest by the question each part answers, and open every part with
   a divider slide**: its number, its name in plain words, one sentence on what
   the part answers, and the slides inside it with their page numbers. A long
@@ -152,7 +153,9 @@ make one argument.
   a drop only after the context that explains it, and mark the cause on the
   chart.
 - **Chain the headlines.** Each headline should bridge from the one before it.
-  When a slide moves, retitle it.
+  When a slide moves, retitle it. A total in the short version or on a divider
+  reconciles with the figures in the headlines beneath it, in the same units
+  and without counting anything twice, with any rounding said.
 - **Keep the main story short.** Deep dives, superseded drafts, sources, and
   any feedback log go to the back or to an appendix deck. A new research
   question, or a plan that would be buried inside another deck, gets its own
