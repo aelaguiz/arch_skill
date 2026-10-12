@@ -144,10 +144,14 @@ pdftoppm -r 110 -png render/deck.pdf render/p
   slide the builder writes (its elements, text, and notes), and compare it with
   the live slide before rebuilding. If they differ, a rebuild would wipe his
   edits: make any change that slide needs on the live slide instead, and leave
-  its notes as they are. Pass the revision ID from the pre-build read as
-  `writeControl.requiredRevisionId` on the first `batchUpdate`, and the one each
-  response returns on the next, so a build fails instead of landing on an edit
-  made while it ran.
+  its notes as they are. Take the fingerprint from a read of the deck at the
+  revision the build's last write returned, not from the requests it sent, and
+  leave out values the API computes or reissues on read (autofit's font
+  scale, an image's short-lived `contentUrl`), or every slide the builder
+  made can look hand-edited. Pass the
+  revision ID from the pre-build read as `writeControl.requiredRevisionId` on
+  the first `batchUpdate`, and the one each response returns on the next, so a
+  build fails instead of landing on an edit made while it ran.
 - Rebuild only the slides that changed. Inserting or removing a slide shifts
   every later page number: rewrite the other footers in place with one
   page-scoped `replaceAllText` each instead of rebuilding the deck. A small
