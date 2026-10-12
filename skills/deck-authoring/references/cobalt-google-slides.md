@@ -189,6 +189,9 @@ pdftoppm -r 110 -png render/deck.pdf render/p
   over a thin rule, with no fill.
 - **Empty text:** an empty text box can't be styled and fails the batch; use a
   placeholder such as "·".
+- **Bullet presets:** take `bulletPreset` from the values the API reference
+  lists, not from memory. A name that is not on the list, such as
+  `NUMBERED_DIGIT_PERIOD`, fails the whole batch with a 400.
 - **Image fetches fail now and then** ("There was a problem retrieving the
   image") for a file that is fine. Retry that slide; the batch is atomic.
 - **A network drop reads as an auth failure,** and `gws` can fail with "no
