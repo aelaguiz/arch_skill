@@ -101,8 +101,11 @@ slides exist and look right.
   slide builds, insert it from
   `https://drive.google.com/uc?export=download&id=<fileId>`, then delete that
   permission. Skip both steps for a file that is already open to anyone, or
-  you will undo someone's real sharing. Alternatively, host a folder of images
-  with `$cf-share` and insert each by its URL.
+  you will undo someone's real sharing. Record the file id beside the builder
+  before each grant and the permission id the grant returns after it. At the
+  start of the next run, delete each recorded permission that still exists,
+  and report a file recorded without one rather than guess. Alternatively,
+  host a folder of images with `$cf-share` and insert each by its URL.
 - **Prepare images first:** resize large captures, flatten transparent PNGs
   onto the page color before converting to JPEG, and open every image at slide
   size to check that it shows what the caption claims.
