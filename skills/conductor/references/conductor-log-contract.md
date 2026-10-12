@@ -4,7 +4,10 @@ One sidecar file beside the plan: `<PLAN_STEM>_CONDUCTOR_LOG.md` (for
 `docs/PAYMENTS_MIGRATION_2026-07-01.md`, the log is
 `docs/PAYMENTS_MIGRATION_2026-07-01_CONDUCTOR_LOG.md`). It is schedule,
 evidence, and resume state — never a second plan. Record facts and anchors,
-not transcripts. The log must not contain secrets.
+not transcripts. The log must not contain secrets. Keep an untracked log out
+of commits: at intake, add `*_CONDUCTOR_LOG.md` to
+`$(git rev-parse --git-path info/exclude)`, which also resolves in a linked
+worktree. An exclude does not untrack a log that is already committed.
 
 Do not write into surfaces other skills own: never hand-edit
 `arch_skill:block:*` receipt blocks (script-owned) and never write
@@ -93,13 +96,14 @@ Human baseline: <plan/user anchor>   Initial closure: <plan anchor or none>
 ## Update Cadence
 
 Update at meaningful boundaries — dispatch, return, triage, acceptance,
-checkpoint, escalation — not after every micro-step. Keep the log short
+checkpoint, escalation — not after every micro-step. Read any time you write
+from the clock at that moment; never estimate it. Keep the log short
 enough that a resumed conductor can read it quickly; the Resume Snapshot is
 the first thing a post-compaction parent reads.
 
 ## Exit Probe
 
-The run is complete when all three hold:
+The run is complete when all four hold:
 
 1. Zero Execution Map rows outside `accepted`/`deferred`, and every
    `deferred` row carries prior plan authority or explicit human approval.
