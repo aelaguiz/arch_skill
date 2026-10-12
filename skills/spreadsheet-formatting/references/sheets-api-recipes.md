@@ -31,6 +31,7 @@ Gotchas that cost time:
   Sheets should parse need `USER_ENTERED`. `RAW` is right for literals that
   must stay exact: numeric JSON values, and text that `USER_ENTERED` would
   parse (`1/2`, `3-4`, codes with leading zeros).
+- In a `values` write, `null` leaves a cell untouched and `""` clears it.
 - Field masks: `fields` lists exactly the properties you send. A bare
   `"fields": "userEnteredFormat"` resets every unlisted format property on
   the range to default; that is useful once when rebuilding a tab and
