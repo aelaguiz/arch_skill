@@ -97,7 +97,8 @@ Your report is a claims manifest, not a verdict: every line will be audited
 against the repo, and decisive verification is independently reproduced in a
 separate session. Report exactly what is true, including partial or failed
 work — an honest partial is routine; a misreported claim costs this session
-its credibility. End with exactly:
+its credibility. Put long raw output in a file and cite its path. Start your
+report with exactly this footer block, with any further detail after it:
 
 STATUS: done | partial | blocked | failed
 SLICE: <id>
@@ -110,6 +111,9 @@ BLOCKERS: <bullets or none>
 SCOPE DISCOVERIES: <item + disposition, or none>
 SUMMARY FOR PARENT: <one concise paragraph>
 ```
+
+The footer block comes first so `STATUS`, `CHANGED FILES`, and
+`DELETES EXECUTED` survive a truncated return.
 
 The `DELETES EXECUTED:` line is deliberate: un-executed deletes are a common
 worker omission, so the footer forces a claim the conductor can
@@ -146,7 +150,7 @@ footer — is unchanged. Your previous result was audited and is NOT accepted.
 - Do not implement observations or `new-scope-needs-human` findings. The
   conductor sends back only authorized repair or subtraction work.
 
-End with the same report footer as the original contract.
+Start with the same report footer block as the original contract.
 ```
 
 ## Respawn Prompt
