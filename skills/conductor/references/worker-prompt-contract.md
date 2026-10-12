@@ -149,6 +149,15 @@ footer — is unchanged. Your previous result was audited and is NOT accepted.
 End with the same report footer as the original contract.
 ```
 
+## Respawn Prompt
+
+A respawn is a new clean worker on the slice prompt skeleton with the
+sharpened slice contract. Add a `# Prior Attempt` block naming the previous
+attempt's exact commits, or its exact uncommitted paths, marked unverified:
+the new worker reads them before building on them. Only those commits or
+paths are the prior attempt; a broad diff on a shared branch can hold other
+slices' work. Never pass the previous worker's report as truth.
+
 ## Avoid
 
 - Micromanaged file-by-file scripts, or five-line micro-tasks that belong in

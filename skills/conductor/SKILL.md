@@ -237,7 +237,7 @@ log beside the plan is its durable memory.
   `unauthorized-built-scope` requires subtraction unless a human ratifies and
   re-approves it. Repetition never changes the disposition.
 - Batch all accepted findings into one resume prompt per repair round. Caps:
-  3 send-backs per worker handle, then 1 new clean respawn with a sharpened
+  3 send-backs per slice, then 1 new clean respawn with a sharpened
   brief, then escalate the slice and continue independent work. The same finding surviving
   two consecutive send-backs marks the worker unhealthy immediately. Two
   consecutive malformed or failed child runs on one slice escalate it.
@@ -455,6 +455,6 @@ Report compactly:
 - `references/terra-delivery-shortcut.md` - explicit standard Terra worktree,
   implementation, independent review, repair, PR, and follow-through path
 - `references/worker-prompt-contract.md` - worker slice prompt skeleton,
-  required footer, and send-back prompt shape
+  required footer, and send-back and respawn prompt shapes
 - `references/conductor-log-contract.md` - conductor log layout, status
   enums, proof ledger, and exit probe

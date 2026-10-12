@@ -171,7 +171,11 @@ redesign/subtraction inside the approved boundary.
 
 ## Caps And Worker Health
 
-- **3 send-backs** per worker handle, then **1 new clean respawn** with a sharpened
+Caps, misreport strikes, and repeated findings count per slice, across every
+worker that has carried it, including the respawn. A respawn resets none of
+them; read the slice's history in the log before deciding.
+
+- **3 send-backs** per slice, then **1 new clean respawn** with a sharpened
   brief (fold what the failures taught into the new slice contract), then
   mark the slice `escalated`. Total worker attempts per slice never exceed 5.
 - **Repeated-identical-finding rule:** the same finding surviving two
@@ -180,8 +184,8 @@ redesign/subtraction inside the approved boundary.
   failure without new evidence is the classic no-memory retry smell.
 - **Claim-mismatch rule:** a worker caught misreporting repo reality (changed
   files, deletes, verification) gets one strike recorded against session
-  health; a second misreport from the same worker forces respawn or
-  escalation regardless of remaining send-back budget.
+  health; a second misreport on the same slice, by any of its workers, forces
+  respawn or escalation regardless of remaining send-back budget.
 - **Process-failure rule:** two consecutive malformed or failed child runs on
   one slice (non-zero exit, empty final, missing footer, unrecoverable
   child/session handle) escalate the slice. Preserve available receipts and
