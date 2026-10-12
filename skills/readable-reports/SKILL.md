@@ -152,6 +152,10 @@ Always name the thing.
   gap". Do the division for the reader. Give a percent only when
   the base supports it; "21 to 29" is eight people, not "up 38.1%". Keep
   the precision the decision needs: "66 seconds", not "66.253 seconds".
+  Keep the statistical meaning: two points are not a trend, a snapshot is
+  not a trend, and a forecast keeps its anchor date and its condition. A
+  missing comparison basis goes back to whoever did the analysis, not into
+  the prose.
 - One idea per sentence. Bold the one line a skimmer must not miss, if any;
   bolding several lines cancels all of them.
 - No repeated shape. Rows do not all open the same way, cells do not all
