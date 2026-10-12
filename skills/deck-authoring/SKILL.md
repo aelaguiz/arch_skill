@@ -137,7 +137,8 @@ make one argument.
   recommendation, or his goals as you read them ("correct it if we read you
   wrong"), simple enough to act on. "It should be really fucking simple."
   When the deck has parts, the short version lists each part's one-sentence
-  answer, in divider order.
+  answer, in divider order: what that part achieves, never a count of what it
+  holds ("two sets of actions").
 - **Group the rest by the question each part answers, and open every part with
   a divider slide**: its number, its name in plain words, one sentence on what
   the part answers, and the slides inside it with their page numbers. A long
@@ -152,7 +153,9 @@ make one argument.
   a drop only after the context that explains it, and mark the cause on the
   chart.
 - **Chain the headlines.** Each headline should bridge from the one before it.
-  When a slide moves, retitle it.
+  When a slide moves, retitle it. A total in the short version or on a divider
+  reconciles with the figures in the headlines beneath it, in the same units
+  and without counting anything twice, with any rounding said.
 - **Keep the main story short.** Deep dives, superseded drafts, sources, and
   any feedback log go to the back or to an appendix deck. A new research
   question, or a plan that would be buried inside another deck, gets its own
@@ -253,9 +256,10 @@ you.
    your view of what the slides mean. Ask it to read each slide alone, as a
    busy founder seeing it for the first time, and report for each one what it
    thinks the slide says, every word, name, or number it could not resolve from
-   that slide, what it had to guess, and what it needed to see. Its misreadings
-   are the evidence. Fix every slide it could not read cold, then send. Do not
-   run a second cold read before he has seen the deck.
+   that slide, what it had to guess, what it needed to see, every sentence
+   nobody would say aloud, and any narration of how the deck was made. Its
+   misreadings are the evidence. Fix every slide it could not read cold, then
+   send. Do not run a second cold read before he has seen the deck.
 8. **Deliver.** Send the link with one or two sentences: what the deck answers,
    what you need from him, and anything you know is still rough. Keep the
    deck's source (builder or spec, images, a feedback log file) next to the
