@@ -229,6 +229,19 @@ until a real invalidator (new changes touching it, an explicit plan demand,
 or review evidence) makes it stale. Record results in the proof ledger, then
 record completion in the plan's own format.
 
+When a proof run at any gate fails in a way the diff does not explain, the
+proof worker reruns the failing tests once on the tree and once on a separate
+copy of the base commit (a new detached worktree or a `git archive` export),
+set up the way the project's tests need. The base is the commit the slice
+started from, or the log's `Start commit` for phase closure and the final
+gate. Record one label in the proof ledger: `flaky` (the rerun passes),
+`pre-existing` (the base fails the same way), `finding` (the base passes or
+fails differently), or `unresolved` (anything else, including a base run that
+could not execute). Only a flaky or pre-existing failure can pass a gate, and
+a pre-existing failure the plan owns blocks closure unless the user waives
+it. A gate that passes this way is recorded passing in the proof ledger with
+each label, and any waiver quoted there.
+
 ## Final Gate
 
 After all phases:
