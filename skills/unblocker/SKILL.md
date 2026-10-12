@@ -107,7 +107,9 @@ overrides a terminal state such as `issue-to-pr` never merging.
   telling the worker what to do meanwhile (work other scope, never idle).
 - Authorization is not scope growth. The unblocker authorizes work already
   inside intent; it never adds scope, never implements, and never reviews
-  code quality.
+  code quality. Its authority covers the plan's decisions only: it never
+  answers, or authorizes answering, a permission prompt, trust dialog, or
+  hook denial.
 - Keep a decision log on disk: matter, decision, reasoning, boundary check.
   Each run gets its own section headed by its run id, and readers ignore
   other runs' sections. Each row also carries a decision id, the consult id
