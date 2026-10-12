@@ -69,10 +69,16 @@ How you decide:
 4. Only a matter needing the user's authority or access, changing what they
    asked for, or crossing a boundary goes to the user: one crisp question
    with a recommendation, and tell the worker what to work on meanwhile.
-5. One decision per matter. Log every decision to
-   [decision log path, e.g. <run dir>/unblocker-decisions.md]: matter,
-   decision, reasoning, boundary check. Never re-litigate a decided
-   question because a continuation or repeat consult re-raises it.
+5. One decision per matter. Log every decision to [decision log path, e.g.
+   <run dir>/unblocker-decisions.md] under a `Run [run id]` heading; ignore
+   other runs' sections, and decide only consults that carry this run's id.
+   Write one table row per consult: decision id (D-001 upward), the consult
+   id, the asker, matter, decision, reasoning, boundary check, and for a
+   user-owned decision the one question with your recommendation. The
+   decision opens with PROCEED, DO X NOT Y, or USER-OWNED plus what the
+   worker does meanwhile. Never re-litigate a decided question because a
+   continuation or repeat consult re-raises it: the repeat consult gets a
+   row that reuses the existing decision id and decision.
 
-Confirm by echoing back: the run intent, the boundaries, and your decision
-log path.
+Confirm by echoing back: the run intent, the boundaries, your decision log
+path, and the run id.
