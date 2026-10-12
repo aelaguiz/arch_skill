@@ -47,16 +47,18 @@ Gotchas that cost time:
 
 ```json
 {"spreadsheetId": "ID", "ranges": ["'Tab'!A1:N60"], "includeGridData": true,
- "fields": "namedRanges,sheets(properties,merges,bandedRanges,conditionalFormats,protectedRanges,basicFilter,filterViews,rowGroups,columnGroups,data(rowData(values(userEnteredValue,effectiveValue,formattedValue,effectiveFormat,note,hyperlink)),rowMetadata(pixelSize,hiddenByUser,hiddenByFilter),columnMetadata(pixelSize,hiddenByUser,hiddenByFilter)))"}
+ "fields": "namedRanges,sheets(properties,merges,bandedRanges,conditionalFormats,protectedRanges,basicFilter,filterViews,rowGroups,columnGroups,data(rowData(values(userEnteredValue,effectiveValue,formattedValue,userEnteredFormat,effectiveFormat,dataValidation,note,hyperlink)),rowMetadata(pixelSize,hiddenByUser,hiddenByFilter),columnMetadata(pixelSize,hiddenByUser,hiddenByFilter)))"}
 ```
 Then list: frozen rows/cols, merges, hidden or grouped rows and columns,
 filters, per-cell `formulaValue` (search for digits not in references),
 `formattedValue` length, `effectiveFormat` (alignment, wrap, numberFormat,
-fonts, fills), column `pixelSize`. Hidden dimensions are part of the
-reading surface: a preserved, formatted column the reader cannot see is a
-failed deliverable. Unhide with `updateDimensionProperties`
-`{"hiddenByUser": false}` and `fields: "hiddenByUser"` when the field is
-meant to be read.
+fonts, fills), `dataValidation` rules, column `pixelSize`. `effectiveFormat`
+includes conditional formatting, so it shows what the reader sees but cannot
+restore what was stored; keep `userEnteredFormat` in the saved dump for
+that. Hidden dimensions are part of the reading surface: a preserved,
+formatted column the reader cannot see is a failed deliverable. Unhide with
+`updateDimensionProperties` `{"hiddenByUser": false}` and
+`fields: "hiddenByUser"` when the field is meant to be read.
 
 ## Sheet properties: freeze, gridlines, tab colour (verified)
 
