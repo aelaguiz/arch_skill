@@ -214,6 +214,7 @@ covered, reason from these (section 0 of the guide expands each one):
    (fit, alignment, formats, constants, input style, signal budget);
    recompute or eyeball two or three outputs against the original. Fix and
    look again. Do not report done on the strength of a successful API call.
+   An Excel workbook gets this look and readback in Excel itself.
 7. **Report** what changed per tab in the user's terms (frozen rows before
    and after, inputs extracted, cells shortened, formats unified), the file
    and tab links, and any judgment calls.
