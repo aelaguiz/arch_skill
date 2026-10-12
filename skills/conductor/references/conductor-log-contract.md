@@ -4,7 +4,10 @@ One sidecar file beside the plan: `<PLAN_STEM>_CONDUCTOR_LOG.md` (for
 `docs/PAYMENTS_MIGRATION_2026-07-01.md`, the log is
 `docs/PAYMENTS_MIGRATION_2026-07-01_CONDUCTOR_LOG.md`). It is schedule,
 evidence, and resume state — never a second plan. Record facts and anchors,
-not transcripts. The log must not contain secrets.
+not transcripts. The log must not contain secrets. Keep an untracked log out
+of commits: at intake, add `*_CONDUCTOR_LOG.md` to
+`$(git rev-parse --git-path info/exclude)`, which also resolves in a linked
+worktree. An exclude does not untrack a log that is already committed.
 
 Do not write into surfaces other skills own: never hand-edit
 `arch_skill:block:*` receipt blocks (script-owned) and never write
