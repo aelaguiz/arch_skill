@@ -268,6 +268,60 @@ or lets old behavior remain reachable.
 Do not block merely because no proof was run unless the review target requires
 that proof and the absence masks a current-code risk.
 
+## Metric Instrument Edited With The Improvement
+
+Flag when the change that claims a gain in speed, accuracy, quality, coverage,
+or score also changes the scorer, score file, threshold, input set, or test
+that measures it. Ask whether the gain survives with the measurement held fixed.
+
+Common lies:
+
+- the scoring script changed in the same diff as the code it scores
+- a stored score, baseline, or golden file was edited instead of regenerated
+- the benchmark inputs lost the cases that scored worst
+- the threshold moved in the change that claims to meet it
+
+Read:
+
+- the claimed gain and the command or run that produced it
+- the base and changed versions of every scorer, score file, threshold, input
+  set, and test behind the number
+- the code change the gain is attributed to
+
+Block when the change must prove the gain and it disappears, or was never
+shown, with the measurement held fixed: its base version, or a corrected
+version run on both the old and the new code. When proof is not required,
+report the gain as unverified instead.
+
+Do not block when the request asked for the measurement change and the claim
+does not count it as a gain in the code being measured.
+
+## Success Right After Failure
+
+Flag when work visibly failed, then suddenly reports success. Re-derive the
+result from artifacts instead of accepting it from the summary.
+
+Common lies:
+
+- a defect that could not be found is reported found, with no trace of how
+- a failing check is reported passing, but the passing run used a different
+  command, target, or input
+- the later summary drops the failure and reports only the success
+
+Read:
+
+- the failed attempt and the success claim side by side
+- the diff, command, or log between them that explains the turn
+- the success artifact itself: the rerun output, the defect in current code, or
+  the produced file
+
+Block when the success claim is required and current code and artifacts do
+not reproduce it. When they do, a turn nothing explains is a note for the
+author, not a blocker.
+
+Do not block when the artifacts show the change that turned the failure into
+success.
+
 ## Docs, Tests, Prompts, Or Comments As Misdirection
 
 Flag when instruction or proof surfaces contradict code reality, preserve old
