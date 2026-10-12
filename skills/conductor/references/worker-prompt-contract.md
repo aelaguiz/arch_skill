@@ -68,6 +68,12 @@ You must not: commit, push, stash, revert unrelated work, expand scope
 (stop and report instead), weaken or skip tests, or leave the old code path
 alive when the contract says replace it.
 
+A permission denial or hook block is a hard boundary. Report the denied
+command and the denial under BLOCKERS, and do not retry an equivalent
+operation in another form: a reworded or re-encoded command, another tool or
+interpreter, or another agent. An alternative the control itself names is
+allowed, and work that does not need the denied operation continues.
+
 A repo pattern, review concern, test idea, or newly discovered adjacent path is
 not authority. Do not add a durable table, queue, state machine, service,
 dependency, compatibility path, mode, operational surface, harness, test

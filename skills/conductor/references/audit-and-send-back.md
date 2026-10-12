@@ -187,6 +187,10 @@ redesign/subtraction inside the approved boundary.
   child/session handle) escalate the slice. Preserve available receipts and
   external run directories; never silently
   switch runtime, model, or effort.
+- **Control-evasion rule:** a worker that retried a denied operation in
+  another form is disclosed to the user in the next update, naming the denied
+  command and the workaround. The conductor never runs the denied command on
+  the worker's behalf.
 - A worker reporting `SESSION HEALTH: struggling` or `stuck` weighs toward
   respawn even before caps fire.
 
