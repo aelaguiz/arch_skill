@@ -88,6 +88,11 @@ delegate. The line is hard:
   slice's new files, then run `git commit --only -- <accepted paths>`. A
   staged path outside the slice belongs to someone else: leave it alone and
   find its owner before the next commit.
+- When an accepted slice ran in its own worktree, confirm that worktree is
+  clean and detach it (`git -C <path> switch --detach`) before a successor
+  needs its branch; git will not check out a branch another worktree holds.
+  A slice reopened after that is repaired on its branch, in whichever
+  worktree now holds it.
 
 ## Stop Discipline
 
