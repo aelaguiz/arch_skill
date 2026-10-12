@@ -146,6 +146,11 @@ instruction.
 - Open every consult with the run id, its consult id and your name, then
   frame it with goal context: what the plan says, what you want to do, why
   you believed a gate existed, the options, your recommendation.
+- The answer is your consult's row in the decision log, not the unblocker's
+  status or screen. Wait a bounded time for the row. A send that timed out
+  may still have landed: read the unblocker's pane or session, and re-send
+  the same consult id once only if it never arrived. A second wait with no
+  row is a failed consult; note it and keep doing independent work.
 - Treat the answer as the user's standing intent within the charter. A
   boundary refusal is final until the user speaks.
 - While a user escalation pends, work the remaining unblocked scope.
