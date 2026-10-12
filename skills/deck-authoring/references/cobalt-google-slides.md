@@ -192,6 +192,9 @@ pdftoppm -r 110 -png render/deck.pdf render/p
 - **Bullet presets:** take `bulletPreset` from the values the API reference
   lists, not from memory. A name that is not on the list, such as
   `NUMBERED_DIGIT_PERIOD`, fails the whole batch with a 400.
+- **List spacing:** a paragraph can inherit `spacingMode: COLLAPSE_LISTS`,
+  which drops the space between list items. Send `NEVER_COLLAPSE` on a list
+  whose items need space between them.
 - **Image fetches fail now and then** ("There was a problem retrieving the
   image") for a file that is fine. Retry that slide; the batch is atomic.
 - **A network drop reads as an auth failure,** and `gws` can fail with "no
