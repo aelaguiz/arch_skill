@@ -256,9 +256,10 @@ you.
    your view of what the slides mean. Ask it to read each slide alone, as a
    busy founder seeing it for the first time, and report for each one what it
    thinks the slide says, every word, name, or number it could not resolve from
-   that slide, what it had to guess, and what it needed to see. Its misreadings
-   are the evidence. Fix every slide it could not read cold, then send. Do not
-   run a second cold read before he has seen the deck.
+   that slide, what it had to guess, what it needed to see, every sentence
+   nobody would say aloud, and any narration of how the deck was made. Its
+   misreadings are the evidence. Fix every slide it could not read cold, then
+   send. Do not run a second cold read before he has seen the deck.
 8. **Deliver.** Send the link with one or two sentences: what the deck answers,
    what you need from him, and anything you know is still rough. Keep the
    deck's source (builder or spec, images, a feedback log file) next to the
