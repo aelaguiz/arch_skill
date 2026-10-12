@@ -256,8 +256,9 @@ log beside the plan is its durable memory.
   and the PR is merge-ready. The parent verifies the outcome first-hand —
   the published PR loaded and read, CI state checked — before closing, and
   never merges or enables auto-merge without a separate user ask. Other
-  workers never commit, push, stash, or revert unrelated work; only the
-  explicitly assigned delivery worker touches push and PR operations.
+  workers never commit, push, stash, touch the git index, or revert unrelated
+  work; only the explicitly assigned delivery worker touches push and PR
+  operations.
 - Before phase closure, plan-required proof must be recorded passing. Before
   plan closure, run the final gate: one whole-plan cynical audit sweep —
   which personally loads the plan's end-state work products, a check no

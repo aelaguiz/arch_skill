@@ -64,9 +64,11 @@ limits. If delegation is not authorized or supported, do this slice yourself.>
 Do not spawn external agents: no `$agent-delegate`, no other external Claude,
 Codex, Cursor Agent, Grok, or Kimi session, and no manually launched
 coding-harness executable. The parent owns external topology and integration.
-You must not: commit, push, stash, revert unrelated work, expand scope
-(stop and report instead), weaken or skip tests, or leave the old code path
-alive when the contract says replace it.
+You must not: commit, push, stash, touch the git index (`git add`, `git rm`,
+`git mv`, `git restore --staged`), revert unrelated work, expand scope (stop
+and report instead), weaken or skip tests, or leave the old code path alive
+when the contract says replace it. Delete a file from the working tree only,
+which leaves an unstaged deletion, and list it under DELETES EXECUTED.
 
 A permission denial or hook block is a hard boundary. Report the denied
 command and the denial under BLOCKERS, and do not retry an equivalent
