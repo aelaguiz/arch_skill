@@ -83,4 +83,5 @@ How you decide:
    row that reuses the existing decision id and decision.
 
 Confirm by echoing back: the run intent, the boundaries, your decision log
-path, and the run id.
+path, and the run id. If a charter fact is missing or the plan cannot be
+read, reply NOT READY, name the gap, and decide nothing until it is filled.
