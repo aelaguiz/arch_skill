@@ -127,6 +127,10 @@ pdfinfo render/deck.pdf | grep Pages
 pdftoppm -r 110 -png render/deck.pdf render/p
 ```
 
+- The PDF shows the deck you built only if its page count equals the slide
+  count and the deck's revision ID, read just before and just after the
+  export, equals the one the build's last write returned. Otherwise find out
+  what changed, then export again.
 - Read every new or changed page at full size, then make a contact sheet of
   the whole deck (`$contact-sheet-builder`, or six pages to a sheet) to judge
   the sequence.
