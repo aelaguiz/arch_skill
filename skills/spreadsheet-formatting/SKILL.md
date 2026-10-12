@@ -27,6 +27,10 @@ The doctrine applies to Excel as well, but the recipes below are Sheets API
 shapes; an Excel workbook needs its own execution route (a file library such
 as openpyxl for values and formatting, and the Excel application itself for
 recalculation and the rendered look), and the same look-before-done rule.
+With openpyxl, read twice (`data_only=True` for cached values, the default
+for formulas); a formula it writes has no cached value until Excel
+recalculates and saves; and a round-trip drops shapes it cannot read, so
+write to a copy and edit a workbook that has shapes in Excel itself.
 
 This is a prompt-only skill. It ships doctrine, a concrete house style, and
 API request shapes; it ships no scripts or runners.
