@@ -86,8 +86,8 @@ state machine, or script-backed completion judge.
   scope. Every independent recheck uses a new clean critic rather than the
   implementer's or an earlier critic's context.
 - Do not manually spawn separate coding-harness executables such as `codex`,
-  `claude`, `agent`, `grok`, or `kimi` for ordinary acceleration. This lightweight lane may
-  still hand an explicitly requested external worker or conductor to
+  `claude`, `agent`, `grok`, `kimi`, or `agy` for ordinary acceleration. This
+  lightweight lane may still hand an explicitly requested external worker or conductor to
   `agent-delegate` or `conductor` under the shared policy; external
   execution is a deliberate route, not a blanket ban.
 - Do not claim a plan item complete from logs or checkboxes alone. Read code

@@ -66,6 +66,7 @@ class SharedPolicyInstallTests(unittest.TestCase):
             ("agents_install_skill", "verify_agents_install", "AGENTS_SKILLS_DIR"),
             ("claude_install_skill", "verify_claude_install", "CLAUDE_SKILLS_DIR"),
             ("gemini_install_skill", "verify_gemini_install", "GEMINI_SKILLS_DIR"),
+            ("agy_install_skill", "verify_agy_install", "AGY_SKILLS_DIR"),
         ]
 
         for install_target, verify_target, destination_var in cases:
@@ -81,7 +82,10 @@ class SharedPolicyInstallTests(unittest.TestCase):
                     "CLAUDE_SKILLS_DIR": home / ".claude/skills",
                     "CLAUDE_SETTINGS_FILE": home / ".claude/settings.json",
                     "GEMINI_SKILLS_DIR": home / ".gemini/skills",
+                    "AGY_HOME": home / ".gemini",
+                    "AGY_SKILLS_DIR": home / ".gemini/config/skills",
                 }
+                (home / ".gemini/antigravity-cli").mkdir(parents=True)
 
                 install = run_make(install_target, home, overrides)
                 self.assertEqual(install.returncode, 0, install.stderr)

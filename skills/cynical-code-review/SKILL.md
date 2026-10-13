@@ -46,8 +46,9 @@ waves, run external review subprocesses, or decide the user's broader workflow.
   truthful. Use `plan-audit implementation-audit`.
 - The user wants only a harsh maintainability, spaghetti, file-size, or
   code-judo pass. Use `thermo-nuclear-code-quality-review`.
-- The user wants an external Codex, Claude, Cursor, Grok, or Kimi second opinion. Use
-  the explicitly requested consult or delegation skill.
+- The user wants an external Codex, Claude, Cursor, Grok, Kimi, or Antigravity
+  (Gemini) second opinion. Use the explicitly requested consult or delegation
+  skill.
 - The user wants fixes, implementation, PR shipping, or workflow orchestration.
 
 ## Non-Negotiables
@@ -72,8 +73,8 @@ waves, run external review subprocesses, or decide the user's broader workflow.
   may not start external agents.
 - The parent owns child accounting, deduplication, integration, scope
   disposition, the saved artifact, and the final verdict.
-- Do not manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or any other
-  coding-harness executable.
+- Do not manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, `agy`, or any
+  other coding-harness executable.
 - Do not invoke external agent, delegation, consult, or review skills as the
   review mechanism.
 - Start from distrust: the implementation story, completion claim, names,

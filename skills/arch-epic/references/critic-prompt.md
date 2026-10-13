@@ -214,6 +214,8 @@ output via `--json-schema` surfaces the JSON
 in the top-level result's `structured_output` field. Codex's
 `--output-schema` writes the JSON verbatim to the `-o` file. Grok receives the
 schema appended to the prompt, and Kimi uses the same inline-schema path; the
-script post-validates each final JSON text. Native critics return the same JSON contract through the host's child
+script post-validates each final JSON text. agy receives the schema file
+through `--json-schema` and surfaces the JSON in the final result's
+`structured_output` field. Native critics return the same JSON contract through the host's child
 return surface. The critic does not need to worry about transport; it returns
 one JSON document per the schema and the parent validates it.

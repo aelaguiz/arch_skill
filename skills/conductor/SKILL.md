@@ -120,13 +120,16 @@ log beside the plan is its durable memory.
   from one vocabulary, and the user normally supplies them. A Codex worker
   with no named model defaults to `gpt-6.1-sol`, and an omitted level on that
   Sol worker defaults to `xhigh`; a Kimi worker with omitted model and level
-  defaults to `kimi-code/k3` at `max`. Accept `sol`, `astra`, `luna`, and `terra` as
+  defaults to `kimi-code/k3` at `max`, and an agy worker to `gemini-4-argon`
+  at `high`. Accept `sol`, `astra`, `luna`, and `terra` as
   `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated
   question only for load-bearing missing values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording
-  resolves to `grok-4.6`, and Kimi runs `kimi-code/k3` with an omitted-level
-  default of `max`. Explicit legacy Grok ids remain exact and discovery-gated.
+  resolves to `grok-4.6`, Kimi runs `kimi-code/k3` with an omitted-level
+  default of `max`, and the Antigravity CLI (`agy`) runs Gemini models,
+  `gemini-4-argon` by default, with an omitted-level default of `high`.
+  Explicit legacy Grok ids remain exact and discovery-gated.
   Announce the resolved model, thinking level, and lane before the first
   launch, and never change any of the three silently mid-run.
 - When intake is a described outcome or a partial plan, run the executive
@@ -300,8 +303,9 @@ log beside the plan is its durable memory.
    thinking level; `../_shared/agent-orchestration-policy.md` owns what "name"
    means here. Otherwise the fleet profile defaults to Codex `gpt-6.1-sol` at
    `xhigh`; a user-named provider swaps the whole fleet — Kimi to `kimi-code/k3`
-   at `max`, Grok to `grok-4.6`, Cursor to `composer-2.5-fast`, Claude to a
-   supported Claude model. Then pick the lane per
+   at `max`, agy (Gemini) to `gemini-4-argon` at `high`, Grok to `grok-4.6`,
+   Cursor to `composer-2.5-fast`, Claude to a supported Claude model. Then
+   pick the lane per
    `references/delegation-and-monitoring.md`: a native child when this host
    can pin that model and thinking level durably, otherwise `$agent-delegate`.
    Ask one consolidated question only for load-bearing missing values. The

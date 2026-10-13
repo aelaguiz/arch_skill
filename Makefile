@@ -1,4 +1,4 @@
-.PHONY: install crg-setup install_skill agents_install_skill clean_codex_skill_mirror clean_installed_hooks clean_codex_installed_hooks clean_claude_installed_hooks claude_install_skill gemini_install gemini_install_skill hermes_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install verify_hermes_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
+.PHONY: install crg-setup install_skill agents_install_skill clean_codex_skill_mirror clean_installed_hooks clean_codex_installed_hooks clean_claude_installed_hooks claude_install_skill gemini_install gemini_install_skill agy_install_skill hermes_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install verify_agy_install verify_hermes_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 # Purge removed packages from installed skill dirs before copying the active set.
 REMOVED_SKILLS := arch-skill arch-plan codemagic-builds customerio arch-loop delay-poll wait code-review plan-swarm skill-flow codex-babysit eli10 plan-conductor goal-loop
@@ -91,6 +91,11 @@ CODEX_HOOKS_FILE ?= $(HOME)/.codex/hooks.json
 CLAUDE_SKILLS_DIR ?= $(HOME)/.claude/skills
 CLAUDE_SETTINGS_FILE ?= $(HOME)/.claude/settings.json
 GEMINI_SKILLS_DIR ?= $(HOME)/.gemini/skills
+# The Antigravity CLI (`agy`) discovers global skills under ~/.gemini/config/
+# rather than the Gemini CLI's ~/.gemini/skills. Install only where agy has
+# already created its home; never create one.
+AGY_HOME ?= $(HOME)/.gemini
+AGY_SKILLS_DIR ?= $(AGY_HOME)/config/skills
 # Hermes Agent reads skills from category subdirectories under per-profile
 # skill roots. Install mirrors the agents surface into every Hermes root that
 # already exists on this machine; it never creates a Hermes home or profile.
@@ -105,6 +110,14 @@ INSTALL_GEMINI := gemini_install
 VERIFY_GEMINI := verify_gemini_install
 endif
 
+ifeq ($(NO_AGY),1)
+INSTALL_AGY :=
+VERIFY_AGY :=
+else
+INSTALL_AGY := agy_install_skill
+VERIFY_AGY := verify_agy_install
+endif
+
 ifeq ($(NO_HERMES),1)
 INSTALL_HERMES :=
 VERIFY_HERMES :=
@@ -113,7 +126,7 @@ INSTALL_HERMES := hermes_install_skill
 VERIFY_HERMES := verify_hermes_install
 endif
 
-install: clean_codex_stale_surfaces clean_claude_stale_surfaces clean_installed_hooks install_skill claude_install_skill $(INSTALL_GEMINI) $(INSTALL_HERMES)
+install: clean_codex_stale_surfaces clean_claude_stale_surfaces clean_installed_hooks install_skill claude_install_skill $(INSTALL_GEMINI) $(INSTALL_AGY) $(INSTALL_HERMES)
 
 # CRG is an optional agent accelerator. Missing tooling is loud but non-fatal.
 crg-setup:
@@ -304,6 +317,35 @@ gemini_install_skill:
 		find $(GEMINI_SKILLS_DIR)/$$item -name 'arch_controller_stop_hook.py' -delete; \
 	done
 
+# agy gets the Gemini skill set. Unlike the Gemini CLI copy, SKILL.md keeps its
+# frontmatter: agy requires `name` and `description` there.
+agy_install_skill:
+	@if [ ! -d "$(AGY_HOME)/antigravity-cli" ]; then \
+		echo "SKIP: no Antigravity CLI home at $(AGY_HOME)/antigravity-cli; nothing to install"; \
+		exit 0; \
+	fi; \
+	mkdir -p "$(AGY_SKILLS_DIR)"; \
+	for skill in $(REMOVED_SKILLS) $(SKILLS); do \
+		rm -rf "$(AGY_SKILLS_DIR)/$$skill"; \
+	done; \
+	for skill in $(LOCAL_GEMINI_SKILLS); do \
+		cp -R skills/$$skill "$(AGY_SKILLS_DIR)/$$skill"; \
+	done; \
+	for skill in $(VENDORED_GEMINI_SKILLS); do \
+		cp -R $(CURSOR_TEAM_KIT_SKILLS_DIR)/$$skill "$(AGY_SKILLS_DIR)/$$skill"; \
+	done; \
+	for shared in $(SHARED_DIRS); do \
+		rm -rf "$(AGY_SKILLS_DIR)/$$shared"; \
+		cp -R skills/$$shared "$(AGY_SKILLS_DIR)/$$shared"; \
+	done; \
+	for item in $(GEMINI_SKILLS) $(SHARED_DIRS); do \
+		find "$(AGY_SKILLS_DIR)/$$item" \( -name build -o -name prompts -o -name __pycache__ \) -type d -prune -exec rm -rf {} +; \
+		find "$(AGY_SKILLS_DIR)/$$item" -name '*.pyc' -delete; \
+		find "$(AGY_SKILLS_DIR)/$$item" -name 'upsert_*hook.py' -delete; \
+		find "$(AGY_SKILLS_DIR)/$$item" -name 'arch_controller_stop_hook.py' -delete; \
+	done; \
+	echo "OK: Antigravity CLI skills installed to $(AGY_SKILLS_DIR)"
+
 # Mirror the agents skill surface into every Hermes Agent skill root that
 # already exists: the default profile root ($(HERMES_HOME)/skills) and each
 # named profile root ($(HERMES_HOME)/profiles/<name>/skills). Skills land
@@ -344,8 +386,8 @@ hermes_install_skill:
 		echo "OK: Hermes skills installed to $$dest"; \
 	done
 
-verify_install: verify_agents_install verify_codex_install verify_claude_install $(VERIFY_GEMINI) $(VERIFY_HERMES)
-	@echo "OK: active skill surface installed for agents, Claude Code, requested Gemini targets, and existing Hermes skill roots; no arch_skill hooks installed"
+verify_install: verify_agents_install verify_codex_install verify_claude_install $(VERIFY_GEMINI) $(VERIFY_AGY) $(VERIFY_HERMES)
+	@echo "OK: active skill surface installed for agents, Claude Code, requested Gemini targets, an existing Antigravity CLI home, and existing Hermes skill roots; no arch_skill hooks installed"
 
 verify_agents_install:
 	@for skill in $(SKILLS); do \
@@ -439,6 +481,29 @@ verify_gemini_install:
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/upsert_claude_stop_hook.py
 	@test ! -e $(GEMINI_SKILLS_DIR)/arch-step/scripts/upsert_claude_session_start_hook.py
 	@echo "OK: Gemini active skills installed; stale command surfaces removed"
+
+verify_agy_install:
+	@if [ ! -d "$(AGY_HOME)/antigravity-cli" ]; then \
+		echo "OK: no Antigravity CLI home at $(AGY_HOME)/antigravity-cli; nothing to verify"; \
+		exit 0; \
+	fi; \
+	for skill in $(GEMINI_SKILLS); do \
+		f="$(AGY_SKILLS_DIR)/$$skill/SKILL.md"; \
+		if [ ! -f "$$f" ]; then echo "ERROR: missing $$f"; exit 1; fi; \
+		if [ "$$(head -n 1 "$$f")" != "---" ] || ! grep -q '^name:' "$$f" || ! grep -q '^description:' "$$f"; then echo "ERROR: $$f lacks the name/description frontmatter agy requires"; exit 1; fi; \
+	done; \
+	for skill in $(NON_GEMINI_SKILLS) $(REMOVED_SKILLS); do \
+		if [ -d "$(AGY_SKILLS_DIR)/$$skill" ]; then echo "ERROR: $(AGY_SKILLS_DIR)/$$skill should not be installed"; exit 1; fi; \
+	done; \
+	if [ ! -f "$(AGY_SKILLS_DIR)/_shared/native-child-capabilities.md" ]; then echo "ERROR: missing $(AGY_SKILLS_DIR)/_shared/native-child-capabilities.md"; exit 1; fi; \
+	if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(AGY_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(AGY_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi; \
+	if [ ! -f "$(AGY_SKILLS_DIR)/_shared/model_resolution.py" ]; then echo "ERROR: missing $(AGY_SKILLS_DIR)/_shared/model_resolution.py"; exit 1; fi; \
+	for item in $(GEMINI_SKILLS) $(SHARED_DIRS); do \
+		if find "$(AGY_SKILLS_DIR)/$$item" \( -name build -o -name prompts -o -name __pycache__ \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(AGY_SKILLS_DIR)/$$item"; exit 1; fi; \
+		if find "$(AGY_SKILLS_DIR)/$$item" -name '*.pyc' -print -quit | grep -q .; then echo "ERROR: Python bytecode installed under $(AGY_SKILLS_DIR)/$$item"; exit 1; fi; \
+		if find "$(AGY_SKILLS_DIR)/$$item" \( -name 'upsert_*hook.py' -o -name 'arch_controller_stop_hook.py' \) -print -quit | grep -q .; then echo "ERROR: hook scripts installed under $(AGY_SKILLS_DIR)/$$item"; exit 1; fi; \
+	done; \
+	echo "OK: Antigravity CLI skills verified at $(AGY_SKILLS_DIR)"
 
 verify_hermes_install:
 	@roots=""; \

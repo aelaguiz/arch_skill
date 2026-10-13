@@ -62,8 +62,8 @@ implement and verify, and make implementation decisions the plan implies.
 <State the authorized native delegation scope and this host's child-depth
 limits. If delegation is not authorized or supported, do this slice yourself.>
 Do not spawn external agents: no `$agent-delegate`, no other external Claude,
-Codex, Cursor Agent, Grok, or Kimi session, and no manually launched
-coding-harness executable. The parent owns external topology and integration.
+Codex, Cursor Agent, Grok, Kimi, or Antigravity (Gemini) session, and no
+manually launched coding-harness executable. The parent owns external topology and integration.
 You must not: commit, push, stash, touch the git index (`git add`, `git rm`,
 `git mv`, `git restore --staged`), revert unrelated work, expand scope (stop
 and report instead), weaken or skip tests, or leave the old code path alive

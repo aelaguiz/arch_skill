@@ -210,7 +210,10 @@ the host's exact child handle. External Claude uses `-r <session-id>` and
 external Codex uses `codex exec resume <session-id>`. External Grok uses
 `--resume <session-id>`. External Kimi runs from the original cwd and uses
 `kimi -r <session-id>`; never use `-c`/`--continue`, and require a fresh
-`session.resume_hint` rather than falling back to the input id.
+`session.resume_hint` rather than falling back to the input id. External agy
+runs from the original cwd and uses `agy --conversation <session-id>`; never
+use `-c`/`--continue`, and require the turn to report that same conversation
+id.
 
 After an upstream repair, downstream steps start new clean replacements. Do not
 resume a downstream child whose history was built on broken upstream input.

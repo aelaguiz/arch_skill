@@ -18,23 +18,27 @@ spawn path, `codex-cli 0.154.0-alpha.3` catalogs and configuration schema, and
 Claude Code `2.1.274`. The "Open-source and unnamed parent models" section records
 what those probes established.
 
+**Antigravity CLI added 2026-10-13** against `agy 1.3.4`: the subagent tool
+schemas the CLI gives its model, plus a live headless run in which one Gemini 4
+Argon parent launched five `flash`-tier children in a single call.
+
 **Harnesses move.** Treat every row as a starting expectation, not a promise.
 Inspect the live tool schema before you rely on a capability, and believe the
 schema over this file when they disagree.
 
 ## Matrix
 
-| Capability | Prime Agent | Codex CLI (multi_agent_v2) | Claude Code |
-|---|---|---|---|
-| Pin child **model** | `model="provider/id"` on the spawn call. Exact selector; it must be in the authenticated catalog or the spawn hard-fails | `spawn_agent(model=...)`. The slug must be catalog-tagged for v2; on a typical host that is only the `gpt-5.6-*` family | Three levers, in order: `CLAUDE_CODE_SUBAGENT_MODEL` env, per-call `model`, agent frontmatter `model:`. The per-call form is a closed alias enum, not full IDs |
-| Pin child **thinking / effort** | `thinking=` with `off, minimal, low, medium, high, xhigh, max` | `reasoning_effort=` with `none, minimal, low, medium, high, xhigh, max, ultra` | Agent frontmatter `effort:` with `low, medium, high, xhigh, max`. **No per-call effort parameter**, and no per-subagent extended-thinking toggle |
-| Unsupported level | Hard spawn failure when set explicitly; an inherited level is silently clamped | Rejected with the model's supported list | Frontmatter value applies to that agent definition |
-| **Cross-provider** child | **Yes** — provider is not a constraint in the spawn path. The gate is the authenticated catalog: a host logged in to two providers can spawn a child on either | **No** through `model` — the child's provider is copied from the parent turn. Reachable only through a human-installed role whose config file sets its own provider | **No** — the vendor does not route Claude Code to non-Claude models through any gateway; the base-URL override is process-wide and changes where requests go, not which model answers |
-| Starting context | Clean only; no fork option exists | `fork_turns`: `none`, `all`, or a positive-integer string. **Omitting it means `all`** | Clean by default; the explicit fork form inherits everything and forces the parent model |
-| Resume the exact child | Message the child by name or id | Follow-up or message tool against the canonical task name | Message tool against the agent id or name; full history retained |
-| Concurrency | No cap; a kernel boot throttle delays rather than rejects | **3 children** by default; over-cap triggers an unload, not an error | 20 by default |
-| Child fan-out | **Depth 1 by default — a child cannot spawn its own children.** Raise it deliberately at the host | Uncapped under v2 | Depth 3 by default |
-| Billing | The child bills at **its own model's rate**, summed into parent totals and tagged by origin | One account and rate-limit window for the whole tree. Child token usage is per-thread and **is not rolled up**, so parent-side totals under-report | One account for the whole tree |
+| Capability | Prime Agent | Codex CLI (multi_agent_v2) | Claude Code | Antigravity CLI (`agy`) |
+|---|---|---|---|---|
+| Pin child **model** | `model="provider/id"` on the spawn call. Exact selector; it must be in the authenticated catalog or the spawn hard-fails | `spawn_agent(model=...)`. The slug must be catalog-tagged for v2; on a typical host that is only the `gpt-5.6-*` family | Three levers, in order: `CLAUDE_CODE_SUBAGENT_MODEL` env, per-call `model`, agent frontmatter `model:`. The per-call form is a closed alias enum, not full IDs | `invoke_subagent` `Model` is a tier, not an id: `inherit` (default), `flash_lite`, `flash`, `pro`. An exact model such as `gemini-4-argon` cannot be named |
+| Pin child **thinking / effort** | `thinking=` with `off, minimal, low, medium, high, xhigh, max` | `reasoning_effort=` with `none, minimal, low, medium, high, xhigh, max, ultra` | Agent frontmatter `effort:` with `low, medium, high, xhigh, max`. **No per-call effort parameter**, and no per-subagent extended-thinking toggle | **Not offered.** A child runs its tier's own level |
+| Unsupported level | Hard spawn failure when set explicitly; an inherited level is silently clamped | Rejected with the model's supported list | Frontmatter value applies to that agent definition | Not applicable; there is no effort parameter |
+| **Cross-provider** child | **Yes** — provider is not a constraint in the spawn path. The gate is the authenticated catalog: a host logged in to two providers can spawn a child on either | **No** through `model` — the child's provider is copied from the parent turn. Reachable only through a human-installed role whose config file sets its own provider | **No** — the vendor does not route Claude Code to non-Claude models through any gateway; the base-URL override is process-wide and changes where requests go, not which model answers | **No.** The tiers are Gemini tiers, although the parent's own catalog also lists Claude and GPT-OSS models |
+| Starting context | Clean only; no fork option exists | `fork_turns`: `none`, `all`, or a positive-integer string. **Omitting it means `all`** | Clean by default; the explicit fork form inherits everything and forces the parent model | Clean: the child type's system prompt plus the `Prompt` you write. The built-in `self` type copies the parent's configuration (tools, system prompt, model), not its conversation |
+| Resume the exact child | Message the child by name or id | Follow-up or message tool against the canonical task name | Message tool against the agent id or name; full history retained | `send_message` to the child's `conversationId`; a finished child sits `idle` and accepts more work |
+| Concurrency | No cap; a kernel boot throttle delays rather than rejects | **3 children** by default; over-cap triggers an unload, not an error | 20 by default | Five children in one `invoke_subagent` call were admitted with no queueing; no cap was found |
+| Child fan-out | **Depth 1 by default — a child cannot spawn its own children.** Raise it deliberately at the host | Uncapped under v2 | Depth 3 by default | Off unless the child's definition sets `enable_subagent_tools` |
+| Billing | The child bills at **its own model's rate**, summed into parent totals and tagged by origin | One account and rate-limit window for the whole tree. Child token usage is per-thread and **is not rolled up**, so parent-side totals under-report | One account for the whole tree | The parent's Google account and quota for the whole tree |
 
 ## Sharp edges
 
@@ -63,6 +67,14 @@ ability depends on which providers that installation is authenticated for. When
 the catalog holds two providers, a cross-provider child is an ordinary native
 spawn. When it holds one, the same request needs an external session. Check the
 catalog before deciding; do not assume either answer.
+
+**A tier is not a model pin.** On the Antigravity CLI a native child can be
+moved to a cheaper or stronger Gemini tier, but not to a named model or effort.
+When the work needs exactly Gemini 4 Argon at a stated effort, or any
+non-Gemini model, that is a concrete benefit of the external `agy` lane or
+another provider's lane. `Workspace: branch` (an isolated copy) or `share`
+(a worktree-like checkout) is real filesystem isolation for editful children;
+the default `inherit` shares the parent's workspace.
 
 **Context inheritance is separate from everything else.** None of these rows say
 anything about permissions, filesystem scope, worktree isolation, or network

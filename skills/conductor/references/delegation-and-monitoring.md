@@ -110,7 +110,8 @@ The user supplies the runtime and normally the thinking level plus a
 model/profile outside the defaults. When the fleet is Codex and the model is
 omitted, use `gpt-6.1-sol`; when that Sol lane also omits the level, use
 `xhigh`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
-`max`. For Codex, accept `sol`, `astra`, `luna`, and `terra` as
+`max`. When it is agy, use `gemini-4-argon` and default an omitted level to
+`high`. For Codex, accept `sol`, `astra`, `luna`, and `terra` as
 `gpt-6.1-sol`, `gpt-6-astra`,
 `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
 missing execution values. For a parent this repo names, the default fleet is

@@ -1,7 +1,8 @@
 # Native continuation and external session adapter
 
 Verified against Claude Code CLI 2.1.119, Codex CLI 0.124.0-alpha.3, Grok CLI
-0.2.91, and Kimi Code CLI 0.26.0. When a CLI version drifts, re-run the relevant verification block
+0.2.91, Kimi Code CLI 0.26.0, and Antigravity CLI (`agy`) 1.3.4. When a CLI
+version drifts, re-run the relevant verification block
 at the bottom of this file before trusting that invocation.
 
 ## Transport ownership
@@ -34,17 +35,17 @@ another deliberate benefit warrants an external process.
 
 On failure, Stepwise may resume an external worker in two ways: read-only
 diagnostic conversation, then operational repair after root cause is located.
-Claude, Codex, Grok, and Kimi expose different external session handles; this
-reference is the single place those exact mechanics live.
+Claude, Codex, Grok, Kimi, and agy expose different external session handles;
+this reference is the single place those exact mechanics live.
 
 ## External runtime behavior contract
 
 - External worker sessions are resumable. Do not pass `--ephemeral` (Codex) or
   `--no-session-persistence` (Claude) to them.
 - External critics always start clean and are never resumed. Pass `--ephemeral`
-  for Codex and use new clean processes for Claude and Grok. Kimi always
-  persists a session, so its critic is fresh-but-persisted rather than
-  stateless/no-persist; ignore that handle and never resume it.
+  for Codex and use new clean processes for Claude and Grok. Kimi and agy
+  always persist a session, so their critics are fresh-but-persisted rather
+  than stateless/no-persist; ignore that handle and never resume it.
 - Diagnostic and repair turns both resume exact external worker sessions.
   Diagnostic turns are read-only by prompt contract and do not consume repair
   bounces. Repair turns are operational and do consume repair bounces.
@@ -356,6 +357,90 @@ parse the final text as JSON, and apply the same semantic StepVerdict
 validation as Grok. The critic's persisted session is ignored and never
 resumed.
 
+## agy — step session (resumable)
+
+agy (the Antigravity CLI, which runs Gemini models such as Gemini 4 Argon) has
+no cwd or prompt-file flag. Run it from `<target_repo>` and pass the saved
+prompt text as one attached `--print=` argv value, without a shell. The
+attached form keeps a prompt that starts with `-` from being read as a flag.
+
+```
+agy \
+  --print=<step_prompt_text> \
+  --model <resolved_step_model> \
+  --effort <resolved_step_effort> \
+  --output-format stream-json \
+  --print-timeout 0 \
+  --dangerously-skip-permissions
+```
+
+Stdout is JSONL. The first event is
+`{"event":"init","conversation_id":"<id>",...}`, `step_update` events stream
+progress, and the last event is
+`{"event":"result","result":{"conversation_id":"<id>","status":"SUCCESS","response":"<final text>",...}}`.
+The final answer is `result.response`. The session id is
+`init.conversation_id`, and the result event must name the same conversation.
+A run with no result event, a status other than `SUCCESS`, or empty response
+text is malformed; agy puts its own reason in `result.error`. Preserve the run
+artifacts and fail. A resumable worker without matching init and result ids is
+unrecoverable.
+
+`--print-timeout 0` waits for the whole turn. Every headless run passes
+`--dangerously-skip-permissions`: print mode cannot answer a permission
+prompt, so a machine on agy's default review setting would otherwise refuse
+tools. agy persists every conversation. Do not add `--mode plan`; it writes a
+plan artifact and waits for approval, so it is not a read-only mode.
+`run_stepwise.py` writes `agy --version` to `agy_version.txt` beside each
+launch because agy can update itself between runs.
+
+## agy — step resume
+
+Resume the exact worker from the same `<target_repo>` cwd:
+
+```
+agy \
+  --print=<diagnostic_or_repair_prompt_text> \
+  --model <resolved_step_model> \
+  --effort <resolved_step_effort> \
+  --output-format stream-json \
+  --print-timeout 0 \
+  --dangerously-skip-permissions \
+  --conversation <session_id>
+```
+
+Use `--conversation <session_id>` only. Never use `-c`/`--continue`, which
+selects the latest conversation. A resumed turn keeps its conversation id, but
+agy does not fail on an unknown id: it prints
+`warning: conversation "<id>" not found`, starts a new conversation, and exits
+0. After every diagnostic or repair turn, require the returned id to equal the
+requested one. A different or missing id is unrecoverable for continuation; do
+not adopt the new id, select another conversation, change the model or effort,
+or fall back to another provider.
+
+## agy — critic (fresh, schema flag)
+
+Start a new clean agy conversation from `<target_repo>` and pass the
+StepVerdict schema file:
+
+```
+agy \
+  --print=<critic_prompt_text> \
+  --model <resolved_critic_model> \
+  --effort <resolved_critic_effort> \
+  --output-format stream-json \
+  --print-timeout 0 \
+  --dangerously-skip-permissions \
+  --json-schema <StepVerdict schema file>
+```
+
+The verdict is `result.structured_output`. `result.response` carries the same
+JSON plus agy's own `toolAction` and `toolSummary` keys, so never parse the
+verdict from it. A result without a `structured_output` object is malformed.
+The script then applies the same semantic StepVerdict validation as the other
+lanes. The critic stays read-only through its no-edit prompt contract and the
+parent's repository-state check, as in the Grok lane. Its persisted
+conversation is ignored and never resumed.
+
 ## Notes on flag drift
 
 - Claude's `--effort` accepts: `low`, `medium`, `high`, `xhigh`, `max`.
@@ -388,6 +473,15 @@ resumed.
   only the exact `session.resume_hint` id.
 - Kimi takes prompt text as one `-p` argv value. The operating-system argv-size
   limit is real; do not claim arbitrarily large prompts are supported.
+- agy takes effort as `--effort`. Gemini models in agy accept only `low`,
+  `medium`, and `high`; agy rejects `xhigh` and `max` with an `ERROR` result.
+- agy's `duration_seconds` on a resumed turn counts from the conversation's
+  earlier activity. Time runs from `start_ts` and `end_ts` instead.
+- agy has no hook-suppression or no-auto-update switch, and it runs the user's
+  global hooks. Do not invent flags.
+- agy takes prompt text as one `--print=` argv value, under the same argv-size
+  limit as Kimi. Its stdin `stream-json` input shape is undocumented; do not
+  use it.
 
 ## Verification block
 
@@ -475,6 +569,35 @@ KIMI_CODE_NO_AUTO_UPDATE=1 KIMI_MODEL_THINKING_EFFORT=low \
   kimi -m kimi-code/k3 \
   -p 'Return JSON only: {"verdict":"pass"}' --output-format stream-json \
   | tee /tmp/smoke/kimi-critic.events.jsonl
+
+# 13 agy step (run all agy commands from the same cwd)
+cd /tmp/smoke
+agy --print='Remember the word MANGO. Reply with exactly: OK' \
+  --model gemini-4-argon --effort low --output-format stream-json \
+  --print-timeout 0 --dangerously-skip-permissions \
+  | tee /tmp/smoke/agy-step.events.jsonl
+jq -rR 'fromjson? | select(.event=="init") | .conversation_id' \
+  /tmp/smoke/agy-step.events.jsonl
+
+# 14 agy resume (reuse the exact conversation_id from step 13; the response
+# must be MANGO and the result must name the same conversation)
+agy --print='What word did I ask you to remember? Reply with only that word.' \
+  --model gemini-4-argon --effort low --output-format stream-json \
+  --print-timeout 0 --dangerously-skip-permissions \
+  --conversation <CONVERSATION_ID> | tee /tmp/smoke/agy-resume.events.jsonl
+jq -cR 'fromjson? | select(.event=="result") | .result | {conversation_id,status,response}' \
+  /tmp/smoke/agy-resume.events.jsonl
+
+# 15 agy critic (schema file through --json-schema; read structured_output)
+printf '%s' '{"type":"object","properties":{"verdict":{"type":"string","enum":["pass","fail"]}},"required":["verdict"]}' \
+  > /tmp/smoke/agy-schema.json
+agy --print='Return verdict pass.' \
+  --model gemini-4-argon --effort low --output-format stream-json \
+  --print-timeout 0 --dangerously-skip-permissions \
+  --json-schema /tmp/smoke/agy-schema.json \
+  | tee /tmp/smoke/agy-critic.events.jsonl
+jq -cR 'fromjson? | select(.event=="result") | .result.structured_output' \
+  /tmp/smoke/agy-critic.events.jsonl
 ```
 
 If any relevant probe fails or emits a different shape than described above,

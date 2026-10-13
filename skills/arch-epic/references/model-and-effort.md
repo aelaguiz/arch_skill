@@ -6,19 +6,20 @@ the epic doc, sub-plan DOC_PATH, worklog, and relevant arch-step references.
 Do not invent a native model, effort, permission set, worktree, or lifecycle the
 host cannot confirm.
 
-An external Claude, Codex, Grok, or Kimi process remains valid when a concrete
-provider, exact model/profile, durable or detached lifecycle, worktree/process
-isolation, automation surface, structured receipt, or another deliberate
-benefit warrants the additional process and integration cost. These examples
-are recognition aids, not an allowlist. External repair resumes the exact
-planner or implementation session; every external critic starts clean.
+An external Claude, Codex, Grok, Kimi, or agy (Antigravity CLI) process
+remains valid when a concrete provider, exact model/profile, durable or
+detached lifecycle, worktree/process isolation, automation surface, structured
+receipt, or another deliberate benefit warrants the additional process and
+integration cost. These examples are recognition aids, not an allowlist.
+External repair resumes the exact planner or implementation session; every
+external critic starts clean.
 
 ## Interactive mode
 
 Interactive and same-session modes prefer one clean native critic. The legacy
 frontmatter still supports an external critic execution block:
 
-- `critic_runtime`: `claude`, `codex`, `grok`, or `kimi`
+- `critic_runtime`: `claude`, `codex`, `grok`, `kimi`, or `agy`
 - `critic_model`: runnable CLI model identifier
 - `critic_effort`: `low | medium | high | xhigh | max | ultra`
 
@@ -87,6 +88,10 @@ the same doctrine used by Stepwise and fresh-consult:
 - resolve Kimi/K3 wording to `runtime=kimi`, `model=kimi-code/k3`; default an
   omitted Kimi effort to `max`
 - inspect `kimi provider list --json` when Kimi model availability matters
+- resolve Argon, Gemini, Antigravity, and agy wording to `runtime=agy`,
+  `model=gemini-4-argon`; default an omitted agy effort to `high`
+- inspect `agy models` when agy model availability matters; it lists Argon only
+  for a Google AI Ultra sign-in
 - prefer `claude-<family>-<version-with-hyphens>` for supported Claude
   family+version
   phrases
@@ -109,6 +114,7 @@ include a role:
 - "implementation worker on Codex Fugu Ultra xhigh"
 - "planner on Grok Build high"
 - "implementation worker on Kimi K3 max"
+- "critic on Gemini 4 Argon high"
 - "critics on gpt-6.1-sol xhigh"
 - "codex gpt-6.1-sol high everywhere"
 
@@ -143,6 +149,12 @@ Treat model text as intent, not a loose alias:
 - `kimi`, `kimi code`, `kimi k3`, `k3`, and `moonshot` normalize to
   `runtime=kimi`, `model=kimi-code/k3`. Do not auto-resolve older
   Kimi-for-coding/K2.7 aliases.
+- `argon`, `gemini`, `gemini 4 argon`, `antigravity`, and `agy` normalize to
+  `runtime=agy`, `model=gemini-4-argon`; `gemini flash` becomes
+  `gemini-3.8-flash` only when named. A natural Gemini version that is not in
+  the catalog, such as `gemini 4.5 argon`, fails loud rather than being
+  rewritten. agy runs only Gemini models: the Claude and GPT-OSS models it also
+  lists never run through it, so `agy opus` names two runtime families.
 - Bare `composer`, `composer 2.5`, or bare `2.5` is ambiguous unless the user
   explicitly names Cursor Agent or Grok in the same execution choice.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
@@ -164,7 +176,9 @@ does not widen that model's catalog contract. Kimi K3 advertises `low`, `high`,
 and `max`, with omitted effort defaulting to `max`. Pass Kimi effort through
 `KIMI_MODEL_THINKING_EFFORT`, not a nonexistent `--effort` flag. Preserve an
 explicit `medium` or `xhigh` verbatim as a forced override, but never choose
-either by default or inference.
+either by default or inference. agy's Gemini models support only `low`,
+`medium`, and `high`, passed with `--effort`; an omitted effort defaults to
+`high`, and `xhigh`, `max`, or `ultra` fails rather than being lowered.
 
 Every Kimi process also sets `KIMI_CODE_NO_AUTO_UPDATE=1`, passes
 `-m kimi-code/k3`, and runs from the role's work root. Print mode's automatic
@@ -175,6 +189,22 @@ final text from ordered `role=assistant` contents, and require a fresh
 `session.resume_hint` id for continued work. Missing text or a required hint is
 unrecoverable, with no latest-session, input-id, model, effort, or provider
 fallback. Kimi critics receive the verdict schema inline in their prompt.
+
+Every agy process passes the prompt as one `--print=<prompt>` value with
+`--model`, `--effort`, `--output-format stream-json`, `--print-timeout 0`, and
+`--dangerously-skip-permissions`, and runs from the role's work root because
+agy has no cwd flag. agy runs the user's global hooks and can update itself, so
+each receipt records `agy --version`. The session id is the `init` event's
+`conversation_id`; the final `result` event must name the same conversation,
+report `SUCCESS`, and carry non-empty `response` text. Resume only with
+`agy --conversation <exact-id>` from the same work root, never `-c` or
+`--continue`. agy answers an unknown id by quietly starting a new conversation,
+so a resumed turn that reports any other id is unrecoverable. agy critics pass
+the verdict schema file with `--json-schema` and take the verdict from
+`result.structured_output`, never from `response`, which can carry extra keys.
+A missing result, a non-`SUCCESS` status, empty text, a missing or mismatched
+conversation id, or a missing structured verdict is unrecoverable, with no
+latest-session, model, effort, or provider fallback.
 
 Always print the raw-to-resolved mapping before execution:
 
@@ -189,6 +219,8 @@ planner: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effo
 implementation_worker: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
 implementation_worker: "Kimi K3 high" -> runtime=kimi, model=kimi-code/k3, effort=high
 critic: "Kimi" -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
+implementation_worker: "Gemini 4 Argon medium" -> runtime=agy, model=gemini-4-argon, effort=medium
+critic: "Argon" -> runtime=agy, model=gemini-4-argon, effort=high, effort_source=preference_default
 ```
 
 ## Asking when missing
@@ -209,12 +241,13 @@ choices control real external processes and model budget.
 - critic: checks North Star, plan readiness, completion, and scope drift
 
 Please give runtime plus any non-default effort for each role and a
-model/profile outside the Codex and Kimi defaults, or say which roles should be
-"same as" another role. A Codex role with no model uses gpt-6.1-sol, and that
-Sol role uses xhigh when effort is omitted; a Kimi role uses kimi-code/k3 and
-defaults an omitted effort to max. Ordinary critic failures resume the exact
-relevant planner or implementation worker session; there is no separate
-repair-worker choice in new external-harness policies.
+model/profile outside the Codex, Kimi, and agy defaults, or say which roles
+should be "same as" another role. A Codex role with no model uses
+gpt-6.1-sol, and that Sol role uses xhigh when effort is omitted; a Kimi role
+uses kimi-code/k3 and defaults an omitted effort to max; an agy role uses
+gemini-4-argon and defaults an omitted effort to high. Ordinary critic
+failures resume the exact relevant planner or implementation worker session;
+there is no separate repair-worker choice in new external-harness policies.
 ```
 
 If one role is complete and another is missing, preserve the complete role and

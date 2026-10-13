@@ -3,7 +3,9 @@
 This module is deterministic plumbing for skill scripts. It encodes the
 provider-owned routing rule: Codex runs GPT/GBT/OpenAI models and Fugu profiles,
 Claude Code runs supported Claude models, Cursor Agent runs Composer 2.5 Fast,
-Grok CLI runs Grok models, and Kimi Code runs Kimi models.
+Grok CLI runs Grok models, Kimi Code runs Kimi models, and the Antigravity
+CLI (`agy`) runs Gemini models. `agy` also lists Claude and GPT-OSS models;
+those are never routed through `agy`.
 Cross-provider phrases fail loud instead of routing an expensive model through
 the wrong harness.
 """
@@ -19,7 +21,7 @@ from dataclasses import dataclass
 from typing import Any
 
 
-VALID_RUNTIMES = {"agent", "claude", "codex", "grok", "kimi"}
+VALID_RUNTIMES = {"agent", "agy", "claude", "codex", "grok", "kimi"}
 VALID_EFFORTS = {"low", "medium", "high", "xhigh", "max", "ultra"}
 PREFERRED_CODEX_MODEL = "gpt-6.1-sol"
 PREFERRED_CODEX_EFFORT = "xhigh"
@@ -28,6 +30,19 @@ PREFERRED_KIMI_MODEL = "kimi-code/k3"
 KIMI_DEFAULT_EFFORT = "max"
 KIMI_EFFORT_ENV = "KIMI_MODEL_THINKING_EFFORT"
 KIMI_NO_AUTO_UPDATE_ENV = "KIMI_CODE_NO_AUTO_UPDATE"
+PREFERRED_AGY_MODEL = "gemini-4-argon"
+AGY_FLASH_MODEL = "gemini-3.8-flash"
+PREFERRED_AGY_EFFORT = "high"
+# Every scripted agy launch streams events, waits for the whole turn (older
+# builds stopped print mode after 5 minutes), and skips permission prompts a
+# headless run cannot answer.
+AGY_HEADLESS_ARGS = (
+    "--output-format",
+    "stream-json",
+    "--print-timeout",
+    "0",
+    "--dangerously-skip-permissions",
+)
 CODEX_6_VARIANTS = ("sol", "luna")
 CODEX_56_VARIANTS = ("terra",)
 BLOCKED_CODEX_MODELS = frozenset({"gpt-5.4", "gpt-5.5"})
@@ -81,6 +96,27 @@ _FUGU_PROFILE_DEFAULT_EFFORTS = {
 _CODEX_ULTRA_MODELS = {"gpt-6-astra", "gpt-6-sol", "gpt-5.6-terra"}
 _CLAUDE_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 _KIMI_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
+_AGY_EFFORTS = {"low", "medium", "high"}
+_AGY_KEYWORD_RE = re.compile(r"\b(agy|antigravity|gemini|argon)\b", re.IGNORECASE)
+_AGY_SLUG_RE = re.compile(r"\bgemini-\d[a-z0-9.]*(?:-[a-z0-9.]+)+\b", re.IGNORECASE)
+_AGY_EFFORT_SUFFIX_RE = re.compile(
+    r"-(?:none|minimal|low|medium|high|xhigh|max|ultra)$", re.IGNORECASE
+)
+_AGY_NATURAL_RE = re.compile(
+    r"\b(?:gemini[\s_]*(?P<version>\d+(?:\.\d+)?)?[\s_]*)?(?P<family>argon|flash)\b"
+    r"(?:[\s_-]*v?(?P<post_version>\d+(?:\.\d+)?)\b)?",
+    re.IGNORECASE,
+)
+_AGY_OTHER_FAMILY_RE = re.compile(
+    r"\b(?P<flash_lite>flash[\s_-]*lite)\b|\b(?P<family>pro|nano|lite|composer)\b",
+    re.IGNORECASE,
+)
+_AGY_UNSUPPORTED_EFFORT_RE = re.compile(r"\b(none|minimal|off)\b", re.IGNORECASE)
+_AGY_SIGN_IN_RE = re.compile(r"sign[\s-]*in|log[\s-]*in|authenticat", re.IGNORECASE)
+_AGY_NATURAL_MODELS = {
+    "argon": ("4", PREFERRED_AGY_MODEL),
+    "flash": ("3.8", AGY_FLASH_MODEL),
+}
 _CLAUDE_FAMILY_RE = re.compile(
     r"\b(?P<family>fable|opus|sonnet|haiku)"
     r"(?:[\s_-]*(?P<version>\d+(?:[\.-]\d+)*))?\b",
@@ -183,6 +219,22 @@ def kimi_model_args(model: str) -> list[str]:
     """Return the Kimi Code CLI argv that pins an exact model alias."""
 
     return ["-m", model]
+
+
+def agy_model_args(model: str, effort: str) -> list[str]:
+    """Return the Antigravity CLI argv that pins an exact model and effort."""
+
+    return ["--model", model, "--effort", effort]
+
+
+def agy_prompt_arg(prompt: str) -> str:
+    """Return the print-mode prompt as one attached argv value.
+
+    The attached form keeps a prompt that looks like a flag from being read
+    as one.
+    """
+
+    return f"--print={prompt}"
 
 
 def discover_codex_models() -> list[str]:
@@ -288,6 +340,66 @@ def discover_kimi_models() -> list[str]:
     )
 
 
+def discover_agy_models() -> list[str]:
+    """Return base model ids from `agy models` when available.
+
+    Each model line is `<id>\t<display name>`, and each id carries its effort
+    as a suffix (`gemini-4-argon-high`). Return the ids without that suffix.
+    Any other output shape is treated as unavailable rather than guessed.
+    """
+
+    if shutil.which("agy") is None:
+        return []
+    proc = subprocess.run(
+        ["agy", "models"],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        if _AGY_SIGN_IN_RE.search(proc.stdout):
+            raise ModelResolutionError(
+                "agy is installed but not signed in (`agy models`: "
+                f"{proc.stdout.strip()[:200]!r}). A headless agy run would open the "
+                "Google sign-in page in the browser, so no agy run can start until "
+                "someone signs in by running `agy` interactively"
+            )
+        return []
+    return parse_agy_models(proc.stdout)
+
+
+def check_agy_ready(model: str) -> None:
+    """Fail before an agy launch that cannot work.
+
+    Raises when agy is signed out, or when its catalog is readable and lacks
+    `model`. Call it immediately before starting an agy process.
+    """
+
+    models = discover_agy_models()
+    if models and model not in models:
+        gemini_models = ", ".join(m for m in models if m.startswith("gemini-"))
+        raise ModelResolutionError(
+            f"agy does not list {model!r} for this sign-in; it lists: "
+            f"{gemini_models or '<no Gemini models>'}"
+        )
+
+
+def parse_agy_models(text: str) -> list[str]:
+    """Parse `agy models` output into sorted base model ids."""
+
+    candidates: set[str] = set()
+    for line in text.splitlines():
+        if "\t" not in line:
+            continue
+        model_id = line.split("\t", 1)[0].strip().lower()
+        if not model_id or " " in model_id:
+            continue
+        candidates.add(_AGY_EFFORT_SUFFIX_RE.sub("", model_id))
+    return sorted(candidates)
+
+
 def resolve_execution_phrase(
     source_quote: str,
     *,
@@ -295,6 +407,7 @@ def resolve_execution_phrase(
     agent_models: list[str] | None = None,
     grok_models: list[str] | None = None,
     kimi_models: list[str] | None = None,
+    agy_models: list[str] | None = None,
 ) -> ResolvedExecution:
     """Resolve a compact user phrase into runtime/model/effort.
 
@@ -319,6 +432,10 @@ def resolve_execution_phrase(
     - "grok composer 2.5 high" -> grok / grok-composer-2.5-fast / high
     - "kimi k3" -> kimi / kimi-code/k3 / max
     - "kimi-code/k3 xhigh" -> kimi / kimi-code/k3 / xhigh
+    - "argon" -> agy / gemini-4-argon / high
+    - "gemini 4 argon medium" -> agy / gemini-4-argon / medium
+    - "gemini-4-argon-low" -> agy / gemini-4-argon / low
+    - "gemini flash high" -> agy / gemini-3.8-flash / high
 
     The function raises ModelResolutionError when a required value is missing
     or when exact-version-preserving model discovery is impossible. Cursor
@@ -334,7 +451,7 @@ def resolve_execution_phrase(
     runtime, runtime_source = _infer_runtime(lowered)
     if runtime is None:
         raise ModelResolutionError(
-            f"could not infer runtime from {raw!r}; name claude, codex, agent, grok, or kimi"
+            f"could not infer runtime from {raw!r}; name claude, codex, agent, grok, kimi, or agy"
         )
     fugu_candidate = (
         _extract_fugu_model_candidate(lowered) if runtime == "codex" else None
@@ -354,6 +471,8 @@ def resolve_execution_phrase(
         model = _resolve_agent_model(raw, agent_models=agent_models)
     elif runtime == "grok":
         model, model_source = _resolve_grok_model(raw, grok_models=grok_models)
+    elif runtime == "agy":
+        model, model_source = _resolve_agy_model(raw, agy_models=agy_models)
     else:
         model, model_source = _resolve_kimi_model(raw, kimi_models=kimi_models)
 
@@ -371,6 +490,15 @@ def resolve_execution_phrase(
     if effort is None and runtime == "kimi":
         effort = KIMI_DEFAULT_EFFORT
         effort_source = "model_default"
+    if effort is None and runtime == "agy":
+        unsupported = _AGY_UNSUPPORTED_EFFORT_RE.search(lowered)
+        if unsupported:
+            raise ModelResolutionError(
+                f"{raw!r} names effort {unsupported.group(1)!r}, but agy supports only: "
+                + ", ".join(sorted(_AGY_EFFORTS))
+            )
+        effort = PREFERRED_AGY_EFFORT
+        effort_source = "preference_default"
     if effort is None and runtime != "agent":
         raise ModelResolutionError(
             f"could not infer effort from {raw!r}; name an effort supported "
@@ -386,6 +514,8 @@ def resolve_execution_phrase(
         effort = f"encoded-in-model:{effort}" if effort else "encoded-in-model"
     elif runtime == "grok":
         _validate_grok_effort(model, effort or "", raw)
+    elif runtime == "agy":
+        _validate_agy_effort(model, effort or "", raw)
     else:
         _validate_kimi_effort(effort or "", raw)
 
@@ -414,6 +544,7 @@ def resolve_role_execution_policy(
     agent_models: list[str] | None = None,
     grok_models: list[str] | None = None,
     kimi_models: list[str] | None = None,
+    agy_models: list[str] | None = None,
     poll_seconds: int = 180,
     quiet_floor_seconds: int = 900,
     stuck_floor_seconds: int = 1800,
@@ -473,6 +604,7 @@ def resolve_role_execution_policy(
                     agent_models=agent_models,
                     grok_models=grok_models,
                     kimi_models=kimi_models,
+                    agy_models=agy_models,
                 ).to_dict()
                 block["source"] = "user_table"
                 resolved[role] = block
@@ -544,9 +676,14 @@ def _infer_runtime(lowered: str) -> tuple[str | None, str]:
     has_claude = bool(
         re.search(r"\b(claude|anthropic|fable|opus|sonnet|haiku)\b", lowered)
     )
+    has_agy = bool(_AGY_KEYWORD_RE.search(lowered))
     has_agent = bool(
         re.search(r"\b(cursor(?:[-\s]+agent)?|cursor-agent|agent)\b", lowered)
     )
+    if has_agy and not re.search(r"\bcursor\b", lowered):
+        # "Antigravity agent" names the agy harness; only Cursor's own name
+        # selects Cursor Agent alongside an agy word.
+        has_agent = False
     has_grok = bool(
         re.search(r"\b(grok|xai|x\.ai)\b", lowered)
         or _GROK_MODEL_RE.search(lowered)
@@ -567,6 +704,7 @@ def _infer_runtime(lowered: str) -> tuple[str | None, str]:
         "Cursor Agent": has_agent,
         "Grok": has_grok,
         "Kimi": has_kimi,
+        "Gemini (agy)": has_agy,
     }
     selected = [name for name, present in families.items() if present]
     if len(selected) > 1:
@@ -574,6 +712,8 @@ def _infer_runtime(lowered: str) -> tuple[str | None, str]:
             "execution phrase names multiple runtime families "
             f"({', '.join(selected)}); split the roles"
         )
+    if has_agy:
+        return "agy", "inferred_from_model_family"
     if has_kimi:
         return "kimi", "inferred_from_model_family"
     if has_grok:
@@ -757,6 +897,72 @@ def _validate_kimi_effort(effort: str, raw: str) -> None:
     raise ModelResolutionError(
         f"{raw!r} uses effort {effort!r}, but Kimi supports only: {allowed_text}"
     )
+
+
+def _validate_agy_effort(model: str, effort: str, raw: str) -> None:
+    if effort in _AGY_EFFORTS:
+        return
+    allowed_text = ", ".join(sorted(_AGY_EFFORTS))
+    raise ModelResolutionError(
+        f"{raw!r} uses effort {effort!r}, but {model!r} in agy supports only: "
+        f"{allowed_text}"
+    )
+
+
+def _resolve_agy_model(
+    raw: str,
+    *,
+    agy_models: list[str] | None,
+) -> tuple[str, str]:
+    candidate, model_source = _extract_agy_model_candidate(raw.lower())
+    models = agy_models
+    if models is None:
+        models = discover_agy_models()
+    normalized_models = [model.strip().lower() for model in models if model.strip()]
+    if not normalized_models or candidate in normalized_models:
+        return candidate, model_source
+    gemini_models = ", ".join(m for m in normalized_models if m.startswith("gemini-"))
+    hint = (
+        "; Gemini 4 Argon in agy needs a Google AI Ultra sign-in"
+        if candidate == PREFERRED_AGY_MODEL
+        else ""
+    )
+    raise ModelResolutionError(
+        f"{raw!r} did not match an available agy model id; candidate was "
+        f"{candidate!r}; this agy sign-in lists: "
+        f"{gemini_models or '<no Gemini models>'}{hint}"
+    )
+
+
+def _extract_agy_model_candidate(lowered: str) -> tuple[str, str]:
+    slug = _AGY_SLUG_RE.search(lowered)
+    if slug:
+        return _AGY_EFFORT_SUFFIX_RE.sub("", slug.group(0)), "explicit"
+    other = _AGY_OTHER_FAMILY_RE.search(lowered)
+    if other:
+        family = "flash lite" if other.group("flash_lite") else other.group("family")
+        raise ModelResolutionError(
+            f"{family!r} is not an agy model this resolver routes; name "
+            f"{PREFERRED_AGY_MODEL!r}, {AGY_FLASH_MODEL!r}, or an exact gemini-* id"
+        )
+    natural = _AGY_NATURAL_RE.search(lowered)
+    if natural:
+        version, model = _AGY_NATURAL_MODELS[natural.group("family")]
+        for named_version in (natural.group("version"), natural.group("post_version")):
+            if named_version is None or named_version == version:
+                continue
+            raise ModelResolutionError(
+                f"natural Gemini wording names unsupported version {named_version!r} "
+                f"for {natural.group('family')!r}; use {model!r} or an exact "
+                "gemini-* model id"
+            )
+        return model, "explicit"
+    if re.search(r"\bgemini[\s_-]*\d", lowered):
+        raise ModelResolutionError(
+            "Gemini wording names a version without Argon or Flash; name "
+            f"{PREFERRED_AGY_MODEL!r}, {AGY_FLASH_MODEL!r}, or an exact gemini-* id"
+        )
+    return PREFERRED_AGY_MODEL, "default"
 
 
 def _looks_like_agent_model_id(token: str) -> bool:

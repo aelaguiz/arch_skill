@@ -1,6 +1,6 @@
 ---
 name: agent-delegate
-description: "Run editful Claude, Codex, Cursor Agent, Grok, or Kimi workers as explicit external processes or resumable sessions with exact model/profile resolution and structured receipts. Use when external transport provides a concrete benefit, such as a different provider, a load-bearing exact model/profile, durable exact-session continuation, process isolation, automation, or captured event/final-output artifacts; these are examples, not a closed gate. Route ordinary same-host work directly to the active host's native children when they can satisfy the role. Use exact handles to resume the same external worker. Not for read-only reviews (`fresh-consult`), Codex `-p yolo` reviews, two-model convergence, ordered orchestration, or detached/background delegation."
+description: "Run editful Claude, Codex, Cursor Agent, Grok, Kimi, or Gemini 4 Argon (Antigravity `agy`) workers as explicit external processes or resumable sessions with exact model/profile resolution and structured receipts. Use when external transport provides a concrete benefit, such as a different provider, a load-bearing exact model/profile, durable exact-session continuation, process isolation, automation, or captured event/final-output artifacts; these are examples, not a closed gate. Route ordinary same-host work directly to the active host's native children when they can satisfy the role. Use exact handles to resume the same external worker. Not for read-only reviews (`fresh-consult`), Codex `-p yolo` reviews, two-model convergence, ordered orchestration, or detached/background delegation."
 metadata:
   short-description: "External editful worker sessions and receipts"
 ---
@@ -9,8 +9,9 @@ metadata:
 
 Use this skill as the explicit external editful worker/session adapter. It runs
 Claude Fable/Opus, Codex GPT/GBT models or Fugu profiles, Cursor Composer,
-Grok, or Kimi K3 as a separate process, captures a durable receipt, and can resume the
-exact external session. It does not own the caller's decomposition, role
+Grok, Kimi K3, or Gemini 4 Argon through the Antigravity CLI (`agy`) as a
+separate process, captures a durable receipt, and can resume the exact external
+session. It does not own the caller's decomposition, role
 choice, context choice, review policy, or final integration.
 
 For ordinary same-host work, use the active host's native child directly when
@@ -39,6 +40,7 @@ automation.
 - "Use Cursor Agent Composer to implement this slice and report back."
 - "Use Grok Build to investigate and patch this workflow."
 - "Use Kimi K3 max to implement this slice and keep its exact session handle."
+- "Delegate this to Argon high and keep its exact conversation id."
 - "Use the exact Fugu Ultra profile and preserve a resumable receipt."
 - "Have an external Claude session use `$skill-authoring` to patch this skill
   package and preserve its exact handle."
@@ -88,21 +90,24 @@ automation.
   preferred implementation, and selected evidence path advisory unless the
   authoritative source actually chose them.
 - Runtime must be known. Effort must also be known except that GPT-6.1 Sol
-  defaults an omitted effort to `xhigh` and Kimi K3 defaults it to `max`.
-  Model or profile must be known except that a Codex lane with no named model
-  defaults to `gpt-6.1-sol` and a Kimi lane defaults to `kimi-code/k3`. Codex runs
-  GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs supported
-  Claude models, Cursor Agent runs `composer-2.5-fast`, Grok CLI naturally
-  resolves to `grok-4.6`, and Kimi Code runs `kimi-code/k3`. Explicit legacy
-  Grok ids remain exact and discovery-gated. If any other required value is
-  missing or ambiguous, ask one consolidated question before invoking.
+  defaults an omitted effort to `xhigh`, Kimi K3 defaults it to `max`, and an
+  agy lane defaults it to `high`. Model or profile must be known except that a
+  Codex lane with no named model defaults to `gpt-6.1-sol`, a Kimi lane
+  defaults to `kimi-code/k3`, and an agy lane defaults to `gemini-4-argon`.
+  Codex runs GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs
+  supported Claude models, Cursor Agent runs `composer-2.5-fast`, Grok CLI
+  naturally resolves to `grok-4.6`, Kimi Code runs `kimi-code/k3`, and agy runs
+  Gemini models, with `gemini-3.8-flash` only when Flash is named. Explicit
+  legacy Grok ids remain exact and discovery-gated. If any other required value
+  is missing or ambiguous, ask one consolidated question before invoking.
 - Never run GPT/GBT model ids, Fugu profiles, or Claude models through Cursor
-  Agent, Grok, or Kimi. Do not pass Grok or Kimi model ids through another
+  Agent, Grok, Kimi, or agy, even though agy's own catalog lists Claude and
+  GPT-OSS models. Do not pass Grok, Kimi, or Gemini model ids through another
   runtime.
 - Delegation mode is one of `fresh-one-shot`, `fresh-resumable`, or `resume`.
   Default to `fresh-resumable`. Use `fresh-one-shot` only when the caller
   explicitly asks for a stateless, ephemeral, no-resume, or throwaway worker.
-  Kimi always persists sessions, so it cannot satisfy a load-bearing
+  Kimi and agy always persist sessions, so neither can satisfy a load-bearing
   stateless/no-persist requirement even when the receipt would be ignored.
 - Resume mode requires an explicit session id or a previous run directory with
   `session_id.txt`. Refuse missing, empty, `UNRECOVERABLE`, cross-runtime, or
@@ -116,8 +121,8 @@ automation.
 - Fresh one-shot runs may be stateless. Fresh-resumable runs must capture a
   session handle. Resume runs must use the same runtime as the captured handle:
   Claude resumes through Claude, Codex resumes through Codex, Cursor Agent
-  resumes through Cursor Agent, Grok resumes through Grok, and Kimi resumes
-  through Kimi with the exact captured id.
+  resumes through Cursor Agent, Grok resumes through Grok, Kimi resumes
+  through Kimi, and agy resumes through agy, each with the exact captured id.
 - For a single delegation, create one namespaced run directory under
   `/tmp/agent-delegate/` and keep `prompt.md`, `final.txt`, `events.jsonl`,
   `stderr.log`, and `execution.json` there. For fresh-resumable and resume
@@ -189,12 +194,14 @@ automation.
    delegate.
 7. When an external Codex lane omits its model, apply `gpt-6.1-sol`; when that
    Sol lane also omits effort, apply the preference default `xhigh`. For Kimi,
-   apply `kimi-code/k3` and the model-default `max` effort when omitted. If
-   another required execution value, write scope, or resume handle is
-   incomplete, ask one question that names exactly what is missing and what it
-   controls.
+   apply `kimi-code/k3` and the model-default `max` effort when omitted. For
+   agy, apply `gemini-4-argon` and the preference-default `high` effort when
+   omitted. If another required execution value, write scope, or resume handle
+   is incomplete, ask one question that names exactly what is missing and what
+   it controls.
 8. Confirm the selected CLI exists with `command -v codex`, `command -v
-   claude`, `command -v agent`, `command -v grok`, or `command -v kimi`.
+   claude`, `command -v agent`, `command -v grok`, `command -v kimi`, or
+   `command -v agy`.
 9. Create the run directory or group directory and write each delegation prompt
    to its own `prompt.md`.
 10. Invoke each worker with the exact command shape from the invocation reference.
@@ -211,7 +218,7 @@ automation.
    docs. Do not assume parent-chat inheritance or promote a parent diagnosis,
    preferred fix, or selected file list into task authority.
 3. **Resolve execution.** Map the raw model phrase to
-   `runtime=<claude|codex|agent|grok|kimi>`, `model=<runnable id>`, and
+   `runtime=<claude|codex|agent|grok|kimi|agy>`, `model=<runnable id>`, and
    `effort=<level-or-encoded-in-model>`.
    Announce the mapping before execution.
 4. **Select single or parallel.** Use one worker by default. Use a parallel group

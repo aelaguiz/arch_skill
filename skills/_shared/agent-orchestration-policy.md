@@ -76,8 +76,8 @@ Code parents remain their own runtimes even when AIMgr launched them.
 ## Default dispatch for a parent model this repo does not name
 
 This repo names a worker for one parent: Astra. Every other parent —
-Sol, Terra, Luna, Opus, Fable, DeepSeek, GLM, Fugu, and whatever is added
-later — takes the default below, in every host. A role in the routing table
+Sol, Terra, Luna, Opus, Fable, Argon, DeepSeek, GLM, Fugu, and whatever is
+added later — takes the default below, in every host. A role in the routing table
 below still gets its routed model. The Codex model preference below is about
 choosing a model for a Codex lane; it does not name a worker for a Codex parent.
 
@@ -292,6 +292,14 @@ provider. Depth is limited: at the default setting a child cannot create
 children of its own, so give a Prime child work it can finish without fanning
 out unless the host was deliberately configured otherwise.
 
+In the Antigravity CLI (`agy`), a native child is an `invoke_subagent` launch
+and always starts clean from its type's system prompt and the prompt you write.
+`Model: inherit` is the default dispatch for an Argon parent. The other values
+are Gemini tiers, not model ids, and there is no effort setting, so a pinned
+exact model or effort needs the external lane. Give an editful child
+`Workspace: branch` or `share` when it needs its own checkout. Continue the same
+child with `send_message` to its conversation id.
+
 Other hosts may expose different primitives. Preserve the clean, bounded, and
 full distinction even when the exact syntax differs, and read
 `native-child-capabilities.md` when a choice turns on what the active host can
@@ -348,7 +356,8 @@ and process load before assigning concurrent work.
 A child must not spawn external agents. A worker or reviewer started through
 `$agent-delegate` — or through any other external process or session — may not
 itself use `$agent-delegate`, launch another external Claude, Codex, Cursor
-Agent, Grok, or Kimi session, or manually start a coding-harness executable.
+Agent, Grok, Kimi, or Antigravity (`agy`) session, or manually start a
+coding-harness executable.
 External topology stays parent-owned. Ordinary worker and critic prompts should
 say both halves plainly. If peers need to communicate directly rather than
 through the parent, choose a host-native team deliberately and name why that

@@ -47,6 +47,7 @@ intended to be visible and shareable.
 │           ├── stdout.final.json         # external lane or normalized native return
 │           ├── stream.log                # external lane only
 │           ├── session_id.txt            # external lane only
+│           ├── agy_version.txt           # external agy only; `agy --version`
 │           ├── start_ts
 │           ├── end_ts
 │           ├── exit_code
@@ -57,6 +58,7 @@ intended to be visible and shareable.
 │           │   ├── dispatch.json
 │           │   ├── child_handle.txt
 │           │   ├── schema.codex.json     # external Codex only
+│           │   ├── agy_version.txt       # external agy only
 │           │   ├── invocation.sh         # external lane only
 │           │   ├── stdout.final.json
 │           │   ├── verdict.json

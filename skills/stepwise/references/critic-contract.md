@@ -63,8 +63,9 @@ the sequence of transcript landmarks.
 
 The critic returns one JSON document conforming to
 `step-verdict.schema.json`. Claude enforces it with `--json-schema`, Codex
-enforces it with `--output-schema`, and Grok and Kimi receive the schema inline
-before the script post-validates the returned JSON. Codex may require
+enforces it with `--output-schema`, agy enforces it with `--json-schema
+<schema file>` and returns it as `structured_output`, and Grok and Kimi receive
+the schema inline before the script post-validates the returned JSON. Codex may require
 required-but-nullable fields; the orchestration script normalizes schema shape
 while preserving semantics.
 
