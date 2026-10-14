@@ -2,7 +2,10 @@
 
 Real slides agents built for Amir, what he said, and the version he accepted.
 Each pair teaches one way of seeing; most bad slides fail several at once. Use
-them to calibrate your eye, not as templates to copy.
+them to calibrate your eye, not as templates to copy. For headlines and one
+thing per slide, start with the pictures in [bad-and-good.md](bad-and-good.md).
+The "After" versions here use the names he has since ruled on (users, iOS,
+Practice vs AI, D1, %), so copy their words as well as their shape.
 
 ## Contents
 
@@ -24,6 +27,9 @@ them to calibrate your eye, not as templates to copy.
 16. The same words, a real picture
 17. Cut to what matters for this deck
 18. Make the change visible at a glance
+19. Set up the test before its result
+20. Replace the term you made up; do not define it
+21. Each headline names its own subject
 
 ## 1. Name every thing in full
 
@@ -36,7 +42,7 @@ section 8 of what?... Make it blindingly easy."
 
 **After:** "'Keep your streak' stops, and a 10 PM streak warning replaces it",
 with a picture of today's notification and a picture of its replacement.
-"Today: players with a streak who haven't played in 24 hours get it once a
+"Today: users with a streak who haven't played in 24 hours get it once a
 day, any time from 9 AM to 10:45 PM. 1,021 went out last week. After the new
 push plan goes live: a new notification at 10 PM, 'Your streak ends at
 midnight'. My take: agree, if it stops the day the 10 PM warning starts."
@@ -138,8 +144,8 @@ board of 7.5-point cards.
 into several slides".
 
 **After:** ten slides, one change each. "Meta's checkout event moves from the
-paywall to the tap on buy." TODAY: "When a player sees the paywall, AppsFlyer
-tells Meta the player started a checkout. When a player actually taps buy,
+paywall to the tap on buy." TODAY: "When a user sees the paywall, AppsFlyer
+tells Meta the user started a checkout. When a user actually taps buy,
 Meta hears nothing." AFTER THE CHANGE: "The tap on buy reaches Meta as
 InitiateCheckout." Then WHY IT MATTERS, WHO DOES IT ("You: decide. Me: add the
 two rows"), and WHEN ("The morning you say go"). He approved them one by one.
@@ -264,7 +270,7 @@ up, another saw it eligible on September 5."
 **He said:** "If there's stuff you need to go check, then just go fucking check
 it. Don't tell me it needs to get checked."
 
-**After:** "iPhone runs on Meta's own measurement, and it works", with a bar
+**After:** "iOS runs on Meta's own measurement, and it works", with a bar
 chart of what Meta counted and the note "SKAN was switched off on purpose.
 Nothing broke."
 
@@ -321,3 +327,60 @@ legend line. He later pointed agents at this slide as the model for drawing a
 journey.
 
 **Why it works:** the eye lands on what changes.
+
+## 19. Set up the test before its result
+
+**Before** (a findings deck on what brings players back): "A random half got
+Play vs AI with no cap", with a note beside it that this added 4 minutes a
+week.
+
+**He said:** "you show me there was an experiment but you didn't tell me
+anything about it... Is that during this capped period?"
+
+**After:** "The Practice vs AI experiment ran August 7 to 27, before there was any
+game limit. A random half of new users got Practice vs AI with unlimited games;
+the other half didn't have Practice vs AI at all. They played longer: about 4 more
+minutes in the first week. We don't know if more came back: D1 retention
+was 18.7% against 18.8%."
+
+**Why it works:** he was not there when the test ran. What was tested, on
+whom, when, and against what comes before any number. Without it he rebuilds
+the design from the result, aloud, and may get it wrong. The same holds for
+any event inside the work: an outage, a campaign that came and went, a call
+another agent made.
+
+## 20. Replace the term you made up; do not define it
+
+**Before** (the same deck, which a cold reader had passed after making it use
+one name per thing): "A day without a lesson is a day the player passed over
+the default.", and several slides about "the lesson-day lead".
+
+**He said:** "What is a fucking lesson day? You're using terminology that
+makes no fucking sense... Your word choice is just fucking foreign and
+cryptic."
+
+**After:** no "lesson day", "lead", or "passed over the default" on any slide.
+"More users come back the day after a lesson: 75% against 61% after other
+days."
+
+**Why it works:** the analysis named its own variables and the deck was
+written in them. A patient reader decodes such a phrase, and one name per
+thing only makes it consistent. He lands on one slide and meets a word he has
+never heard. The plain description goes on every slide that needs it, even
+though it is longer.
+
+## 21. Each headline names its own subject
+
+**Before** (seven slides in a row in that deck): the first one showed a
+difference in how many players come back, and the headlines after it leaned
+on it: "Lessons the player went looking for show the same gap".
+
+**He said:** "You keep referring to this gap between slides 13 and 19 and I
+keep being confused by what gap you're talking about."
+
+**After:** "Lessons users went looking for are followed by as many returns",
+"Energy explains about 3 of the 10 extra returns after a lesson", "Leave out
+returns from a push, and lessons show no extra returns".
+
+**Why it works:** the headlines still make one argument in order, and each
+says what it compares without the slide before it.
