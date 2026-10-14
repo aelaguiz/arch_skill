@@ -321,8 +321,10 @@ the next routing decision.
 - If an external Codex critic was selected and its model is missing, use
   `gpt-6.1-sol`; if that Sol critic also omits effort, use `xhigh`. If an
   external Kimi critic was selected, default an omitted model to `kimi-code/k3`
-  and an omitted effort to `max`. If another required external critic value is
-  missing, ask the same consolidated policy question used by interactive mode.
+  and an omitted effort to `max`. If an external agy critic was selected,
+  default an omitted model to `gemini-4-argon` and an omitted effort to `high`.
+  If another required external critic value is missing, ask the same
+  consolidated policy question used by interactive mode.
   Do not ask for model values for an ordinary capable native critic.
 
 ## Mode: `auto-run`
@@ -362,7 +364,8 @@ the next routing decision.
    `epic_planner`, `implementation_worker`, and `critic` role table via
    `../../_shared/model_resolution.py`; default an omitted external Codex role
    model to `gpt-6.1-sol` and its omitted Sol effort to `xhigh`, default an
-   omitted external Kimi role to `kimi-code/k3` at `max`, ask once for other
+   omitted external Kimi role to `kimi-code/k3` at `max` and an omitted
+   external agy role to `gemini-4-argon` at `high`, ask once for other
    missing values, then initialize the run directory with
    `scripts/run_arch_epic.py auto-init`.
 4. Select the first sub-plan whose Status is not `complete`.

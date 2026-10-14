@@ -282,6 +282,36 @@ Later lines are events chained by `id` and `parentId`:
 - A `compaction` event means earlier turns were replaced by a summary. Absence of
   a match inside a compacted range is `best_effort`, not proof.
 
+## Antigravity CLI (agy)
+
+Home: `~/.gemini/antigravity-cli/`.
+
+### Primary Stores
+
+- `brain/<conversation-id>/.system_generated/logs/transcript_full.jsonl`: one
+  JSON object per step, untruncated. `transcript.jsonl` beside it is the same
+  log with long fields cut and named in `truncated_fields`; read it only when
+  the full file is missing.
+- `conversation_summaries.db` (SQLite, table `conversation_summaries`): title,
+  `workspace_uris` (the project folder as a `file://` URI),
+  `parent_conversation_id` for subagents, and `last_modified_time`. Open it
+  read-only; an unset time is stored as year 1.
+- `history.jsonl`: interactive prompt history with `display`, `workspace`, and
+  sometimes `conversationId`; headless `agy -p` runs do not appear here.
+- `conversations/<id>.db` and `.pb`: agy's own binary state. The transcripts
+  carry the same steps in readable form, so do not decode these.
+
+### Transcript Steps
+
+- `USER_INPUT` (`source: USER_EXPLICIT`): the user's turn, wrapped in
+  `<USER_REQUEST>` with agy metadata after it.
+- `PLANNER_RESPONSE` (`source: MODEL`): the reply in `content`, reasoning in
+  `thinking`, and `tool_calls` with `name` and `args`. Subagent briefs are the
+  `Prompt` values inside `invoke_subagent` args.
+- `GENERIC`: tool output. `SYSTEM_MESSAGE`: system notices. `CHECKPOINT`:
+  agy's own bookkeeping.
+- Every step has `created_at` (UTC ISO) and `step_index`.
+
 ## Confidence Labels
 
 - `exact`: directly stored user prompt, command text, message text, or tool

@@ -146,6 +146,11 @@ Compute the totals, rates, cohorts, and outcomes again from the decomposed
 artifact. Reconcile source population, extracted cases, classified cases,
 unknown cases, duplicates, and exclusions. Explain every material mismatch.
 
+When a cohort or mechanism is offered as the explanation for a gap, its cases
+must reproduce the size of that gap, and the named parts must add up to the
+total, with any remainder reported as unexplained. Checking one input, such as
+a rate or a single row, does not verify the attribution.
+
 Keep independent proof layers independent. An accepted request is not the same
 as downstream visibility; a store transaction is not the same as an
 entitlement or analytics event; a visible control is not the same as an

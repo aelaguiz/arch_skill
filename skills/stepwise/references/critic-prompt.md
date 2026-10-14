@@ -152,6 +152,8 @@ output via `--json-schema` may emit JSON inside a
 `structured_output` key. Codex writes schema-conforming JSON to the `-o` file
 when `--output-schema` is active. Grok receives a schema-appended prompt and
 Kimi uses the same inline-schema path; the script post-validates the JSON in
-each final text. Native critics return the
+each final text. agy receives the schema file through `--json-schema` and
+returns the verdict in the final result's `structured_output`, which the
+script reads instead of the response text. Native critics return the
 same StepVerdict contract through the host's child-return surface. The
 orchestrator handles those transport shapes.

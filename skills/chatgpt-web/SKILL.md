@@ -18,8 +18,8 @@ carry that word on this machine:
   the ChatGPT composer's model picker. In this skill, "Pro" alone always
   means this, and so does the user's "work with Pro" or "get Pro signoff".
 - **The consultation profiles:** the BrowserOS browser profiles the user keeps
-  for agent consultations. Their labels are `pro1`, `pro2`, and so on; the
-  user says "Pro 1" or "the Pro3 window". A label is a name the user typed,
+  for agent consultations. Their labels are `pro1`, `pro3`, and so on; the
+  user says "Pro 1" or "the Pro3 window". `pro2` is retired. A label is a name the user typed,
   the same kind of thing as `Work`. It says which ChatGPT login the page
   uses. It never selects, implies, or proves the model.
 
@@ -143,8 +143,9 @@ the consultation autonomously as described below.
   setting, or a browser profile labeled `pro` is not Pro.** A Pro request
   uses the `Chat` surface and the picker's `Pro` option in every profile.
 - **Use a consultation profile whose account currently offers Pro.** Discover
-  the already-open consultation profiles, such as `pro1`, `pro2`, `pro3`,
-  or others present; exclude the `Work` profile from the pool.
+  the already-open consultation profiles, such as `pro1`, `pro3`, `pro4`,
+  or others present; exclude the `Work` profile and the retired `pro2` from
+  the pool, even when a `pro2` window is open.
   Pro is missing from a composer only when `Power` cannot reach it: the slider
   ends at `Extra High, 4 of 4` and a disabled `Pro` entry appears under the
   model list. Hover that entry to read why; `Limit reached. Try again after

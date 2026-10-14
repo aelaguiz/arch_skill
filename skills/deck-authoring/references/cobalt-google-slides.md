@@ -42,7 +42,9 @@ slides exist and look right.
 - **Charts:** the palette in fixed order starting at `#0D89AB` (then
   `#9A8409`, `#CF4672`, `#1E852C`, `#AF46A3`, `#C05A0C`, `#4562D9`, `#E25C50`).
   One question and one y-axis per chart. Status colors only with a status
-  label beside them.
+  label beside them. A chart image has no title or source of its own, since
+  the headline and the notes carry them, and is drawn at the size of the box
+  it fills so its labels are not shrunk below the slide's text.
 - **Copy rules:** "Poker Skill" is two words. No em dashes in slide text.
 
 ## Making a new deck
@@ -105,8 +107,11 @@ slides exist and look right.
   slide builds, insert it from
   `https://drive.google.com/uc?export=download&id=<fileId>`, then delete that
   permission. Skip both steps for a file that is already open to anyone, or
-  you will undo someone's real sharing. Alternatively, host a folder of images
-  with `$cf-share` and insert each by its URL.
+  you will undo someone's real sharing. Record the file id beside the builder
+  before each grant and the permission id the grant returns after it. At the
+  start of the next run, delete each recorded permission that still exists,
+  and report a file recorded without one rather than guess. Alternatively,
+  host a folder of images with `$cf-share` and insert each by its URL.
 - **Prepare images first:** resize large captures, flatten transparent PNGs
   onto the page color before converting to JPEG, and open every image at slide
   size to check that it shows what the caption claims.
@@ -118,6 +123,9 @@ slides exist and look right.
   on-screen copy, and keep rejected drafts. Label each mock on the slide.
 - **Marking a real screenshot:** draw native outlines and arrows over the
   placed image; never edit its pixels by hand.
+- **Alt text:** `createImage` sets none. Follow each one with an
+  `updatePageElementAltText` request on the same object ID whose description
+  says what the image shows.
 
 ## Rendering and looking
 
@@ -128,6 +136,10 @@ pdfinfo render/deck.pdf | grep Pages
 pdftoppm -r 110 -png render/deck.pdf render/p
 ```
 
+- The PDF shows the deck you built only if its page count equals the slide
+  count and the deck's revision ID, read just before and just after the
+  export, equals the one the build's last write returned. Otherwise find out
+  what changed, then export again.
 - Read every new or changed page at full size, then make a contact sheet of
   the whole deck (`$contact-sheet-builder`, or six pages to a sheet) to judge
   the sequence.
@@ -144,6 +156,18 @@ pdftoppm -r 110 -png render/deck.pdf render/p
   adds, edits, and reorders slides by hand: keep any slide your builder did not
   make, copy his order into your slide list, and never let a build delete or
   overwrite his work.
+- A slide your builder made can carry his edits too. Store a fingerprint of each
+  slide the builder writes (its elements, text, and notes), and compare it with
+  the live slide before rebuilding. If they differ, a rebuild would wipe his
+  edits: make any change that slide needs on the live slide instead, and leave
+  its notes as they are. Take the fingerprint from a read of the deck at the
+  revision the build's last write returned, not from the requests it sent, and
+  leave out values the API computes or reissues on read (autofit's font
+  scale, an image's short-lived `contentUrl`), or every slide the builder
+  made can look hand-edited. Pass the
+  revision ID from the pre-build read as `writeControl.requiredRevisionId` on
+  the first `batchUpdate`, and the one each response returns on the next, so a
+  build fails instead of landing on an edit made while it ran.
 - Rebuild only the slides that changed. Inserting or removing a slide shifts
   every later page number: rewrite the other footers in place with one
   page-scoped `replaceAllText` each instead of rebuilding the deck. A small
@@ -167,9 +191,16 @@ pdftoppm -r 110 -png render/deck.pdf render/p
 - **Native tables:** columns at least 32 points wide, and rows grow with
   padding (a two-line 7.5-point cell is about 33 points tall). Budget about 16
   points per text line plus 10 per row, or split the table. For a dense data
-  table, draw a grid of text boxes instead.
+  table, draw a grid of text boxes instead. Set the header row as bold labels
+  over a thin rule, with no fill.
 - **Empty text:** an empty text box can't be styled and fails the batch; use a
   placeholder such as "·".
+- **Bullet presets:** take `bulletPreset` from the values the API reference
+  lists, not from memory. A name that is not on the list, such as
+  `NUMBERED_DIGIT_PERIOD`, fails the whole batch with a 400.
+- **List spacing:** a paragraph can inherit `spacingMode: COLLAPSE_LISTS`,
+  which drops the space between list items. Send `NEVER_COLLAPSE` on a list
+  whose items need space between them.
 - **Image fetches fail now and then** ("There was a problem retrieving the
   image") for a file that is fine. Retry that slide; the batch is atomic.
 - **A network drop reads as an auth failure,** and `gws` can fail with "no

@@ -27,9 +27,10 @@ architecture, and avoids kitchen-sink plans.
 
 ## Use When
 
-- The user wants two Claude, Codex, Cursor Agent, Grok, or Kimi participants to
-  iterate on a plan, architecture, design, migration, debugging strategy,
-  investigation, or concept.
+- The user wants two Claude, Codex, Cursor Agent, Grok, Kimi, or Gemini (agy)
+  participants to iterate on a plan, architecture, design, migration, debugging
+  strategy, investigation, or concept, for example "consensus between Sol and
+  Argon".
 - The value comes from independent first passes, critique, and convergence
   rather than one reviewer answering once.
 - One participant should challenge assumptions, propose simpler alternatives,
@@ -97,7 +98,9 @@ architecture, and avoids kitchen-sink plans.
 - Preserve exact participant model resolution. Codex runs GPT/GBT/OpenAI model
   ids and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
-  runs `kimi-code/k3` and defaults an omitted effort to `max`. An omitted Codex
+  runs `kimi-code/k3` and defaults an omitted effort to `max`; the Antigravity
+  CLI (`agy`) runs only Gemini models, defaults to `gemini-4-argon` at `high`,
+  and runs `gemini-3.8-flash` only when Flash is named. An omitted Codex
   participant model defaults to `gpt-6.1-sol`, and an omitted effort on that
   Sol lane defaults to `xhigh`. Preserve explicit legacy Grok ids exactly.
   Never silently substitute model family/version or cross runtimes.
@@ -142,9 +145,10 @@ Then:
    caller's theory or file map. Audit the actual populated participant prompt,
    not only the reusable shape.
 3. Resolve both participant provider/model/profile/effort choices exactly. Use
-   the Codex `gpt-6.1-sol`/`xhigh` preference defaults and Kimi's
-   `kimi-code/k3`/`max` defaults, then ask one concise question if another
-   load-bearing participant choice remains ambiguous.
+   the Codex `gpt-6.1-sol`/`xhigh` preference defaults, Kimi's
+   `kimi-code/k3`/`max` defaults, and agy's `gemini-4-argon`/`high` defaults,
+   then ask one concise question if another load-bearing participant choice
+   remains ambiguous.
 4. Inspect the active host's native child capabilities and choose transport for
    each participant separately. Record the concrete reason for any external
    participant and do not promise native model selection the host cannot

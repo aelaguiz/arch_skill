@@ -21,6 +21,10 @@ Read the plan once, end to end, and record in the conductor log:
   (exact commands, scenarios, or manual proof when the plan names them), exit
   criteria, cleanup and **delete obligations** (the most commonly dropped
   items and a named audit target), rollback notes.
+- **Quantitative targets** — each figure the plan commits to (call budgets,
+  latency, cost, counts), tagged by its basis (`measured` when the plan cites
+  a baseline you can find, `estimated` otherwise), with the first phase able
+  to measure it. Both stay binding.
 - **Anchors, not prose.** Record plan section headings and `path:line` code
   anchors. Link to long plan sections; never paste them. The plan stays the
   single source of truth; the log is schedule and evidence.

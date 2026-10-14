@@ -34,7 +34,7 @@ raw_goal: |
   <verbatim user input that created this epic — every word, no edits>
 raw_goal_sha256: <hex digest of the raw_goal string>
 sub_plans_approved: false
-critic_runtime: null | claude | codex | grok | kimi  # legacy/external critic only
+critic_runtime: null | claude | codex | grok | kimi | agy  # legacy/external critic only
 critic_model: null | <resolved external CLI model, e.g. claude-fable-5-1>
 critic_effort: null | <low | medium | high | xhigh | max | ultra>
 models_sha256: null | <hex digest of external {runtime, model, effort} tuple>
@@ -69,8 +69,9 @@ Frontmatter rules:
   critic leaves them null and records its clean child handle in the
   Orchestration Log. For an external critic, values are user-supplied per
   `model-and-effort.md`, except an omitted Codex model defaults to
-  `gpt-6.1-sol`, an omitted effort on that Sol role defaults to `xhigh`, and
-  Kimi defaults to `kimi-code/k3` at `max`; store the resolved runnable
+  `gpt-6.1-sol`, an omitted effort on that Sol role defaults to `xhigh`,
+  Kimi defaults to `kimi-code/k3` at `max`, and agy defaults to
+  `gemini-4-argon` at `high`; store the resolved runnable
   identifier and default provenance, not raw shorthand. Natural Grok wording
   resolves to `grok-4.6`; explicit legacy Grok ids remain exact.
   During same-session `auto-plan` these fields may stay null because no critic

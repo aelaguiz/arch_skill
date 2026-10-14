@@ -46,7 +46,8 @@ promising it.
 - **Send-back / repair → exact-child resume.** Send one bounded findings delta
   to the same native child handle or the exact external session id through its
   original transport. Never select "latest," cross runtimes, or replace the
-  implementer merely because another handle is convenient.
+  implementer merely because another handle is convenient. A worker that has
+  reported takes no new scope; a new slice or role gets a new clean child.
 - **Respawn → new clean replacement.** Use when the role truly needs a cold
   restart, its prior handle is lost or unhealthy under the audit caps, or its
   owner surface changed enough to invalidate the earlier view. Record why the
@@ -66,7 +67,8 @@ promising it.
   carries it — and a one-shot with no resume is the easiest role to pin
   natively, because no eviction can quietly re-price it. Give it the plan path,
   human baseline anchors, approved initial closure, approval anchor, and explicit
-  human approvals; its findings cannot expand scope.
+  human approvals; its findings cannot expand scope. A re-check after repairs
+  is another new clean one-shot, never the verifier that already reported.
 - **Parallel waves** are parent-owned. Use only the active host slots or
   external sessions that independent, non-overlapping slices justify. Every
   child knows that siblings may be editing the repo, must not revert unfamiliar
@@ -108,7 +110,8 @@ The user supplies the runtime and normally the thinking level plus a
 model/profile outside the defaults. When the fleet is Codex and the model is
 omitted, use `gpt-6.1-sol`; when that Sol lane also omits the level, use
 `xhigh`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
-`max`. For Codex, accept `sol`, `astra`, `luna`, and `terra` as
+`max`. When it is agy, use `gemini-4-argon` and default an omitted level to
+`high`. For Codex, accept `sol`, `astra`, `luna`, and `terra` as
 `gpt-6.1-sol`, `gpt-6-astra`,
 `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
 missing execution values. For a parent this repo names, the default fleet is

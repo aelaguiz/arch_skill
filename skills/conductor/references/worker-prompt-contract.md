@@ -62,11 +62,19 @@ implement and verify, and make implementation decisions the plan implies.
 <State the authorized native delegation scope and this host's child-depth
 limits. If delegation is not authorized or supported, do this slice yourself.>
 Do not spawn external agents: no `$agent-delegate`, no other external Claude,
-Codex, Cursor Agent, Grok, or Kimi session, and no manually launched
-coding-harness executable. The parent owns external topology and integration.
-You must not: commit, push, stash, revert unrelated work, expand scope
-(stop and report instead), weaken or skip tests, or leave the old code path
-alive when the contract says replace it.
+Codex, Cursor Agent, Grok, Kimi, or Antigravity (Gemini) session, and no
+manually launched coding-harness executable. The parent owns external topology and integration.
+You must not: commit, push, stash, touch the git index (`git add`, `git rm`,
+`git mv`, `git restore --staged`), revert unrelated work, expand scope (stop
+and report instead), weaken or skip tests, or leave the old code path alive
+when the contract says replace it. Delete a file from the working tree only,
+which leaves an unstaged deletion, and list it under DELETES EXECUTED.
+
+A permission denial or hook block is a hard boundary. Report the denied
+command and the denial under BLOCKERS, and do not retry an equivalent
+operation in another form: a reworded or re-encoded command, another tool or
+interpreter, or another agent. An alternative the control itself names is
+allowed, and work that does not need the denied operation continues.
 
 A repo pattern, review concern, test idea, or newly discovered adjacent path is
 not authority. Do not add a durable table, queue, state machine, service,
@@ -89,7 +97,8 @@ Your report is a claims manifest, not a verdict: every line will be audited
 against the repo, and decisive verification is independently reproduced in a
 separate session. Report exactly what is true, including partial or failed
 work — an honest partial is routine; a misreported claim costs this session
-its credibility. End with exactly:
+its credibility. Put long raw output in a file and cite its path. Start your
+report with exactly this footer block, with any further detail after it:
 
 STATUS: done | partial | blocked | failed
 SLICE: <id>
@@ -102,6 +111,9 @@ BLOCKERS: <bullets or none>
 SCOPE DISCOVERIES: <item + disposition, or none>
 SUMMARY FOR PARENT: <one concise paragraph>
 ```
+
+The footer block comes first so `STATUS`, `CHANGED FILES`, and
+`DELETES EXECUTED` survive a truncated return.
 
 The `DELETES EXECUTED:` line is deliberate: un-executed deletes are a common
 worker omission, so the footer forces a claim the conductor can
@@ -117,8 +129,12 @@ For resume rounds against the exact same child or external session:
 
 ```markdown
 Continue the same slice using your existing session history. The original
-slice contract — goal, checklist, scope, constraints, verification, report
-footer — is unchanged. Your previous result was audited and is NOT accepted.
+slice contract — goal, checklist, scope, constraints, report footer — is
+unchanged. Your previous result was audited and is NOT accepted.
+
+# Verification For This Pass
+<the verification list recomputed for the slice's cumulative diff; it
+replaces the original contract's verification line>
 
 # Audit Findings (all must be resolved)
 <one block per finding:>
@@ -131,15 +147,23 @@ footer — is unchanged. Your previous result was audited and is NOT accepted.
 # Rules for this repair pass
 - Fix root causes, not symptoms; do not weaken tests or the contract to
   pass.
-- Re-run the verification commands named in the original contract after
-  repairs and quote real output.
+- Run the verification for this pass after repairs and quote real output.
 - If you believe a finding is wrong, say so with code evidence in your
   report instead of silently ignoring it.
 - Do not implement observations or `new-scope-needs-human` findings. The
   conductor sends back only authorized repair or subtraction work.
 
-End with the same report footer as the original contract.
+Start with the same report footer block as the original contract.
 ```
+
+## Respawn Prompt
+
+A respawn is a new clean worker on the slice prompt skeleton with the
+sharpened slice contract. Add a `# Prior Attempt` block naming the previous
+attempt's exact commits, or its exact uncommitted paths, marked unverified:
+the new worker reads them before building on them. Only those commits or
+paths are the prior attempt; a broad diff on a shared branch can hold other
+slices' work. Never pass the previous worker's report as truth.
 
 ## Avoid
 

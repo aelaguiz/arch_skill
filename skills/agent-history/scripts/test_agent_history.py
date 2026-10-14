@@ -715,6 +715,106 @@ class AgentHistoryScriptTests(unittest.TestCase):
             self.assertNotIn("wrong project marker", proc.stdout)
             self.assertIn("No, that is wrong", proc.stdout)
 
+    def make_agy_home(self, root: Path, project: Path, other: Path) -> Path:
+        home = root / "agy"
+        (home / "brain").mkdir(parents=True)
+        conn = sqlite3.connect(home / "conversation_summaries.db")
+        conn.execute(
+            "CREATE TABLE conversation_summaries (conversation_id text, title text, "
+            "preview text, last_modified_time datetime, workspace_uris text, "
+            "parent_conversation_id text, nesting_depth integer)"
+        )
+        rows = [
+            ("agy-main", "Fix the badge", "", now_iso(), json.dumps([project.as_uri()]), "", 0),
+            ("agy-child", "Research helper", "", now_iso(), json.dumps([project.as_uri()]), "agy-main", 1),
+            ("agy-other", "Other repo work", "", now_iso(), json.dumps([other.as_uri()]), "", 0),
+            ("agy-unset", "Never ran", "", "0001-01-01 00:00:00+00:00", "", "", 0),
+        ]
+        conn.executemany("INSERT INTO conversation_summaries VALUES (?, ?, ?, ?, ?, ?, ?)", rows)
+        conn.commit()
+        conn.close()
+
+        def transcript(cid: str, name: str, steps: list[dict]) -> None:
+            write_jsonl(home / "brain" / cid / ".system_generated" / "logs" / name, steps)
+
+        transcript(
+            "agy-main",
+            "transcript_full.jsonl",
+            [
+                {"step_index": 0, "type": "USER_INPUT", "source": "USER_EXPLICIT", "created_at": now_iso(),
+                 "content": "<USER_REQUEST>\nFind where the Discount badge comes from.\n</USER_REQUEST>\n<ADDITIONAL_METADATA>\nlocal time\n</ADDITIONAL_METADATA>"},
+                {"step_index": 1, "type": "PLANNER_RESPONSE", "source": "MODEL", "created_at": now_iso(),
+                 "content": "", "thinking": "I should search the typesense mapping.",
+                 "tool_calls": [{"name": "invoke_subagent", "args": {"Subagents": "[{\"Prompt\": \"Trace the badge field\"}]", "toolAction": "\"Launching\""}}]},
+                {"step_index": 2, "type": "GENERIC", "source": "SYSTEM", "created_at": now_iso(),
+                 "content": "Subagent reply: badge comes from typesense discount_pct"},
+                {"step_index": 3, "type": "USER_INPUT", "source": "USER_EXPLICIT", "created_at": now_iso(),
+                 "content": "<USER_REQUEST>\n/goal ship the badge fix\n</USER_REQUEST>"},
+            ],
+        )
+        transcript(
+            "agy-child",
+            "transcript.jsonl",
+            [
+                {"step_index": 0, "type": "USER_INPUT", "source": "USER_EXPLICIT", "created_at": now_iso(),
+                 "content": "<USER_REQUEST>\nTrace the badge field\n</USER_REQUEST>", "truncated_fields": ["content"]},
+            ],
+        )
+        transcript(
+            "agy-other",
+            "transcript_full.jsonl",
+            [
+                {"step_index": 0, "type": "USER_INPUT", "source": "USER_EXPLICIT", "created_at": now_iso(),
+                 "content": "<USER_REQUEST>\nUnrelated badge question\n</USER_REQUEST>"},
+            ],
+        )
+        return home
+
+    def test_agy_sessions_prompts_search_and_subagents(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            project = root / "project"
+            other = root / "other"
+            project.mkdir()
+            other.mkdir()
+            home = self.make_agy_home(root, project, other)
+            common = ["--runtime", "agy", "--agy-home", str(home), "--cwd", str(project),
+                      "--output-root", str(root / "out"), "--format", "jsonl"]
+
+            proc = self.run_tool("sessions", *common)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("Fix the badge", proc.stdout)
+            self.assertNotIn("Research helper", proc.stdout)
+            self.assertNotIn("Other repo work", proc.stdout)
+
+            proc = self.run_tool("sessions", *common, "--include-sidechains", "--max-preview-chars", "300")
+            self.assertIn("Research helper", proc.stdout)
+            self.assertIn("subagent of conversation agy-main", proc.stdout)
+
+            proc = self.run_tool("prompts", *common)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("Find where the Discount badge comes from.", proc.stdout)
+            self.assertNotIn("USER_REQUEST", proc.stdout)
+            self.assertNotIn("Unrelated badge question", proc.stdout)
+
+            proc = self.run_tool("goals", *common)
+            self.assertIn("/goal ship the badge fix", proc.stdout)
+
+            proc = self.run_tool("search", *common, "typesense")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn('"kind": "thinking"', proc.stdout)
+            self.assertIn('"kind": "tool_output"', proc.stdout)
+
+            proc = self.run_tool("search", *common, "Trace the badge field")
+            self.assertIn('"kind": "tool_call"', proc.stdout)
+            self.assertIn("agy.tool_call.invoke_subagent", proc.stdout)
+
+            proc = self.run_tool("search", *common, "--include-sidechains", "Trace the badge field")
+            self.assertIn('"confidence": "best_effort"', proc.stdout)
+
+            proc = self.run_tool("prompts", *common[:-2], "--scope", "all-projects")
+            self.assertIn("Unrelated badge question", proc.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

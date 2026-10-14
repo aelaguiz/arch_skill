@@ -9,13 +9,15 @@ isolation, automation, or receipt benefit justifies the added process.
 For the external lane, use this reference to resolve what the user meant by
 "Claude", "Codex", "Cursor Agent", "Grok", "Kimi", "fable 5.1 high", "opus high",
 "gpt-6.1-sol xhigh", "luna xhigh", "terra high", "GPT6SOLXI", "fugu high",
-"fugu-ultra xhigh", "composer-2.5-fast", "grok-4.6", "kimi k3", or similar phrasing,
-and to run the selected read-only consult subprocess.
+"fugu-ultra xhigh", "composer-2.5-fast", "grok-4.6", "kimi k3", "argon high",
+"gemini flash", or similar phrasing, and to run the selected read-only consult
+subprocess.
 
 Fresh consult is review/second-opinion work. Provider routing is fixed: Codex
 runs GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs supported
 Claude models, Cursor Agent runs Composer 2.5 Fast, Grok CLI runs Grok models,
-and Kimi Code runs Kimi K3. The first turn in a consult line starts clean from disk and the prompt;
+Kimi Code runs Kimi K3, and the Antigravity CLI (`agy`) runs Gemini models.
+The first turn in a consult line starts clean from disk and the prompt;
 bounded same-line follow-ups resume the captured child session by exact session
 id.
 
@@ -63,23 +65,24 @@ read-only enforcement, filesystem isolation, or a separate worktree.
 
 Every external consult child needs three execution values:
 
-- `runtime` - `claude`, `codex`, `agent`, `grok`, or `kimi`
+- `runtime` - `claude`, `codex`, `agent`, `grok`, `kimi`, or `agy`
 - `model` - the runnable CLI model identifier, or the Codex profile name for
   Fugu. An omitted model on a Codex lane resolves to `gpt-6.1-sol`; an omitted
-  Kimi model resolves to `kimi-code/k3`.
+  Kimi model resolves to `kimi-code/k3`; an omitted agy model resolves to
+  `gemini-4-argon`.
 - `effort` - the reasoning effort level, `encoded-in-model` for Cursor Agent,
-  GPT-6.1 Sol's `xhigh` preference default when omitted, or Kimi K3's `max`
-  model default when omitted
+  GPT-6.1 Sol's `xhigh` preference default when omitted, Kimi K3's `max`
+  model default when omitted, or agy's `high` preference default when omitted
 
 If external transport has been selected and a required value is missing or
-ambiguous after applying the Codex and Kimi defaults, ask one consolidated
-question before invoking. Do not ask for CLI values for an ordinary native
-review. For Cursor Agent Composer, effort resolves to `encoded-in-model`; do
-not ask for a separate effort level.
+ambiguous after applying the Codex, Kimi, and agy defaults, ask one
+consolidated question before invoking. Do not ask for CLI values for an
+ordinary native review. For Cursor Agent Composer, effort resolves to
+`encoded-in-model`; do not ask for a separate effort level.
 
 ```text
 I need the fresh consult runtime, any non-default effort, and a model/profile
-outside the Codex and Kimi defaults when applicable before invoking an
+outside the Codex, Kimi, and agy defaults when applicable before invoking an
 external model. The consult runs as a clean subprocess and can spend real
 model budget. What should I use?
 ```
@@ -105,27 +108,35 @@ Infer runtime only when the user's wording makes it unambiguous:
   legacy `grok-*` slug implies `runtime=grok`.
 - `kimi`, `kimi code`, `kimi k3`, `k3`, or `moonshot` implies `runtime=kimi`.
   Kimi defaults to `kimi-code/k3` at `max` when model or effort is omitted.
+- `agy`, `antigravity`, `gemini`, `argon`, or an exact `gemini-*` id implies
+  `runtime=agy`. agy defaults to `gemini-4-argon` when the model is omitted and
+  to `high`, reported as a preference default, when the effort is omitted.
+  "Antigravity agent" names agy, not Cursor Agent; only the word `cursor`
+  selects Cursor Agent beside an agy word, and that phrase then fails as mixed.
 - Bare `composer`, `composer 2.5`, or bare `2.5` is ambiguous unless the user
   explicitly names Cursor Agent or Grok in the same execution choice.
 - If a phrase mixes Cursor Agent with GPT/GBT model ids, Fugu profiles, or
   Claude, fail loud instead of choosing a side. Never run GPT/GBT model ids,
   Fugu profiles, or Claude models through Cursor Agent.
-- If a phrase mixes Grok or Kimi with GPT/GBT model ids, Fugu profiles, Claude, or
-  Cursor Agent, fail loud instead of choosing a side.
+- If a phrase mixes Grok, Kimi, or agy with GPT/GBT model ids, Fugu profiles,
+  Claude, Cursor Agent, or each other, fail loud instead of choosing a side.
+  `agy opus` fails this way even though agy's own catalog lists Claude Opus.
 - If the user names only an effort level, such as "xhigh", ask for runtime.
   If the answer is Codex and still omits a model, use `gpt-6.1-sol`.
 - If the user says only "run a fresh consult" or "get a second opinion", use a
   clean native child of the active host when it can satisfy the role. Ask for
-  runtime, any non-default effort, and a model/profile outside the Codex and
-  Kimi defaults only after an external lane is
+  runtime, any non-default effort, and a model/profile outside the Codex, Kimi,
+  and agy defaults only after an external lane is
   selected and those values are load-bearing.
 
 The defaults are deliberately narrow: when the lane is Codex and no model or
 profile is named, use `gpt-6.1-sol`; when a Sol lane omits effort, use `xhigh`
 with `effort_source=preference_default`; when the lane is Kimi, use
-`kimi-code/k3` and default an omitted effort to `max`. Do not default the
-runtime itself, and do not invent defaults for Claude, Cursor Agent, Grok,
-other Codex models, or Fugu profiles.
+`kimi-code/k3` and default an omitted effort to `max`; when the lane is agy,
+use `gemini-4-argon` and default an omitted effort to `high` with
+`effort_source=preference_default`. Do not default the runtime itself, and do
+not invent defaults for Claude, Cursor Agent, Grok, other Codex models, or Fugu
+profiles.
 
 ## Model Phrase Resolution
 
@@ -170,6 +181,23 @@ Treat model text as intent, not a loose alias:
   Kimi-for-coding/K2.7 aliases and do not cross provider model ids. When
   availability matters, inspect the top-level `.models` keys from
   `kimi provider list --json`.
+- For agy, bare `agy`, `antigravity`, `gemini`, and `argon`, natural
+  `gemini 4 argon`, and the exact id `gemini-4-argon` resolve to
+  `gemini-4-argon`. `gemini flash`, `gemini 3.8 flash`, or `gemini-3.8-flash`
+  resolves to `gemini-3.8-flash`, and only when Flash is named. A baked effort
+  suffix such as `gemini-4-argon-medium` reads as model plus effort. A natural
+  version the catalog does not have, such as `gemini 4.5 argon`, `argon 4.5`, or `gemini 3 flash`, or a Gemini version with neither Argon nor Flash, such as
+  `gemini 2.5 pro`, fails; never rewrite it. Only Gemini models run through
+  agy: its catalog also lists Claude Opus 5.5, Claude Sonnet 5.5, and GPT-OSS,
+  but Opus stays on Claude Code and this doctrine routes neither Sonnet nor
+  GPT-OSS. Before the first agy launch, run `agy models`. If it says to sign in, stop and
+  report that agy is signed out: a signed-out headless agy run opens the
+  Google sign-in page in the user's browser. Each model line is
+  `<id-with-effort-suffix>\t<display name>`, and the base id is the id without
+  its `-low`, `-medium`, or `-high` suffix. Argon needs a Google AI Ultra
+  sign-in, so a machine without one will not list it. If the catalog lists
+  models but not the requested one, fail and name the sign-in as the likely
+  cause; never substitute Flash or another provider.
 - Do not run paid trial prompts to discover whether a Claude model exists. Use
   the CLI help/config surface when available; otherwise ask.
 
@@ -188,6 +216,10 @@ Cursor Agent composer 2.5 -> runtime=agent, model=composer-2.5-fast, effort=enco
 Grok Build high -> runtime=grok, model=grok-4.6, effort=high
 Kimi K3 high -> runtime=kimi, model=kimi-code/k3, effort=high
 Kimi -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
+Argon high -> runtime=agy, model=gemini-4-argon, effort=high
+Gemini -> runtime=agy, model=gemini-4-argon, effort=high, model_source=default, effort_source=preference_default
+Gemini Flash medium -> runtime=agy, model=gemini-3.8-flash, effort=medium
+agy opus high -> fail: names Claude and agy; Opus runs through Claude Code
 ```
 
 For deterministic script plumbing that needs the same rules, use
@@ -217,15 +249,23 @@ visible output contract to verdict, evidence, session metadata, and directories.
   Set `KIMI_MODEL_THINKING_EFFORT=<level>` on the process; there is no
   `--effort` flag. Preserve an explicit `medium` or `xhigh` verbatim as a forced
   override, but never choose either by default or inference.
+- agy's Gemini models accept `low`, `medium`, and `high` via `--effort`, and
+  an omitted effort resolves to `high` with
+  `effort_source=preference_default`. `xhigh`, `max`, and `ultra` fail before
+  launch; agy's generic help lists more effort words, but its catalog offers
+  only those three per Gemini model. Pass the base id with `--model` and the
+  effort with `--effort`, even when the user named a baked id such as
+  `gemini-4-argon-high`.
 - Cursor Agent does not expose a separate `--effort` flag in the local CLI.
   Store effort as `encoded-in-model` and pass only
   `--model "composer-2.5-fast"`.
 - For ordinary Codex model ids, confirm the selected model supports the
   requested effort when `codex debug models` is needed for model resolution.
   `codex debug models` does not prove whether local Fugu profiles exist.
-- Outside the Sol and Kimi defaults, if a required effort is missing or the
-  selected model does not support the requested effort, ask. Sol defaults an
-  omitted effort to `xhigh`; Kimi defaults one to `max`.
+- Outside the Sol, Kimi, and agy defaults, if a required effort is missing or
+  the selected model does not support the requested effort, ask. Sol defaults
+  an omitted effort to `xhigh`; Kimi defaults one to `max`; agy defaults one
+  to `high`.
 
 ## Transport-Neutral Consult Continuity
 
@@ -324,9 +364,10 @@ SESSION_PATH="$TURN_DIR/session_id.txt"
 RESUME_FROM_PATH="$TURN_DIR/resume_from.txt"
 ```
 
-Write the prompt to `prompt.md`. Kimi has no verified prompt-file or stdin
-form, so pass that file's contents as one `-p` argv value without a shell and
-recognize the operating-system argv-size limit for unusually large prompts.
+Write the prompt to `prompt.md`. Kimi and agy have no verified prompt-file or
+stdin form, so pass that file's contents as one argv value without a shell
+(`-p` for Kimi, attached `--print=` for agy) and recognize the operating-system
+argv-size limit for unusually large prompts.
 
 `events.jsonl` is the live child stream. `stderr.log` is the diagnostic error
 stream. `final.txt` is the final assistant text: Codex writes it directly with
@@ -334,7 +375,10 @@ stream. `final.txt` is the final assistant text: Codex writes it directly with
 `type=result` event after the process exits. For Grok, concatenate streamed
 `type=text` `data` chunks after the process exits. For Kimi, concatenate
 `role=assistant` event contents after exit and capture the `session_id` from
-the `role=meta`, `type=session.resume_hint` event.
+the `role=meta`, `type=session.resume_hint` event. For agy, copy
+`result.response` from the final `event=result` line when `result.status` is
+`SUCCESS`, and capture the session id from the first line's
+`init.conversation_id`.
 
 Write `execution.json` before invocation with at least:
 
@@ -342,7 +386,7 @@ Write `execution.json` before invocation with at least:
 {
   "schema_version": 1,
   "mode": "fresh-resumable | resume | fresh-forced | fresh-rotated",
-  "runtime": "claude | codex | agent | grok | kimi",
+  "runtime": "claude | codex | agent | grok | kimi | agy",
   "model": "<resolved model or reused-from-session>",
   "effort": "<resolved effort or reused-from-session>",
   "work_root": "<absolute path>",
@@ -352,6 +396,10 @@ Write `execution.json` before invocation with at least:
   "restart_reason": "none | user_forced_cold | chain_turn_limit | changed_execution | missing_session | ambiguous_chain"
 }
 ```
+
+For agy, also record `"agy_version"` from `agy --version` in each turn's
+`execution.json`, because agy updates itself between runs and has no switch to
+stop that.
 
 For fresh-resumable, fresh-forced, fresh-rotated, and resume turns, write the
 captured, reused, or replacement session id to `session_id.txt`. For resume
@@ -370,7 +418,7 @@ defensible:
   "created_at_utc": "2026-06-05T00:00:00Z",
   "updated_at_utc": "2026-06-05T00:00:00Z",
   "work_root": "<absolute path>",
-  "runtime": "claude | codex | agent | grok | kimi",
+  "runtime": "claude | codex | agent | grok | kimi | agy",
   "model": "<resolved model>",
   "effort": "<resolved effort or encoded-in-model>",
   "max_chain_turns": 3,
@@ -428,10 +476,10 @@ EXECUTION_PATH="$TURN_DIR/execution.json"
 SESSION_PATH="$TURN_DIR/session_id.txt"
 ```
 
-Launch each child with the same Codex, Claude, Cursor Agent, Grok, or Kimi command
-shape below, using that child's paths. Record the shell PID and exit status in
-the child directory if the host shell makes that convenient, but do not
-introduce a script, controller, detached monitor, or state machine.
+Launch each child with the same Codex, Claude, Cursor Agent, Grok, Kimi, or agy
+command shape below, using that child's paths. Record the shell PID and exit
+status in the child directory if the host shell makes that convenient, but do
+not introduce a script, controller, detached monitor, or state machine.
 
 Default to one shared runtime/model/effort for all children. If the user clearly
 assigns different execution choices to different children, apply those choices
@@ -737,6 +785,80 @@ Parse final text and require a fresh returned resume hint with the fresh-turn
 rules. A missing hint is unrecoverable for continuation; do not reuse the input
 id as a fallback.
 
+## External agy Fresh Resumable
+
+Use this shape for `fresh-resumable`, `fresh-forced`, and `fresh-rotated` agy
+turns. A fresh agy turn starts without prior conversation but still persists
+one:
+
+```bash
+agy \
+  --print="$(cat "$PROMPT_PATH")" \
+  --model "<resolved_agy_model>" \
+  --effort "<resolved_effort>" \
+  --output-format stream-json \
+  --print-timeout 0 \
+  --dangerously-skip-permissions \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+Run from `work_root`; agy has no cwd flag. Keep the prompt attached to
+`--print=`, so a prompt that starts with `-` is not read as a flag.
+`--print-timeout 0` waits for the whole turn; older builds defaulted to five
+minutes. agy always persists a conversation, so this lane cannot satisfy a
+load-bearing stateless/no-persist review requirement.
+
+Pass `--dangerously-skip-permissions` on consults too: a headless run cannot
+answer a permission prompt, and a machine on agy's shipped `request-review`
+setting would otherwise refuse the tools the reviewer needs to read evidence.
+The consult stays read-only through the no-edit contract and the parent's
+status or diff check, as on the Grok lane. Do not add `--mode plan` as a
+read-only mode; it writes an `implementation_plan.md` artifact and waits for
+approval instead of answering. Do not add `--sandbox` or feed the prompt
+through `--input-format stream-json`, whose message shape is undocumented.
+agy runs the user's global hooks from `~/.gemini/config/hooks.json` and its
+configured MCP servers in every subprocess, and no flag disables them.
+
+The first line of `events.jsonl` is `event=init`; write its `conversation_id`
+to `session_id.txt`. After exit, read the last line, `event=result`. When
+`result.status` is `SUCCESS`, write `result.response` to `final.txt` and check
+that `result.conversation_id` matches the init id. If a caller adds
+`--json-schema <schema path>`, read only the parsed object in
+`result.structured_output`, because `result.response` can then hold prose or
+extra keys around the JSON. A missing result line, a `status` of `ERROR` (its
+`error` string says why), an empty `response`, or a missing or mismatched
+conversation id is malformed; preserve the turn directory. An invalid model or
+effort exits 1 with only an `ERROR` result line and an empty conversation id.
+
+## External agy Resume
+
+Resume the exact captured agy conversation from the same `work_root`:
+
+```bash
+agy \
+  --conversation "<session_id>" \
+  --print="$(cat "$PROMPT_PATH")" \
+  --model "<resolved_agy_model>" \
+  --effort "<resolved_effort>" \
+  --output-format stream-json \
+  --print-timeout 0 \
+  --dangerously-skip-permissions \
+  > "$EVENTS_PATH" \
+  2> "$STDERR_PATH"
+```
+
+Use `--conversation <session_id>`, never `-c`/`--continue` or any
+latest-session selector. Parse the result with the fresh-turn rules, then check
+the id. agy does not fail on an id it cannot find: it writes
+`warning: conversation "<id>" not found` to stderr, answers in a new
+conversation under a new id, and exits 0 with `SUCCESS`. Both the init and
+result `conversation_id` must therefore equal the requested id. If either is
+missing or different, the reviewer answered without its earlier history. That
+is a failed resume, never a passing turn: preserve the chain and turn
+directory, report the failure, and do not adopt the new id, reuse the input id,
+or silently start a fresh chain in its place.
+
 ## External Monitoring Posture
 
 Consults are not instant. A normal repo-backed consult commonly takes 5+
@@ -770,22 +892,28 @@ For external review, fail loud and preserve the chain and turn directory when:
 - `session_id.txt` is missing, empty, or `UNRECOVERABLE` for a resume
 - the caller asks for cross-runtime resume
 - the caller asks for Claude `--continue`, Codex `--last`, Cursor Agent
-  `--continue`, `agent resume`, `agent ls`, Grok latest-session selection, or
-  Kimi `-c`/`--continue`, or any other latest-session resume selection
+  `--continue`, `agent resume`, `agent ls`, Grok latest-session selection,
+  Kimi `-c`/`--continue`, agy `-c`/`--continue`, or any other latest-session
+  resume selection
 - the child exits non-zero
 - `final.txt` is empty
 - Claude exits without a final `type=result` event
 - Cursor Agent exits without a final `type=result` event
 - Grok exits without final text
 - Kimi exits without any `role=assistant` text
-- a caller requires truly stateless/no-persist Kimi execution
+- agy exits without a final `event=result` line, or its `result.status` is not
+  `SUCCESS`
+- a caller requires truly stateless/no-persist Kimi or agy execution
 - a fresh Kimi turn emits no `session.resume_hint` session id
+- agy has no `init.conversation_id`, or the init and result ids disagree with
+  each other or, on resume, with the requested id
 - the child omits the required verdict footer
 
 When the prior same-line chain is already at three turns, start a new
 `fresh-rotated` chain instead of failing.
 
-Do not silently fall back between Claude, Codex, Cursor Agent, Grok, and Kimi, one
-model to another model, one effort level to another, or one session to another.
+Do not silently fall back between Claude, Codex, Cursor Agent, Grok, Kimi, and
+agy, one model to another model, one effort level to another, or one session to
+another.
 
 Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: default omitted Codex models and bare `sol` to `gpt-6.1-sol` at `xhigh`. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.

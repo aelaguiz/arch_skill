@@ -1,7 +1,7 @@
 # Agent History Helper Script
 
 `scripts/agent_history.py` is a read-only helper for parsing local Codex, Claude
-Code, Pi, and Prime Agent history stores. It exists because JSONL and SQLite
+Code, Pi, Prime Agent, and Antigravity CLI (agy) history stores. It exists because JSONL and SQLite
 extraction is deterministic enough that agents should not reimplement it every
 time.
 
@@ -17,7 +17,7 @@ no runtime package dependencies.
 Run it with:
 
 ```bash
-python3 skills/agent-history/scripts/agent_history.py <command> --runtime <codex|claude|pi|prime>
+python3 skills/agent-history/scripts/agent_history.py <command> --runtime <codex|claude|pi|prime|agy>
 ```
 
 If a future version needs non-stdlib dependencies, it must carry them in a PEP
@@ -36,15 +36,15 @@ agent does not have to figure out dependencies.
 
 ## Shared Options
 
-- `--runtime codex|claude|pi|prime`: required for all search commands. Use the
+- `--runtime codex|claude|pi|prime|agy`: required for all search commands. Use the
   current runtime by default.
 - `--cwd <path>`: default is the process cwd.
 - `--scope current-project|all-projects`: default is `current-project`.
 - `--since <time>`: default is `24h`; accepts relative durations, ISO dates,
   ISO datetimes, and `today`.
 - `--until <time>`: optional end time.
-- `--include-sidechains`: include Claude subagent JSONL and Prime `sub-*` child
-  transcripts.
+- `--include-sidechains`: include Claude subagent JSONL, Prime `sub-*` child
+  transcripts, and agy subagent conversations.
 - `--limit <n>`: default 20.
 - `--max-results <n>`: default 2000. Bounds how many results are retained and
   written to disk; the newest are kept.
@@ -52,8 +52,8 @@ agent does not have to figure out dependencies.
 - `--format summary|jsonl`: default `summary`.
 - `--max-preview-chars <n>`: default bounded preview.
 - `--output-root <path>`: default `/tmp/agent-history`.
-- `--codex-home`, `--claude-home`, `--pi-home`, `--prime-home`: test or
-  alternate homes.
+- `--codex-home`, `--claude-home`, `--pi-home`, `--prime-home`,
+  `--agy-home` (default `~/.gemini/antigravity-cli`): test or alternate homes.
 
 `search` also accepts positional query terms and `--regex`.
 
@@ -68,6 +68,13 @@ agent does not have to figure out dependencies.
 - Result kinds for these runtimes are `session`, `prompt`, `command`, `goal`,
   `message`, `agent_message`, `custom`, `status`, and `compaction`.
 - `child_usage_attributed` records are never returned; they are accounting.
+- `agy` reads each conversation's transcript and takes its title, project
+  folder, and parent conversation from `conversation_summaries.db`. Prompts
+  have agy's `<USER_REQUEST>` wrapper removed. `search` also matches Argon's
+  replies (`message`), its reasoning (`thinking`), tool calls including
+  subagent briefs (`tool_call`), tool output (`tool_output`), and system
+  messages (`system`). A subagent result names its parent conversation in
+  `thread_id` and `context`.
 - When the result cap bites, the summary line says `capped at <n>` and
   `sources.jsonl` records how many older sessions went unscanned.
 

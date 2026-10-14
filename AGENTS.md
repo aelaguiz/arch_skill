@@ -3,7 +3,7 @@
 This repo ships installable agent skills. `skills/` is the main live runtime
 surface. `Makefile` may also install explicitly listed vendored skills from
 `vendor/`; `Makefile` plus `README.md` own the install surface for Codex,
-Claude Code, and Gemini.
+Claude Code, Gemini CLI, and the Antigravity CLI (`agy`).
 
 ## Build And Verify
 

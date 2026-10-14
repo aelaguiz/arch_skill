@@ -71,7 +71,7 @@ The parent agent must:
 ## External Harness Boundary
 
 Do not manually spawn separate coding-harness executables such as `codex`,
-`claude`, `agent`, `grok`, or `kimi` for ordinary acceleration.
+`claude`, `agent`, `grok`, `kimi`, or `agy` for ordinary acceleration.
 
 Do not invoke skills whose main effect is to shell out to those binaries for
 ordinary same-host acceleration. An explicitly requested external worker or
