@@ -115,9 +115,11 @@ Always name the thing.
   words, quoted, with the message linked, or it is cut. "Your later
   assessment credits the partnership" with no quote is invented framing.
 - Tool states and system words become sentences about the work as the
-  reader would see it. "CLEAN" becomes "can merge now"; "BLOCKED" becomes
-  "cannot merge until the base merges"; a flag name becomes what the user
-  now sees; a Sentry group id becomes the error it is.
+  reader would see it. "CLEAN" becomes "can merge now", not "approved" or
+  "shipped"; "BLOCKED" becomes "cannot merge until the base merges" when the
+  source shows the base is what blocks it; a flag name becomes what the user
+  now sees; a Sentry group id becomes the error it is. The sentence never
+  adds a cause, approval, or deployment the evidence does not show.
 - Every status carries the named subject, what is true now, why (the cause
   or the blocker), and what happens next or who acts. Make the state visible
   without reading the cell: lead with the state and its cause in a few
@@ -150,6 +152,10 @@ Always name the thing.
   gap". Do the division for the reader. Give a percent only when
   the base supports it; "21 to 29" is eight people, not "up 38.1%". Keep
   the precision the decision needs: "66 seconds", not "66.253 seconds".
+  Keep the statistical meaning: two points are not a trend, a snapshot is
+  not a trend, and a forecast keeps its anchor date and its condition. A
+  missing comparison basis goes back to whoever did the analysis, not into
+  the prose.
 - One idea per sentence. Bold the one line a skimmer must not miss, if any;
   bolding several lines cancels all of them.
 - No repeated shape. Rows do not all open the same way, cells do not all

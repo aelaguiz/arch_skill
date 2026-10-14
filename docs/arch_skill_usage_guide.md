@@ -41,15 +41,16 @@ make install
 
 Automatic skill modes now rely on the host's native goal-mode continuation. Use Codex `/goal` or Claude Code `/goal` when you want a skill to keep moving across turns until its proof bar is met.
 
-Install copies only the live runtime package surface. Source/build internals (`build/`, `prompts/`, `__pycache__/`, `*.pyc`, and hook cleanup helpers) are pruned from installed skills. The source-retained `codex-babysit` package is excluded from the default surface, and install removes previously installed copies. This package no longer installs `Stop` or `SessionStart` hooks; install removes old arch_skill-owned hook entries from prior installs. When a Hermes Agent home exists on the machine, install also mirrors the same surface into every existing Hermes skill root (`~/.hermes/skills/` and each `~/.hermes/profiles/<name>/skills/`) under the `arch_skill/` category directory; pass `NO_HERMES=1` to skip, and machines without Hermes are skipped automatically.
+Install copies only the live runtime package surface. Source/build internals (`build/`, `prompts/`, `__pycache__/`, `*.pyc`, and hook cleanup helpers) are pruned from installed skills. The source-retained `codex-babysit` package is excluded from the default surface, and install removes previously installed copies. This package no longer installs `Stop` or `SessionStart` hooks; install removes old arch_skill-owned hook entries from prior installs. When a Hermes Agent home exists on the machine, install also mirrors the same surface into every existing Hermes skill root (`~/.hermes/skills/` and each `~/.hermes/profiles/<name>/skills/`) under the `arch_skill/` category directory; pass `NO_HERMES=1` to skip, and machines without Hermes are skipped automatically. When an Antigravity CLI home exists (`~/.gemini/antigravity-cli/`), install also copies the Gemini CLI's skill set, frontmatter kept, to `~/.gemini/config/skills/`, where `agy` looks for skills; pass `NO_AGY=1` to skip, and machines without `agy` are skipped automatically.
 
-Restart Codex, Claude Code, Gemini, or Hermes Agent after install so the running process
+Restart Codex, Claude Code, Gemini, the Antigravity CLI, or Hermes Agent after install so the running process
 reloads skills and drops any hook list cached before install removed old
 arch_skill hook entries.
 
 Codex discovers the personal packages in `~/.agents/skills/`; Claude uses
-`~/.claude/skills/`, Gemini uses `~/.gemini/skills/`, and existing Hermes
-profiles receive the `arch_skill/` category. See the [installer](../Makefile)
+`~/.claude/skills/`, Gemini uses `~/.gemini/skills/`, the Antigravity CLI uses
+`~/.gemini/config/skills/`, and existing Hermes profiles receive the
+`arch_skill/` category. See the [installer](../Makefile)
 for membership and the [README](../README.md#install) for options.
 
 For a reviewed Codex-only update, use `make agents_install_files FILES="..."`
@@ -61,7 +62,7 @@ Install removes stale pre-skill command surfaces, removed or default-disabled sk
 
 The shared agent policy is installed on all supported skill surfaces. Ordinary
 same-host work uses native children; deliberate external lanes still require
-the matching local `claude`, `codex`, `agent`, `grok`, or `kimi` CLI. Provider and
+the matching local `claude`, `codex`, `agent`, `grok`, `kimi`, or `agy` CLI. Provider and
 model ids remain exact and never cross runtimes. `agent-delegate` owns external
 editful sessions, while `fresh-consult`, `model-consensus`, `conductor`,
 `stepwise`, and `arch-epic` select transport for each role under the shared
@@ -264,7 +265,7 @@ Practical rule:
   Same-host planner, implementation-worker, and critic roles prefer clean
   native children; the separate external harness is selected only for a
   deliberate external benefit.
-- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5.1 high` becomes `claude-fable-5-1`; bare `Codex` becomes `gpt-6.1-sol` at `xhigh`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-6.1-sol` before launching children.
+- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5.1 high` becomes `claude-fable-5-1`; bare `Codex` becomes `gpt-6.1-sol` at `xhigh`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; `Argon` or bare `Gemini` becomes `gemini-4-argon` at `high`; and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-6.1-sol` before launching children.
 - Role-based automatic mode drives sub-plans depth-first. Planner and
   implementation roles are resumable by exact handle; a new clean critic's
   accepted findings return to the owning role instead of creating a repair
@@ -623,7 +624,8 @@ For an external consult, the user supplies enough information to resolve the
 runtime, model/profile, and effort, or the skill asks once. An omitted Codex
 model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane
 defaults to `xhigh`. Bare Kimi defaults to `kimi-code/k3` at `max`; natural
-Grok wording selects `grok-4.6` and still requires an explicit effort. Exact
+Grok wording selects `grok-4.6` and still requires an explicit effort. Bare
+Gemini or Argon defaults to `gemini-4-argon` at `high`. Exact
 versions and profiles are preserved without silent downgrade or provider
 switch.
 
@@ -664,7 +666,7 @@ same-host work uses native children directly. The adapter preserves exact model
 resolution, CLI invocation, namespaced receipts, shared-worktree reporting, and
 exact-handle resume.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6.1-sol`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. An omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6.1-sol`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini` or `Argon` for the Antigravity CLI. An omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Argon resolves to `gemini-4-argon` at `high`, the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -735,7 +737,7 @@ before dispatch when done-state or frozen scope is not defensible; the
 readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is Codex
-`gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi, Grok, Cursor, or
+`gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi, Argon, Grok, Cursor, or
 Claude, and it covers every heavy role: implementation, research,
 verification, any requested cynical review, and the cold verifier. That
 profile runs on a native child when the host can reach the model in its child
@@ -794,8 +796,9 @@ The user names the participant identities. Native roles use only model
 capabilities the host can confirm; an unavailable load-bearing identity selects
 the external lane. External shorthand follows the shared exact model resolver:
 bare Codex selects `gpt-6.1-sol` at `xhigh`, bare Kimi selects `kimi-code/k3`
-at `max`, and natural Grok wording selects `grok-4.6` while retaining Grok's
-explicit-effort requirement.
+at `max`, bare Gemini or Argon selects `gemini-4-argon` at `high`, and natural
+Grok wording selects `grok-4.6` while retaining Grok's explicit-effort
+requirement.
 
 For repo-backed investigations, root-cause work, and "read everything" cross-checks, both participants must read real evidence before agreeing. The parent records the raw user goal, exact user-named artifacts, desired output, and hard constraints. The child models choose and cite the code, docs, research, tests, commands, and local evidence they need.
 

@@ -90,7 +90,7 @@ You must not:
 3. Start external continuation controllers, detached background workers, or nested
    orchestration workflows as a continuation strategy.
 4. Spawn external agents. Do not use `$agent-delegate`, start another external
-   Claude, Codex, Cursor Agent, Grok, or Kimi session, or manually launch a
+   Claude, Codex, Cursor Agent, Grok, Kimi, or agy session, or manually launch a
    coding-harness executable. External topology belongs to the parent.
 5. Expand beyond the allowed write scope unless the task is impossible without
    it; if that happens, stop and report the blocker.

@@ -81,8 +81,18 @@ delegate. The line is hard:
 - If the run inherits a dirty worktree, treat it as likely resumed plan work
   and take an initial checkpoint unless there is a concrete safety issue such
   as secrets or files clearly unrelated to the repo.
-- The conductor owns commits. Workers never commit, push, stash, or revert
-  unrelated work. Never push or open PRs from this skill.
+- The conductor owns commits. Workers never commit, push, stash, touch the
+  git index, or revert unrelated work. Never push or open PRs from this skill.
+- Commit an accepted slice by naming its paths. Check that
+  `git diff --cached --name-only` lists nothing outside them, `git add` the
+  slice's new files, then run `git commit --only -- <accepted paths>`. A
+  staged path outside the slice belongs to someone else: leave it alone and
+  find its owner before the next commit.
+- When an accepted slice ran in its own worktree, confirm that worktree is
+  clean and detach it (`git -C <path> switch --detach`) before a successor
+  needs its branch; git will not check out a branch another worktree holds.
+  A slice reopened after that is repaired on its branch, in whichever
+  worktree now holds it.
 
 ## Stop Discipline
 

@@ -1,6 +1,6 @@
 ---
 name: agent-history
-description: "Historical local Codex, Claude Code, Pi, or Prime Agent session evidence: retrieve prior prompts, goals, corrections, tool calls, child-agent briefs, and timelines. Supports natural-language history requests with bundled JSONL/SQLite helpers. Not for live agent status, streaming output, or session control; use the runtime's live interface for those. Defaults to the current project/runtime and last 24 hours."
+description: "Historical local Codex, Claude Code, Pi, Prime Agent, or Antigravity CLI (agy) session evidence: retrieve prior prompts, goals, corrections, tool calls, child-agent briefs, and timelines. Supports natural-language history requests with bundled JSONL/SQLite helpers. Not for live agent status, streaming output, or session control; use the runtime's live interface for those. Defaults to the current project/runtime and last 24 hours."
 metadata:
   short-description: "Search local agent session history"
 ---
@@ -24,12 +24,13 @@ skill remains read-only and does not dispatch that agent itself.
 
 ## When To Use
 
-- The user asks about prior Codex, Claude Code, Pi, or Prime Agent prompts,
+- The user asks about prior Codex, Claude Code, Pi, Prime Agent, or
+  Antigravity CLI (`agy`) prompts,
   turns, commands, goals, tool calls, corrections, confusion, or session
   timelines.
 - The user asks what happened in the current project during recent agent work.
-- The user asks what a Prime child agent was told to do or what it reported
-  back.
+- The user asks what a Prime or agy child agent was told to do or what it
+  reported back.
 - The user wants to search local session history by natural-language clues.
 - Another skill needs grounded history evidence before deciding what happened.
 
@@ -48,14 +49,18 @@ skill remains read-only and does not dispatch that agent itself.
 ## Non-Negotiables
 
 - Use the current agent runtime by default. In Codex, search Codex history. In
-  Claude Code, search Claude history. In Prime Agent or Pi, search that
-  runtime's history. Search another runtime only when the user asks for it or
+  Claude Code, search Claude history. In Prime Agent, Pi, or the Antigravity
+  CLI, search that runtime's history. Search another runtime only when the user asks for it or
   clearly implies it. Map "prime", "prime agent", and "prime-agent" to
-  `--runtime prime`. If the current runtime is genuinely ambiguous, pick the
+  `--runtime prime`, and "antigravity", "agy", or Gemini Argon sessions to
+  `--runtime agy`. If the current runtime is genuinely ambiguous, pick the
   store with recent activity for this project and say which one you assumed.
 - Pi and Prime Agent have no global prompt store and no goal store. Prompts and
   `/goal` text come from transcripts only, so say that plainly instead of
   reporting a clean absence.
+- agy has no goal store either. Its prompts come from per-conversation
+  transcripts; where only the shortened `transcript.jsonl` exists, long fields
+  can be cut, and those results are labelled `best_effort`.
 - Never read `auth.json` in any runtime home, and never run daemon lifecycle
   commands. This skill only reads history.
 - If the user does not name a project, default to the current working

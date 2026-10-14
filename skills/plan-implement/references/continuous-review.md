@@ -93,8 +93,8 @@ critic.
 - Do not launch an external review runner for ordinary same-host review. Route
   an explicitly requested external worker or conductor under the shared policy
   when its concrete benefit warrants the added process and integration cost.
-- Do not manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` binaries for
-  ordinary continuous review.
+- Do not manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or `agy`
+  binaries for ordinary continuous review.
 - Do not block implementation on missing CI logs when this is plan-backed code
   review.
 - Do not let review become a reason to widen scope beyond the approved contract.

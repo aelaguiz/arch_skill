@@ -191,6 +191,136 @@ class KimiShapeParsing(unittest.TestCase):
                 self.assertIsNone(rs._parse_kimi_final_json(stdout))
 
 
+# Lines captured from agy 1.3.4 stream-json runs (tools list trimmed).
+_AGY_SID = "91471704-c967-418f-abe9-70faf64b9a19"
+_AGY_FRESH_SUCCESS = "\n".join(
+    [
+        '{"event":"init","conversation_id":"91471704-c967-418f-abe9-70faf64b9a19","init":{"model":"gemini-4-argon","cwd":"/tmp/agy-probe","tools":["view_file","write_to_file"],"permission_mode":"always-proceed"}}',
+        '{"event":"step_update","step_update":{"conversation_id":"91471704-c967-418f-abe9-70faf64b9a19","step_index":0,"state":"DONE","step_type":"user_input"}}',
+        '{"event":"step_update","step_update":{"conversation_id":"91471704-c967-418f-abe9-70faf64b9a19","step_index":1,"state":"ACTIVE","step_type":"agent_response","text_delta":"PONG"}}',
+        '{"event":"step_update","step_update":{"conversation_id":"91471704-c967-418f-abe9-70faf64b9a19","step_index":1,"state":"DONE","step_type":"agent_response","text_delta":"\\n","duration_seconds":4.044088}}',
+        '{"event":"result","result":{"conversation_id":"91471704-c967-418f-abe9-70faf64b9a19","status":"SUCCESS","response":"PONG\\n","duration_seconds":4.196386,"num_turns":1}}',
+    ]
+)
+_AGY_CRITIC_SCHEMA = "\n".join(
+    [
+        '{"event":"init","conversation_id":"3992b4d6-17a7-4399-a5f9-8be8bd6af32e","init":{"model":"gemini-4-argon","cwd":"/tmp/agy-probe","tools":["view_file"],"permission_mode":"always-proceed","json_schema":{"type":"object","properties":{"verdict":{"type":"string","enum":["APPROVE","REJECT"]},"reason":{"type":"string"}},"required":["verdict","reason"]}}}',
+        '{"event":"step_update","step_update":{"conversation_id":"3992b4d6-17a7-4399-a5f9-8be8bd6af32e","step_index":2,"state":"DONE","step_type":"finish","duration_seconds":0.025832}}',
+        '{"event":"result","result":{"conversation_id":"3992b4d6-17a7-4399-a5f9-8be8bd6af32e","status":"SUCCESS","response":"{\\"reason\\":\\"2 + 2 equals 4.\\",\\"toolAction\\":\\"Finishing with verdict\\",\\"toolSummary\\":\\"Provide verdict on 2+2=4\\",\\"verdict\\":\\"APPROVE\\"}\\n","num_turns":1,"structured_output":{"reason":"2 + 2 equals 4.","verdict":"APPROVE"}}}',
+    ]
+)
+_AGY_INVALID_EFFORT = (
+    '{"event":"result","result":{"conversation_id":"","status":"ERROR","response":"","error":"invalid model selection (--model \\"gemini-4-argon\\" --effort \\"max\\"): gemini-4-argon has no \\"max\\" effort (available: low, medium, high)","duration_seconds":0,"num_turns":0}}'
+)
+_AGY_INVALID_MODEL = "\n".join(
+    [
+        'error: invalid model selection (--model "gemini-9-nope" --effort ""): model gemini-9-nope is not recognized as a known model or custom model in settings',
+        "Available models:",
+        "  Gemini 4 Argon (High)",
+        '{"event":"result","result":{"conversation_id":"","status":"ERROR","response":"","error":"invalid model selection (--model \\"gemini-9-nope\\" --effort \\"\\"): model gemini-9-nope is not recognized as a known model or custom model in settings","duration_seconds":0,"num_turns":0}}',
+    ]
+)
+
+
+def _agy_stdout(
+    response: str,
+    *,
+    init_sid: str | None = _AGY_SID,
+    result_sid: str | None = _AGY_SID,
+    status: str = "SUCCESS",
+    structured_output: object = None,
+    include_result: bool = True,
+) -> str:
+    init: dict[str, object] = {"event": "init", "init": {"model": "gemini-4-argon"}}
+    if init_sid is not None:
+        init["conversation_id"] = init_sid
+    lines = [
+        json.dumps(init),
+        json.dumps(
+            {
+                "event": "step_update",
+                "step_update": {
+                    "conversation_id": init_sid or "",
+                    "step_type": "agent_response",
+                    "text_delta": response,
+                },
+            }
+        ),
+    ]
+    if include_result:
+        result: dict[str, object] = {
+            "conversation_id": result_sid or "",
+            "status": status,
+            "response": response,
+        }
+        if structured_output is not None:
+            result["structured_output"] = structured_output
+        lines.append(json.dumps({"event": "result", "result": result}))
+    return "\n".join(lines)
+
+
+class AgyShapeParsing(unittest.TestCase):
+    def test_reads_final_text_and_conversation_id_from_a_real_stream(self):
+        self.assertEqual(
+            rs._parse_agy_final_json(_AGY_FRESH_SUCCESS),
+            {
+                "type": "agy_result",
+                "result": "PONG\n",
+                "session_id": _AGY_SID,
+                "structured_output": None,
+            },
+        )
+        self.assertEqual(rs._parse_agy_session_id(_AGY_FRESH_SUCCESS), _AGY_SID)
+
+    def test_schema_verdict_comes_from_structured_output_not_response(self):
+        final = rs._parse_agy_final_json(_AGY_CRITIC_SCHEMA)
+
+        self.assertIsNotNone(final)
+        self.assertEqual(
+            final["structured_output"],
+            {"reason": "2 + 2 equals 4.", "verdict": "APPROVE"},
+        )
+        self.assertIn("toolAction", final["result"])
+        self.assertEqual(
+            final["session_id"], "3992b4d6-17a7-4399-a5f9-8be8bd6af32e"
+        )
+
+    def test_rejects_failed_and_malformed_streams(self):
+        cases = {
+            "invalid effort": _AGY_INVALID_EFFORT,
+            "invalid model with plain-text preamble": _AGY_INVALID_MODEL,
+            "no result event": _agy_stdout("partial", include_result=False),
+            "error status": _agy_stdout("partial", status="ERROR"),
+            "empty response": _agy_stdout("  \n"),
+            "init and result name different conversations": _agy_stdout(
+                "done", result_sid="another-conversation"
+            ),
+            "noise only": "not json\nstill not json\n",
+        }
+        for label, stdout in cases.items():
+            with self.subTest(label=label):
+                self.assertIsNone(rs._parse_agy_final_json(stdout))
+                self.assertIsNone(rs._parse_agy_session_id(stdout))
+
+    def test_missing_conversation_id_keeps_text_but_is_not_resumable(self):
+        for label, stdout in {
+            "init without id": _agy_stdout("done", init_sid=None),
+            "result without id": _agy_stdout("done", result_sid=None),
+        }.items():
+            with self.subTest(label=label):
+                final = rs._parse_agy_final_json(stdout)
+                self.assertIsNotNone(final)
+                self.assertEqual(final["result"], "done")
+                self.assertIsNone(final["session_id"])
+                self.assertIsNone(rs._parse_agy_session_id(stdout))
+
+    def test_failure_detail_quotes_agys_own_error(self):
+        detail = rs._agy_failure_detail(_AGY_INVALID_EFFORT)
+        self.assertIn("'ERROR'", detail)
+        self.assertIn('has no "max" effort', detail)
+        self.assertEqual(rs._agy_failure_detail(_AGY_FRESH_SUCCESS), "")
+
+
 class GrokShapeParsing(unittest.TestCase):
     def test_concatenates_text_and_captures_end_session(self):
         stdout = "\n".join(
@@ -836,6 +966,390 @@ class KimiInvocationFlags(unittest.TestCase):
                 )["type"],
                 "kimi_result",
             )
+
+
+class AgyInvocationFlags(unittest.TestCase):
+    _BASE_ARGV_TAIL = [
+        "--output-format",
+        "stream-json",
+        "--print-timeout",
+        "0",
+        "--dangerously-skip-permissions",
+    ]
+
+    def _run_and_capture(
+        self,
+        args_list: list[str],
+        *,
+        stdout: str,
+        expected_exit: int | None = None,
+    ) -> dict[str, object]:
+        old_run_subprocess = rs._run_subprocess
+        old_cli_version = rs._agy_cli_version
+        old_preflight = rs._agy_preflight
+        captured: dict[str, object] = {}
+
+        def fake_run(argv, stdout_stream_path, out_dir, cwd=None, stamp_prefix=None):
+            captured["argv"] = argv
+            captured["cwd"] = cwd
+            captured["stamp_prefix"] = stamp_prefix
+            stdout_stream_path.write_text(stdout, encoding="utf-8")
+            return 0, stdout
+
+        parser = rs._build_parser()
+        args = parser.parse_args(args_list)
+        stderr = io.StringIO()
+        try:
+            rs._run_subprocess = fake_run
+            rs._agy_cli_version = lambda: "1.3.4"
+            rs._agy_preflight = lambda model: captured.setdefault("preflight", model)
+            with (
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(stderr),
+            ):
+                if expected_exit is None:
+                    self.assertEqual(args.func(args), 0)
+                else:
+                    with self.assertRaises(SystemExit) as raised:
+                        args.func(args)
+                    self.assertEqual(raised.exception.code, expected_exit)
+        finally:
+            rs._run_subprocess = old_run_subprocess
+            rs._agy_cli_version = old_cli_version
+            rs._agy_preflight = old_preflight
+        captured["stderr"] = stderr.getvalue()
+        return captured
+
+    @staticmethod
+    def _make_run(root: Path) -> tuple[Path, Path]:
+        run_dir = root / "run"
+        target = root / "target"
+        run_dir.mkdir()
+        target.mkdir()
+        (run_dir / "state.json").write_text("{}\n", encoding="utf-8")
+        return run_dir, target
+
+    @staticmethod
+    def _command_args(
+        command: str, run_dir: Path, target: Path, prompt: Path, sid: str
+    ) -> list[str]:
+        args_list = [
+            command,
+            "--run-dir", str(run_dir),
+            "--target-repo", str(target),
+            "--prompt-file", str(prompt),
+            "--model", "gemini-4-argon",
+            "--effort", "high",
+            "--runtime", "agy",
+            "--step-n", "1",
+            "--try-k", "1",
+        ]
+        if command in {"step-resume", "step-diagnose"}:
+            args_list.extend(["--session-id", sid])
+        if command == "step-diagnose":
+            args_list.extend(["--round-k", "1", "--with-step-m", "1"])
+        return args_list
+
+    def test_step_spawn_uses_exact_argv_from_target_repo(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            run_dir, target = self._make_run(root)
+            prompt = root / "prompt.md"
+            prompt_text = "--model x $(touch nope); `echo bad` '$HOME'\nnext line\n"
+            prompt.write_text(prompt_text, encoding="utf-8")
+
+            captured = self._run_and_capture(
+                [
+                    "step-spawn",
+                    "--run-dir", str(run_dir),
+                    "--target-repo", str(target),
+                    "--prompt-file", str(prompt),
+                    "--model", "gemini-4-argon",
+                    "--effort", "high",
+                    "--runtime", "agy",
+                    "--step-n", "1",
+                    "--try-k", "1",
+                ],
+                stdout=_AGY_FRESH_SUCCESS,
+            )
+
+            self.assertEqual(
+                captured["argv"],
+                [
+                    "agy",
+                    "--print=" + prompt_text,
+                    "--model",
+                    "gemini-4-argon",
+                    "--effort",
+                    "high",
+                    *self._BASE_ARGV_TAIL,
+                ],
+            )
+            self.assertEqual(captured["cwd"], str(target.resolve()))
+            try_dir = run_dir / "steps" / "1" / "try-1"
+            final = json.loads((try_dir / "stdout.final.json").read_text(encoding="utf-8"))
+            self.assertEqual(final["result"], "PONG\n")
+            self.assertEqual(
+                (try_dir / "session_id.txt").read_text(encoding="utf-8"),
+                _AGY_SID + "\n",
+            )
+            self.assertEqual(
+                (try_dir / "agy_version.txt").read_text(encoding="utf-8"), "1.3.4\n"
+            )
+
+    def test_step_resume_names_the_exact_conversation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            run_dir, target = self._make_run(root)
+            prompt = root / "repair.md"
+            prompt.write_text("repair the step\n", encoding="utf-8")
+
+            captured = self._run_and_capture(
+                self._command_args("step-resume", run_dir, target, prompt, _AGY_SID),
+                stdout=_agy_stdout("repaired"),
+            )
+
+            argv = captured["argv"]
+            self.assertEqual(
+                argv,
+                [
+                    "agy",
+                    "--print=repair the step\n",
+                    "--model",
+                    "gemini-4-argon",
+                    "--effort",
+                    "high",
+                    *self._BASE_ARGV_TAIL,
+                    "--conversation",
+                    _AGY_SID,
+                ],
+            )
+            self.assertNotIn("-c", argv)
+            self.assertNotIn("--continue", argv)
+            self.assertEqual(captured["cwd"], str(target.resolve()))
+            try_dir = run_dir / "steps" / "1" / "try-1"
+            self.assertEqual(
+                (try_dir / "session_id.txt").read_text(encoding="utf-8"),
+                _AGY_SID + "\n",
+            )
+            self.assertEqual(
+                json.loads((try_dir / "stdout.final.json").read_text(encoding="utf-8"))[
+                    "result"
+                ],
+                "repaired",
+            )
+
+    def test_step_diagnose_resumes_in_target_cwd_and_writes_response(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            run_dir, target = self._make_run(root)
+            prompt = root / "diagnose.md"
+            prompt.write_text("diagnose only\n", encoding="utf-8")
+
+            captured = self._run_and_capture(
+                self._command_args("step-diagnose", run_dir, target, prompt, _AGY_SID),
+                stdout=_agy_stdout("diagnostic response"),
+            )
+
+            self.assertEqual(
+                captured["argv"][-2:], ["--conversation", _AGY_SID]
+            )
+            self.assertEqual(captured["cwd"], str(target.resolve()))
+            self.assertEqual(captured["stamp_prefix"], "turn-1.with-step-1")
+            diag_dir = run_dir / "steps" / "1" / "try-1" / "diagnostic"
+            self.assertEqual(
+                (diag_dir / "turn-1.with-step-1.response.md").read_text(
+                    encoding="utf-8"
+                ),
+                "diagnostic response",
+            )
+            self.assertEqual(
+                (diag_dir / "turn-1.with-step-1.session_id.txt").read_text(
+                    encoding="utf-8"
+                ),
+                _AGY_SID + "\n",
+            )
+            self.assertEqual(
+                (diag_dir / "turn-1.with-step-1.agy_version.txt").read_text(
+                    encoding="utf-8"
+                ),
+                "1.3.4\n",
+            )
+
+    def test_continuation_without_the_exact_conversation_is_unrecoverable(self):
+        cases = [
+            ("step-spawn", "no init id", _agy_stdout("done", init_sid=None)),
+            ("step-resume", "no result id", _agy_stdout("done", result_sid=None)),
+            ("step-diagnose", "no init id", _agy_stdout("done", init_sid=None)),
+            (
+                "step-resume",
+                "different conversation",
+                _agy_stdout("done", init_sid="other", result_sid="other"),
+            ),
+            (
+                "step-diagnose",
+                "different conversation",
+                _agy_stdout("done", init_sid="other", result_sid="other"),
+            ),
+        ]
+        for command, label, stdout in cases:
+            with self.subTest(command=command, label=label), tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                run_dir, target = self._make_run(root)
+                prompt = root / "prompt.md"
+                prompt.write_text("turn\n", encoding="utf-8")
+
+                captured = self._run_and_capture(
+                    self._command_args(command, run_dir, target, prompt, _AGY_SID),
+                    stdout=stdout,
+                    expected_exit=4,
+                )
+
+                try_dir = run_dir / "steps" / "1" / "try-1"
+                if command == "step-diagnose":
+                    receipt = try_dir / "diagnostic" / "turn-1.with-step-1.session_id.txt"
+                else:
+                    receipt = try_dir / "session_id.txt"
+                self.assertEqual(receipt.read_text(encoding="utf-8"), "UNRECOVERABLE\n")
+                if label == "different conversation":
+                    self.assertIn("reported 'other'", captured["stderr"])
+                if command == "step-diagnose" and label == "different conversation":
+                    self.assertFalse(
+                        (try_dir / "diagnostic" / "turn-1.with-step-1.response.md").exists()
+                    )
+                self.assertEqual(captured.get("preflight"), "gemini-4-argon")
+
+    def test_failed_runs_exit_loudly_and_keep_the_run_folder(self):
+        cases = {
+            "invalid effort": _AGY_INVALID_EFFORT,
+            "invalid model": _AGY_INVALID_MODEL,
+            "no result event": _agy_stdout("partial", include_result=False),
+            "empty response": _agy_stdout(""),
+        }
+        for label, stdout in cases.items():
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                run_dir, target = self._make_run(root)
+                prompt = root / "prompt.md"
+                prompt.write_text("do the step\n", encoding="utf-8")
+
+                captured = self._run_and_capture(
+                    self._command_args("step-spawn", run_dir, target, prompt, _AGY_SID),
+                    stdout=stdout,
+                    expected_exit=3,
+                )
+
+                try_dir = run_dir / "steps" / "1" / "try-1"
+                self.assertEqual(
+                    (try_dir / "stream.log").read_text(encoding="utf-8"), stdout
+                )
+                self.assertTrue((try_dir / "invocation.sh").is_file())
+                self.assertFalse((try_dir / "stdout.final.json").exists())
+                if label == "invalid effort":
+                    self.assertIn('has no "max" effort', captured["stderr"])
+
+    def _critic_args(self, run_dir: Path, target: Path, prompt: Path, schema: Path) -> list[str]:
+        return [
+            "critic-spawn",
+            "--run-dir", str(run_dir),
+            "--target-repo", str(target),
+            "--prompt-file", str(prompt),
+            "--model", "gemini-4-argon",
+            "--effort", "high",
+            "--runtime", "agy",
+            "--schema-file", str(schema),
+            "--step-n", "4",
+            "--try-k", "1",
+        ]
+
+    def test_critic_passes_schema_file_and_reads_structured_output(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            run_dir, target = self._make_run(root)
+            prompt = root / "critic.md"
+            prompt.write_text("judge the step\n", encoding="utf-8")
+            schema_file = root / "schema.json"
+            schema_file.write_text(json.dumps(_PASS_SCHEMA), encoding="utf-8")
+            # agy's response text carries extra keys; parsing it would fail
+            # StepVerdict validation, so the verdict must come from
+            # structured_output.
+            response = json.dumps(
+                {**_PASS_VERDICT, "toolAction": "Finishing", "toolSummary": "Done"}
+            )
+
+            captured = self._run_and_capture(
+                self._critic_args(run_dir, target, prompt, schema_file),
+                stdout=_agy_stdout(response, structured_output=_PASS_VERDICT),
+            )
+
+            self.assertEqual(
+                captured["argv"],
+                [
+                    "agy",
+                    "--print=judge the step\n",
+                    "--model",
+                    "gemini-4-argon",
+                    "--effort",
+                    "high",
+                    *self._BASE_ARGV_TAIL,
+                    "--json-schema",
+                    str(schema_file.resolve()),
+                ],
+            )
+            self.assertEqual(captured["cwd"], str(target.resolve()))
+            critic_dir = run_dir / "steps" / "4" / "try-1" / "critic"
+            self.assertFalse((critic_dir / "prompt.agy.md").exists())
+            self.assertEqual(
+                json.loads((critic_dir / "verdict.json").read_text(encoding="utf-8")),
+                _PASS_VERDICT,
+            )
+            self.assertEqual(
+                json.loads(
+                    (critic_dir / "stdout.final.json").read_text(encoding="utf-8")
+                )["type"],
+                "agy_result",
+            )
+            self.assertEqual(
+                (critic_dir / "agy_version.txt").read_text(encoding="utf-8"), "1.3.4\n"
+            )
+
+    def test_critic_without_structured_output_or_conversation_fails(self):
+        cases = [
+            ("no structured_output", _agy_stdout(json.dumps(_PASS_VERDICT)), 5),
+            (
+                "structured_output not an object",
+                _agy_stdout("[]", structured_output=["pass"]),
+                5,
+            ),
+            (
+                "no conversation id",
+                _agy_stdout(
+                    json.dumps(_PASS_VERDICT),
+                    init_sid=None,
+                    structured_output=_PASS_VERDICT,
+                ),
+                3,
+            ),
+            ("error result", _AGY_INVALID_EFFORT, 3),
+        ]
+        for label, stdout, expected_exit in cases:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                run_dir, target = self._make_run(root)
+                prompt = root / "critic.md"
+                prompt.write_text("judge the step\n", encoding="utf-8")
+                schema_file = root / "schema.json"
+                schema_file.write_text(json.dumps(_PASS_SCHEMA), encoding="utf-8")
+
+                self._run_and_capture(
+                    self._critic_args(run_dir, target, prompt, schema_file),
+                    stdout=stdout,
+                    expected_exit=expected_exit,
+                )
+
+                critic_dir = run_dir / "steps" / "4" / "try-1" / "critic"
+                self.assertFalse((critic_dir / "verdict.json").exists())
+                self.assertTrue((critic_dir / "stream.log").is_file())
 
 
 class CodexProfileInvocationFlags(unittest.TestCase):

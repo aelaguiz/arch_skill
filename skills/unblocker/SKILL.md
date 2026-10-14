@@ -107,14 +107,21 @@ overrides a terminal state such as `issue-to-pr` never merging.
   telling the worker what to do meanwhile (work other scope, never idle).
 - Authorization is not scope growth. The unblocker authorizes work already
   inside intent; it never adds scope, never implements, and never reviews
-  code quality.
+  code quality. Its authority covers the plan's decisions only: it never
+  answers, or authorizes answering, a permission prompt, trust dialog, or
+  hook denial.
 - Keep a decision log on disk: matter, decision, reasoning, boundary check.
-  The run and the user audit it afterwards.
+  Each run gets its own section headed by its run id, and readers ignore
+  other runs' sections. Each row also carries a decision id, the consult id
+  and who asked; the decision opens with `PROCEED`, `DO X NOT Y`, or
+  `USER-OWNED` plus the meanwhile work, and a user-owned row carries the
+  one question. A repeat consult gets a row that reuses the existing
+  decision id. The run and the user audit it afterwards.
 
 ## Standing it up
 
 1. Gather the charter: the user's verbatim ask, plan artifacts, Pro thread,
-   and boundaries (default plus any the user adds).
+   boundaries (default plus any the user adds), and a run id for the log.
 2. Read the installed `../_shared/agent-orchestration-policy.md`. The
    unblocker is normally a long-lived native child of the coordinating
    agent; use an external session only per that policy.
@@ -138,8 +145,14 @@ instruction.
 
 ## Consulting it (worker contract)
 
-- Frame every consult with goal context: what the plan says, what you want
-  to do, why you believed a gate existed, the options, your recommendation.
+- Open every consult with the run id, its consult id and your name, then
+  frame it with goal context: what the plan says, what you want to do, why
+  you believed a gate existed, the options, your recommendation.
+- The answer is your consult's row in the decision log, not the unblocker's
+  status or screen. Wait a bounded time for the row. A send that timed out
+  may still have landed: read the unblocker's pane or session, and re-send
+  the same consult id once only if it never arrived. A second wait with no
+  row is a failed consult; note it and keep doing independent work.
 - Treat the answer as the user's standing intent within the charter. A
   boundary refusal is final until the user speaks.
 - While a user escalation pends, work the remaining unblocked scope.

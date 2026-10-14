@@ -189,7 +189,8 @@ Must happen every run:
   load-bearing values. An omitted model on an external Codex role defaults to
   `gpt-6.1-sol`, and an omitted effort on that Sol role defaults to `xhigh`.
   An external Kimi role defaults to `kimi-code/k3` and the model-default `max`
-  effort; other runtimes, Codex models, and efforts never silently default.
+  effort, and an external agy role defaults to `gemini-4-argon` at `high`;
+  other runtimes, Codex models, and efforts never silently default.
   Natural Grok wording resolves to `grok-4.6`, while explicitly named legacy
   Grok ids remain exact. Existing external
   policies with legacy `repair_worker` values may load, but ordinary critic
@@ -372,8 +373,9 @@ Detail per mode lives in `references/workflow-contract.md`.
   contracts for planner, implementation, exact-role continuation, and clean
   critics.
 - `references/epic-verdict-schema.json` — JSON schema file used by
-  Codex `--output-schema`, inlined into Claude `--json-schema`, and appended
-  to Grok and Kimi critic prompts before post-validation.
+  Codex `--output-schema` and agy `--json-schema`, inlined into Claude
+  `--json-schema`, and appended to Grok and Kimi critic prompts before
+  post-validation.
 - `references/model-and-effort.md` — native-first role dispatch plus external
   model shorthand resolution, exact-version preservation, and ask-once
   discipline.
@@ -398,7 +400,7 @@ python3 scripts/run_arch_epic.py critic-spawn \
   --sub-plan-doc-path <path> \
   --prompt-file <path> \
   --schema-file references/epic-verdict-schema.json \
-  --runtime claude|codex|grok|kimi \
+  --runtime claude|codex|grok|kimi|agy \
   --model <model> \
   --effort <effort> \
   [--codex-profile <profile>] \

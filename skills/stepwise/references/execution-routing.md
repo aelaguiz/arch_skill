@@ -72,7 +72,7 @@ For each drafted step, resolve execution in this order:
    runtime that cannot run the step is invalid. Do not force a CLI that cannot
    satisfy target doctrine or continuation mechanics.
 3. **Hard target doctrine.** If the target repo or process explicitly requires
-   Claude, Codex, Grok, or Kimi for a step, honor that unless the user explicitly
+   Claude, Codex, Grok, Kimi, or agy for a step, honor that unless the user explicitly
    overrides it and accepts the conflict.
 4. **Explicit step or label preference.** A user phrase like "step 4 on
    Codex" or "the copy pass on Claude" beats a broader semantic preference.
@@ -82,7 +82,8 @@ For each drafted step, resolve execution in this order:
 6. **Defaults.** Use clean native dispatch when no external benefit or hard
    doctrine applies. Use external defaults only within a selected external
    lane. In a selected Kimi lane, omitted model/effort means
-   `kimi-code/k3`/`max`; natural Grok wording means `grok-4.6`. Explicit legacy
+   `kimi-code/k3`/`max`, and in a selected agy lane it means
+   `gemini-4-argon`/`high`; natural Grok wording means `grok-4.6`. Explicit legacy
    Grok ids remain exact.
 
 Critic execution resolves independently. The default critic runtime is the

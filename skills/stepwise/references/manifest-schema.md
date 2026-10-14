@@ -80,7 +80,7 @@ Fields:
 - `continuation`: `"new-then-exact-resume"` for workers or
   `"new-each-verdict"` for critics.
 - `runtime`: `"active-host"` for native dispatch or `"claude"`, `"codex"`,
-  `"grok"`, or `"kimi"` for the external adapter.
+  `"grok"`, `"kimi"`, or `"agy"` for the external adapter.
 - `model`: external CLI model name, or `null` when native model selection is
   neither requested nor confirmed by the host.
 - `codex_profile`: Codex profile name for Fugu (`"fugu"` or

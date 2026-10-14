@@ -74,6 +74,16 @@ not reuse the input id, select a latest session, or fall back to another
 provider. Final text is the ordered concatenation of `role=assistant` event
 contents.
 
+For an agy external role, every turn also runs from the original work root,
+because agy has no cwd flag, and a fresh turn persists a conversation. Capture
+the session id from the `init` event's `conversation_id`, confirm the final
+`result` event names the same conversation, and resume only with
+`agy --conversation <exact-id>`. Never use `-c`/`--continue`. agy answers an
+unknown id by starting a new conversation, so a resumed turn that reports a
+different id is unrecoverable: preserve the run artifacts and do not adopt the
+new id, select a latest conversation, or fall back to another provider. Final
+text is the `result` event's `response` when its status is `SUCCESS`.
+
 Artifact-level resume works across CLI restarts because disk remains the state.
 Exact native-child continuation additionally depends on the active host still
 recognizing the recorded handle; do not pretend a durable artifact recreates a

@@ -64,14 +64,29 @@ make install
 2. **Verify each lane from artifacts.** What did it actually change (commits,
    files)? What did it prove (tests, CI)? What did it publish (PR, state)?
    When did the artifacts last move? A lane whose artifacts stopped moving
-   well inside its expected cadence is stalled regardless of what it says.
+   well inside its expected cadence is stalled regardless of what it says,
+   unless the tail of its transcript shows otherwise. An event in the last
+   15 minutes or so shows recent activity, and a turn still open shows only
+   that no end was recorded; neither shows useful work. Read the last event,
+   and the last messages when the lane is quiet, to judge whether it is
+   still working (a long job it started is running), awaiting the user's
+   reply (it asked a question or needs an approval), or finished. When many
+   lanes need that call, a cheaper helper model may make it under
+   `../_shared/agent-orchestration-policy.md`. Reuse a judgment only while
+   the transcript's size and mtime are unchanged and nothing it rested on has
+   lapsed, such as the recency window or a job it saw running. A failed or
+   unclear judgment leaves the lane unresolved, never finished. A session
+   that died or sits at a permission prompt can also leave a turn open, so
+   check its screen or process before calling it working.
 3. **Classify and report.** Exactly two lists:
    - **Merge-ready:** PR URL, one-line change summary, receipts (review
      verdicts where they exist, CI state, head SHA).
    - **Blocked or stalled:** the lane, the artifact evidence (no commits
-     since X, CI red on Y, waiting on reviewer, session dead), and the one
-     question or smallest action it needs.
-   Anything claimed-but-unproven goes in the second list, labeled as such.
+     since X, CI red on Y, waiting on reviewer, awaiting the user's reply,
+     session dead), and the one question or smallest action it needs.
+   Anything claimed-but-unproven or unresolved goes in the second list,
+   labeled as such. A lane verified finished with nothing to merge goes in
+   the first list, with its artifacts in place of a PR URL.
 4. **Optionally nudge.** One nudge per stalled-but-alive worker, when the
    user's ask implies it; note the nudge in the report and stop there.
 

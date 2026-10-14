@@ -2,7 +2,8 @@
 """Stepwise run-state and external-session adapter plumbing.
 
 This script is deterministic infrastructure for Stepwise run-state plus its
-deliberately selected external Claude, Codex, Grok, or Kimi lane. It does NOT choose
+deliberately selected external Claude, Codex, Grok, Kimi, or agy (Antigravity
+CLI) lane. It does NOT choose
 transport or make judgments about strictness, manifests, verdicts,
 advance/resume, or stop discipline. Those decisions live in the orchestrator's
 prose reasoning.
@@ -10,7 +11,8 @@ prose reasoning.
 Subcommands:
 
   init-run     Create the run directory and initial state.json.
-  step-spawn   Spawn a fresh external worker session (claude, codex, grok, or kimi).
+  step-spawn   Spawn a fresh external worker session (claude, codex, grok, kimi,
+               or agy).
   step-resume  Resume an existing external worker session with a repair prompt.
   step-diagnose
                Resume an existing external worker session with a read-only
@@ -46,6 +48,11 @@ if str(_SHARED_DIR) not in sys.path:
 from model_resolution import (  # noqa: E402
     KIMI_EFFORT_ENV,
     KIMI_NO_AUTO_UPDATE_ENV,
+    AGY_HEADLESS_ARGS,
+    ModelResolutionError,
+    agy_model_args,
+    agy_prompt_arg,
+    check_agy_ready,
     codex_model_or_profile_args,
     kimi_model_args,
 )
@@ -777,6 +784,155 @@ def _parse_kimi_session_id(stdout_text: str) -> str | None:
     return sid if isinstance(sid, str) and sid else None
 
 
+def _agy_argv(
+    model: str,
+    effort: str,
+    prompt: str,
+    *,
+    session_id: str | None = None,
+    schema_path: Path | None = None,
+) -> list[str]:
+    """Build Antigravity CLI argv; the caller runs it from the target repo.
+
+    agy has no cwd flag. Every headless run skips permission prompts because
+    print mode cannot answer them; critics stay read-only through their
+    no-edit contract and the parent's repository-state check.
+    """
+    argv = [
+        "agy",
+        agy_prompt_arg(prompt),
+        *agy_model_args(model, effort),
+        *AGY_HEADLESS_ARGS,
+    ]
+    if session_id:
+        argv.extend(["--conversation", session_id])
+    if schema_path is not None:
+        argv.extend(["--json-schema", str(schema_path)])
+    return argv
+
+
+def _agy_preflight(model: str) -> None:
+    """Stop before launching agy when it is signed out or does not list `model`.
+
+    A signed-out headless agy run opens the Google sign-in page in the browser,
+    so this check must run before any agy process starts.
+    """
+    try:
+        check_agy_ready(model)
+    except ModelResolutionError as e:
+        _die(str(e))
+
+
+def _agy_cli_version() -> str:
+    """Return `agy --version` for the run receipt; agy can update itself."""
+    try:
+        proc = subprocess.run(
+            ["agy", "--version"],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired) as e:
+        _die(f"could not run `agy --version`: {e}")
+    version = proc.stdout.strip()
+    if proc.returncode != 0 or not version:
+        _die(
+            f"`agy --version` failed (exit {proc.returncode}): "
+            f"{(proc.stderr or proc.stdout).strip()}"
+        )
+    return version
+
+
+def _parse_agy_final_json(stdout_text: str) -> dict | None:
+    """Return agy's final turn from stream-json stdout, or None when malformed.
+
+    Malformed means no `result` event, a status other than SUCCESS, empty
+    `response` text, or init and result events that name different
+    conversations. The session id is `init.conversation_id` when the result
+    event names the same conversation; if either id is missing it is None and
+    continuation is unrecoverable. A schema critic's verdict is
+    `result.structured_output`; `response` can carry extra keys and is never
+    parsed for the verdict.
+    """
+    init_sid: str | None = None
+    result: Any = None
+    for line in stdout_text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            ev = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(ev, dict):
+            continue
+        if ev.get("event") == "init":
+            sid = ev.get("conversation_id")
+            if isinstance(sid, str) and sid:
+                init_sid = sid
+        elif ev.get("event") == "result":
+            result = ev.get("result")
+
+    if not isinstance(result, dict) or result.get("status") != "SUCCESS":
+        return None
+    text = result.get("response")
+    if not _nonempty_str(text):
+        return None
+    result_sid = result.get("conversation_id")
+    if not (isinstance(result_sid, str) and result_sid):
+        result_sid = None
+    if init_sid and result_sid and init_sid != result_sid:
+        return None
+    structured = result.get("structured_output")
+    return {
+        "type": "agy_result",
+        "result": text,
+        "session_id": init_sid if init_sid == result_sid else None,
+        "structured_output": structured if isinstance(structured, dict) else None,
+    }
+
+
+def _parse_agy_session_id(stdout_text: str) -> str | None:
+    final = _parse_agy_final_json(stdout_text)
+    if final is None:
+        return None
+    sid = final.get("session_id")
+    return sid if isinstance(sid, str) and sid else None
+
+
+def _agy_resumed_session_id(stdout_text: str, requested_sid: str) -> str | None:
+    """Return a resumed turn's conversation id, or None when it is missing or
+    names a different conversation than the one asked for."""
+    sid = _parse_agy_session_id(stdout_text)
+    if sid is not None and sid != requested_sid:
+        print(
+            f"run_stepwise: agy was asked to resume conversation "
+            f"{requested_sid!r} but reported {sid!r}",
+            file=sys.stderr,
+        )
+        return None
+    return sid
+
+
+def _agy_failure_detail(stdout_text: str) -> str:
+    """Return agy's own error text from a failed result event, if it sent one."""
+    for line in reversed(stdout_text.splitlines()):
+        try:
+            ev = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(ev, dict) and ev.get("event") == "result":
+            result = ev.get("result")
+            if isinstance(result, dict) and result.get("status") != "SUCCESS":
+                error = result.get("error")
+                detail = error.strip() if isinstance(error, str) else ""
+                return f" (agy status {result.get('status')!r}: {detail})"
+            break
+    return ""
+
+
 def _grok_argv(
     target_repo: str,
     model: str,
@@ -952,6 +1108,11 @@ def cmd_step_spawn(args: argparse.Namespace) -> int:
     elif args.runtime == "kimi":
         argv = _kimi_argv(args.model, args.effort, prompt)
         spawn_cwd = target_repo
+    elif args.runtime == "agy":
+        _agy_preflight(args.model)
+        _write_text(try_dir / "agy_version.txt", _agy_cli_version() + "\n")
+        argv = _agy_argv(args.model, args.effort, prompt)
+        spawn_cwd = target_repo
     else:
         _die(f"unknown runtime: {args.runtime}")
 
@@ -989,6 +1150,17 @@ def cmd_step_spawn(args: argparse.Namespace) -> int:
             )
         _write_json(final_path, final)
         sid = _parse_kimi_session_id(stdout_text)
+    elif args.runtime == "agy":
+        final = _parse_agy_final_json(stdout_text)
+        if final is None:
+            _die(
+                "agy stdout did not include a SUCCESS result with final text"
+                + _agy_failure_detail(stdout_text)
+                + "; see stream.log",
+                code=3,
+            )
+        _write_json(final_path, final)
+        sid = _parse_agy_session_id(stdout_text)
     else:
         _die(f"unknown runtime: {args.runtime}")
 
@@ -1096,6 +1268,16 @@ def cmd_step_resume(args: argparse.Namespace) -> int:
             session_id=sid,
         )
         resume_cwd = target_repo
+    elif args.runtime == "agy":
+        _agy_preflight(args.model)
+        _write_text(try_dir / "agy_version.txt", _agy_cli_version() + "\n")
+        argv = _agy_argv(
+            args.model,
+            args.effort,
+            prompt,
+            session_id=sid,
+        )
+        resume_cwd = target_repo
     else:
         _die(f"unknown runtime: {args.runtime}")
 
@@ -1132,6 +1314,17 @@ def cmd_step_resume(args: argparse.Namespace) -> int:
             )
         _write_json(final_path, final)
         out_sid = _parse_kimi_session_id(stdout_text)
+    elif args.runtime == "agy":
+        final = _parse_agy_final_json(stdout_text)
+        if final is None:
+            _die(
+                "agy stdout did not include a SUCCESS result with final text"
+                + _agy_failure_detail(stdout_text)
+                + "; see stream.log",
+                code=3,
+            )
+        _write_json(final_path, final)
+        out_sid = _agy_resumed_session_id(stdout_text, sid)
     else:
         _die(f"unknown runtime: {args.runtime}")
 
@@ -1240,6 +1433,18 @@ def cmd_step_diagnose(args: argparse.Namespace) -> int:
             session_id=sid,
         )
         resume_cwd = target_repo
+    elif args.runtime == "agy":
+        _agy_preflight(args.model)
+        _write_text(
+            diag_dir / f"{prefix}.agy_version.txt", _agy_cli_version() + "\n"
+        )
+        argv = _agy_argv(
+            args.model,
+            args.effort,
+            prompt,
+            session_id=sid,
+        )
+        resume_cwd = target_repo
     else:
         _die(f"unknown runtime: {args.runtime}")
 
@@ -1299,6 +1504,21 @@ def cmd_step_diagnose(args: argparse.Namespace) -> int:
             result_text if isinstance(result_text, str) else json.dumps(final, indent=2),
         )
         out_sid = _parse_kimi_session_id(stdout_text)
+    elif args.runtime == "agy":
+        final = _parse_agy_final_json(stdout_text)
+        if final is None:
+            _die(
+                "agy stdout did not include a SUCCESS result with final text"
+                + _agy_failure_detail(stdout_text)
+                + "; see diagnostic stream log",
+                code=3,
+            )
+        _write_json(final_path, final)
+        out_sid = _agy_resumed_session_id(stdout_text, sid)
+        if out_sid is not None:
+            # A reply from a conversation other than the step's has none of the
+            # step's history, so it is never recorded as a diagnostic answer.
+            _write_text(response_path, final["result"])
     else:
         _die(f"unknown runtime: {args.runtime}")
 
@@ -1403,6 +1623,16 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
             kimi_prompt,
         )
         critic_cwd = target_repo
+    elif args.runtime == "agy":
+        _agy_preflight(args.model)
+        _write_text(crit_dir / "agy_version.txt", _agy_cli_version() + "\n")
+        argv = _agy_argv(
+            args.model,
+            args.effort,
+            prompt,
+            schema_path=schema_path,
+        )
+        critic_cwd = target_repo
     else:
         _die(f"unknown runtime: {args.runtime}")
 
@@ -1461,6 +1691,29 @@ def cmd_critic_spawn(args: argparse.Namespace) -> int:
         verdict = _json_object_from_text(result_text if isinstance(result_text, str) else "")
         if verdict is None:
             _die("kimi critic output is not valid JSON; see stdout.final.json", code=5)
+        _write_json(verdict_path, verdict)
+    elif args.runtime == "agy":
+        final = _parse_agy_final_json(stdout_text)
+        if final is None:
+            _die(
+                "agy critic stdout did not include a SUCCESS result with final text"
+                + _agy_failure_detail(stdout_text)
+                + "; see stream.log",
+                code=3,
+            )
+        _write_json(final_path, final)
+        if final["session_id"] is None:
+            _die(
+                "agy critic result did not carry a matching conversation id; "
+                "see stdout.final.json",
+                code=3,
+            )
+        verdict = final["structured_output"]
+        if not isinstance(verdict, dict):
+            _die(
+                "agy critic returned no structured_output; see stdout.final.json",
+                code=5,
+            )
         _write_json(verdict_path, verdict)
     else:
         _die(f"unknown runtime: {args.runtime}")
@@ -1707,7 +1960,9 @@ def _build_parser() -> argparse.ArgumentParser:
     for a in ["--run-dir", "--target-repo", "--prompt-file", "--model", "--effort"]:
         step.add_argument(a, required=True)
     step.add_argument(
-        "--runtime", required=True, choices=["claude", "codex", "grok", "kimi"]
+        "--runtime",
+        required=True,
+        choices=["claude", "codex", "grok", "kimi", "agy"],
     )
     step.add_argument("--codex-profile", default="")
     step.add_argument("--step-n", required=True, type=int)
@@ -1729,7 +1984,9 @@ def _build_parser() -> argparse.ArgumentParser:
               "--effort", "--session-id"]:
         resume.add_argument(a, required=True)
     resume.add_argument(
-        "--runtime", required=True, choices=["claude", "codex", "grok", "kimi"]
+        "--runtime",
+        required=True,
+        choices=["claude", "codex", "grok", "kimi", "agy"],
     )
     resume.add_argument("--step-n", required=True, type=int)
     resume.add_argument("--try-k", required=True, type=int)
@@ -1751,7 +2008,9 @@ def _build_parser() -> argparse.ArgumentParser:
               "--effort", "--session-id"]:
         diagnose.add_argument(a, required=True)
     diagnose.add_argument(
-        "--runtime", required=True, choices=["claude", "codex", "grok", "kimi"]
+        "--runtime",
+        required=True,
+        choices=["claude", "codex", "grok", "kimi", "agy"],
     )
     diagnose.add_argument("--step-n", required=True, type=int)
     diagnose.add_argument("--try-k", required=True, type=int)
@@ -1767,7 +2026,9 @@ def _build_parser() -> argparse.ArgumentParser:
               "--effort", "--schema-file"]:
         critic.add_argument(a, required=True)
     critic.add_argument(
-        "--runtime", required=True, choices=["claude", "codex", "grok", "kimi"]
+        "--runtime",
+        required=True,
+        choices=["claude", "codex", "grok", "kimi", "agy"],
     )
     critic.add_argument("--codex-profile", default="")
     critic.add_argument("--step-n", required=True, type=int)

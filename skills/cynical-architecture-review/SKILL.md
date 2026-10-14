@@ -77,8 +77,8 @@ user's broader workflow.
   may not start external agents.
 - The parent owns child accounting, deduplication, integration, scope
   disposition, the saved artifact, and the final verdict.
-- Do not manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or any other
-  coding-harness executable.
+- Do not manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, `agy`, or any
+  other coding-harness executable.
 - Do not invoke external agent, delegation, consult, or review skills as the
   review mechanism.
 - Start from distrust: existing architecture, names, wrappers, owners,

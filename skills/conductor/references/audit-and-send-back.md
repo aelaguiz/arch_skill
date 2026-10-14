@@ -151,7 +151,9 @@ Batch all factually accepted findings dispositioned `authorized` or
 or external session (shape in `worker-prompt-contract.md`). Repair directions are
 advisory hints — the worker owns implementation judgment; conductor diagnosis
 is context, not a script. The original slice contract stays binding and is
-restated by reference, not re-pasted.
+restated by reference, not re-pasted. Only its verification line changes:
+recompute it for the slice's cumulative diff across every attempt so far and
+put it in the resume prompt.
 
 **Worker rebuttals do not close findings.** When a send-back response disputes
 a finding, the conductor verifies the worker's cited evidence directly in the
@@ -171,7 +173,11 @@ redesign/subtraction inside the approved boundary.
 
 ## Caps And Worker Health
 
-- **3 send-backs** per worker handle, then **1 new clean respawn** with a sharpened
+Caps, misreport strikes, and repeated findings count per slice, across every
+worker that has carried it, including the respawn. A respawn resets none of
+them; read the slice's history in the log before deciding.
+
+- **3 send-backs** per slice, then **1 new clean respawn** with a sharpened
   brief (fold what the failures taught into the new slice contract), then
   mark the slice `escalated`. Total worker attempts per slice never exceed 5.
 - **Repeated-identical-finding rule:** the same finding surviving two
@@ -180,13 +186,17 @@ redesign/subtraction inside the approved boundary.
   failure without new evidence is the classic no-memory retry smell.
 - **Claim-mismatch rule:** a worker caught misreporting repo reality (changed
   files, deletes, verification) gets one strike recorded against session
-  health; a second misreport from the same worker forces respawn or
-  escalation regardless of remaining send-back budget.
+  health; a second misreport on the same slice, by any of its workers, forces
+  respawn or escalation regardless of remaining send-back budget.
 - **Process-failure rule:** two consecutive malformed or failed child runs on
   one slice (non-zero exit, empty final, missing footer, unrecoverable
   child/session handle) escalate the slice. Preserve available receipts and
   external run directories; never silently
   switch runtime, model, or effort.
+- **Control-evasion rule:** a worker that retried a denied operation in
+  another form is disclosed to the user in the next update, naming the denied
+  command and the workaround. The conductor never runs the denied command on
+  the worker's behalf.
 - A worker reporting `SESSION HEALTH: struggling` or `stuck` weighs toward
   respawn even before caps fire.
 
@@ -211,6 +221,8 @@ A slice is `accepted` only when:
   enough that a later reader can distinguish "audited" from "skimmed".
 
 Record the evidence anchors in the log and commit a local checkpoint.
+Acceptance stays provisional until the phase's closure verification passes on
+the combined tree.
 
 ## Phase Closure
 
@@ -219,7 +231,27 @@ verification — impact-aware: the plan's named obligations plus changed and
 plausibly impacted surfaces, not "run everything." Reuse fresh passing proof
 until a real invalidator (new changes touching it, an explicit plan demand,
 or review evidence) makes it stale. Record results in the proof ledger, then
-record completion in the plan's own format.
+record completion in the plan's own format. A closure failure reopens the
+slices it implicates: each row returns to `sent-back` through the normal
+send-back machinery and counts against its caps, and the phase stays open
+until the verification passes. At the first phase able to measure a
+quantitative target from intake, compare it with that phase's proof. When
+the proof shows the target will be missed, or that the figure it rests on was
+wrong, ask the user whether to keep or replace it; it stays binding until the
+user answers.
+
+When a proof run at any gate fails in a way the diff does not explain, the
+proof worker reruns the failing tests once on the tree and once on a separate
+copy of the base commit (a new detached worktree or a `git archive` export),
+set up the way the project's tests need. The base is the commit the slice
+started from, or the log's `Start commit` for phase closure and the final
+gate. Record one label in the proof ledger: `flaky` (the rerun passes),
+`pre-existing` (the base fails the same way), `finding` (the base passes or
+fails differently), or `unresolved` (anything else, including a base run that
+could not execute). Only a flaky or pre-existing failure can pass a gate, and
+a pre-existing failure the plan owns blocks closure unless the user waives
+it. A gate that passes this way is recorded passing in the proof ledger with
+each label, and any waiver quoted there.
 
 ## Final Gate
 
@@ -268,8 +300,14 @@ After all phases:
    structural, or the completion story could not be fully verified, offer
    these reviews in the final report rather than running them unasked.
 4. Triage findings from any of these like any others; repair through
-   send-backs (resuming the owning sessions where healthy); re-run an
-   affected review on material repairs.
+   send-backs (resuming the owning sessions where healthy), and audit each
+   repair like any send-back return. Re-run a review or the cold verifier in
+   full only when the repairs touched surface it did not see or a repair
+   failed its audit. Record in the log the commit range each one reviewed.
+   A defect that spans accepted slices gets one seam repair: its own
+   Execution Map row, a repair contract naming each affected slice's anchors
+   and commits, the normal caps, and a new clean worker. The accepted slices'
+   rows stay accepted.
 
 ## Escalation
 

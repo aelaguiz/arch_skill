@@ -62,7 +62,10 @@ with it, and blend shapes when a deck serves two jobs.
 - **Upside first.** Find what is working and how to get more of it; bugs go in
   one calm, linked section unless one of them stops growth.
 - **Commit.** Give the likely read and a recommendation on every open
-  question. About 70% sure is enough to recommend at this stage.
+  question. About 70% sure is enough to recommend at this stage. Firm is not
+  bare: the slide shows what you looked at and what it showed, then what you
+  propose. A confident line with a light reason under it reads to him as
+  "just designing what seems good".
 - **Long is fine** when every slide is one clear decision.
 - **Planning is not deciding.** While he is still shaping a plan, explain it
   and ask for nothing.
@@ -101,6 +104,17 @@ with it, and blend shapes when a deck serves two jobs.
   visual and easy to follow for me."
 - **Describe before prescribing.** While he is still forming the picture,
   show what exists and how it works; hold next steps until he asks for them.
+- **Simple first, then a layer at a time.** Open on the plainest picture of
+  the whole, add one piece per slide, and show the full system only after its
+  pieces. The whole flow on one slide is "way too complicated". Spend slides
+  where several pieces interact; a routine step needs none.
+- **Known problems are a plain list, not the headline.** "I know there's
+  plenty of fucking bugs. That's not the headline. That's just a slide that
+  lists them out". They come after the picture of how it works. A finding
+  that overturns something he is building on still goes first.
+- **When he is stuck on a question, lay out the problem, not your answer:**
+  what he is trying to get, what pulls against what, the unknowns, and the
+  assumptions, so that he can reason his way to it and trust where he lands.
 - **Assume no memory of it.** "assume I completely forgot what the fuck is in
   this entire feature stack over the last week."
 
@@ -127,6 +141,10 @@ What the good ones share: a one-line takeaway headline, a picture of the thing
 on almost every slide, every line readable alone, and density held in tables
 and labeled screenshots rather than prose. A deck rebuilt with the same words
 but a visual form chosen for each slide went from rejected to his model deck.
+The high counts are the words inside a table or a screenshot strip, never a
+paragraph: a daily deck whose slides carry about 160 words in caption
+paragraphs and two-finding headlines is the deck he could not read. A dense
+slide still says one thing in its headline.
 
 ## How his apparent contradictions resolve
 
@@ -143,6 +161,13 @@ but a visual form chosen for each slide went from rejected to his model deck.
   atomic data. Findings and recommendations never get compressed into rows.
 - **Verdicts.** Decision decks recommend. Research and orientation decks
   present what is known until he opens a decision. No deck project-manages.
+  "No verdicts" never means no reading: a deck whose titles only name the
+  data is "a data dump". He wants the data on the slide and what you make of
+  it beside it, so he can see for himself whether you are right.
+- **His words in the deck, your bookkeeping out of it.** His goals, his
+  limits, his to-dos, and the assumptions he has to settle go at the front,
+  in his terms, when he asks for them there. A log of your own changes is
+  bloat; keep it as a file.
 - **Caveats.** Hedges never go on a conversation slide. Edge cases someone
   will build from belong in a spec section. One line of framing that keeps a
   number honest ("worst case", "hypothetical") stays on the slide.

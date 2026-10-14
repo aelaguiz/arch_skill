@@ -10,7 +10,7 @@ metadata:
 Use this workflow only after explicit selection as `$fresh-consult` or a
 binding task instruction requiring it. `Fresh` means a new
 reviewer with clean starting context; it does not inherently mean a Claude,
-Codex, Cursor Agent, Grok, or Kimi CLI subprocess.
+Codex, Cursor Agent, Grok, Kimi, or agy CLI subprocess.
 
 Prefer a clean native child of the active host for ordinary same-host review.
 Use the external lane when it buys a concrete provider, exact model/profile,
@@ -41,6 +41,8 @@ add a universal runner, controller, state machine, or harness for this skill.
 - "Use Cursor Agent Composer 2.5 Fast for a cold read of this artifact."
 - "Use Grok Build for an external fresh consult on this implementation claim."
 - "Use Kimi K3 for a cold read and keep the exact review session receipt."
+- "Fresh consult with Gemini 4 Argon on whether this migration plan is
+  complete."
 - Another skill needs an independent read before deciding whether to proceed.
 
 ## When not to use
@@ -97,10 +99,12 @@ add a universal runner, controller, state machine, or harness for this skill.
 - Preserve exact external model resolution. Codex runs GPT/GBT/OpenAI model ids
   and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
-  runs `kimi-code/k3` and defaults an omitted effort to `max`. An omitted
-  external Codex model defaults to `gpt-6.1-sol`, and an omitted effort on
-  that Sol lane defaults to `xhigh`. Preserve explicitly named legacy Grok ids
-  exactly. Never silently substitute a nearby model or cross runtimes.
+  runs `kimi-code/k3` and defaults an omitted effort to `max`; the Antigravity
+  CLI (`agy`) runs only Gemini models, defaults to `gemini-4-argon` at `high`,
+  and runs `gemini-3.8-flash` only when Flash is named. An omitted external
+  Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane
+  defaults to `xhigh`. Preserve explicitly named legacy Grok ids exactly. Never
+  silently substitute a nearby model or cross runtimes.
 - Use bounded continuity by default: turn 1 is a new clean reviewer, turns 2
   and 3 resume the exact healthy same-line reviewer, and turn 4 starts clean
   unless the user explicitly asks to continue. Strictness is an acceptance bar,

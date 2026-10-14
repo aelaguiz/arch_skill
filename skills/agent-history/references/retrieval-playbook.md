@@ -68,6 +68,8 @@ python3 skills/agent-history/scripts/agent_history.py search --runtime claude st
 python3 skills/agent-history/scripts/agent_history.py sessions --runtime prime --since today
 python3 skills/agent-history/scripts/agent_history.py search --runtime prime --include-sidechains worktree
 python3 skills/agent-history/scripts/agent_history.py prompts --runtime pi --scope all-projects --since 30d
+python3 skills/agent-history/scripts/agent_history.py sessions --runtime agy --since 7d
+python3 skills/agent-history/scripts/agent_history.py search --runtime agy --include-sidechains invoke_subagent
 python3 skills/agent-history/scripts/agent_history.py show --run /tmp/agent-history/<run> --id <id> --context 3
 ```
 

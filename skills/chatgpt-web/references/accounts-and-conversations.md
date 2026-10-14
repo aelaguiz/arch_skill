@@ -14,8 +14,9 @@ accounts. Apply the BrowserOS profile-targeting reference before browser calls.
 ## Choose a working account
 
 The account pool contains only the consultation profiles configured on this
-machine: the BrowserOS profiles labeled, for example, `pro1`, `pro2`, and
-`pro3`.
+machine: the BrowserOS profiles labeled, for example, `pro1`, `pro3`, and
+`pro4`. `pro2` is retired: never use it, even when its profile or window is
+still open.
 Names and count vary; these examples are not a fixed inventory or rotation
 order. The label is how you find the profile and which login it holds. It is
 not the model: choosing the profile and choosing the model are two separate

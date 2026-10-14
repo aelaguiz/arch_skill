@@ -1,6 +1,6 @@
 # arch_skill
 
-This repo ships installable agent skills centered on the arch suite for Codex CLI, Claude Code, and Gemini CLI.
+This repo ships installable agent skills centered on the arch suite for Codex CLI, Claude Code, Gemini CLI, and the Antigravity CLI (`agy`).
 
 ## Community
 
@@ -110,7 +110,11 @@ make install
 This installs the live skill surface to `~/.agents/skills/`, removes old
 arch_skill-owned Codex and Claude hook entries from previous installs, removes
 older `~/.codex/skills/<skill>` mirrors, and also installs the Claude Code and
-Gemini CLI skill directories. When a Hermes Agent home exists, the same
+Gemini CLI skill directories. When an Antigravity CLI home exists
+(`~/.gemini/antigravity-cli/`), the Gemini CLI's skill set is also installed to
+`~/.gemini/config/skills/`, where `agy` looks for skills, with each `SKILL.md`
+frontmatter kept because `agy` requires it; machines without `agy` are
+skipped. When a Hermes Agent home exists, the same
 surface is mirrored into every existing Hermes skill root
 (`~/.hermes/skills/` and each `~/.hermes/profiles/<name>/skills/`) under the
 `arch_skill/` category directory; machines without Hermes are skipped
@@ -130,7 +134,9 @@ and Claude/Gemini invocation remain unchanged.
 Agent-using skills share one runtime contract, installed at
 `~/.agents/skills/_shared/agent-orchestration-policy.md`,
 `~/.claude/skills/_shared/agent-orchestration-policy.md`, and
-`~/.gemini/skills/_shared/agent-orchestration-policy.md`. It prefers host-native children
+`~/.gemini/skills/_shared/agent-orchestration-policy.md`, plus
+`~/.gemini/config/skills/_shared/agent-orchestration-policy.md` where `agy` is
+installed. It prefers host-native children
 for ordinary same-host work, requires explicit clean/bounded/full starting
 context and resume/replace semantics, and keeps external sessions available
 when their provider, exact model/profile, lifecycle, isolation, automation, or
@@ -162,8 +168,15 @@ To skip Hermes Agent propagation:
 make install NO_HERMES=1
 ```
 
+To skip the Antigravity CLI:
+
+```bash
+make install NO_AGY=1
+```
+
 Install destinations are `~/.agents/skills/` for Codex,
-`~/.claude/skills/` for Claude Code, and `~/.gemini/skills/` for Gemini.
+`~/.claude/skills/` for Claude Code, `~/.gemini/skills/` for Gemini CLI, and
+`~/.gemini/config/skills/` for the Antigravity CLI.
 [Makefile](Makefile) owns their exact membership.
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
@@ -174,11 +187,14 @@ Codex reads the same installed skill surface from `~/.agents/skills/`. `make ins
 surfaces and requires an installed Herdr CLI at runtime.
 
 External lanes still require the selected local `claude`, `codex`, `agent`,
-`grok`, or `kimi` CLI at invocation time. Ordinary same-host work uses the active host's
+`grok`, `kimi`, or `agy` CLI at invocation time. Ordinary same-host work uses the active host's
 native child system instead. External provider routing remains exact: Codex
 runs OpenAI model ids and Fugu profiles, Claude Code runs supported Claude
 models, Cursor Agent runs `composer-2.5-fast`, natural Grok requests use
-`grok-4.6`, and Kimi Code uses `kimi-code/k3`; model ids never cross runtimes.
+`grok-4.6`, Kimi Code uses `kimi-code/k3`, and the Antigravity CLI (`agy`)
+runs Gemini models, `gemini-4-argon` at `high` by default; model ids never cross
+runtimes, so the Claude and GPT-OSS models `agy` also lists are never routed
+through `agy`.
 
 `agent-delegate` owns external editful sessions and receipts. `fresh-consult`
 and `model-consensus` select native or external transport per role while
@@ -201,12 +217,12 @@ make verify_install
 ```
 
 This validates the installed active skill surface, including the shared agent
-orchestration policy under Agents/Codex, Claude, Gemini, and every existing
-Hermes Agent skill root; confirms old arch_skill-owned Codex and Claude hook
+orchestration policy under Agents/Codex, Claude, Gemini, the Antigravity CLI
+when it is installed, and every existing Hermes Agent skill root; confirms old arch_skill-owned Codex and Claude hook
 entries and old `~/.codex/skills/<skill>` mirrors are absent; and confirms
 removed packages are absent for the supported runtimes.
 
-Restart your Codex, Claude Code, Gemini CLI, or Hermes Agent session after install so it
+Restart your Codex, Claude Code, Gemini CLI, Antigravity CLI, or Hermes Agent session after install so it
 reloads skills and drops any hook list cached before install removed old
 arch_skill hook entries.
 
@@ -594,7 +610,8 @@ runtime, model/profile, and effort, or the skill asks once. Codex aliases remain
 exact (`astra`, `luna`, `terra`), and an omitted external Codex model defaults to
 `gpt-6.1-sol`; an omitted effort on that Sol lane defaults to `xhigh`. Bare
 Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.6`
-and still require an explicit effort. Exact model versions and profiles are
+and still require an explicit effort. Bare Gemini or Argon defaults to
+`gemini-4-argon` at `high`. Exact model versions and profiles are
 preserved without silent downgrade or provider switch.
 
 The first request in a consult line starts clean and preserves the exact native
@@ -639,9 +656,9 @@ directly. The adapter preserves exact model resolution, hook-suppressed CLI
 invocation, namespaced receipts, shared-worktree reporting, and exact-handle
 resume.
 
-Fresh-resumable is the default. When the caller explicitly requests parallel workers, `agent-delegate` creates a group directory and launches ordinary fresh-resumable child workers, then inspects repo state before reporting the combined result. Stateless one-shot is available only when explicitly requested and the selected CLI can honor it; Kimi always persists a session, even when its receipt is ignored. Explicit resume uses a same-runtime session id or prior run directory. Claude and Kimi resume use `-r <session_id>` from the original work root; Codex resume uses `codex exec resume <thread_id>` and never `--last`; Cursor Agent and Grok resume use `--resume <session_id>` and never latest-session selection. The skill does not resume "latest" sessions, cross runtimes, or use external continuation controllers as a strategy.
+Fresh-resumable is the default. When the caller explicitly requests parallel workers, `agent-delegate` creates a group directory and launches ordinary fresh-resumable child workers, then inspects repo state before reporting the combined result. Stateless one-shot is available only when explicitly requested and the selected CLI can honor it; Kimi always persists a session, even when its receipt is ignored. Explicit resume uses a same-runtime session id or prior run directory. Claude and Kimi resume use `-r <session_id>` from the original work root; Codex resume uses `codex exec resume <thread_id>` and never `--last`; Cursor Agent and Grok resume use `--resume <session_id>` and never latest-session selection; agy resume uses `--conversation <conversation_id>` and never `--continue`. The skill does not resume "latest" sessions, cross runtimes, or use external continuation controllers as a strategy.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `astra`, `luna`, and `terra` as the exact `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, or `Kimi K3` for Kimi Code. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `astra`, `luna`, and `terra` as the exact `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra` choices; an omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini` or `Argon` for the Antigravity CLI. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Argon resolves to `gemini-4-argon` at `high`, the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -692,7 +709,7 @@ readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is
 Codex `gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi (`kimi-code/k3`
-at `max`), Grok (`grok-4.6`), Cursor (`composer-2.5-fast`), or Claude, and it
+at `max`), Argon (`gemini-4-argon` at `high`), Grok (`grok-4.6`), Cursor (`composer-2.5-fast`), or Claude, and it
 covers every heavy role — implementation, research, verification, any
 requested cynical review, and the cold verifier. That profile runs on a native
 child when the host can reach the model in its child catalog, pin both the
@@ -753,7 +770,8 @@ identity selects the external lane. External shorthand follows the shared
 model resolver, preserves exact versions/profiles, and defaults an omitted
 external Codex model to `gpt-6.1-sol` and its omitted Sol effort to `xhigh`.
 Bare Kimi selects `kimi-code/k3` at `max`; natural Grok wording selects
-`grok-4.6` and keeps the explicit-effort requirement.
+`grok-4.6` and keeps the explicit-effort requirement. Bare Gemini or Argon
+selects `gemini-4-argon` at `high`.
 
 External participants preserve event/final receipts; native participants
 preserve exact host child handles. Both remain read-only, and the parent checks
@@ -784,7 +802,7 @@ Shares are unlisted but public: anyone with the URL can view them, so sensitive 
 
 When explicitly selected, use when the user wants a prompt-only skeptical implementation-integrity code review over implemented code, a branch, diff, path set, completion claim, or optional plan-backed implementation and wants the review saved to disk. The skill assumes the completion story may be misleading, treats names/docs/status/tests as claims rather than proof, hunts name-only completion, split-brain owners, side doors, partial unification, stale authority paths, stopped-short user workflows, overbuilt machinery, scope contamination, fake proof receipts, and docs/status/tests that mask broken code, then writes `target.md`, `suspicion-map.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-code-review/...`. Its verdicts are `approve`, `not-approved`, or `coverage-incomplete`.
 
-It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` subprocesses, or turn review into a test/doc nit pass.
+It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or `agy` subprocesses, or turn review into a test/doc nit pass.
 
 Use `cynical-code-review` when distrust of the implementation story is the job. Use `exhaustive-code-review` when coverage is the deliverable, `plan-audit implementation-audit` when plan fit is the main question, `codex-review-yolo` for an explicit Codex `-p yolo` fresh-eyes review, and `thermo-nuclear-code-quality-review` for maintainability-only review.
 
@@ -792,7 +810,7 @@ Use `cynical-code-review` when distrust of the implementation story is the job. 
 
 When explicitly selected, use when the user wants a prompt-only skeptical architecture review over a branch, diff, subsystem, plan-backed implementation, or code area and wants the review saved to disk. The skill assumes the architecture may have emerged accidentally through iteration, preserves the intended UX and hard experiment requirements, hunts sprawl, invalid split ownership, duplicate truth, accidental abstractions, compatibility shims, flags-as-architecture, registries, adapters, state spread, wrong decomposition, and needless complexity, then writes `target.md`, `architecture-map.md`, `complexity-ledger.md`, `subtraction-map.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-architecture-review/...`. Its verdicts are `approve`, `not-approved`, or `scope-incomplete`.
 
-It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` subprocesses, redesign the product, or turn review into a QA/test/doc pass unless the user explicitly asks.
+It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or `agy` subprocesses, redesign the product, or turn review into a QA/test/doc pass unless the user explicitly asks.
 
 Use `cynical-architecture-review` when accidental architecture and subtraction are the job. Use `cynical-code-review` when distrust of the implementation story is the job, `exhaustive-code-review` when coverage is the deliverable, `plan-audit implementation-audit` when plan fit is the main question, and `thermo-nuclear-code-quality-review` for maintainability-only review.
 
@@ -800,7 +818,7 @@ Use `cynical-architecture-review` when accidental architecture and subtraction a
 
 When explicitly selected, use when the user wants a prompt-only skeptical cleanup review over a repo, branch, diff, subsystem, test suite, dependency set, generated artifact set, or docs/examples/prompt surface and wants a deep deletion report saved to disk. The skill assumes references are not proof of value, identifies live roots and current purpose, hunts dead code, self-referential islands, retired V1/V2 paths, stale feature flags, worthless tests, fake coverage, unused dependencies, obsolete configs/scripts, stale generated artifacts, point-in-time docs/examples, and other low-value artifacts, then writes `target.md`, `live-root-map.md`, `purpose-map.md`, `reference-graph-notes.md`, `low-value-catalog.md`, `test-bloat-report.md`, `deletion-candidates.md`, `keep-decisions.md`, `coverage.md`, `findings.md`, and `verdict.md` under `/tmp/cynical-cruft-removal/...`. Its verdicts are `cruft-found`, `no-material-cruft-found`, `scope-incomplete`, or `unsafe-to-judge`.
 
-It is review-only and workflow-neutral. It does not fix code, delete files, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` subprocesses, or turn review into a QA/test/doc pass.
+It is review-only and workflow-neutral. It does not fix code, delete files, run a runner, dictate the user's next workflow, invoke external review/delegation skills, manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or `agy` subprocesses, or turn review into a QA/test/doc pass.
 
 Use `cynical-cruft-removal` when deletion value and low-value artifact discovery are the job. Use `cynical-code-review` when distrust of the implementation story is the job, `cynical-architecture-review` when accidental architecture and subtraction are the job, `arch-docs` for docs-only cleanup, `exhaustive-code-review` when coverage is the deliverable, and `thermo-nuclear-code-quality-review` for maintainability-only review.
 
@@ -819,7 +837,7 @@ return before writing `target.md`,
 `/tmp/exhaustive-code-review/...`. Its verdicts are `approve`, `not-approved`,
 or `coverage-incomplete`.
 
-It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, or manually spawn `codex`, `claude`, `agent`, `grok`, or `kimi` subprocesses.
+It is review-only and workflow-neutral. It does not fix code, run a runner, dictate the user's next workflow, invoke external review/delegation skills, or manually spawn `codex`, `claude`, `agent`, `grok`, `kimi`, or `agy` subprocesses.
 
 Use `exhaustive-code-review` when coverage is the deliverable. Use `cynical-code-review` when distrust of the implementation story is the main question, `plan-audit implementation-audit` for plan-backed code review, `codex-review-yolo` for an explicit Codex `-p yolo` fresh-eyes review, and `thermo-nuclear-code-quality-review` for maintainability-only review.
 

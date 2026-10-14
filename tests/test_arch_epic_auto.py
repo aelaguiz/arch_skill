@@ -435,6 +435,288 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 ):
                     self.model_resolution.resolve_execution_phrase(phrase)
 
+    AGY_MODELS_OUTPUT = (
+        "Fetching available models...\n"
+        "gemini-4-argon-medium\tGemini 4 Argon (Medium)\n"
+        "gemini-4-argon-high\tGemini 4 Argon (High)\n"
+        "gemini-4-argon-low\tGemini 4 Argon (Low)\n"
+        "gemini-3.8-flash-high\tGemini 3.8 Flash (High)\n"
+        "gemini-3.8-flash-medium\tGemini 3.8 Flash (Medium)\n"
+        "gemini-3.8-flash-low\tGemini 3.8 Flash (Low)\n"
+        "claude-opus-5-5-high\tClaude Opus 5.5 (High)\n"
+        "gpt-oss-120b-medium\tGPT-OSS 120B (Medium)\n"
+    )
+    AGY_CATALOG = ["gemini-3.8-flash", "gemini-4-argon"]
+
+    def test_agy_argon_defaults_to_high_with_preference_provenance(self):
+        for phrase in ("argon", "Gemini 4 Argon", "gemini", "agy", "Antigravity"):
+            with self.subTest(phrase=phrase):
+                resolved = self.model_resolution.resolve_execution_phrase(
+                    phrase,
+                    agy_models=self.AGY_CATALOG,
+                )
+                self.assertEqual(resolved.runtime, "agy")
+                self.assertEqual(resolved.model, "gemini-4-argon")
+                self.assertEqual(resolved.effort, "high")
+                self.assertEqual(resolved.effort_source, "preference_default")
+
+    def test_agy_preserves_explicit_model_and_effort(self):
+        cases = [
+            ("argon low", "gemini-4-argon", "low"),
+            ("Gemini 4 Argon medium", "gemini-4-argon", "medium"),
+            ("gemini-4-argon-low", "gemini-4-argon", "low"),
+            ("gemini-4-argon high", "gemini-4-argon", "high"),
+            ("gemini flash medium", "gemini-3.8-flash", "medium"),
+            ("Gemini 3.8 Flash low", "gemini-3.8-flash", "low"),
+            ("gemini-3.8-flash-high", "gemini-3.8-flash", "high"),
+            ("antigravity agent argon high", "gemini-4-argon", "high"),
+        ]
+        for phrase, model, effort in cases:
+            with self.subTest(phrase=phrase):
+                resolved = self.model_resolution.resolve_execution_phrase(
+                    phrase,
+                    agy_models=self.AGY_CATALOG,
+                )
+                self.assertEqual(resolved.runtime, "agy")
+                self.assertEqual(resolved.model, model)
+                self.assertEqual(resolved.effort, effort)
+                self.assertEqual(resolved.effort_source, "explicit")
+
+    def test_agy_rejects_efforts_argon_does_not_offer(self):
+        for phrase in ("argon xhigh", "argon max", "gemini ultra", "gemini-4-argon-xhigh"):
+            with self.subTest(phrase=phrase):
+                with self.assertRaisesRegex(
+                    self.model_resolution.ModelResolutionError,
+                    "supports only: high, low, medium",
+                ):
+                    self.model_resolution.resolve_execution_phrase(
+                        phrase,
+                        agy_models=self.AGY_CATALOG,
+                    )
+
+    def test_agy_refuses_unlisted_or_rewritten_gemini_identity(self):
+        for phrase, message in (
+            ("gemini 4.5 argon high", "unsupported version '4.5'"),
+            ("gemini 3 flash high", "unsupported version '3'"),
+            ("gemini 3 pro high", "is not an agy model"),
+            ("gemini pro high", "is not an agy model"),
+            ("gemini flash lite low", "is not an agy model"),
+            ("gemini nano", "is not an agy model"),
+            ("gemini 3 high", "without Argon or Flash"),
+            ("gemini-9-nope high", "did not match an available agy model id"),
+        ):
+            with self.subTest(phrase=phrase):
+                with self.assertRaisesRegex(
+                    self.model_resolution.ModelResolutionError,
+                    message,
+                ):
+                    self.model_resolution.resolve_execution_phrase(
+                        phrase,
+                        agy_models=self.AGY_CATALOG,
+                    )
+
+    def test_agy_catalog_without_argon_names_the_ultra_requirement(self):
+        with self.assertRaisesRegex(
+            self.model_resolution.ModelResolutionError,
+            "Google AI Ultra",
+        ):
+            self.model_resolution.resolve_execution_phrase(
+                "argon high",
+                agy_models=["gemini-3.8-flash"],
+            )
+
+    def test_agy_mixed_provider_phrases_fail_loud(self):
+        for phrase in (
+            "agy opus high",
+            "argon claude-opus-5-5 high",
+            "agy gpt-oss-120b medium",
+            "cursor agent argon",
+            "gemini and kimi k3 high",
+        ):
+            with self.subTest(phrase=phrase):
+                with self.assertRaisesRegex(
+                    self.model_resolution.ModelResolutionError,
+                    "multiple runtime families",
+                ):
+                    self.model_resolution.resolve_execution_phrase(
+                        phrase,
+                        agy_models=self.AGY_CATALOG,
+                    )
+
+    def test_agy_contradictory_efforts_fail_instead_of_defaulting(self):
+        with self.assertRaisesRegex(
+            self.model_resolution.ModelResolutionError,
+            "multiple distinct effort levels",
+        ):
+            self.model_resolution.resolve_execution_phrase(
+                "argon low high",
+                agy_models=self.AGY_CATALOG,
+            )
+
+    def test_bare_agent_still_selects_cursor_without_an_agy_word(self):
+        resolved = self.model_resolution.resolve_execution_phrase(
+            "agent composer 2.5",
+            agent_models=["composer-2.5-fast"],
+        )
+        self.assertEqual(resolved.runtime, "agent")
+
+    def test_agy_model_parsing_strips_effort_suffixes(self):
+        self.assertEqual(
+            self.model_resolution.parse_agy_models(self.AGY_MODELS_OUTPUT),
+            [
+                "claude-opus-5-5",
+                "gemini-3.8-flash",
+                "gemini-4-argon",
+                "gpt-oss-120b",
+            ],
+        )
+        self.assertEqual(self.model_resolution.parse_agy_models("not a catalog\n"), [])
+
+    def test_agy_discovery_runs_models_and_fails_safe(self):
+        with mock.patch.object(
+            self.model_resolution.shutil,
+            "which",
+            return_value="/usr/local/bin/agy",
+        ), mock.patch.object(
+            self.model_resolution.subprocess,
+            "run",
+            return_value=mock.Mock(returncode=0, stdout=self.AGY_MODELS_OUTPUT),
+        ) as run:
+            models = self.model_resolution.discover_agy_models()
+        self.assertIn("gemini-4-argon", models)
+        self.assertEqual(run.call_args.args[0], ["agy", "models"])
+
+        with mock.patch.object(
+            self.model_resolution.shutil,
+            "which",
+            return_value="/usr/local/bin/agy",
+        ), mock.patch.object(
+            self.model_resolution.subprocess,
+            "run",
+            return_value=mock.Mock(returncode=1, stdout=self.AGY_MODELS_OUTPUT),
+        ):
+            self.assertEqual(self.model_resolution.discover_agy_models(), [])
+
+        with mock.patch.object(self.model_resolution.shutil, "which", return_value=None):
+            self.assertEqual(self.model_resolution.discover_agy_models(), [])
+
+    def test_agy_version_after_the_model_name_is_checked_not_dropped(self):
+        for phrase in ("argon 4.5 high", "argon 5 high", "gemini argon 4.5 medium",
+                       "argon v5", "gemini flash 4"):
+            with self.subTest(phrase=phrase):
+                with self.assertRaisesRegex(
+                    self.model_resolution.ModelResolutionError,
+                    "unsupported version",
+                ):
+                    self.model_resolution.resolve_execution_phrase(
+                        phrase, agy_models=self.AGY_CATALOG
+                    )
+        for phrase, model in (("argon 4 high", "gemini-4-argon"),
+                              ("gemini flash 3.8 low", "gemini-3.8-flash")):
+            with self.subTest(phrase=phrase):
+                resolved = self.model_resolution.resolve_execution_phrase(
+                    phrase, agy_models=self.AGY_CATALOG
+                )
+                self.assertEqual(resolved.model, model)
+
+    def test_agy_rejects_other_model_names_and_unoffered_effort_words(self):
+        for phrase, message in (
+            ("gemini 4 argon pro", "'pro' is not an agy model"),
+            ("agy composer", "'composer' is not an agy model"),
+            ("argon composer 2.5", "'composer' is not an agy model"),
+            ("argon minimal", "names effort 'minimal'"),
+            ("gemini-4-argon-none", "names effort 'none'"),
+            ("argon off", "names effort 'off'"),
+        ):
+            with self.subTest(phrase=phrase):
+                with self.assertRaisesRegex(
+                    self.model_resolution.ModelResolutionError, message
+                ):
+                    self.model_resolution.resolve_execution_phrase(
+                        phrase, agy_models=self.AGY_CATALOG
+                    )
+
+    def test_signed_out_agy_stops_before_any_launch(self):
+        signed_out = mock.Mock(
+            returncode=1, stdout="Please sign in to view available models\n"
+        )
+        with mock.patch.object(
+            self.model_resolution.shutil, "which", return_value="/usr/local/bin/agy"
+        ), mock.patch.object(
+            self.model_resolution.subprocess, "run", return_value=signed_out
+        ):
+            with self.assertRaisesRegex(
+                self.model_resolution.ModelResolutionError, "not signed in"
+            ):
+                self.model_resolution.discover_agy_models()
+            with self.assertRaisesRegex(
+                self.model_resolution.ModelResolutionError, "not signed in"
+            ):
+                self.model_resolution.resolve_execution_phrase("argon high")
+            with self.assertRaisesRegex(
+                self.model_resolution.ModelResolutionError, "not signed in"
+            ):
+                self.model_resolution.check_agy_ready("gemini-4-argon")
+
+    def test_agy_readiness_requires_the_model_in_a_readable_catalog(self):
+        listed = mock.Mock(returncode=0, stdout=self.AGY_MODELS_OUTPUT)
+        flash_only = mock.Mock(
+            returncode=0,
+            stdout="gemini-3.8-flash-high\tGemini 3.8 Flash (High)\n",
+        )
+        with mock.patch.object(
+            self.model_resolution.shutil, "which", return_value="/usr/local/bin/agy"
+        ):
+            with mock.patch.object(
+                self.model_resolution.subprocess, "run", return_value=listed
+            ):
+                self.model_resolution.check_agy_ready("gemini-4-argon")
+            with mock.patch.object(
+                self.model_resolution.subprocess, "run", return_value=flash_only
+            ):
+                with self.assertRaisesRegex(
+                    self.model_resolution.ModelResolutionError,
+                    "does not list 'gemini-4-argon'",
+                ):
+                    self.model_resolution.check_agy_ready("gemini-4-argon")
+
+    def test_shared_agy_cli_primitives_are_canonical(self):
+        self.assertEqual(
+            self.model_resolution.agy_model_args("gemini-4-argon", "high"),
+            ["--model", "gemini-4-argon", "--effort", "high"],
+        )
+        self.assertEqual(
+            self.model_resolution.agy_prompt_arg("--model looks like a flag"),
+            "--print=--model looks like a flag",
+        )
+        self.assertEqual(
+            self.model_resolution.AGY_HEADLESS_ARGS,
+            (
+                "--output-format",
+                "stream-json",
+                "--print-timeout",
+                "0",
+                "--dangerously-skip-permissions",
+            ),
+        )
+
+    def test_role_policy_threads_agy_catalog_and_same_as(self):
+        policy = self.model_resolution.resolve_role_execution_policy(
+            {
+                "epic_planner": "argon",
+                "implementation_worker": "gemini flash medium",
+                "critic": "same as epic_planner",
+            },
+            agy_models=self.AGY_CATALOG,
+        )
+        self.assertEqual(policy["roles"]["epic_planner"]["runtime"], "agy")
+        self.assertEqual(policy["roles"]["epic_planner"]["effort"], "high")
+        self.assertEqual(
+            policy["roles"]["implementation_worker"]["model"],
+            "gemini-3.8-flash",
+        )
+        self.assertEqual(policy["roles"]["critic"]["source"], "same_as:epic_planner")
+
     def test_natural_grok_harness_names_default_to_grok_46(self):
         for phrase in (
             "grok high",
@@ -1509,6 +1791,505 @@ class ArchEpicProcessCleanupTests(unittest.TestCase):
             self.assertEqual((root / "exit_code").read_text().strip(), "127")
             pid = int((root / "child.pid").read_text())
             self.wait_until(lambda: not self.process_running(pid), "failed runner survived")
+
+
+
+class ArchEpicAgyRunnerTests(unittest.TestCase):
+    """Antigravity CLI (agy) worker and critic plumbing, built from captured agy 1.3.4 output."""
+
+    SID = "91471704-c967-418f-abe9-70faf64b9a19"
+    CRITIC_SID = "3992b4d6-17a7-4399-a5f9-8be8bd6af32e"
+    INIT = (
+        '{"event":"init","conversation_id":"91471704-c967-418f-abe9-70faf64b9a19",'
+        '"init":{"model":"gemini-4-argon","permission_mode":"always-proceed"}}'
+    )
+    STEP = (
+        '{"event":"step_update","step_update":{"conversation_id":'
+        '"91471704-c967-418f-abe9-70faf64b9a19","step_index":1,"state":"ACTIVE",'
+        '"step_type":"agent_response","text_delta":"PONG"}}'
+    )
+    RESULT = (
+        '{"event":"result","result":{"conversation_id":'
+        '"91471704-c967-418f-abe9-70faf64b9a19","status":"SUCCESS",'
+        '"response":"PONG\\n","duration_seconds":4.196386,"num_turns":1}}'
+    )
+    FRESH_SUCCESS = "\n".join([INIT, STEP, RESULT]) + "\n"
+    CRITIC_SCHEMA = "\n".join(
+        [
+            '{"event":"init","conversation_id":"3992b4d6-17a7-4399-a5f9-8be8bd6af32e",'
+            '"init":{"model":"gemini-4-argon"}}',
+            '{"event":"step_update","step_update":{"conversation_id":'
+            '"3992b4d6-17a7-4399-a5f9-8be8bd6af32e","step_index":2,"state":"DONE",'
+            '"step_type":"finish","duration_seconds":0.025832}}',
+            '{"event":"result","result":{"conversation_id":'
+            '"3992b4d6-17a7-4399-a5f9-8be8bd6af32e","status":"SUCCESS","response":'
+            '"{\\"reason\\":\\"2 + 2 equals 4.\\",\\"toolAction\\":\\"Finishing with '
+            'verdict\\",\\"toolSummary\\":\\"Provide verdict on 2+2=4\\",\\"verdict\\":'
+            '\\"APPROVE\\"}\\n","num_turns":1,"structured_output":{"reason":'
+            '"2 + 2 equals 4.","verdict":"APPROVE"}}}',
+        ]
+    ) + "\n"
+    INVALID_EFFORT = (
+        '{"event":"result","result":{"conversation_id":"","status":"ERROR",'
+        '"response":"","error":"invalid model selection (--model \\"gemini-4-argon\\" '
+        '--effort \\"max\\"): gemini-4-argon has no \\"max\\" effort (available: low, '
+        'medium, high)","duration_seconds":0,"num_turns":0}}\n'
+    )
+    INVALID_MODEL = "\n".join(
+        [
+            'error: invalid model selection (--model "gemini-9-nope" --effort ""): model '
+            "gemini-9-nope is not recognized as a known model or custom model in settings",
+            "Available models:",
+            "  Gemini 4 Argon (High)",
+            '{"event":"result","result":{"conversation_id":"","status":"ERROR",'
+            '"response":"","error":"invalid model selection (--model \\"gemini-9-nope\\" '
+            '--effort \\"\\"): model gemini-9-nope is not recognized"}}',
+        ]
+    ) + "\n"
+    # `agy --conversation <unknown id>` exits 0 with SUCCESS under a brand-new
+    # conversation id; only stderr warns `conversation "<id>" not found`.
+    UNKNOWN_CONVERSATION_ID = "00000000-0000-4000-8000-000000000000"
+    UNKNOWN_CONVERSATION_RESUME = "\n".join(
+        [
+            '{"event":"init","conversation_id":"55832817-36a3-4fff-ae28-3f09a788bd98",'
+            '"init":{"model":"gemini-4-argon"}}',
+            '{"event":"result","result":{"conversation_id":'
+            '"55832817-36a3-4fff-ae28-3f09a788bd98","status":"SUCCESS",'
+            '"response":"OK\\n","num_turns":1}}',
+        ]
+    ) + "\n"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.runner = load_module(RUN_ARCH_EPIC_PATH, "arch_epic_agy_runner_tests")
+
+
+    def test_agy_preflight_stops_a_signed_out_launch_loudly(self):
+        error = self.runner.ModelResolutionError("agy is installed but not signed in")
+        with mock.patch.object(
+            self.runner, "check_agy_ready", side_effect=error
+        ) as ready, contextlib.redirect_stderr(io.StringIO()) as stderr:
+            with self.assertRaises(SystemExit) as raised:
+                self.runner._agy_preflight("gemini-4-argon")
+        ready.assert_called_once_with("gemini-4-argon")
+        self.assertNotEqual(raised.exception.code, 0)
+        self.assertIn("not signed in", stderr.getvalue())
+    def _result_line(self, **result):
+        return json.dumps({"event": "result", "result": result})
+
+    def _child_dir(self, root: Path, metadata: dict, stdout_text: str) -> Path:
+        child_dir = root / "workers" / "implementation_worker" / "one" / "try-1"
+        child_dir.mkdir(parents=True)
+        metadata = {
+            "final_path": str(child_dir / "stdout.final.json"),
+            "verdict_path": str(child_dir / "verdict.json"),
+            **metadata,
+        }
+        (child_dir / "metadata.json").write_text(json.dumps(metadata), encoding="utf-8")
+        (child_dir / "events.jsonl").write_text(stdout_text, encoding="utf-8")
+        return child_dir
+
+    def test_agy_worker_command_runs_print_mode_and_resumes_exact_conversation(self):
+        prompt = "--model looks like a flag; implement this exact scope."
+        fresh = self.runner._agy_worker_argv("gemini-4-argon", "high", prompt)
+        resumed = self.runner._agy_worker_argv(
+            "gemini-4-argon",
+            "high",
+            prompt,
+            session_id=self.SID,
+        )
+
+        self.assertEqual(
+            fresh,
+            [
+                "agy",
+                "--print=" + prompt,
+                "--model",
+                "gemini-4-argon",
+                "--effort",
+                "high",
+                "--output-format",
+                "stream-json",
+                "--print-timeout",
+                "0",
+                "--dangerously-skip-permissions",
+            ],
+        )
+        self.assertEqual(resumed, fresh + ["--conversation", self.SID])
+        for argv in (fresh, resumed):
+            for banned in ("-c", "--continue", "-C", "--cwd", "--json-schema", "-p"):
+                self.assertNotIn(banned, argv)
+
+    def test_agy_critic_command_uses_native_schema_flag_with_plain_prompt(self):
+        argv = self.runner._agy_critic_argv(
+            "gemini-4-argon",
+            "medium",
+            Path("/tmp/epic-verdict-schema.json"),
+            "Review this.",
+        )
+
+        self.assertEqual(argv[1], "--print=Review this.")
+        self.assertEqual(
+            argv[argv.index("--json-schema") + 1],
+            "/tmp/epic-verdict-schema.json",
+        )
+        self.assertEqual(argv[argv.index("--output-format") + 1], "stream-json")
+        self.assertIn("--dangerously-skip-permissions", argv)
+        self.assertNotIn("--conversation", argv)
+
+    def test_agy_parser_reads_init_session_and_success_response(self):
+        self.assertEqual(
+            self.runner._parse_agy_final_json(self.FRESH_SUCCESS),
+            {
+                "type": "agy_result",
+                "result": "PONG\n",
+                "session_id": self.SID,
+                "structured_output": None,
+            },
+        )
+        self.assertEqual(self.runner._parse_agy_session_id(self.FRESH_SUCCESS), self.SID)
+
+    def test_agy_parser_takes_verdict_from_structured_output_not_response(self):
+        final = self.runner._parse_agy_final_json(self.CRITIC_SCHEMA)
+
+        self.assertEqual(final["session_id"], self.CRITIC_SID)
+        self.assertIn("toolAction", final["result"])
+        self.assertEqual(
+            final["structured_output"],
+            {"reason": "2 + 2 equals 4.", "verdict": "APPROVE"},
+        )
+
+    def test_agy_parser_rejects_malformed_streams(self):
+        cases = {
+            "invalid effort": self.INVALID_EFFORT,
+            "invalid model": self.INVALID_MODEL,
+            "no result event": "\n".join([self.INIT, self.STEP]),
+            "no init event": self.RESULT,
+            "empty response": "\n".join(
+                [
+                    self.INIT,
+                    self._result_line(
+                        conversation_id=self.SID,
+                        status="SUCCESS",
+                        response=" \n",
+                    ),
+                ]
+            ),
+            "result names another conversation": "\n".join(
+                [
+                    self.INIT,
+                    self._result_line(
+                        conversation_id="another-conversation",
+                        status="SUCCESS",
+                        response="PONG\n",
+                    ),
+                ]
+            ),
+            "result without conversation id": "\n".join(
+                [
+                    self.INIT,
+                    self._result_line(status="SUCCESS", response="PONG\n"),
+                ]
+            ),
+            "error status with text": "\n".join(
+                [
+                    self.INIT,
+                    self._result_line(
+                        conversation_id=self.SID,
+                        status="ERROR",
+                        response="partial",
+                        error="quota exhausted",
+                    ),
+                ]
+            ),
+        }
+        for name, stream in cases.items():
+            with self.subTest(case=name):
+                self.assertIsNone(self.runner._parse_agy_final_json(stream))
+                self.assertIsNone(self.runner._parse_agy_session_id(stream))
+
+    def test_agy_worker_finalization_persists_result_and_exact_resumed_session(self):
+        for input_session_id in (None, self.SID):
+            with self.subTest(input_session_id=input_session_id):
+                with tempfile.TemporaryDirectory() as td:
+                    try_dir = self._child_dir(
+                        Path(td),
+                        {
+                            "runtime": "agy",
+                            "role": "implementation_worker",
+                            "sub_plan_name": "one",
+                            "input_session_id": input_session_id,
+                        },
+                        self.FRESH_SUCCESS,
+                    )
+                    session_id = self.runner._finalize_worker_try_dir(try_dir)
+                    final = json.loads((try_dir / "stdout.final.json").read_text())
+                    receipt = (try_dir / "session_id.txt").read_text()
+
+                self.assertEqual(session_id, self.SID)
+                self.assertEqual(receipt, self.SID + "\n")
+                self.assertEqual(final["result"], "PONG\n")
+
+    def test_agy_worker_finalization_fails_loudly_with_agy_error_text(self):
+        with tempfile.TemporaryDirectory() as td:
+            try_dir = self._child_dir(
+                Path(td),
+                {"runtime": "agy", "input_session_id": None},
+                self.INVALID_EFFORT,
+            )
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr), self.assertRaises(SystemExit) as raised:
+                self.runner._finalize_worker_try_dir(try_dir)
+            receipt = (try_dir / "session_id.txt").read_text()
+            self.assertTrue((try_dir / "events.jsonl").is_file())
+
+        self.assertEqual(raised.exception.code, 3)
+        self.assertEqual(receipt, "UNRECOVERABLE\n")
+        self.assertIn('gemini-4-argon has no "max" effort', stderr.getvalue())
+
+    def test_agy_worker_resume_refuses_a_new_conversation_in_place_of_the_requested_one(self):
+        with tempfile.TemporaryDirectory() as td:
+            try_dir = self._child_dir(
+                Path(td),
+                {"runtime": "agy", "input_session_id": self.UNKNOWN_CONVERSATION_ID},
+                self.UNKNOWN_CONVERSATION_RESUME,
+            )
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(
+                SystemExit
+            ) as raised:
+                self.runner._finalize_worker_try_dir(try_dir)
+            receipt = (try_dir / "session_id.txt").read_text()
+
+        self.assertEqual(raised.exception.code, 4)
+        self.assertEqual(receipt, "UNRECOVERABLE\n")
+
+    def test_agy_critic_finalization_writes_structured_output_verdict(self):
+        with tempfile.TemporaryDirectory() as td:
+            crit_dir = self._child_dir(Path(td), {"runtime": "agy"}, self.CRITIC_SCHEMA)
+            verdict_path = self.runner._finalize_critic_run_dir(crit_dir)
+            verdict = json.loads(verdict_path.read_text())
+
+        self.assertEqual(verdict, {"reason": "2 + 2 equals 4.", "verdict": "APPROVE"})
+
+    def test_agy_critic_finalization_requires_structured_output(self):
+        for name, stream, code in (
+            ("plain success without structured_output", self.FRESH_SUCCESS, 5),
+            ("error result", self.INVALID_EFFORT, 3),
+        ):
+            with self.subTest(case=name):
+                with tempfile.TemporaryDirectory() as td:
+                    crit_dir = self._child_dir(Path(td), {"runtime": "agy"}, stream)
+                    with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(
+                        SystemExit
+                    ) as raised:
+                        self.runner._finalize_critic_run_dir(crit_dir)
+                    self.assertFalse((crit_dir / "verdict.json").exists())
+
+                self.assertEqual(raised.exception.code, code)
+
+    def test_agy_cli_version_is_read_for_receipts_and_fails_loudly(self):
+        with mock.patch.object(
+            self.runner.subprocess,
+            "run",
+            return_value=mock.Mock(returncode=0, stdout="1.3.4\n", stderr=""),
+        ) as run:
+            self.assertEqual(self.runner._agy_cli_version(), "1.3.4")
+        self.assertEqual(run.call_args.args[0], ["agy", "--version"])
+
+        with mock.patch.object(
+            self.runner.subprocess,
+            "run",
+            return_value=mock.Mock(returncode=1, stdout="", stderr="broken"),
+        ), contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            self.runner._agy_cli_version()
+
+    def _write_state(self, run_dir: Path, role: str) -> None:
+        (run_dir / "state.json").write_text(
+            json.dumps(
+                {
+                    "auto_execution": {
+                        "roles": {
+                            role: {
+                                "runtime": "agy",
+                                "model": "gemini-4-argon",
+                                "effort": "high",
+                            }
+                        }
+                    },
+                    "latest_worker_attempts": {},
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    def test_agy_worker_dispatch_runs_from_target_repo_and_records_version(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            run_dir = base / "run"
+            run_dir.mkdir()
+            target_repo = base / "target"
+            target_repo.mkdir()
+            prompt_path = base / "prompt.md"
+            prompt_path.write_text("Implement.", encoding="utf-8")
+            self._write_state(run_dir, "implementation_worker")
+            with mock.patch.object(
+                self.runner, "_run_subprocess", return_value=(0, "")
+            ) as run, mock.patch.object(
+                self.runner, "_agy_cli_version", return_value="1.3.4"
+            ), mock.patch.object(self.runner, "_agy_preflight"), contextlib.redirect_stdout(io.StringIO()):
+                code = self.runner._run_worker(
+                    run_dir=run_dir,
+                    target_repo=target_repo,
+                    role="implementation_worker",
+                    sub_plan_name="one",
+                    prompt_file=prompt_path,
+                    try_k=2,
+                    session_id=self.SID,
+                    run_mode="detached",
+                )
+            [metadata_path] = list(run_dir.glob("workers/*/*/try-2/metadata.json"))
+            metadata = json.loads(metadata_path.read_text())
+
+        argv = run.call_args.args[0]
+        self.assertEqual(code, 0)
+        self.assertEqual(Path(run.call_args.kwargs["cwd"]).resolve(), target_repo.resolve())
+        self.assertEqual(argv[:2], ["agy", "--print=Implement."])
+        self.assertEqual(argv[argv.index("--conversation") + 1], self.SID)
+        self.assertEqual(metadata["agy_version"], "1.3.4")
+        self.assertEqual(metadata["input_session_id"], self.SID)
+
+    def test_agy_auto_critic_dispatch_passes_schema_file_and_plain_prompt(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            run_dir = base / "run"
+            run_dir.mkdir()
+            target_repo = base / "target"
+            target_repo.mkdir()
+            prompt_path = base / "prompt.md"
+            prompt_path.write_text("Review.", encoding="utf-8")
+            schema_path = base / "schema.json"
+            schema_path.write_text('{"type":"object"}', encoding="utf-8")
+            self._write_state(run_dir, "critic")
+            args = self.runner.argparse.Namespace(
+                run_dir=str(run_dir),
+                target_repo=str(target_repo),
+                role="critic",
+                gate="completion",
+                sub_plan_name="one",
+                prompt_file=str(prompt_path),
+                schema_file=str(schema_path),
+                run_mode="detached",
+                expected_duration="short",
+            )
+            with mock.patch.object(
+                self.runner, "_run_subprocess", return_value=(0, "")
+            ) as run, mock.patch.object(
+                self.runner, "_agy_cli_version", return_value="1.3.4"
+            ), mock.patch.object(self.runner, "_agy_preflight"), contextlib.redirect_stdout(io.StringIO()):
+                code = self.runner.cmd_auto_critic_spawn(args)
+            [metadata_path] = list(run_dir.glob("critics/completion/one/run-*/metadata.json"))
+            metadata = json.loads(metadata_path.read_text())
+
+        argv = run.call_args.args[0]
+        self.assertEqual(code, 0)
+        self.assertEqual(Path(run.call_args.kwargs["cwd"]).resolve(), target_repo.resolve())
+        self.assertEqual(argv[1], "--print=Review.")
+        self.assertEqual(
+            Path(argv[argv.index("--json-schema") + 1]),
+            schema_path.resolve(),
+        )
+        self.assertNotIn("--conversation", argv)
+        self.assertEqual(metadata["agy_version"], "1.3.4")
+
+    def test_agy_standalone_critic_dispatch_uses_orchestrator_root_cwd(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            for name, text in (
+                ("epic.md", "# Epic"),
+                ("sub-plan.md", "# Sub-plan"),
+                ("prompt.md", "Review."),
+                ("schema.json", '{"type":"object"}'),
+            ):
+                (root / name).write_text(text, encoding="utf-8")
+            args = self.runner._build_parser().parse_args(
+                [
+                    "critic-spawn",
+                    "--epic-doc",
+                    str(root / "epic.md"),
+                    "--sub-plan-name",
+                    "one",
+                    "--sub-plan-doc-path",
+                    str(root / "sub-plan.md"),
+                    "--prompt-file",
+                    str(root / "prompt.md"),
+                    "--schema-file",
+                    str(root / "schema.json"),
+                    "--model",
+                    "gemini-4-argon",
+                    "--effort",
+                    "high",
+                    "--runtime",
+                    "agy",
+                    "--orchestrator-root",
+                    str(root),
+                    "--run-mode",
+                    "detached",
+                ]
+            )
+            with mock.patch.object(
+                self.runner, "_run_subprocess", return_value=(0, "")
+            ) as run, mock.patch.object(
+                self.runner, "_agy_cli_version", return_value="1.3.4"
+            ), mock.patch.object(self.runner, "_agy_preflight"), contextlib.redirect_stdout(io.StringIO()):
+                code = args.func(args)
+
+        argv = run.call_args.args[0]
+        self.assertEqual(code, 0)
+        self.assertEqual(args.runtime, "agy")
+        self.assertEqual(Path(run.call_args.kwargs["cwd"]).resolve(), root.resolve())
+        self.assertEqual(argv[1], "--print=Review.")
+        self.assertIn("--json-schema", argv)
+
+    def test_arch_policy_file_threads_agy_catalog_and_same_as(self):
+        resolver = sys.modules[self.runner.resolve_role_execution_policy.__module__]
+        with tempfile.TemporaryDirectory() as td:
+            policy_path = Path(td) / "policy.json"
+
+            def load(roles, agy_models):
+                policy_path.write_text(
+                    json.dumps({"roles": roles, "agy_models": agy_models}),
+                    encoding="utf-8",
+                )
+                with mock.patch.object(
+                    resolver,
+                    "discover_agy_models",
+                    side_effect=AssertionError("policy catalog was not threaded"),
+                ):
+                    return self.runner._policy_from_file(policy_path)
+
+            roles = {
+                "epic_planner": "argon",
+                "implementation_worker": "gemini flash medium",
+                "critic": "same as epic_planner",
+            }
+            policy = load(roles, ["gemini-3.8-flash", "gemini-4-argon"])
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr), self.assertRaises(SystemExit):
+                load(roles, ["gemini-3.8-flash"])
+
+        planner = policy["roles"]["epic_planner"]
+        self.assertEqual(
+            (planner["runtime"], planner["model"], planner["effort"]),
+            ("agy", "gemini-4-argon", "high"),
+        )
+        self.assertEqual(planner["effort_source"], "preference_default")
+        self.assertEqual(
+            policy["roles"]["implementation_worker"]["model"],
+            "gemini-3.8-flash",
+        )
+        self.assertEqual(policy["roles"]["critic"]["source"], "same_as:epic_planner")
+        self.assertEqual(policy["roles"]["critic"]["model"], "gemini-4-argon")
+        self.assertIn("Google AI Ultra", stderr.getvalue())
 
 
 if __name__ == "__main__":
