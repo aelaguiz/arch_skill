@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sentry Triage"
+  short_description: "Group recurring errors and silence accepted noise"
+  default_prompt: "Use $sentry-triage to handle the requested Sentry issue family, verify grouping and alert behavior, and report the changes and any remaining dependencies."

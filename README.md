@@ -37,6 +37,7 @@ unauthorized scope cycling.
 Use `miniarch-step` when the work still needs a real full-arch artifact and auto continuation, but you want the trimmed command surface instead of the broader `arch-step` helper surface. Use `arch-step` when the work is broader, more ambiguous, or needs the full helper surface.
 
 Other shipped skills are:
+- [`sentry-triage`](skills/sentry-triage/SKILL.md) handles recurring Sentry noise, duplicate error grouping, explicit archive policies, and verification that actionable alerts remain eligible. It uses connected tools first and documented API or browser access for operations the connector does not expose.
 - `agent-definition-auditor` — cold-reader scoring and findings for `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompts, and other agent-definition markdown
 - `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
 - `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, Markdown-backed Codex goal prompt files, and paste-sized `/goal` mission briefs
