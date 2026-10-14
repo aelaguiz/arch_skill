@@ -3,7 +3,8 @@
 # requires-python = ">=3.11"
 # dependencies = []
 # ///
-"""Read-only helpers for local Codex, Claude Code, Pi, and Prime Agent history.
+"""Read-only helpers for local Codex, Claude Code, Pi, Prime Agent, and
+Antigravity CLI (agy) history.
 
 The script prints bounded summaries for agents and writes complete result
 artifacts to a run directory. It uses only the Python standard library.
@@ -20,6 +21,7 @@ import re
 import sqlite3
 import sys
 import tempfile
+import urllib.parse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
@@ -74,6 +76,7 @@ class RunContext:
     max_results: int = DEFAULT_MAX_RESULTS
     run_dir: Path | None = None
     truncated: bool = False
+    agy_home: Path | None = None
 
 
 @dataclass
@@ -160,9 +163,13 @@ def parse_timestamp(raw: Any) -> dt.datetime | None:
             parsed = dt.datetime.fromisoformat(text)
         except ValueError:
             return None
-        if parsed.tzinfo is None:
-            parsed = parsed.astimezone()
-        return parsed.astimezone()
+        try:
+            if parsed.tzinfo is None:
+                parsed = parsed.astimezone()
+            return parsed.astimezone()
+        except (OverflowError, OSError, ValueError):
+            # agy stores an unset time as year 1, which local time cannot hold.
+            return None
     return None
 
 
@@ -207,8 +214,16 @@ def ensure_run_dir(ctx: RunContext) -> Path:
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     slug_source = f"{ctx.command}-{ctx.runtime}-{ctx.cwd}"
     slug = hashlib.sha256(slug_source.encode("utf-8")).hexdigest()[:8]
-    run_dir = ctx.output_root / f"{stamp}-{ctx.command}-{slug}"
-    run_dir.mkdir(parents=True, exist_ok=False)
+    base = f"{stamp}-{ctx.command}-{slug}"
+    attempt = 1
+    while True:
+        # Two identical queries in the same second would otherwise collide.
+        run_dir = ctx.output_root / (base if attempt == 1 else f"{base}-{attempt}")
+        try:
+            run_dir.mkdir(parents=True, exist_ok=False)
+            break
+        except FileExistsError:
+            attempt += 1
     ctx.run_dir = run_dir
     return run_dir
 
@@ -1420,6 +1435,216 @@ def collect_pi_prime(
     return sort_results(results), sources, errors
 
 
+# Antigravity CLI (agy) keeps one folder per conversation under
+# `brain/<conversation-id>/`, with a readable step log at
+# `.system_generated/logs/transcript_full.jsonl` (untruncated) or
+# `transcript.jsonl` (long fields cut, listed in `truncated_fields`).
+# `conversation_summaries.db` maps each conversation to its title, workspace
+# folder, and parent conversation; subagents carry a parent id.
+AGY_REQUEST_RE = re.compile(r"<USER_REQUEST>\s*(.*?)\s*</USER_REQUEST>", re.DOTALL)
+
+
+def agy_home(ctx: RunContext) -> Path:
+    return ctx.agy_home or (Path.home() / ".gemini" / "antigravity-cli")
+
+
+def agy_workspace_path(raw: Any) -> str:
+    try:
+        uris = json.loads(raw) if isinstance(raw, str) and raw else []
+    except json.JSONDecodeError:
+        return ""
+    for uri in uris if isinstance(uris, list) else []:
+        if isinstance(uri, str) and uri.startswith("file://"):
+            return urllib.parse.unquote(urllib.parse.urlparse(uri).path)
+    return ""
+
+
+def agy_conversations(home: Path, errors: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """Return conversation metadata keyed by id, from the summary database and
+    prompt history, plus every conversation folder that has a transcript."""
+
+    conversations: dict[str, dict[str, Any]] = {}
+    db_path = home / "conversation_summaries.db"
+    if db_path.exists():
+        try:
+            conn = sqlite3.connect(f"file:{db_path}?mode=ro&immutable=1", uri=True)
+            try:
+                cols = sqlite_columns(conn, "conversation_summaries")
+                wanted = [
+                    name
+                    for name in (
+                        "conversation_id",
+                        "title",
+                        "preview",
+                        "workspace_uris",
+                        "parent_conversation_id",
+                        "last_modified_time",
+                    )
+                    if name in cols
+                ]
+                if "conversation_id" in wanted:
+                    for row in conn.execute(
+                        f"SELECT {', '.join(wanted)} FROM conversation_summaries"
+                    ).fetchall():
+                        record = dict(zip(wanted, row))
+                        cid = str(record.get("conversation_id") or "")
+                        if not cid:
+                            continue
+                        conversations[cid] = {
+                            "title": str(record.get("title") or record.get("preview") or ""),
+                            "cwd": agy_workspace_path(record.get("workspace_uris")),
+                            "parent": str(record.get("parent_conversation_id") or ""),
+                            "last_ts": parse_timestamp(record.get("last_modified_time")),
+                        }
+            finally:
+                conn.close()
+        except sqlite3.Error as exc:
+            errors.append({"path": str(db_path), "error": f"sqlite: {exc}"})
+
+    for _, row in read_jsonl(home / "history.jsonl", errors):
+        cid = str(row.get("conversationId") or "")
+        if cid and row.get("workspace"):
+            info = conversations.setdefault(cid, {"title": "", "cwd": "", "parent": "", "last_ts": None})
+            if not info.get("cwd"):
+                info["cwd"] = str(row["workspace"])
+
+    brain = home / "brain"
+    if brain.is_dir():
+        for folder in brain.iterdir():
+            logs = folder / ".system_generated" / "logs"
+            transcript = logs / "transcript_full.jsonl"
+            if not transcript.exists():
+                transcript = logs / "transcript.jsonl"
+            if transcript.exists():
+                info = conversations.setdefault(
+                    folder.name, {"title": "", "cwd": "", "parent": "", "last_ts": None}
+                )
+                info["transcript"] = transcript
+                if info.get("last_ts") is None:
+                    info["last_ts"] = file_mtime(transcript)
+    return conversations
+
+
+def agy_user_text(content: str) -> str:
+    match = AGY_REQUEST_RE.search(content)
+    return match.group(1) if match else content
+
+
+def agy_tool_call_text(call: dict[str, Any]) -> str:
+    args = call.get("args") if isinstance(call.get("args"), dict) else {}
+    parts = []
+    for key, value in args.items():
+        if key in {"toolAction", "toolSummary"}:
+            continue
+        if isinstance(value, str):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError:
+                pass
+        parts.append(f"{key}: {value if isinstance(value, str) else json.dumps(value)}")
+    return f"{call.get('name') or 'tool'}\n" + "\n".join(parts)
+
+
+def collect_agy(ctx: RunContext, mode: str, matcher: Any | None = None) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    home = agy_home(ctx)
+    errors: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
+    sources: list[dict[str, Any]] = [{"name": "agy_conversation_summaries", "path": str(home / "conversation_summaries.db")}]
+    for cid, info in agy_conversations(home, errors).items():
+        parent = info.get("parent") or ""
+        if parent and not ctx.include_sidechains:
+            continue
+        cwd = info.get("cwd") or ""
+        if not same_project(cwd, ctx.cwd, ctx.scope):
+            continue
+        context = f"subagent of conversation {parent}" if parent else ""
+        title = info.get("title") or ""
+        if mode == "sessions":
+            if not in_window(info.get("last_ts"), ctx.window):
+                continue
+            results.append(
+                make_result(
+                    ctx=ctx,
+                    kind="session",
+                    source="agy.subagent_session" if parent else "agy.session",
+                    confidence="exact",
+                    timestamp=info.get("last_ts"),
+                    path=info.get("transcript"),
+                    text=title or cid,
+                    session_id=cid,
+                    thread_id=parent,
+                    cwd=cwd,
+                    context=context,
+                )
+            )
+            continue
+        transcript = info.get("transcript")
+        if transcript is None:
+            continue
+        last_ts = info.get("last_ts")
+        if ctx.window and last_ts is not None and last_ts < ctx.window.since:
+            continue
+        sources.append({"name": "agy_transcript", "path": str(transcript)})
+        for line_no, row in read_jsonl(transcript, errors):
+            ts = parse_timestamp(row.get("created_at"))
+            if not in_window(ts, ctx.window):
+                continue
+            step_type = str(row.get("type") or "")
+            confidence = "best_effort" if row.get("truncated_fields") else "exact"
+            content = row.get("content") if isinstance(row.get("content"), str) else ""
+
+            def add(kind: str, source: str, text: str, role: str) -> None:
+                results.append(
+                    make_result(
+                        ctx=ctx,
+                        kind=kind,
+                        source=source,
+                        confidence=confidence,
+                        timestamp=ts,
+                        path=transcript,
+                        line=line_no,
+                        text=text,
+                        session_id=cid,
+                        thread_id=parent,
+                        cwd=cwd,
+                        role=role,
+                        context=context,
+                    )
+                )
+
+            if step_type == "USER_INPUT":
+                text = agy_user_text(content)
+                if not text:
+                    continue
+                stripped = text.lstrip()
+                if mode == "prompts":
+                    add("prompt", "agy.user", text, "user")
+                elif mode in {"commands", "goals"}:
+                    if stripped.startswith("/goal" if mode == "goals" else "/"):
+                        add("goal" if mode == "goals" else "command", "agy.user", text, "user")
+                elif mode == "search" and matcher(text):
+                    add("message", "agy.user", text, "user")
+                continue
+            if mode != "search":
+                continue
+            if step_type == "PLANNER_RESPONSE":
+                if content and matcher(content):
+                    add("message", "agy.assistant", content, "assistant")
+                thinking = row.get("thinking") if isinstance(row.get("thinking"), str) else ""
+                if thinking and matcher(thinking):
+                    add("thinking", "agy.thinking", thinking, "assistant")
+                for call in row.get("tool_calls") or []:
+                    if not isinstance(call, dict):
+                        continue
+                    text = agy_tool_call_text(call)
+                    if matcher(text):
+                        add("tool_call", f"agy.tool_call.{call.get('name') or 'tool'}", text, "assistant")
+            elif content and matcher(content):
+                kind = "system" if step_type == "SYSTEM_MESSAGE" else "tool_output"
+                add(kind, f"agy.{step_type.lower() or 'step'}", content, "system" if kind == "system" else "tool")
+    return sort_results(results), sources, errors
+
+
 def build_matcher(args: argparse.Namespace) -> Any:
     terms = list(args.query or [])
     if args.regex:
@@ -1440,8 +1665,10 @@ def execute_search_command(args: argparse.Namespace) -> int:
         results, sources, errors = collect_claude(ctx, args.command, matcher=matcher)
     elif ctx.runtime in {"pi", "prime"}:
         results, sources, errors = collect_pi_prime(ctx, args.command, matcher=matcher)
+    elif ctx.runtime == "agy":
+        results, sources, errors = collect_agy(ctx, args.command, matcher=matcher)
     else:
-        raise HistoryError("--runtime must be codex, claude, pi, or prime")
+        raise HistoryError("--runtime must be codex, claude, pi, prime, or agy")
 
     if ctx.max_results and len(results) > ctx.max_results:
         results = results[: ctx.max_results]
@@ -1465,6 +1692,7 @@ def rebuild_args_for_next_page(args: argparse.Namespace) -> list[str]:
         ("--claude-home", args.claude_home, Path.home() / ".claude"),
         ("--pi-home", args.pi_home, Path.home() / ".pi"),
         ("--prime-home", args.prime_home, Path.home() / ".prime"),
+        ("--agy-home", args.agy_home, Path.home() / ".gemini" / "antigravity-cli"),
     ):
         if str(value) != str(default):
             pieces.extend([flag, str(value)])
@@ -1496,6 +1724,7 @@ def context_from_args(args: argparse.Namespace, *, command: str) -> RunContext:
         max_preview_chars=args.max_preview_chars,
         fmt=args.format,
         include_sidechains=args.include_sidechains,
+        agy_home=Path(args.agy_home).expanduser(),
     )
 
 
@@ -1542,7 +1771,7 @@ def cmd_show(args: argparse.Namespace) -> int:
 
 
 def add_common_options(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--runtime", required=True, choices=("codex", "claude", "pi", "prime"))
+    parser.add_argument("--runtime", required=True, choices=("codex", "claude", "pi", "prime", "agy"))
     parser.add_argument("--cwd", default=os.getcwd())
     parser.add_argument("--scope", default="current-project", choices=("current-project", "all-projects"))
     parser.add_argument("--since", default="24h")
@@ -1558,6 +1787,7 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--claude-home", default=str(Path.home() / ".claude"))
     parser.add_argument("--pi-home", default=str(Path.home() / ".pi"))
     parser.add_argument("--prime-home", default=str(Path.home() / ".prime"))
+    parser.add_argument("--agy-home", default=str(Path.home() / ".gemini" / "antigravity-cli"))
 
 
 def build_parser() -> argparse.ArgumentParser:
