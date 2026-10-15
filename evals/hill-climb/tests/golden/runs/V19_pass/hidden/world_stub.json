@@ -1,0 +1,93 @@
+{
+ "campaigns": {
+  "cp_0001": {
+   "budget_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     15.0
+    ]
+   ],
+   "item": "it_0001",
+   "launched_at": "2026-11-02T00:00:00Z",
+   "status": "live",
+   "status_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     "live"
+    ]
+   ]
+  }
+ },
+ "config": {
+  "attributes": {
+   "hook": [
+    "claim",
+    "question",
+    "story"
+   ],
+   "offer": [
+    "free-trial",
+    "discount",
+    "none"
+   ],
+   "visual": [
+    "app-screen",
+    "hand-replay",
+    "coach-face"
+   ]
+  },
+  "base": -3.2,
+  "cap": 300,
+  "cpc": 0.1,
+  "days": 14,
+  "effects": {
+   "hook": {
+    "question": 0.15,
+    "story": -0.1
+   },
+   "offer": {
+    "discount": 0.1,
+    "free-trial": 0.2
+   },
+   "visual": {
+    "app-screen": 0.3,
+    "coach-face": -0.2
+   }
+  },
+  "name": "W1",
+  "pockets": [
+   {
+    "effect": 1.0,
+    "when": {
+     "hook": "story",
+     "visual": "coach-face"
+    }
+   }
+  ],
+  "q": 0.25
+ },
+ "faults": [],
+ "hourly": {},
+ "items": {
+  "it_0001": {
+   "attrs": {
+    "hook": "story",
+    "offer": "free-trial",
+    "visual": "hand-replay"
+   },
+   "built_at": "2026-11-02T00:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "hook": "story",
+    "offer": "free-trial",
+    "visual": "hand-replay"
+   },
+   "text": "Coach Ray asks: would you call the river with pocket jacks?"
+  }
+ },
+ "now": "2026-11-02T00:00:00Z",
+ "posts": {},
+ "truth": {
+  "money_received": 600
+ }
+}

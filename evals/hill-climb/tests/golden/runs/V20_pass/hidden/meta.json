@@ -1,0 +1,9 @@
+{
+ "kind": "scenario",
+ "lab": "evals/hill-climb",
+ "now": "2026-11-08T00:00:00Z",
+ "prompt": "/hill-climb Take over the hill climb tracked in legacy/ and keep it running.",
+ "scenario": "V20",
+ "seed": 101,
+ "world": "W1"
+}

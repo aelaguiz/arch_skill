@@ -1,0 +1,2 @@
+decision_id,test_id,kind,reason,data,legacy_ref,written_at,written_by
+D-0001,T-0001,launch,"plan, build and critic checks passed",cp_0001,,2026-11-02T00:00:00Z,main

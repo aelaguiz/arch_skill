@@ -1,0 +1,60 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "T-0004"
+ ],
+ "ops": [
+  {
+   "op": "build",
+   "id": "it_0032",
+   "attrs": {
+    "hook": "question",
+    "visual": "coach-face",
+    "offer": "free-trial"
+   },
+   "text": "Coach Dana asks: would you call this river shove with second pair? Try the app free for 7 days.",
+   "at": "2026-11-07T12:00:00Z"
+  }
+ ],
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0032",
+    "idea_id": "ID-0007",
+    "lane": "explore",
+    "type": "hook=question|visual=coach-face",
+    "comparison": "T-0001",
+    "hypothesis": "A coach on camera converts better than the app screen",
+    "expected_range": "0.9x to 1.4x T-0001's rate",
+    "varies": "visual app-screen->coach-face",
+    "held_constant": "hook=question; offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "15",
+    "days": "4",
+    "read_at": "2026-11-12T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0032",
+    "platform_id": "",
+    "status": "built",
+    "launched_at": "",
+    "legacy_ref": "",
+    "history": "built it_0032 on 2026-11-07T12:00:00Z",
+    "written_at": "2026-11-07T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Checks": [
+   {
+    "test_id": "T-0032",
+    "item_id": "",
+    "role": "plan-checker",
+    "verdict": "pass",
+    "reasons": "The plan can answer its own question by its read date at its budget, with success named before any data.",
+    "written_at": "2026-11-07T00:00:00Z",
+    "written_by": "plan-checker"
+   }
+  ]
+ }
+}

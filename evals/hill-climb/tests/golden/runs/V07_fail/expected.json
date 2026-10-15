@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "cp_0014 not paused",
+  "no Lessons change citing T-0014 in this run",
+  "no Results row citing T-0014 in this run"
+ ],
+ "grader": "V07",
+ "pass": false,
+ "scenario": "V07"
+}

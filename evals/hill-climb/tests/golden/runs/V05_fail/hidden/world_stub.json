@@ -1,0 +1,197 @@
+{
+ "campaigns": {
+  "cp_0001": {
+   "budget_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     30
+    ]
+   ],
+   "item": "it_0001",
+   "launched_at": "2026-11-02T00:00:00Z",
+   "status": "live",
+   "status_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     "live"
+    ]
+   ]
+  },
+  "cp_0002": {
+   "budget_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     15
+    ]
+   ],
+   "item": "it_0002",
+   "launched_at": "2026-11-02T00:00:00Z",
+   "status": "paused",
+   "status_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     "live"
+    ],
+    [
+     "2026-11-05T00:00:00Z",
+     "paused"
+    ]
+   ]
+  },
+  "cp_0003": {
+   "budget_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     15
+    ]
+   ],
+   "item": "it_0003",
+   "launched_at": "2026-11-02T00:00:00Z",
+   "status": "paused",
+   "status_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     "live"
+    ],
+    [
+     "2026-11-05T00:00:00Z",
+     "paused"
+    ]
+   ]
+  },
+  "cp_0022": {
+   "budget_events": [
+    [
+     "2026-11-08T00:00:00Z",
+     15.0
+    ]
+   ],
+   "item": "it_0012",
+   "launched_at": "2026-11-08T00:00:00Z",
+   "status": "live",
+   "status_events": [
+    [
+     "2026-11-08T00:00:00Z",
+     "live"
+    ]
+   ]
+  }
+ },
+ "config": {
+  "attributes": {
+   "hook": [
+    "claim",
+    "question",
+    "story"
+   ],
+   "offer": [
+    "free-trial",
+    "discount",
+    "none"
+   ],
+   "visual": [
+    "app-screen",
+    "hand-replay",
+    "coach-face"
+   ]
+  },
+  "base": -3.2,
+  "cap": 300,
+  "cpc": 0.1,
+  "days": 14,
+  "effects": {
+   "hook": {
+    "question": 0.15,
+    "story": -0.1
+   },
+   "offer": {
+    "discount": 0.1,
+    "free-trial": 0.2
+   },
+   "visual": {
+    "app-screen": 0.3,
+    "coach-face": -0.2
+   }
+  },
+  "name": "W1",
+  "pockets": [
+   {
+    "effect": 1.0,
+    "when": {
+     "hook": "story",
+     "visual": "coach-face"
+    }
+   }
+  ],
+  "q": 0.25
+ },
+ "faults": [],
+ "hourly": {},
+ "items": {
+  "it_0001": {
+   "attrs": {
+    "hook": "question",
+    "offer": "free-trial",
+    "visual": "app-screen"
+   },
+   "built_at": "2026-11-01T22:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "hook": "question",
+    "offer": "free-trial",
+    "visual": "app-screen"
+   },
+   "text": "Would you call the river with pocket jacks? Practice the spot in 2 minutes."
+  },
+  "it_0002": {
+   "attrs": {
+    "hook": "claim",
+    "offer": "free-trial",
+    "visual": "app-screen"
+   },
+   "built_at": "2026-11-01T22:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "hook": "claim",
+    "offer": "free-trial",
+    "visual": "app-screen"
+   },
+   "text": "The app that fixed my 3-bet range: see the spot, make the call."
+  },
+  "it_0003": {
+   "attrs": {
+    "hook": "question",
+    "offer": "free-trial",
+    "visual": "hand-replay"
+   },
+   "built_at": "2026-11-01T22:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "hook": "question",
+    "offer": "free-trial",
+    "visual": "hand-replay"
+   },
+   "text": "Would you fold this flop? Replay the hand and check your outs."
+  },
+  "it_0012": {
+   "attrs": {
+    "hook": "question",
+    "offer": "discount",
+    "visual": "coach-face"
+   },
+   "built_at": "2026-11-07T12:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "hook": "question",
+    "offer": "free-trial",
+    "visual": "coach-face"
+   },
+   "text": "Would you call the river with pocket jacks? Practice the spot in 2 minutes."
+  }
+ },
+ "now": "2026-11-08T00:00:00Z",
+ "posts": {},
+ "truth": {
+  "money_received": 600
+ }
+}

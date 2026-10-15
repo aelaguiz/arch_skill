@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "at least 15 Library rows each carry values for at least 6 coded attributes",
+  "the Charter's attributes codes at least 8 attributes with their values"
+ ],
+ "grader": "V29",
+ "pass": false,
+ "scenario": "V29"
+}

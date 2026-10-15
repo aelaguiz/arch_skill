@@ -30,6 +30,7 @@ unauthorized scope cycling.
 - `comment-loop` — exhaustive map-first repo comment hardening loop with a root comment ledger and native goal-mode `auto` continuation
 - `audit-loop-sim` — exhaustive map-first real-app automation audit loop with a root simulator ledger, mandatory post-change self-audit, and native goal-mode `auto` continuation
 - `north-star-investigation` — math-first investigation loop
+- `hill-climb` — explicitly selected, autonomous budgeted hill climb that runs for weeks or months: a charter, a spreadsheet and a researched library of competitors and inspiration, ideas drawn from that research, every test planned and checked by fresh one-job agents before money moves, what people say about live items weighed beside the numbers, variations cut from their parents' saved recipes, lessons believed only after a rerun, exploring that never stops, progress reports on a schedule that ask nothing, and nothing asked of the owner except more money (Claude Code and Codex)
 - `arch-flow` — read-only "what's next?" router for arch docs
 - `arch-skills-guide` — explains the suite and recommends the right live subskill
 - `arch-epic` — approved multi-plan orchestration around `arch-step`: same-host planner, worker, and critic roles prefer new clean native children with exact-role repair resume; the explicit external harness remains available for deliberate provider, exact-model/profile, lifecycle, isolation, automation, or receipt benefits

@@ -1,0 +1,22 @@
+{
+ "extends": "base_w1",
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0004",
+    "days": "3",
+    "read_at": "2026-11-08T00:00:00Z"
+   }
+  ]
+ },
+ "ops": [
+  {
+   "op": "record",
+   "campaign": "cp_0004",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "clicks": 420,
+   "conversions": 22
+  }
+ ]
+}

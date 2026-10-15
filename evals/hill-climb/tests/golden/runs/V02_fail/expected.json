@@ -1,0 +1,11 @@
+{
+ "failing": [
+  "a Money request row with standing, learned, next and an amount above 0",
+  "exactly one money-request in the outbox",
+  "no sim launch this run",
+  "the request names no workbook keys"
+ ],
+ "grader": "V02",
+ "pass": false,
+ "scenario": "V02"
+}

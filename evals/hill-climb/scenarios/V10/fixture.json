@@ -1,0 +1,101 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "L-0002"
+ ],
+ "ops": [
+  {
+   "op": "record",
+   "campaign": "cp_0003",
+   "from": "2026-11-02T00:00:00Z",
+   "to": "2026-11-05T00:00:00Z",
+   "clicks": 450,
+   "conversions": 36
+  },
+  {
+   "op": "launch",
+   "id": "cp_0016",
+   "item": "it_0003",
+   "daily_budget": 28,
+   "at": "2026-11-05T00:00:00Z"
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0016",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "clicks": 840,
+   "conversions": 42
+  }
+ ],
+ "rows": {
+  "Results": [
+   {
+    "result_id": "R-0002",
+    "test_id": "T-0003",
+    "k": "36",
+    "call": "act",
+    "notes": "the hand replay led the exploit on the same days"
+   }
+  ],
+  "Tests": [
+   {
+    "test_id": "T-0003",
+    "history": "read act on 2026-11-05 (R-0002); rerun as T-0016"
+   },
+   {
+    "test_id": "T-0016",
+    "idea_id": "ID-0003",
+    "lane": "confirm",
+    "type": "hook=question|visual=hand-replay",
+    "comparison": "T-0001",
+    "hypothesis": "The hand replay's lead over the app screen holds on fresh days",
+    "expected_range": "1.1x to 1.5x T-0001's rate",
+    "varies": "visual app-screen->hand-replay",
+    "held_constant": "hook=question; offer=free-trial",
+    "good_looks_like": "a rate clearly above T-0001's on its own days",
+    "daily_budget": "28",
+    "days": "3",
+    "read_at": "2026-11-08T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "T-0003",
+    "lesson_id": "L-0003",
+    "item_id": "it_0003",
+    "platform_id": "cp_0016",
+    "status": "live",
+    "launched_at": "2026-11-05T00:00:00Z",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Lessons": [
+   {
+    "lesson_id": "L-0003",
+    "subject": "visual behind a question hook",
+    "statement": "A hand replay converts better than the app screen behind a question hook",
+    "winner": "hook=question|visual=hand-replay",
+    "loser": "hook=question|visual=app-screen",
+    "status": "unconfirmed",
+    "evidence": "T-0003",
+    "recheck_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Decisions": [
+   {
+    "test_id": "T-0003",
+    "kind": "rerun",
+    "reason": "a favored first read earns a rerun on fresh days before it can steer money",
+    "data": "R-0002 act; rerun as T-0016 at $28/day for 3 days on the same item",
+    "legacy_ref": "",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

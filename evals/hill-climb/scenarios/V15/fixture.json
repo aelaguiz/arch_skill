@@ -1,0 +1,22 @@
+{
+ "extends": "base_w1",
+ "ops": [
+  {
+   "op": "inject",
+   "fault": "delivery",
+   "campaign": "cp_0004",
+   "from": "2026-11-07T00:00:00Z",
+   "to": "2026-11-10T00:00:00Z",
+   "target_share": 0.12
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0004",
+   "from": "2026-11-07T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "clicks": 140,
+   "conversions": 2,
+   "target_share": 0.12
+  }
+ ]
+}

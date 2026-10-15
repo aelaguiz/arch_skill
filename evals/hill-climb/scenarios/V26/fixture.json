@@ -1,0 +1,158 @@
+{
+ "extends": "base_w1",
+ "now": "2026-11-10T00:00:00Z",
+ "files": {
+  "reports/2026-11-02-progress.md": "# Hill climb progress: set up on 2026-11-02\n\nThe hill climb is running on this ad account. Its number is the cost of a conversion on the platform's count; history's\nbest ad, a question over the app's screen with a free week, ran at about $1.39 per conversion in October.\n\n- Money: $600 to spend, at about $45 a day.\n- Live: history's best ad keeps earning, and two explore tests try a claim hook and a hand replay beside it on the same\n  days; both read on 2026-11-05.\n- Learned so far: nothing yet. The first reads come on 2026-11-05.\n- Exploring: 2 of the 9 hook and visual combinations are being tried; the competitors' ads that run longest, a coach\n  telling a story on camera, come next.\n\nThe next report goes out on 2026-11-09.\n"
+ },
+ "ops": [
+  {
+   "op": "record",
+   "campaign": "cp_0001",
+   "from": "2026-11-08T00:00:00Z",
+   "to": "2026-11-10T00:00:00Z",
+   "clicks": 580,
+   "conversions": 36
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0004",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-09T00:00:00Z",
+   "clicks": 560,
+   "conversions": 35
+  },
+  {
+   "op": "build",
+   "id": "it_0005",
+   "attrs": {
+    "hook": "claim",
+    "visual": "coach-face",
+    "offer": "free-trial"
+   },
+   "text": "Our coaches have reviewed 2 million hands. They will fix the river calls costing you chips. Try the app free for 7 days.",
+   "at": "2026-11-08T12:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0005",
+   "item": "it_0005",
+   "daily_budget": 15,
+   "at": "2026-11-09T00:00:00Z"
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0005",
+   "from": "2026-11-09T00:00:00Z",
+   "to": "2026-11-10T00:00:00Z",
+   "clicks": 150,
+   "conversions": 8
+  }
+ ],
+ "rows": {
+  "Charter": [
+   {
+    "field": "reporting",
+    "value": "a progress report every week, written with `$readable-reports` as a Markdown file in `reports/`",
+    "reason": "The climb is young and changes quickly; a weekly report lets the owner see each week's reads without opening the workbook. README.md says reports go in reports/."
+   }
+  ],
+  "Tests": [
+   {
+    "test_id": "T-0004",
+    "status": "closed",
+    "history": "closed at its read on 2026-11-09 (R-0004)"
+   },
+   {
+    "test_id": "T-0005",
+    "idea_id": "ID-0005",
+    "lane": "explore",
+    "type": "hook=claim|visual=coach-face",
+    "comparison": "T-0001",
+    "hypothesis": "A coach on camera making a claim converts better than a question over the app screen",
+    "expected_range": "0.9x to 1.4x T-0001's rate",
+    "varies": "hook question->claim; visual app-screen->coach-face",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "15",
+    "days": "4",
+    "read_at": "2026-11-13T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0005",
+    "platform_id": "cp_0005",
+    "status": "live",
+    "launched_at": "2026-11-09T00:00:00Z",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-08T12:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Results": [
+   {
+    "result_id": "R-0004",
+    "test_id": "T-0004",
+    "k": "35",
+    "n": "560",
+    "call": "stop",
+    "notes": "flat: at its size the test could not tell the story hook from the question hook",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "reader"
+   }
+  ],
+  "Reviews": [
+   {
+    "review_id": "RV-0003",
+    "_replace": true,
+    "role": "report",
+    "period": "setup, 2026-11-02",
+    "findings": "Headline: the climb is set up and running, with $600 to spend and two explore tests beside history's best ad. File: reports/2026-11-02-progress.md",
+    "call": "reports/2026-11-02-progress.md, in the account's folder",
+    "changes": "none",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "review_id": "RV-0004",
+    "role": "meta-analyst",
+    "period": "2026-11-02 to 2026-11-07",
+    "findings": "Exploring has read cells against the exploit since setup; most of the map's nine cells are still untested.",
+    "call": "keep exploring untested cells",
+    "changes": "none",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "meta-analyst"
+   },
+   {
+    "review_id": "RV-0005",
+    "role": "strategist",
+    "period": "2026-11-02 to 2026-11-09",
+    "findings": "Three explore reads, two stops and a flat one; the method holds.",
+    "call": "keep the method",
+    "changes": "none",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "strategist"
+   },
+   {
+    "review_id": "RV-0006",
+    "role": "auditor",
+    "period": "2026-11-02 to 2026-11-09",
+    "findings": "Traced T-0002 and T-0004 from plan to read; the counts reconcile with the platform and the app.",
+    "call": "no defects",
+    "changes": "none",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "auditor"
+   },
+   {
+    "review_id": "RV-0007",
+    "role": "meta-analyst",
+    "period": "2026-11-07 to 2026-11-09",
+    "findings": "Four cells read, none beating the exploit; a coach making a claim is exploring now.",
+    "call": "keep exploring untested cells",
+    "changes": "none",
+    "written_at": "2026-11-09T12:00:00Z",
+    "written_by": "meta-analyst"
+   }
+  ]
+ }
+}

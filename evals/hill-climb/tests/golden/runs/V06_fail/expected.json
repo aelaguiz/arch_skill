@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "every launch this run is a checked launch",
+  "it_0013 never launched"
+ ],
+ "grader": "V06",
+ "pass": false,
+ "scenario": "V06"
+}

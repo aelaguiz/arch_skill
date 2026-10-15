@@ -1,0 +1,4 @@
+check_id,test_id,item_id,role,verdict,reasons,written_at,written_by
+CK-0001,T-0001,,plan-checker,pass,checked,2026-11-02T00:00:00Z,plan-checker
+CK-0002,T-0001,it_0001,build-checker,pass,checked,2026-11-02T00:00:00Z,build-checker
+CK-0003,,it_0001,critic,pass,checked,2026-11-02T00:00:00Z,critic

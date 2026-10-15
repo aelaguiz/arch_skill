@@ -1,0 +1,16 @@
+{
+ "README.md": "61227e8bffafd5fce4a3d05147e48bfca7fdfcfedf29a260be43b033ac2b6bbe",
+ "history.csv": "4cc2f6c68ef84853f4cf2d80aaed731efdd9d81e6c85c7d38aef1e87bc9fdb59",
+ "workbook/Charter.csv": "6b8d6c4a6801cda13849e46cf476a5ca5db5d10b8f4f84797cbc295a1f607337",
+ "workbook/Checks.csv": "e64ec20f3da42255192f6d897fe8ca5e35e83518e9f5e3fe10a809ed98ab14e1",
+ "workbook/Decisions.csv": "99ba834573ec77628b71bf9318183f59d7b8f6194277ba13d6ebde406b072331",
+ "workbook/Ideas.csv": "48c0ce4f75dc6e50caccad9751234ffaf2a6ed10cefd45af1e2bba3e20a4345b",
+ "workbook/Lessons.csv": "f7c5cc805dbe9bfb9a28578bcb4b5a0db0204f008dd6dc080b3804043fa72e33",
+ "workbook/Library.csv": "5305383be24c898618d279482e3d05578cd74db0a2d49c8d555553e12effae50",
+ "workbook/Log.csv": "cd75e7f4289e1df90482140e90caef9f08be25450de7b8793a5a5bd9596f4b0a",
+ "workbook/Map.csv": "85dbad465eeba879be6f60d72181ee9332934c45be37acbf79434defc0b986c7",
+ "workbook/Money.csv": "8bc4ede709fb03d4e24d87d3655a7a4edbb297a5f6dd7ac506e58e271ad281ce",
+ "workbook/Results.csv": "c85eaf48aff1fd823a2a097f1d5c1687201cf7e6cd851ffd6deb64ab2e9845ac",
+ "workbook/Reviews.csv": "fcc6cc6727b8c6f4b5d4d65761eb0e1acb9662f48c43e198bd07861d88712821",
+ "workbook/Tests.csv": "d08a600191ae4df4175125bba375ac3c7092437c3ac7abc25377a8f25a4402c8"
+}

@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "ID-0012 has near_copy_of filled and status rejected or parked",
+  "no Tests row with idea_id ID-0012"
+ ],
+ "grader": "V12",
+ "pass": false,
+ "scenario": "V12"
+}

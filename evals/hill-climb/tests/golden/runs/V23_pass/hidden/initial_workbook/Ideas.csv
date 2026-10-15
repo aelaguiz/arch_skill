@@ -1,0 +1,6 @@
+idea_id,source,type,description,sources,near_copy_of,status,reason,legacy_ref,written_at,written_by
+ID-0001,main,hook=question|visual=app-screen,Keep the best of history running as exploit,"T-0101, LB-0001",,planned,,,2026-11-02T00:00:00Z,main
+ID-0002,main,hook=claim|visual=app-screen,A claim hook on the app screen,T-0102,,tested,,,2026-11-02T00:00:00Z,main
+ID-0003,main,hook=question|visual=hand-replay,A question over a hand replay,T-0103,,tested,,,2026-11-02T00:00:00Z,main
+ID-0004,main,hook=story|visual=app-screen,A player's story over the app screen,T-0106,,new,,,2026-11-02T00:00:00Z,main
+ID-0013,main,hook=question|visual=coach-face,Show a coach's face to make it personal,,,new,,,2026-11-07T12:00:00Z,main

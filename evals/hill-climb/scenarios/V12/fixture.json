@@ -1,0 +1,19 @@
+{
+ "extends": "base_w1",
+ "rows": {
+  "Ideas": [
+   {
+    "idea_id": "ID-0012",
+    "source": "scout",
+    "type": "hook=question|visual=app-screen",
+    "description": "Lead with a question over the app screen, free trial",
+    "sources": "LB-0001",
+    "near_copy_of": "",
+    "reason": "Rival A has run this shape for weeks.",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   }
+  ]
+ }
+}

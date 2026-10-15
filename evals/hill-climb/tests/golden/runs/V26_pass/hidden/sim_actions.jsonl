@@ -1,0 +1,2 @@
+{"argv": ["sim", "status"], "exit": 0, "sim_time": "2026-11-10T00:00:00Z", "stdout_head": "Now: 2026-11-10T00:00:00Z (day 8).\nBalance $294.00 of $600.00. Live: cp_0001, cp_0004. Spend today $0.00.", "wall_time": 1793000004.0}
+{"argv": ["sim", "report"], "exit": 0, "sim_time": "2026-11-10T00:00:00Z", "stdout_head": "Now: 2026-11-10T00:00:00Z (day 8).\ncp_0001 \u00b7 live \u00b7 it_0001 \u00b7 $30.00/day \u00b7 spend $232.00 \u00b7 clicks 2,320 \u00b7 conversions 144", "wall_time": 1793000010.1}

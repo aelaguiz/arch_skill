@@ -1,0 +1,154 @@
+{
+ "campaigns": {
+  "cp_0001": {
+   "budget_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     15.0
+    ]
+   ],
+   "item": "it_0001",
+   "launched_at": "2026-11-02T00:00:00Z",
+   "status": "live",
+   "status_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     "live"
+    ]
+   ]
+  }
+ },
+ "config": {
+  "attributes": {
+   "captions": [
+    "burned-in",
+    "none"
+   ],
+   "closing_ask": [
+    "download",
+    "try-free",
+    "learn-more"
+   ],
+   "format": [
+    "vertical",
+    "square",
+    "horizontal"
+   ],
+   "hook": [
+    "question",
+    "story",
+    "claim",
+    "challenge"
+   ],
+   "length": [
+    "15s",
+    "30s",
+    "60s"
+   ],
+   "music": [
+    "none",
+    "lo-fi",
+    "upbeat",
+    "cinematic"
+   ],
+   "offer": [
+    "free-trial",
+    "discount",
+    "none"
+   ],
+   "opening": [
+    "face",
+    "cards",
+    "text-card"
+   ],
+   "palette": [
+    "dark",
+    "bright",
+    "felt-green"
+   ],
+   "presenter": [
+    "coach",
+    "player",
+    "none"
+   ],
+   "visual": [
+    "app-screen",
+    "hand-replay",
+    "table-footage"
+   ],
+   "voice": [
+    "calm",
+    "energetic"
+   ]
+  },
+  "base": -3.1,
+  "cap": 300,
+  "cpc": 0.1,
+  "days": 14,
+  "effects": {
+   "hook": {
+    "challenge": 0.25,
+    "claim": -0.05,
+    "question": 0.1
+   },
+   "offer": {
+    "discount": 0.05,
+    "free-trial": 0.2
+   },
+   "visual": {
+    "app-screen": 0.15,
+    "hand-replay": 0.3
+   }
+  },
+  "name": "W5",
+  "pockets": [],
+  "q": 0.25,
+  "truth_attributes": [
+   "hook",
+   "visual",
+   "offer"
+  ]
+ },
+ "faults": [],
+ "hourly": {},
+ "items": {
+  "it_0001": {
+   "attrs": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "upbeat",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "coach",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "built_at": "2026-11-02T00:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "upbeat",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "coach",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "text": "Beat this hand: call or fold on the river?"
+  }
+ },
+ "now": "2026-11-02T00:00:00Z",
+ "posts": {},
+ "truth": {
+  "money_received": 600
+ }
+}

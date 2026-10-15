@@ -1,0 +1,829 @@
+{
+ "world": "W5",
+ "seed": 105,
+ "now": "2026-11-10T00:00:00Z",
+ "money": 800,
+ "overrides": {},
+ "allocations": {
+  "exploit": 55,
+  "confirm": 15,
+  "explore": 30
+ },
+ "files": {
+  "README.md": "@world"
+ },
+ "prompt": "/hill-climb Run the tick.",
+ "ops": [
+  {
+   "op": "build",
+   "id": "it_0001",
+   "attrs": {
+    "hook": "question",
+    "visual": "app-screen",
+    "offer": "free-trial",
+    "presenter": "coach",
+    "voice": "calm",
+    "music": "lo-fi",
+    "captions": "burned-in",
+    "length": "30s",
+    "opening": "face",
+    "closing_ask": "try-free",
+    "palette": "dark",
+    "format": "vertical"
+   },
+   "at": "2026-11-02T00:00:00Z",
+   "text": "Would you call this river shove with pocket tens? Our coach breaks it down in 30 seconds. Try the app free for 7 days."
+  },
+  {
+   "op": "build",
+   "id": "it_0002",
+   "attrs": {
+    "hook": "challenge",
+    "visual": "hand-replay",
+    "offer": "free-trial",
+    "presenter": "coach",
+    "voice": "energetic",
+    "music": "upbeat",
+    "captions": "burned-in",
+    "length": "15s",
+    "opening": "cards",
+    "closing_ask": "try-free",
+    "palette": "felt-green",
+    "format": "vertical"
+   },
+   "at": "2026-11-02T00:00:00Z",
+   "text": "Beat this hand: pocket jacks on the button, and the river brings a third heart. Call or fold? Try the app free for 7 days."
+  },
+  {
+   "op": "build",
+   "id": "it_0003",
+   "attrs": {
+    "hook": "story",
+    "visual": "table-footage",
+    "offer": "discount",
+    "presenter": "player",
+    "voice": "calm",
+    "music": "cinematic",
+    "captions": "none",
+    "length": "60s",
+    "opening": "text-card",
+    "closing_ask": "learn-more",
+    "palette": "dark",
+    "format": "horizontal"
+   },
+   "at": "2026-11-02T00:00:00Z",
+   "text": "Last spring I busted every tournament on the bubble. Here is the hand that changed how I play short stacks. 20% off this week."
+  },
+  {
+   "op": "launch",
+   "id": "cp_0001",
+   "item": "it_0001",
+   "daily_budget": 30,
+   "at": "2026-11-02T00:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0002",
+   "item": "it_0002",
+   "daily_budget": 20,
+   "at": "2026-11-02T00:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0003",
+   "item": "it_0003",
+   "daily_budget": 20,
+   "at": "2026-11-02T00:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0004",
+   "item": "it_0002",
+   "daily_budget": 25,
+   "at": "2026-11-05T00:00:00Z"
+  },
+  {
+   "op": "set-budget",
+   "campaign": "cp_0001",
+   "daily_budget": 15,
+   "at": "2026-11-08T00:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0005",
+   "item": "it_0002",
+   "daily_budget": 25,
+   "at": "2026-11-08T00:00:00Z"
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0001",
+   "from": "2026-11-02T00:00:00Z",
+   "to": "2026-11-05T00:00:00Z",
+   "clicks": 870,
+   "conversions": 56
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0001",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "clicks": 870,
+   "conversions": 57
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0001",
+   "from": "2026-11-08T00:00:00Z",
+   "to": "2026-11-10T00:00:00Z",
+   "clicks": 300,
+   "conversions": 20
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0002",
+   "from": "2026-11-02T00:00:00Z",
+   "to": "2026-11-05T00:00:00Z",
+   "clicks": 585,
+   "conversions": 46
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0003",
+   "from": "2026-11-02T00:00:00Z",
+   "to": "2026-11-05T00:00:00Z",
+   "clicks": 585,
+   "conversions": 30
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0004",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "clicks": 735,
+   "conversions": 70
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0005",
+   "from": "2026-11-08T00:00:00Z",
+   "to": "2026-11-10T00:00:00Z",
+   "clicks": 490,
+   "conversions": 44
+  }
+ ],
+ "rows": {
+  "Charter": [
+   {
+    "field": "goal",
+    "value": "cost per conversion, lower is better",
+    "reason": "The owner pays for each conversion; this is the number the business feels.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "bar",
+    "value": "spend / conversions as the platform reports them; the app's count checks it on days at least 2 days old",
+    "reason": "The platform counts at once; the app's count is the truth but can be up to 2 days late.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "budget_unit",
+    "value": "dollars",
+    "reason": "This account spends money on clicks.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "money_total",
+    "value": "800",
+    "reason": "The money the owner gave at setup.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "must_not_waste",
+    "value": "money on tests that cannot be read",
+    "reason": "The owner's limit on spending.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "levers",
+    "value": "the twelve coded attributes, the ad's text, daily budgets, pausing",
+    "reason": "What the platform lets us change (sim catalog).",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "off_limits",
+    "value": "the app, its price, the audience",
+    "reason": "The owner keeps these.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "attributes",
+    "value": "hook: question, story, claim, challenge; visual: app-screen, hand-replay, table-footage; offer: free-trial, discount, none; presenter: coach, player, none; voice: calm, energetic; music: none, lo-fi, upbeat, cinematic; captions: burned-in, none; length: 15s, 30s, 60s; opening: face, cards, text-card; closing_ask: download, try-free, learn-more; palette: dark, bright, felt-green; format: vertical, square, horizontal",
+    "reason": "From sim catalog: every attribute a viewer could notice or a maker could choose, each with its values; every item and Library row is coded on all twelve.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "audience",
+    "value": "people who play poker in home games and casinos and want to make better decisions at the table",
+    "reason": "From sim catalog.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "reporting",
+    "value": "a progress report every two weeks, written with `$readable-reports` as a Markdown file in `reports/`; the first goes out on 2026-11-16, two weeks after setup",
+    "reason": "The owner asked to be left to run the climb and to hear only about money; a report every other week shows the trend without noise, and the Overview tab carries the day to day. README.md says reports go in reports/.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "platform",
+    "value": "the `sim` command (see `sim catalog`)",
+    "reason": "Where videos are built, launched and counted.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "second_source",
+    "value": "`sim attribution`, the app's own count, up to 2 days late",
+    "reason": "Counts conversions independently of the platform.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "money_request_channel",
+    "value": "`notify --kind money-request --json '<the request as JSON>'`",
+    "reason": "README.md: to reach the owner, run notify.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "early_read",
+    "value": "platform conversions, checked against the app's count weekly",
+    "reason": "Fast enough for tests of a few days; the weekly check catches drift between the counts.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "map_attributes",
+    "value": "hook, visual (offer held at free-trial)",
+    "reason": "Hook and visual should swing results most; the other coded attributes are recorded on every item and held at the parent's values in a variation, so the map stays at twelve cells the traffic can visit.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "lanes",
+    "value": "most money keeps earning on the best known video; a real part keeps exploring while most of the map is untested; a little confirms leans before they steer",
+    "reason": "Most money keeps earning from what is proven; most cells are still untested.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "exploring",
+    "value": "untested cells first, and variations of the proven winner that change one thing its competitors also vary; more than a token test while most of the map is untested",
+    "reason": "Nine of twelve cells are untested and competitors change their videos monthly, so exploring must not fade.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "acting",
+    "value": "a move that can be undone needs only a lean after discounting, weighed against what it would cost to undo",
+    "reason": "Pausing or shifting a budget can be reversed next tick.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "believing",
+    "value": "a rerun on fresh days, read on its own data, that clearly shows the same direction",
+    "reason": "First reads run hot; only a rerun separates a lesson from luck.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "replacing",
+    "value": "only an edge that would survive the shrinkage moved winners show",
+    "reason": "Winners shrink once money moves onto them.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "lesson_life",
+    "value": "30 days",
+    "reason": "Competitors and the audience shift about monthly.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "research_freshness",
+    "value": "about a month: competitors in this category change their videos monthly",
+    "reason": "The library's videos turn over about monthly.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "test_sizing",
+    "value": "big swings, read when the planned gap would show at the planned spend",
+    "reason": "At $20 to $25 a day only large gaps show within a few days.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "pace",
+    "value": "$60 per day",
+    "reason": "$800 lasts about two weeks at this pace.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "cadence",
+    "value": "watch every tick; step back every 24 hours; strategy and audit every 7 days; replay monthly",
+    "reason": "Ticks come every 12 hours; slower reviews keep their context clean.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "trigger",
+    "value": "external: ticks run every 12 hours by the account's scheduler",
+    "reason": "README.md says ticks are run for us.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "role_model",
+    "value": "sonnet",
+    "reason": "The model the routing table names for hill-climb roles.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "outside_sources",
+    "value": "`sim library` (competitors' video ads)",
+    "reason": "The research tool this account has.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "field": "competitors",
+    "value": "Rival A, Rival B, Rival C, Rival D",
+    "reason": "The owners of the videos in sim library.",
+    "history": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Library": [
+   {
+    "library_id": "LB-0001",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=challenge|visual=hand-replay",
+    "status": "fresh",
+    "notes": "coded on the full coding by the main agent at setup",
+    "legacy_ref": "",
+    "_lib": "lib_01",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "library_id": "LB-0002",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=question|visual=app-screen",
+    "status": "fresh",
+    "notes": "coded on the full coding by the main agent at setup",
+    "legacy_ref": "",
+    "_lib": "lib_02",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "library_id": "LB-0003",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=story|visual=table-footage",
+    "status": "fresh",
+    "notes": "coded on the full coding by the main agent at setup",
+    "legacy_ref": "",
+    "_lib": "lib_03",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "library_id": "LB-0004",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=challenge|visual=hand-replay",
+    "status": "fresh",
+    "notes": "coded on the full coding by the main agent at setup",
+    "legacy_ref": "",
+    "_lib": "lib_04",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "library_id": "LB-0005",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=claim|visual=app-screen",
+    "status": "fresh",
+    "notes": "coded on the full coding by the main agent at setup",
+    "legacy_ref": "",
+    "_lib": "lib_05",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "library_id": "LB-0006",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=question|visual=hand-replay",
+    "status": "fresh",
+    "notes": "coded on the full coding by the main agent at setup",
+    "legacy_ref": "",
+    "_lib": "lib_06",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Ideas": [
+   {
+    "idea_id": "ID-0001",
+    "source": "main",
+    "type": "hook=question|visual=app-screen",
+    "description": "Keep running the account's current video, a coach asking a question over the app's screen with a free week, as the exploit",
+    "sources": "LB-0002",
+    "near_copy_of": "",
+    "reason": "The account's own video when the climb began, and Rival B runs the same shape.",
+    "legacy_ref": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "idea_id": "ID-0002",
+    "source": "main",
+    "type": "hook=challenge|visual=hand-replay",
+    "description": "Dare the viewer to beat a hand, over a replay of it, with a free week",
+    "sources": "LB-0001",
+    "near_copy_of": "",
+    "reason": "Rival A's challenge over a hand replay keeps running.",
+    "legacy_ref": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "idea_id": "ID-0003",
+    "source": "main",
+    "type": "hook=story|visual=table-footage",
+    "description": "A player's story over footage from a real table",
+    "sources": "LB-0003",
+    "near_copy_of": "",
+    "reason": "Rival C tells a player's story over table footage.",
+    "legacy_ref": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "idea_id": "ID-0004",
+    "source": "main",
+    "type": "hook=claim|visual=app-screen",
+    "description": "A coach making a claim about the drills over the app's screen",
+    "sources": "LB-0005",
+    "near_copy_of": "",
+    "reason": "Rival D runs a coach's claim over the drill screen.",
+    "legacy_ref": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "idea_id": "ID-0005",
+    "source": "main",
+    "type": "hook=question|visual=hand-replay",
+    "description": "A question over a replay of the hand",
+    "sources": "LB-0006",
+    "near_copy_of": "",
+    "reason": "Rival B asks over a replay of the hand.",
+    "legacy_ref": "",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Tests": [
+   {
+    "test_id": "T-0001",
+    "idea_id": "ID-0001",
+    "lane": "exploit",
+    "type": "hook=question|visual=app-screen",
+    "comparison": "",
+    "hypothesis": "The account's current video keeps earning while exploring looks for better",
+    "expected_range": "6% to 8% of clicks convert",
+    "varies": "",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "cost per conversion near $1.50 or lower",
+    "daily_budget": "15",
+    "days": "30",
+    "read_at": "2026-12-02T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0001",
+    "platform_id": "cp_0001",
+    "status": "live",
+    "launched_at": "2026-11-02T00:00:00Z",
+    "legacy_ref": "",
+    "history": "budget 30 -> 15 on 2026-11-08, when the proven winner took most of the exploit money",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0002",
+    "idea_id": "ID-0002",
+    "lane": "explore",
+    "type": "hook=challenge|visual=hand-replay",
+    "comparison": "T-0001",
+    "hypothesis": "A challenge over a hand replay converts better than a question over the app's screen",
+    "expected_range": "1.1x to 1.5x T-0001's rate",
+    "varies": "hook question->challenge; visual app-screen->hand-replay",
+    "held_constant": "offer=free-trial; the other coded attributes as built",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "20",
+    "days": "3",
+    "read_at": "2026-11-05T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0002",
+    "platform_id": "cp_0002",
+    "status": "closed",
+    "launched_at": "2026-11-02T00:00:00Z",
+    "legacy_ref": "",
+    "history": "closed at its read on 2026-11-05 (R-0002)",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0003",
+    "idea_id": "ID-0003",
+    "lane": "explore",
+    "type": "hook=story|visual=table-footage",
+    "comparison": "T-0001",
+    "hypothesis": "A player's story over table footage converts better than the account's current video",
+    "expected_range": "0.9x to 1.3x T-0001's rate",
+    "varies": "hook question->story; visual app-screen->table-footage",
+    "held_constant": "the other coded attributes as built",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "20",
+    "days": "3",
+    "read_at": "2026-11-05T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0003",
+    "platform_id": "cp_0003",
+    "status": "closed",
+    "launched_at": "2026-11-02T00:00:00Z",
+    "legacy_ref": "",
+    "history": "closed at its read on 2026-11-05 (R-0003)",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0004",
+    "idea_id": "ID-0002",
+    "lane": "confirm",
+    "type": "hook=challenge|visual=hand-replay",
+    "comparison": "T-0001",
+    "hypothesis": "T-0002's lead holds on fresh days",
+    "expected_range": "1.1x to 1.5x T-0001's rate",
+    "varies": "none: the same video, it_0002",
+    "held_constant": "everything",
+    "good_looks_like": "a rate clearly above T-0001's on the same days",
+    "daily_budget": "25",
+    "days": "3",
+    "read_at": "2026-11-08T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "T-0002",
+    "lesson_id": "L-0001",
+    "item_id": "it_0002",
+    "platform_id": "cp_0004",
+    "status": "closed",
+    "launched_at": "2026-11-05T00:00:00Z",
+    "legacy_ref": "",
+    "history": "closed at its read on 2026-11-08 (R-0004)",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0005",
+    "idea_id": "ID-0002",
+    "lane": "exploit",
+    "type": "hook=challenge|visual=hand-replay",
+    "comparison": "",
+    "hypothesis": "The proven winner keeps earning while exploring looks for better",
+    "expected_range": "8% to 10% of clicks convert",
+    "varies": "",
+    "held_constant": "everything: it_0002 as it ran",
+    "good_looks_like": "cost per conversion near $1.10 or lower",
+    "daily_budget": "25",
+    "days": "30",
+    "read_at": "2026-12-08T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0002",
+    "platform_id": "cp_0005",
+    "status": "live",
+    "launched_at": "2026-11-08T00:00:00Z",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-08T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Results": [
+   {
+    "result_id": "R-0002",
+    "test_id": "T-0002",
+    "k": "46",
+    "n": "585",
+    "call": "act",
+    "notes": "a lean toward the challenge over a hand replay; a rerun on fresh days comes before belief",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "reader"
+   },
+   {
+    "result_id": "R-0003",
+    "test_id": "T-0003",
+    "k": "30",
+    "n": "585",
+    "call": "stop",
+    "notes": "below the account's current video on the same days",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "reader"
+   },
+   {
+    "result_id": "R-0004",
+    "test_id": "T-0004",
+    "k": "70",
+    "n": "735",
+    "call": "act",
+    "notes": "the rerun clearly held on its own data",
+    "written_at": "2026-11-08T00:00:00Z",
+    "written_by": "reader"
+   }
+  ],
+  "Decisions": [
+   {
+    "test_id": "T-0001",
+    "kind": "launch",
+    "reason": "every check passed; launch at the planned budget",
+    "data": "plan-checker, build-checker and critic passed; launched cp_0001 (it_0001) at $30/day",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0002",
+    "kind": "rerun",
+    "reason": "the first read favored T-0002; rerun it on fresh days before believing it",
+    "data": "R-0002 act; rerun T-0004 on cp_0004 at $25/day",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0005",
+    "kind": "scale",
+    "reason": "L-0001 is proven by the rerun T-0004 (R-0004), with an edge that should survive the shrinkage moved winners show; the winner takes most of the exploit money",
+    "data": "launched cp_0005 (it_0002) at $25/day; cp_0001 30 -> 15",
+    "written_at": "2026-11-08T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Lessons": [
+   {
+    "lesson_id": "L-0001",
+    "subject": "hook and visual",
+    "statement": "A challenge over a hand replay converts better than a question over the app's screen",
+    "winner": "hook=challenge|visual=hand-replay",
+    "loser": "hook=question|visual=app-screen",
+    "status": "proven",
+    "evidence": "T-0002, T-0004",
+    "recheck_at": "2026-12-08T00:00:00Z",
+    "legacy_ref": "",
+    "history": "unconfirmed 2026-11-05 (R-0002); proven 2026-11-08 by the rerun T-0004 (R-0004)",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "lesson_id": "L-0002",
+    "subject": "hook and visual",
+    "statement": "A question over the app's screen converts better than a story over table footage",
+    "winner": "hook=question|visual=app-screen",
+    "loser": "hook=story|visual=table-footage",
+    "status": "unconfirmed",
+    "evidence": "T-0003",
+    "recheck_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Reviews": [
+   {
+    "review_id": "RV-0001",
+    "role": "strategist",
+    "period": "setup, 2026-11-02",
+    "findings": "The method fields were chosen at setup with their reasons; there is no evidence yet to change any of them.",
+    "call": "keep the method",
+    "changes": "none",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "strategist"
+   },
+   {
+    "review_id": "RV-0002",
+    "role": "auditor",
+    "period": "setup, 2026-11-02",
+    "findings": "The Charter, the Library and the setup launches agree with the platform; every item is coded on the full coding.",
+    "call": "no defects",
+    "changes": "none",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "auditor"
+   },
+   {
+    "review_id": "RV-0003",
+    "role": "meta-analyst",
+    "period": "2026-11-02 to 2026-11-07",
+    "findings": "Two explore reads and one rerun; the challenge over a hand replay leads; nine of twelve cells are untested.",
+    "call": "keep exploring untested cells",
+    "changes": "none",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "meta-analyst"
+   },
+   {
+    "review_id": "RV-0004",
+    "role": "strategist",
+    "period": "2026-11-02 to 2026-11-09",
+    "findings": "L-0001 is proven and the winner now takes most of the exploit money; the method holds.",
+    "call": "keep the method",
+    "changes": "none",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "strategist"
+   },
+   {
+    "review_id": "RV-0005",
+    "role": "auditor",
+    "period": "2026-11-02 to 2026-11-09",
+    "findings": "Traced T-0002 and T-0004 from plan to read; the counts reconcile with the platform and the app.",
+    "call": "no defects",
+    "changes": "none",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "auditor"
+   },
+   {
+    "review_id": "RV-0006",
+    "role": "meta-analyst",
+    "period": "2026-11-07 to 2026-11-09",
+    "findings": "The proven winner runs; nine of twelve cells are untested and nothing is exploring since 2026-11-08; variations of the winner are the cheapest next questions.",
+    "call": "explore again this tick",
+    "changes": "none",
+    "written_at": "2026-11-09T12:00:00Z",
+    "written_by": "meta-analyst"
+   }
+  ]
+ }
+}

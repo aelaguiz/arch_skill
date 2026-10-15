@@ -1,0 +1,31 @@
+{
+ "extends": "base_w1",
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0004",
+    "days": "3",
+    "read_at": "2026-11-08T00:00:00Z"
+   }
+  ]
+ },
+ "ops": [
+  {
+   "op": "inject",
+   "fault": "tracking",
+   "campaign": "cp_0004",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-16T00:00:00Z",
+   "factor": 0.3
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0004",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "clicks": 420,
+   "conversions": 18,
+   "platform_conversions": 6
+  }
+ ]
+}

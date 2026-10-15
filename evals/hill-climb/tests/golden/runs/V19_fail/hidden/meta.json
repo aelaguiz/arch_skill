@@ -1,0 +1,9 @@
+{
+ "kind": "scenario",
+ "lab": "evals/hill-climb",
+ "now": "2026-11-02T00:00:00Z",
+ "prompt": "/hill-climb Set up a hill climb on this ad account to get the cost of a conversion as low as possible. You have $600; ask me if you need more.",
+ "scenario": "V19",
+ "seed": 101,
+ "world": "W1"
+}

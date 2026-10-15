@@ -1,0 +1,2 @@
+{"argv": ["sim", "catalog"], "exit": 0, "sim_time": "2026-11-02T00:00:00Z", "stdout_head": "Now: 2026-11-02T00:00:00Z (day 0).\nAttributes: hook, visual, offer. Levers: daily budget $5 to $100, pause, resume, resubmit.", "wall_time": 1793000004.0}
+{"argv": ["sim", "library", "--search", "river"], "exit": 0, "sim_time": "2026-11-02T00:00:00Z", "stdout_head": "Now: 2026-11-02T00:00:00Z (day 0).\nlib_03 \u00b7 Rival A \u00b7 running 64 days \u00b7 ...", "wall_time": 1793000011.52}

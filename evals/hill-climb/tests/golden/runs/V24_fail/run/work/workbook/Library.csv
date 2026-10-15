@@ -1,0 +1,9 @@
+library_id,kind,source,link,owner,content,signal,type,status,notes,legacy_ref,written_at,written_by
+LB-0001,competitor-ad,Rival A,sim library,Rival A,Ask yourself: would you call the river with pocket jacks here? The app shows the spot.,running 64 days,hook=question|visual=app-screen,fresh,lib_03,,2026-09-28T00:00:00Z,scout
+LB-0002,competitor-ad,Rival B,sim library,Rival B,I folded aces once. Here's the read that saved my stack at the button.,running 22 days,hook=claim|visual=coach-face,fresh,lib_09,,2026-09-28T00:00:00Z,scout
+LB-0003,competitor-ad,Rival C,sim library,Rival C,Last night's home game: the turn card that changed my whole range.,running 31 days,hook=story|visual=hand-replay,fresh,lib_12,,2026-09-28T00:00:00Z,scout
+LB-0004,competitor-ad,Rival A,sim library,Rival A,Why does your c-bet fail on wet flops? Coach Dee explains in 2 minutes.,running 27 days,hook=question|visual=coach-face,fresh,lib_15,,2026-09-28T00:00:00Z,scout
+LB-0005,competitor-ad,Rival D,sim library,Rival D,Pot odds beat gut calls: replay the hand and see the equity.,running 18 days,hook=claim|visual=hand-replay,fresh,lib_18,,2026-09-28T00:00:00Z,scout
+LB-0006,competitor-ad,Rival B,sim library,Rival B,Coach Maria walks through the river call she'd make with pocket nines.,running 81 days,hook=story|visual=coach-face,fresh,lib_21,,2026-09-28T00:00:00Z,scout
+LB-0007,competitor-ad,Rival C,sim library,Rival C,Coach Lin replays a 3-bet pot from last night's tournament.,running 12 days,hook=story|visual=hand-replay,fresh,,,2026-11-08T00:00:00Z,scout
+LB-0008,competitor-ad,Rival D,sim library,Rival D,Would you shove 15 big blinds on the button?,running 9 days,hook=question|visual=app-screen,fresh,,,2026-11-08T00:00:00Z,scout

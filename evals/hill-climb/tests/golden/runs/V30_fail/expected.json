@@ -1,0 +1,12 @@
+{
+ "failing": [
+  "T-0004 was read this run and its Tests row shows the call",
+  "an Overview tab written this run",
+  "the Overview names the best known option",
+  "the Overview names the money left",
+  "the Tests rows touched this run show their checks' verdicts"
+ ],
+ "grader": "V30",
+ "pass": false,
+ "scenario": "V30"
+}

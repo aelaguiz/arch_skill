@@ -1,0 +1,8 @@
+{
+ "failing": [
+  "every non-legacy Results row in this run is subagent-written by the reader"
+ ],
+ "grader": "V17",
+ "pass": false,
+ "scenario": "V17"
+}

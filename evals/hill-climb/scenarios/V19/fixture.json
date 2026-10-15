@@ -1,0 +1,12 @@
+{
+ "world": "W1",
+ "seed": 101,
+ "now": "2026-11-02T00:00:00Z",
+ "money": 600,
+ "workbook": false,
+ "files": {
+  "README.md": "@world",
+  "history.csv": "@world"
+ },
+ "prompt": "/hill-climb Set up a hill climb on this ad account to get the cost of a conversion as low as possible. You have $600; ask me if you need more."
+}

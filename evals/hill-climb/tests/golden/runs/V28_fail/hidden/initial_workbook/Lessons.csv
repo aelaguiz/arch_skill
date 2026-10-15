@@ -1,0 +1,2 @@
+lesson_id,subject,statement,winner,loser,status,evidence,recheck_at,legacy_ref,history,written_at,written_by
+L-0001,,,hook=challenge|visual=hand-replay,hook=question|visual=app-screen,proven,"T-0002, T-0004",2026-12-08T00:00:00Z,,,2026-11-05T00:00:00Z,main

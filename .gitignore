@@ -9,3 +9,6 @@ __pycache__/
 
 # Generated skill build output (pruned on install)
 skills/*/build/
+
+# Hill-climb test lab batch results
+evals/hill-climb/results/

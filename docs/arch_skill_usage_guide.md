@@ -374,6 +374,22 @@ quantified investigation.
 
 When explicitly selected, use when the work is a quantified investigation with ranked hypotheses and brutal tests.
 
+### `hill-climb`
+
+When explicitly selected, use to set up, adopt or run a long-running hill climb that spends a budget to keep improving one
+number (cost per install, conversions, follows). It researches competitors and inspiration before the first test, draws
+every idea from that research, has fresh one-job agents check each plan, build, quality and result, weighs what people
+say about live items beside the numbers, keeps how each item was made so variations are cut from their parents, believes
+a lesson only after a rerun, never stops exploring, sends progress reports on a schedule that ask nothing, and asks the
+owner only for more money. It is not for a one-off analysis or a single A/B readout. Installed for Claude Code and
+Codex.
+
+Examples:
+
+- `Use $hill-climb to set up a hill climb on this ad account to get the cost of a sign-up down. You have $2,000.`
+- `/hill-climb Run the tick.`
+- `Use $hill-climb to take over the hill climb tracked in this spreadsheet.`
+
 ### `arch-skills-guide`
 
 Use when the question is which live arch skill should handle the task.

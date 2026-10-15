@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "a Decisions row (pause, exclude-data or void) naming cp_0004 or T-0004",
+  "every T-0004 act or stop Results row has k between 12 and 18"
+ ],
+ "grader": "V14",
+ "pass": false,
+ "scenario": "V14"
+}

@@ -1,0 +1,5 @@
+group,ad,item,campaign,status,cap,clicks,conversions,cost per conversion
+question/app-screen,Would you call the river with pocket jacks?,it_0001,cp_0001,Live,30,1740,108,1.61
+claim/app-screen,The app that fixed my 3-bet range,it_0002,cp_0002,Paused,15,450,21,2.14
+question/hand-replay,Would you fold this flop?,it_0003,cp_0003,Paused,15,450,24,1.88
+story/app-screen,Last week at the home game,it_0004,cp_0004,Live,15,420,24,1.75

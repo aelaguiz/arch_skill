@@ -1,0 +1,4 @@
+lesson_id,subject,statement,winner,loser,status,evidence,recheck_at,legacy_ref,history,written_at,written_by
+L-0001,,Claims convert worse than questions on the app screen,,,proven,,,Learnings.csv:2,,2026-11-08T00:00:00Z,main
+L-0002,,A hand replay converts worse than the app screen with question hooks,,,unconfirmed,,,,,2026-11-08T00:00:00Z,main
+L-0003,,Weekend clicks convert better,,,unconfirmed,,,"Learnings, row 4",,2026-11-08T00:00:00Z,main

@@ -1,0 +1,432 @@
+{
+ "id": "W3",
+ "name": "free slots",
+ "kind": "posts",
+ "days": 10,
+ "tick_hours": 12,
+ "start": "2026-11-02T00:00:00Z",
+ "attributes": [
+  {
+   "name": "format",
+   "values": [
+    "clip",
+    "carousel",
+    "meme"
+   ]
+  },
+  {
+   "name": "topic",
+   "values": [
+    "hand-review",
+    "rules-tip",
+    "player-story"
+   ]
+  }
+ ],
+ "follows_base": 6,
+ "multipliers": {
+  "format": {
+   "clip": 1.2,
+   "carousel": 1.0,
+   "meme": 0.9
+  },
+  "topic": {
+   "hand-review": 1.1,
+   "rules-tip": 1.15,
+   "player-story": 0.85
+  }
+ },
+ "pockets": [
+  {
+   "when": {
+    "format": "meme",
+    "topic": "player-story"
+   },
+   "multiplier": 2.2
+  }
+ ],
+ "quality_multipliers": {
+  "specific": 1.3,
+  "neutral": 1.0,
+  "generic": 0.75
+ },
+ "slots": [
+  {
+   "hour": 9,
+   "multiplier": 0.9
+  },
+  {
+   "hour": 13,
+   "multiplier": 1.0
+  },
+  {
+   "hour": 19,
+   "multiplier": 1.15
+  }
+ ],
+ "reach": {
+  "per_follow": 40,
+  "sigma": 0.3
+ },
+ "budget_unit": "posts",
+ "posts_per_day": 3,
+ "money": 0,
+ "grants": [],
+ "build_fault_p": 0.1,
+ "build_fault_attrs": [
+  "format"
+ ],
+ "rejection_p": 0.0,
+ "faults": [
+  {
+   "kind": "delivery",
+   "target": "*",
+   "from": "2026-11-06T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "target_share": 0.12
+  }
+ ],
+ "followers_start": 1840,
+ "follower_lag_p": [
+  0.6,
+  0.4
+ ],
+ "audience": "people who play poker in home games and casinos and want to make better decisions at the table",
+ "generic_phrases": [
+  "level up",
+  "next level",
+  "best app",
+  "best poker app",
+  "game changer",
+  "download now",
+  "improve your skills",
+  "get better at poker",
+  "take your game",
+  "ultimate",
+  "amazing",
+  "you won't believe"
+ ],
+ "specific_terms": [
+  "flop",
+  "turn",
+  "river",
+  "3-bet",
+  "4-bet",
+  "c-bet",
+  "pot odds",
+  "outs",
+  "equity",
+  "range",
+  "position",
+  "button",
+  "big blind",
+  "small blind",
+  "stack",
+  "pocket",
+  "aces",
+  "kings",
+  "queens",
+  "jacks",
+  "suited",
+  "bluff",
+  "fold",
+  "raise",
+  "check-raise",
+  "all-in",
+  "tournament",
+  "cash game",
+  "home game",
+  "$1/$2",
+  "$2/$5",
+  "chips",
+  "showdown",
+  "kicker",
+  "flush",
+  "straight",
+  "set",
+  "overpair",
+  "draw"
+ ],
+ "reception": {
+  "exposure": "reach",
+  "comment_rate": 0.012,
+  "kinds": [
+   "praise",
+   "question",
+   "complaint",
+   "spam call-out"
+  ],
+  "mix": {
+   "generic": [
+    0.25,
+    0.1,
+    0.15,
+    0.5
+   ],
+   "neutral": [
+    0.4,
+    0.25,
+    0.15,
+    0.2
+   ],
+   "specific": [
+    0.4,
+    0.4,
+    0.1,
+    0.1
+   ]
+  },
+  "overpromise_phrases": [
+   "guarantee",
+   "never lose",
+   "win every",
+   "can't lose",
+   "cannot lose",
+   "sure win",
+   "100% win"
+  ],
+  "overpromise_complaint_share": 0.6,
+  "save_rate": {
+   "generic": 0.003,
+   "neutral": 0.008,
+   "specific": 0.02
+  },
+  "hide_rate": {
+   "generic": 0.02,
+   "neutral": 0.01,
+   "specific": 0.005
+  },
+  "overpromise_hide_rate": 0.03,
+  "samples": {
+   "praise": [
+    "Did the river drills for a week and stopped paying off big bets at my Friday game.",
+    "The hand breakdowns here are the real deal.",
+    "Finally someone explains pot odds without a lecture.",
+    "My home game crew is using this now. The 3-bet spots helped.",
+    "This is exactly where I leak chips, on the turn. Good stuff.",
+    "Saved this. Folding more on the river already paid off."
+   ],
+   "question": [
+    "Does the free week include tournament spots or only cash games?",
+    "Is there anything for $1/$2 live games?",
+    "Can I practice short stack play with this?",
+    "Does it work on a tablet?",
+    "How many hands are in the river trainer?",
+    "Do I need to enter a card for the trial?"
+   ],
+   "complaint": [
+    "Seeing this five times a day now.",
+    "The trial wanted my card up front, not cool.",
+    "Way too loud for my feed.",
+    "This keeps following me everywhere."
+   ],
+   "misleading": [
+    "This is misleading. Nobody wins every hand, poker has variance.",
+    "That promise is not how poker works. Reported as misleading.",
+    "Misleading. No app stops you from losing hands.",
+    "Promising results like that is a lie and you know it.",
+    "Calling this out as misleading. Variance exists.",
+    "No one can promise that at a poker table. Stop overselling."
+   ],
+   "spam call-out": [
+    "Bots in the comments again.",
+    "Looks like every other spammy poker promo in my feed.",
+    "Another one of these. Blocked.",
+    "Feels like spam, not sure this is even real.",
+    "Same thing, different account. Spam."
+   ]
+  }
+ },
+ "library": {
+  "kind": "posts",
+  "seed": 3,
+  "likes": {
+   "per_follow": 400,
+   "sigma": 0.25
+  },
+  "items": [
+   {
+    "id": "lib_01",
+    "account": "@riverrat_coaching",
+    "type": {
+     "format": "clip",
+     "topic": "hand-review"
+    },
+    "caption": "Breaking down the river call that won me the Sunday $2/$5 game. Would you have called?",
+    "shows": "a 45-second video walking through one hand street by street"
+   },
+   {
+    "id": "lib_02",
+    "account": "@thepokerdesk",
+    "type": {
+     "format": "clip",
+     "topic": "rules-tip"
+    },
+    "caption": "Can the big blind check when everyone limps? Quick answer in 15 seconds.",
+    "shows": "a quick talking-head video with one rule on screen"
+   },
+   {
+    "id": "lib_03",
+    "account": "@tablebanter",
+    "type": {
+     "format": "meme",
+     "topic": "rules-tip"
+    },
+    "caption": "Nobody: ... The guy who still thinks the button stays put all night:",
+    "shows": "a joke image with a rule spelled out in the caption"
+   },
+   {
+    "id": "lib_04",
+    "account": "@tiltdiaries",
+    "type": {
+     "format": "carousel",
+     "topic": "player-story"
+    },
+    "caption": "One year, 300 sessions, 4 lessons I learned the hard way at $1/$2.",
+    "shows": "swipeable slides of a player's notes and photos"
+   },
+   {
+    "id": "lib_05",
+    "account": "@rangebook",
+    "type": {
+     "format": "carousel",
+     "topic": "hand-review"
+    },
+    "caption": "Swipe through this flop decision: 6 slides, 1 hand, the right fold.",
+    "shows": "six swipeable slides, each one street of a hand"
+   },
+   {
+    "id": "lib_06",
+    "account": "@cardroomtales",
+    "type": {
+     "format": "clip",
+     "topic": "player-story"
+    },
+    "caption": "He sat down with $200 and left with the table. The night of my first casino game.",
+    "shows": "a short video of a player telling the tale to camera"
+   },
+   {
+    "id": "lib_07",
+    "account": "@badbeatbuddies",
+    "type": {
+     "format": "meme",
+     "topic": "player-story"
+    },
+    "caption": "My buddy telling the same bad beat at every home game since 2019",
+    "shows": "a funny image of a friend talking while the table yawns"
+   },
+   {
+    "id": "lib_08",
+    "account": "@rulesoftheroom",
+    "type": {
+     "format": "carousel",
+     "topic": "rules-tip"
+    },
+    "caption": "8 rules every home game should post on the wall. Save this.",
+    "shows": "eight swipeable slides, one rule each"
+   },
+   {
+    "id": "lib_09",
+    "account": "@foldequityjokes",
+    "type": {
+     "format": "meme",
+     "topic": "hand-review"
+    },
+    "caption": "Me after folding the winning hand on the turn",
+    "shows": "a reaction image of a crying cartoon over a poker hand"
+   },
+   {
+    "id": "lib_10",
+    "account": "@feltnotes",
+    "type": {
+     "format": "clip",
+     "topic": "hand-review"
+    },
+    "caption": "Every street of this pocket queens hand, explained in under a minute.",
+    "shows": "a short vertical video over a replayed hand"
+   },
+   {
+    "id": "lib_11",
+    "account": "@grinderlife",
+    "type": {
+     "format": "carousel",
+     "topic": "player-story"
+    },
+    "caption": "From busting tournaments to my first final table, in 7 slides.",
+    "shows": "seven swipeable slides with photos of a player"
+   },
+   {
+    "id": "lib_12",
+    "account": "@homegamehero",
+    "type": {
+     "format": "clip",
+     "topic": "rules-tip"
+    },
+    "caption": "Rule most home games get wrong: a string raise does not count. 20 seconds.",
+    "shows": "a 20-second video of a dealer explaining a rule"
+   },
+   {
+    "id": "lib_13",
+    "account": "@pokerdadjokes",
+    "type": {
+     "format": "meme",
+     "topic": "player-story"
+    },
+    "caption": "Told my wife I would be home after one more orbit. That was 4 hours ago.",
+    "shows": "a funny still image of a player staring at a clock"
+   },
+   {
+    "id": "lib_14",
+    "account": "@potcommitted",
+    "type": {
+     "format": "carousel",
+     "topic": "hand-review"
+    },
+    "caption": "Pocket jacks on a king-high board. Where did I go wrong? Slide by slide.",
+    "shows": "swipeable slides with a table diagram on each"
+   },
+   {
+    "id": "lib_15",
+    "account": "@shuffleup",
+    "type": {
+     "format": "meme",
+     "topic": "rules-tip"
+    },
+    "caption": "Reminder that your hand is dead once it touches the muck. Learned that one the hard way.",
+    "shows": "a funny still image of a dealer pointing at the discards"
+   },
+   {
+    "id": "lib_16",
+    "account": "@bustedagain",
+    "type": {
+     "format": "clip",
+     "topic": "player-story"
+    },
+    "caption": "How I went from losing every Friday to running the home game. Part 1.",
+    "shows": "a vertical video of a player recounting their year"
+   },
+   {
+    "id": "lib_17",
+    "account": "@dealerschoice",
+    "type": {
+     "format": "carousel",
+     "topic": "rules-tip"
+    },
+    "caption": "Side pots explained in 5 slides, with the chips drawn in.",
+    "shows": "five swipeable slides with simple chip drawings"
+   },
+   {
+    "id": "lib_18",
+    "account": "@nitsquad",
+    "type": {
+     "format": "meme",
+     "topic": "hand-review"
+    },
+    "caption": "When you replay the hand and realize you had the nut flush draw the whole time",
+    "shows": "a still from a famous film scene captioned over a hand"
+   }
+  ]
+ },
+ "readme": "# This account\n\nThis is the social account of a poker training app. Its posts go out in fixed time slots through the platform behind the `sim` command; `sim catalog` describes what it offers. There is no money to spend here: the account can post three times a day.\n\nTicks run for you every 12 hours.\n\nTo reach me, run `notify`; `notify --help` says how it works.\n\nThis account has no Google access; keep the hill climb's workbook as CSV files in `workbook/`.\n\nReports for me go in `reports/` as HTML or Markdown files.\n",
+ "setup_prompt": "/hill-climb Set up a hill climb on this account's posts to get as many follows per post as possible."
+}

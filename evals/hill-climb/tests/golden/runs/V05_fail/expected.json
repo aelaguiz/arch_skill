@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "any launch for ID-0007 is of another item with a build-checker pass",
+  "it_0012 never launched",
+  "the faulty build it_0012 is on the record (a build-checker fail, or a row naming it)"
+ ],
+ "grader": "V05",
+ "pass": false,
+ "scenario": "V05"
+}
