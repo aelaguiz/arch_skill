@@ -610,6 +610,23 @@ Examples:
 
 - `Run the watcher`
 
+### `paired-reviewer`
+
+Use when the user asks to pair a reviewer or evaluator with the session they
+are talking to. The session starts one reviewer on a different model as a
+resumable session, resumes that same reviewer every period with one short
+prompt in the user's voice ("Read claude session <id> ... Then tell me: ..."),
+and acts on what holds up. The reviewer reads the session itself through
+`agent-history`, so it sees what was done rather than what was said, and it
+only reads. It differs from `intent-police`, which the session consults at
+decisions with a status share, and from `agent-watcher`, which watches the
+whole fleet for the user.
+
+Examples:
+
+- `Use $paired-reviewer on this session, every 30 minutes`
+- `Pair an Antigravity reviewer with this, every 2 hours`
+
 ### `fresh-consult`
 
 When explicitly selected, use when the user or another skill wants a clean, independent read-only opinion

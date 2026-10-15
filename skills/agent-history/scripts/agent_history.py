@@ -2123,6 +2123,16 @@ READ_PARSERS = {
 }
 
 
+def cap_keeping_ends(text: str, max_chars: int) -> str:
+    """Cut the middle of long output: tool results end with what matters most
+    (a test summary, an exit status, the error)."""
+    if len(text) <= max_chars:
+        return text
+    head = max_chars * 2 // 3
+    tail = max_chars - head
+    return f"{text[:head]}\n[... {len(text) - max_chars} characters cut ...]\n{text[-tail:]}"
+
+
 def file_newest_first(files: list[SessionFile]) -> list[SessionFile]:
     return sorted(files, key=lambda item: (file_mtime(item.path) or dt.datetime.min.replace(tzinfo=dt.timezone.utc)), reverse=True)
 
@@ -2207,7 +2217,11 @@ def cmd_read(args: argparse.Namespace) -> int:
         scope_note = f"entries after {iso_or_empty(after)}" if after else "every entry"
         handle.write(f"- this file: {scope_note}; long entries are cut\n\n")
         for entry in entries:
-            text, _ = cap_text(entry["text"], READ_CAPS.get(entry["role"], 2000))
+            cap = READ_CAPS.get(entry["role"], 2000)
+            if entry["role"] == "tool result":
+                text = cap_keeping_ends(entry["text"], cap)
+            else:
+                text, _ = cap_text(entry["text"], cap)
             handle.write(f"### {iso_or_empty(entry['ts']) or 'unknown-time'} · {entry['role']}\n\n{text}\n\n")
     write_jsonl(
         run_dir / "entries.jsonl",
@@ -2225,7 +2239,10 @@ def cmd_read(args: argparse.Namespace) -> int:
     print(f"readable copy: {transcript_md}")
     print("")
     for entry in shown:
-        print(f"{iso_or_empty(entry['ts']) or 'unknown-time'} | {entry['role']} | {preview_text(entry['text'], args.max_preview_chars)}")
+        text = entry["text"]
+        if entry["role"] == "tool result":
+            text = cap_keeping_ends(re.sub(r"\s+", " ", text).strip(), args.max_preview_chars)
+        print(f"{iso_or_empty(entry['ts']) or 'unknown-time'} | {entry['role']} | {preview_text(text, args.max_preview_chars + 40)}")
     script = Path(__file__).resolve()
     print("")
     if len(shown) < len(entries):

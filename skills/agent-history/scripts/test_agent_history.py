@@ -849,7 +849,7 @@ def claude_session_rows(session_id: str, project: Path, ask: str) -> list[dict]:
             "sessionId": session_id,
             "cwd": str(project),
             "timestamp": "2026-10-15T11:10:00Z",
-            "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "t1", "content": "23 of 24 scenarios passed", "is_error": True}]},
+            "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "t1", "content": "collected 24 items\n" + "." * 5000 + "\n23 of 24 scenarios passed", "is_error": True}]},
         },
         {"type": "system", "subtype": "compact_boundary", "sessionId": session_id, "timestamp": "2026-10-15T11:20:00Z"},
         {
@@ -918,11 +918,13 @@ class ReadAndHomeDiscoveryTests(unittest.TestCase):
             self.assertNotIn("project rules", out)
             self.assertNotIn("only a reminder", out)
             self.assertIn("| tool call | Bash: python3 run_lab.py | Run the lab", out)
-            self.assertIn("| tool result | error: 23 of 24 scenarios passed", out)
+            # Long tool output keeps its end, where the result is.
+            self.assertRegex(out, r"\| tool result \| error: collected 24 items .*characters cut.*23 of 24 scenarios passed")
             self.assertIn("| compaction | Summary: building the hill-climb skill.", out)
             self.assertIn(f"read {CLAUDE_ID} --after ", out)
             transcript = Path(re.search(r"readable copy: (\S+)", out).group(1)).read_text()
             self.assertIn("Rerunning only the failing scenario.", transcript)
+            self.assertIn("23 of 24 scenarios passed", transcript)
 
             later = self.run_in_home(home, "read", CLAUDE_ID, "--after", "2026-10-15T11:20:00Z", "--output-root", str(home / "runs"))
             self.assertEqual(later.returncode, 0, later.stdout + later.stderr)
