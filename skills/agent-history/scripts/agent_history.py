@@ -22,7 +22,7 @@ import sqlite3
 import sys
 import tempfile
 import urllib.parse
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -77,6 +77,11 @@ class RunContext:
     run_dir: Path | None = None
     truncated: bool = False
     agy_home: Path | None = None
+    # AI Manager keeps one Claude config folder per account and its own Codex
+    # home, so a machine has many homes per runtime. Searches read all of them
+    # unless a single home was passed explicitly.
+    claude_homes: list[Path] = field(default_factory=list)
+    codex_homes: list[Path] = field(default_factory=list)
 
 
 @dataclass
@@ -206,6 +211,40 @@ def same_project(record_cwd: str | None, target_cwd: Path, scope: str) -> bool:
     if record_path == target_path:
         return True
     return record_path in target_path.parents or target_path in record_path.parents
+
+
+def existing_unique_dirs(candidates: Iterable[str | Path | None], store: str) -> list[Path]:
+    """Existing homes, counting two as one when their `store` folder is the same
+    place (AI Manager's Codex home links its sessions back to ~/.codex)."""
+    seen: set[Path] = set()
+    homes: list[Path] = []
+    for candidate in candidates:
+        if not candidate:
+            continue
+        path = Path(candidate).expanduser()
+        if not path.is_dir():
+            continue
+        key = resolve_path(path / store) or path
+        if key in seen:
+            continue
+        seen.add(key)
+        homes.append(path)
+    return homes
+
+
+def default_claude_homes() -> list[Path]:
+    """This session's config folder, the default one, and every AI Manager account folder."""
+    home = Path.home()
+    accounts = sorted((home / ".aimgr" / "claude-homes").glob("*/.claude"))
+    return existing_unique_dirs([os.environ.get("CLAUDE_CONFIG_DIR"), home / ".claude", *accounts], "projects")
+
+
+def default_codex_homes() -> list[Path]:
+    """This session's Codex home, the default one, and the one AI Manager launches into."""
+    home = Path.home()
+    return existing_unique_dirs(
+        [os.environ.get("CODEX_HOME"), home / ".codex", home / ".aimgr" / "codex-cli"], "sessions"
+    )
 
 
 def ensure_run_dir(ctx: RunContext) -> Path:
@@ -422,6 +461,9 @@ def print_summary(
             f"showing {len(visible)}; run={run_dir}"
         )
     else:
+        homes = {"claude": ctx.claude_homes, "codex": ctx.codex_homes}.get(ctx.runtime or "", [])
+        if homes:
+            searched = f"{searched} in {len(homes)} {ctx.runtime} home{'s' if len(homes) != 1 else ''}"
         print(f"NO_MATCH agent-history {ctx.command}: searched {searched}; run={run_dir}")
 
     for result in visible:
@@ -527,7 +569,15 @@ def codex_rollout_paths(
         root = home / root_name
         if root.exists():
             discovered.extend(root.rglob("rollout-*.jsonl"))
-    return sorted(set(discovered))
+    return sorted(set(path for path in discovered if written_in_window(path, ctx.window)))
+
+
+def written_in_window(path: Path, window: TimeWindow | None) -> bool:
+    """A transcript last written before the window opened cannot hold a match."""
+    if window is None:
+        return True
+    mtime = file_mtime(path)
+    return mtime is None or mtime >= window.since
 
 
 def collect_codex_sessions(ctx: RunContext) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
@@ -874,7 +924,11 @@ def collect_claude_project_records(
     mode: str,
     matcher: Any | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    files = claude_project_files(ctx.claude_home, ctx.include_sidechains)
+    files = [
+        path
+        for path in claude_project_files(ctx.claude_home, ctx.include_sidechains)
+        if written_in_window(path, ctx.window)
+    ]
     sources = [{"name": "claude_project_jsonl", "path": str(path)} for path in files]
     results: list[dict[str, Any]] = []
     sessions: dict[str, dict[str, Any]] = {}
@@ -1656,13 +1710,50 @@ def build_matcher(args: argparse.Namespace) -> Any:
     return lambda text: any(term in (text or "").lower() for term in lowered)
 
 
+def dedupe_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Drop exact repeats, which appear when a transcript was copied between account homes."""
+    seen: set[tuple[Any, ...]] = set()
+    kept: list[dict[str, Any]] = []
+    for result in results:
+        key = (
+            result.get("kind"),
+            result.get("session_id") or result.get("thread_id"),
+            result.get("timestamp"),
+            result.get("text"),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        kept.append(result)
+    return kept
+
+
+def collect_across_homes(
+    ctx: RunContext,
+    home_field: str,
+    homes: list[Path],
+    collector: Any,
+    mode: str,
+    matcher: Any | None,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    results: list[dict[str, Any]] = []
+    sources: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+    for home in homes:
+        home_results, home_sources, home_errors = collector(replace(ctx, **{home_field: home}), mode, matcher=matcher)
+        results.extend(home_results)
+        sources.extend(home_sources)
+        errors.extend(home_errors)
+    return sort_results(dedupe_results(results)), sources, errors
+
+
 def execute_search_command(args: argparse.Namespace) -> int:
     ctx = context_from_args(args, command=args.command)
     matcher = build_matcher(args) if args.command == "search" else None
     if ctx.runtime == "codex":
-        results, sources, errors = collect_codex(ctx, args.command, matcher=matcher)
+        results, sources, errors = collect_across_homes(ctx, "codex_home", ctx.codex_homes, collect_codex, args.command, matcher)
     elif ctx.runtime == "claude":
-        results, sources, errors = collect_claude(ctx, args.command, matcher=matcher)
+        results, sources, errors = collect_across_homes(ctx, "claude_home", ctx.claude_homes, collect_claude, args.command, matcher)
     elif ctx.runtime in {"pi", "prime"}:
         results, sources, errors = collect_pi_prime(ctx, args.command, matcher=matcher)
     elif ctx.runtime == "agy":
@@ -1687,9 +1778,10 @@ def rebuild_args_for_next_page(args: argparse.Namespace) -> list[str]:
         pieces.extend(["--until", args.until])
     if args.include_sidechains:
         pieces.append("--include-sidechains")
+    for flag, value in (("--codex-home", args.codex_home), ("--claude-home", args.claude_home)):
+        if value:
+            pieces.extend([flag, str(value)])
     for flag, value, default in (
-        ("--codex-home", args.codex_home, Path.home() / ".codex"),
-        ("--claude-home", args.claude_home, Path.home() / ".claude"),
         ("--pi-home", args.pi_home, Path.home() / ".pi"),
         ("--prime-home", args.prime_home, Path.home() / ".prime"),
         ("--agy-home", args.agy_home, Path.home() / ".gemini" / "antigravity-cli"),
@@ -1703,10 +1795,18 @@ def rebuild_args_for_next_page(args: argparse.Namespace) -> list[str]:
     return pieces
 
 
+def homes_from_args(args: argparse.Namespace) -> tuple[list[Path], list[Path]]:
+    """An explicit home narrows the search to that folder; otherwise every known home is read."""
+    claude = [Path(args.claude_home).expanduser()] if args.claude_home else default_claude_homes()
+    codex = [Path(args.codex_home).expanduser()] if args.codex_home else default_codex_homes()
+    return claude, codex
+
+
 def context_from_args(args: argparse.Namespace, *, command: str) -> RunContext:
     now = local_now()
     since = parse_time_value(args.since, default=now - dt.timedelta(hours=24))
     until = parse_time_value(args.until, default=now)
+    claude_homes, codex_homes = homes_from_args(args)
     return RunContext(
         command=command,
         runtime=args.runtime,
@@ -1714,8 +1814,10 @@ def context_from_args(args: argparse.Namespace, *, command: str) -> RunContext:
         scope=args.scope,
         window=TimeWindow(since=since, until=until),
         output_root=Path(args.output_root).expanduser(),
-        codex_home=Path(args.codex_home).expanduser(),
-        claude_home=Path(args.claude_home).expanduser(),
+        codex_home=codex_homes[0] if codex_homes else Path.home() / ".codex",
+        claude_home=claude_homes[0] if claude_homes else Path.home() / ".claude",
+        claude_homes=claude_homes,
+        codex_homes=codex_homes,
         pi_home=Path(args.pi_home).expanduser(),
         prime_home=Path(args.prime_home).expanduser(),
         limit=args.limit,
@@ -1770,6 +1872,369 @@ def cmd_show(args: argparse.Namespace) -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------
+# read: open one session by id and show what happened in it, in order.
+# ---------------------------------------------------------------------------
+
+READ_RUNTIMES = ("claude", "codex", "agy", "prime", "pi")
+READ_DEFAULT_LAST = 40
+READ_PREVIEW_CHARS = 300
+# How much of each entry the readable transcript keeps. Tool output is the
+# bulk of most sessions and is rarely needed whole to follow what happened.
+READ_CAPS = {
+    "user": 6000,
+    "assistant": 4000,
+    "compaction": 8000,
+    "tool call": 1500,
+    "tool result": 1500,
+    "context": 600,
+}
+UUID_AT_END = re.compile(r"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\.jsonl$")
+SYSTEM_REMINDER_RE = re.compile(r"<system-reminder>.*?</system-reminder>", re.DOTALL)
+CODEX_CONTEXT_PREFIXES = ("<environment_context>", "<user_instructions>", "<INSTRUCTIONS>", "# AGENTS.md", "<permissions")
+TOOL_INPUT_KEYS = ("command", "cmd", "file_path", "path", "pattern", "url", "query", "skill", "description", "prompt")
+
+
+@dataclass
+class SessionFile:
+    runtime: str
+    session_id: str
+    path: Path
+
+
+def find_session_files(args: argparse.Namespace, ident: str, runtimes: Iterable[str]) -> tuple[list[SessionFile], list[str]]:
+    """Find transcripts whose session id starts with `ident`, by file name only."""
+    claude_homes, codex_homes = homes_from_args(args)
+    found: list[SessionFile] = []
+    searched: list[str] = []
+    wanted = ident.lower()
+    for runtime in runtimes:
+        if runtime == "claude":
+            searched.append(f"{len(claude_homes)} Claude homes")
+            for home in claude_homes:
+                for path in (home / "projects").glob(f"*/{ident}*.jsonl"):
+                    found.append(SessionFile("claude", path.stem, path))
+        elif runtime == "codex":
+            searched.append(f"{len(codex_homes)} Codex homes")
+            for home in codex_homes:
+                candidates = list((home / "sessions").glob(f"*/*/*/rollout-*{ident}*.jsonl"))
+                candidates += list((home / "archived_sessions").glob(f"rollout-*{ident}*.jsonl"))
+                for path in candidates:
+                    match = UUID_AT_END.search(path.name)
+                    if match and match.group(1).lower().startswith(wanted):
+                        found.append(SessionFile("codex", match.group(1), path))
+        elif runtime == "agy":
+            home = Path(args.agy_home).expanduser()
+            searched.append("Antigravity")
+            for folder in (home / "brain").glob(f"{ident}*"):
+                logs = folder / ".system_generated" / "logs"
+                transcript = logs / "transcript_full.jsonl"
+                if not transcript.exists():
+                    transcript = logs / "transcript.jsonl"
+                if transcript.exists():
+                    found.append(SessionFile("agy", folder.name, transcript))
+        elif runtime == "prime":
+            searched.append("Prime")
+            for path in (Path(args.prime_home).expanduser() / "agent" / "sessions").glob(f"{ident}*.jsonl"):
+                if SESSION_UUID_NAME.match(path.name):
+                    found.append(SessionFile("prime", path.stem, path))
+        elif runtime == "pi":
+            searched.append("Pi")
+            for path in (Path(args.pi_home).expanduser() / "agent" / "sessions").glob(f"*/*_{ident}*.jsonl"):
+                match = UUID_AT_END.search(path.name)
+                if match and PI_SESSION_NAME.match(path.name):
+                    found.append(SessionFile("pi", match.group(1), path))
+    return found, searched
+
+
+def tool_input_summary(name: str, payload: Any) -> str:
+    if isinstance(payload, str):
+        try:
+            payload = json.loads(payload)
+        except json.JSONDecodeError:
+            return f"{name}: {payload}"
+    if isinstance(payload, dict):
+        picked = [str(payload[key]) for key in TOOL_INPUT_KEYS if isinstance(payload.get(key), (str, list)) and payload.get(key)]
+        if picked:
+            return f"{name}: " + " | ".join(" ".join(p) if isinstance(p, list) else p for p in picked)
+        return f"{name}: {json.dumps(payload, sort_keys=True, default=str)}"
+    return f"{name}: {payload}" if payload is not None else name
+
+
+class EntryLog:
+    def __init__(self) -> None:
+        self.entries: list[dict[str, Any]] = []
+        self.meta: dict[str, Any] = {"cwd": "", "title": ""}
+
+    def add(self, ts: dt.datetime | None, role: str, text: str, line: int | None) -> None:
+        text = (text or "").strip()
+        if text:
+            self.entries.append({"ts": ts, "role": role, "text": text, "line": line})
+
+    def note_cwd(self, cwd: Any) -> None:
+        if cwd and not self.meta["cwd"]:
+            self.meta["cwd"] = str(cwd)
+
+
+def claude_entries(path: Path, errors: list[dict[str, Any]]) -> EntryLog:
+    log = EntryLog()
+    for line_no, row in read_jsonl(path, errors):
+        record_type = str(row.get("type") or "")
+        ts = parse_timestamp(row.get("timestamp"))
+        log.note_cwd(row.get("cwd"))
+        if record_type in {"custom-title", "ai-title"}:
+            log.meta["title"] = row.get("customTitle") or row.get("aiTitle") or log.meta["title"]
+            continue
+        if record_type == "system" and row.get("subtype") == "compact_boundary":
+            log.add(ts, "compaction", "context compacted", line_no)
+            continue
+        if record_type not in {"user", "assistant"}:
+            continue
+        message = row.get("message") if isinstance(row.get("message"), dict) else {}
+        content = message.get("content")
+        if row.get("isCompactSummary"):
+            log.add(ts, "compaction", content_to_text(content), line_no)
+            continue
+        speaker = "user" if record_type == "user" else "assistant"
+        if row.get("isMeta"):
+            speaker = "context"
+        blocks = [{"type": "text", "text": content}] if isinstance(content, str) else content
+        for block in blocks if isinstance(blocks, list) else []:
+            if not isinstance(block, dict):
+                continue
+            block_type = block.get("type")
+            if block_type == "text":
+                text = str(block.get("text") or "")
+                if speaker == "user":
+                    text = SYSTEM_REMINDER_RE.sub("", text)
+                log.add(ts, speaker, text, line_no)
+            elif block_type == "tool_use":
+                log.add(ts, "tool call", tool_input_summary(str(block.get("name") or "tool"), block.get("input")), line_no)
+            elif block_type == "tool_result":
+                text = content_to_text(block.get("content"))
+                log.add(ts, "tool result", f"error: {text}" if block.get("is_error") else text, line_no)
+    return log
+
+
+def codex_output_text(output: Any) -> str:
+    if isinstance(output, str):
+        try:
+            parsed = json.loads(output)
+        except json.JSONDecodeError:
+            return output
+        if isinstance(parsed, dict) and isinstance(parsed.get("output"), str):
+            return parsed["output"]
+        return output
+    if isinstance(output, dict):
+        return str(output.get("output") or output.get("content") or json.dumps(output, default=str))
+    return content_to_text(output)
+
+
+def codex_entries(path: Path, errors: list[dict[str, Any]]) -> EntryLog:
+    log = EntryLog()
+    for line_no, row in read_jsonl(path, errors):
+        ts = parse_timestamp(row.get("timestamp"))
+        row_type = row.get("type")
+        payload = row.get("payload") if isinstance(row.get("payload"), dict) else {}
+        if row_type == "session_meta":
+            log.note_cwd(payload.get("cwd"))
+            continue
+        if row_type == "compacted":
+            log.add(ts, "compaction", str(payload.get("message") or "context compacted"), line_no)
+            continue
+        if row_type != "response_item":
+            continue
+        payload_type = payload.get("type")
+        if payload_type == "message":
+            role = str(payload.get("role") or "")
+            text = content_to_text(payload.get("content"))
+            if role == "user":
+                log.add(ts, "context" if text.lstrip().startswith(CODEX_CONTEXT_PREFIXES) else "user", text, line_no)
+            elif role == "assistant":
+                log.add(ts, "assistant", text, line_no)
+            else:
+                log.add(ts, "context", text, line_no)
+        elif payload_type in {"function_call", "custom_tool_call"}:
+            name = str(payload.get("name") or "tool")
+            log.add(ts, "tool call", tool_input_summary(name, payload.get("arguments", payload.get("input"))), line_no)
+        elif payload_type == "local_shell_call":
+            action = payload.get("action") if isinstance(payload.get("action"), dict) else {}
+            log.add(ts, "tool call", tool_input_summary("shell", action), line_no)
+        elif payload_type in {"function_call_output", "custom_tool_call_output", "local_shell_call_output"}:
+            log.add(ts, "tool result", codex_output_text(payload.get("output")), line_no)
+        elif payload_type == "web_search_call":
+            log.add(ts, "tool call", tool_input_summary("web_search", payload.get("action")), line_no)
+    return log
+
+
+def agy_entries(path: Path, errors: list[dict[str, Any]]) -> EntryLog:
+    log = EntryLog()
+    for line_no, step in read_jsonl(path, errors):
+        ts = parse_timestamp(step.get("created_at"))
+        step_type = str(step.get("type") or "")
+        content = str(step.get("content") or "")
+        if step_type == "USER_INPUT":
+            log.add(ts, "user", agy_user_text(content), line_no)
+        elif step_type == "PLANNER_RESPONSE":
+            log.add(ts, "assistant", content, line_no)
+            for call in step.get("tool_calls") or []:
+                if isinstance(call, dict):
+                    log.add(ts, "tool call", agy_tool_call_text(call).replace("\n", " | "), line_no)
+        elif step_type == "GENERIC":
+            log.add(ts, "tool result", content, line_no)
+        elif step_type == "SYSTEM_MESSAGE":
+            log.add(ts, "context", content, line_no)
+    return log
+
+
+def pi_prime_entries(path: Path, errors: list[dict[str, Any]]) -> EntryLog:
+    log = EntryLog()
+    for line_no, row in read_jsonl(path, errors):
+        row_type = str(row.get("type") or "")
+        ts = parse_timestamp(row.get("timestamp"))
+        if row_type == "session":
+            log.note_cwd(row.get("cwd"))
+        elif row_type == "session_info":
+            log.meta["title"] = str(row.get("name") or log.meta["title"])
+        elif row_type == "compaction":
+            log.add(ts, "compaction", str(row.get("summary") or "context compacted"), line_no)
+        elif row_type == "message":
+            message = row.get("message") if isinstance(row.get("message"), dict) else {}
+            role = str(message.get("role") or "")
+            content = message.get("content")
+            if role in {"toolResult", "tool"}:
+                log.add(ts, "tool result", session_message_text(content), line_no)
+                continue
+            log.add(ts, "user" if role == "user" else "assistant", session_message_text(content, text_only=True), line_no)
+            for block in content if isinstance(content, list) else []:
+                if isinstance(block, dict) and block.get("type") == "toolCall":
+                    log.add(ts, "tool call", tool_input_summary(str(block.get("name") or "tool"), block.get("arguments")), line_no)
+        elif row_type == "custom_message" and row.get("customType") == "agent_message":
+            log.add(ts, "context", session_message_text(row.get("content")), line_no)
+    return log
+
+
+READ_PARSERS = {
+    "claude": claude_entries,
+    "codex": codex_entries,
+    "agy": agy_entries,
+    "prime": pi_prime_entries,
+    "pi": pi_prime_entries,
+}
+
+
+def file_newest_first(files: list[SessionFile]) -> list[SessionFile]:
+    return sorted(files, key=lambda item: (file_mtime(item.path) or dt.datetime.min.replace(tzinfo=dt.timezone.utc)), reverse=True)
+
+
+def cmd_read(args: argparse.Namespace) -> int:
+    ident = args.session.strip()
+    if len(ident) < 8 or not re.fullmatch(r"[0-9A-Za-z-]+", ident):
+        raise HistoryError("give the session id, or at least its first 8 characters")
+    runtimes = [args.runtime] if args.runtime else list(READ_RUNTIMES)
+    found, searched = find_session_files(args, ident, runtimes)
+    by_id: dict[tuple[str, str], list[SessionFile]] = {}
+    for item in found:
+        by_id.setdefault((item.runtime, item.session_id), []).append(item)
+
+    if not by_id:
+        print(f"NO_MATCH agent-history read: no session id starting {ident} in {', '.join(searched)} on this machine")
+        return 1
+    if len(by_id) > 1:
+        print(f"ERROR agent-history read: {len(by_id)} sessions start with {ident}; give more of the id")
+        for (runtime, session_id), files in list(by_id.items())[:10]:
+            print(f"{runtime} | {session_id} | {file_newest_first(files)[0].path}")
+        return 2
+
+    (runtime, session_id), files = next(iter(by_id.items()))
+    ordered = file_newest_first(files)
+    chosen = ordered[0]
+    errors: list[dict[str, Any]] = []
+    log = READ_PARSERS[runtime](chosen.path, errors)
+    if runtime == "agy":
+        info = agy_conversations(Path(args.agy_home).expanduser(), errors).get(session_id, {})
+        log.meta["title"] = log.meta["title"] or info.get("title", "")
+        log.note_cwd(info.get("cwd"))
+
+    # An entry without its own time (some tool output) belongs to the entry before it.
+    last_ts: dt.datetime | None = None
+    for entry in log.entries:
+        entry["ts"] = entry["ts"] or last_ts
+        last_ts = entry["ts"]
+
+    entries = log.entries
+    after = parse_time_value(args.after) if args.after else None
+    if after is not None:
+        # Times print to the second, so compare at that precision or the last
+        # entry of the previous read comes back again.
+        entries = [entry for entry in entries if entry["ts"] is not None and entry["ts"].replace(microsecond=0) > after]
+    shown = entries[-args.last :] if args.last > 0 else entries
+
+    ctx = RunContext(
+        command="read",
+        runtime=runtime,
+        cwd=Path(os.getcwd()),
+        scope="session",
+        window=None,
+        output_root=Path(args.output_root).expanduser(),
+        codex_home=Path.home(),
+        claude_home=Path.home(),
+        pi_home=Path.home(),
+        prime_home=Path.home(),
+        limit=args.last,
+        page=1,
+        max_preview_chars=args.max_preview_chars,
+        fmt="summary",
+        include_sidechains=False,
+    )
+    run_dir = ensure_run_dir(ctx)
+    first_ts = next((e["ts"] for e in log.entries if e["ts"]), None)
+    activity = f"{iso_or_empty(first_ts) or 'unknown'} to {iso_or_empty(last_ts) or 'unknown'}"
+    header = [
+        f"session: {runtime} {session_id}",
+        f"title: {log.meta['title'] or '-'}",
+        f"project: {log.meta['cwd'] or '-'}",
+        f"activity: {activity}",
+        f"transcript: {chosen.path}",
+    ]
+    if len(ordered) > 1:
+        header.append("older copies: " + ", ".join(str(item.path) for item in ordered[1:]))
+
+    transcript_md = run_dir / "transcript.md"
+    with transcript_md.open("w", encoding="utf-8") as handle:
+        handle.write(f"# {runtime} session {session_id}\n\n")
+        handle.write("\n".join(f"- {line}" for line in header[1:]) + "\n")
+        scope_note = f"entries after {iso_or_empty(after)}" if after else "every entry"
+        handle.write(f"- this file: {scope_note}; long entries are cut\n\n")
+        for entry in entries:
+            text, _ = cap_text(entry["text"], READ_CAPS.get(entry["role"], 2000))
+            handle.write(f"### {iso_or_empty(entry['ts']) or 'unknown-time'} · {entry['role']}\n\n{text}\n\n")
+    write_jsonl(
+        run_dir / "entries.jsonl",
+        [dict(entry, ts=iso_or_empty(entry["ts"]), text=cap_text(entry["text"])[0]) for entry in entries],
+    )
+    write_jsonl(run_dir / "errors.jsonl", errors)
+
+    span = f" after {iso_or_empty(after)}" if after else ""
+    print(
+        f"OK agent-history read: {len(entries)} entries{span}; showing the last {len(shown)}; "
+        f"run={run_dir}"
+    )
+    for line in header:
+        print(line)
+    print(f"readable copy: {transcript_md}")
+    print("")
+    for entry in shown:
+        print(f"{iso_or_empty(entry['ts']) or 'unknown-time'} | {entry['role']} | {preview_text(entry['text'], args.max_preview_chars)}")
+    script = Path(__file__).resolve()
+    print("")
+    if len(shown) < len(entries):
+        print(f"earlier entries: {transcript_md}")
+    if last_ts is not None:
+        print(f"next time: python3 {script} read {session_id} --after {iso_or_empty(last_ts)}")
+    return 0
+
+
 def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--runtime", required=True, choices=("codex", "claude", "pi", "prime", "agy"))
     parser.add_argument("--cwd", default=os.getcwd())
@@ -1782,9 +2247,14 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--page", type=int, default=1)
     parser.add_argument("--format", default="summary", choices=("summary", "jsonl"))
     parser.add_argument("--max-preview-chars", type=int, default=DEFAULT_PREVIEW_CHARS)
+    add_home_options(parser)
+
+
+def add_home_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--output-root", default=str(Path(tempfile.gettempdir()) / "agent-history"))
-    parser.add_argument("--codex-home", default=str(Path.home() / ".codex"))
-    parser.add_argument("--claude-home", default=str(Path.home() / ".claude"))
+    # No default: without the flag, every Codex or Claude home on the machine is read.
+    parser.add_argument("--codex-home", default=None, help="read only this Codex home")
+    parser.add_argument("--claude-home", default=None, help="read only this Claude config folder")
     parser.add_argument("--pi-home", default=str(Path.home() / ".pi"))
     parser.add_argument("--prime-home", default=str(Path.home() / ".prime"))
     parser.add_argument("--agy-home", default=str(Path.home() / ".gemini" / "antigravity-cli"))
@@ -1802,6 +2272,15 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("query", nargs="*")
     search.add_argument("--regex", default=None)
     search.set_defaults(func=execute_search_command)
+
+    read = sub.add_parser("read", help="open one session by its id or id prefix and show what happened in it")
+    read.add_argument("session", help="session or thread id, or at least its first 8 characters")
+    read.add_argument("--runtime", default=None, choices=READ_RUNTIMES, help="look only in this runtime")
+    read.add_argument("--after", default=None, help="only entries after this time, e.g. the 'next time' value of the last read")
+    read.add_argument("--last", type=int, default=READ_DEFAULT_LAST, help="entries to print; 0 prints all")
+    read.add_argument("--max-preview-chars", type=int, default=READ_PREVIEW_CHARS)
+    add_home_options(read)
+    read.set_defaults(func=cmd_read)
 
     show = sub.add_parser("show")
     show.add_argument("--run", required=True)

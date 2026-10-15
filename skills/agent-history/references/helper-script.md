@@ -14,10 +14,11 @@ evidence, and writes the answer.
 The helper is self-contained Python and uses only the standard library. It has
 no runtime package dependencies.
 
-Run it with:
+Run it from the skill's own folder:
 
 ```bash
-python3 skills/agent-history/scripts/agent_history.py <command> --runtime <codex|claude|pi|prime|agy>
+python3 <this skill>/scripts/agent_history.py read <session id>
+python3 <this skill>/scripts/agent_history.py <command> --runtime <codex|claude|pi|prime|agy>
 ```
 
 If a future version needs non-stdlib dependencies, it must carry them in a PEP
@@ -26,6 +27,8 @@ agent does not have to figure out dependencies.
 
 ## Commands
 
+- `read <session id>`: open one session by its id, or the first 8 or more
+  characters of it, and show what happened in it in order. See below.
 - `sessions`: list candidate sessions for a runtime, cwd, and time window.
 - `prompts`: extract submitted/user prompts.
 - `commands`: extract slash/TUI command evidence.
@@ -34,10 +37,64 @@ agent does not have to figure out dependencies.
   agent-chosen terms or regex.
 - `show`: show bounded detail for one result id from a prior run artifact.
 
+## `read`
+
+```text
+OK agent-history read: <N> entries[ after <time>]; showing the last <M>; run=<run_dir>
+session: <runtime> <full id>
+title: <title or ->
+project: <cwd>
+activity: <first time> to <last time>
+transcript: <path of the copy that was read>
+older copies: <other paths>            (only when copies exist)
+readable copy: <run_dir>/transcript.md
+
+<time> | <user|assistant|tool call|tool result|compaction|context> | <preview>
+...
+
+earlier entries: <run_dir>/transcript.md
+next time: python3 <script> read <full id> --after <last time>
+```
+
+- The id is matched against transcript file and folder names, so the lookup
+  does not read any transcript but the one it opens. With no `--runtime` it
+  looks in every runtime; a prefix that matches several sessions prints them
+  and exits 2; no match prints `NO_MATCH` with what was searched and exits 1.
+- When AI Manager left copies of one session in several account folders, the
+  most recently written copy is read and the others are listed.
+- `context` entries are text the runtime injected rather than anyone typing
+  it: Codex environment and instruction blocks, Claude meta messages. Claude
+  `<system-reminder>` blocks are removed from user turns. Reasoning and
+  thinking blocks are left out.
+- `--after <time>` keeps entries after that time, compared to the second.
+  `--last <n>` sets how many entries print (default 40; `0` prints all).
+  `--max-preview-chars` sets each printed line's length (default 300).
+- The run folder holds `transcript.md` (every entry, or every entry after
+  `--after`, with long entries cut: tool calls and results at 1,500
+  characters, replies at 4,000, prompts at 6,000, compaction summaries at
+  8,000), `entries.jsonl`, and `errors.jsonl`.
+- `--claude-home`, `--codex-home`, `--agy-home`, `--prime-home`, `--pi-home`,
+  and `--output-root` work as they do for the search commands.
+
+## Homes
+
+Claude and Codex searches, and `read`, use every home they can find unless one
+is passed explicitly:
+
+- Claude: `$CLAUDE_CONFIG_DIR`, `~/.claude`, and every
+  `~/.aimgr/claude-homes/<account>/.claude` (AI Manager keeps one per
+  account).
+- Codex: `$CODEX_HOME`, `~/.codex`, and `~/.aimgr/codex-cli`. Two homes whose
+  `sessions` folder is the same place count once.
+
+`--claude-home <path>` or `--codex-home <path>` narrows the search to that one
+home. Exact duplicate results from copied transcripts are shown once. A
+transcript last written before `--since` is skipped without being read.
+
 ## Shared Options
 
 - `--runtime codex|claude|pi|prime|agy`: required for all search commands. Use the
-  current runtime by default.
+  current runtime by default. Optional for `read`.
 - `--cwd <path>`: default is the process cwd.
 - `--scope current-project|all-projects`: default is `current-project`.
 - `--since <time>`: default is `24h`; accepts relative durations, ISO dates,
@@ -52,8 +109,10 @@ agent does not have to figure out dependencies.
 - `--format summary|jsonl`: default `summary`.
 - `--max-preview-chars <n>`: default bounded preview.
 - `--output-root <path>`: default `/tmp/agent-history`.
-- `--codex-home`, `--claude-home`, `--pi-home`, `--prime-home`,
-  `--agy-home` (default `~/.gemini/antigravity-cli`): test or alternate homes.
+- `--codex-home`, `--claude-home`: read only that one home instead of every
+  home (see Homes).
+- `--pi-home`, `--prime-home`, `--agy-home` (default
+  `~/.gemini/antigravity-cli`): alternate homes.
 
 `search` also accepts positional query terms and `--regex`.
 
