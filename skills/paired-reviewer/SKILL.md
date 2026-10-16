@@ -15,8 +15,8 @@ did, sees it. Your job here is to start that reviewer, ask it again on time,
 and act on what it finds that holds up. You stay in charge of every decision;
 the user's own words stay the only authority on what the work is for.
 
-Run this only when the user selects it. The reviewer only reads; it never
-edits, changes state, or starts other agents.
+Run this only when the user selects it. The reviewer only reads and keeps its
+own notes; it never edits the work, changes state, or starts other agents.
 
 ## Start the reviewer
 
@@ -32,13 +32,20 @@ fresh, resumable external session with the command shapes in
 and "Resume" sections for your reviewer's runtime (for Antigravity, "agy
 Fresh" and "agy Resume"). Run it from your working folder. Send it the
 prompt below with your own session id: in Claude Code it is
-`$CLAUDE_CODE_SESSION_ID`, in Codex `$CODEX_THREAD_ID`.
+`$CLAUDE_CODE_SESSION_ID`, in Codex `$CODEX_THREAD_ID`. Give it a notes file
+outside your working tree, somewhere that lasts as long as the work, and send
+the same path at every check-in.
+
+Start it as soon as there is something to review, not one period from now.
+That is usually right away: a user who asks for a reviewer partway through a
+session already has work on the page. If the session has only just begun,
+start it once you have a plan or a first result for it to read.
 
 Write one line where you will find it after a compaction or a restart, in the
 plan or run notes you already keep: the reviewer's runtime, model,
-conversation id and working folder, your check-in period, and your own
-session id at the start. Without it, a compacted you starts a second reviewer
-that knows nothing.
+conversation id, working folder and notes file, your check-in period, and your
+own session id at the start. Without it, a compacted you starts a second
+reviewer that knows nothing.
 
 ## The prompt
 
@@ -56,13 +63,21 @@ Send exactly this, filling only the brackets:
 >
 > [One line for this kind of work.]
 >
-> Critically evaluate it; don't just report back what it's doing. Give me your full analysis. Only read; don't change anything.
+> Keep notes in [notes file]. Start from them each time: read what they say you haven't read yet and what's happened since. Add to them as you go, not at the end: what you've read, what you couldn't read, what you found and where. If you lose your context, your notes are all you'll have.
+>
+> Critically evaluate it; don't just report back what it's doing. Give me your full analysis. Only read; don't change anything except your notes.
 
 The prompt is in the user's voice and about "it" because the reviewer works
 for the user, not for you. It is short because the reviewer's job is to read
 the session: the id is all the briefing it needs. Do not add your summary of
 the goal, your status, or a narrower question; any of those puts your framing
 in the reviewer's head, which is the thing it exists to be free of.
+
+The notes are there because a long session does not fit in the reviewer's
+context. When its harness compacts that context, what it read is gone, and a
+reviewer writing from a summary fills the gaps with details that sound right
+and are not there. Its notes are what it picks up from after a compaction and
+at every check-in.
 
 The one line for the kind of work is a question the user would ask about this
 work, in the user's words. Some the user has asked:
@@ -79,10 +94,10 @@ work, in the user's words. Some the user has asked:
 
 ## Check in on time
 
-Every period while you are working, resume that same reviewer with the same
-prompt and your current session id. The period is the user's number; with
-none, 30 minutes. Run the check-in in the background and keep working; while
-there is work to do, never sit waiting for a review.
+After the first review, every period while you are working, resume that same
+reviewer with the same prompt and your current session id. The period is the
+user's number; with none, 30 minutes. Run the check-in in the background and
+keep working; while there is work to do, never sit waiting for a review.
 
 - In Claude Code, a background shell command that waits out the period and
   then runs the resume wakes you when it finishes; arm the next one when you
@@ -129,10 +144,10 @@ for, the user's words decide.
 
 A reviewer whose answers turn into summaries of your logs, repeat the last
 review, come back garbled, or will not resume has stopped helping. Start a
-fresh one with the same prompt and update your notes. If you have moved
-accounts since the work began, a fresh reviewer sees only what your session
-carried over, so also give it the session id you started with; that is where
-the user's original ask is.
+fresh one with the same prompt and a new notes file, and update your notes.
+If you have moved accounts since the work began, a fresh reviewer sees only
+what your session carried over, so also give it the session id you started
+with; that is where the user's original ask is.
 
 ## Finish
 

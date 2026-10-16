@@ -630,11 +630,13 @@ Examples:
 
 Use when the user asks to pair a reviewer or evaluator with the session they
 are talking to. The session starts one reviewer on a different model as a
-resumable session, resumes that same reviewer every period with one short
+resumable session as soon as there is work to review, then resumes that same
+reviewer every period with one short
 prompt in the user's voice ("Read claude session <id> ... Then tell me: ..."),
 and acts on what holds up. The reviewer reads the session itself through
-`agent-history`, so it sees what was done rather than what was said, and it
-only reads. It differs from `intent-police`, which the session consults at
+`agent-history`, so it sees what was done rather than what was said. It only
+reads, and keeps notes as it goes so a long session or a compaction does not
+cost it what it read. It differs from `intent-police`, which the session consults at
 decisions with a status share, and from `agent-watcher`, which watches the
 whole fleet for the user.
 
