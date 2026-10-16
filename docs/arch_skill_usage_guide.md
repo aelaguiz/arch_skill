@@ -376,17 +376,22 @@ When explicitly selected, use when the work is a quantified investigation with r
 
 ### `hill-climb`
 
-When explicitly selected, use to set up, adopt or run a long-running hill climb that spends a budget to keep improving one
-number (cost per install, conversions, follows). It researches competitors and inspiration before the first test, draws
-every idea from that research, has fresh one-job agents check each plan, build, quality and result, weighs what people
-say about live items beside the numbers, keeps how each item was made so variations are cut from their parents, believes
-a lesson only after a rerun, never stops exploring, sends progress reports on a schedule that ask nothing, and asks the
-owner only for more money. It is not for a one-off analysis or a single A/B readout. Installed for Claude Code and
-Codex.
+When explicitly selected, use to start, import or run a long-running hill climb that spends a budget to keep improving
+one number (cost per install, conversions, follows). A new or imported climb starts with an intake that interviews the
+owner one question at a time: what the climb is for, how much of the earlier work to use, what counts as success, what it
+may spend and change, what it must never do, what creatives are made from and what can never be wrong in them. It then
+researches what the interview raised (competitors and inspiration, how to see one item's effect, how a fair test runs on
+the platform, the tools that make good items now, everything an item can vary on), checks it understood with made-up
+outcomes, and plays the design back for the owner's sign-off before it spends anything. After that it draws every idea
+from that research, makes each creative from what inspired it, has fresh one-job agents check each plan, build, quality
+and result, weighs what people say about live items beside the numbers, keeps how each item was made so variations are
+cut from their parents, believes a lesson only after a rerun, never stops exploring, sends progress reports on a
+schedule that ask nothing, and asks the owner only for more money. It is not for a one-off analysis or a single A/B
+readout. Installed for Claude Code and Codex.
 
 Examples:
 
-- `Use $hill-climb to set up a hill climb on this ad account to get the cost of a sign-up down. You have $2,000.`
+- `Use $hill-climb to start a hill climb on this ad account to get the cost of a sign-up down. You have $2,000.`
 - `/hill-climb Run the tick.`
 - `Use $hill-climb to take over the hill climb tracked in this spreadsheet.`
 

@@ -35,6 +35,12 @@ def have(module):
 HAVE_SIM = have("sim.world") and have("fixtures")
 
 
+# Retired (CHANGES.md, 2026-10-15, the intake round): V19, V20 and V29 now grade a multi-session intake interview
+# against a simulated owner; these one-session golden runs, built around the old no-question setup, no longer fit
+# them. tests/test_intake.py grades small hand-made intake runs instead. V22's golden runs still fit V22.
+RETIRED_GOLDEN = {"V19_pass", "V19_fail", "V20_pass", "V20_fail", "V29_pass", "V29_fail"}
+
+
 def golden_folders():
     return sorted(p for p in GOLDEN_RUNS.iterdir() if p.is_dir())
 
@@ -55,6 +61,8 @@ class GoldenRuns(unittest.TestCase):
 
     def test_graders_on_golden_runs(self):
         for folder in golden_folders():
+            if folder.name in RETIRED_GOLDEN:
+                continue
             expected = json.loads((folder / "expected.json").read_text())
             with self.subTest(run=folder.name):
                 run = load_golden(folder)

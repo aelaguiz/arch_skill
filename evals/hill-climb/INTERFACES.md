@@ -32,6 +32,19 @@ so modules import as `sim.world`, `sim.cli`, `fixtures`, `runner.transcript`, `g
   wrappers). The runner adds `.claude/skills/` (`hill-climb`, `prompt-authoring`, `_shared`, `readable-reports`).
 - A role test's `HIDDEN/previews.json` maps the critic's labels to items (`{"A": "it_0013", "B": "it_0001"}`), and its
   `RUN/case.json` (written after the session) keeps the case, the labels and the facts its brief was filled with.
+- An intake run (`runner/run_intake.py`; a backtest's setup tick too) keeps one folder per session under
+  `RUN/ticks/<n>/` (`tick.json` with `tick`, `turn`, `phase` "intake" or "tick", `sim_time`, `prompt`), and:
+  - `HIDDEN/owner.md`: the simulated owner's brief, copied by the fixture builders from `scenarios/<ID>/owner.md` or
+    `worlds/owners/<W>.md`;
+  - `RUN/interview.jsonl`: one line per session, `{"turn", "phase", "prompt", "status", "agent_message", "question",
+    "asked_at", "asked_t", "cost_usd"}`, plus, when the owner was asked, `{"answer", "flags": {"asked_method",
+    "asked_finding_out", "asked_known", "multiple_questions", "outcome_check", "playback", "signed_off"}, "why",
+    "missing_flags", "files", "owner_status", "owner_cost_usd", "answered_at", "answered_t"}`;
+  - `RUN/intake.json`: `{"ended", "sessions", "signed_off_turn", "final_tick_turn", "next_turn", "statuses",
+    "cost_usd"}`;
+  - `HIDDEN/owner/<n>/`: each owner call's `system.md`, `user.md`, `try<k>/stream.jsonl` and `reply.json` (in the
+    hidden folder, since they hold the brief); a tool input naming `interview.jsonl` or `intake.json` is
+    tampering.
 
 Times are ISO 8601 UTC with seconds and `Z` (`2026-11-08T00:00:00Z`) everywhere the lab writes them.
 
@@ -128,7 +141,20 @@ def parse(stream_path: Path) -> "Transcript":
     "is_error"}]; Transcript.final_text; Transcript.cost_usd; Transcript.agent_calls (Agent/Task calls of the main
     agent)."""
 
+# runner/run_intake.py
+def intake_loop(request, run_session, ask_owner, run_dir, *, max_sessions=30, final_tick=True, prefix="/hill-climb ",
+                tick=0, sim_time=None, cost_cap=None, before_tick=None, log=None) -> dict:
+    """run_session(turn, prompt, tick_dir, phase) -> {"status", "message", "cost_usd", "files"};
+    ask_owner(turn, message, history, files) -> runner.owner.ask's reply. Returns RUN/intake.json's summary."""
+
+# runner/owner.py
+def ask(brief, message, history=(), files=None, *, pool, out_dir, aim="aim", ...) -> dict:
+    """{"answer", "flags", "why", "missing_flags", "error", "status", "attempts", "cost_usd", "raw", ...}"""
+
 # graders/common.py
+# INTAKE_CHARTER_FIELDS: the 36 fields of a Charter written by the intake (13 owner's, 7 setup's, 16 method); Run gains
+# `interview`, `intake`, `signoff_turn` and `is_intake_session(index)`; `intake_checks(run)` are the checks V19, V20
+# and V29 share.
 # COLUMNS: what every workbook must hold (PLAN.md 4.7); EXTRA_COLUMNS (Library and Tests `coding`, Tests `made_from`,
 # `recipe`, `checks`, `read`, `decision`, Results `signals`) and the Overview tab (item, value, as_of) are accepted
 # anywhere and needed only by V25 to V30; CHARTER_FIELDS holds 29 fields, `reporting` among setup's.

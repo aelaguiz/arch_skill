@@ -38,23 +38,38 @@ def _median(values):
     return round(statistics.median(values), 4) if values else None
 
 
+def _tick_of(session) -> int:
+    """The tick a session belongs to: its tick.json's `tick` (the setup's interview spans several sessions, all tick
+    0), else its own index."""
+    value = (session.tick or {}).get("tick")
+    return value if isinstance(value, int) else session.index
+
+
 def tick_speed(run) -> list:
     """PLAN.md 13.4, per tick: its wall time, its reported cost and its role dispatches (the main agent's Agent or Task
-    calls)."""
-    out = []
+    calls). The sessions of one tick (the setup's intake interview) add up, so the setup still counts as one tick."""
+    out, by_tick = [], {}
     for session in run.sessions:
         info = session.info
         start, end = info.get("started_t"), info.get("ended_t")
         wall = round(end - start, 1) if isinstance(start, (int, float)) and isinstance(end, (int, float)) else None
         cost = info.get("cost_usd") if isinstance(info.get("cost_usd"), (int, float)) else session.transcript.cost_usd
-        out.append({"tick": session.index, "wall_s": wall, "cost_usd": cost,
-                    "dispatches": len(session.transcript.agent_calls)})
+        tick = _tick_of(session)
+        entry = by_tick.get(tick)
+        if entry is None:
+            entry = by_tick[tick] = {"tick": tick, "wall_s": wall, "cost_usd": cost, "dispatches": 0, "sessions": 0}
+            out.append(entry)
+        else:
+            entry["wall_s"] = None if wall is None or entry["wall_s"] is None else round(entry["wall_s"] + wall, 1)
+            entry["cost_usd"] = None if cost is None or entry["cost_usd"] is None else entry["cost_usd"] + cost
+        entry["dispatches"] += len(session.transcript.agent_calls)
+        entry["sessions"] += 1
     return out
 
 
 def metrics(run) -> dict:
-    out = {"world": run.world_name, "ticks": len(run.sessions)}
     speed = tick_speed(run)
+    out = {"world": run.world_name, "ticks": len(speed), "sessions": len(run.sessions)}
     out["per_tick"] = speed
     out["median_tick_wall_s"] = _median([t["wall_s"] for t in speed])
     out["median_tick_cost_usd"] = _median([t["cost_usd"] for t in speed])

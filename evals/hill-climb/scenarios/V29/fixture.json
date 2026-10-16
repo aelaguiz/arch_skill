@@ -7,5 +7,27 @@
  "files": {
   "README.md": "@world"
  },
+ "ops": [
+  {
+   "op": "build",
+   "id": "it_0001",
+   "attrs": {
+    "hook": "question",
+    "visual": "hand-replay",
+    "offer": "free-trial",
+    "presenter": "coach",
+    "voice": "calm",
+    "music": "lo-fi",
+    "captions": "burned-in",
+    "length": "30s",
+    "opening": "cards",
+    "closing_ask": "try-free",
+    "palette": "felt-green",
+    "format": "vertical"
+   },
+   "text": "Pocket queens, and an ace lands on the flop. Fold, call or raise? Coach Ray replays the hand and shows the right play. Try the app free for 7 days.",
+   "at": "2026-11-02T00:00:00Z"
+  }
+ ],
  "prompt": "/hill-climb Set up a hill climb on this video ad account to get the cost of a conversion as low as possible. You have $600; ask me if you need more."
 }

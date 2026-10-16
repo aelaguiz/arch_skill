@@ -19,8 +19,8 @@ from tests.test_runner import PROBE3, install_fake_aim
 BRACES = {
     "plan-checker": "{goal} {keys} {now} {other_facts} {platform} {test_ids} {workbook} {write_how}",
     "build-checker": "{built_item_command} {goal} {items} {keys} {now} {other_facts} {workbook} {write_how}",
-    "critic": "{audience} {goal} {how_to_see_them} {intended_difference} {items} {keys} {now} {where_they_meet_it} "
-              "{workbook} {write_how}",
+    "critic": "{aimed_at} {goal} {how_to_see_them} {intended_difference} {items} {keys} {now} {quality_floor} "
+              "{where_they_meet_it} {workbook} {write_how}",
     "reader": "{goal} {keys} {now} {other_facts} {platform} {second_source} {test_ids} {workbook} {write_how}",
 }
 
@@ -74,6 +74,11 @@ class Filling(unittest.TestCase):
                     self.assertEqual(labels, prepared["labels"])
                     for item in case["items"]:
                         self.assertNotIn(item, prepared["brief"])      # the critic sees labels only
+                    # who each item is aimed at, under the same labels; the bar is neutral without a quality_floor
+                    self.assertEqual([part.split(":")[0] for part in prepared["facts"]["aimed_at"].split("; ")],
+                                     sorted(labels))
+                    self.assertIn("people who play poker", prepared["facts"]["aimed_at"])
+                    self.assertEqual(prepared["facts"]["quality_floor"], run_roles.NEUTRAL_QUALITY_FLOOR)
                     self.assertFalse(list((self.root / case["id"] / "run").glob("*.json")))
                 else:
                     self.assertFalse((hidden / "previews.json").exists())

@@ -1,6 +1,6 @@
 # Research: the Library ideas draw on
 
-Read this when setting up, when the scout is due, and whenever you write an idea.
+Read this at intake, when the scout is due, and whenever you write an idea.
 
 ## Why the Library exists
 
@@ -11,6 +11,10 @@ to run: competitors keep the ads that make them money, a category's best perform
 audience says in its own words what it wants. The Library holds that material, so every idea starts from something that
 has worked for someone, or from something the climb itself has learned.
 
+At intake the research starts from the interview: what it raised and where the owner pointed (references/intake.md,
+Research, which also lists setup's own questions). Earlier work the owner left out in `earlier_work` is not research:
+it goes in no Library row and no brief.
+
 ## What goes in
 
 - **Competitors' work**: their ads, pages, listings and offers, and how long each has been kept running.
@@ -18,11 +22,11 @@ has worked for someone, or from something the climb itself has learned.
 - **The audience's own words**: reviews, forums, comments, support messages, search phrasing.
 - **Search and demand data**: what people look for and how much competition each term draws.
 - **Other markets**: what worked for a similar product somewhere else.
-- **The climb's own history**: past tests and their results, imported at setup.
+- **The climb's own history**: the earlier work the owner let in at intake, and the climb's own tests since.
 
-Look where the charter's `outside_sources` says, with whatever research tools the host has (web search, ad libraries,
-app-store pages, the platform's own research tools), and record each item's `source` and `link` so anyone can go back to
-it.
+Look first where the owner pointed (`research_direction`), then where the charter's `outside_sources` says, with
+whatever research tools the host has (web search, ad libraries, app-store pages, the platform's own research tools), and
+record each item's `source` and `link` so anyone can go back to it.
 
 ## What makes an item evidence
 
@@ -40,7 +44,9 @@ explored for you and which nobody has tried.
 An idea names the Library rows, lessons or tests it builds on in `sources`, and its description says what it takes from
 them. For a meal-kit service, say: "Two competitors have kept ads that open on a parent's tired face at 6 pm running for
 over two months; we have never tested that opening." Combining items is often where the best ideas come from; inventing
-freely is not. An idea that cannot name anything it draws on goes back to research.
+freely is not. An idea that cannot name anything it draws on goes back to research. An idea the owner put in the mix
+cites its Interview row; it is screened, planned and checked like any other, and research that bears on it is worth
+finding.
 
 ## Keeping it fresh
 

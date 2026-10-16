@@ -20,9 +20,10 @@ careful checker asks, as places to look rather than boxes to tick:
 
 - Does the idea rest on something real? It should draw on the research or results it cites, and those rows should
   actually support it. An idea that cites nothing, or cites rows about something else, is invented, however good it
-  sounds. Research also goes stale: an idea built on what competitors used to run may miss what they run now. Rows
-  marked stale, or older than the charter's `research_freshness`, are a reason to look at whether they still describe
-  the market.
+  sounds. An idea the owner put in the mix rests on their Interview row, which is real grounding; its plan still has to
+  be able to answer its question. Research also goes stale: an idea built on what competitors used to run may miss what
+  they run now. Rows marked stale, or older than the charter's `research_freshness`, are a reason to look at whether
+  they still describe the market.
 - Could a result be pinned on what the plan claims to test? What the test changes has to match its question. For
   example, a plan claiming a headline effect while also swapping the image cannot tell which one moved the result; a
   plan asking whether one whole combination beats another may change several things, and its lesson is about the
@@ -34,6 +35,8 @@ careful checker asks, as places to look rather than boxes to tick:
 - Does it say before launch what would stop it early (a fault, or harm worth cutting a loser for), and is that something
   other than a good day?
 - Would it teach something the record does not already know?
+- For a new creative, does the plan say what inspired it, what it keeps from that and what it changes, and who it is
+  aimed at? Without them, a result cannot say what it taught.
 - For a variation of an item that already ran, does the plan name its parent and say how the new item will be made from
   the parent's own materials? Rebuilt from scratch, it would change things nobody chose.
 

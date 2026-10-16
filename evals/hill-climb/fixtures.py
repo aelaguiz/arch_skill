@@ -32,6 +32,9 @@ from sim.world import DAY, HOUR, LIVE, World, iso, load_config, parse_time  # no
 
 SCENARIOS = LAB / "scenarios"
 DEFAULT_PROMPT = "/hill-climb Run the tick."
+# The simulated owner's brief for the intake interview (runner/owner.py): `scenarios/<ID>/owner.md` or
+# `worlds/owners/<W>.md`, copied into the hidden folder, where no session can read it.
+OWNER_BRIEF = "owner.md"
 TAIL = ["written_at", "written_by"]
 # The 4.7 layout plus the columns of PLAN.md 13.1 (3) to (5) as the skill's workbook reference places them: the
 # Overview tab, Library and Tests `coding`, Tests `made_from`, `recipe`, `checks`, `read` and `decision`, Results
@@ -43,8 +46,8 @@ TAB_COLUMNS = {
                 "notes", "legacy_ref"],
     "Ideas": ["idea_id", "source", "type", "description", "sources", "near_copy_of", "status", "reason", "legacy_ref"],
     "Map": ["type", "best_test_id", "best_result", "tests_count", "last_tested", "status", "history"],
-    "Tests": ["test_id", "idea_id", "lane", "type", "comparison", "hypothesis", "expected_range", "varies",
-              "held_constant", "good_looks_like", "daily_budget", "days", "read_at", "guardrails", "rerun_of",
+    "Tests": ["test_id", "idea_id", "lane", "type", "comparison", "inspired_by", "hypothesis", "expected_range",
+              "varies", "held_constant", "good_looks_like", "daily_budget", "days", "read_at", "guardrails", "rerun_of",
               "lesson_id", "item_id", "made_from", "recipe", "coding", "platform_id", "status", "launched_at", "checks",
               "read", "decision", "legacy_ref", "history"],
     "Checks": ["check_id", "test_id", "item_id", "role", "verdict", "reasons"],
@@ -734,6 +737,15 @@ def _finish_hidden(hidden: Path, work: Path, hashes: dict, meta: dict) -> None:
     (hidden / "meta.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
 
 
+def copy_owner_brief(folder: Path, hidden: Path, name: str = OWNER_BRIEF) -> bool:
+    """Copy the owner's brief (folder/name), when there is one, to HIDDEN/owner.md."""
+    source = Path(folder) / name
+    if not source.is_file():
+        return False
+    shutil.copyfile(source, Path(hidden) / OWNER_BRIEF)
+    return True
+
+
 def closing_pauses(rows: dict, ops: list) -> list:
     """A pause at its read for each closed test's campaigns that no op pauses already."""
     paused = {op.get("campaign") for op in ops if op.get("op") == "pause"}
@@ -775,6 +787,7 @@ def build_scenario(scenario: str, run_dir: Path, hidden_dir: Path, lab: Path = L
     meta = {"kind": kind, "scenario": scenario, "world": spec["world"], "seed": spec["seed"],
             "now": iso(world.now), "prompt": spec["prompt"], "lab": str(Path(lab).resolve())}
     _finish_hidden(hidden, work, hashes, meta)
+    copy_owner_brief(Path(folder) if folder is not None else SCENARIOS / scenario, hidden)
     return meta
 
 
@@ -795,6 +808,7 @@ def build_world(world: str, seed: int, run_dir: Path, hidden_dir: Path, lab: Pat
     meta = {"kind": "world", "scenario": None, "world": world, "seed": int(seed), "now": iso(sim_world.now),
             "prompt": config["setup_prompt"], "lab": str(Path(lab).resolve())}
     _finish_hidden(hidden, work, hashes, meta)
+    copy_owner_brief(LAB / "worlds" / "owners", hidden, f"{world}.md")
     return meta
 
 

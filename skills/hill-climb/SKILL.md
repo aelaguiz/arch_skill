@@ -1,37 +1,39 @@
 ---
 name: hill-climb
-description: "Explicitly selected long-running, autonomous hill climb that spends a budget to keep improving one number (cost per install, conversions, follows) by the scientific method for as long as it runs. Sets up a charter, a spreadsheet and a researched library of competitors and inspiration, or adopts an existing tracker, then runs scheduled ticks: draws every idea from that research, plans every test before money moves, has fresh one-job agents check plans, builds, quality and results, builds variations from their parents' recipes, weighs soft signals beside the numbers, acts on reversible moves quickly but believes a lesson only after a rerun, never stops exploring, and reports progress on a schedule. Asks the user only for more money. Use when the user chooses $hill-climb or asks to set up, adopt or run a budgeted optimization loop. Not for a one-off analysis or a single A/B readout, a quantitative investigation ($north-star-investigation), repo audits ($audit-loop), or watching agents ($agent-watcher)."
+description: "Explicitly selected long-running, autonomous hill climb that spends a budget to keep improving one number (cost per install, conversions, follows) by the scientific method. Starts with an intake that interviews the owner (what it is for, success, spend, limits, which earlier work to use) and researches before anything runs; then runs scheduled ticks: draws every idea from research, plans every test before money moves, has fresh one-job agents check plans, builds, quality and results, makes each creative from what inspired it, weighs soft signals beside the numbers, acts on reversible moves quickly but believes a lesson only after a rerun, never stops exploring, and reports on a schedule. After intake it asks the owner only for more money. Use when the user chooses $hill-climb or asks to start, import or run a budgeted optimization loop. Not for a one-off analysis or a single A/B readout, a quantitative investigation ($north-star-investigation), repo audits ($audit-loop), or watching agents ($agent-watcher)."
 metadata:
   short-description: "Autonomous budgeted hill climb"
 ---
 
 # Hill Climb
 
-A hill climb spends a budget, one honest test at a time, to keep improving one number for as long as it runs: weeks,
-months, or with no end date. You are its main agent. Each tick leaves the workbook true and current, money moving toward
-what earns, exploration still going, every idea grounded in research, and every belief labeled with how sure it is. You
-run it alone. The owner is asked for nothing but more money, with the case for it, and on the charter's schedule gets a
-progress report that asks nothing.
+A hill climb spends a budget, one honest test at a time, to keep improving one number for as long as it runs, across as
+many sessions and restarts as that takes. You are its main agent. It starts with an intake that interviews the owner
+until you understand each other and researches what the interview raised (references/intake.md). After that, each tick
+leaves the workbook true and current, money moving toward what earns, exploration still going, every idea grounded in
+research, and every belief labeled with how sure it is. You run it alone. The owner is asked for nothing but more money,
+with the case for it, and on the charter's schedule gets a progress report that asks nothing.
 
-Run this skill only when the user chooses `$hill-climb` or `/hill-climb`, or asks you to set up, adopt or run a budgeted
-optimization loop.
+Run this skill only when the user chooses `$hill-climb` or `/hill-climb`, or asks you to start, import or run a
+budgeted optimization loop.
 
 ## What holds on every tick
 
-**The owner is asked for nothing but money.** The owner set the goal and the money so the hill climb could run without
-them. A question parks the work until they come back and hands them a call the charter already makes. So when something
-breaks, fix it or stop what it is costing, and record what you did. When the method looks wrong, call the strategist,
-which changes it inside the charter; its cadence is the usual rhythm, not the only time. When an idea would need a
-different goal, park it with the reason. A money request is the one exception (references/money.md). Progress reports go
-to them on the charter's `reporting` schedule and ask nothing (references/reporting.md). Everything sent through the
-owner's channel reaches them, so learn how a channel works from its help or documentation, never by sending through it.
-End every tick with one line that says what it did, never with a question or an offer.
+**The owner is asked for nothing but money.** The owner set the goal, the money and their limits in the intake interview
+so the hill climb could run without them; intake, before the first tick, is the one time they are asked anything else. A
+question parks the work until they come back and hands them a call the charter already makes. So when something breaks,
+fix it or stop what it is costing, and record what you did. When the method looks wrong, call the strategist, which
+changes it inside the charter; its cadence is the usual rhythm, not the only time. When an idea would need a different
+goal, park it with the reason. A money request is the one exception (references/money.md). Progress reports go to them
+on the charter's `reporting` schedule and ask nothing (references/reporting.md). Everything sent through the owner's
+channel reaches them, so learn how a channel works from its help or documentation, never by sending through it. End
+every tick with one line that says what it did, never with a question or an offer.
 
-**The workbook and the platform are the truth.** A hill climb that runs for months restarts, compacts, and inherits
-summaries from earlier sessions, and any of them can be wrong. A wrong carried fact steers every later tick without
-anyone noticing. So read state fresh each tick, and when a summary, your memory or a message disagrees with the workbook
-or the platform, they win; note the disagreement in the Log. For example, a summary says the last tick paused a
-campaign, but the platform shows it live: it is live, and this tick decides afresh what should happen to it.
+**The workbook and the platform are the truth.** A hill climb restarts, compacts, and inherits summaries from earlier
+sessions, and any of them can be wrong. A wrong carried fact steers every later tick without anyone noticing. So read
+state fresh each tick, and when a summary, your memory or a message disagrees with the workbook or the platform, they
+win; note the disagreement in the Log. For example, a summary says the last tick paused a campaign, but the platform
+shows it live: it is live, and this tick decides afresh what should happen to it.
 
 **Every idea comes from research.** Ideas a model makes up on the spot crowd around what it already knows, so a search
 fed only by invention circles the same few ideas. The Library holds what the world has already tried: competitors' work
@@ -68,12 +70,13 @@ budget usually waits for that (references/evidence.md).
 drifts. The pull to pour everything into today's winner is strongest exactly when one option wins big, and that is when
 exploring matters most (references/map.md; references/money.md, which also covers what an end date changes).
 
-**The charter keeps the climb consistent.** What the owner actually said (the goal, the money, any limit they named)
-never changes during a run, except `money_total` when you record a grant. Everything setup worked out for itself, and
-the fields that record how this climb weighs its recurring calls, keep every fresh session working the same way; the
-strategist revises them as the climb learns, with a Decisions row saying why. Judge each case in front of you with them
-in mind, and when a case calls for something else, say why in that decision's row (references/charter.md). A departure
-you find yourself making tick after tick means the charter is wrong: call the strategist to change it.
+**The charter keeps the climb consistent.** What the owner said in the interview (the charter's owner fields, with the
+Interview tab behind them) never changes during a run unless the owner changes it, except `money_total` when you record
+a grant. Everything setup worked out for itself, and the fields that record how this climb weighs its recurring calls,
+keep every fresh session working the same way; the strategist revises them as the climb learns, with a Decisions row
+saying why. Judge each case in front of you with them in mind, and when a case calls for something else, say why in that
+decision's row (references/charter.md). A departure you find yourself making tick after tick means the charter is wrong:
+call the strategist to change it.
 
 **Take now from a live clock.** Use the platform's own time when it reports one, else the machine's, never a time from
 memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it, and cut every
@@ -86,12 +89,11 @@ references teach what the numbers mean and what is at stake. No rule here decide
 
 ## Modes
 
-- **Set up** from a request in plain words: read references/charter.md and references/research.md. Research first, then
-  write the Charter (every choice with its reason; an assumption is written down, never asked), code the medium richly
-  (references/making.md), create the workbook (every tab with its columns, the empty ones too, laid out with
-  `$spreadsheet-formatting` when it is a Google Sheet), fill the Map, write sourced Ideas, and run the first tick.
-- **Adopt** an existing tracker: references/charter.md, Adoption.
-- **Tick**: the default whenever the folder already has a hill climb.
+- **Intake**, whenever the folder has no hill climb yet or its workbook's Charter is still empty: a new climb, or one
+  built from earlier work such as an old tracker. Read references/intake.md and follow it through the interview, the
+  research, the playback and seeding to the first tick. Each intake turn ends on its one question to the owner; intake
+  is not a tick.
+- **Tick**: the default whenever the folder has a hill climb with its Charter written.
 - **Money request**: inside a tick, when money runs short or the owner has answered (references/money.md).
 
 ## The shape of a tick
@@ -103,17 +105,19 @@ platform shows you counts as much:
 - Load the state fresh, reading each tab whole rather than its first lines: the Charter, open Tests, Lessons, Ideas, the
   Library, the last Reviews and Log rows, Money, and the platform's own status and clock. If the owner has answered a
   money request, record it: the answer usually comes back on the channel the request went out on, so look there while a
-  request is open, as well as in the prompt.
+  request is open, as well as in the prompt. When a call turns on what the owner meant, read the Interview tab: their
+  words are there, and so are their calls on the made-up outcomes intake asked about.
 - Look for faults before anything else: anything that means money is reaching the wrong people, that an item is doing
   harm, or that the numbers can no longer be trusted. Some places they show: the platform's count against the second
-  source, delivery against the plan's audience, spend against the plan, an item the platform disapproved, a page the ads
-  lead to that broke (both counts then fall together), a change in what the platform counts, a run of complaints, hides
-  or reports on anything live, the best known option included, since that harm builds every day it runs. Counts never
-  match exactly, and one that arrives late looks short on recent days, so a shortfall in the late count needs complete
-  days to judge; lateness cannot explain a gap the other way, which needs its own explanation now, an ordinary one (such
-  as sign-ups the platform never saw) or a sign that a count broke. Judge whether a gap is the usual one or a sign that
-  something broke, and which side broke. Then weigh what the fault threatens and choose the response (pause, fix, set
-  the data aside, hold the read), with its reason in a Decisions row. Nothing is ever read from data you set aside.
+  source, delivery against whom the plan aimed at, spend against the plan, an item the platform disapproved, a page the
+  ads lead to that broke (both counts then fall together), a change in what the platform counts, a run of complaints,
+  hides or reports on anything live, the best known option included, since that harm builds every day it runs. Counts
+  never match exactly, and one that arrives late looks short on recent days, so a shortfall in the late count needs
+  complete days to judge; lateness cannot explain a gap the other way, which needs its own explanation now, an ordinary
+  one (such as sign-ups the platform never saw) or a sign that a count broke. Judge whether a gap is the usual one or a
+  sign that something broke, and which side broke. Then weigh what the fault threatens and choose the response (pause,
+  fix, set the data aside, hold the read), with its reason in a Decisions row. Nothing is ever read from data you set
+  aside.
 - Have the tick's due reads made by one reader, which also reports the soft signals: what people say and do around a
   live item (comments, saves, shares, hides, complaints) never overrides the bar, but it shows risks and strengths the
   count does not, and you weigh it in the decisions you take on each read (references/evidence.md). Look at when each
@@ -143,10 +147,13 @@ platform shows you counts as much:
   launch; a round is the tests ready at once, and planning the next days' tests together keeps the checks few. Size each
   plan before it goes: work out, as the plan-checker will, what it can see by its read date with the money in hand,
   since a plan sent back costs another round. Keep the Tests row in step with the platform (ids, status, a live test's
-  budget). Record how each item was made and its coding, keep its files where they last, and cut a variation from its
-  parent's own materials with the parent's recipe, changing only what its plan changes (references/making.md). To change
-  a plan, before its check or after one, write the new plan as a new Tests row and withdraw the old one: a check vouches
-  only for the plan it read, and anyone tracing the test later needs to see which plan each check saw.
+  budget). Make a new creative from the one or few things that inspired it, after looking at them, with its plan saying
+  what it keeps from them, what it changes and who it is aimed at; cut a variation from its parent's own materials with
+  the parent's recipe, changing only what its plan changes; make both with the charter's tools from what `making_from`
+  names, to its `quality_floor`; record how each item was made and its coding, and keep its files where they last
+  (references/making.md). To change a plan, before its check or after one, write the new plan as a new Tests row and
+  withdraw the old one: a check vouches only for the plan it read, and anyone tracing the test later needs to see which
+  plan each check saw.
 - Ask for money early enough that the owner can answer before it runs out, once this tick's plans and checks have
   settled: the request tells the owner what the climb will do next, and a plan still waiting on a check may not happen.
   It never waits for a plan to pass: when nothing is ready yet, it says what the climb would test next and why.
@@ -194,13 +201,16 @@ row.
 
 ## References
 
-- references/charter.md: setting up or adopting, and what each Charter field records.
+- references/intake.md: starting a climb, new or from earlier work: the interview, the research, the playback and
+  seeding.
+- references/charter.md: what each Charter field records, and seeding from earlier work.
 - references/research.md: building and refreshing the Library, and how ideas draw on it.
 - references/workbook.md: the tabs and columns and why each exists; read before writing a kind of row for the first time
   in a session.
 - references/evidence.md: every tick with a read, a lesson change or a test to plan.
 - references/money.md: every tick that sets spend, and whenever money is short or the owner has answered.
 - references/map.md: choosing what to explore, and judging whether an idea is new.
-- references/making.md: coding items, recording how each was made, and building a variation from its parent.
+- references/making.md: coding items, making a new creative from what inspired it, recording how each was made, and
+  building a variation from its parent.
 - references/reporting.md: the progress report the owner gets on the charter's schedule.
 - references/roles/<role>.md: the brief for the role you are dispatching.

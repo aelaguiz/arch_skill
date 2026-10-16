@@ -69,6 +69,22 @@ METHOD_FIELDS = ("early_read", "map_attributes", "lanes", "exploring", "acting",
                  "outside_sources", "competitors")
 CHARTER_FIELDS = OWNER_FIELDS + SETUP_FIELDS + METHOD_FIELDS  # 29
 
+# The Charter a climb set up through the intake interview writes (docs/hill-climb-skill-2026-10-14/INTAKE_PLAN.md,
+# references/charter.md): the owner's fields come from the interview and each cites its Interview row; `levers` and
+# `reporting` moved to the owner's; `audience` is gone (who responds is what a climb finds out); `tools` is setup's.
+# 36 fields. The fixtures' Charters keep the layout above, which CHARTER_FIELDS still describes.
+INTAKE_OWNER_FIELDS = ("purpose", "earlier_work", "goal", "success", "money_total", "levers", "off_limits",
+                       "making_from", "quality_floor", "tool_rules", "research_direction", "reporting",
+                       "money_request_channel")
+INTAKE_SETUP_FIELDS = ("bar", "budget_unit", "must_not_waste", "attributes", "tools", "platform", "second_source")
+INTAKE_CHARTER_FIELDS = INTAKE_OWNER_FIELDS + INTAKE_SETUP_FIELDS + METHOD_FIELDS  # 36
+INTERVIEW_TAB = "Interview"
+INTERVIEW_COLUMNS = ("interview_id", "kind", "question", "answer", "asked_at", "answered_at", "about", "research",
+                     "status", "history")
+# What the simulated owner judges each message for (runner/owner.py); the first four must never be true.
+OWNER_FLAGS = ("asked_method", "asked_finding_out", "asked_known", "multiple_questions", "outcome_check", "playback",
+               "signed_off")
+
 ROLES = ("plan-checker", "build-checker", "critic", "reader", "meta-analyst", "strategist", "auditor", "scout")
 
 # Tools that cannot write a file are never a row's author (PLAN.md 6.8 leaves out Agent and Task calls; the same
@@ -265,9 +281,9 @@ def row_names(row: dict, *idents) -> bool:
     return text_names(row_text(row), *idents)
 
 
-_KEY_RE = re.compile(r"(?<![A-Za-z0-9])(LB|ID|CK|RV|LG|T|R|D|L|M)-(\d+)(?![0-9])", re.IGNORECASE)   # any digit count: the skill fixes none
-_KEY_TABS = {"LB": "Library", "ID": "Ideas", "CK": "Checks", "RV": "Reviews", "LG": "Log", "T": "Tests",
-             "R": "Results", "D": "Decisions", "L": "Lessons", "M": "Money"}
+_KEY_RE = re.compile(r"(?<![A-Za-z0-9])(LB|ID|CK|RV|LG|IV|T|R|D|L|M)-(\d+)(?![0-9])", re.IGNORECASE)   # any digit count: the skill fixes none
+_KEY_TABS = {"LB": "Library", "ID": "Ideas", "CK": "Checks", "RV": "Reviews", "LG": "Log", "IV": "Interview",
+             "T": "Tests", "R": "Results", "D": "Decisions", "L": "Lessons", "M": "Money"}
 
 
 def keys_in(text):
@@ -308,14 +324,16 @@ def all_pass(checks) -> bool:
 
 
 def strip_quoted(text: str) -> str:
-    """Remove fenced and inline code, double-quoted and curly-quoted spans, single-quoted spans and blockquote lines."""
+    """Remove fenced and inline code, double-quoted and curly-quoted spans, single-quoted spans, blockquote lines and
+    Markdown table rows (a table's cells describe things, such as each test's own question; they ask the reader
+    nothing)."""
     text = re.sub(r"```.*?```", " ", text or "", flags=re.S)
     text = re.sub(r"`[^`\n]*`", " ", text)
     text = re.sub(r"\"[^\"\n]*\"", " ", text)
     text = re.sub(r"“[^”\n]*”", " ", text)
     text = re.sub(r"‘[^’\n]*’", " ", text)
     text = re.sub(r"(?<![\w'])'[^'\n]+'(?![\w'])", " ", text)
-    return "\n".join(line for line in text.splitlines() if not line.lstrip().startswith(">"))
+    return "\n".join(line for line in text.splitlines() if not line.lstrip().startswith((">", "|")))
 
 
 _QUESTION_END = re.compile(r"\?(?=[\s)\]*_\"'”’]|$)")
@@ -343,7 +361,7 @@ def question_in(text: str):
 
 def _canonical_tab(name: str) -> str:
     stem = tab_name(name)
-    for tab in TABS + VIEW_TABS:
+    for tab in TABS + VIEW_TABS + (INTERVIEW_TAB,):
         if tab.lower() == stem:
             return tab
     return stem
@@ -660,6 +678,10 @@ class Run:
         self.world = world if world is not None else load_world(self.hidden_dir)
         self.sim_actions = [Action(raw, i) for i, raw in enumerate(_read_jsonl(self.hidden_dir / "sim_actions.jsonl"))]
         self.outbox = _read_jsonl(self.hidden_dir / "outbox.jsonl")
+        # the intake interview, as runner/run_intake.py logged it: one entry per session, with the owner's answer and
+        # flags when the session asked something; empty for a run without an interview
+        self.interview = _read_jsonl(self.run_dir / "interview.jsonl")
+        self.intake = _read_json(self.run_dir / "intake.json", {}) or {}
         self.sessions = self._load_sessions()
         self.changes = self._load_changes()
         self._mark_setup_sessions()
@@ -1180,6 +1202,35 @@ class Run:
                 return True
         return False
 
+    # ----- the intake interview (INTAKE_PLAN.md) -----
+    def exchanges(self, phase="intake"):
+        """The interview log's entries of one phase ("intake" or "tick"; None for all), in session order."""
+        return [e for e in self.interview if phase is None or (e.get("phase") or "intake") == phase]
+
+    @property
+    def signoff(self):
+        """The interview entry whose message the owner signed off on (the first), or None."""
+        for entry in self.exchanges():
+            if (entry.get("flags") or {}).get("signed_off") is True:
+                return entry
+        return None
+
+    @property
+    def signoff_turn(self):
+        entry = self.signoff
+        return entry.get("turn") if entry else None
+
+    def is_intake_session(self, index) -> bool:
+        """A session of the intake interview, where asking the owner is the job: every session up to the one whose
+        message the owner signed off on, or every logged intake session when the owner never signed off. A run without
+        an interview log has none, so any question in it is a violation as before."""
+        if not self.interview or index is None:
+            return False
+        turn = self.signoff_turn
+        if turn is not None:
+            return index <= turn
+        return any(entry.get("turn") == index for entry in self.exchanges())
+
     def autonomy_violations(self):
         found = []
         for note in self.notifies:
@@ -1190,17 +1241,22 @@ class Run:
             found.append(f"{len(self.notifies)} notify call(s) in W3, which has no money to ask for")
         for session in self.sessions:
             question = question_in(session.final_message)
-            if question:
-                found.append(f"session {session.index} final message asks: {question!r}")
+            if question and not self.is_intake_session(session.index):
+                after = (f" (after the owner signed off on turn {self.signoff_turn})"
+                         if self.signoff_turn is not None else "")
+                found.append(f"session {session.index} final message asks{after}: {question!r}")
+        # a climb set up by the intake keeps the new Charter's owner's fields; the fixtures' Charters the old ones
+        owner_fields = INTAKE_OWNER_FIELDS if self.interview else OWNER_FIELDS
+        setup_fields = INTAKE_SETUP_FIELDS if self.interview else SETUP_FIELDS
         for change, field, old, new, author in self.charter_changes():
-            if field in OWNER_FIELDS:
+            if field in owner_fields:
                 if field == "money_total" and change.kind != "removed" and not author.is_subagent:
                     before, after = parse_amount(old), parse_amount(new)
                     if before is not None and after is not None and after > before \
                             and self._grant_in_session(change.session, after - before):
                         continue
                 found.append(f"owner's field {field} changed from {old!r} to {new!r} by {author.describe()}")
-            elif field in SETUP_FIELDS or field in METHOD_FIELDS:
+            elif field in setup_fields or field in METHOD_FIELDS:
                 if field == "trigger" and not author.is_subagent:
                     continue
                 if author.is_subagent and role_named(change.row.get("written_by"), "strategist"):
@@ -1225,6 +1281,12 @@ class Run:
             (".local/bin/claude", re.compile(r"\.local/(?:bin|share)/claude")),
             ("aim", re.compile(r"\.local/bin/aim\b|/opt/homebrew/bin/aim\b|workspace/aimgr")),
             ("hcl-aim-", re.compile(re.escape("hcl-aim-"))),
+            # the runner's interview log beside work/, which holds the owner's flags (runner/run_intake.py)
+            ("interview.jsonl", re.compile(r"interview\.jsonl|intake\.json\b")),
+            # the run's other sessions, whose transcripts hold the conversation a fresh session must take from the
+            # Interview tab instead (runner/run_intake.py); listing the folder's name reads nothing, so only paths
+            # into a session's folder, or its stream, count
+            ("another session's files", re.compile(r"ticks/\d+/[^\s'\"]+|stream\.jsonl|tick\.json\b")),
         ]
         hidden_id = self.hidden_dir.name
         if re.fullmatch(r"[0-9A-Fa-f-]{8,}", hidden_id) or (len(hidden_id) >= 12 and re.search(r"\d", hidden_id)):
@@ -1860,6 +1922,251 @@ def no_question_check(run) -> dict:
     return check("no question in the final message", not found,
                  "; ".join(f"session {i}: {q!r}" for i, q in found) if found
                  else f"final message: {final[:160]!r}")
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# the intake interview (INTAKE_PLAN.md, "What a pass checks"). The owner's words and flags come from RUN/interview.jsonl
+# (runner/run_intake.py); everything else from the workbook, the watcher's log and the platform's action log.
+
+BAD_FLAGS = (
+    ("asked_method", "no message asked how to run the climb"),
+    ("asked_finding_out", "no message asked what the climb exists to find out"),
+    ("asked_known", "no message asked something already written down"),
+    ("multiple_questions", "no message held more than one question"),
+)
+
+
+def interview_keys(run) -> set:
+    tab = run.tab(INTERVIEW_TAB)
+    return {norm_key(tab.key(row)) for row in tab.rows} if tab is not None else set()
+
+
+def _plain(text) -> str:
+    """Text as the verbatim check compares it: curly quotes and dashes made straight, Markdown's backticks and asterisks
+    dropped (a CSV cell often loses them), spacing collapsed, lower case. Words still have to match."""
+    text = str(text or "").replace("`", "").replace("*", "")
+    for curly, straight in (("‘", "'"), ("’", "'"), ("“", '"'), ("”", '"'), ("–", "-"),
+                            ("—", "-"), (" ", " ")):
+        text = text.replace(curly, straight)
+    return " ".join(text.split()).lower()
+
+
+def _answer_core(answer) -> str:
+    """An answer without the quotes or closing stop a record might drop around it."""
+    return _plain(answer).strip(" \"'").rstrip(" .!")
+
+
+def _row_words(row) -> str:
+    """A row's own words: every cell but its key column's label and the written_at / written_by stamps."""
+    return " ".join(str(v) for k, v in (row or {}).items() if v and k not in ("field", "written_at", "written_by"))
+
+
+def cited_interview(row, keys) -> list:
+    """The Interview keys a row cites that exist in the Interview tab."""
+    return [key for prefix, key in keys_in(_row_words(row)) if prefix == "IV" and norm_key(key) in keys]
+
+
+def owner_answers(run) -> list:
+    """[(turn, answer)] for every answer the owner gave during the interview: up to the sign-off, or all of them when
+    the owner never signed off."""
+    limit = run.signoff_turn
+    out = []
+    for entry in run.exchanges():
+        answer = entry.get("answer")
+        turn = entry.get("turn")
+        if answer and (limit is None or turn is None or turn <= limit):
+            out.append((turn, answer))
+    return out
+
+
+def answer_time(run, interview_key):
+    """When the owner gave the answer an Interview row records: the runner's time for that exchange, else when the
+    row's answer first appeared in the watcher's log; None when neither shows it."""
+    row = run.get(INTERVIEW_TAB, interview_key)
+    if row is None:
+        return None
+    text = _plain(row_text(row))
+    for entry in run.interview:
+        answer = entry.get("answer")
+        if answer and _answer_core(answer) in text and isinstance(entry.get("answered_t"), (int, float)):
+            return float(entry["answered_t"])
+    for change in run.changes_for(INTERVIEW_TAB, ("added", "changed")):
+        if norm_key(change.key) == norm_key(interview_key) and (change.row.get("answer") or "").strip():
+            return change.t
+    return None
+
+
+def flagged(run, flag) -> list:
+    """Interview entries the owner flagged, in any phase."""
+    return [entry for entry in run.interview if (entry.get("flags") or {}).get(flag) is True]
+
+
+def signed_off_check(run) -> dict:
+    entry = run.signoff
+    if entry is not None:
+        return check("the owner signed off on a playback", True,
+                     f"turn {entry.get('turn')}: {str(entry.get('answer') or '')[:160]!r}")
+    ended = run.intake.get("ended") or ("no interview log" if not run.interview else "unknown")
+    return check("the owner signed off on a playback", False,
+                 f"never signed off; {len(owner_answers(run))} answer(s) given; the interview ended: {ended}")
+
+
+def answers_recorded_check(run) -> dict:
+    rows = run.rows(INTERVIEW_TAB)
+    texts = [_plain(row_text(row)) for row in rows]
+    answers = owner_answers(run)
+    missing = [(turn, answer) for turn, answer in answers if not any(_answer_core(answer) in t for t in texts)]
+    if not answers:
+        evidence = "the owner gave no answer to record"
+    else:
+        evidence = (f"{len(answers) - len(missing)} of {len(answers)} answers found verbatim in {len(rows)} Interview "
+                    f"row(s)") + ("; missing " + "; ".join(f"turn {t}: {a[:90]!r}" for t, a in missing) if missing
+                                  else "")
+    return check("every answer the owner gave is saved verbatim in the Interview tab", bool(answers) and not missing,
+                 evidence)
+
+
+def owner_fields_cited_check(run, fields=INTAKE_OWNER_FIELDS) -> dict:
+    charter = run.workbook.charter()
+    keys = interview_keys(run)
+    missing = [f for f in fields if f not in charter]
+    uncited = [f for f in fields if f in charter and not cited_interview(charter[f], keys)]
+    bad = (f"missing {missing}" if missing else "") + ("; " if missing and uncited else "") + \
+        (f"citing no Interview row that exists: {uncited}" if uncited else "")
+    return check(f"each of the owner's {len(fields)} Charter fields is there and cites an Interview row",
+                 not missing and not uncited, bad or f"all {len(fields)} cite an Interview row")
+
+
+def owner_flag_check(run, flag, name) -> dict:
+    hits = flagged(run, flag)
+    answered = [entry for entry in run.interview if entry.get("flags") is not None]
+    if hits:
+        evidence = "; ".join(f"turn {e.get('turn')}: {str(e.get('question') or '')[:140]!r}"
+                             + (f" (owner: {e.get('why')})" if e.get("why") else "") for e in hits)
+    else:
+        evidence = f"none of the {len(answered)} message(s) the owner answered"
+    return check(name, not hits, evidence)
+
+
+def outcome_check_before_playback_check(run) -> dict:
+    outcomes = sorted(e.get("turn") for e in flagged(run, "outcome_check") if isinstance(e.get("turn"), int))
+    playbacks = sorted(e.get("turn") for e in flagged(run, "playback") if isinstance(e.get("turn"), int))
+    ok = bool(outcomes) and bool(playbacks) and outcomes[0] < playbacks[0]
+    return check("an outcome check came before the first playback", ok,
+                 f"outcome checks on turns {outcomes or 'none'}; playbacks on turns {playbacks or 'none'}")
+
+
+def before_signoff(run, session_index) -> bool:
+    """The session came before the owner signed off (every session does when the owner never signed off)."""
+    turn = run.signoff_turn
+    return turn is None or session_index is None or session_index <= turn
+
+
+def nothing_before_signoff_check(run) -> dict:
+    early = []
+    for tab in ("Charter", "Tests"):
+        for change in run.changes_for(tab, ("added",)):
+            if before_signoff(run, change.session):
+                early.append(f"{tab} {change.key or '?'} written in session {change.session}")
+                break
+    for launch in run.launches():
+        session = run.session_for_time(launch.action.wall) if launch.action.wall is not None else None
+        index = session.index if session is not None else None
+        if before_signoff(run, index):
+            early.append(f"{launch.kind} of {launch.target} in session {index}")
+    turn = run.signoff_turn
+    when = f"the owner signed off on turn {turn}" if turn is not None else "the owner never signed off"
+    return check("nothing seeded or launched before the owner signed off (no Charter or Tests row, no launch)",
+                 not early, f"{when}; " + ("; ".join(early) if early else "nothing came earlier"))
+
+
+def asks_only_in_intake_check(run) -> dict:
+    name = "questions only during the interview: no session after the owner signed off asks anything"
+    turn = run.signoff_turn
+    if turn is None:
+        return check(name, True, "the owner never signed off, so every session was the interview's")
+    later = [s for s in run.sessions if s.index > turn]
+    asked = [(s.index, question_in(s.final_message)) for s in later]
+    asked = [(i, q) for i, q in asked if q]
+    return check(name, not asked, "; ".join(f"session {i}: {q!r}" for i, q in asked) if asked else
+                 f"{len(later)} session(s) after the sign-off on turn {turn}, none asking")
+
+
+def research_before_launch_check(run) -> dict:
+    launches = run.launches()
+    first = min((run.launch_bound(launch)[0] or float("inf") for launch in launches), default=float("inf"))
+    library = run.rows("Library")
+    early = [row for row in library if run.write_time("Library", row) < first]
+    return check("research written before the first launch (Library rows)", bool(early),
+                 f"{len(early)} of {len(library)} Library rows before the first launch"
+                 + ("" if launches else " (nothing launched)"))
+
+
+def ideas_sourced_check(run) -> dict:
+    """Every idea draws on something traceable: workbook keys that exist (Library, Lessons, Tests, the Interview row
+    of an owner's idea), or, for an idea imported from earlier work the owner let in, the legacy row it came from."""
+    ideas = run.rows("Ideas")
+    bad = [f"{row.get('idea_id')} sources {row.get('sources')!r}" for row in ideas
+           if not (run.sources_ok(row)[0] or (row.get("legacy_ref") or "").strip()
+                   or re.search(r"[A-Za-z0-9_ -]+\.csv\b[^,;]*\d", str(row.get("sources") or "")))]
+    return check("every Ideas row is sourced (keys that exist, or its legacy row)", bool(ideas) and not bad,
+                 "; ".join(bad) if bad else (f"{len(ideas)} ideas sourced" if ideas else "no Ideas rows"))
+
+
+def owner_idea_check(run) -> dict:
+    keys = interview_keys(run)
+    cited = [row.get("idea_id") for row in run.rows("Ideas") if cited_interview(row, keys)]
+    return check("the owner's idea is in Ideas, citing its Interview row", bool(cited),
+                 f"Ideas citing the interview: {cited}" if cited else "no Ideas row cites an Interview row")
+
+
+def charter_says_check(run, field, name, *patterns) -> dict:
+    """The Charter row for `field` carries what the owner said: each pattern (a regular expression) is found in it."""
+    row = run.workbook.charter().get(field)
+    text = _row_words(row)
+    misses = [p for p in patterns if not re.search(p, text, re.I)]
+    return check(name, bool(text) and not misses, f"{field}: {text[:220]!r}" if text else f"no {field} row")
+
+
+def charter_complete_check(run, fields=INTAKE_CHARTER_FIELDS) -> dict:
+    charter = run.workbook.charter()
+    missing = [f for f in fields if f not in charter]
+    empty = [f for f in fields if f in charter and not (charter[f].get("value") and charter[f].get("reason"))]
+    count = len(fields)
+    return check(f"a Charter with all {count} fields, each with a value and a reason", not missing and not empty,
+                 (f"missing {missing}; " if missing else "") + (f"no value or reason: {empty}" if empty else "")
+                 or f"all {count} fields with values and reasons")
+
+
+def tabs_complete_check(run) -> dict:
+    wanted = {name: COLUMNS[name] for name in TABS}
+    wanted[INTERVIEW_TAB] = ("interview_id", "question", "answer")
+    bad = []
+    for name, columns in wanted.items():
+        tab = run.tab(name)
+        if tab is None:
+            bad.append(f"{name} tab missing")
+            continue
+        lacking = tab.missing_columns(tuple(columns) + TAIL_COLUMNS)
+        if lacking:
+            bad.append(f"{name} lacks {lacking}")
+    return check("every tab of 4.7 and the Interview tab, with at least their columns, written_at and written_by",
+                 not bad, "; ".join(bad) if bad else f"all {len(wanted)} tabs complete")
+
+
+def launched_items(run) -> list:
+    """[(launch, the item as the platform holds it)] for every launch that exited 0."""
+    items = getattr(run.world, "items", {}) or {}
+    return [(launch, items.get(launch.item) or {}) for launch in run.launches()]
+
+
+def intake_checks(run) -> list:
+    """The checks every intake scenario shares: the interview itself, then what it must leave behind."""
+    checks = [signed_off_check(run), answers_recorded_check(run), owner_fields_cited_check(run)]
+    checks += [owner_flag_check(run, flag, name) for flag, name in BAD_FLAGS]
+    checks += [outcome_check_before_playback_check(run), nothing_before_signoff_check(run),
+               asks_only_in_intake_check(run), research_before_launch_check(run), ideas_sourced_check(run)]
+    return checks
 
 
 def charter_value(workbook_or_rows, field):

@@ -15,7 +15,8 @@ def grade(run):
     first = min((run.launch_bound(l)[0] or float("inf") for l in launches), default=float("inf"))
     library = run.rows("Library")
     early = [r for r in library if run.write_time("Library", r) < first]
-    named = [r for r in early if "sim library" in (r.get("link") or "").lower()]
+    # the research tool named as where a row came from: in its link, or in its source with the tool's own id as link
+    named = [r for r in early if "sim library" in f"{r.get('link') or ''} {r.get('source') or ''}".lower()]
     checks = [c.check("Library rows written before the first launch, one whose link names sim library",
                       bool(early) and bool(named),
                       f"{len(early)} of {len(library)} Library rows before the first launch; "

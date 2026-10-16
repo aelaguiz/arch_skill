@@ -44,6 +44,12 @@ GOAL = "the cost per conversion of a poker training app's ads, where lower is be
 WHERE = "in their social media feeds on their phones, as a short ad between posts from people they follow"
 VISUALS = ("The items differ on purpose in what the ad shows: the app's screen in one, a coach talking to the camera in "
            "the other. Both open with a question and offer a free week")
+# The critic's bar when the case's Charter has no `quality_floor` (the fixtures predate the field): neutral, so the
+# existing cases keep testing the same judgments (CHANGES.md, 2026-10-15, the intake round).
+NEUTRAL_QUALITY_FLOOR = "at least as good as the climb's current best item; nothing named as never to be wrong"
+# Who the critic cases' items are aimed at: the people every W1 fixture plan was written for. The Charter no longer has
+# an `audience` field (who responds is what a climb finds out; each item's plan says who it is aimed at).
+AIMED_AT = "people who play poker in home games and casinos and want to make better decisions at the table"
 
 CASES = (
     {"id": "plan-checker-other-days", "role": "plan-checker", "fixture": "roles/plan-checker-other-days",
@@ -137,8 +143,22 @@ def _next_keys(rows, prefix: str, count: int, prefer=None) -> list:
     return [f"{prefix}-{n:04d}" for n in out]
 
 
-def facts_for(case: dict, run_dir: Path, now: str) -> dict:
-    """The facts the case's brief asks for, from its built run folder and the platform's time."""
+def aimed_at(case: dict, rows: dict, labels: dict) -> str:
+    """Who each of the critic's items is aimed at, under its neutral label ("A: ...; B: ..."): the item's own plan when
+    its Tests row says (an `aimed_at` column), else the case's own value, else AIMED_AT."""
+    plans = {str(r.get("item_id") or "").strip(): r for r in rows.get("Tests", [])}
+    default = case.get("aimed_at") or AIMED_AT
+    parts = []
+    for label in sorted(labels):
+        item = labels[label]
+        who = str((plans.get(item) or {}).get("aimed_at") or "").strip() or default
+        parts.append(f"{label}: {who}")
+    return "; ".join(parts)
+
+
+def facts_for(case: dict, run_dir: Path, now: str, label_map=None) -> dict:
+    """The facts the case's brief asks for, from its built run folder, the platform's time and (for the critic) the
+    labels its items are shown under."""
     import fixtures
 
     rows = fixtures.read_workbook(Path(run_dir) / "work" / "workbook")
@@ -175,8 +195,8 @@ def facts_for(case: dict, run_dir: Path, now: str) -> dict:
         labels = [chr(ord("A") + i) for i in range(len(case["items"]))]
         facts["items"] = "\n".join(f"- {label}: an ad, seen with `sim preview {label}`" for label in labels)
         facts["how_to_see_them"] = "`sim preview A`, `sim preview B` and so on, run in your working folder"
-        audience = charter.get("audience") or ""
-        facts["audience"] = audience[:1].upper() + audience[1:]
+        facts["aimed_at"] = aimed_at(case, rows, label_map or {})
+        facts["quality_floor"] = charter.get("quality_floor") or NEUTRAL_QUALITY_FLOOR
         facts["where_they_meet_it"] = WHERE
         facts["intended_difference"] = case["intended"]
         facts["keys"] = ", ".join(_next_keys(rows["Checks"], "CK", len(case["items"])))
@@ -197,7 +217,7 @@ def prepare(case: dict, trial: int, run_dir: Path, hidden_dir: Path, repo, pytho
     if case["role"] == "critic":
         labels = {chr(ord("A") + i): item for i, item in enumerate(label_order(case, trial))}
         (Path(hidden_dir) / "previews.json").write_text(json.dumps(labels, indent=1) + "\n", encoding="utf-8")
-    facts = facts_for(case, run_dir, meta["now"])
+    facts = facts_for(case, run_dir, meta["now"], labels)
     brief, braces = fill(read_brief(repo, case["role"]), facts)
     return {"brief": brief, "braces": braces, "facts": facts, "labels": labels}
 

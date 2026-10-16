@@ -1,17 +1,18 @@
 """Layer 2: the scenarios on Sonnet (PLAN.md 6.6, 6.10, 6.11).
 
-    python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a                  # 29 scenarios x 3 + 6 controls
+    python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a                  # 26 scenarios x 3 + 6 controls
     python3 evals/hill-climb/runner/run_scenarios.py --batch L2-b --scenarios V03,V08 --trials 3 --no-controls
     python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a --regrade         # grade the copied results again
     python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a --dry-run         # print the plan and one command
 
 Each trial builds a fresh run folder from its fixture (`fixtures.build_scenario`), runs one isolated session, grades it
-with its scenario's `grade.py` (V19's runs also with V22's), and copies the run and hidden folders to
+with its scenario's `grade.py`, and copies the run and hidden folders to
 `evals/hill-climb/results/<batch>/<run_id>/` before removing them from the lab root. A run whose tool inputs touch the
 lab is invalid and rerun once; a second tampering counts as a failed trial. A trial stopped by its budget cap or its
 timeout counts as failed. A session the account's usage limit cut short is not a trial: it is rerun on the next account,
 or, when `--account` pins one, on the same account once its limit resets.
-The batch writes `summary.json` and `summary.md`.
+The batch writes `summary.json` and `summary.md`. V19, V20 and V29, the intake interview, run through
+`run_intake.py` instead (many sessions and a simulated owner); V22 grades V19's runs there.
 """
 from __future__ import annotations
 
@@ -254,6 +255,10 @@ def main(argv=None) -> int:
     args = parse_args(argv)
     ctx = Context(args)
     scenarios = [s.strip() for s in args.scenarios.split(",") if s.strip()]
+    intake = [s for s in scenarios if s in batch.INTAKE_SCENARIOS]
+    if intake and not args.regrade:
+        print(f"{', '.join(intake)} run through the intake interview: use runner/run_intake.py", file=sys.stderr)
+        return 2
     controls = [] if args.no_controls else [s.strip() for s in args.controls.split(",") if s.strip()]
     started = time.time()
     if args.regrade:

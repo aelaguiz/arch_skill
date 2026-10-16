@@ -640,13 +640,15 @@ def limit_reset(status: dict, label: str, now: float):
 
 
 def run_session_with_accounts(pool: AccountPool, *, sleep=time.sleep, busy_wait_s: float = BUSY_WAIT_S,
-                              busy_retries: int = BUSY_RETRIES, **session_kwargs) -> dict:
-    """run_session on the pool's account. A busy refusal is retried after busy_wait_s up to busy_retries times, then
-    the next account is used; `no_eligible_pool_account` raises NoEligibleAccount."""
+                              busy_retries: int = BUSY_RETRIES, runner=None, **session_kwargs) -> dict:
+    """run_session (or `runner`, a function with the same account contract, such as the simulated owner's session) on
+    the pool's account. A busy refusal is retried after busy_wait_s up to busy_retries times, then the next account is
+    used; `no_eligible_pool_account` raises NoEligibleAccount."""
+    runner = runner or run_session
     tries = 0
     while True:
         label = pool.label()
-        info = run_session(label=label, **session_kwargs)
+        info = runner(label=label, **session_kwargs)
         if info.get("no_eligible"):
             raise NoEligibleAccount(f"aim refused {label}")
         if info.get("busy"):

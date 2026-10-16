@@ -6,7 +6,7 @@ Read this on every tick that sets spend, and whenever money is short or the owne
 
 Spend steadily enough to learn and earn while the money lasts. Too fast, and the money runs out before the first tests
 have read, so the first request for more comes with nothing to show. Too slow, and tests take weeks to read and the
-climb barely moves. At setup, write down in `pace` how fast this climb means to spend and why, from the money, the
+climb barely moves. At intake, write down in `pace` how fast this climb means to spend and why, from the money, the
 platform's traffic and how long a test needs to read. Pace weighs how soon the climb needs answers, how much the
 platform sells before each extra dollar costs more, and how long a test needs to read. When the owner has said more
 money will come on request, there is no need to stretch what is in hand, and a pace that starves tests to make it last
@@ -40,7 +40,7 @@ Each lane's next dollar buys something different:
 **A climb with an end date.** A test that cannot read before the end teaches this climb nothing it can still use; it can
 only inform a later climb, which is worth something when the owner will run one. So as the end nears, the reason for
 exploring weakens and the money usually does more earning on the best known options, while money left unspent earns
-nothing at all. Plan the last stretch at setup, and when exploring stops paying for this climb, have the strategist say
+nothing at all. Plan the last stretch at intake, and when exploring stops paying for this climb, have the strategist say
 so in the charter with its reason rather than letting it lapse tick after tick.
 
 The charter's `lanes` record this climb's current leaning between the three, in words, with its reasons; each tick still

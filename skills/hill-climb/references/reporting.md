@@ -1,6 +1,6 @@
 # Progress reports
 
-Read this when the charter's `reporting` brings a report due, and at setup when choosing how the owner is told.
+Read this when the charter's `reporting` brings a report due, and at intake, where the owner says how they want to hear.
 
 The owner leaves the climb to run. A report is how they see it working without being asked anything, so it should let
 them see in a few minutes where the climb stands and whether it is getting better, without opening the workbook.
@@ -28,6 +28,6 @@ the answer first, things named by what they are rather than by workbook keys, ev
 
 Put it where `reporting` says, and record it as a Reviews row with `role` `report`: the period it covers, its headline
 and the link or file in `findings`, where it went in `call`, `changes` `none`. The newest such row tells the next
-session when another report is due, as a role's newest Reviews row does for its cadence. When the owner said how they
-want reports, that stays as they said it; otherwise `reporting` is setup's choice, and the strategist may change it like
-any other.
+session when another report is due, as a role's newest Reviews row does for its cadence. The owner says in the interview
+how they want reports, and that stays as they said it; when they leave it to you, `reporting` is your choice, and the
+strategist may change it like any other.

@@ -9,7 +9,8 @@ Four layers:
 | Layer | What it checks | Models | Command |
 |---|---|---|---|
 | 1 | the lab itself: simulator, fixtures, graders, transcript parser, runners | none | `python3 -m unittest discover -s evals/hill-climb/tests -t evals/hill-climb` |
-| 2 | one tick of the skill in a prepared situation (29 scenarios, 30 graders) | Sonnet | `python3 evals/hill-climb/runner/run_scenarios.py --batch <name>` |
+| 2 | one tick of the skill in a prepared situation (26 scenarios) | Sonnet | `python3 evals/hill-climb/runner/run_scenarios.py --batch <name>` |
+| 2i | the intake interview against a simulated owner, many sessions (V19, V20, V29; V22 grades V19's runs) | Sonnet | `python3 evals/hill-climb/runner/run_intake.py --batch <name> --account <label>` |
 | 2b | one role on its own, from its brief, on a case built to need its judgment (7 cases) | Sonnet | `python3 evals/hill-climb/runner/run_roles.py --batch <name>` |
 | 3 | a whole climb from setup to the world's horizon, against a no-skill run and a Thompson-sampling baseline | Sonnet | `python3 evals/hill-climb/runner/run_backtest.py --batch <name>` |
 
@@ -35,7 +36,7 @@ moves to the next one by the same rule when it is busy or limited.
 ## Layer 2: scenarios
 
 ```
-python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a                          # 29 scenarios x 3, plus 6 no-skill controls
+python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a                          # 26 scenarios x 3, plus 6 no-skill controls
 python3 evals/hill-climb/runner/run_scenarios.py --batch L2-b --scenarios V03,V08 --trials 3 --no-controls
 python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a --regrade                # grade the saved runs again
 python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a --dry-run                # print the plan and one command
@@ -43,8 +44,37 @@ python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a --dry-run         
 
 Each scenario folder (`scenarios/VNN/`) holds the situation (`fixture.json`) and its pass rule (`grade.py`); the table
 of pass rules is PLAN.md section 6.6, and 13.3 for V25 to V30. V22 has no fixture: it grades the research checks on
-V19's runs. Most scenarios extend `scenarios/base_w1.json`; V27 and V28 extend `scenarios/base_w5.json`, and V29 sets
-up W5 from nothing. The safety scenarios, which need 3 of 3, are V01, V02, V03, V07, V16, V17, V23 and V28.
+V19's runs. Most scenarios extend `scenarios/base_w1.json`; V27 and V28 extend `scenarios/base_w5.json`. The safety
+scenarios, which need 3 of 3, are V01, V02, V03, V07, V16, V17, V23 and V28. V19, V20 and V29 run through
+`run_intake.py` (below); `run_scenarios.py` refuses them.
+
+## Layer 2i: the intake interview
+
+```
+python3 evals/hill-climb/runner/run_intake.py --batch I-a --trials 1 --account <label>    # V19, V20, V29 once each
+python3 evals/hill-climb/runner/run_intake.py --batch I-a --scenarios V19,V20 --trials 2 --account <label>
+python3 evals/hill-climb/runner/run_intake.py --batch I-a --regrade
+python3 evals/hill-climb/runner/run_intake.py --batch I-a --dry-run                       # the plan and one command
+```
+
+A new climb, or one built from earlier work, starts with an interview of the owner
+(`docs/hill-climb-skill-2026-10-14/INTAKE_PLAN.md`). Each trial runs one fresh session per turn under `RUN/ticks/<n>/`,
+so every turn picks the interview up from the workbook: the first prompt is the scenario's request, each later one
+`/hill-climb <the owner's answer>`. When a session's final message asks something, a simulated owner
+(`runner/owner.py`: a clean Sonnet session with no tools, from an empty folder) answers it from the scenario's hidden
+brief (`scenarios/<ID>/owner.md`, copied into the hidden folder only), reading any report the agent wrote for it that
+turn, and flags the message: it asked the method, asked what the climb exists to find out, asked something already
+written down, held two questions, was an outcome check, was a playback, and whether the owner signed off. The loop
+stops at the first session that ends without a question, after 30 sessions, or at a trial cost of $40; once the owner
+has signed off (and that session has seeded the climb and run its first tick), the world moves on 12 hours and one
+more session runs `/hill-climb Run the tick.`, which must ask nothing. `RUN/interview.jsonl` logs every turn (the
+agent's message, the question, the owner's answer, flags and times), `HIDDEN/owner/<n>/` keeps each owner call, and the
+graders read the log beside the workbook and the platform's action log. V19 is a new climb on W1, V20 an import of the
+hand-run tracker in `legacy/`, V29 a new climb on the W5 video account. The plan's runs are 2 trials each; a scenario
+passes at 2 of 2.
+
+The backtests' setup tick runs the same loop, with a brief per world in `worlds/owners/` that answers the way the
+world's request reads.
 
 ## Layer 2b: role tests
 
@@ -93,8 +123,8 @@ copied). At most 3 sessions at once, and a new one starts only while the one-min
 inactive memory is at least 16 GB (`--max-parallel`, `--load-limit`, `--mem-limit-gb`). `runner/remote.py` runs a batch
 on the Mac Studio instead when it has an account free.
 
-Each session has a spending cap: $5 for a scenario, $8 for a setup or adoption run, $6 for a backtest tick, and a
-20-minute timeout. A session stopped by either counts as a failed trial. Measured on Sonnet on 2026-10-15: a scenario
+Each session has a spending cap: $5 for a scenario, $8 for a setup or interview session, $6 for a backtest tick, $0.50
+for an owner's reply, and a 20-minute timeout (5 minutes for the owner). A session stopped by either counts as a failed trial. Measured on Sonnet on 2026-10-15: a scenario
 costs $0.15 to $1.40 and takes 1 to 7 minutes; a full layer 2 pass (75 sessions) about $40 to $50 and an hour at three
 at once; a backtest $5 to $12 and 20 to 45 minutes per world with the skill, about $1 to $2 without it.
 

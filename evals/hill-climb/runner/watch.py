@@ -41,6 +41,7 @@ TAB_KEYS = {
     "reviews": "review_id",
     "money": "entry_id",
     "log": "tick_id",
+    "interview": "interview_id",   # the intake interview (INTAKE_PLAN.md)
 }
 
 

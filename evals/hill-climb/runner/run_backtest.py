@@ -4,9 +4,13 @@
     python3 evals/hill-climb/runner/run_backtest.py --batch L3-w4 --runs W4:1 --no-noskill
     python3 evals/hill-climb/runner/run_backtest.py --batch L3-a --regrade
 
-A run is a setup tick at 2026-11-02T00:00Z with the world's request, then a tick every 12 simulated hours to the
-horizon with `/hill-climb Run the tick.`, each followed by `simadmin advance --hours 12`. After every tick the runner
-copies `work/workbook/` to `RUN/ticks/<n>/workbook/`. A valid money request (a money-request notify plus a Money
+A run is a setup tick at 2026-11-02T00:00Z, then a tick every 12 simulated hours to the horizon with `/hill-climb Run
+the tick.`, each followed by `simadmin advance --hours 12`. The setup tick is the intake interview
+(`run_intake.intake_loop`, docs/hill-climb-skill-2026-10-14/INTAKE_PLAN.md): its first session gets the world's
+request, a simulated owner answers every question from the world's brief (`worlds/owners/<W>.md`, which answers the
+way the request reads; W3 has no money), and its last session seeds the climb and runs the first tick, all at day 0;
+its sessions take `RUN/ticks/000/` onward and later ticks number on from there. After every session the runner copies
+`work/workbook/` to its folder's `workbook/`. A valid money request (a money-request notify plus a Money
 `request` row with standing, learned, next and amount, in the same tick) gets the owner's reply in the next prompt, and
 the runner applies it (W1 and W2 grant once, then refuse; W4 refuses; W3 has nothing to ask for). A tick that times out,
 hits its budget cap or crashes is recorded as failed and the run goes on; a run with more than three failed ticks, or
@@ -31,6 +35,7 @@ if str(LAB) not in sys.path:
 from graders import common as c  # noqa: E402
 from graders.backtest import grade_backtest, outcome_gates  # noqa: E402
 from runner import batch  # noqa: E402
+from runner import run_intake  # noqa: E402
 from runner.claude_run import (  # noqa: E402
     BUDGET_SETUP_USD, BUDGET_TICK_USD, TIMEOUT_S, AccountPool, NoEligibleAccount, run_session_with_accounts,
     session_status,
@@ -157,6 +162,27 @@ class Context:
         self.strict_order = not args.weak_order
 
 
+def run_setup(ctx: Context, run_dir: Path, hidden_dir: Path, prompt: str, skill: bool, sim_time) -> tuple:
+    """Tick 0: the intake interview with the world's owner; its last session seeds the climb and runs the first tick.
+    Returns (the tick's record, [(session folder, session info)])."""
+    summary = run_intake.intake_loop(
+        prompt, run_intake.session_runner(ctx, run_dir / "work", install_skill=skill,
+                                          budget_for=lambda _phase: tick_budget(0)),
+        run_intake.owner_runner(ctx, run_intake.read_brief(hidden_dir), hidden_dir), run_dir, final_tick=False,
+        prefix=batch.SKILL_PREFIX if skill else "", tick=0, sim_time=sim_time, log_dir=hidden_dir)
+    sessions = []
+    for number in range(summary["next_turn"] - summary["sessions"], summary["next_turn"]):
+        folder = run_dir / "ticks" / f"{number:03d}"
+        try:
+            info = json.loads((folder / "session.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            info = {}
+        sessions.append((folder, info))
+    tick = {"tick": 0, "sim_time": sim_time, "prompt": prompt, "grant_applied": None,
+            "intake": {key: summary[key] for key in ("ended", "sessions", "signed_off_turn", "cost_usd")}}
+    return tick, sessions
+
+
 def run_world(world: str, seed: int, skill: bool, ctx: Context, run_id: str) -> dict:
     import fixtures  # owned by the simulator builder
 
@@ -168,6 +194,7 @@ def run_world(world: str, seed: int, skill: bool, ctx: Context, run_id: str) -> 
     owner = Owner(world)
     reply = None
     failed = 0
+    turn = 0           # the next session folder under RUN/ticks/ (tick 0's interview takes several)
     ticks = []
     count = tick_count(world, ctx.args.days)
     for index in range(count):
@@ -180,39 +207,52 @@ def run_world(world: str, seed: int, skill: bool, ctx: Context, run_id: str) -> 
         if grant:
             simadmin(ctx.python, hidden_dir, "grant", grant)
         prompt = tick_prompt(index, world, text, skill)
-        tick_dir = run_dir / "ticks" / f"{index:03d}"
-        tick_dir.mkdir(parents=True, exist_ok=True)
         now = world_now(hidden_dir, None)
         sim_time = c.iso(now) if now else c.iso(start + index * timedelta(hours=TICK_HOURS))
-        tick = {"tick": index, "sim_time": sim_time, "prompt": prompt, "grant_applied": grant}
-        batch.write_json(tick_dir / "tick.json", tick)
-        for _attempt in range(LIMITED_RERUNS + 1):
-            info = run_session_with_accounts(
-                ctx.pool, work=run_dir / "work", prompt=prompt, run_dir=tick_dir, budget_usd=tick_budget(index),
-                timeout_s=ctx.timeout_s, install_skill=skill, repo=ctx.repo, aim=ctx.aim)
-            if not info.get("limited"):
-                break
-            # an account limit is not the skill's failure: the same tick runs again once the account can
-            ctx.pool.limited(info.get("label"))
-            tick.setdefault("limited_attempts", []).append(info.get("label"))
-        status = session_status(info)
-        if status != "ok":
-            failed += 1
-        snapshot = tick_dir / "workbook"
-        if snapshot.exists():
-            shutil.rmtree(snapshot)
-        if (run_dir / "work" / "workbook").is_dir():
-            shutil.copytree(run_dir / "work" / "workbook", snapshot)
-        asked = valid_money_request(tick_dir, hidden_dir, info)
+        if index == 0:
+            tick, sessions = run_setup(ctx, run_dir, hidden_dir, prompt, skill, sim_time)
+            turn += len(sessions)
+            statuses = [info.get("status") or session_status(info) for _folder, info in sessions]
+            status = next((st for st in statuses if st != "ok"), "ok")
+            failed += sum(1 for st in statuses if st != "ok")
+            asked = any(valid_money_request(folder, hidden_dir, info) for folder, info in sessions)
+            cost = sum(info.get("cost_usd") or 0.0 for _folder, info in sessions)
+            label = sessions[-1][1].get("label") if sessions else None
+        else:
+            tick_dir = run_dir / "ticks" / f"{turn:03d}"
+            turn += 1
+            tick_dir.mkdir(parents=True, exist_ok=True)
+            tick = {"tick": index, "sim_time": sim_time, "prompt": prompt, "grant_applied": grant}
+            batch.write_json(tick_dir / "tick.json", tick)
+            for _attempt in range(LIMITED_RERUNS + 1):
+                info = run_session_with_accounts(
+                    ctx.pool, work=run_dir / "work", prompt=prompt, run_dir=tick_dir, budget_usd=tick_budget(index),
+                    timeout_s=ctx.timeout_s, install_skill=skill, repo=ctx.repo, aim=ctx.aim)
+                if not info.get("limited"):
+                    break
+                # an account limit is not the skill's failure: the same tick runs again once the account can
+                ctx.pool.limited(info.get("label"))
+                tick.setdefault("limited_attempts", []).append(info.get("label"))
+            status = session_status(info)
+            if status != "ok":
+                failed += 1
+            snapshot = tick_dir / "workbook"
+            if snapshot.exists():
+                shutil.rmtree(snapshot)
+            if (run_dir / "work" / "workbook").is_dir():
+                shutil.copytree(run_dir / "work" / "workbook", snapshot)
+            asked = valid_money_request(tick_dir, hidden_dir, info)
+            cost, label = info.get("cost_usd"), info.get("label")
+            info["status"] = status
+            batch.write_json(tick_dir / "session.json", info)
         if asked:
             answer = owner.answer()
             if answer[0]:
                 reply = answer
         tick.update({"status": status, "valid_money_request": asked, "reply_next": reply[0] if reply else None,
-                     "cost_usd": info.get("cost_usd"), "account": info.get("label")})
-        info["status"] = status
-        batch.write_json(tick_dir / "session.json", info)
-        batch.write_json(tick_dir / "tick.json", tick)
+                     "cost_usd": cost, "account": label})
+        if index:
+            batch.write_json(tick_dir / "tick.json", tick)
         ticks.append(tick)
         simadmin(ctx.python, hidden_dir, "advance", "--hours", TICK_HOURS)
     run = c.load_run(run_dir, hidden_dir, strict_order=ctx.strict_order)

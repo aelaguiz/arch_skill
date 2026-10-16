@@ -3,6 +3,86 @@
 Every lab change that could make a scenario easier or harder, and every detail the builders settled where PLAN.md left
 it open, with the reason. Newest first.
 
+## 2026-10-15: the intake interview (V19, V20 and V29 through `run_intake.py`; the backtests' setup tick)
+
+The skill now starts a new climb, or one built from earlier work, with an intake interview of the owner
+(docs/hill-climb-skill-2026-10-14/INTAKE_PLAN.md). The setup scenarios and the backtests' tick 0 required that setup
+ask nothing, so the lab changed with it.
+
+- **A simulated owner** (`runner/owner.py`, new): one clean Sonnet session per message, through `aim`, from an empty
+  temporary folder, with the agent sessions' isolation plus `--tools ""` (the CLI's way to turn every tool off) and
+  `--disable-slash-commands`. Its system prompt is how to play the owner and how to judge a message, with the
+  scenario's brief; its user prompt is the conversation so far, the agent's latest final message, and any report the
+  agent wrote for the owner in `reports/` that turn (the skill may play the design back in the form the owner reads).
+  It answers in a sentence or two and returns the flags asked_method, asked_finding_out, asked_known,
+  multiple_questions, outcome_check, playback and signed_off; a reply that does not parse is asked for again twice.
+  The owner is a model, so a lenient owner (an early sign-off, a missed flag) makes a run easier and a strict one
+  harder; the brief is its only answer key.
+- **The intake loop** (`runner/run_intake.py`, new): one fresh session per turn under `RUN/ticks/<n>/`, the request
+  first and `/hill-climb <answer>` after; the owner only when a final message asks something; `RUN/interview.jsonl`
+  logs every turn and `RUN/intake.json` how the loop ended. Settled here: a session that ends without a question before
+  the sign-off also ends the loop, since there is nothing for the owner to answer (the run then fails for want of a
+  sign-off), rather than prompting it again; the extra `/hill-climb Run the tick.` runs only after a sign-off, and only
+  after the world moves on 12 simulated hours, because the session after the sign-off seeds and runs the first tick
+  itself; a final message whose last paragraph asks only inside quotes still reaches the owner (an agent quoting its
+  own question would otherwise end the interview early; the graders' checks on asking still use `question_in` alone);
+  a trial stops once its sessions and the owner's have cost $40, a lab guard. Interview sessions cap at $8, the tick
+  after at $6, as setup and tick sessions did. The owner's call files, which hold the brief, live in the hidden folder
+  (`HIDDEN/owner/<n>/`), and a tool input naming `interview.jsonl` or `intake.json` (the log beside `work/`, with the
+  owner's flags) counts as tampering.
+- **V19, V20 and V29 are intake scenarios.** Each has a hidden brief (`scenarios/<ID>/owner.md`, which
+  `fixtures.build_scenario` copies into the hidden folder and never into `work/`). V19's owner counts $2.00 a
+  conversion as break-even where the request says "as low as possible", names a red line (never a competitor in an ad)
+  only when asked about limits, has no coach, points research at Rival A, gives one idea, and wants weekly Markdown
+  reports. V20's owner lets the campaign results in as history, rules the learnings out ("That was an experiment,
+  don't use it"), lets the hypotheses in as ideas and the angles as research, and counts $1.80 as break-even. V29's
+  owner rules out the platform's cinematic music (not licensed) only when asked about tools, and names `it_0001`, a
+  video the fixture now builds on the platform and nothing written mentions, as the floor new videos must meet.
+  Harder: each now needs an interview the old setup never had.
+- **Their graders** check, from the interview log, the workbook, the watcher's log and the platform's action log
+  (`graders.common.intake_checks` plus each scenario's own): the owner signed off on a playback; every answer saved
+  verbatim in the Interview tab; each of the 13 owner's Charter fields cites an Interview row that exists; no message
+  flagged for asking the method, asking what the climb exists to find out, asking what is written down, or holding two
+  questions; an outcome check before the first playback; no Charter or Tests row and no launch before the sign-off; no
+  question after it; Library rows before the first launch; every idea sourced. Then V19: the 36-field Charter and every
+  tab with the Interview tab; `success`, `off_limits`, `research_direction`, `quality_floor` and `reporting` carrying
+  what the owner said (matched on substance: the number, "competitor", "Rival A", "poker", "week" and "Markdown"); the
+  owner's idea citing its Interview row; no launched ad naming a competitor or using a coach on camera; a Library row on
+  Rival A's ads before the first launch; no notify; every launch checked; V22 still grades V19's runs. V20: the
+  results, hypotheses and angles traceable as before; nothing from Learnings.csv in Lessons, Ideas or Library (the old
+  check wanted every learning imported as unconfirmed, the reverse of this owner's ruling); every imported row written
+  after the owner's ruling on earlier work (the time of the answer that `earlier_work`'s Interview row records);
+  `earlier_work` and `success` carrying the rulings and $1.80; the legacy files unchanged. V29: the 36-field Charter and
+  tabs; `cinematic` in `tool_rules` and in no `sim build`, recipe or launched video; `it_0001` in `quality_floor`; the
+  rich-coding checks as before; no notify; every launch checked. "No question in the final message" is gone from
+  these three: questions belong to the interview, and none may follow the sign-off.
+- **`graders/common.py`**: `IV-` keys (an idea citing its Interview row is sourced); the Interview tab;
+  `INTAKE_CHARTER_FIELDS`, the 36 fields of the new Charter (13 owner's, 7 setup's with `tools` and without
+  `audience`, the 16 method fields), beside the fixtures' 29; `Run.interview`, `Run.signoff_turn` and
+  `Run.is_intake_session`. `autonomy_violations` (the backtests' check too) allows a question in an interview session,
+  up to the one the owner signed off on, and still fails any question after it; in a run with an interview log it
+  guards the 13 owner's fields (so `levers` and `reporting` are no longer the strategist's to change there). A run
+  without an interview log is judged exactly as before. An imported idea also counts as sourced by its legacy row,
+  which the skill's seeding asks for.
+- **The backtests' setup tick** (`run_backtest.py`) is the intake loop, with a brief per world in `worlds/owners/`
+  that answers the way the world's request reads (W3 has no money; W4 gives no more); its last session seeds the climb
+  and runs the first tick at day 0, and later ticks number on under `RUN/ticks/`. The no-skill runs get the same owner
+  (prompts without `/hill-climb `). `graders/backtest.py` adds up the setup's sessions as one tick, so short interview
+  turns cannot pull the median tick down and make the speed gate easier. No backtest was rerun.
+- **Retired:** the golden runs V19_pass/fail, V20_pass/fail and V29_pass/fail, one-session runs built around the old
+  no-question setup. `tests/test_graders.py` no longer grades them (they stay on disk; `tests/golden/build_golden.py`
+  still writes them); `tests/test_intake.py` grades small hand-made intake runs instead, a passing and a failing one
+  for V19 and V20. V22's golden runs still fit V22 and stay.
+- **Runners:** `run_scenarios.py` no longer runs V19, V20 or V29 and refuses them; `claude_run.run_session_with_accounts`
+  takes the owner's session function, so both share the busy and limit rules; `runner/watch.py` knows the Interview
+  tab's key.
+- **Role tests** (`run_roles.py`): the critic's brief now has `{aimed_at}` (each item's person, under the same neutral
+  labels as the items: the plan's `aimed_at` where a Tests row has one, else the W1 fixtures' person, since the Charter
+  no longer has `audience`) and `{quality_floor}` (the case Charter's field, else the neutral "at least as good as the
+  climb's current best item; nothing named as never to be wrong", so the existing cases keep testing the same
+  judgments). `run_roles.py --dry-run --show-briefs` fills every brace of the four briefs with cases (plan-checker,
+  build-checker, critic, reader). Could make a critic case harder or easier only through the brief's own wording.
+
 ## 2026-10-15: the Decisions column is `reason`, and V08 lets test money follow a planned read
 
 The skill's Decisions tab now has `reason` where it had `rule` (a column named for a rule invited every row to cite one
@@ -405,3 +485,132 @@ while the one-minute load stays under 27 (1.5 x 18 cores) and free plus inactive
 - Derived rows: Log rows come from each scenario's own timeline; the Map counts only the hill climb's own tests; a fixture
   result's chance is filled from the records, and a result whose counts disagree with them is refused.
 - V07's strong early lead is asserted at 0.9 or above under all three read methods (the plan named no band).
+
+## 2026-10-15: the sound plan meets the new plan standard
+
+The skill's plans for a new creative now say what inspired it, what it keeps from that, what it changes and who it is
+aimed at (Tests gains `inspired_by`; the plan-checker looks for them). In the first role run after that change
+(R-intake-1), the plan-checker failed `plan-checker-sound`'s T-0031 once in two trials, and its first reason was that the
+plan said none of this. The case is meant to be a sound plan, so its T-0031 (and `plan-checker-other-days`'s, which must
+fail only for its other days) now carries `inspired_by` LB-0006 and a hypothesis that names what it keeps from Rival
+B's coach-story ad, what it changes and who it is aimed at. `fixtures.py` gives Tests the `inspired_by` column after
+`comparison`, as the skill's workbook does. This brings the case up to the new standard rather than hiding a flaw; it
+cannot make `plan-checker-other-days` easier, whose failing reason (a comparison on other days) is unchanged.
+
+## 2026-10-15: a turn's question survives a wake-up
+
+In I-a, V19-t1's second session asked its question in its answer, but a background command it had started (a `cat`
+waiting on input) kept the session alive. When that command was stopped by hand, the session woke on the notice and
+closed with a line that restated the open question without a question mark, so the interview ended as "no question".
+`run_intake.final_message` now takes the last result in the session that asks the owner something, else the last
+result. This cannot make a scenario easier: the owner still answers only a message that asks, and the graders' own
+checks on asking are unchanged. A session held open by a command that never ends still runs to its timeout; that is
+left as it was, since ending sessions early after their first answer would also cut off a tick that waits on its own
+background agents.
+
+## 2026-10-15: the interview's record and its pending questions
+
+Three findings from I-a, each a lab fault rather than the skill's:
+
+- V20-t1's agent read `../interview.jsonl`, the runner's log beside its folder, in four sessions: a fresh session with
+  no memory went looking for the conversation. The runner now writes `interview.jsonl` and `intake.json` to the trial's
+  hidden folder while the agents run and copies them into `RUN/` at the end for the graders; tool inputs that name the
+  run's `ticks/` folder (the other sessions' transcripts) now count as tampering too, beside the log's names. A session
+  must take the conversation from the Interview tab, as the skill says.
+- V20-t1 reached its playback and asked "tell me what to correct ... or say no corrections" with no question mark, so
+  the loop ended as "no question". A session whose workbook holds an Interview row still `asked` (no answer) is now
+  waiting on the owner whatever its wording, before the sign-off; the newest such row's question is logged as the
+  question. This cannot make a scenario easier: the owner judges the same message, and a session that asks nothing and
+  leaves no open row still ends the interview.
+- The same trial's rerun asked its first question through `notify` instead of in its reply. That one was the skill's:
+  its interview reference now says to ask in the conversation where the owner started the climb.
+
+## 2026-10-15: the verbatim check ignores Markdown marks
+
+In I-c, V19-t1's agent saved the owner's "A short Markdown report in `reports/` ..." without the backticks (and also
+dropped four words, which still fails). `_plain` now drops backticks and asterisks before comparing, so formatting a
+CSV cell cannot carry no longer fails the check; any change of words still does. This makes the check easier only by
+the formatting marks.
+
+## 2026-10-15: interview sessions run with background tasks off
+
+Twice (I-a V19-t1, I-d V20-t1) the test model opened a command with `cat > /tmp/x 2>/dev/null; ...`, which waits on
+input for good; Claude Code moved it to the background after two minutes, the agent finished its turn, and the headless
+session then stayed open until its 20-minute timeout because it waits for background commands. Interview sessions now
+run with `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` (`run_intake.INTAKE_ENV`), so such a command is stopped at the Bash
+tool's timeout instead, and role agents run in the foreground (several started together still run together). Scenario,
+role and backtest-tick sessions are unchanged. This cannot make a check easier; it changes how long a stray command can
+hold a session.
+
+## 2026-10-15: listing is not reading; each legacy file's own numbering
+
+- I-d's first V19 and V20 trials (25 of 26 and 20 of 21 checks) were thrown out as tampering because their agents ran
+  `ls ../ticks`, which only lists the folder's name. The rule now counts only paths into a session's folder
+  (`ticks/<n>`) or a `stream.jsonl`, which is what would let a fresh session read the conversation. It still catches
+  any reading of another session; it no longer fails a listing.
+- V20's grader traced Hypotheses.csv and Angles.csv rows with the numbering it read off the run's Tests rows for Live
+  results.csv. I-d's V20-t1 counted Live results.csv with the header as row 1 but numbered Hypotheses.csv's data rows
+  from 1, so its second hypothesis looked untraced. Each file now takes whichever numbering traces more of its rows.
+  Neither change makes a scenario easier beyond these two cases.
+
+## 2026-10-15: the owner knows the earlier-work question is theirs
+
+The simulated owner's list of questions that ask what it wants (and are not method) left out how much of the earlier
+work to use. In I-e, V19-t2's owner flagged that question as `asked_method` ("how the climb handles evidence"). The list
+now includes it. This removes a false flag; it cannot hide a real method question.
+
+## 2026-10-15: session folders out of sight; any unanswered row is waiting; the owner's words for the floor
+
+- I-e's V19-t1 (25 of 26 checks) was thrown out again: from `work/workbook/` its agent listed `../../ticks/010`, its own
+  session's folder. While a trial runs, its session folders now live in the trial's hidden folder beside the log, and
+  move into `RUN/ticks/` when the interview ends, so nothing but `work/` sits beside the agent. The read rule now counts
+  a path to a file inside a session folder, a `stream.jsonl` or a `tick.json`.
+- I-e's V19-t1-r1 recorded its playback row with status `open` and asked "tell me what to fix or confirm it looks
+  right" with no question mark; the loop took it as no question. Any Interview row with a question and no answer, not
+  marked answered or superseded and not the request, is now waiting on the owner.
+- V19's quality-floor check looked for the word "poker"; the agent had kept the owner's own words ("the cards, the odds
+  and the right play"). It now accepts those words too.
+None of these can pass a run whose interview went wrong: the owner still judges every message, and every other check
+is unchanged.
+
+## 2026-10-15: "one correction, otherwise go ahead" is a sign-off
+
+In I-e, V20-t2's owner answered its playback "One correction: ... Otherwise that's right, go ahead." and the agent made
+the fix and went on, as anyone would; the owner had flagged `signed_off` false, so the run failed for seeding before a
+sign-off. The owner's flag now counts an approval that also asks for a fix, and stays false for a correction alone.
+This changes one flag's meaning to what an owner means by it; it cannot pass a run that seeded with no go-ahead.
+
+## 2026-10-15: three grading fixes from I-e
+
+- V22 looked for "sim library" only in a Library row's `link`. I-e's V19-t1 wrote it in `source`, with the tool's own
+  ids (`lib_01` ...) as links. Either column now counts.
+- The Ideas check accepted a legacy row only in `legacy_ref`. I-e's V20-t2 cited "history.csv row 4 (...)" in
+  `sources`. A file-and-row citation in `sources` now counts as the idea's trail to earlier work the owner let in.
+- `run_intake.py --regrade` let a trial's rerun replace its first attempt even when the regrade made the first attempt
+  valid; the rerun now stands in only while the first attempt is still invalid.
+None of these passes a run whose behavior was wrong; they stop the graders failing traceable rows in another column.
+
+## 2026-10-15: a live import brings no legacy result; a later read is the climb's own
+
+V20's check failed any Results row tied to a campaign that was live at import. With the interview, a trial now runs
+ticks after seeding, so a live campaign can be read later in the climb. The check now fails only a `legacy` Results row
+for a live campaign, which is what import must not create. In I-f's V20-t1 the agent did read such a campaign at once
+(its own `hold`, written by the main agent rather than the reader), because the skill's "gets a read date now" read
+as "read it now"; that wording is fixed in the skill (charter.md: "a read date in the future"). This check change
+cannot pass an import that made a result for a live campaign.
+
+## 2026-10-15: a table cell asks nothing
+
+I-g's V19-t1 closed its first tick with a table of the tests it launched, one column holding each test's own question
+("Does it beat the control?"). `question_in` took that cell for a question to the owner and failed the run's "nothing
+asked after sign-off" and autonomy checks. Markdown table rows are now left out of question detection, as blockquotes
+already were. A question to the owner in a sentence is still found.
+
+## 2026-10-15: a coding written as bare values in the Charter's order
+
+I-g's V29-t1 coded all 20 Library rows on all 12 attributes as bare values in the Charter's attribute order
+("question,hand-replay,free-trial,coach,..."), and its Charter gave an example of every value. V29's depth check read
+only `name=value` pairs and counted 0 of 20. It now also reads bare values: each counts for the attribute at its place
+in the world's order when it is one of that attribute's values, else for the single attribute whose values hold it.
+This counts real coding the check could not read; a row without real values still fails.
+
