@@ -636,12 +636,17 @@ Examples:
 Use when the user asks to pair a reviewer or evaluator with the session they
 are talking to. The session starts one reviewer on a different model as a
 resumable session as soon as there is work to review, then resumes that same
-reviewer every period with one short
-prompt in the user's voice ("Read claude session <id> ... Then tell me: ..."),
-and acts on what holds up. The reviewer reads the session itself through
-`agent-history`, so it sees what was done rather than what was said. It only
-reads, and keeps notes as it goes so a long session or a compaction does not
-cost it what it read. It differs from `intent-police`, which the session consults at
+reviewer every period, for as long as anything runs for the work, with one
+prompt in the user's voice ("Read claude session <id> ... Then tell me: ...").
+Every check-in sends the reviewer back to where the work started, to the
+user's own words and standing rules, and to its notes, then asks questions
+that can't be answered with an all-clear. The reviewer reads the session
+itself through `agent-history`, so it sees what was done rather than what was
+said. It keeps notes and whatever else it needs as it goes, so a long
+session or a compaction does not cost it what it read, and it leaves the
+session's work alone. The session reads every review,
+records what it took and why, and spins the same reviewer back up after a
+restart. It differs from `intent-police`, which the session consults at
 decisions with a status share, and from `agent-watcher`, which watches the
 whole fleet for the user.
 

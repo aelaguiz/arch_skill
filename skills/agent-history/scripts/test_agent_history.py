@@ -932,6 +932,82 @@ class ReadAndHomeDiscoveryTests(unittest.TestCase):
             self.assertNotIn("Running the lab now.", later.stdout)
             self.assertIn("Rerunning only the failing scenario.", later.stdout)
 
+    def test_read_follows_a_continued_session_back_and_lists_what_the_user_wrote(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            project = home / "work" / "repo"
+            project.mkdir(parents=True)
+            (project / "AGENTS.md").write_text("repo rules\n")
+            first_id = "0a1b2c3d-0000-4000-8000-0000000000a1"
+            later_id = "0a1b2c3d-0000-4000-8000-0000000000b2"
+            first = home / ".aimgr" / "claude-homes" / "pro1" / ".claude" / "projects" / "-tmp-project" / f"{first_id}.jsonl"
+            write_jsonl(first, [
+                {"type": "user", "sessionId": first_id, "cwd": str(project), "timestamp": "2026-10-15T09:00:00Z",
+                 "message": {"role": "user", "content": "Test it on the version we're about to ship."}},
+                {"type": "assistant", "sessionId": first_id, "cwd": str(project), "timestamp": "2026-10-15T09:00:05Z",
+                 "message": {"role": "assistant", "content": [{"type": "text", "text": "Planning the release test."}]}},
+            ])
+            later = home / ".aimgr" / "claude-homes" / "pro2" / ".claude" / "projects" / "-tmp-project" / f"{later_id}.jsonl"
+            summary = ("This session is being continued from a previous conversation that ran out of context.\n\n"
+                       "Summary: prove it on the oldest app.\n\nIf you need specific details from before compaction, "
+                       f"read the full transcript at: {first}")
+            write_jsonl(later, [
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:00:00Z",
+                 "isCompactSummary": True, "message": {"role": "user", "content": summary}},
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:05:00Z",
+                 "message": {"role": "user", "content": "Now run the phone test.<system-reminder>rules</system-reminder>"}},
+                {"type": "assistant", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:05:10Z",
+                 "message": {"role": "assistant", "content": [{"type": "text", "text": "Building the oldest app."}]}},
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:20:00Z",
+                 "message": {"role": "user", "content": "<task-notification> <status>completed</status> </task-notification>"}},
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:30:00Z",
+                 "message": {"role": "user", "content": "<command-message>paired-reviewer</command-message>\n<command-name>/paired-reviewer</command-name>\n<command-args>use flash</command-args>"}},
+            ])
+            memory = home / ".claude" / "projects" / re.sub(r"[^A-Za-z0-9]", "-", str(project)) / "memory"
+            memory.mkdir(parents=True)
+            (memory / "MEMORY.md").write_text("- Device QA tests head, never production\n")
+            runs = str(home / "runs")
+
+            proc = self.run_in_home(home, "read", later_id, "--output-root", runs)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn(f"continues: {first_id} {first}", proc.stdout)
+            self.assertIn(f"memory: {memory}", proc.stdout)
+            self.assertIn(str(project / "AGENTS.md"), proc.stdout)
+            self.assertIn(f"read {later_id} --yours", proc.stdout)
+
+            yours = self.run_in_home(home, "read", later_id, "--yours", "--output-root", runs)
+            self.assertEqual(yours.returncode, 0, yours.stdout + yours.stderr)
+            out = yours.stdout
+            self.assertIn("3 messages from the user", out)
+            ask, phone, command = (out.index(text) for text in (
+                "Test it on the version we're about to ship.", "Now run the phone test.", "/paired-reviewer use flash"))
+            self.assertLess(ask, phone)
+            self.assertLess(phone, command)
+            self.assertIn(f"| {first_id[:8]} | user |", out)
+            for text in ("prove it on the oldest app", "Planning the release test.", "Building the oldest app.", "task-notification", "rules"):
+                self.assertNotIn(text, out.split("readable copy:")[1])
+            self.assertIn(f"read {later_id} --yours --after ", out)
+
+            newer = self.run_in_home(home, "read", later_id, "--yours", "--after", "2026-10-15T12:10:00Z", "--output-root", runs)
+            self.assertIn("1 messages from the user", newer.stdout)
+            self.assertNotIn("about to ship", newer.stdout.split("readable copy:")[1])
+
+    def test_read_names_an_earlier_session_that_is_not_on_this_machine(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            gone = "/elsewhere/projects/-tmp-project/9f8e7d6c-0000-4000-8000-0000000000c3.jsonl"
+            path = home / ".claude" / "projects" / "-tmp-project" / f"{CLAUDE_ID}.jsonl"
+            write_jsonl(path, [
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-15T12:00:00Z",
+                 "isCompactSummary": True, "message": {"role": "user", "content": f"Summary.\nread the full transcript at: {gone}"}},
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-15T12:01:00Z",
+                 "message": {"role": "user", "content": "Keep going."}},
+            ])
+            proc = self.run_in_home(home, "read", CLAUDE_ID, "--output-root", str(home / "runs"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn(f"continues: 9f8e7d6c-0000-4000-8000-0000000000c3 (not on this machine: {gone})", proc.stdout)
+
     def test_read_picks_the_newest_copy_and_names_the_others(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             home, project = Path(tmp), Path(tmp) / "project"

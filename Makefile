@@ -318,10 +318,11 @@ gemini_install_skill:
 	done
 
 # agy gets the Gemini skill set. Unlike the Gemini CLI copy, SKILL.md keeps its
-# frontmatter: agy requires `name` and `description` there.
+# frontmatter: agy requires `name` and `description` there. It installs whenever
+# ~/.gemini exists, so an agy installed later finds its skills already there.
 agy_install_skill:
-	@if [ ! -d "$(AGY_HOME)/antigravity-cli" ]; then \
-		echo "SKIP: no Antigravity CLI home at $(AGY_HOME)/antigravity-cli; nothing to install"; \
+	@if [ ! -d "$(AGY_HOME)" ]; then \
+		echo "SKIP: no $(AGY_HOME); nothing to install for the Antigravity CLI"; \
 		exit 0; \
 	fi; \
 	mkdir -p "$(AGY_SKILLS_DIR)"; \
@@ -483,8 +484,8 @@ verify_gemini_install:
 	@echo "OK: Gemini active skills installed; stale command surfaces removed"
 
 verify_agy_install:
-	@if [ ! -d "$(AGY_HOME)/antigravity-cli" ]; then \
-		echo "OK: no Antigravity CLI home at $(AGY_HOME)/antigravity-cli; nothing to verify"; \
+	@if [ ! -d "$(AGY_HOME)" ]; then \
+		echo "OK: no $(AGY_HOME); nothing to verify for the Antigravity CLI"; \
 		exit 0; \
 	fi; \
 	for skill in $(GEMINI_SKILLS); do \

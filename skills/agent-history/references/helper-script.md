@@ -47,6 +47,11 @@ project: <cwd>
 activity: <first time> to <last time>
 transcript: <path of the copy that was read>
 older copies: <other paths>            (only when copies exist)
+continues: <earlier id> <path>          (when the session continues another)
+  which continues: <id> <path>          (back to the first session)
+memory: <memory folders>                (Claude: those with anything in them)
+instructions: <AGENTS.md / CLAUDE.md files for this project and user>
+everything the user wrote, from the first session: python3 <script> read <id> --yours
 readable copy: <run_dir>/transcript.md
 
 <time> | <user|assistant|tool call|tool result|compaction|context> | <preview>
@@ -66,6 +71,20 @@ next time: python3 <script> read <full id> --after <last time>
   it: Codex environment and instruction blocks, Claude meta messages. Claude
   `<system-reminder>` blocks are removed from user turns. Reasoning and
   thinking blocks are left out.
+- `continues:` comes from the summary a continued Claude session opens with,
+  which names the transcript it came from ("read the full transcript at:").
+  Each earlier session is opened the same way, nearest first. One that is no
+  longer on this machine prints `(not on this machine: <path>)`.
+- `--yours` prints only what the user typed, in this session and every
+  earlier one it continues, oldest first, each line tagged with its session.
+  Tool output, compaction summaries, notifications and injected context are
+  left out, and a slash command prints as `/name args`. It prints every
+  message (`--last` still limits it), with up to 2,000 characters each, and
+  writes them in full to `yours.md`. Its `next time:` line keeps `--yours`.
+- `memory:` lists Claude memory folders with anything in them, for the
+  project folder and each folder above it, since Claude keys memory by the
+  repo root. `instructions:` lists `AGENTS.md` and `CLAUDE.md` in those
+  folders, plus the user's Claude or Codex instructions file.
 - `--after <time>` keeps entries after that time, compared to the second.
   `--last <n>` sets how many entries print (default 40; `0` prints all).
   `--max-preview-chars` sets each printed line's length (default 300).

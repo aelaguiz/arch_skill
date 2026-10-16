@@ -2137,6 +2137,105 @@ def file_newest_first(files: list[SessionFile]) -> list[SessionFile]:
     return sorted(files, key=lambda item: (file_mtime(item.path) or dt.datetime.min.replace(tzinfo=dt.timezone.utc)), reverse=True)
 
 
+# A continued Claude session opens with a summary that names the transcript it
+# came from: "... read the full transcript at: /path/<id>.jsonl".
+FULL_TRANSCRIPT_RE = re.compile(r"full transcript at:\s*`?(\S+?\.jsonl)`?")
+NOT_TYPED_PREFIXES = ("<task-notification", "<local-command", "Caveat:", "[Request interrupted")
+COMMAND_RE = re.compile(r"<command-name>\s*(\S+?)\s*</command-name>(?:.*?<command-args>(.*?)</command-args>)?", re.S)
+
+
+def earlier_transcript(log: EntryLog, session_id: str) -> Path | None:
+    for entry in log.entries:
+        if entry["role"] != "compaction":
+            continue
+        for match in FULL_TRANSCRIPT_RE.finditer(entry["text"]):
+            named = Path(match.group(1))
+            if session_id not in named.name:
+                return named
+    return None
+
+
+def session_chain(args: argparse.Namespace, runtime: str, session_id: str, log: EntryLog) -> list[dict[str, Any]]:
+    """The earlier sessions this one continues, nearest first, back to where the work started."""
+    chain: list[dict[str, Any]] = []
+    seen = {session_id}
+    current_log, current_id = log, session_id
+    while runtime == "claude" and len(chain) < 20:
+        named = earlier_transcript(current_log, current_id)
+        if named is None:
+            break
+        match = UUID_AT_END.search(named.name)
+        earlier_id = match.group(1) if match else named.stem
+        if earlier_id in seen:
+            break
+        seen.add(earlier_id)
+        path: Path | None = named if named.exists() else None
+        if path is None:
+            found, _ = find_session_files(args, earlier_id, ["claude"])
+            path = file_newest_first(found)[0].path if found else None
+        item: dict[str, Any] = {"id": earlier_id, "path": path, "named": named, "log": None}
+        chain.append(item)
+        if path is None:
+            break
+        item["log"] = claude_entries(path, [])
+        current_log, current_id = item["log"], earlier_id
+    return chain
+
+
+def standing_rule_places(args: argparse.Namespace, runtime: str, path: Path, cwd: str) -> tuple[list[str], list[str]]:
+    """Memory folders and instruction files that hold the user's standing rules for this session."""
+    memory: list[Path] = []
+    files: list[Path] = []
+    # The project folder and the folders above it, up to the home folder: Claude
+    # keys memory by the repo root, and instruction files stack up the tree.
+    folders: list[Path] = []
+    if cwd:
+        here = Path(cwd)
+        for folder in [here, *here.parents]:
+            if folder == Path.home() or folder == folder.parent:
+                break
+            folders.append(folder)
+    if runtime == "claude":
+        claude_homes, _ = homes_from_args(args)
+        slugs = [path.parent.name] + [re.sub(r"[^A-Za-z0-9]", "-", str(folder)) for folder in folders]
+        memory = [home / "projects" / slug / "memory" for slug in dict.fromkeys(slugs) for home in claude_homes]
+        files = [path.parent.parent.parent / "CLAUDE.md", Path.home() / ".claude" / "CLAUDE.md"]
+    elif runtime == "codex":
+        _, codex_homes = homes_from_args(args)
+        files = [home / "AGENTS.md" for home in codex_homes]
+    for folder in folders:
+        files += [folder / "AGENTS.md", folder / "CLAUDE.md"]
+
+    def existing(paths: list[Path], is_dir: bool) -> list[str]:
+        out, seen = [], set()
+        for item in paths:
+            ok = (item.is_dir() and any(item.iterdir())) if is_dir else item.is_file()
+            key = str(item.resolve()) if ok else ""
+            if ok and key not in seen:
+                seen.add(key)
+                out.append(str(item))
+        return out
+
+    return existing(memory, True), existing(files, False)
+
+
+def typed_messages(sources: list[tuple[str, EntryLog]]) -> list[dict[str, Any]]:
+    """What the user typed, oldest session first: no tool output, summaries or notifications."""
+    out: list[dict[str, Any]] = []
+    for sid, log in sources:
+        for entry in log.entries:
+            if entry["role"] != "user":
+                continue
+            text = entry["text"].strip()
+            if text.startswith(NOT_TYPED_PREFIXES):
+                continue
+            command = COMMAND_RE.search(text) if text.startswith("<command-") else None
+            if command:
+                text = f"{command.group(1)} {(command.group(2) or '').strip()}".strip()
+            out.append(dict(entry, text=text, session=sid))
+    return out
+
+
 def cmd_read(args: argparse.Namespace) -> int:
     ident = args.session.strip()
     if len(ident) < 8 or not re.fullmatch(r"[0-9A-Za-z-]+", ident):
@@ -2172,13 +2271,21 @@ def cmd_read(args: argparse.Namespace) -> int:
         entry["ts"] = entry["ts"] or last_ts
         last_ts = entry["ts"]
 
-    entries = log.entries
+    chain = session_chain(args, runtime, session_id, log)
+    memory_dirs, rule_files = standing_rule_places(args, runtime, chosen.path, log.meta["cwd"])
+    if args.yours:
+        sources = [(item["id"], item["log"]) for item in reversed(chain) if item["log"] is not None]
+        entries = typed_messages(sources + [(session_id, log)])
+    else:
+        entries = log.entries
     after = parse_time_value(args.after) if args.after else None
     if after is not None:
         # Times print to the second, so compare at that precision or the last
         # entry of the previous read comes back again.
         entries = [entry for entry in entries if entry["ts"] is not None and entry["ts"].replace(microsecond=0) > after]
-    shown = entries[-args.last :] if args.last > 0 else entries
+    last_n = args.last if args.last is not None else (0 if args.yours else READ_DEFAULT_LAST)
+    preview_chars = args.max_preview_chars or (2000 if args.yours else READ_PREVIEW_CHARS)
+    shown = entries[-last_n:] if last_n > 0 else entries
 
     ctx = RunContext(
         command="read",
@@ -2191,9 +2298,9 @@ def cmd_read(args: argparse.Namespace) -> int:
         claude_home=Path.home(),
         pi_home=Path.home(),
         prime_home=Path.home(),
-        limit=args.last,
+        limit=last_n,
         page=1,
-        max_preview_chars=args.max_preview_chars,
+        max_preview_chars=preview_chars,
         fmt="summary",
         include_sidechains=False,
     )
@@ -2209,20 +2316,32 @@ def cmd_read(args: argparse.Namespace) -> int:
     ]
     if len(ordered) > 1:
         header.append("older copies: " + ", ".join(str(item.path) for item in ordered[1:]))
+    for index, item in enumerate(chain):
+        where = str(item["path"]) if item["path"] else f"(not on this machine: {item['named']})"
+        header.append(f"{'continues' if index == 0 else '  which continues'}: {item['id']} {where}")
+    if memory_dirs:
+        header.append("memory: " + ", ".join(memory_dirs))
+    if rule_files:
+        header.append("instructions: " + ", ".join(rule_files))
+    script = Path(__file__).resolve()
+    if chain and not args.yours:
+        header.append(f"everything the user wrote, from the first session: python3 {script} read {session_id} --yours")
 
-    transcript_md = run_dir / "transcript.md"
+    transcript_md = run_dir / ("yours.md" if args.yours else "transcript.md")
     with transcript_md.open("w", encoding="utf-8") as handle:
         handle.write(f"# {runtime} session {session_id}\n\n")
         handle.write("\n".join(f"- {line}" for line in header[1:]) + "\n")
         scope_note = f"entries after {iso_or_empty(after)}" if after else "every entry"
-        handle.write(f"- this file: {scope_note}; long entries are cut\n\n")
+        what = "the user's own messages, from the first session on" if args.yours else scope_note
+        handle.write(f"- this file: {what}; long entries are cut\n\n")
         for entry in entries:
             cap = READ_CAPS.get(entry["role"], 2000)
             if entry["role"] == "tool result":
                 text = cap_keeping_ends(entry["text"], cap)
             else:
                 text, _ = cap_text(entry["text"], cap)
-            handle.write(f"### {iso_or_empty(entry['ts']) or 'unknown-time'} · {entry['role']}\n\n{text}\n\n")
+            where = f" · {entry['session']}" if args.yours else ""
+            handle.write(f"### {iso_or_empty(entry['ts']) or 'unknown-time'} · {entry['role']}{where}\n\n{text}\n\n")
     write_jsonl(
         run_dir / "entries.jsonl",
         [dict(entry, ts=iso_or_empty(entry["ts"]), text=cap_text(entry["text"])[0]) for entry in entries],
@@ -2230,8 +2349,9 @@ def cmd_read(args: argparse.Namespace) -> int:
     write_jsonl(run_dir / "errors.jsonl", errors)
 
     span = f" after {iso_or_empty(after)}" if after else ""
+    kind = "messages from the user" if args.yours else "entries"
     print(
-        f"OK agent-history read: {len(entries)} entries{span}; showing the last {len(shown)}; "
+        f"OK agent-history read: {len(entries)} {kind}{span}; showing the last {len(shown)}; "
         f"run={run_dir}"
     )
     for line in header:
@@ -2241,14 +2361,16 @@ def cmd_read(args: argparse.Namespace) -> int:
     for entry in shown:
         text = entry["text"]
         if entry["role"] == "tool result":
-            text = cap_keeping_ends(re.sub(r"\s+", " ", text).strip(), args.max_preview_chars)
-        print(f"{iso_or_empty(entry['ts']) or 'unknown-time'} | {entry['role']} | {preview_text(text, args.max_preview_chars + 40)}")
-    script = Path(__file__).resolve()
+            text = cap_keeping_ends(re.sub(r"\s+", " ", text).strip(), preview_chars)
+        who = f"{entry['session'][:8]} | user" if args.yours else entry["role"]
+        print(f"{iso_or_empty(entry['ts']) or 'unknown-time'} | {who} | {preview_text(text, preview_chars + 40)}")
     print("")
     if len(shown) < len(entries):
         print(f"earlier entries: {transcript_md}")
-    if last_ts is not None:
-        print(f"next time: python3 {script} read {session_id} --after {iso_or_empty(last_ts)}")
+    newest = entries[-1]["ts"] if args.yours and entries else last_ts
+    if newest is not None:
+        flag = " --yours" if args.yours else ""
+        print(f"next time: python3 {script} read {session_id}{flag} --after {iso_or_empty(newest)}")
     return 0
 
 
@@ -2294,8 +2416,9 @@ def build_parser() -> argparse.ArgumentParser:
     read.add_argument("session", help="session or thread id, or at least its first 8 characters")
     read.add_argument("--runtime", default=None, choices=READ_RUNTIMES, help="look only in this runtime")
     read.add_argument("--after", default=None, help="only entries after this time, e.g. the 'next time' value of the last read")
-    read.add_argument("--last", type=int, default=READ_DEFAULT_LAST, help="entries to print; 0 prints all")
-    read.add_argument("--max-preview-chars", type=int, default=READ_PREVIEW_CHARS)
+    read.add_argument("--yours", action="store_true", help="only what the user typed, across this session and the earlier sessions it continues")
+    read.add_argument("--last", type=int, default=None, help=f"entries to print; 0 prints all (default {READ_DEFAULT_LAST}, all with --yours)")
+    read.add_argument("--max-preview-chars", type=int, default=None)
     add_home_options(read)
     read.set_defaults(func=cmd_read)
 

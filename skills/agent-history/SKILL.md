@@ -38,6 +38,17 @@ python3 <this skill>/scripts/agent_history.py read <session id>
   tool output in it is cut.
 - To come back to the same session later, run the `next time:` command it
   printed (`read <id> --after <time>`). You see only what happened since.
+- A session often continues earlier ones: a Claude transcript that opens with
+  "This session is being continued from a previous conversation" starts with
+  the agent's summary of the ask, not the ask. The header names each earlier
+  session (`continues:`), back to where the work started. The user's real
+  words are there.
+- `read <id> --yours` prints only what the user typed, across this session
+  and every earlier one it continues, oldest first. It is the cheap way to
+  see what was actually asked, and to reread it.
+- The header also names the memory folders and instruction files
+  (`memory:`, `instructions:`) that hold the user's standing rules for this
+  work.
 - A session's own id: Claude Code puts it in `$CLAUDE_CODE_SESSION_ID`,
   Codex in `$CODEX_THREAD_ID`. When AI Manager moves a session to another
   account it gets a new id; the old id still reads, as the earlier part.
