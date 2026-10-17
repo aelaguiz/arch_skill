@@ -641,7 +641,9 @@ reviewer every period, for as long as anything runs for the work, with one
 prompt in the user's voice ("Read claude session <id> ... Then tell me: ...").
 Every check-in sends the reviewer back to where the work started, to the
 user's own words and standing rules, and to its notes, then asks questions
-that can't be answered with an all-clear. The reviewer reads the session
+that can't be answered with an all-clear, starting with whether the work is
+going in circles. When it is, the session fixes the cause across all the work
+instead of the next instance. The reviewer reads the session
 itself through `agent-history`, so it sees what was done rather than what was
 said. It keeps notes and whatever else it needs as it goes, so a long
 session or a compaction does not cost it what it read, and it leaves the

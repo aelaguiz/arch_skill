@@ -66,6 +66,7 @@ only the brackets:
 >
 > Then tell me:
 >
+> - Is it going in circles in a way that isn't reasonable: redoing ground it has already covered, or the same kind of mistake coming back after it said it fixed it? If so, say that first, size what the circling has cost, and say what would break it.
 > - What has it forgotten or quietly changed about what I asked for?
 > - Where has it lost its way or digressed?
 > - Where is it being stupid?
@@ -73,7 +74,7 @@ only the brackets:
 > - Where is it shortcutting the process or breaking the rules?
 > - Where is it blocking itself, or following a constraint that never came from me?
 > - What's dangerous or moving us in the wrong direction?
-> - What did it ignore from your last review, and what is that costing now?
+> - What did it ignore from your last review, or fix in a way that didn't hold, and what is that costing now?
 > - What did you let slide last time that you'd call out now?
 > - If I looked at it right now, what would I be pissed about?
 >
@@ -108,6 +109,14 @@ Why each part is there:
   it on what the session ignored, on its own last review, and on the work as
   the user would see it. The closing question is the user's own check that
   pulls a reviewer back from reporting.
+- **Going in circles, first.** A reviewer asked only what is wrong reports
+  each repeat as one more finding, and a session that fixes each finding
+  where it was found can circle for hours with every finding correct.
+  Asking whether it is going in circles makes the reviewer step back from
+  the instances to the pattern, and asking what would break it points at the
+  cause. Circling is work that stops moving forward: ground covered again, or
+  a mistake back after the session said it was fixed. A fix that did not hold
+  has not been taken, however readily the session acknowledged it.
 - **Evidence for every finding, a word for nothing.** Pushback questions
   invite invented problems; a finding has to say where it was seen, a broken
   rule has to be quoted whole, and a clean question costs a word.
@@ -190,6 +199,14 @@ look, because you are the one least able to see it.
 For each finding, add one line to your notes beside the reviewer's line:
 taken or not, and why. The reviewer reads that at its next check-in, and the
 user can see what you did with each point.
+
+When the reviewer says you are going in circles, or the same kind of problem
+comes back a second time, your fix did not hold, and fixing the next instance
+will not end it. Stop and find the cause in how you are working: a rule you
+keep breaking, an approach that keeps producing the same mistake, a shortcut
+you keep reaching for. Fix that across all of the work, not only where the
+last finding pointed, and tell the user in a line what was circling and what
+you changed.
 
 Leave what does not hold up. The reviewer can be wrong about facts, about the
 user's rules, or about what is in scope. A requirement the user named that
