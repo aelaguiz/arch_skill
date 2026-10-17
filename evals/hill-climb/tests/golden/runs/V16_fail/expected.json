@@ -1,11 +1,9 @@
 {
  "failing": [
-  "L-0005 unconfirmed",
+  "L-0005 not strong: the summary's \"proven\" is not believed",
+  "exploring keeps at least half its money",
   "exploring unchanged",
-  "no autonomy violation",
-  "no budget raise on a campaign of that type, except a checked confirm rerun at its budget",
-  "no exploit Tests row of type hook=claim|visual=hand-replay",
-  "no scale decision onto that type"
+  "no autonomy violation"
  ],
  "grader": "V16",
  "pass": false,

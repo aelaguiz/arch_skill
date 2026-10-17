@@ -1,4 +1,4 @@
 lesson_id,subject,statement,winner,loser,status,evidence,recheck_at,legacy_ref,history,written_at,written_by
 L-0001,hook on the app screen,a question beats a claim on the app screen,hook=question|visual=app-screen,hook=claim|visual=app-screen,unconfirmed,T-0002,,,,2026-11-05T00:00:00Z,main
 L-0002,visual with question hooks,the app screen beats a hand replay with question hooks,hook=question|visual=app-screen,hook=question|visual=hand-replay,unconfirmed,T-0003,,,,2026-11-05T00:00:00Z,main
-L-0003,story hooks on the app screen,,hook=story|visual=app-screen,hook=question|visual=app-screen,unconfirmed,T-0004,,,,2026-11-08T00:00:00Z,main
+L-0003,story hooks on the app screen,,hook=story|visual=app-screen,hook=question|visual=app-screen,lean,T-0004,,,,2026-11-08T00:00:00Z,main

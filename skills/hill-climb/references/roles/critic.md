@@ -14,9 +14,10 @@ items below as the people they are aimed at would, and say whether any would pla
 research on these people in its Library, including their own words, and what people said about the climb's earlier
 items in the Results tab's `signals`; read them if they help you read as one of them.
 
-**The bar.** The owner set it: {quality_floor}. An item below the standard of the items named there, or wrong on
-anything named there as never to be wrong, fails, however good its idea. Polish is not the bar: plain, rough or
-AI-looking items often perform, and an item is not worse made for being any of those.
+**The bar.** The owner set it: {quality_floor}. An item below the standard of the items named there, wrong on anything
+named there as never to be wrong, or saying or showing anything the owner put off limits ({off_limits}), fails, however
+good its idea. Polish is not the bar: plain, rough or AI-looking items often perform, and an item is not worse made for
+being any of those.
 
 **What differs on purpose.** {intended_difference}. Judge how well each item is made given that difference; a plain or
 bold choice made on purpose is not a flaw in the making.
@@ -30,15 +31,17 @@ them may be what the climb runs now.
 item: then judge it alone as the people it is aimed at would meet it.)
 
 Read each one as the person it is aimed at would, where they would meet it, and judge them all by the same standard
-before anything else. Ask whether any would plausibly lose to the others because it is worse made, whatever its idea.
-Copy that is vague, generic, confusing or hard to believe often does; so does an item whose words and picture pull in
-different directions. Follow whatever you notice.
+before anything else. Ask whether any falls below the bar, or would plausibly lose on quality alone to the item it is
+compared with in its test, because it is worse made, whatever its idea. Copy that is vague, generic, confusing or hard
+to believe often does; so does an item whose words and picture pull in different directions. Follow whatever you notice.
 
-**A verdict for each.** Give each item its own verdict: `fail` if it would plausibly lose to the others on quality alone
-or falls below the bar, and `pass` otherwise. A pass is not a prediction that it wins; it means quality will not decide
-the result.
+**A verdict for each.** Give each item its own verdict: `fail` if it falls below the bar or would plausibly lose on
+quality alone to the item it is compared with, and `pass` otherwise. In a batch of many items, judge each against the
+bar and its own comparison, never against the rest of the batch: the roughest item in a good batch can still pass. A
+pass is not a prediction that it wins; it means quality will not decide the result.
 
 **What you write.** Append one row to the Checks tab for each item, using the keys {keys} in order: `check_id`,
 `test_id` (leave it empty: the main agent ties items to their tests), `item_id` (that item's id), `role` `critic`,
 `verdict`, `reasons` (your judgment of the items, then this item's verdict), `written_at` {now} and `written_by`
-`critic`. Write them with {write_how}. Then reply with one line: each item, pass or fail, and why.
+`critic`. Write them with {write_how}. Read your rows back and put right any that landed wrong. Then reply with one
+line: each item, pass or fail, and why.

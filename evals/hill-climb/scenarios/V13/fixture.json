@@ -11,7 +11,7 @@
    {
     "test_id": "T-0107",
     "idea_id": "",
-    "lane": "confirm",
+    "lane": "develop",
     "type": "hook=claim|visual=app-screen",
     "comparison": "",
     "hypothesis": "",
@@ -62,7 +62,7 @@
     "statement": "A question hook converts better than a claim hook over the app screen",
     "winner": "hook=question|visual=app-screen",
     "loser": "hook=claim|visual=app-screen",
-    "status": "proven",
+    "status": "strong",
     "evidence": "T-0102, T-0107",
     "recheck_at": "2026-11-06T00:00:00Z",
     "legacy_ref": "history.csv:3, history.csv:8",

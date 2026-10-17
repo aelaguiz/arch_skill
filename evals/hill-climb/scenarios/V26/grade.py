@@ -23,7 +23,7 @@ def grade(run):
     candidates = c.bar_candidates(run)
     words = set()
     for row in run.rows_ever("Tests"):
-        if c.norm_label(row.get("lane")) in ("explore", "confirm") and not row.get("legacy_ref"):
+        if c.norm_label(row.get("lane")) in ("explore", "confirm", "develop") and not row.get("legacy_ref"):
             words |= c.value_words(c.parse_type(row.get("type")) or {})
     judged = [(rel, _judge(run, text, candidates, words)) for rel, text in written]
 

@@ -54,9 +54,9 @@ in their words, so what it settles can cite it.
 - **Ask only what only the owner can answer**: what the climb is for, what it may spend, what counts as success, what
   it may and may not change. Never ask what you can read or find out.
 - **Never ask the method.** How to run a hill climb (what to try first, how big a test is, the early read, how sure to
-  be before acting, when a winner is replaced, how money splits between lanes) is this skill's job. Asking it hands the
-  owner the work they gave you, as if they had asked you how to run a hill climb. The owner sees what the method
-  produces in the playback and the reports.
+  be before acting, when money moves to a new option, how money splits between lanes) is this skill's job. Asking it
+  hands the owner the work they gave you, as if they had asked you how to run a hill climb. The owner sees what the
+  method produces in the playback and the reports.
 - **Never ask what the climb exists to find out.** Who responds, who pays, which angle, format or offer works: asking
   makes the owner guess, and a climb told the answer tests only for the guess. Asked who the ads are for, an owner can
   only answer "whoever pays us", which is what the climb is there to find out. The same holds for "what do you think
@@ -91,7 +91,8 @@ so ask. The order is the usual one; follow the conversation.
 | Whether you understood them | A couple of made-up outcomes, each with your guess of their call (below) | Interview rows, kind `outcome-check` |
 
 Record each in the Interview tab, with the Charter fields it settles in `about`. The owner may answer "your call": then
-the choice is yours, with its reason.
+the choice is yours, with its reason. It settles that question only; the rest of the interview, the outcome checks and
+the playback still come before anything is spent.
 
 ## Earlier work
 
@@ -116,9 +117,9 @@ Setup also has questions of its own to research and write down where the climb u
 - **How the climb will see one item's effect on the goal**: what the platform counts for each item and how late, how
   people are tied back to the item they saw, a quick number with evidence that it tracks the goal, and a second count
   that checks the platform's (`platform`, `second_source`, `early_read`).
-- **How a fair comparison runs on this platform**: how to compare two items so the platform's own delivery does not
-  pick the winner, and how far the number moves by chance when nothing changes (`test_sizing`, and the method fields'
-  reasons).
+- **How to learn fast and fairly on this platform**: the cheapest read that shows which way an item leans, how many
+  items can run and be read at once, how to compare items so the platform's own delivery does not decide for you, and
+  how far the number moves by chance when nothing changes (`test_sizing`, `speed`, and the method fields' reasons).
 - **The tools that make good items now**, inside the owner's `tool_rules`, and the ones not to use (`tools`).
 - **Everything an item can vary on, with examples of how each can vary**, from the medium itself, what competitors
   vary, the platform's options and the owner's items they let in (`attributes`, references/making.md).
@@ -138,10 +139,11 @@ that good enough?" Repeat until the research and the answers agree.
 
 Pick a couple of made-up outcomes where the owner's answers could point either way, write down your guess of their call,
 and ask whether you are right, one outcome per message like any question: "A post gains three times the usual followers
-but never mentions the product. Is that a win? My guess: only partly, because you want followers who could become
-customers. Right?" Keep them about what the goal means and what the owner would accept, never about the method. Where a
-guess is wrong, ask until you can say why: that gap would have steered the whole climb. Record each case and the owner's
-call in the Interview tab; later decisions weigh trade-offs by them.
+but never mentions the product. How promising is that to you? My guess: promising for reach, less so for what you're
+after, because you want followers who could become customers. Right?" Keep them about what the goal means and what the
+owner would accept, never about the method, and on a gradient rather than win or lose, since the climb ranks what it
+makes by promise. Where a guess is wrong, ask until you can say why: that gap would have steered the whole climb. Record
+each case and the owner's call in the Interview tab; later decisions weigh trade-offs by them.
 
 ## The playback
 
@@ -149,11 +151,13 @@ Before it, go down the table: each row has the owner's answer in their words, or
 missing first, even a row that looks moot, since the owner may hold a rule you cannot see (a platform with one builder
 can still have a sound or a look they will not use). Then, before anything is seeded or spent, play the design back: the
 owner's answers and what the research found that bears on them, each marked as the owner's words or research, plus what
-to expect in the first weeks and what the climb cannot learn at this traffic. Use the form the owner said they read, or
-the chat when it is short. It asks one thing: what to correct. Record it as a playback row in the Interview tab, and the
-owner's reply as its answer, like any question. Correct what they correct, show them what changed, and ask whether
-anything else needs correcting, until nothing does. A correction alone is not a sign-off; "fix this, otherwise go ahead"
-is one: make the fix and go. That sign-off, recorded, ends the interview.
+will limit how fast the climb learns at first and what it will do about each, and what it cannot learn at this traffic.
+Say the first weeks as limits and what pushes on them, never as a schedule or a count: a forecast written as "five a
+week" becomes the plan. Use the form the owner said they read, or the chat when it is short. It asks one thing: what to
+correct. Record it as a playback row in the Interview tab, and the owner's reply as its answer, like any question.
+Correct what they correct, show them what changed, and ask whether anything else needs correcting, until nothing does. A
+correction alone is not a sign-off; "fix this, otherwise go ahead" is one: make the fix and go. That sign-off, recorded,
+ends the interview.
 
 ## Seeding
 

@@ -24,13 +24,15 @@ that holds a page's layout single-column and a built page with two columns fails
 
 Read each item's recipe in its Tests row too, while the files still exist: a session that never saw this build should be
 able to make the item again from it, or cut a variation from it, and its files should be kept somewhere that lasts. When
-the recipe is too thin for that, or the files sit somewhere that can expire, fail the item and say what is missing: it
-is cheap to fix now, and once the files are gone the next variation would have to be rebuilt from scratch. Check the
-recipe's tools as well: they should be among the Charter's `tools`, and none may be one that `tool_rules` says never to
-use. An item made with a tool the owner ruled out fails, whatever it looks like.
+the recipe is too thin for that, or the files sit somewhere that can expire, say exactly what is missing so it is fixed
+before launch: it is cheap to fix now, and once the files are gone the next variation would have to be rebuilt from
+scratch. That gap alone does not make the item wrong, so it is no reason to fail it. Check the recipe's tools as well:
+they should be among the Charter's `tools`, and none may be one that `tool_rules` says never to use. An item made with a
+tool the owner ruled out fails, whatever it looks like. When an item fails for something cheap to fix, such as the wrong
+track, say exactly what to fix, so it can be fixed and checked again in the same round.
 
 **What you write.** One row per item in the Checks tab, appended (never rewrite the tab), with the keys {keys} in order:
 `check_id`, `test_id`, `item_id`, `role` `build-checker`, `verdict` (`pass` or `fail`), `reasons` (what matched, or what
 differs and why it matters or does not, and whether the recipe would let a fresh session make the item again),
-`written_at` {now} and `written_by` `build-checker`. Write them with {write_how}. Then reply with one line per item: the
-item, pass or fail, and what differed if anything.
+`written_at` {now} and `written_by` `build-checker`. Write them with {write_how}. Read your rows back and put right any
+that landed wrong. Then reply with one line per item: the item, pass or fail, and what differed if anything.

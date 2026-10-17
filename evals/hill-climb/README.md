@@ -9,9 +9,9 @@ Four layers:
 | Layer | What it checks | Models | Command |
 |---|---|---|---|
 | 1 | the lab itself: simulator, fixtures, graders, transcript parser, runners | none | `python3 -m unittest discover -s evals/hill-climb/tests -t evals/hill-climb` |
-| 2 | one tick of the skill in a prepared situation (26 scenarios) | Sonnet | `python3 evals/hill-climb/runner/run_scenarios.py --batch <name>` |
+| 2 | one tick of the skill in a prepared situation (27 scenarios) | Sonnet | `python3 evals/hill-climb/runner/run_scenarios.py --batch <name>` |
 | 2i | the intake interview against a simulated owner, many sessions (V19, V20, V29; V22 grades V19's runs) | Sonnet | `python3 evals/hill-climb/runner/run_intake.py --batch <name> --account <label>` |
-| 2b | one role on its own, from its brief, on a case built to need its judgment (7 cases) | Sonnet | `python3 evals/hill-climb/runner/run_roles.py --batch <name>` |
+| 2b | one role on its own, from its brief, on a case built to need its judgment (9 cases) | Sonnet | `python3 evals/hill-climb/runner/run_roles.py --batch <name>` |
 | 3 | a whole climb from setup to the world's horizon, against a no-skill run and a Thompson-sampling baseline | Sonnet | `python3 evals/hill-climb/runner/run_backtest.py --batch <name>` |
 
 ## Before a batch
@@ -36,7 +36,7 @@ moves to the next one by the same rule when it is busy or limited.
 ## Layer 2: scenarios
 
 ```
-python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a                          # 26 scenarios x 3, plus 6 no-skill controls
+python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a                          # 27 scenarios x 3, plus 6 no-skill controls
 python3 evals/hill-climb/runner/run_scenarios.py --batch L2-b --scenarios V03,V08 --trials 3 --no-controls
 python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a --regrade                # grade the saved runs again
 python3 evals/hill-climb/runner/run_scenarios.py --batch L2-a --dry-run                # print the plan and one command
@@ -79,7 +79,7 @@ world's request reads.
 ## Layer 2b: role tests
 
 ```
-python3 evals/hill-climb/runner/run_roles.py --batch R-a                               # 7 cases x 3
+python3 evals/hill-climb/runner/run_roles.py --batch R-a                               # 9 cases x 3
 python3 evals/hill-climb/runner/run_roles.py --batch R-b --cases reader-lean --trials 3
 python3 evals/hill-climb/runner/run_roles.py --batch R-a --regrade
 python3 evals/hill-climb/runner/run_roles.py --batch R-a --dry-run --show-briefs       # fills every brief, starts nothing

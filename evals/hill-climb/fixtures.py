@@ -486,17 +486,19 @@ def derive_rows(rows: dict, world: World, allocations: dict | None = None) -> li
     rows["Map"] = [given.get(cell) or _map_row(cell, rows, start) for cell in map_cells(world, rows)] + \
         [r for t, r in given.items() if t not in map_cells(world, rows)]
     if not any(m.get("kind") == "allocate" for m in rows["Money"]):
-        lanes, pace = _charter(rows, "lanes"), _number(_charter(rows, "pace"))
-        for lane in ("exploit", "confirm", "explore"):
+        lanes, pace = _charter(rows, "lanes"), _number(_charter(rows, "speed") or _charter(rows, "pace"))
+        for lane in ("exploit", "develop", "explore"):
             # the lanes are in words; the fixture's lab-only `allocations` gives each lane's share of the pace
             share = _number(lanes, lane)
             if share is None:
                 share = (allocations or {}).get(lane)
+            if share is None and lane == "develop":
+                share = (allocations or {}).get("confirm")
             if share is None or pace is None:
                 continue
             rows["Money"].append({"kind": "allocate", "lane": lane, "amount": f"{pace * share / 100:.2f}",
                                   "standing": "", "learned": "", "next": "",
-                                  "note": f"this lane's part of the {_money_text(pace)}/day pace, per the Charter's lanes",
+                                  "note": f"this lane's part of the {_money_text(pace)}/day committed now, per the Charter's lanes",
                                   "written_at": stamp0, "written_by": "main"})
     if not rows["Log"]:
         rows["Log"] = _derive_log(rows, world)
@@ -574,7 +576,8 @@ def _cost_per_conversion(world: World, since, until):
 
 def derive_overview(rows: dict, world: World) -> list:
     """The Overview as the last tick before now left it (PLAN.md 13.1 (5)): the bar now and at the start, money left
-    and the pace, what is live and when each reads, the best known option, proven lessons and what comes next."""
+    and how fast it is going, what is live and how each is reading, the best known option, strong lessons and what
+    comes next."""
     start = world.start
     times = sorted(parse_time(r["platform_time"]) for r in rows["Log"] if r.get("platform_time"))
     if not times or not world.paid:
@@ -590,7 +593,7 @@ def derive_overview(rows: dict, world: World) -> list:
             continue
         if any(cid in world.campaigns and world.status_at(cid, as_of) == LIVE for cid in cids):
             live.append(test)
-    lessons = [r for r in rows["Lessons"] if r.get("status") == "proven"]
+    lessons = [r for r in rows["Lessons"] if r.get("status") in ("strong", "proven")]
     committed = sum(float(t.get("daily_budget") or 0) for t in rows["Tests"] if t.get("status") in COMMITTED)
     cpc_text = (lambda x: "no conversions yet" if x is None else f"${x:.2f} per conversion")
     items = [
@@ -599,14 +602,14 @@ def derive_overview(rows: dict, world: World) -> list:
                          f"({iso(start)[:10]})"),
         ("money left", f"${world.money_received() - world.spend_between(None, as_of):.2f} of "
                        f"${world.money_received():.2f}"),
-        ("pace", f"{_charter(rows, 'pace')}; {_money_text(committed)} a day committed"),
+        ("speed", f"{_charter(rows, 'speed') or _charter(rows, 'pace')}; {_money_text(committed)} a day committed"),
         ("live", "; ".join(f"{t['test_id']} on {t['platform_id']} ({t.get('lane')}, "
                            f"{_money_text(t.get('daily_budget') or 0)}/day, reads {str(t.get('read_at'))[:10]})"
                            for t in live) or "nothing"),
         ("best known option", "; ".join(f"{t['test_id']}: {t.get('type')} ({t.get('item_id')}), exploit since "
                                         f"{t['launched_at'][:10]}" for t in live if t.get("lane") == "exploit")
          or "none yet"),
-        ("proven lessons", "; ".join(f"{r['lesson_id']}: {r.get('statement')} (recheck {str(r.get('recheck_at'))[:10]})"
+        ("strong lessons", "; ".join(f"{r['lesson_id']}: {r.get('statement')} (recheck {str(r.get('recheck_at'))[:10]})"
                                      for r in lessons) or "none yet"),
         ("next", next((r.get("next") for r in rows["Log"] if r.get("platform_time") == stamp), "") or "the next tick"),
     ]
@@ -812,4 +815,4 @@ def build_world(world: str, seed: int, run_dir: Path, hidden_dir: Path, lab: Pat
     return meta
 
 
-SCENARIO_IDS = [f"V{i:02d}" for i in range(1, 31) if i != 22]
+SCENARIO_IDS = [f"V{i:02d}" for i in range(1, 32) if i != 22]

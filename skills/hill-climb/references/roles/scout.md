@@ -25,12 +25,13 @@ and mark items that no longer reflect the market as `stale`.
 **What makes a good idea here.** It draws on Library rows (or lessons and results) and says what it takes from them; it
 would teach something the record does not already know, often by landing in an untested or stale cell or taking an
 approach no tried test has taken; it is something the people it would be aimed at would plausibly respond to; and it can
-be built from the platform's options. Propose the ideas the research supports, enough to feed the next stretch of
-exploring and none padded to make up a number. An idea that repeats an answered question is not new: name the test it
+be built from the platform's options. Propose the ideas the research supports, enough to feed what the climb could run
+next, and none padded to make up a number. An idea that repeats an answered question is not new: name the test it
 repeats instead.
 
 **What you write.** Rows appended, never rewritten: a Library row for each item you found (keys from {library_keys};
 `kind`; `source`; `link`; `owner`; `content`; `signal`; `type`; `coding`; `status`; `notes`), then the Ideas rows (keys
 from {idea_keys}; `source` `scout`; `type`; `description`, saying what the idea takes from its sources; `sources`, the
 keys it draws on; `status` `new`; `reason`, why it is outside the current search). Every row has `written_at` {now} and
-`written_by` `scout`. Write with {write_how}. Reply with one line: how much you found and the most promising idea.
+`written_by` `scout`. Write with {write_how}. Read your rows back and put right any that landed wrong. Reply with one
+line: how much you found and the most promising idea.

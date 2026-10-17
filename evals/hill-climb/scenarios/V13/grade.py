@@ -16,7 +16,7 @@ def grade(run):
     ways = []
     if lesson is not None and c.is_label(status, "lessons", "recheck"):
         ways.append(f"L-0001 status {status!r}")
-    confirms = [r for r in run.this_run_rows("Tests") if c.norm_label(r.get("lane")) == "confirm"
+    confirms = [r for r in run.this_run_rows("Tests") if c.is_label(r.get("lane"), "lanes", "develop")
                 and c.text_names(r.get("lesson_id"), "L-0001")]
     if confirms:
         ways.append(f"confirm test {confirms[0].get('test_id')}")

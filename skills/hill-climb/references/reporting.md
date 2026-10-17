@@ -9,12 +9,13 @@ them see in a few minutes where the climb stands and whether it is getting bette
 
 - Where the climb stands against the bar, now, over time and against where it started: the bar week by week beside the
   starting point and the best known option's number, as a small chart or table.
-- What it has learned, each lesson with how sure it is (proven, unconfirmed, retired) and what it changed in the climb.
+- How fast it is learning: items run and read, leans formed, strengthened or dropped, the money each cost, and what
+  limits learning now and what the climb is doing about it.
+- What it has learned, each lesson with how sure it is (strong, lean, retired) and what it changed in the climb.
 - The soft signals worth knowing: what people said and did around the items, good and bad.
-- How fast it is learning: tests read, lessons proven or retired, and the money each lesson cost.
 - How it is staying out of a local maximum: what exploring reached since the last report, how much of the map is still
   untried, how fresh the research is, what the meta-analyst found.
-- What comes next, and the money: what is left, the pace, any request outstanding.
+- What comes next, and the money: what is left, how fast it is going, any request outstanding.
 
 It asks nothing. No questions and no decisions for the owner: a money request stays its own message through
 `money_request_channel`.

@@ -55,5 +55,5 @@ when it no longer reflects what the market is doing, sooner in a fast-moving cat
 `research_freshness` records this climb's sense of how fast that happens and why; judge each item against it and against
 what you can see (a competitor's ads all replaced, a new competitor, a season change), and mark stale items `stale`:
 still a record, but no longer fresh evidence. The scout refreshes the Library when its material no longer reflects the
-market or when the waiting ideas would not fill the next days of exploring, and the meta-analyst watches how many tests
-rest on research.
+market or when the waiting ideas would not fill what the climb could run next, and the meta-analyst watches how many
+tests rest on research.

@@ -23,7 +23,7 @@ STUDIO_LOAD_LIMIT = 9.0    # 0.75 x the Studio's 12 cores (6.10)
 MEMORY_LIMIT_GB = 16.0
 MAX_PARALLEL = 3
 
-SCENARIOS = tuple(f"V{n:02d}" for n in range(1, 31))
+SCENARIOS = tuple(f"V{n:02d}" for n in range(1, 32))   # V31: money limits learning (VELOCITY_PLAN.md)
 INTAKE_SCENARIOS = ("V19", "V20", "V29")   # the intake interview: run_intake.py, many sessions with a simulated owner
 RUN_SCENARIOS = tuple(s for s in SCENARIOS if s != "V22" and s not in INTAKE_SCENARIOS)   # V22 grades V19's runs
 SAFETY_SCENARIOS = ("V01", "V02", "V03", "V07", "V16", "V17", "V23", "V28")   # 3 of 3 (PLAN.md 8, 13.5)

@@ -46,7 +46,7 @@
    {
     "test_id": "T-0016",
     "idea_id": "ID-0003",
-    "lane": "confirm",
+    "lane": "develop",
     "type": "hook=question|visual=hand-replay",
     "comparison": "T-0001",
     "hypothesis": "The hand replay's lead over the app screen holds on fresh days",
@@ -77,7 +77,7 @@
     "statement": "A hand replay converts better than the app screen behind a question hook",
     "winner": "hook=question|visual=hand-replay",
     "loser": "hook=question|visual=app-screen",
-    "status": "unconfirmed",
+    "status": "lean",
     "evidence": "T-0003",
     "recheck_at": "",
     "legacy_ref": "",

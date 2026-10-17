@@ -169,10 +169,10 @@ def run_setup(ctx: Context, run_dir: Path, hidden_dir: Path, prompt: str, skill:
         prompt, run_intake.session_runner(ctx, run_dir / "work", install_skill=skill,
                                           budget_for=lambda _phase: tick_budget(0)),
         run_intake.owner_runner(ctx, run_intake.read_brief(hidden_dir), hidden_dir), run_dir, final_tick=False,
-        prefix=batch.SKILL_PREFIX if skill else "", tick=0, sim_time=sim_time, log_dir=hidden_dir)
+        prefix=batch.SKILL_PREFIX if skill else "", tick=0, sim_time=sim_time, log_dir=hidden_dir, publish=False)
     sessions = []
     for number in range(summary["next_turn"] - summary["sessions"], summary["next_turn"]):
-        folder = run_dir / "ticks" / f"{number:03d}"
+        folder = hidden_dir / "ticks" / f"{number:03d}"
         try:
             info = json.loads((folder / "session.json").read_text(encoding="utf-8"))
         except (OSError, ValueError):
@@ -219,7 +219,7 @@ def run_world(world: str, seed: int, skill: bool, ctx: Context, run_id: str) -> 
             cost = sum(info.get("cost_usd") or 0.0 for _folder, info in sessions)
             label = sessions[-1][1].get("label") if sessions else None
         else:
-            tick_dir = run_dir / "ticks" / f"{turn:03d}"
+            tick_dir = hidden_dir / "ticks" / f"{turn:03d}"   # out of the agent's sight until the run ends
             turn += 1
             tick_dir.mkdir(parents=True, exist_ok=True)
             tick = {"tick": index, "sim_time": sim_time, "prompt": prompt, "grant_applied": grant}
@@ -255,6 +255,8 @@ def run_world(world: str, seed: int, skill: bool, ctx: Context, run_id: str) -> 
             batch.write_json(tick_dir / "tick.json", tick)
         ticks.append(tick)
         simadmin(ctx.python, hidden_dir, "advance", "--hours", TICK_HOURS)
+    # the interview log and every session's folder stayed hidden from the agents; now they join the run for the graders
+    run_intake.publish_logs(hidden_dir, run_dir)
     run = c.load_run(run_dir, hidden_dir, strict_order=ctx.strict_order)
     graded = grade_backtest(run)
     invalid = failed > MAX_FAILED_TICKS or bool(graded["tampering"])
@@ -272,7 +274,7 @@ def run_world(world: str, seed: int, skill: bool, ctx: Context, run_id: str) -> 
 def run_with_rerun(world, seed, skill, ctx) -> dict:
     base = f"{world}-s{seed}" + ("" if skill else "-noskill")
     first = run_world(world, seed, skill, ctx, base)
-    if not first["invalid"]:
+    if not first["invalid"] or ctx.args.no_rerun:
         return first
     second = run_world(world, seed, skill, ctx, base + "-r1")
     second["rerun_of"] = base
@@ -366,6 +368,8 @@ def parse_args(argv=None):
     parser.add_argument("--timeout", type=int, default=TIMEOUT_S)
     parser.add_argument("--weak-order", action="store_true")
     parser.add_argument("--keep", action="store_true")
+    parser.add_argument("--no-rerun", action="store_true",
+                        help="keep an invalid run's result instead of running it again (its record says why it is invalid)")
     parser.add_argument("--regrade", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args(argv)

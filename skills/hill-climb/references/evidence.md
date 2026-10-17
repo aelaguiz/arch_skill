@@ -1,54 +1,57 @@
-# Evidence: what a test can show, and how far to trust it
+# Evidence: reading direction fast, and how sure to be
 
 Read this on every tick that has a result to act on, a lesson to change, or a test to plan.
 
-Contents: what a test can show · letting the running result decide nothing · why first results run hot · discounting ·
-how sure to be · the record's words for a read · when the counts disagree · what people say and do around an item ·
-lessons · worked cases · when a plan fails its check
+Contents: what a read can show · reading as results come in · why first results run hot · discounting · how sure to be
+· the record's words for a read · when the counts disagree · what people say and do around an item · lessons · cases ·
+when a plan fails its check
 
-## What a test can show
+## What a read can show
 
-A rate measured on a sample is the true rate plus luck, and the luck shrinks only with the square root of the sample. A
-few dozen conversions a side can separate a big difference, such as one option converting about twice as well as the
-other, and nothing subtler; telling apart options a tenth apart takes many times the traffic. So before a test is
-planned, work out what it can see: from the comparison's rate, the planned spend and the platform's cost, how many
-conversions will each side have by the read date, and how big a gap stands out from luck at that size? If the gap the
-plan hopes for is smaller, the test cannot answer its own question: plan a bigger swing, a longer read, or another test.
-Traffic bought faster reads sooner: a test that buys its traffic in three days reads before one that spreads it over a
-week. Whether that costs anything depends on the platform: where a click costs the same at any daily budget, the faster
-test learns sooner for the same money; where results cost more as the daily budget rises, as on most auction platforms,
-speed has a price. A shorter window also covers fewer days of the week and may reach a different slice of the audience,
-so it must still cover what the comparison needs.
+A rate measured on a sample is the true rate plus luck, and the luck shrinks only with the square root of the sample.
+The question a climb asks of a read is rarely "is this proven?" and usually "which way does it lean, and how sure is
+that?", and direction is far cheaper than proof: the counts that show which way a big gap leans are a small fraction of
+what proving the same gap at the usual 95 percent takes. So size each read to the cheapest that shows direction for a
+gap you would care about, and spend what that saves on more items. Before a plan goes, work out roughly what it can
+show: from the comparison's rate, the planned spend and the platform's cost, how many conversions each side will have,
+and how sure a gap of the size you hope for would make you. For example, where about 20 in 100 people open an email,
+sending each of two subject lines to about 50 people already shows which way one that is really opened half again as
+often leans, roughly 9 times in 10, while proving that gap at 95 percent would take several times the sends. A read that
+can show only which way a big gap leans is a good read. One that could not show any direction even for the biggest gap
+you could plausibly see teaches nothing at that size: make the change bolder, read it on an earlier signal, or put the
+money elsewhere.
 
-This is why a hill climb with little traffic tests big, different ideas rather than polishing one: small refinements are
-invisible at its size, while a different approach can be told apart in days.
+Big, different swings show fastest; small refinements are invisible at small sizes and wait until the climb has the
+traffic for them. The cheapest signal that tracks the goal (the charter's `early_read`, such as clicks or installs ahead
+of purchases) lets many items be screened for little, with real money going only to the ones that look promising; check
+from time to time that it still tracks the goal, since a cheap signal that drifts from the goal steers everything wrong.
+Traffic bought faster reads sooner. Where results cost more as one item's daily budget rises, as on most auction
+platforms, spread the money across more items rather than pushing more through each.
 
 Work numbers out any way you like, including a quick calculation you write on the spot. The judgment stays yours, and
 the row you write says how you got the number.
 
-## Reading at the planned date
+## Reading as results come in
 
-A test is read at the date its plan set before launch, or by a reading rule its plan set before launch. What goes wrong
-otherwise is choosing when to look after seeing the data: a test watched every day and stopped on the day it looks good
-roughly quadruples its false wins (in one simulation, from 5% to 23%), because luck always has a good day somewhere, and
-a lead partway through is mostly luck and novelty. So no test is called a winner except at its planned read, and nothing
-is believed on a lead partway through. Moving money toward a test that is ahead acts on that lead as surely as stopping
-it on a good day would, and it also changes which days and people that side buys, so the planned read stops comparing
-like with like; what it gains is a few days of slightly better spending. That trade rarely favors moving, the test's own
-budget included. A plan that means to act on repeated looks says so before launch, with a method built for them (a
-sequential test, say), and the plan-checker judges whether it is honest.
+Read a test whenever it has enough data to lean, not on a date set in advance, and act on the lean in the same tick:
+tilt money toward an item that leads, by how likely it is to be the best; cut one that looks weak; start variations of
+one that looks promising. The price is that some early leans turn out to be luck. The next reads correct them, and money
+moved by the odds moves back when the odds turn; that costs less than results sitting unread and money sitting still
+while they wait for a date. Two habits keep early reads honest at almost no cost: compare items on the same days, and
+discount a lead from the first days (below). Keep enough on an item's comparison that the comparison still means
+something while the lead firms up or fades, and give every new item a small, sure look before cutting it: an item cut
+after one bad day never gets the data that would correct it.
 
-Stopping a test early for other reasons is a different trade. Cutting one that is losing badly saves money and costs a
-little chance of seeing a winner that was having a bad start; whether that is worth it depends on how much it is burning
-and how bad the start is, and a plan can name before launch what harm would justify stopping. A fault, spend running
-away from the plan, or a market change that makes the question moot can also stop a test; traffic that came in short can
-stretch one to a later read date. Say why in a Decisions row. A test stopped early tells you little about its idea.
+A test can also stop for other reasons: a fault, spend running away from the plan, harm worth stopping for, or a market
+change that makes the question moot. Say why in a Decisions row.
 
 ## Why first results run hot
 
-New items get a burst of attention that fades; some days of the week convert better than others; and a winner is chosen
-partly because luck favored it, so part of its measured edge will not repeat. Compare the two sides on the same days, so
-the calendar affects both alike, and expect any first result to shrink.
+New items get a burst of attention that fades; some days of the week convert better than others; and the item that leads
+is partly the one luck favored, so part of its measured edge will not repeat. So compare items on the same days, so the
+calendar affects them alike, expect any first lead to shrink, and tilt money toward it rather than pour it in. A
+contender that keeps running gives fresh days for free: read its later days on their own, and raise its money in steps
+while they agree.
 
 ## Discounting toward past results
 
@@ -57,24 +60,24 @@ looks huge on a small sample is probably mostly luck. So pull each new result to
 hard when the sample is small, gently when it is large. Some ways to do it: mix the new counts with the past results'
 typical rate weighted like a modest test of its own; or compare the new gap with the spread of past gaps. Use a method
 you can explain in a sentence, apply it the same way to both sides, and leave out the test's own earlier data so a
-result is not discounted toward itself.
+result is not discounted toward itself. Discounting matters more the more items run: the best-looking of a hundred
+equally good items looks far better than it is from luck alone, so pull harder when the item was picked from many.
 
 ## How sure to be
 
-How strong the evidence must be depends on what a wrong call costs, so set out the stakes before deciding: what the move
-could gain, what it could lose, what waiting a few more days would cost, and how cheaply the move could be undone.
+How sure to be depends on what a wrong call costs and how fast it can be undone, so weigh the stakes: what the move
+could gain, what it could lose, what waiting would cost, and how cheaply the move could be reversed.
 
-- **A move you can undo cheaply** (shifting some test money, starting the next test, pausing a test that is losing)
-  needs only a lean, because waiting costs money every day and the move can be reversed when more is known.
-- **A lesson** steers later tests and where the money goes, so it is not believed until a rerun on fresh days, read on
-  its own data, shows the same thing clearly. Pooling the rerun with the first test would carry the first test's novelty
-  and luck along.
-- **Moving the main budget** onto a new option bets what the business earns on it. When most ideas fail, a good share of
-  apparent wins are luck (when about 1 idea in 10 works, about 1 in 5 "significant" wins is false), and winners keep
-  only part of their first edge once moved (one team's moved winners kept about 0.62 to 0.73 of their first level). That
-  is why the main budget usually waits for a confirmed lesson and an edge big enough to survive that shrinkage. If a
-  case looks different (a huge, clear effect on a large sample, or a move that costs little to reverse), say why in the
-  Decisions row; the strategist and the auditor will look at it.
+- **Most moves are directional and can be undone**: moving money between items, starting the next items, cutting one
+  that looks weak, making variations of one that looks promising, letting a lean shape the next ideas. About 60 to 80
+  percent sure is enough, because the next results correct a wrong move sooner than waiting would confirm a right one.
+- **Money follows the odds.** An option's share, the best known option's included, grows as its chance of being the
+  best grows and shrinks when results turn; nothing waits for a ceremony to move. When most ideas fail, part of every
+  lead is luck, and leaders keep only part of their first edge once moved (one team's moved winners kept about 0.62 to
+  0.73 of their first level): discount for that, and move in steps as the odds firm up rather than all at once.
+- **A few calls need more**: anything that must never be wrong (the quality floor's never-wrong things, an off-limits
+  line), a count that may be broken, and a large commitment that cannot be taken back quickly. Wait for stronger
+  evidence there, and say why.
 
 The charter's `acting`, `believing` and `replacing` fields say how this hill climb has been weighing these, in its own
 words. Use them to stay consistent from tick to tick, judge the case in front of you, and when the case calls for
@@ -82,21 +85,18 @@ something else, say why.
 
 ## The record's words for a read
 
-A read is recorded with one of three words: `act` (the evidence favors the tested option), `stop` (it does not) or
-`hold` (the numbers cannot answer the question). If none fits, write the word you would use and why. The word says which
-way the evidence leans now, not whether it is believed: a first read that leans is `act` or `stop` though no lesson
-rests on it yet. The word is a summary; the row also sets out what was weighed. What to do next is a separate judgment,
-recorded with its reason:
+A read is recorded with one of three words: `act` (the evidence favors the tested item), `stop` (it does not) or `hold`
+(the numbers cannot answer the question). If none fits, write the word you would use and why. The word says which way
+the evidence leans now, `chance_beats` says how sure, and the read places the item among the others, from weak to
+promising. What to do next is a separate judgment, recorded with its reason:
 
-- A favored first read is a lean. It can earn some test money now and tilt which explore test comes next. Rerun it on
-  fresh days when believing it would change something (narrowing the search, carrying the main budget, shaping later
-  tests) and the money in hand can buy a rerun that reads, since a lesson does none of those until it shows itself
-  twice. A lean that nothing will build on can stay a lean. Either way, a Decisions row says what you decided and why.
-- A flat read means the test could not tell the two apart at its size. Record that, not a winner and a loser.
-- A rerun that does not clearly show the same thing leaves the lesson unproven. It may mean the first read was luck, the
-  effect is smaller than it looked, or it held only in some conditions; you might retire the lesson, narrow its claim to
-  where it held, keep it as a light lean for exploring, or test it again bigger, depending on what knowing would be
-  worth against what the test would cost.
+- A favored read is a lean. It earns money now by its odds, shapes the next items (variations of it, ideas near it),
+  and becomes a lesson that steers, with how sure it is. A lean grows strong as later items, variations and reads keep
+  agreeing; test it again on its own only when a large, hard-to-undo move would rest on it.
+- A flat read means the test could not tell the items apart at its size. Record that, and let each item's place on the
+  gradient say what is known.
+- A lean that later results contradict loses weight: narrow it to where it held, keep it as a light lean, or retire it,
+  depending on how much it was steering.
 - A hold means these numbers cannot answer the question. Plan it again if the question still matters once the cause is
   fixed.
 
@@ -123,45 +123,51 @@ on anything live. Put the audience's own words in the Library.
 
 ## Lessons
 
-A lesson is one row per subject: what it says, what it compares (a `winner` and a `loser`, when it is a comparison), the
-tests that are its evidence, and a status that says how far to trust it. Update the row in place as its status moves,
-and keep every row: lists rewritten wholesale lose detail and do worse than none.
+A lesson is one row per subject: what it says, what it compares (a `winner` and a `loser`, when it compares two), the
+evidence behind it, how sure it is, and a status. Lessons come from single reads and from patterns across many coded
+items: when the promising items keep sharing an attribute, that pattern is a lean of its own, and the next variations
+test it on the items that matter. A lean that rests only on the early read says so, and gets reads on the goal's own
+count before it narrows the search, since a cheap signal can lean one way while the goal leans the other. Update the row
+in place as it moves, and keep every row: lists rewritten wholesale lose detail and do worse than none.
 
-- A read that shows a difference records or updates an `unconfirmed` lesson. A confirm rerun is a new Tests row in the
-  confirm lane with `rerun_of` and `lesson_id`, on fresh days.
-- When a rerun shows the same thing clearly on its own data, the lesson becomes `proven`, with a `recheck_at` the
-  charter's `lesson_life` away as a reminder. When it does not, the lesson stays unproven (above); say what you did with
-  it and why. A retired lesson stays in the tab.
-- A proven lesson's `recheck_at` is the date to look at it again, not a switch. When results disagree with it, the
-  market changes, or that date arrives, weigh how much the lesson is steering, how fast this market drifts, and whether
-  recent results still agree; mark it `recheck` and rerun it when that weighing raises a real doubt worth a rerun's
-  cost, and say why either way.
+- `lean`: the evidence points this way, somewhere around 60 to 80 percent sure. It steers the next items and the money
+  now.
+- `strong`: later items, variations and reads kept agreeing. It can narrow the search and carry more of the money, and
+  gets a `recheck_at` the charter's `lesson_life` away as a reminder.
+- `in-doubt`: newer results disagree, or its `recheck_at` has come. Weigh how much it is steering, how fast this market
+  drifts and whether recent results still agree, and test it again when the doubt is worth what the test costs.
+- `retired`: the evidence turned against it. A retired lesson stays in the tab.
 
-Proven lessons may narrow the search and carry the main budget. An unconfirmed one may steer which explore test comes
-next, lightly.
+## Cases
 
-## Worked cases
+Some cases, told as general ones:
 
-These come from real hill climbs, told as general cases.
-
-- **A day-of-week finding that faded.** Over ten days, clicks late in the week converted about twice as often as early
-  in the week. It was tempting to move the whole budget. As a first result it was a lean: worth a rerun over the next
-  weeks, read by day, and not worth betting the budget on.
+- **A day-of-week lean.** Over ten days, clicks late in the week converted about twice as often as early in the week.
+  That was worth acting on lightly (some money tilted toward late in the week) while the next weeks showed whether it
+  held; moving the whole budget on ten days would have bet everything on a lean.
 - **A creative whose first days looked twice as good.** A new ad converted 11 of its first 32 clicks, then 5 of its next
-  44; its first three days were its best everywhere it launched. That is novelty at work, and the reason the main budget
-  waits for a rerun on fresh days.
+  44; its first three days were its best everywhere it launched. Discounting the first days and moving money in steps
+  kept the cost of that novelty small, and the climb still learned within a week that the ad was ordinary.
+- **A count that a pace set.** A climb set its spend at intake and divided it by what a full read of its slowest
+  number cost, which came to five to ten ads a week. Screened on an earlier signal at a few dollars each, the same
+  money would have shown which way dozens of ads leaned in the same week, with full reads only for the promising
+  ones.
 - **A keyword group never bought because nothing was ever tried.** A group with no history looked worse than groups with
   thin, noisy histories, so it never got money. An untried option is not a bad one; what it could teach is a reason to
   try it.
+- **A pattern no single test asked about.** Across dozens of ads, the ones with a person on camera kept landing near the
+  top of the gradient. The next round cut variations of the best ads with and without the person, and within days the
+  climb knew roughly how much of the lead the person carried.
 
 ## When a plan fails its check
 
 A failed check is the check working. Read its reasons and decide what the idea deserves. A plan that can be put right
 gets a revised plan, written as a new Tests row with the same `idea_id` while the old row becomes `withdrawn`, and goes
-to a fresh plan-checker once it puts right everything the reasons name, sized again with the money in hand: a revision
-that fixes one reason and meets the next costs another round. When the money in hand cannot buy a readable answer to the
-question, the question is the wrong size for now; ask one a smaller test can read (a bolder change, or a gap the record
-says is likely to be large), or let it wait for money. An idea that cites nothing goes back to research, and one that
-repeats an answered question is parked. A built item that fails the build-checker or the critic usually gets a rebuild,
-checked again, unless the reasons say the idea cannot be made well with what the platform offers. Whatever you decide,
-the Ideas or Tests row says why.
+to a fresh plan-checker once it puts right everything the reasons name; fix them all at once, since a revision that
+fixes one reason and meets the next costs another round. When the money in hand cannot show even which way the question
+leans, make the change bolder, read it on an earlier signal, or put the money where it can show something. An idea that
+cites nothing goes back to research, and one that repeats an answered question is parked. A built item that fails the
+build-checker or the critic usually gets a rebuild, checked again in the same round, unless the reasons say the idea
+cannot be made well with what the platform offers. A rebuild under an unchanged plan keeps its Tests row and its plan
+check, with the new item recorded in the row and its history; only a changed plan needs a new row and a new plan check.
+Whatever you decide, the Ideas or Tests row says why.

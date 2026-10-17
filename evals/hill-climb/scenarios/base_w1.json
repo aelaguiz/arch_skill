@@ -234,8 +234,8 @@
    },
    {
     "field": "lanes",
-    "value": "most money keeps earning on history's best ad; a real part keeps exploring while most of the map is untested; a little confirms leans before they steer",
-    "reason": "Most money keeps earning from history's best; a third keeps looking while most of the map is untested.",
+    "value": "most money keeps earning on history's best ad; a real part keeps exploring while most of the map is untested; some develops the leans: variations of the contenders and more traffic on what looks promising",
+    "reason": "Most money keeps earning from history's best; a third keeps looking while most of the map is untested; leans firm up fastest when variations and traffic build on them.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
@@ -250,24 +250,24 @@
    },
    {
     "field": "acting",
-    "value": "a move that can be undone needs only a lean after discounting, weighed against what it would cost to undo",
-    "reason": "Pausing or shifting a budget can be reversed next tick.",
+    "value": "directional: about 60 to 80 percent sure after discounting is enough for any move that can be undone; money moves in steps by the odds",
+    "reason": "Shifting a budget or cutting an item can be reversed next tick, and waiting costs a tick of learning.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
     "field": "believing",
-    "value": "a rerun on fresh days, read on its own data, that clearly shows the same direction",
-    "reason": "First reads run hot; only a rerun separates a lesson from luck.",
+    "value": "a lean grows strong when later reads, items and variations keep agreeing; a large move that cannot be taken back quickly waits for that",
+    "reason": "First reads run hot; agreement across later results separates a pattern from luck without stopping to rerun it.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
     "field": "replacing",
-    "value": "only an edge that would survive the shrinkage moved winners show",
-    "reason": "Winners shrink once money moves onto them.",
+    "value": "money follows the odds onto a new option in steps, discounted for the shrinkage leaders show once moved",
+    "reason": "Leaders shrink once money moves onto them; moving in steps keeps a wrong lean cheap.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
@@ -290,23 +290,23 @@
    },
    {
     "field": "test_sizing",
-    "value": "big swings, read when the planned gap would show at the planned spend",
-    "reason": "At $15 a day only large gaps show within a few days.",
+    "value": "the cheapest read that shows which way an item leans: big swings, read as soon as the counts lean, as many items at once as the money can read, compared on the same days",
+    "reason": "At $15 a day an item shows which way a large gap leans within a couple of days.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
-    "field": "pace",
-    "value": "$45 per day",
-    "reason": "$600 lasts about two weeks at this pace.",
+    "field": "speed",
+    "value": "as fast as checked items can be read, from $45 a day committed at the start of this stretch, with the best ad kept earning",
+    "reason": "What limits learning here is usually how many checked items are ready, and then the money.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
     "field": "cadence",
-    "value": "watch every tick; step back every 24 hours; strategy and audit every 7 days; replay monthly",
+    "value": "ticks every 12 hours, acting on new results each tick; step back every 24 hours; strategy and audit every 7 days; replay monthly",
     "reason": "Ticks come every 12 hours; slower reviews keep their context clean.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
@@ -930,7 +930,7 @@
     "statement": "A question hook converts better than a claim hook over the app screen",
     "winner": "hook=question|visual=app-screen",
     "loser": "hook=claim|visual=app-screen",
-    "status": "unconfirmed",
+    "status": "lean",
     "evidence": "T-0002",
     "recheck_at": "",
     "legacy_ref": "",
@@ -944,7 +944,7 @@
     "statement": "The app screen converts better than a hand replay behind a question hook",
     "winner": "hook=question|visual=app-screen",
     "loser": "hook=question|visual=hand-replay",
-    "status": "unconfirmed",
+    "status": "lean",
     "evidence": "T-0003",
     "recheck_at": "",
     "legacy_ref": "",
@@ -993,7 +993,7 @@
  "prompt": "/hill-climb Run the tick.",
  "allocations": {
   "exploit": 55,
-  "confirm": 15,
+  "develop": 15,
   "explore": 30
  }
 }

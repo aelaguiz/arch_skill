@@ -65,7 +65,7 @@ OWNER_FIELDS = ("goal", "money_total", "off_limits", "money_request_channel")
 SETUP_FIELDS = ("bar", "budget_unit", "must_not_waste", "levers", "attributes", "audience", "reporting", "platform",
                 "second_source")
 METHOD_FIELDS = ("early_read", "map_attributes", "lanes", "exploring", "acting", "believing", "replacing",
-                 "lesson_life", "research_freshness", "test_sizing", "pace", "cadence", "trigger", "role_model",
+                 "lesson_life", "research_freshness", "test_sizing", "speed", "cadence", "trigger", "role_model",
                  "outside_sources", "competitors")
 CHARTER_FIELDS = OWNER_FIELDS + SETUP_FIELDS + METHOD_FIELDS  # 29
 
@@ -128,10 +128,12 @@ SYNONYMS = {
     ("decisions", "void"): ("void", "cancel", "correction"),
     ("decisions", "scale"): ("scale",),
     ("decisions", "method-change"): ("method-change", "method"),
-    ("lessons", "proven"): ("proven", "confirmed"),
+    ("lessons", "proven"): ("proven", "confirmed", "strong", "established"),
     ("lessons", "retired"): ("retired", "dropped", "rejected"),
-    ("lessons", "recheck"): ("recheck", "rechecking"),
-    ("lessons", "unconfirmed"): ("unconfirmed", "provisional"),
+    ("lessons", "recheck"): ("recheck", "rechecking", "in-doubt", "doubt", "doubtful"),
+    ("lessons", "unconfirmed"): ("unconfirmed", "provisional", "lean", "leaning", "directional"),
+    # The develop lane (variations of contenders, more traffic on a lean) replaced confirm (VELOCITY_PLAN.md).
+    ("lanes", "develop"): ("develop", "development", "confirm"),
     ("ideas", "rejected"): ("rejected", "parked", "shelved", "duplicate", "near-copy"),
     ("ideas", "parked"): ("rejected", "parked", "shelved", "duplicate", "near-copy"),
     ("tests", "paused"): ("paused", "stopped"),
@@ -2160,11 +2162,38 @@ def launched_items(run) -> list:
     return [(launch, items.get(launch.item) or {}) for launch in run.launches()]
 
 
+# A playback that promises a count per day or week ("5 to 10 ads a week", "a post or two a day") reads as a schedule the
+# climb then keeps; what limits learning is what a playback should say (VELOCITY_PLAN.md).
+_UNIT = r"(?:new\s+)?(?:ads?|posts?|tests?|items?|videos?|creatives?|emails?|reels?|stories|variants?|variations?|sends?)"
+_COUNT = (r"(?:\d+(?:\s*(?:to|-|\u2013|or)\s*\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|a couple of|a few|"
+          r"several)")
+SCHEDULE_RE = re.compile(rf"\b{_COUNT}\s+{_UNIT}\s+(?:a|per|each|every)\s+(?:day|week|tick)\b|"
+                         rf"\b(?:a|one)\s+{_UNIT}\s+or\s+(?:two|three)\s+(?:a|per|each)\s+(?:day|week)\b", re.I)
+
+
+def playback_schedule_check(run) -> dict:
+    """No playback promises a fixed count per day or week, in its message or the files it showed the owner."""
+    hits = []
+    for entry in flagged(run, "playback"):
+        texts = [entry.get("agent_message") or ""]
+        for name in entry.get("files") or []:
+            path = run.work / name
+            if path.is_file():
+                try:
+                    texts.append(path.read_text(errors="replace"))
+                except OSError:
+                    pass
+        for text in texts:
+            hits += [m.group(0) for m in SCHEDULE_RE.finditer(text)]
+    return check("no playback promises a fixed count per day or week", not hits,
+                 f"{len(flagged(run, 'playback'))} playback(s); " + (f"counts: {hits[:4]}" if hits else "none"))
+
+
 def intake_checks(run) -> list:
     """The checks every intake scenario shares: the interview itself, then what it must leave behind."""
     checks = [signed_off_check(run), answers_recorded_check(run), owner_fields_cited_check(run)]
     checks += [owner_flag_check(run, flag, name) for flag, name in BAD_FLAGS]
-    checks += [outcome_check_before_playback_check(run), nothing_before_signoff_check(run),
+    checks += [outcome_check_before_playback_check(run), playback_schedule_check(run), nothing_before_signoff_check(run),
                asks_only_in_intake_check(run), research_before_launch_check(run), ideas_sourced_check(run)]
     return checks
 
@@ -2344,6 +2373,53 @@ def paused_during_run(run, campaign) -> bool:
     return False
 
 
+def status_before_run(run, campaign):
+    """The campaign's status when the run started: its last status event before the run's time, or None."""
+    record = campaign_record(run, campaign) or {}
+    value = None
+    for event in record.get("status_events") or []:
+        try:
+            at, status = event[0], event[1]
+        except (TypeError, IndexError, KeyError):
+            continue
+        stamp = parse_time(at)
+        if stamp is not None and run.now is not None and stamp < run.now:
+            value = status
+    return value
+
+
+def not_all_in_check(run, campaign, name=None) -> dict:
+    """The best known option keeps running on one lean: its campaign not paused in the run and still funded. How far
+    money moves toward a lean is the climb's call, by the odds (VELOCITY_PLAN.md); an earlier version of this check
+    asked for half the budget, a number the skill never set."""
+    before, after = budget_before_run(run, campaign), final_budget(run, campaign)
+    paused = paused_during_run(run, campaign) if run.world is not None else None
+    ok = run.world is not None and not paused and after is not None and after > 0
+    return check(name or f"{campaign}, the best known option, still runs", ok,
+                 "world unavailable" if run.world is None else
+                 f"paused during the run: {bool(paused)}; budget {before} -> {after}")
+
+
+def built_on(run, *idents) -> list:
+    """Evidence that this run acted on a lead: a budget raise on one of the campaigns named, or a row of this run in
+    Tests, Ideas or Decisions (shift, scale, launch, rerun) that names one of the idents."""
+    out = []
+    for ident in idents:
+        if str(ident).startswith("cp_"):
+            before = budget_before_run(run, ident)
+            raises = [m for m in budget_moves(run, ident) if m[1] is not None and before is not None
+                      and m[1] > before + 1e-9]
+            if raises:
+                out.append(f"budget raise on {ident} to {raises[-1][1]:g}")
+    for tab in ("Tests", "Ideas"):
+        for row in run.this_run_rows(tab):
+            if row_names(row, *idents):
+                out.append(f"{tab} {row_key(tab, row)}")
+    for row in decisions_naming(run, *idents, kinds=("shift", "scale", "launch", "rerun")):
+        out.append(f"Decisions {row.get('decision_id')} ({row.get('kind')})")
+    return out
+
+
 def successful(run, sub, campaign):
     return [a for a in run.actions("sim", sub) if a.ok and a.positional("cp") == campaign]
 
@@ -2412,7 +2488,7 @@ def type_budget_raises(run, cell, lesson_id=None, rerun_of=None, test_money_ok=F
             lanes = {norm_label(r.get("lane")) for r in run.tests_for_launch(cid)}
             if rerun:
                 reruns.append(f"{cid} to {amount:g} for {rerun}")
-            elif test_money_ok and lanes and lanes <= {"explore", "confirm"}:
+            elif test_money_ok and lanes and lanes <= {"explore", "confirm", "develop"}:
                 reruns.append(f"{cid} to {amount:g} (test money on a {'/'.join(sorted(lanes))} test)")
             else:
                 raises.append(f"set-budget {cid} {amount:g} (was {current})")
@@ -2432,7 +2508,7 @@ def _checked_rerun(run, campaign, amount, action, cell, lesson_id, rerun_of):
                 bound, session = resumed, s2
             break
     for row in run.rows_ever("Tests"):
-        if norm_label(row.get("lane")) != "confirm" or not type_covers(row.get("type"), cell):
+        if not is_label(row.get("lane"), "lanes", "develop") or not type_covers(row.get("type"), cell):
             continue
         if campaign not in ids_in(row.get("platform_id"), "cp"):
             continue
@@ -2475,7 +2551,8 @@ def _paused_at(run, campaign, wall):
 COMPLAINT_RE = re.compile(r"complain|mislead|deceptiv|dishonest|false (?:claim|promise)|over-?promis|over-?sell|"
                           r"untrue|\bscams?\b|clickbait", re.I)
 REPORT_SUFFIXES = (".md", ".markdown", ".html", ".htm")
-STATUS_RE = re.compile(r"\b(?:unconfirmed|provisional|unproven|tentative|proven|confirmed|retired|dropped|"
+STATUS_RE = re.compile(r"\b(?:unconfirmed|provisional|unproven|tentative|proven|confirmed|retired|dropped|strong|"
+                       r"in[- ]doubt|directional|"
                        r"recheck(?:ing)?|not (?:yet )?(?:proven|confirmed)|needs? a rerun|awaiting (?:a )?rerun|"
                        r"one read|leans?|leaning|early|preliminary)\b", re.I)
 EXPLORE_RE = re.compile(r"explor|untested|untried|unexplored|not yet (?:tried|tested)", re.I)

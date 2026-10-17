@@ -123,7 +123,8 @@ def _session(run_session, run_dir: Path, turn: int, prompt: str, phase: str, tic
 
 def intake_loop(request: str, run_session, ask_owner, run_dir, *, max_sessions: int = MAX_SESSIONS,
                 final_tick: bool = True, tick_prompt: str = TICK_PROMPT, prefix: str = batch.SKILL_PREFIX,
-                tick: int = 0, sim_time=None, cost_cap=None, before_tick=None, log=None, log_dir=None) -> dict:
+                tick: int = 0, sim_time=None, cost_cap=None, before_tick=None, log=None, log_dir=None,
+                publish: bool = True) -> dict:
     """Run the interview, then (when the owner signed off and `final_tick`) one more tick; returns the summary written
     to RUN/intake.json: {"ended", "sessions", "signed_off_turn", "final_tick_turn", "next_turn", "statuses",
     "cost_usd"}. The session after the sign-off seeds the climb and runs its first tick, so `before_tick()` moves the
@@ -204,21 +205,27 @@ def intake_loop(request: str, run_session, ask_owner, run_dir, *, max_sessions: 
     summary = {"ended": ended, "sessions": len(statuses), "signed_off_turn": signoff_turn,
                "final_tick_turn": final_turn, "next_turn": turn, "statuses": statuses, "cost_usd": round(spent, 4)}
     batch.write_json(log_root / "intake.json", summary)
-    if log_root != run_dir:
-        run_dir.mkdir(parents=True, exist_ok=True)
-        for name in ("interview.jsonl", "intake.json"):
-            if (log_root / name).exists():
-                shutil.copy2(log_root / name, run_dir / name)
-        # the sessions' folders (transcripts, workbook copies) stayed out of the agents' sight; now they join the run
-        if (log_root / "ticks").is_dir():
-            (run_dir / "ticks").mkdir(parents=True, exist_ok=True)
-            for folder in sorted((log_root / "ticks").iterdir()):
-                target = run_dir / "ticks" / folder.name
-                if target.exists():
-                    shutil.rmtree(target)
-                shutil.move(str(folder), str(target))
-            shutil.rmtree(log_root / "ticks", ignore_errors=True)
+    if publish and log_root != run_dir:
+        publish_logs(log_root, run_dir)
     return summary
+
+
+def publish_logs(log_root, run_dir) -> None:
+    """Move a run's hidden logs into RUN/ for the graders: interview.jsonl, intake.json and the sessions' folders."""
+    log_root, run_dir = Path(log_root), Path(run_dir)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    for name in ("interview.jsonl", "intake.json"):
+        if (log_root / name).exists():
+            shutil.copy2(log_root / name, run_dir / name)
+    # the sessions' folders (transcripts, workbook copies) stayed out of the agents' sight; now they join the run
+    if (log_root / "ticks").is_dir():
+        (run_dir / "ticks").mkdir(parents=True, exist_ok=True)
+        for folder in sorted((log_root / "ticks").iterdir()):
+            target = run_dir / "ticks" / folder.name
+            if target.exists():
+                shutil.rmtree(target)
+            shutil.move(str(folder), str(target))
+        shutil.rmtree(log_root / "ticks", ignore_errors=True)
 
 
 # ----------------------------------------------------------------------------------------------------------------------

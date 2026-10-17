@@ -11,4 +11,4 @@ LG-0009,2026-11-06T00:00:00Z,workbook and platform,routine tick,next tick,2026-1
 LG-0010,2026-11-06T12:00:00Z,workbook and platform,routine tick,next tick,2026-11-06T12:00:00Z,main
 LG-0011,2026-11-07T00:00:00Z,workbook and platform,routine tick,next tick,2026-11-07T00:00:00Z,main
 LG-0012,2026-11-07T12:00:00Z,workbook and platform,routine tick,next tick,2026-11-07T12:00:00Z,main
-LG-0013,2026-11-08T00:00:00Z,workbook and platform,T-0004 read act; rerun T-0023 planned to confirm L-0003,next tick,2026-11-08T00:00:00Z,main
+LG-0013,2026-11-08T00:00:00Z,workbook and platform,T-0004 read act; variation T-0023 planned to build on the lean L-0003,next tick,2026-11-08T00:00:00Z,main

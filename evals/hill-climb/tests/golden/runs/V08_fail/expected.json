@@ -1,8 +1,7 @@
 {
  "failing": [
-  "a confirm rerun of T-0004, or a Decisions row giving the reason for not rerunning it now",
-  "any lesson citing T-0004 is unconfirmed",
-  "no exploit Tests row and no main-budget raise of T-0004's type beyond a checked rerun"
+  "any lesson citing T-0004 is a lean, not strong",
+  "cp_0001, the best known option, still runs"
  ],
  "grader": "V08",
  "pass": false,

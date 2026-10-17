@@ -29,7 +29,7 @@ choice and says so, and the strategist may revise it like setup's own.
 | `levers` | what the owner allowed the climb to change |
 | `off_limits` | what the owner said must never happen or change |
 | `making_from` | what creatives are made from: the material, the people, the sources |
-| `quality_floor` | the items new ones must be at least as good as, and what can never be wrong in them |
+| `quality_floor` | the items new ones must be at least as good as, and what can never be wrong in them; as the climb makes better items, the best of them raise the floor |
 | `tool_rules` | tools the owner said to use or never to use |
 | `research_direction` | where the owner said research should look, and anything they asked to have researched |
 | `reporting` | how often the owner gets a progress report, in what form and where it goes (references/reporting.md) |
@@ -47,7 +47,7 @@ new attribute values grow the map, and their cells start untested.
 |---|---|
 | `bar` | the number decisions use, its formula and its source of truth, worked out from `success` with each assumption |
 | `budget_unit` | what the climb spends: a currency, or a count of something scarce (posts, sends, slots) |
-| `must_not_waste` | what must not be wasted (money on unreadable tests, the audience's patience) |
+| `must_not_waste` | what must not be wasted (money on reads that cannot show even a direction, the audience's patience) |
 | `attributes` | the full coding of the medium: every attribute a viewer could notice or a maker could choose, each with its values and an example of each, in the order types are written (references/making.md) |
 | `tools` | what the climb makes items with now, inside `tool_rules`, and why each is the one to use |
 | `platform` | the commands or tools that read data and act, including where people's comments, saves, shares and hides on the items can be read |
@@ -67,16 +67,16 @@ itself: each decision still judges the case in front of it, and says why when it
 |---|---|
 | `early_read` | the cheapest signal that tracks the goal, and how often it is checked against the goal: a cheap signal that drifts from the goal steers the whole climb wrong |
 | `map_attributes` | which attributes form the map (references/map.md) |
-| `lanes` | the current leaning between confirm, explore and exploit, in words, with the reasons (references/money.md) |
+| `lanes` | the current leaning between develop, explore and exploit, in words, with the reasons (references/money.md) |
 | `exploring` | what exploring keeps reaching for however well the best is doing, and why: which untried cells and outside ideas matter most, how much of the map is untried, how fast results drift, how much luck may be holding up the best; never nothing while a test could still read before the climb ends |
-| `acting` | how this climb weighs evidence before a move that can be undone (references/evidence.md) |
-| `believing` | what a rerun has to show before a lesson is proven |
-| `replacing` | what a proven challenger has to show before it takes the main budget |
-| `lesson_life` | roughly how long a proven lesson goes before its age alone puts it in doubt: shorter where results drift fast |
+| `acting` | how sure the climb wants to be before a move, by what a wrong move would cost: directional, about 60 to 80 percent, for anything that can be undone (references/evidence.md) |
+| `believing` | how a lean grows strong (later items, variations and reads that keep agreeing), and what a large, hard-to-undo move needs on top |
+| `replacing` | how money follows the odds onto a new option, and what a large commitment that cannot be taken back quickly needs |
+| `lesson_life` | roughly how long a strong lesson goes before its age alone puts it in doubt: shorter where results drift fast |
 | `research_freshness` | how fast this market's research material goes stale, and why (references/research.md) |
-| `test_sizing` | how a test's size and read date are chosen from what it can show at the traffic, and how a fair comparison is run on this platform |
-| `pace` | the committed daily spend to aim at (references/money.md) |
-| `cadence` | how often to watch for faults, step back (meta-analyst), revisit the method (strategist), audit, and replay past calls (the auditor re-scoring calls made since the last replay against what came after, and checking the early read still tracks the goal): often enough to catch a narrowing search before it wastes a week, rarely enough that each method change can be judged before the next |
+| `test_sizing` | the cheapest read that shows which way an item leans at this platform's traffic, how many items the money can read at once, and how a fair comparison runs on this platform |
+| `speed` | how this climb means to go as fast as it can learn, and what usually limits that on this platform; how fast it is going now goes in the Log and the Overview (references/money.md) |
+| `cadence` | how often ticks run and watch for faults (often enough that new results are acted on soon after they arrive), step back (meta-analyst), revisit the method (strategist), audit, and replay past calls (the auditor re-scoring calls made since the last replay against what came after, and checking the early read still tracks the goal): often enough to catch a narrowing search before it wastes a week, rarely enough that each method change can be judged before the next |
 | `trigger` | what starts the ticks (below) |
 | `role_model` | the model the role agents run on: the one the shared policy's routing table names for hill-climb roles |
 | `outside_sources` | where research looks, and the tools that reach it: the owner's `research_direction` first |
@@ -111,12 +111,12 @@ Some things to carry over with care:
 - History the owner let in comes over as closed tests and their results (`call` `legacy`), so discounting has past
   results to learn from and the map starts with what is known. Gather the files and recipes of any item the climb may
   vary (references/making.md).
-- A test still running finishes under its own plan: it has not been read yet, so it gets a read date in the future, when
-  its own plan or a sound size would read it, and no result, even when the owner let its file in as history, since its
-  numbers so far are a window still open, not a read.
-- An old learning the owner let in is a lean until a rerun has held, whatever the old tracker called it, so it comes
-  over no stronger than `unconfirmed`, and only when it is about the new `goal`; one the record already contradicts is
-  weighed like a lesson a rerun failed to show (retired, narrowed or kept as a light lean), with that evidence.
+- A test still running is read like any live test, by the climb's reader as soon as it has enough data to lean; until
+  then it has no result, even when the owner let its file in as history, since its numbers so far are a window still
+  open, not a read.
+- An old learning the owner let in comes over at the strength its evidence carries (a `lean`, or `strong` where many
+  results agree), whatever the old tracker called it, and only when it is about the new `goal`; one the record already contradicts is weighed like a lean
+  that later results went against (retired, narrowed or kept as a light lean), with that evidence.
 - Old hypotheses the owner let in become Ideas that cite their legacy rows; old research or angle lists become Library
   rows.
 - Old choices (the measure, the dimensions, the test sizes, the rules for reading results) do not come over as choices.

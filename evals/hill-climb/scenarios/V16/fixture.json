@@ -78,7 +78,7 @@
     "statement": "A claim over a hand replay converts better than a question over the app screen",
     "winner": "hook=claim|visual=hand-replay",
     "loser": "hook=question|visual=app-screen",
-    "status": "unconfirmed",
+    "status": "lean",
     "evidence": "T-0007",
     "recheck_at": "",
     "legacy_ref": "",

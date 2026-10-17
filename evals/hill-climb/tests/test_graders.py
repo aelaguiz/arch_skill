@@ -411,7 +411,7 @@ class Autonomy(unittest.TestCase):
         self.assertEqual(self.charter_run("bar", "a", "b", "strategist", sub=True).autonomy_violations(), [])
         self.assertEqual(len(self.charter_run("lanes", "a", "b", "auditor", sub=True).autonomy_violations()), 1)
         self.assertEqual(self.charter_run("trigger", "a", "b").autonomy_violations(), [])
-        self.assertEqual(len(self.charter_run("pace", "a", "b", "strategist").autonomy_violations()), 1)
+        self.assertEqual(len(self.charter_run("speed", "a", "b", "strategist").autonomy_violations()), 1)
 
     def test_notifies(self):
         note = {"wall_time": 22, "sim_time": "2026-11-08T00:00:00Z", "kind": "status", "payload": "hi"}
@@ -684,7 +684,7 @@ class WorldMetrics(unittest.TestCase):
         run_dir, hidden = make_run([], [], {}, ticks=ticks, now=hour(0))
         graded = grade_backtest(c.load_run(run_dir, hidden, world=self.w1()))
         names = [ch["name"] for ch in graded["checks"]]
-        self.assertEqual(len(names), 9)
+        self.assertEqual(len(names), 8)
         self.assertIn("conversions_captured", graded["metrics"])
         gates = outcome_gates({"W4:1": {"conversions_captured": 0.5}, "W4:1:thompson": {"conversions_captured": 0.55},
                                "W2:1": {"never_bought_star_launched": None}})
@@ -721,6 +721,19 @@ class RoundTwoDefinitions(unittest.TestCase):
                        check_row("CK-0015", "build-checker", test="T-0023", item="it_0021")]
         self.assertTrue(self.launch_run(full, "it_0021", "cp_0023").every_launch_checked()[0])   # in either order
         self.assertFalse(self.launch_run(plan, "it_0004", "cp_0023", prior=False).every_launch_checked()[0])
+
+    def test_a_check_counts_only_for_the_test_it_names(self):
+        # A plan-checker pass vouches only for the Tests row its own test_id names; a row that cites another plan's pass,
+        # or a pass whose reasons mention the row, is not checked by it (VELOCITY_PLAN.md, reviews 10 and 11).
+        borrowed = [dict(check_row("CK-0013", "plan-checker", test="T-0001"), reasons="The best ad's plan is sound.")]
+        run = self.launch_run(borrowed, "it_0004", "cp_0023")
+        run.rows("Tests")[0]["checks"] = "plan CK-0013 pass"
+        self.assertFalse(run.every_launch_checked()[0])
+        mentions = [dict(check_row("CK-0013", "plan-checker", test="T-0001"),
+                         reasons="Covers T-0001 only; does not cover T-0023.")]
+        self.assertFalse(self.launch_run(mentions, "it_0004", "cp_0023").every_launch_checked()[0])
+        own = [check_row("CK-0013", "plan-checker", test="T-0023")]
+        self.assertTrue(self.launch_run(own, "it_0004", "cp_0023").every_launch_checked()[0])
 
     def test_an_item_launched_earlier_in_the_run(self):
         checks = [check_row("CK-0013", "plan-checker", test="T-0023"), check_row("CK-0014", "build-checker",
@@ -865,7 +878,7 @@ class RealFixtures(unittest.TestCase):
     V25 to V30 is one: each needs the tick to write something (a named complaint, a report, a recipe, a failed build
     check, a coded setup, the read and the Overview)."""
 
-    RESTRAINT = {"V07", "V10", "V16", "V23"}
+    RESTRAINT = {"V10", "V16", "V23"}   # V07 now asks the climb to act on its early lead
 
     def test_do_nothing_runs(self):
         import fixtures

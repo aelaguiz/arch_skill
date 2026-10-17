@@ -40,14 +40,23 @@ Weigh what each candidate could teach against what it would cost. A few things t
 
 A test can only answer the question its plan asks, so what it changes must match that question. A plan asking whether
 one attribute helps ("does a price-first headline beat a benefit-first one?") changes only that attribute and holds
-everything else; change two things and no result can say which one did it. A plan asking whether one cell beats another
-("is a before-and-after photo with a price-first headline better than our best?") may differ in several attributes, and
-its lesson is then about the two cells, not about any one attribute. When no live option is the right comparison for the
-question, an explore test may launch its own comparison arm beside it, on the same days.
+everything else; change two things in one comparison and that comparison cannot say which one did it, though across many
+coded items that vary both, the patterns can. A plan asking whether one cell beats another ("is a before-and-after photo
+with a price-first headline better than our best?") may differ in several attributes, and its lesson is then about the
+two cells, not about any one attribute. When no live option is the right comparison for the question, an explore test
+may launch its own comparison arm beside it, on the same days.
+
+The fastest teacher is often not any one test but the pattern across many. With many items running, each coded in
+full, the attributes the promising items share and the weak ones lack show up across the coding long before
+one-attribute tests could isolate them. Let those patterns suggest hypotheses, and use variations that change one
+attribute of a promising item to check the ones worth money.
 
 ## Is the idea new?
 
 Ask whether the test would teach something the record does not already know. A repeat of a tried test's cell and
 approach wastes money when the earlier test answered the question; it is worth running when that answer was thin, broken
 or old, and then it is a rerun with `rerun_of` set. An idea that only repeats an answered question gets `near_copy_of`
-(the test it repeats) and is parked or rejected with the reason.
+(the test it repeats) and is parked or rejected with the reason. A variation of a contender is not a repeat: it asks
+what about the contender carries its promise. Nor are several different items in one cell repeats of each other: run
+together, they show whether the cell or one item carries a result. A repeat is the same item, or one so close it could
+teach nothing new.

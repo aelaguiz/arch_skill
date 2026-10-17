@@ -1072,21 +1072,25 @@ def v07(passing):
     if passing:
         run = GoldenRun("V07_pass", "V07", True, wb=wb, stub=stub)
         run.opening()
-        run.sim_call(["report", "--campaign", "cp_0014"], "cp_0014 live it_0014 $15.00/day spend $30.00 clicks 300 "
-                                                          "conversions 33")
-        run.log("T-0014 leads early; its read date is 2026-11-11, so it runs on")
-        run.final("Tick 2026-11-08T00:00Z: T-0014 leads early but reads on 2026-11-11; everything runs on.")
+        run.agent("Read T-0014", "You are the reader. Read T-0014 and write R-0014.",
+                  lambda sub: (sub.sim(["report", "--campaign", "cp_0014"], "cp_0014 300 clicks 33 conversions"),
+                               sub.append("Results", [reader_row("R-0014", "T-0014", 33, 300, "act",
+                                                                 window="2026-11-06 to 2026-11-08")], "reader")))
+        run.append("Lessons", [{"lesson_id": "L-0003", "winner": "hook=question|visual=coach-face",
+                                "loser": "hook=question|visual=app-screen", "status": "lean", "evidence": "T-0014"}])
+        run.sim_call(["set-budget", "cp_0014", "25"], "cp_0014 daily budget set to $25.00.")
+        run.log("T-0014 leads two days in; money follows it in a step, the comparison keeps running")
+        run.final("Tick 2026-11-08T00:00Z: T-0014 leans ahead after two days, so it gets $25 a day while it keeps "
+                  "reading.")
         return run
-    run = GoldenRun("V07_fail", "V07", False, {"cp_0014 not paused", "no Results row citing T-0014 in this run",
-                    "no Lessons change citing T-0014 in this run"}, wb, stub)
+    run = GoldenRun("V07_fail", "V07", False, {"a subagent-written reader Results row for T-0014 in this run, before its "
+                    "planned read", "the lead steers something this run: money toward cp_0014, or a test, idea or "
+                    "decision built on it"}, wb, stub)
     run.opening()
-    run.append("Results", [{"result_id": "R-0014", "test_id": "T-0014", "metric": "platform conversions", "k": 33,
-                            "n": 300, "call": "act"}])
-    run.append("Lessons", [{"lesson_id": "L-0003", "winner": "hook=question|visual=coach-face",
-                            "loser": "hook=question|visual=app-screen", "status": "unconfirmed",
-                            "evidence": "T-0014"}])
-    run.sim_call(["pause", "cp_0014"], "Paused cp_0014.")
-    run.final("Read T-0014 early and paused it.")
+    run.sim_call(["report", "--campaign", "cp_0014"], "cp_0014 live it_0014 $15.00/day spend $30.00 clicks 300 "
+                                                      "conversions 33")
+    run.log("T-0014 leads early; its read date is 2026-11-11, so it runs on")
+    run.final("Tick 2026-11-08T00:00Z: T-0014 leads early but reads on 2026-11-11; everything runs on.")
     return run
 
 
@@ -1113,16 +1117,14 @@ def v08(passing):
         run.agent("Read T-0004", "You are the reader. Read T-0004 and write R-0004.", reader)
         run.append("Lessons", [{"lesson_id": "L-0003", "subject": "story hooks on the app screen",
                                 "winner": "hook=story|visual=app-screen", "loser": "hook=question|visual=app-screen",
-                                "status": "unconfirmed", "evidence": "T-0004"}])
-        run.append("Tests", [plan_values("T-0023", "ID-0004", "hook=story|visual=app-screen", lane="confirm",
+                                "status": "lean", "evidence": "T-0004"}])
+        run.append("Tests", [plan_values("T-0023", "ID-0004", "hook=story|visual=app-screen", lane="develop",
                                          rerun_of="T-0004", lesson_id="L-0003", days=3)])
-        run.log("T-0004 read act; rerun T-0023 planned to confirm L-0003")
-        run.final("Tick 2026-11-08T00:00Z: T-0004 read act, so its lesson waits on rerun T-0023 before it steers "
-                  "money.")
+        run.log("T-0004 read act; variation T-0023 planned to build on the lean L-0003")
+        run.final("Tick 2026-11-08T00:00Z: T-0004 leans ahead, so T-0023 builds on it.")
         return run
-    run = GoldenRun("V08_fail", "V08", False, {"any lesson citing T-0004 is unconfirmed", "a confirm rerun of T-0004, or "
-                    "a Decisions row giving the reason for not rerunning it now", "no exploit Tests row and no main-budget "
-                    "raise of T-0004's type beyond a checked rerun"}, wb, stub)
+    run = GoldenRun("V08_fail", "V08", False, {"any lesson citing T-0004 is a lean, not strong",
+                    "cp_0001, the best known option, still runs"}, wb, stub)
     run.opening()
     run.agent("Read T-0004", "You are the reader. Read T-0004 and write R-0004.", reader)
     run.append("Lessons", [{"lesson_id": "L-0003", "winner": "hook=story|visual=app-screen",
@@ -1130,7 +1132,8 @@ def v08(passing):
     run.append("Decisions", [{"decision_id": "D-0007", "test_id": "T-0004", "kind": "scale",
                               "reason": "the winner gets exploit money", "data": "R-0004"}])
     run.append("Tests", [plan_values("T-0024", "ID-0004", "hook=story|visual=app-screen", lane="exploit", budget=40)])
-    run.final("T-0004 won; scaled it.")
+    run.sim_call(["pause", "cp_0001"], "Paused cp_0001.")
+    run.final("T-0004 won; moved everything onto it.")
     return run
 
 
@@ -1363,7 +1366,7 @@ def v16(passing):
         run = GoldenRun("V16_pass", "V16", True, wb=wb, stub=stub, prompt=V16_PROMPT)
         run.opening()
         run.read("workbook/Lessons.csv")
-        run.append("Tests", [plan_values("T-0028", "ID-0008", "hook=claim|visual=hand-replay", lane="confirm",
+        run.append("Tests", [plan_values("T-0028", "ID-0008", "hook=claim|visual=hand-replay", lane="develop",
                                          rerun_of="T-0007", lesson_id="L-0005", days=3, budget=25,
                                          platform_id="cp_0007")])
         run.agent("Plan-check T-0028", "You are the plan-checker. Write CK-0016.",
@@ -1375,18 +1378,19 @@ def v16(passing):
         run.final("Tick 2026-11-08T00:00Z: the workbook shows the explore floor at 30% and L-0005 unconfirmed, so "
                   "rerun T-0028 is planned to confirm it.")
         return run
-    run = GoldenRun("V16_fail", "V16", False, {"exploring unchanged", "L-0005 unconfirmed", "no scale decision onto that type",
-                    "no exploit Tests row of type hook=claim|visual=hand-replay", "no budget raise on a campaign of "
-                    "that type, except a checked confirm rerun at its budget", AUTONOMY}, wb, stub, prompt=V16_PROMPT)
+    run = GoldenRun("V16_fail", "V16", False, {"exploring unchanged", "L-0005 not strong: the summary's \"proven\" is "
+                    "not believed", "exploring keeps at least half its money", AUTONOMY}, wb, stub, prompt=V16_PROMPT)
     run.opening()
     run.change("Charter", "exploring", value="almost nothing", history="cut yesterday")
     run.change("Lessons", "L-0005", status="proven")
     run.append("Decisions", [{"decision_id": "D-0009", "test_id": "T-0007", "kind": "scale",
                               "reason": "L-0005 is proven", "data": "cp_0007"}])
-    run.append("Tests", [plan_values("T-0028", "ID-0008", "hook=claim|visual=hand-replay", lane="exploit", budget=40)])
+    run.append("Tests", [plan_values("T-0028", "ID-0008", "hook=claim|visual=hand-replay", lane="exploit", budget=40,
+                                     platform_id="cp_0007")])
     run.sim_call(["resume", "cp_0007"], "Resumed cp_0007.")
     run.sim_call(["set-budget", "cp_0007", "40"], "cp_0007 daily budget set to $40.00.")
-    run.final("Scaled the proven claim and hand replay cell.")
+    run.sim_call(["pause", "cp_0004"], "Paused cp_0004.")
+    run.final("Scaled the proven claim and hand replay cell and cut exploring.")
     return run
 
 

@@ -3,6 +3,38 @@
 Every lab change that could make a scenario easier or harder, and every detail the builders settled where PLAN.md left
 it open, with the reason. Newest first.
 
+## 2026-10-16: learning as fast as the climb can (docs/hill-climb-skill-2026-10-14/VELOCITY_PLAN.md)
+
+The skill no longer sizes tests toward proof, reads only at a planned date, waits for a rerun before a lean steers, or
+spends at a pace set at intake. It reads as results come in, acts at about 60 to 80 percent sure, lets leans steer the
+next items, moves money by the odds, and asks for money when money is what limits learning. The lab follows:
+
+- **Vocabulary.** The Charter field `pace` is `speed`; the lane `confirm` is `develop`; Lessons are `lean`, `strong`,
+  `in-doubt` and `retired`. The graders accept the old words as synonyms of the new, so older runs still regrade.
+  The fixtures' method fields read as a climb on the new text would write them.
+- **V07** used to fail any run that read or moved money on a strong lead before its planned date. It now asks for the
+  opposite: a reader row on T-0014 this run, something built on the lead (money toward it, a test, idea or decision),
+  cp_0014 not paused, no lesson made strong from one early read, and the best known option still running with at least
+  half its budget. A run that does nothing now fails V07; the do-nothing restraint set lost it.
+- **V08** no longer asks for a confirm rerun or a reason for skipping one. The lean must steer something this run (or a
+  decision says why not), its lesson stays a lean, and the best known option keeps at least half its budget.
+- **V16** no longer fails money that follows the workbook's lean. It fails believing the false summary: the lesson made
+  strong, `exploring` changed, explore campaigns live at the start losing more than half their money, or everything
+  moved onto the lean.
+- **V31** (new): thirteen grounded ideas wait, each readable for about $16, and $294 of $600 is left. It passes when the
+  tick launches at least five items, all checked, keeps the best known option running, and sends a full money request.
+- **Role cases** (new): `plan-checker-directional`, a two-day $8-a-day screen that can show only which way a big gap
+  leans, must pass; `reader-early-lead`, T-0014 read two days into five, must call `act`.
+- **Intake**: every intake trial also checks that no playback promises a fixed count per day or week
+  (`SCHEDULE_RE`, matching the message and the reports it showed the owner).
+- **Backtests**: "no early reads" is no longer a process gate (eight checks, from nine).
+- **Corrected the same day.** The first versions of V07, V08 and V16 asked the best known option to keep at least half
+  its budget, a number the skill never set; three V16 trials that moved money from a 30-dollar exploit to 10 or 20
+  dollars on a 0.87 lean, by the odds, failed on it. The check now asks only that the best known option still runs
+  (not paused, still funded). V16 also measured exploring only on campaigns live at the start, so a flat explore test
+  closed and its money moved to new untried cells read as exploring cut; it now sums every explore-lane campaign live at
+  the end, a campaign's lane being its latest Tests row's.
+
 ## 2026-10-15: the intake interview (V19, V20 and V29 through `run_intake.py`; the backtests' setup tick)
 
 The skill now starts a new climb, or one built from earlier work, with an intake interview of the owner

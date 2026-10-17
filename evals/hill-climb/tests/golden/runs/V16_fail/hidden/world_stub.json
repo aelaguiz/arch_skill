@@ -68,11 +68,15 @@
    ],
    "item": "it_0004",
    "launched_at": "2026-11-05T00:00:00Z",
-   "status": "live",
+   "status": "paused",
    "status_events": [
     [
      "2026-11-05T00:00:00Z",
      "live"
+    ],
+    [
+     "2026-11-08T00:00:00Z",
+     "paused"
     ]
    ]
   },

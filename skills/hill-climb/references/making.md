@@ -17,32 +17,34 @@ idea can say exactly what it would change; trying the scheme on a handful of rea
 overlap or a value is missing. Code what is actually there, and say when an attribute cannot be seen or does not apply
 rather than guess.
 
-A rich coding does three jobs a thin one cannot. Once results come in, it shows which attributes go with the winners and
-losers, which is how the map comes to hold the attributes that matter. It lets the build check see an item change
-something its plan never named. And it lets an idea say exactly what it would change. The map (`map_attributes`,
-references/map.md) still uses only the few attributes with the most leverage: the coding is the record, the map is the
-search.
+A rich coding does three jobs a thin one cannot. Once results come in, it shows which attributes go with the promising
+items and the weak ones, often the fastest way the climb learns what matters, and how the map comes to hold the
+attributes that matter. It lets the build check see an item change something its plan never named. And it lets an idea
+say exactly what it would change. The map (`map_attributes`, references/map.md) still uses only the few attributes with
+the most leverage: the coding is the record, the map is the search.
 
 ## Make a new creative from what inspired it
 
-A new creative starts from its idea and the one or few things that inspired it: Library items, the owner's own items,
-earlier tests. Look at them before making anything, since this is the research for this creative: how they open, what
-they say, how they are made, what people said about them. When they do not show how to make it well (the craft of the
-format, how others make this kind of item, a reference for a part the idea needs), look that up too before building, and
-add what you find to the Library. Then write in its plan what it keeps from them, what it changes and who it is aimed
-at; with what that should do to the number, that is the test's hypothesis, and the Tests row's `inspired_by` holds their
-keys. Saying what it keeps and what it changes is what lets a result teach something: "we kept the competitor's question
-opening and changed the subject to our app" can be built on, while "something like their ad" cannot. Who it is aimed at
-belongs to the idea, not to the climb: the climb exists partly to find out who responds, so each creative says whom it
-is for, and the critic reads it as that person.
+A new creative starts from its idea and the one or few things that inspired it, and one researched idea can seed many
+creatives (several openings, people or executions), each its own item on the gradient: Library items, the owner's own
+items, earlier tests. Look at them before making anything, since this is the research for this creative: how they open,
+what they say, how they are made, what people said about them. When they do not show how to make it well (the craft of
+the format, how others make this kind of item, a reference for a part the idea needs), look that up too before building,
+and add what you find to the Library. Then write in its plan what it keeps from them, what it changes and who it is
+aimed at; with what that should do to the number, that is the test's hypothesis, and the Tests row's `inspired_by` holds
+their keys. Saying what it keeps and what it changes is what lets a result teach something: "we kept the competitor's
+question opening and changed the subject to our app" can be built on, while "something like their ad" cannot. Who it is
+aimed at belongs to the idea, not to the climb: the climb exists partly to find out who responds, so each creative says
+whom it is for, and the critic reads it as that person.
 
 Make it from what the charter's `making_from` names, with its `tools`, never with a tool `tool_rules` rules out. Left
 to its defaults, an agent reaches for whatever model it remembers, often an old one; the tools intake found make good
 items now are the ones to use, and using one outside them is a choice whose reason goes in the recipe.
 
-How well it is made is judged against the charter's `quality_floor`: at least as good as the items it names, and never
-wrong on what it says can never be wrong. Polish is not the bar. A plain, rough or AI-looking item often performs; it
-falls short only when it would lose for being worse made, or gets wrong something that can never be wrong.
+How well it is made is judged against the charter's `quality_floor`: at least as good as the items it names, never wrong
+on what it says can never be wrong, and, once the climb has made better items, at least as good as the best of those:
+the floor rises as the climb does. Polish is not the bar. A plain, rough or AI-looking item often performs; it falls
+short only when it would lose for being worse made, or gets wrong something that can never be wrong.
 
 ## Record how each item was made
 
@@ -69,8 +71,8 @@ presenter, rebuilt rather than cut from the ad, also changes the voice, the paci
 result can no longer say whether the presenter mattered.
 
 When a clean variation cannot be made from the parent's materials, say so. A new execution of the idea is a different
-kind of test: it gives the idea another fair shot, is planned and screened like any new idea, and is never read as
-evidence about one change.
+kind of test: it gives the idea another fair shot, is planned and screened like any new idea, and on its own is never
+read as evidence about one change, though across many coded items it still feeds the patterns that are.
 
 ## What the build check compares
 

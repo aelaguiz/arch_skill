@@ -72,6 +72,14 @@ CASES = (
     {"id": "reader-lean", "role": "reader", "fixture": "scenarios/V08", "tests": ["T-0004"],
      "expect": {"T-0004": "act"}, "counts": {"T-0004": (31, 420)},
      "about": "a lean of about 0.66 after discounting (call act)"},
+    # Learning speed (docs/hill-climb-skill-2026-10-14/VELOCITY_PLAN.md): a cheap screen that can show only which way a
+    # big gap leans, and a strong lead read two days into a five-day test.
+    {"id": "plan-checker-directional", "role": "plan-checker", "fixture": "roles/plan-checker-directional",
+     "tests": ["T-0031"], "expect": {"T-0031": "pass"},
+     "about": "a cheap two-day screen that can show only which way a big gap leans (must pass)"},
+    {"id": "reader-early-lead", "role": "reader", "fixture": "scenarios/V07", "tests": ["T-0014"],
+     "expect": {"T-0014": "act"}, "counts": {"T-0014": (33, 300)},
+     "about": "a strong lead two days into a five-day test, read now (call act)"},
 )
 CASE_IDS = tuple(case["id"] for case in CASES)
 TAB_OF = {"plan-checker": "Checks", "build-checker": "Checks", "critic": "Checks", "reader": "Results"}
@@ -197,6 +205,7 @@ def facts_for(case: dict, run_dir: Path, now: str, label_map=None) -> dict:
         facts["how_to_see_them"] = "`sim preview A`, `sim preview B` and so on, run in your working folder"
         facts["aimed_at"] = aimed_at(case, rows, label_map or {})
         facts["quality_floor"] = charter.get("quality_floor") or NEUTRAL_QUALITY_FLOOR
+        facts["off_limits"] = charter.get("off_limits") or "nothing named"
         facts["where_they_meet_it"] = WHERE
         facts["intended_difference"] = case["intended"]
         facts["keys"] = ", ".join(_next_keys(rows["Checks"], "CK", len(case["items"])))

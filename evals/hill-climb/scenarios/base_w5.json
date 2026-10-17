@@ -6,7 +6,7 @@
  "overrides": {},
  "allocations": {
   "exploit": 55,
-  "confirm": 15,
+  "develop": 15,
   "explore": 30
  },
  "files": {
@@ -296,8 +296,8 @@
    },
    {
     "field": "lanes",
-    "value": "most money keeps earning on the best known video; a real part keeps exploring while most of the map is untested; a little confirms leans before they steer",
-    "reason": "Most money keeps earning from what is proven; most cells are still untested.",
+    "value": "most money keeps earning on the best known video; a real part keeps exploring while most of the map is untested; some develops the leans: variations of the contenders and more traffic on what looks promising",
+    "reason": "Most money keeps earning on the best so far; most cells are still untested; leans firm up fastest when variations build on them.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
@@ -312,24 +312,24 @@
    },
    {
     "field": "acting",
-    "value": "a move that can be undone needs only a lean after discounting, weighed against what it would cost to undo",
-    "reason": "Pausing or shifting a budget can be reversed next tick.",
+    "value": "directional: about 60 to 80 percent sure after discounting is enough for any move that can be undone; money moves in steps by the odds",
+    "reason": "Shifting a budget or cutting an item can be reversed next tick, and waiting costs a tick of learning.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
     "field": "believing",
-    "value": "a rerun on fresh days, read on its own data, that clearly shows the same direction",
-    "reason": "First reads run hot; only a rerun separates a lesson from luck.",
+    "value": "a lean grows strong when later reads, items and variations keep agreeing; a large move that cannot be taken back quickly waits for that",
+    "reason": "First reads run hot; agreement across later results separates a pattern from luck without stopping to rerun it.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
     "field": "replacing",
-    "value": "only an edge that would survive the shrinkage moved winners show",
-    "reason": "Winners shrink once money moves onto them.",
+    "value": "money follows the odds onto a new option in steps, discounted for the shrinkage leaders show once moved",
+    "reason": "Leaders shrink once money moves onto them; moving in steps keeps a wrong lean cheap.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
@@ -352,23 +352,23 @@
    },
    {
     "field": "test_sizing",
-    "value": "big swings, read when the planned gap would show at the planned spend",
-    "reason": "At $20 to $25 a day only large gaps show within a few days.",
+    "value": "the cheapest read that shows which way an item leans: big swings, read as soon as the counts lean, as many items at once as the money can read, compared on the same days",
+    "reason": "At $20 to $25 a day a video shows which way a large gap leans within a couple of days.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
-    "field": "pace",
-    "value": "$60 per day",
-    "reason": "$800 lasts about two weeks at this pace.",
+    "field": "speed",
+    "value": "as fast as checked videos can be read, from $60 a day committed at the start of this stretch, with the best video kept earning",
+    "reason": "What limits learning here is usually how many checked videos are ready, and then the money.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
     "written_by": "main"
    },
    {
     "field": "cadence",
-    "value": "watch every tick; step back every 24 hours; strategy and audit every 7 days; replay monthly",
+    "value": "ticks every 12 hours, acting on new results each tick; step back every 24 hours; strategy and audit every 7 days; replay monthly",
     "reason": "Ticks come every 12 hours; slower reviews keep their context clean.",
     "history": "",
     "written_at": "2026-11-02T00:00:00Z",
@@ -625,7 +625,7 @@
    {
     "test_id": "T-0004",
     "idea_id": "ID-0002",
-    "lane": "confirm",
+    "lane": "develop",
     "type": "hook=challenge|visual=hand-replay",
     "comparison": "T-0001",
     "hypothesis": "T-0002's lead holds on fresh days",
@@ -740,7 +740,7 @@
     "statement": "A challenge over a hand replay converts better than a question over the app's screen",
     "winner": "hook=challenge|visual=hand-replay",
     "loser": "hook=question|visual=app-screen",
-    "status": "proven",
+    "status": "strong",
     "evidence": "T-0002, T-0004",
     "recheck_at": "2026-12-08T00:00:00Z",
     "legacy_ref": "",
@@ -754,7 +754,7 @@
     "statement": "A question over the app's screen converts better than a story over table footage",
     "winner": "hook=question|visual=app-screen",
     "loser": "hook=story|visual=table-footage",
-    "status": "unconfirmed",
+    "status": "lean",
     "evidence": "T-0003",
     "recheck_at": "",
     "legacy_ref": "",

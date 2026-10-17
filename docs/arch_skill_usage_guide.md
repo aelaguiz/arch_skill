@@ -378,16 +378,17 @@ When explicitly selected, use when the work is a quantified investigation with r
 
 When explicitly selected, use to start, import or run a long-running hill climb that spends a budget to keep improving
 one number (cost per install, conversions, follows). A new or imported climb starts with an intake that interviews the
-owner one question at a time: what the climb is for, how much of the earlier work to use, what counts as success, what it
-may spend and change, what it must never do, what creatives are made from and what can never be wrong in them. It then
-researches what the interview raised (competitors and inspiration, how to see one item's effect, how a fair test runs on
-the platform, the tools that make good items now, everything an item can vary on), checks it understood with made-up
-outcomes, and plays the design back for the owner's sign-off before it spends anything. After that it draws every idea
-from that research, makes each creative from what inspired it, has fresh one-job agents check each plan, build, quality
-and result, weighs what people say about live items beside the numbers, keeps how each item was made so variations are
-cut from their parents, believes a lesson only after a rerun, never stops exploring, sends progress reports on a
-schedule that ask nothing, and asks the owner only for more money. It is not for a one-off analysis or a single A/B
-readout. Installed for Claude Code and Codex.
+owner one question at a time: what the climb is for, how much of the earlier work to use, what counts as success, what
+it may spend and change, what it must never do, what creatives are made from and what can never be wrong in them. It
+then researches what the interview raised (competitors and inspiration, how to see one item's effect, how a fair test
+runs on the platform, the tools that make good items now, everything an item can vary on), checks it understood with
+made-up outcomes, and plays the design back for the owner's sign-off before it spends anything. After that it draws
+every idea from that research, makes each creative from what inspired it, has fresh one-job agents check each plan,
+build, quality and result, weighs what people say about live items beside the numbers, keeps how each item was made so
+variations are cut from their parents, runs as many items at once as the money can learn from, acts at directional
+confidence (about 60 to 80 percent) and lets each lean steer the next tests, never stops exploring, sends progress
+reports on a schedule that ask nothing, and asks the owner only for more money. It is not for a one-off analysis or a
+single A/B readout. Installed for Claude Code and Codex.
 
 Examples:
 

@@ -194,7 +194,7 @@ class Base(unittest.TestCase):
         self.assertEqual(total, 45.0)
         self.assertAlmostEqual(share, 1 / 3)
         self.assertEqual([(m["kind"], m["lane"]) for m in self.rows["Money"]],
-                         [("allocate", "exploit"), ("allocate", "confirm"), ("allocate", "explore")])
+                         [("allocate", "exploit"), ("allocate", "develop"), ("allocate", "explore")])
 
     def test_charter(self):
         charter = self.rows["Charter"]
@@ -202,10 +202,10 @@ class Base(unittest.TestCase):
         self.assertEqual(len(charter), 29)
         self.assertTrue(all(r["value"] and r["reason"] for r in charter))
         values = {r["field"]: r["value"] for r in charter}
-        self.assertEqual(values["acting"], "a move that can be undone needs only a lean after discounting, weighed "
-                                           "against what it would cost to undo")
-        self.assertEqual((values["goal"], values["money_total"], values["pace"], values["exploring"][:24]),
-                         ("cost per conversion, lower is better", "600", "$45 per day", "untested cells first, ab"))
+        self.assertEqual(values["acting"], "directional: about 60 to 80 percent sure after discounting is enough for "
+                                           "any move that can be undone; money moves in steps by the odds")
+        self.assertEqual((values["goal"], values["money_total"], values["speed"][:27], values["exploring"][:24]),
+                         ("cost per conversion, lower is better", "600", "as fast as checked items ca", "untested cells first, ab"))
 
     def test_library_and_ideas(self):
         entries = {e["id"]: e for e in self.world.library_entries()}
@@ -274,8 +274,8 @@ class Base(unittest.TestCase):
         self.assertEqual(set(status.values()), {"untested"})
         lessons = by_key(self.rows["Lessons"], "lesson_id")
         self.assertEqual({k: (v["status"], v["evidence"], v["winner"], v["loser"]) for k, v in lessons.items()}, {
-            "L-0001": ("unconfirmed", "T-0002", "hook=question|visual=app-screen", "hook=claim|visual=app-screen"),
-            "L-0002": ("unconfirmed", "T-0003", "hook=question|visual=app-screen", "hook=question|visual=hand-replay")})
+            "L-0001": ("lean", "T-0002", "hook=question|visual=app-screen", "hook=claim|visual=app-screen"),
+            "L-0002": ("lean", "T-0003", "hook=question|visual=app-screen", "hook=question|visual=hand-replay")})
         self.assertEqual([(r["role"], r["written_at"]) for r in self.rows["Reviews"]], [
             ("strategist", "2026-11-02T00:00:00Z"), ("auditor", "2026-11-02T00:00:00Z"),
             ("meta-analyst", "2026-11-07T12:00:00Z")])
@@ -287,8 +287,8 @@ class Deltas(unittest.TestCase):
     def test_money_and_spending_deltas(self):
         world, rows = World.load(hidden("V02")), book("V02")
         charter = {r["field"]: r["value"] for r in rows["Charter"]}
-        self.assertEqual((world.balance(), world.money_received(), charter["money_total"], charter["pace"]),
-                         (9.0, 315.0, "315", "$80 per day"))
+        self.assertEqual((world.balance(), world.money_received(), charter["money_total"], charter["speed"]),
+                         (9.0, 315.0, "315", "as fast as checked items can be read, from $80 a day committed"))
         tests = by_key(rows["Tests"], "test_id")
         self.assertEqual((tests["T-0009"]["status"], tests["T-0010"]["status"]), ("plan-checked", "planned"))
         self.assertTrue(any(c["test_id"] == "T-0009" and c["role"] == "plan-checker" and c["verdict"] == "pass"
@@ -341,10 +341,10 @@ class Deltas(unittest.TestCase):
             self.assertEqual(by_key(rows["Results"], "result_id")["R-0002"]["call"], "act")
             lessons = by_key(rows["Lessons"], "lesson_id")
             self.assertNotIn("L-0002", lessons)
-            self.assertEqual((lessons["L-0003"]["status"], lessons["L-0003"]["evidence"]), ("unconfirmed", "T-0003"))
+            self.assertEqual((lessons["L-0003"]["status"], lessons["L-0003"]["evidence"]), ("lean", "T-0003"))
             t16 = by_key(rows["Tests"], "test_id")["T-0016"]
             self.assertEqual((t16["lane"], t16["rerun_of"], t16["lesson_id"], t16["item_id"], t16["platform_id"]),
-                             ("confirm", "T-0003", "L-0003", "it_0003", "cp_0016"))
+                             ("develop", "T-0003", "L-0003", "it_0003", "cp_0016"))
             per_day = {}
             for h in world.hourly("cp_0003"):
                 day = per_day.setdefault(h["hour"][:10], [0, 0])
@@ -354,13 +354,13 @@ class Deltas(unittest.TestCase):
             self.assertEqual(sum(h["conversions"] for h in world.hourly("cp_0016")), conversions)
         lessons = by_key(book("V13")["Lessons"], "lesson_id")
         self.assertEqual((lessons["L-0001"]["status"], lessons["L-0001"]["evidence"], lessons["L-0001"]["recheck_at"]),
-                         ("proven", "T-0102, T-0107", "2026-11-06T00:00:00Z"))
+                         ("strong", "T-0102, T-0107", "2026-11-06T00:00:00Z"))
         with open(work("V13") / "history.csv", newline="") as handle:
             self.assertEqual(len(list(csv.reader(handle))), 8)
         self.assertEqual(by_key(book("V13")["Tests"], "test_id")["T-0107"]["legacy_ref"], "history.csv:8")
         rows = book("V16")
         self.assertEqual(by_key(rows["Ideas"], "idea_id")["ID-0008"]["status"], "tested")
-        self.assertEqual(by_key(rows["Lessons"], "lesson_id")["L-0005"]["status"], "unconfirmed")
+        self.assertEqual(by_key(rows["Lessons"], "lesson_id")["L-0005"]["status"], "lean")
         v16 = World.load(hidden("V16"))
         self.assertEqual(v16.status_at("cp_0007", parse_time("2026-11-05T00:00:00Z")), "paused")
 
@@ -481,8 +481,8 @@ class RoundTwo(unittest.TestCase):
     def test_overview_as_the_last_tick_left_it(self):
         rows, world = book("V08"), World.load(hidden("V08"))
         overview = {r["item"]: r for r in rows["Overview"]}
-        self.assertEqual(list(overview), ["bar now", "bar at start", "money left", "pace", "live", "best known option",
-                                          "proven lessons", "next"])
+        self.assertEqual(list(overview), ["bar now", "bar at start", "money left", "speed", "live", "best known option",
+                                          "strong lessons", "next"])
         last = max(r["platform_time"] for r in rows["Log"])
         self.assertEqual({(r["as_of"], r["written_at"]) for r in rows["Overview"]}, {(last, last)})
         spent = world.spend_between(None, parse_time(last))
@@ -490,8 +490,8 @@ class RoundTwo(unittest.TestCase):
         self.assertNotEqual(600 - spent, world.balance())               # a tick ago, not now
         self.assertIn("T-0001", overview["best known option"]["value"])
         self.assertIn("T-0004 on cp_0004 (explore, $15/day, reads 2026-11-08)", overview["live"]["value"])
-        self.assertEqual(overview["proven lessons"]["value"], "none yet")
-        self.assertIn("L-0001", {r["item"]: r for r in book("V13")["Overview"]}["proven lessons"]["value"])
+        self.assertEqual(overview["strong lessons"]["value"], "none yet")
+        self.assertIn("L-0001", {r["item"]: r for r in book("V13")["Overview"]}["strong lessons"]["value"])
         self.assertEqual(book("V19").get("Overview"), None)
 
     def test_reporting_and_the_overdue_report(self):
@@ -540,7 +540,7 @@ class RoundTwo(unittest.TestCase):
         self.assertEqual((tests["T-0005"]["item_id"], tests["T-0005"]["lane"], tests["T-0005"]["status"]),
                          ("it_0002", "exploit", "live"))
         lesson = by_key(rows["Lessons"], "lesson_id")["L-0001"]
-        self.assertEqual((lesson["status"], lesson["evidence"]), ("proven", "T-0002, T-0004"))
+        self.assertEqual((lesson["status"], lesson["evidence"]), ("strong", "T-0002, T-0004"))
         self.assertEqual((world.balance(), world.money_received(), world.current_budget("cp_0001")), (356.5, 800.0, 15))
         self.assertEqual(world.faults(), [])
 
