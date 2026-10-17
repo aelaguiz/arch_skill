@@ -28,8 +28,9 @@ the recipe is too thin for that, or the files sit somewhere that can expire, say
 before launch: it is cheap to fix now, and once the files are gone the next variation would have to be rebuilt from
 scratch. That gap alone does not make the item wrong, so it is no reason to fail it. Check the recipe's tools as well:
 they should be among the Charter's `tools`, and none may be one that `tool_rules` says never to use. An item made with a
-tool the owner ruled out fails, whatever it looks like. When an item fails for something cheap to fix, such as the wrong
-track, say exactly what to fix, so it can be fixed and checked again in the same round.
+tool the owner ruled out fails, whatever it looks like, and so does one made against what the owner has taught about how
+things are made: {owner_lessons}. When an item fails for something cheap to fix, such as the wrong track, say exactly
+what to fix, so it can be fixed and checked again in the same round.
 
 **What you write.** One row per item in the Checks tab, appended (never rewrite the tab), with the keys {keys} in order:
 `check_id`, `test_id`, `item_id`, `role` `build-checker`, `verdict` (`pass` or `fail`), `reasons` (what matched, or what

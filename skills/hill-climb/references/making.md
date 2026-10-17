@@ -37,9 +37,11 @@ question opening and changed the subject to our app" can be built on, while "som
 aimed at belongs to the idea, not to the climb: the climb exists partly to find out who responds, so each creative says
 whom it is for, and the critic reads it as that person.
 
-Make it from what the charter's `making_from` names, with its `tools`, never with a tool `tool_rules` rules out. Left
-to its defaults, an agent reaches for whatever model it remembers, often an old one; the tools intake found make good
-items now are the ones to use, and using one outside them is a choice whose reason goes in the recipe.
+Make it from what the charter's `making_from` names, with its `tools`, never with a tool `tool_rules` rules out, and by
+every owner lesson that governs this kind of item: they are how the owner has taught the climb to make things, and the
+recipe names the ones it followed. Left to its defaults, an agent reaches for whatever model it remembers, often an old
+one; the tools intake found make good items now are the ones to use, and using one outside them is a choice whose reason
+goes in the recipe.
 
 How well it is made is judged against the charter's `quality_floor`: at least as good as the items it names, never wrong
 on what it says can never be wrong, and, once the climb has made better items, at least as good as the best of those:
@@ -70,9 +72,11 @@ from scratch can differ in most of its attributes at once: a version meant to as
 presenter, rebuilt rather than cut from the ad, also changes the voice, the pacing, the music and the words, and its
 result can no longer say whether the presenter mattered.
 
-When a clean variation cannot be made from the parent's materials, say so. A new execution of the idea is a different
-kind of test: it gives the idea another fair shot, is planned and screened like any new idea, and on its own is never
-read as evidence about one change, though across many coded items it still feeds the patterns that are.
+When a clean variation cannot be made from the parent's materials, say so. An owner lesson taught after the parent was
+made outranks the parent's choice: make the variation the owner's way and say in its plan that this difference is there
+too. A new execution of the idea is a different kind of test: it gives the idea another fair shot, is planned and
+screened like any new idea, and on its own is never read as evidence about one change, though across many coded items it
+still feeds the patterns that are.
 
 ## What the build check compares
 

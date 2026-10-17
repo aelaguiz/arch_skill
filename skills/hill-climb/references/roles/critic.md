@@ -16,8 +16,9 @@ items in the Results tab's `signals`; read them if they help you read as one of 
 
 **The bar.** The owner set it: {quality_floor}. An item below the standard of the items named there, wrong on anything
 named there as never to be wrong, or saying or showing anything the owner put off limits ({off_limits}), fails, however
-good its idea. Polish is not the bar: plain, rough or AI-looking items often perform, and an item is not worse made for
-being any of those.
+good its idea. The owner has also taught how items should be made: {owner_lessons}. An item that goes against one of
+those fails too. Polish is not the bar: plain, rough or AI-looking items often perform, and an item is not worse made
+for being any of those.
 
 **What differs on purpose.** {intended_difference}. Judge how well each item is made given that difference; a plain or
 bold choice made on purpose is not a flaw in the making.

@@ -97,6 +97,18 @@ saying why. Judge each case in front of you with them in mind, and when a case c
 decision's row (references/charter.md). A departure you find yourself making tick after tick means the charter is wrong:
 call the strategist to change it.
 
+**What the owner teaches lasts.** When the owner tells you how to work ("it always has to use our creative assets";
+"don't do it like that again, do it this way"), they are teaching, not reacting to one item, and a climb that has to be
+taught the same thing twice is not running without them. So keep it: their words exactly in the Owner lessons tab, with
+what it is about and how far it reaches; apply it every time that kind of work comes round again, in every later
+session; and have the checkers hold the work to it. To tell teaching from a reaction, ask whether it would still be true
+of the next item of its kind: "this one's flat" is about one item and weighs like any other signal, unless it names a
+habit ("you keep opening with a question"). It reaches as far as their reason goes, no further and no narrower: "use our
+creative assets", said about one ad, governs every item the climb makes. When the reach is unclear, take the reading
+closest to their words and say in a line how you read it. Results never overrule a lesson: if one seems to cost
+something, the progress report shows it, and only the owner changes or retires it (references/workbook.md,
+references/making.md).
+
 **Take now from a live clock.** Use the platform's own time when it reports one, else the machine's, never a time from
 memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it, and cut every
 data window on the platform's reporting day and time zone.
@@ -124,12 +136,13 @@ A tick leaves the hill climb better informed and its money better placed. These 
 found, and each deserves a look every tick, though most ticks find several need nothing; anything else the record or the
 platform shows you counts as much:
 
-- Load the state fresh. Read whole what the tick decides from, never just a tab's first lines: the Charter, the open
-  Tests and each one's newest read, Lessons, the waiting Ideas, Money, the last Reviews and Log rows, and the platform's
-  own status and clock; pull older rows from Results, the Library and closed Tests when a call needs their history. If
-  the owner has answered a money request, record it: the answer usually comes back on the channel the request went out
-  on, so look there while a request is open, as well as in the prompt. When a call turns on what the owner meant, read
-  the Interview tab: their words are there, and so are their calls on the made-up outcomes intake asked about.
+- Load the state fresh. Read whole what the tick decides from, never just a tab's first lines: the Charter, the Owner
+  lessons, the open Tests and each one's newest read, Lessons, the waiting Ideas, Money, the last Reviews and Log rows,
+  and the platform's own status and clock; pull older rows from Results, the Library and closed Tests when a call needs
+  their history. If the owner has answered a money request, record it: the answer usually comes back on the channel the
+  request went out on, so look there while a request is open, as well as in the prompt. When a call turns on what the
+  owner meant, read the Interview tab: their words are there, and so are their calls on the made-up outcomes intake
+  asked about.
 - Look for faults before anything else: anything that means money is reaching the wrong people, that an item is doing
   harm, or that the numbers can no longer be trusted. Some places they show: the platform's count against the second
   source, delivery against whom the plan aimed at, spend against the plan, an item the platform disapproved, a page the
@@ -180,10 +193,11 @@ platform shows you counts as much:
   status, a live test's budget). Make a new creative from the one or few things that inspired it, after looking at them,
   with its plan saying what it keeps from them, what it changes and who it is aimed at; cut a variation from its
   parent's own materials with the parent's recipe, changing only what its plan changes; make both with the charter's
-  tools from what `making_from` names, to its `quality_floor`; record how each item was made and its coding, and keep
-  its files where they last (references/making.md). To change a plan, before its check or after one, write the new plan
-  as a new Tests row and withdraw the old one: a check vouches only for the plan it read, and anyone tracing the test
-  later needs to see which plan each check saw. A rebuilt item under the same plan keeps its row and its plan check.
+  tools from what `making_from` names, to its `quality_floor` and by every owner lesson that governs that work; record
+  how each item was made and its coding, and keep its files where they last (references/making.md). To change a plan,
+  before its check or after one, write the new plan as a new Tests row and withdraw the old one: a check vouches only
+  for the plan it read, and anyone tracing the test later needs to see which plan each check saw. A rebuilt item under
+  the same plan keeps its row and its plan check.
 - Ask for money when it is what limits learning, or early enough that the owner can answer before it runs out, once this
   tick's plans and checks have settled: the request tells the owner what the climb will do next, and a plan still
   waiting on a check may not happen. It never waits for a plan to pass: when nothing is ready yet, it says what the

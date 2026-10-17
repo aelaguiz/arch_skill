@@ -13,6 +13,8 @@ them see in a few minutes where the climb stands and whether it is getting bette
   limits learning now and what the climb is doing about it.
 - What it has learned, each lesson with how sure it is (strong, lean, retired) and what it changed in the climb.
 - The soft signals worth knowing: what people said and did around the items, good and bad.
+- What the owner has taught since the last report, in their words, and where it now shows in the work; and any lesson
+  the results suggest is costing something, with the numbers.
 - How it is staying out of a local maximum: what exploring reached since the last report, how much of the map is still
   untried, how fresh the research is, what the meta-analyst found.
 - What comes next, and the money: what is left, how fast it is going, any request outstanding.

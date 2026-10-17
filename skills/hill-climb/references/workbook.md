@@ -22,24 +22,25 @@ workbook out with `$spreadsheet-formatting`, which keeps long notes and history 
 A Google Sheet (written with the host's Sheets tool) or, where the host cannot reach Google Sheets, a folder of CSV
 files named after the tabs (`Tests.csv` and so on). In CSV, append rows with a CSV library rather than joining strings,
 so commas, quotes and line breaks inside a cell survive. Create every tab with its columns at intake, the ones that
-start empty too: every later writer appends, and a row appended where no header is has no columns to land in. Append;
-never rewrite a whole tab to add a row, because a role writing the same tab at the same moment would lose its row. To
-change a row in place, read the whole tab first, write the changed tab to a new file, then move it over the old one:
-opening a tab for writing empties it at once, and a mistake before the rows are back loses the record. Two roles change
-rows in place: the strategist (the Charter's revisable fields) and the scout (a Library item's status); the main agent
-dispatches nothing else that writes the same tab while either runs. After a write, read the rows back: a write that
-failed quietly leaves every later session working from a wrong record.
+start empty too: every later writer appends, and a row appended where no header is has no columns to land in. A climb
+started before a tab existed creates it, columns first, the first time it needs it. Append; never rewrite a whole tab to
+add a row, because a role writing the same tab at the same moment would lose its row. To change a row in place, read the
+whole tab first, write the changed tab to a new file, then move it over the old one: opening a tab for writing empties
+it at once, and a mistake before the rows are back loses the record. Two roles change rows in place: the strategist (the
+Charter's revisable fields) and the scout (a Library item's status); the main agent dispatches nothing else that writes
+the same tab while either runs. After a write, read the rows back: a write that failed quietly leaves every later
+session working from a wrong record.
 
 ## Rules every row follows
 
-- **Keys** are the tab's prefix and the next number: Interview `IV-`, Library `LB-`, Ideas `ID-`, Tests `T-`, Checks
+- **Keys** are the tab's prefix and the next number: Interview `IV-`, Owner lessons `OL-`, Library `LB-`, Ideas `ID-`, Tests `T-`, Checks
   `CK-`, Results `R-`, Decisions `D-`, Lessons `L-`, Reviews `RV-`, Money `M-`, Log `LG-`. The Charter's key is its
   `field`, the Map's its `type` and the Overview's its `item`.
 - **`written_at`** is the platform's current time; **`written_by`** is `main` or the role's name. Without them, nobody
   can tell what was known when, or whether a check was really independent.
 - **Results, Decisions, Checks, Reviews, Money and Log rows are never edited.** A correction is a new row that names the
   row it corrects. The record of what was believed at the time is the point.
-- **Charter, Ideas, Map, Library and Lessons rows are updated in place**, as are an Interview row when its answer comes
+- **Charter, Owner lessons, Ideas, Map, Library and Lessons rows are updated in place**, as are an Interview row when its answer comes
   (`answer`, `answered_at`, `status`), and a Tests row's status, ids, a live test's budget and its summary columns
   (`checks`, `read`, `decision`); each change adds a line to the row's `history` (what changed, from what, when, by
   whom). The Overview is a view: formulas over the record in a Google Sheet, otherwise rewritten whole each tick.
@@ -62,6 +63,7 @@ failed quietly leaves every later session working from a wrong record.
 | Tab | Columns | What it is for |
 |---|---|---|
 | Interview | interview_id, kind (request, question, follow-up, outcome-check, playback, correction), question, answer, asked_at, answered_at, about, research, status (asked, answered, superseded), history | intake's conversation with the owner: the request, each question as asked, the owner's answer copied exactly, what it settles and the research behind it; any session resumes intake from it, and the Charter's owner fields cite it |
+| Owner lessons | lesson_id, said, said_where, practice, governs, status (active, replaced, retired), replaced_by, history | what the owner has taught about how to work: their words exactly, where and when they said it, the practice it sets and the work it governs; read every tick, applied to every item of that work, held to by the critic and the build-checker, changed only by the owner |
 | Charter | field, value, reason, history | what the owner said in the interview, what setup worked out and the climb's chosen method, each with its reason |
 | Overview | item, value, as_of | where the climb stands, for reading at a glance: the bar now and at the start, money left, how fast it is learning and what limits it, what is live and how each is reading, the best known option, the strong lessons and the leans, what comes next |
 | Library | library_id, kind, source, link, owner, content, signal, type, coding, status (fresh, stale), notes, legacy_ref | the research ideas draw on, each with where it came from, why it counts and its values on the full coding |

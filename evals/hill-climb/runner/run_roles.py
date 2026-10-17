@@ -51,6 +51,14 @@ NEUTRAL_QUALITY_FLOOR = "at least as good as the climb's current best item; noth
 # an `audience` field (who responds is what a climb finds out; each item's plan says who it is aimed at).
 AIMED_AT = "people who play poker in home games and casinos and want to make better decisions at the table"
 
+def owner_lessons_text(rows: dict) -> str:
+    """The active Owner lessons as a brief's {owner_lessons}: each practice with the owner's words, or "none yet"."""
+    active = [r for r in rows.get("Owner lessons", []) if (r.get("status") or "active").strip().lower() == "active"]
+    if not active:
+        return "none yet"
+    return "; ".join(f"{r.get('practice')} (they said: \"{r.get('said')}\")" for r in active)
+
+
 CASES = (
     {"id": "plan-checker-other-days", "role": "plan-checker", "fixture": "roles/plan-checker-other-days",
      "tests": ["T-0031"], "expect": {"T-0031": "fail"},
@@ -198,6 +206,7 @@ def facts_for(case: dict, run_dir: Path, now: str, label_map=None) -> dict:
         first = next(iter(case["items"]))
         facts["items"] = "; ".join(f"{item}, built for test {test}" for item, test in case["items"].items())
         facts["built_item_command"] = f"`sim manifest ITEM`, run in your working folder (for example `sim manifest {first}`)"
+        facts["owner_lessons"] = owner_lessons_text(rows)
         facts["keys"] = ", ".join(_next_keys(rows["Checks"], "CK", len(case["items"])))
     if role == "critic":
         labels = [chr(ord("A") + i) for i in range(len(case["items"]))]
@@ -206,6 +215,7 @@ def facts_for(case: dict, run_dir: Path, now: str, label_map=None) -> dict:
         facts["aimed_at"] = aimed_at(case, rows, label_map or {})
         facts["quality_floor"] = charter.get("quality_floor") or NEUTRAL_QUALITY_FLOOR
         facts["off_limits"] = charter.get("off_limits") or "nothing named"
+        facts["owner_lessons"] = owner_lessons_text(rows)
         facts["where_they_meet_it"] = WHERE
         facts["intended_difference"] = case["intended"]
         facts["keys"] = ", ".join(_next_keys(rows["Checks"], "CK", len(case["items"])))
