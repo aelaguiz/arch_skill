@@ -33,12 +33,12 @@ session working from a wrong record.
 
 ## Rules every row follows
 
-- **Keys** are the tab's prefix and the next number: Interview `IV-`, Owner lessons `OL-`, Library `LB-`, Ideas `ID-`, Tests `T-`, Checks
+- **Keys** are the tab's prefix and the next number: Interview `IV-`, Owner lessons `OL-`, Actions `AC-`, Library `LB-`, Ideas `ID-`, Tests `T-`, Checks
   `CK-`, Results `R-`, Decisions `D-`, Lessons `L-`, Reviews `RV-`, Money `M-`, Log `LG-`. The Charter's key is its
   `field`, the Map's its `type` and the Overview's its `item`.
 - **`written_at`** is the platform's current time; **`written_by`** is `main` or the role's name. Without them, nobody
   can tell what was known when, or whether a check was really independent.
-- **Results, Decisions, Checks, Reviews, Money and Log rows are never edited.** A correction is a new row that names the
+- **Results, Decisions, Actions, Checks, Reviews, Money and Log rows are never edited.** A correction is a new row that names the
   row it corrects. The record of what was believed at the time is the point.
 - **Charter, Owner lessons, Ideas, Map, Library and Lessons rows are updated in place**, as are an Interview row when its answer comes
   (`answer`, `answered_at`, `status`), and a Tests row's status, ids, a live test's budget and its summary columns
@@ -72,6 +72,7 @@ session working from a wrong record.
 | Tests | test_id, idea_id, lane (develop, explore, exploit), type, comparison, inspired_by, hypothesis, expected_range, varies, held_constant, good_looks_like, daily_budget, days, read_at, guardrails, rerun_of, lesson_id, item_id, made_from, recipe, coding, platform_id, status (planned, plan-checked, built, ready, live, paused, read, closed, withdrawn), launched_at, checks, read, decision, legacy_ref, history | each test's whole life on one row: the plan written before money moves (with what inspired its item, what the item keeps from it and changes, and who it is aimed at), how its item was made, its checks' verdicts, its read and the decision, and where it stands |
 | Checks | check_id, test_id, item_id, role, verdict (pass, fail), reasons | each independent check and why |
 | Results | result_id, test_id, window, metric, k, n, spend, rate_text, versus, chance_beats, method, signals, call (act, hold, stop, legacy), notes, legacy_ref | each read, with the numbers, how the reader got its estimate, the soft signals around the item, and the call |
+| Actions | action_id, change, target, before, after, why, undo, confirmed, test_id | every change the climb makes to anything outside its workbook, one row per change as it happens (what changed, the platform's ids, before and after, the decision or reason, how to undo it, what the platform showed on reading it back), and any change found on a platform that the ledger did not explain |
 | Decisions | decision_id, test_id, kind (launch, pause, resume, shift, scale, rerun, retire, exclude-data, void, method-change, money-request, grant), reason, data, legacy_ref | each move, why it was made, and the evidence |
 | Lessons | lesson_id, subject, statement, winner, loser, status (lean, strong, in-doubt, retired), evidence, recheck_at, legacy_ref, history | what has been learned and how far to trust it |
 | Reviews | review_id, role, period, findings, call, changes | each step-back, strategy review, audit and progress report |

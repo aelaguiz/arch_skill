@@ -109,6 +109,16 @@ closest to their words and say in a line how you read it. Results never overrule
 something, the progress report shows it, and only the owner changes or retires it (references/workbook.md,
 references/making.md).
 
+**Everything the climb does is on the record.** Anything the climb does to the world is part of the experiment, whether
+or not it was a test: an item made or uploaded to the platform, a launch, a budget moved, a post, a comment, a follow,
+an edited page, a deleted item, a setting switched, a message sent. Each goes in the Actions ledger as it happens, one
+row per change: what changed, where (the platform's ids), before and after, why, how to undo it, and what the platform
+showed when you read it back. An unrecorded change moves the numbers, so every later read learns from a world the climb
+does not fully know; the next session and the owner can only trust, explain or undo what is written down; and the climb
+acts on the owner's accounts, so everything done in their name belongs in one place. The Decisions tab keeps why a
+choice was made; the ledger keeps every act. A change the ledger does not explain, made by the owner, a teammate or the
+platform itself, goes in too, as found, since it moves the numbers just the same.
+
 **Take now from a live clock.** Use the platform's own time when it reports one, else the machine's, never a time from
 memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it, and cut every
 data window on the platform's reporting day and time zone.
@@ -138,22 +148,22 @@ platform shows you counts as much:
 
 - Load the state fresh. Read whole what the tick decides from, never just a tab's first lines: the Charter, the Owner
   lessons, the open Tests and each one's newest read, Lessons, the waiting Ideas, Money, the last Reviews and Log rows,
-  and the platform's own status and clock; pull older rows from Results, the Library and closed Tests when a call needs
-  their history. If the owner has answered a money request, record it: the answer usually comes back on the channel the
-  request went out on, so look there while a request is open, as well as in the prompt. When a call turns on what the
-  owner meant, read the Interview tab: their words are there, and so are their calls on the made-up outcomes intake
-  asked about.
+  the recent Actions (the ledger the fault look checks the platform against), and the platform's own status and clock;
+  pull older rows from Results, the Library and closed Tests when a call needs their history. If the owner has answered
+  a money request, record it: the answer usually comes back on the channel the request went out on, so look there while
+  a request is open, as well as in the prompt. When a call turns on what the owner meant, read the Interview tab: their
+  words are there, and so are their calls on the made-up outcomes intake asked about.
 - Look for faults before anything else: anything that means money is reaching the wrong people, that an item is doing
   harm, or that the numbers can no longer be trusted. Some places they show: the platform's count against the second
-  source, delivery against whom the plan aimed at, spend against the plan, an item the platform disapproved, a page the
-  ads lead to that broke (both counts then fall together), a change in what the platform counts, a run of complaints,
-  hides or reports on anything live, the best known option included, since that harm builds every day it runs. Counts
-  never match exactly, and one that arrives late looks short on recent days, so a shortfall in the late count needs
-  complete days to judge; lateness cannot explain a gap the other way, which needs its own explanation now, an ordinary
-  one (such as sign-ups the platform never saw) or a sign that a count broke. Judge whether a gap is the usual one or a
-  sign that something broke, and which side broke. Then weigh what the fault threatens and choose the response (pause,
-  fix, set the data aside, hold the read), with its reason in a Decisions row. Nothing is ever read from data you set
-  aside.
+  source, delivery against whom the plan aimed at, spend against the plan, the platform against the Actions ledger (a
+  live item, budget or setting it does not explain), an item the platform disapproved, a page the ads lead to that broke
+  (both counts then fall together), a change in what the platform counts, a run of complaints, hides or reports on
+  anything live, the best known option included, since that harm builds every day it runs. Counts never match exactly,
+  and one that arrives late looks short on recent days, so a shortfall in the late count needs complete days to judge;
+  lateness cannot explain a gap the other way, which needs its own explanation now, an ordinary one (such as sign-ups
+  the platform never saw) or a sign that a count broke. Judge whether a gap is the usual one or a sign that something
+  broke, and which side broke. Then weigh what the fault threatens and choose the response (pause, fix, set the data
+  aside, hold the read), with its reason in a Decisions row. Nothing is ever read from data you set aside.
 - Have the reader read every live test with new data since its last read, and any whose plan's read has come, as soon as
   the data is there rather than on a date set in advance: whether the data leans yet is the reader's call, not a count
   you set. It also reports the soft signals: what people say and do around a live item (comments, saves, shares, hides,
@@ -190,14 +200,15 @@ platform shows you counts as much:
   rates rather than copied from earlier tests (references/evidence.md). Each dollar more on one item buys more certainty
   about that item and one item fewer read, so weigh which teaches more right now: another item where much is untried, or
   a deeper read where a promising item's next move turns on it. Keep the Tests row in step with the platform (ids,
-  status, a live test's budget). Make a new creative from the one or few things that inspired it, after looking at them,
-  with its plan saying what it keeps from them, what it changes and who it is aimed at; cut a variation from its
-  parent's own materials with the parent's recipe, changing only what its plan changes; make both with the charter's
-  tools from what `making_from` names, to its `quality_floor` and by every owner lesson that governs that work; record
-  how each item was made and its coding, and keep its files where they last (references/making.md). To change a plan,
-  before its check or after one, write the new plan as a new Tests row and withdraw the old one: a check vouches only
-  for the plan it read, and anyone tracing the test later needs to see which plan each check saw. A rebuilt item under
-  the same plan keeps its row and its plan check.
+  status, a live test's budget), and write every change you make there, an item made or launched, a budget moved, a
+  pause, into the Actions ledger as you make it, starting the ledger if this climb has none yet. Make a new creative
+  from the one or few things that inspired it, after looking at them, with its plan saying what it keeps from them, what
+  it changes and who it is aimed at; cut a variation from its parent's own materials with the parent's recipe, changing
+  only what its plan changes; make both with the charter's tools from what `making_from` names, to its `quality_floor`
+  and by every owner lesson that governs that work; record how each item was made and its coding, and keep its files
+  where they last (references/making.md). To change a plan, before its check or after one, write the new plan as a new
+  Tests row and withdraw the old one: a check vouches only for the plan it read, and anyone tracing the test later needs
+  to see which plan each check saw. A rebuilt item under the same plan keeps its row and its plan check.
 - Ask for money when it is what limits learning, or early enough that the owner can answer before it runs out, once this
   tick's plans and checks have settled: the request tells the owner what the climb will do next, and a plan still
   waiting on a check may not happen. It never waits for a plan to pass: when nothing is ready yet, it says what the
