@@ -56,8 +56,10 @@ COLUMNS = {
 TAIL_COLUMNS = ("written_at", "written_by")
 # Added with PLAN.md 13.1 (3) to (5): graders accept them wherever they appear and only V25 to V30 rely on them, so
 # COLUMNS stays what every workbook must hold (V19's check) and these stay optional.
-EXTRA_COLUMNS = {"Library": ("coding",), "Tests": ("made_from", "recipe", "coding", "checks", "read", "decision"),
-                 "Results": ("signals",)}
+EXTRA_COLUMNS = {"Library": ("coding",),
+                 "Tests": ("made_from", "recipe", "coding", "checks", "read", "decision", "built_on"),
+                 "Results": ("signals", "moved"), "Decisions": ("lesson_id",), "Lessons": ("predicts", "steering"),
+                 "Log": ("learned",)}
 OVERVIEW_COLUMNS = ("item", "value", "as_of")
 VIEW_TABS = ("Overview",)
 
@@ -123,6 +125,7 @@ SYNONYMS = {
     ("results", "act"): ("act",),
     ("results", "stop"): ("stop", "drop"),
     ("results", "hold"): ("hold", "inconclusive"),
+    ("results", "flat"): ("flat", "even", "no lean", "no lean yet"),
     ("decisions", "pause"): ("pause", "stop-spend"),
     ("decisions", "exclude-data"): ("exclude-data", "exclude", "set-aside"),
     ("decisions", "void"): ("void", "cancel", "correction"),
@@ -132,6 +135,7 @@ SYNONYMS = {
     ("lessons", "retired"): ("retired", "dropped", "rejected"),
     ("lessons", "recheck"): ("recheck", "rechecking", "in-doubt", "doubt", "doubtful"),
     ("lessons", "unconfirmed"): ("unconfirmed", "provisional", "lean", "leaning", "directional"),
+    ("lessons", "hypothesis"): ("hypothesis", "hypothesized", "open hypothesis"),
     # The develop lane (variations of contenders, more traffic on a lean) replaced confirm (VELOCITY_PLAN.md).
     ("lanes", "develop"): ("develop", "development", "confirm"),
     ("ideas", "rejected"): ("rejected", "parked", "shelved", "duplicate", "near-copy"),

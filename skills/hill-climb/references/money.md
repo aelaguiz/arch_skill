@@ -11,18 +11,25 @@ usually one of a few things: how many items can be made and checked, how much th
 how soon a read comes back, how much a result costs as an item's daily budget rises, and the money itself. At intake,
 write in `speed` how this climb means to go as fast as it can learn and what usually limits that here; the strategist
 revises it like the other method fields. How fast the climb is learning now, what limits it and what the tick did about
-it go in each tick's Log and the Overview. When the limit is money (more items are ready and readable than the money can
-buy), give each ready item the cheapest read that shows its lean before holding any back, and make the case for more
-money now rather than stretching what is left; when the owner has said more will come on request, the money in hand sets
-when to ask, never how slowly to spend. On most auction platforms a result costs more as one item's daily budget rises,
-so more money usually means more items rather than more per item. When what the climb spends is a scarce count rather
-than money (posts, sends, slots), how often to spend it is itself something to learn: try more and less and read what
-the audience does, within what `must_not_waste` says, rather than settling on a ration at intake. Work out each round's
-sizes from what its reads need (references/evidence.md) rather than copying what earlier tests were given: a size set
-for one question is rarely the cheapest read for the next.
+it go in each tick's Log and the Overview. When the limit is money (the reads point at more than the money can buy:
+contenders worth more traffic, variations worth making, open questions worth asking), give each ready item the cheapest
+read that shows its lean before holding any back, and make the case for more money now rather than stretching what is
+left. Items made ahead of the money are not that case: they were chosen before the reads that would say whether they
+deserve it (SKILL.md, "Make from the reads, not ahead of them"). When the owner has said more will come on request, the
+money in hand sets when to ask, never how slowly to spend. On most auction platforms a result costs more as one item's
+daily budget rises, so more money usually means more items rather than more per item. When what the climb spends is a
+scarce count rather than money (posts, sends, slots), how often to spend it is itself something to learn: try more and
+less and read what the audience does, within what `must_not_waste` says, rather than settling on a ration at intake.
+Work out each round's sizes from what its reads need (references/evidence.md) rather than copying what earlier tests
+were given: a size set for one question is rarely the cheapest read for the next.
 
 Committed daily spend is the summed `daily_budget` of the tests that will spend soon: live ones, and checked ones about
 to launch. Set it by what the climb can learn from now, and when it sits well below that, say what is holding it back.
+
+Making costs money too (generators, tools, the paid calls behind checks), often paid outside the platform's budget.
+Record it on the Money tab as it is spent (`kind` `making`) and weigh it as you weigh spend on the platform, against
+what the item will teach: an item made ahead of the reads that should shape it costs its making and teaches only what
+was guessed.
 
 ## The three lanes
 
@@ -66,15 +73,15 @@ stronger evidence.
 
 ## The money request
 
-Ask for more money when it is what limits learning (more items are ready and readable than the money can buy), or early
-enough that the owner can answer before it runs out, through `money_request_channel`. The
-request is a case the owner can decide from in one read. They read it cold, without the workbook, so name each test and
-lesson by what it tries (the tired-parent opening, say), not by its key. Write it after the tick's plans and checks have
-settled, so what it says the climb will do next is what the climb is doing; when nothing is planned yet, it says what
-the climb would test next, and it never waits for a plan to pass:
+Ask for more money when it is what limits learning (the reads point at more than the money can buy), or early enough
+that the owner can answer before it runs out, through `money_request_channel`. The request is a case the owner can
+decide from in one read. They read it cold, without the workbook, so name each test and lesson by what it tries (the
+tired-parent opening, say), not by its key. Write it after the tick's plans and checks have settled, so what it says the
+climb will do next is what the climb is doing; when nothing is planned yet, it says what the climb would test next, and
+it never waits for a plan to pass:
 
 - **standing**: where the hill climb stands against the bar, with the number and what it compares to;
-- **learned**: what it has learned and how sure each part is (strong, or a lean);
+- **learned**: what it has learned, how sure each part is (strong, or a lean), and what each part changed;
 - **next**: what it would test next and why;
 - **amount**: how much, and what it buys: how much more the climb would learn and how much sooner, or how much longer it
   runs.

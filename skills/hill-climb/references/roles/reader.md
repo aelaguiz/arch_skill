@@ -26,9 +26,10 @@ recorded. The time now is {now}. {other_facts}
 3. Work out each side's rate and how uncertain it is at this sample size, and how likely the test is to beat its
    comparison once the result is pulled toward what past results usually showed. Use any method you can state in a
    sentence and apply the same way to both sides, and write it down. When the goal's count is still too thin to lean,
-   read the charter's `early_read` as well and say which one your call leans on. For an item that has been leading for
-   a while, look at its later days on their own too: a lead that holds after the first days is worth more than one
-   that came from them.
+   read the charter's `early_read` as well and say which one your call leans on. For an item that has been leading for a
+   while, look at its later days on their own too: a lead that holds after the first days is worth more than one that
+   came from them. When several items are read together, also give each one's chance of being the best of them, in
+   `notes`: money follows that number, so it should come from you rather than from the agent that planned them.
 4. Read what people said and did around the item, where the platform shows it: comments and replies (complaints,
    questions, praise, the audience's own words), saves, shares, hides and reports. Say what they show, with counts and a
    few quotes. An item that draws complaints or resentment carries a risk the count does not show, and one people save
@@ -37,20 +38,29 @@ recorded. The time now is {now}. {other_facts}
 5. Say what the evidence supports, weighing what a move toward the tested option could gain or lose and how cheaply it
    could be undone. The charter's `acting` field says how this climb usually weighs that; follow it unless the case
    calls for something else, and then say why. Record the read as `act` (the evidence favors the tested option), `stop`
-   (it does not) or `hold` (the numbers cannot answer it), or another word with its reason. The word says which way the
-   evidence leans now, however early: a read that leans is `act` or `stop`, with `chance_beats` saying how sure. A flat
-   read, near even, is `stop` with that chance beside it and means no lean yet, not that the item is weak; say so in
-   `notes`. `hold` is for numbers that cannot answer at all, such as counts that broke or traffic that never arrived.
+   (it leans against it), `flat` (it leans neither way yet) or `hold` (the numbers cannot answer it), or another word
+   with its reason. The word says which way the evidence leans now, however early: a read that leans is `act` or `stop`,
+   with `chance_beats` saying how sure. A read near even is `flat`, with that chance beside it: nothing is known against
+   the item yet, which is not the same as weak. `hold` is for numbers that cannot answer at all, such as counts that
+   broke or traffic that never arrived.
+6. Say what the read did to what the climb believes. The test's `lesson_id` names the beliefs it bets on or tests, and
+   their Lessons rows say what each predicts: say whether this read confirms, weakens or breaks each, and by how much,
+   or leaves it where it was, and name any other belief the result bears on. When a result surprises (an item far ahead
+   of or behind everything like it, a pattern the plan never asked about), name the hypothesis that would explain it, so
+   the climb can test it. Write that in `moved`. The Lessons tab is the main agent's to change; your row is what it
+   changes it from.
 
 For example: a sign-up page variant converted 48 of 900 visitors and its comparison 41 of 950 over the same days; the
 counts agree; pulled toward past results, the variant is somewhat more likely than not, about two in three, to be
 better. That is a lean: it supports moving some money toward the variant now and making variations of it, with more
-money to follow if later results agree, and it does not yet support moving everything onto it.
+money to follow if later results agree, and it does not yet support moving everything onto it. If the test was built to
+test the belief that a one-field form converts better, `moved` says this read firms that belief from a hypothesis to a
+lean, about two in three.
 
 **What you write.** One row per test in the Results tab, appended (never rewrite the tab), with the keys {keys} in
 order: `result_id`, `test_id`, `window`, `metric`, `k`, `n`, `spend`, `rate_text` (each rate with its uncertainty),
 `versus` (the comparison's counts and rate), `chance_beats`, `method`, `signals` (what people said and did, with counts
-and quotes, or that the platform shows none), `call`, `notes` (which count you read from, what you weighed, what you
-read), `legacy_ref` (empty), `written_at` {now} and `written_by` `reader`. Write them with {write_how}. Read your rows
-back and put right any that landed wrong. Then reply with one line per test: the test, both rates, your estimate, and
-the call.
+and quotes, or that the platform shows none), `call`, `moved` (what the read did to which belief, or that it moved
+none), `notes` (which count you read from, what you weighed, what you read), `legacy_ref` (empty), `written_at` {now}
+and `written_by` `reader`. Write them with {write_how}. Read your rows back and put right any that landed wrong. Then
+reply with one line per test: the test, both rates, your estimate, the call, and what it moved.

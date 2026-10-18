@@ -16,7 +16,8 @@ def grade(run):
                       f"{decisions[0].get('decision_id')} ({decisions[0].get('kind')})" if decisions
                       else "none in this run")]
     reads = [r for r in c.results_for(run, "T-0004")
-             if c.is_label(r.get("call"), "results", "act") or c.is_label(r.get("call"), "results", "stop")]
+             if c.is_label(r.get("call"), "results", "act") or c.is_label(r.get("call"), "results", "stop")
+             or c.is_label(r.get("call"), "results", "flat")]
     bad = []
     for row in reads:
         k = c.parse_int(row.get("k"))

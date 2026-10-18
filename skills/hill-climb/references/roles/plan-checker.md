@@ -14,8 +14,8 @@ that can show only which way a big gap leans is a sound plan, not a weak one. Yo
 stake in them.
 
 **What you have.** The workbook is {workbook}. Read whatever your judgment needs: each test's row, its idea and the rows
-that idea cites, the Charter, and the Tests, Results and Lessons tabs. The platform's costs and limits come from
-{platform}. The time now is {now}. {other_facts}
+that idea cites, the Charter, the Owner lessons, and the Tests, Results and Lessons tabs. The platform's costs and
+limits come from {platform}. The time now is {now}. {other_facts}
 
 **How to judge.** A sound plan protects a few things, and each verdict is your judgment of whether that plan does. Judge
 each plan on its own; seeing the round together may also show plans that would get in each other's way. Some questions a
@@ -42,11 +42,19 @@ careful checker asks, as places to look rather than boxes to tick:
   aimed at? Without them, a result cannot say what it taught.
 - For a variation of an item that already ran, does the plan name its parent and say how the new item will be made from
   the parent's own materials? Rebuilt from scratch, it would change things nobody chose.
+- Does the plan name the beliefs in the Lessons tab it bets on or tests (a new question written there first, with status
+  `hypothesis`), and say what its read would change for each? A plan whose read could confirm or break nothing written
+  down would teach the record nothing: fail it, and say which belief it needs.
+- Has a read come in since the plan was written that bears on it? A plan built before that read may be asking
+  yesterday's question. Say so in your reasons; it is not a reason to fail.
+- Does the plan go against anything the owner has taught (the Owner lessons tab)? A plan the owner has said not to run
+  fails, however sound its numbers.
 - Is it slower than it needs to be? A plan that spreads a read over more days than its traffic needs, or runs fewer
   items than its money could read, learns slower than it could. Say so in your reasons; it is not a reason to fail.
 
-Follow anything else you notice. Fail a plan when it would teach something false or could not show anything at all, and
-say why in plain sentences. Never fail a plan for being small, cheap or short.
+Follow anything else you notice. Fail a plan when it rests on nothing real, would teach something false, could not show
+anything at all, names no written belief its read could confirm or break, or goes against an owner lesson, and say why
+in plain sentences. Never fail a plan for being small, cheap or short.
 
 **What you write.** One row per test in the Checks tab, appended (never rewrite the tab), tests that share one plan each
 getting their own row, so every check names the test it vouches for, with the keys {keys} in order: `check_id`,

@@ -2,9 +2,9 @@
 
 Read this on every tick that has a result to act on, a lesson to change, or a test to plan.
 
-Contents: what a read can show · reading as results come in · why first results run hot · discounting · how sure to be
-· the record's words for a read · when the counts disagree · what people say and do around an item · lessons · cases ·
-when a plan fails its check
+Contents: what a read can show · reading as results come in · why first results run hot · discounting · how sure to be ·
+the record's words for a read · from reads to learnings to pivots · when the counts disagree · what people say and do
+around an item · lessons · cases · when a plan fails its check
 
 ## What a read can show
 
@@ -33,14 +33,16 @@ the row you write says how you got the number.
 
 ## Reading as results come in
 
-Read a test whenever it has enough data to lean, not on a date set in advance, and act on the lean in the same tick:
-tilt money toward an item that leads, by how likely it is to be the best; cut one that looks weak; start variations of
-one that looks promising. The price is that some early leans turn out to be luck. The next reads correct them, and money
-moved by the odds moves back when the odds turn; that costs less than results sitting unread and money sitting still
-while they wait for a date. Two habits keep early reads honest at almost no cost: compare items on the same days, and
-discount a lead from the first days (below). Keep enough on an item's comparison that the comparison still means
-something while the lead firms up or fades, and give every new item a small, sure look before cutting it: an item cut
-after one bad day never gets the data that would correct it.
+Read a test whenever it has enough data to lean, not on a date set in advance, and act on the lean in the same tick. A
+plan's `days` and `read_at` are its sizing's forecast of when the result should start to lean, so a reader can see when
+a test is running late, never a date the read waits for or a reason to keep spending past the point it has answered; a
+test closes when the decision on it is taken. When a lean comes: tilt money toward an item that leads, by how likely it
+is to be the best; cut one that looks weak; start variations of one that looks promising. The price is that some early
+leans turn out to be luck. The next reads correct them, and money moved by the odds moves back when the odds turn; that
+costs less than results sitting unread and money sitting still while they wait for a date. Two habits keep early reads
+honest at almost no cost: compare items on the same days, and discount a lead from the first days (below). Keep enough
+on an item's comparison that the comparison still means something while the lead firms up or fades, and give every new
+item a small, sure look before cutting it: an item cut after one bad day never gets the data that would correct it.
 
 A test can also stop for other reasons: a fault, spend running away from the plan, harm worth stopping for, or a market
 change that makes the question moot. Say why in a Decisions row.
@@ -85,20 +87,70 @@ something else, say why.
 
 ## The record's words for a read
 
-A read is recorded with one of three words: `act` (the evidence favors the tested item), `stop` (it does not) or `hold`
-(the numbers cannot answer the question). If none fits, write the word you would use and why. The word says which way
-the evidence leans now, `chance_beats` says how sure, and the read places the item among the others, from weak to
-promising. What to do next is a separate judgment, recorded with its reason:
+A read is recorded with one of four words: `act` (the evidence favors the tested item), `stop` (it leans against it),
+`flat` (it leans neither way yet at this size) or `hold` (the numbers cannot answer the question). If none fits, write
+the word you would use and why. The word says which way the evidence leans now, `chance_beats` says how sure, and the
+read places the item among the others, from weak to promising. What to do next is a separate judgment, recorded with its
+reason:
 
 - A favored read is a lean. It earns money now by its odds, shapes the next items (variations of it, ideas near it),
   and becomes a lesson that steers, with how sure it is. A lean grows strong as later items, variations and reads keep
   agreeing; test it again on its own only when a large, hard-to-undo move would rest on it.
-- A flat read means the test could not tell the items apart at its size. Record that, and let each item's place on the
-  gradient say what is known.
+- A `flat` read means the test could not tell the items apart at its size: nothing is known against the item yet.
+  Whether it keeps running is a decision weighed like any other: more money if its next dollars could still show a lean
+  worth having, or its money to new items if the gaps it could still show are too small to matter.
 - A lean that later results contradict loses weight: narrow it to where it held, keep it as a light lean, or retire it,
   depending on how much it was steering.
 - A hold means these numbers cannot answer the question. Plan it again if the question still matters once the cause is
   fixed.
+
+## From reads to learnings to pivots
+
+A read is a number about an item; a learning is what the number changes in what the climb expects. Every read ends in
+one of a few places: it opens a hypothesis (a result nobody planned for, an item far ahead of or behind everything like
+it), it firms or weakens a belief its test was built to bet on or test, it retires one, or it leaves every belief where
+it was. Write which, against the belief's key: the reader says it for each read in `moved`, and the belief's Lessons row
+takes the move, with the read in its history. A read that moved nothing says so too; a look at a few more hours of data
+often moves nothing, and that is routine. When the reads a round was sized for come back and still move nothing, find
+out why before making more: the items may be too alike to teach anything, the reads too thin for the gaps they could
+show, or the round may be asking a question whose answer would change nothing the climb does.
+
+A learning is about a cause and says what it predicts. "Item 17 was the cheapest" is a result. "Items that open on a
+real decision bring cheaper installs from people who already play" is a learning: it says what the next item with that
+opening should do, so the next round can bet on it and check it. Most learnings come from more than one read: a pattern
+across many coded items (the promising ones keep sharing an attribute), an outlier the climb sets out to explain, a run
+of losers that rules out a direction, what people say around the items, or a surprise about the measurement itself, such
+as a cheap count that stopped tracking the goal. One item seldom shows which of its parts carried it; the picture forms
+across items, as hypotheses are written down and tested. A pattern found by looking across many attributes is partly
+luck, as a lead picked from many items is (discounting, above): the meta-analyst judges it rather than the agent that
+hopes it holds, discounting it for how many attributes were searched, and what is left is acted on at its strength like
+any other lean, with a variation that changes only that attribute to firm it or break it.
+
+A hypothesis is a belief the climb has set out to test, written before its test so that the read can confirm it or break
+it: what it claims (if this, then that, for whom), what it rests on, and what each way the read could go would mean.
+Hypotheses come from the main agent, from the reader's surprises, from the meta-analyst's patterns and from the owner's
+ideas. Every test bets on or tests at least one written belief: a test of an untried cell or a new idea opens a
+hypothesis about it (why it might beat what runs now), and items launched together under one idea can share one. A
+hypothesis is about a cause, like any learning ("a coach on camera converts better than the app screen behind a
+question", not "item 12 may beat the best"), and the Tests row's own `hypothesis` is the prediction one test makes from
+it: what this item's read should show if the belief holds. A hypothesis steers the tests that test it, and money only as
+far as those tests need, until reads give it a lean.
+
+A pivot is what a learning changes, sized to how sure it is:
+
+- **Bet on it.** Money and the next items move toward what it says works, in steps as it firms (how sure to be, above).
+- **Test it.** The next items change the part it says carries the effect and hold the rest, so their reads confirm it or
+  break it: a contender with and without the thing the learning credits, or that thing tried on a different item. That
+  is how a lean grows strong or falls away, and how the climb learns why something works, not only that it does.
+- **Follow it out.** Try it where it has not been, in another audience, format or corner of the map it should reach if
+  it is true. And weigh again everything already waiting, the ideas, the plans and the built or approved items, in its
+  light: an item the learning argues against is changed or dropped rather than run because it exists, and an idea it
+  favors moves up.
+
+A lean moves some money and shapes a few of the next items; a strong learning reshapes the round and can narrow the
+search; a contradiction reopens a question and can send money back to options the climb had moved away from. Every pivot
+is the next experiment, so its plan says so: the beliefs it bets on and the ones it tests (`lesson_id`), the reads it
+was built from (`built_on`), and what its read would change.
 
 ## When the counts disagree
 
@@ -123,19 +175,25 @@ on anything live. Put the audience's own words in the Library.
 
 ## Lessons
 
-A lesson is one row per subject: what it says, what it compares (a `winner` and a `loser`, when it compares two), the
-evidence behind it, how sure it is, and a status. Lessons come from single reads and from patterns across many coded
+A Lessons row holds one belief, from the moment the climb acts on it or sets out to test it: what it says, what it
+compares (a `winner` and a `loser`, when it compares two), the evidence behind it, what it predicts for the next item
+(`predicts`), what it is steering now (`steering`: the tests that bet on or test it, the money it moved, the ideas it
+raised or set aside), how sure it is, and a status. Lessons come from single reads and from patterns across many coded
 items: when the promising items keep sharing an attribute, that pattern is a lean of its own, and the next variations
 test it on the items that matter. A lean that rests only on the early read says so, and gets reads on the goal's own
 count before it narrows the search, since a cheap signal can lean one way while the goal leans the other. Update the row
-in place as it moves, and keep every row: lists rewritten wholesale lose detail and do worse than none.
+in place as it moves, each move citing the read or review behind it in `history`, and keep every row: lists rewritten
+wholesale lose detail and do worse than none.
 
+- `hypothesis`: what the climb thinks may be true and has set out to test, with what each way the read could go would
+  mean. It steers the tests that test it, and money only as far as they need.
 - `lean`: the evidence points this way, somewhere around 60 to 80 percent sure. It steers the next items and the money
   now.
 - `strong`: later items, variations and reads kept agreeing. It can narrow the search and carry more of the money, and
   gets a `recheck_at` the charter's `lesson_life` away as a reminder.
-- `in-doubt`: newer results disagree, or its `recheck_at` has come. Weigh how much it is steering, how fast this market
-  drifts and whether recent results still agree, and test it again when the doubt is worth what the test costs.
+- `in-doubt`: newer results disagree with it, or a recheck found reason to doubt it; its `recheck_at` coming is a time
+  to look, not a change of status. Weigh how much it is steering, how fast this market drifts and whether recent results
+  still agree, and test it again when the doubt is worth what the test costs.
 - `retired`: the evidence turned against it. A retired lesson stays in the tab.
 
 ## Cases
@@ -158,6 +216,24 @@ Some cases, told as general ones:
 - **A pattern no single test asked about.** Across dozens of ads, the ones with a person on camera kept landing near the
   top of the gradient. The next round cut variations of the best ads with and without the person, and within days the
   climb knew roughly how much of the lead the person carried.
+- **A contender nobody asked why about.** A step back found one ad several times cheaper than anything else the climb
+  had run, and called for finding out why it won. Its one-change variations (a different person, another platform, a
+  broader audience) sat as ideas while the next three rounds explored other corners of the map, so a day later the climb
+  still knew it had a winner but not what made it win, or how to make another. The pivot was a few of those variations
+  in the very next round, beside the exploring, each read saying which part carried the lead.
+- **A queue that outran its reads.** While its first round waited for money, a climb built a second round and started a
+  third, each picked on what it believed before any of them ran. When the first round's reads came in, most of the next
+  week's money already belonged to items chosen without them. Made after those reads, the second round could have bet on
+  what the first one showed.
+- **Subject lines that kept losing.** Over a week, every subject line written as a question was opened less than the
+  statement it ran beside, across four different emails. No single test asked about questions; together they were a lean
+  worth acting on. The pivot dropped the question lines from the waiting ideas, made the next statements bolder, and
+  kept one test pairing a question with a statement of the same length, to see whether it was the question or the
+  length.
+- **An opening that held viewers.** The two-hour reads of three posts showed viewers staying longest on the one that
+  opened on a real decision rather than on a face. The next posts opened on decisions, one kept the face beside the
+  decision to see which part held people, and two posts already approved that opened on a face got new openings, and
+  went back to the owner for their yes, before they went up.
 
 ## When a plan fails its check
 

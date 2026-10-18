@@ -207,9 +207,9 @@ class TrialsOnAFakeAim(unittest.TestCase):
         self.assertFalse(record["passed"])
 
     def test_the_reader_case_needs_act_on_the_plans_window(self):
-        line = "R-0004,T-0004,w,platform conversions,31,420,42.00,7.4%,54 of 870,0.67,flat prior,a few,act,n,," \
+        line = "R-0004,T-0004,w,platform conversions,31,420,42.00,7.4%,54 of 870,0.67,flat prior,a few,act,,n,," \
                "2026-11-08T00:00:00Z,reader"
-        header = "result_id,test_id,window,metric,k,n,spend,rate_text,versus,chance_beats,method,signals,call,notes"
+        header = "result_id,test_id,window,metric,k,n,spend,rate_text,versus,chance_beats,method,signals,call,moved,notes"
         record = self.trial("reader-lean", append("Results", line))
         self.assertTrue(record["passed"], record["checks"])
         self.assertIn(header, (self.root / "results" / "reader-lean-t1" / "run" / "work" / "workbook" /

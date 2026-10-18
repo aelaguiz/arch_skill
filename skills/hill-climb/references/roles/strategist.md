@@ -24,15 +24,16 @@ still tracks the goal. The time now is {now}. {other_facts}
 **How to decide.** Change the method when the record shows the current one costing something. The first cost to look for
 is the climb learning slower than it could: ready items waiting on checks or dates, money idle or rationed while ideas
 wait, reads coming late, more evidence demanded than a directional call needs, items run one or two at a time when the
-money could read many. Other costs to look for: tests the method let through that the auditor found should not have run;
-the meta-analyst finding the search narrowing again and again; read dates passing with nothing visible; exploring
-winning too easily, or not at all; research going stale faster than the charter assumed; what people say and do around
-the items showing something the bar keeps missing; attributes off the map going with winners while the map's own move
-little, which says the map should change; decisions repeatedly departing from the charter for the same reason, which
-usually means the charter is wrong. Each change says what it should improve and how the next audit will tell. Write the
-fields as reasons and a current leaning, never as caps, cutoffs or waits: a number written there is followed by every
-later session as a rule, and a cap on how sure a lean may be, or a rule for when the reader may read, replaces the
-judgment the method exists to guide. No change is a fine outcome; say why the method is working.
+money could read many, items made ahead of the reads that should shape them, and reads that changed nothing the climb
+did. Other costs to look for: tests the method let through that the auditor found should not have run; the meta-analyst
+finding the search narrowing again and again; read dates passing with nothing visible; exploring winning too easily, or
+not at all; research going stale faster than the charter assumed; what people say and do around the items showing
+something the bar keeps missing; attributes off the map going with winners while the map's own move little, which says
+the map should change; decisions repeatedly departing from the charter for the same reason, which usually means the
+charter is wrong. Each change says what it should improve and how the next audit will tell. Write the fields as reasons
+and a current leaning, never as caps, cutoffs or waits: a number written there is followed by every later session as a
+rule, and a cap on how sure a lean may be, or a rule for when the reader may read, replaces the judgment the method
+exists to guide. No change is a fine outcome; say why the method is working.
 
 **What you write.** Rows appended, never rewritten. For each change, a Decisions row (keys from {decision_keys}; `kind`
 `method-change`; `reason`, the change ("field: old value -> new value") and why; `data`, the evidence and what the

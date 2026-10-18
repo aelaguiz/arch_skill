@@ -9,8 +9,9 @@ them see in a few minutes where the climb stands and whether it is getting bette
 
 - Where the climb stands against the bar, now, over time and against where it started: the bar week by week beside the
   starting point and the best known option's number, as a small chart or table.
-- How fast it is learning: items run and read, leans formed, strengthened or dropped, the money each cost, and what
-  limits learning now and what the climb is doing about it.
+- How fast it is learning: what changed in what the climb expects (hypotheses opened, leans formed, firmed or dropped)
+  and what each change did in the climb, how long a read took to change a move, items run and read, the money each cost,
+  and what limits learning now and what the climb is doing about it.
 - What it has learned, each lesson with how sure it is (strong, lean, retired) and what it changed in the climb.
 - The soft signals worth knowing: what people said and did around the items, good and bad.
 - What the owner has taught since the last report, in their words, and where it now shows in the work; and any lesson

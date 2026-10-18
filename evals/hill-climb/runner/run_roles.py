@@ -334,8 +334,10 @@ def grade_case(run, case: dict, prepared: dict) -> list:
 
 
 def _leans(call: str):
-    """act, stop or hold for a call, reading `act` as the record's word for a favored lean ("act (lean)" too)."""
+    """act, stop, flat or hold for a call, reading `act` as the record's word for a favored lean ("act (lean)" too)."""
     words = set(re.findall(r"[a-z]+", call.lower()))
+    if "flat" in words or {"no", "lean"} <= words:
+        return "flat"
     if words & {"stop", "drop", "hold", "inconclusive"}:
         return "stop" if words & {"stop", "drop"} else "hold"
     if words & {"act", "lean", "leans", "favored", "favoured", "favor", "favour"}:

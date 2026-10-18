@@ -15,7 +15,7 @@ TEST = "T-0004"
 
 
 def _shows_call(text, call) -> bool:
-    for label in ("act", "stop", "hold"):
+    for label in ("act", "stop", "flat", "hold"):
         if c.is_label(call, "results", label):
             words = c.SYNONYMS.get(("results", label), (label,))
             return any(re.search(rf"\b{re.escape(w)}\b", text, re.I) for w in words)

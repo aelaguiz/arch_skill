@@ -3,6 +3,10 @@
 Read this at intake, where the coding is built, before making any item, and whenever a plan varies an item that
 already ran.
 
+Before making an item, ask whether a read that could change it will land before it can run. If one will, making it after
+that read costs nothing, since it could not run sooner, and chooses better: made first, it is chosen on what the climb
+believed before it knew (SKILL.md, "Make from the reads, not ahead of them").
+
 ## Code every item richly
 
 An item is more than the few attributes a test varies. A viewer notices, and a maker chooses, many things at once: a

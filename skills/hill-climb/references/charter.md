@@ -74,8 +74,8 @@ itself: each decision still judges the case in front of it, and says why when it
 | `replacing` | how money follows the odds onto a new option, and what a large commitment that cannot be taken back quickly needs |
 | `lesson_life` | roughly how long a strong lesson goes before its age alone puts it in doubt: shorter where results drift fast |
 | `research_freshness` | how fast this market's research material goes stale, and why (references/research.md) |
-| `test_sizing` | the cheapest read that shows which way an item leans at this platform's traffic, how many items the money can read at once, and how a fair comparison runs on this platform |
-| `speed` | how this climb means to go as fast as it can learn, and what usually limits that on this platform; how fast it is going now goes in the Log and the Overview (references/money.md) |
+| `test_sizing` | how to work out the cheapest read that shows which way an item leans on this platform, from its costs and rates, and how a fair comparison runs here; worked out again for each round from what its reads need, never a size or count that later rounds copy |
+| `speed` | how this climb means to go as fast as it can learn, what usually limits that on this platform, and what decides how far ahead of its reads it makes items here (how much the coming reads could change them, how long making, checking and any owner's yes take), and why; how fast it is going now goes in the Log and the Overview (references/money.md) |
 | `cadence` | how often ticks run and watch for faults (often enough that new results are acted on soon after they arrive), step back (meta-analyst), revisit the method (strategist), audit, and replay past calls (the auditor re-scoring calls made since the last replay against what came after, and checking the early read still tracks the goal): often enough to catch a narrowing search before it wastes a week, rarely enough that each method change can be judged before the next |
 | `trigger` | what starts the ticks (below) |
 | `role_model` | the model the role agents run on: the one the shared policy's routing table names for hill-climb roles |
