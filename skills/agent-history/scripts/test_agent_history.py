@@ -992,6 +992,35 @@ class ReadAndHomeDiscoveryTests(unittest.TestCase):
             self.assertIn("1 messages from the user", newer.stdout)
             self.assertNotIn("about to ship", newer.stdout.split("readable copy:")[1])
 
+    def test_read_includes_messages_sent_while_a_turn_was_running(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            path = home / ".claude" / "projects" / "-tmp-project" / f"{CLAUDE_ID}.jsonl"
+            mid_turn = "From Amir: stop making new ones for now."
+            note = "<task-notification> <status>completed</status> </task-notification>"
+            write_jsonl(path, [
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-18T10:00:00Z",
+                 "message": {"role": "user", "content": "Run the climb."}},
+                {"type": "queue-operation", "operation": "enqueue", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:04:00Z", "content": mid_turn},
+                {"type": "queue-operation", "operation": "remove", "reason": "absorbed_mid_turn", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:04:05Z", "content": mid_turn},
+                {"type": "queue-operation", "operation": "remove", "reason": "absorbed_mid_turn", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:05:00Z", "content": note},
+                {"type": "queue-operation", "operation": "enqueue", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:06:00Z", "content": "Next turn's message."},
+                {"type": "queue-operation", "operation": "dequeue", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:07:00Z"},
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-18T10:07:00Z",
+                 "message": {"role": "user", "content": "Next turn's message."}},
+            ])
+            yours = self.run_in_home(home, "read", CLAUDE_ID, "--yours", "--output-root", str(home / "runs"))
+            self.assertEqual(yours.returncode, 0, yours.stdout + yours.stderr)
+            shown = yours.stdout.split("readable copy:")[1]
+            self.assertIn("3 messages from the user", yours.stdout)
+            self.assertIn(mid_turn, shown)
+            self.assertEqual(shown.count("Next turn's message."), 1)
+            self.assertNotIn("task-notification", shown)
+            full = self.run_in_home(home, "read", CLAUDE_ID, "--output-root", str(home / "runs"))
+            self.assertIn(f"| user | {mid_turn}", full.stdout)
+            self.assertIn("| context | <task-notification>", full.stdout)
+
     def test_read_names_an_earlier_session_that_is_not_on_this_machine(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             home, project = Path(tmp), Path(tmp) / "project"

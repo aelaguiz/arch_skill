@@ -78,7 +78,9 @@ next time: python3 <script> read <full id> --after <last time>
 - `--yours` prints only what the user typed, in this session and every
   earlier one it continues, oldest first, each line tagged with its session.
   Tool output, compaction summaries, notifications and injected context are
-  left out, and a slash command prints as `/name args`. It prints every
+  left out, and a slash command prints as `/name args`. A message sent while
+  a turn was running, which Claude stores as a queue entry rather than an
+  ordinary message, is included at the time it arrived. It prints every
   message (`--last` still limits it), with up to 2,000 characters each, and
   writes them in full to `yours.md`. Its `next time:` line keeps `--yours`.
 - `memory:` lists Claude memory folders with anything in them, for the

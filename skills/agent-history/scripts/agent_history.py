@@ -1988,6 +1988,13 @@ def claude_entries(path: Path, errors: list[dict[str, Any]]) -> EntryLog:
         if record_type == "system" and row.get("subtype") == "compact_boundary":
             log.add(ts, "compaction", "context compacted", line_no)
             continue
+        # A message the user sends while a turn is running is queued, then absorbed
+        # into that turn; it never becomes an ordinary user row.
+        if record_type == "queue-operation":
+            if row.get("operation") == "remove" and row.get("reason") == "absorbed_mid_turn":
+                text = str(row.get("content") or "")
+                log.add(ts, "context" if text.lstrip().startswith(NOT_TYPED_PREFIXES) else "user", text, line_no)
+            continue
         if record_type not in {"user", "assistant"}:
             continue
         message = row.get("message") if isinstance(row.get("message"), dict) else {}
