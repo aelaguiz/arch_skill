@@ -110,7 +110,9 @@ Seeding from earlier work, says.
 After the first answers, research widely: what the interview raised, what the owner pointed to, and anywhere you can
 learn from others' work, such as competitors and the category's best (and how long they kept each thing running), the
 audience's own words, other markets, and the owner's other climbs (as research, never as settled answers). Research
-always happens, with or without the owner's direction.
+always happens, with or without the owner's direction. Size each question's research to what it has to settle: a note
+longer than its evidence costs every later reader, and research spends the same accounts and platform limits the climbs
+on this machine run on (SKILL.md, Capacity is shared).
 
 Setup also has questions of its own to research and write down where the climb uses them, each with its sources:
 

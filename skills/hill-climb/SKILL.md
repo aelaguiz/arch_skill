@@ -31,12 +31,16 @@ week, or a steady spend chosen in advance. If it can run a hundred items a day a
 side: more items running at once is faster learning, and more items waiting behind them is not. Each tick, find what
 limits learning now and push on it. Money: run as many items as it can read, and when money is what holds learning back,
 ask for more with the case (references/money.md) rather than stretching what is left. The platform: how much it will
-deliver to new items, and how soon a read comes back. Making and checking: build in batches and check a round at once.
-Reading: have every test with new data read as it arrives; whether it leans yet is the reader's call. Ideas: when the
-waiting ideas would not fill what the climb could run, send the scout. The owner's yes, when the owner approves items
-before they run: every item waiting on it makes the yes slower and harder to give, so send what is needed next, ready to
-judge; a second batch sent before the first is answered makes both harder to answer. A plan that says "two a day" or
-"five a week" has picked a number instead of looking at what limits learning.
+deliver to new items, and how soon a read comes back. Where what the climb spends is a count rather than money (posts,
+sends, slots), how often to spend it is a question the climb tests by spending more on some days and less on others,
+never a spacing kept from a plan, and an item that does not spend the count (a post shown only to people who don't
+follow the account) is not rationed by it. When the climb's own review names the pace as what limits learning, the pace
+changes in that tick. Making and checking: build in batches and check a round at once. Reading: have every test with new
+data read as it arrives; whether it leans yet is the reader's call. Ideas: when the waiting ideas would not fill what
+the climb could run, send the scout. The owner's yes, when the owner approves items before they run: every item waiting
+on it makes the yes slower and harder to give, so send what is needed next, ready to judge; a second batch sent before
+the first is answered makes both harder to answer. A plan that says "two a day" or "five a week" has picked a number
+instead of looking at what limits learning.
 
 **A learning changes what you expect; a pivot is the move it causes.** A learning is a change in what the climb expects
 will work, and why. It is about a cause, not an item ("showing the price first converts visitors who arrive from
@@ -53,16 +57,30 @@ step that way, then read whether it went up. Ask of the record: for each learnin
 each round, which learnings it bets on and which it tests. A learning that changed nothing either does not matter or was
 never acted on (references/evidence.md).
 
-**Make from the reads, not ahead of them.** An item made now is chosen on what the climb believes now. When a read that
-could change it will land before the item can run, making it first means choosing it blind: it is either thrown away, or
-it runs because it exists and takes money and slots the read would have sent elsewhere. So spend waiting time on
-options, not inventory. Ideas, research and working out what the last reads mean stay cheap and can still change; a plan
-written ahead of the reads it depends on is a guess too, only a cheaper one, and a finished item locks in today's
-assumptions, so make it at the last moment it can still be ready when its money or slot frees. How far ahead that is
-comes from one trade-off: how much could the coming reads change what you would make? Early, when little is known and
-every read moves a lot, making ahead costs the most; later, when leans are strong and stable, a longer queue costs
-little. Items lined up behind reads that could change them are a sign the climb is producing rather than learning,
-whatever it is waiting on.
+**Make from the reads, not ahead of them.** An item made now is chosen on what the climb believes now. So the question
+before making it is whether a read that could change it will land before it can run. If one will, wait for that read:
+made first, the item is chosen blind, and it is either thrown away or runs because it exists, taking money and slots the
+read would have sent elsewhere. If the coming reads are too thin to move anything, or are about something else, waiting
+only costs time: make it now. Booking a made item into a slot or a date ahead is the same commitment as making it ahead
+(the next principle). So spend waiting time on options, not inventory: ideas, research and working out what the last
+reads mean stay cheap and can still change; a plan written ahead of the reads it depends on is a cheaper guess; a
+finished or booked item locks in today's assumptions, so make it at the last moment it can still be ready when its money
+or slot frees. Early in a climb most reads can move a lot, so more of them are worth waiting for, but a read earns the
+wait by what it could change, never by how early it is. Items lined up behind reads that could change them are a sign
+the climb is producing rather than learning, whatever it is waiting on.
+
+**The tick is the clock.** Everything the climb does is decided in a tick, from what the record and the latest reads say
+at that moment. A timed job, a booked post or a switch set to flip later is a decision made now about a moment that
+comes after reads that could change it: it acts whether or not they agree, it is a second schedule kept outside the
+workbook, and it dies or misfires with the session or machine that holds it. So when something should happen later,
+write it in the workbook as what the climb means to do and why, and let the tick that comes then decide; when the right
+moment for an act falls between ticks, move the ticks (the charter's `cadence`), not the decision. Where the platform
+takes an act at a set time, such as a scheduled send or a posting slot, book it in the last tick before that time: a
+booking that reaches past the next tick is one the next tick could have made knowing more. Reads work the same way: each
+tick reads what has come in to date, with its age, and when a comparison needs a reading at an age the platform cannot
+show later, the ticks are set to land there. A timer or scheduled change inherited from earlier work is earlier work
+like any other: it keeps running only while the climb would choose it again today, and everything it does goes in the
+Actions ledger. Only the ticks themselves are scheduled (references/charter.md, Triggers).
 
 **The owner is asked for nothing but money.** The owner set the goal, the money and their limits in the intake interview
 so the hill climb could run without them; intake, before the first tick, is the one time they are asked anything else. A
@@ -70,12 +88,14 @@ question parks the work until they come back and hands them a call the charter a
 fix it or stop what it is costing, and record what you did. When the method looks wrong, call the strategist, which
 changes it inside the charter; its cadence is the usual rhythm, not the only time. When an idea would need a different
 goal, park it with the reason. A money request is the one exception (references/money.md). When the owner has asked to
-approve items before they run (an owner lesson), sending a batch for their yes is doing what they asked, not asking them
-something: send it through the channel they named, record the batch in the Actions ledger, and record their answer in a
-Decisions row in their words. Progress reports go to them on the charter's `reporting` schedule and ask nothing
-(references/reporting.md). Everything sent through the owner's channel reaches them, so learn how a channel works from
-its help or documentation, never by sending through it. End every tick with one line that says what it did, never with a
-question or an offer.
+approve items before they run, sending them for their yes is doing what they asked, not asking them something. Send each
+with `$approvals` when the host has it, which puts the thing itself in front of them and brings their answer back to the
+climb, otherwise through the channel they named; record what went out in the Actions ledger and their answer in a
+Decisions row in their words. While anything waits on their yes, check the approval inbox every tick and keep the ticks
+close enough to act on an answer soon after it is given, since a yes that sits unread is learning lost. Progress reports
+go to them on the charter's `reporting` schedule and ask nothing (references/reporting.md). Everything sent through the
+owner's channel reaches them, so learn how a channel works from its help or documentation, never by sending through it.
+End every tick with one line that says what it did, never with a question or an offer.
 
 **The workbook and the platform are the truth.** A hill climb restarts, compacts, and inherits summaries from earlier
 sessions, and any of them can be wrong. A wrong carried fact steers every later tick without anyone noticing. So read
@@ -130,7 +150,11 @@ a grant. Everything setup worked out for itself, and the fields that record how 
 keep every fresh session working the same way; the strategist revises them as the climb learns, with a Decisions row
 saying why. Judge each case in front of you with them in mind, and when a case calls for something else, say why in that
 decision's row (references/charter.md). A departure you find yourself making tick after tick means the charter is wrong:
-call the strategist to change it.
+call the strategist to change it. Each method field is a few sentences of reasons and a current leaning, short enough to
+read whole every tick: a field that grows into operating rules has stopped teaching and started deciding, and every
+later session follows it instead of judging. A method change is a bet like a test: judge it by what it was meant to
+improve before changing the same thing again, so a cost one finding shows is noted and watched, not written into the
+method at once.
 
 **What the owner teaches lasts.** When the owner tells you how to work ("it always has to use our creative assets";
 "don't do it like that again, do it this way"), they are teaching, not reacting to one item, and a climb that has to be
@@ -139,10 +163,11 @@ what it is about and how far it reaches; apply it every time that kind of work c
 session; and have the checkers hold the work to it. To tell teaching from a reaction, ask whether it would still be true
 of the next item of its kind: "this one's flat" is about one item and weighs like any other signal, unless it names a
 habit ("you keep opening with a question"). It reaches as far as their reason goes, no further and no narrower: "use our
-creative assets", said about one ad, governs every item the climb makes. When the reach is unclear, take the reading
-closest to their words and say in a line how you read it. Results never overrule an owner lesson: if one seems to cost
-something, the progress report shows it, and only the owner changes or retires it (references/workbook.md,
-references/making.md).
+creative assets", said about one ad, governs every item the climb makes, while "never label our creative as made by AI"
+says nothing against naming the product's own AI. What the owner tells another climb or another agent is not a lesson
+for this one unless they say it is. When the reach is unclear, take the reading closest to their words and say in a line
+how you read it. Results never overrule an owner lesson: if one seems to cost something, the progress report shows it,
+and only the owner changes or retires it (references/workbook.md, references/making.md).
 
 **Everything the climb does is on the record.** Anything the climb does to the world is part of the experiment, whether
 or not it was a test: an item made or uploaded to the platform, a launch, a budget moved, a post, a comment, a follow,
@@ -165,6 +190,13 @@ learned and what changed because of it. Anyone can then follow an act back throu
 reads and tests behind it, see a belief that moved while what rests on it stayed the same, or an item that ran unchanged
 after a read that bore on it, and measure how fast the climb really learns: how long a read takes to change a move
 (references/workbook.md).
+
+**Capacity is shared.** Every role started, page read, row written and research note gathered spends accounts, model
+time and platform request limits that the climb's next tick and every other job on the machine also need, the way a test
+spends money. A climb that runs an account out of its limits loses its helpers mid-work and its next ticks; one that
+uses up a platform's request limit stops other climbs' reads. So size each to the decision it serves: research as deep
+as its question needs, reads that say what the call needs, rows that hold what a later reader needs and no more, and
+roles on the model the charter names. That is also what keeps the record short enough to read whole every tick.
 
 **Take now from a live clock.** Use the platform's own time when it reports one, else the machine's, never a time from
 memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it, and cut every
@@ -198,10 +230,10 @@ platform shows you counts as much:
   the last Reviews and Log rows, the recent Actions (the ledger the fault look checks the platform against), and the
   platform's own status and clock; pull older rows from Results, the Library and closed Tests when a call needs their
   history. Look for anything the owner has said since the last tick, in the prompt and on every channel something went
-  out to them on (a money request, a batch for their yes, a progress report), and record it: a money answer on the Money
-  tab, a yes or no in a Decisions row in their words, and anything they teach in the Owner lessons tab. When a call
-  turns on what the owner meant, read the Interview tab: their words are there, and so are their calls on the made-up
-  outcomes intake asked about.
+  out to them on (a money request, an item sent for their yes, with `$approvals` its inbox, a progress report), and
+  record it: a money answer on the Money tab, a yes or no in a Decisions row in their words, and anything they teach in
+  the Owner lessons tab. When a call turns on what the owner meant, read the Interview tab: their words are there, and
+  so are their calls on the made-up outcomes intake asked about.
 - Look for faults before anything else: anything that means money is reaching the wrong people, that an item is doing
   harm, or that the numbers can no longer be trusted. Some places they show: the platform's count against the second
   source, delivery against whom the plan aimed at, spend against the plan, the platform against the Actions ledger (a
@@ -266,10 +298,12 @@ platform shows you counts as much:
   keeps from them, what it changes and who it is aimed at; cut a variation from its parent's own materials with the
   parent's recipe, changing only what its plan changes; make both with the charter's tools from what `making_from`
   names, to its `quality_floor` and by every owner lesson that governs that work; record how each item was made and its
-  coding, and keep its files where they last (references/making.md). To change a plan, before its check or after one,
-  write the new plan as a new Tests row and withdraw the old one: a check vouches only for the plan it read, and anyone
-  tracing the test later needs to see which plan each check saw. A rebuilt item under the same plan keeps its row and
-  its plan check.
+  coding, and keep its files where they last (references/making.md). To change what a test asks or how its read would be
+  judged, write the new plan as a new Tests row and withdraw the old one: a check vouches only for the plan it read, and
+  anyone tracing the test later needs to see which plan each check saw; in the same tick, update every belief whose
+  `steering` names the old row. A change that leaves the question and its read as they were (its day or spacing, its
+  budget within the plan's sizing, a word of copy the test does not vary) is a history line on the same row, not a new
+  plan. A rebuilt item under the same plan keeps its row and its plan check.
 - Ask for money when it is what limits learning, or early enough that the owner can answer before it runs out, once this
   tick's plans and checks have settled: the request tells the owner what the climb will do next, and a plan still
   waiting on a check may not happen. It never waits for a plan to pass: when nothing is ready yet, it says what the
@@ -288,8 +322,8 @@ change the most if answered, weighing whether a lesson's age or a contradicting 
 whatever keeps the next read from coming (a slow check, a batch waiting on the owner, delivery that has not started).
 That work does not wait for free. Skipped, a review that would have caught a costly method goes another week, an idea
 that repeats an answered question sits ready to be tested, an old lesson keeps steering unexamined, and the next read
-comes later than it had to. A quiet tick is not for making items the money or slots will not reach soon: the next ideas
-stay screened and ready, and their plans and items get made from the reads they wait on.
+comes later than it had to. A quiet tick makes what the next money or slots will need when no coming read could change
+it, and leaves the rest as screened ideas until the reads they wait on are in.
 
 ## Dispatching a role
 
@@ -321,8 +355,9 @@ can outlast the checks it is waiting for. Check that the row is there and whole,
 do not overrule a call in your own work's favor: a failed check stays failed until a revised plan or a rebuild passes,
 and a read stays what the reader found. This is how the shared policy's "a child's output is evidence" applies here,
 since replacing an independent judgment with yours would undo the independence. When a call rests on missing evidence or
-an unsound method, or a row has wrong numbers, send a fresh role with the missing fact and record why; the fresh role
-writes the correcting row.
+an unsound method, or a row has wrong numbers, and putting it right would change a call, send a fresh role with the
+missing fact and record why; the fresh role writes the correcting row. A finding that would change no call gets a line
+in the Log, not a fresh role or a rewrite: every correction spends hours the climb has for learning.
 
 ## References
 

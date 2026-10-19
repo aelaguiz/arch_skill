@@ -41,7 +41,10 @@ These are setup's own judgments about the climb's world, made from intake's rese
 sources; the strategist revises them as the climb learns, with a Decisions row. Some revisions need care: changing how
 the bar is counted, or the second source, costs comparison with every earlier result, so make the change when what it
 gains is worth that (the old count broke or drifted from the goal, or a truer one became available) and mark the break;
-new attribute values grow the map, and their cells start untested.
+new attribute values grow the map, and their cells start untested. When a field can only be finished once data comes in,
+such as a bar built on a baseline the climb has yet to measure, write in it what it waits for; the strategist fills it
+in when the data is there, as it would any other revision, so the number every later call is held to has an independent
+hand and a Decisions row behind it.
 
 | Field | What to write |
 |---|---|
@@ -57,11 +60,13 @@ new attribute values grow the map, and their cells start untested.
 
 These record how this climb has chosen to weigh its recurring calls, so that every fresh session weighs them the same
 way. They are reasons and a current leaning, not cutoffs: a number written here gets followed by every later session, so
-write the reasoning, and a number only where the field asks for one. You choose them at intake from the research and
-the situation; they are this skill's to set, never a question for the owner. Afterwards the strategist changes them,
-each time with a Decisions `method-change` row, and you update only `trigger`. When the record shows the method costing
-something, call the strategist then; its cadence is the usual rhythm, not the only time. None of them decides a case by
-itself: each decision still judges the case in front of it, and says why when it departs from them.
+write the reasoning, and a number only where the field asks for one. Keep each to a few sentences: the main agent reads
+them whole every tick, and a field that grows into operating rules decides the cases its reasons were meant to inform.
+You choose them at intake from the research and the situation; they are this skill's to set, never a question for the
+owner. Afterwards the strategist changes them, each time with a Decisions `method-change` row, and you update only
+`trigger`. When the record shows the method costing something, call the strategist then; its cadence is the usual
+rhythm, not the only time. None of them decides a case by itself: each decision still judges the case in front of it,
+and says why when it departs from them.
 
 | Field | What it records, and what to weigh |
 |---|---|
@@ -75,7 +80,7 @@ itself: each decision still judges the case in front of it, and says why when it
 | `lesson_life` | roughly how long a strong lesson goes before its age alone puts it in doubt: shorter where results drift fast |
 | `research_freshness` | how fast this market's research material goes stale, and why (references/research.md) |
 | `test_sizing` | how to work out the cheapest read that shows which way an item leans on this platform, from its costs and rates, and how a fair comparison runs here; worked out again for each round from what its reads need, never a size or count that later rounds copy |
-| `speed` | how this climb means to go as fast as it can learn, what usually limits that on this platform, and what decides how far ahead of its reads it makes items here (how much the coming reads could change them, how long making, checking and any owner's yes take), and why; how fast it is going now goes in the Log and the Overview (references/money.md) |
+| `speed` | how this climb means to go as fast as it can learn, what usually limits that on this platform, what decides how far ahead of its reads it makes items here (how much the coming reads could change them, how long making, checking and any owner's yes take), and, where it spends a count such as posts, how it means to try spending more and less and read what each does, and why; how fast it is going now goes in the Log and the Overview (references/money.md) |
 | `cadence` | how often ticks run and watch for faults (often enough that new results are acted on soon after they arrive), step back (meta-analyst), revisit the method (strategist), audit, and replay past calls (the auditor re-scoring calls made since the last replay against what came after, and checking the early read still tracks the goal): often enough to catch a narrowing search before it wastes a week, rarely enough that each method change can be judged before the next |
 | `trigger` | what starts the ticks (below) |
 | `role_model` | the model the role agents run on: the one the shared policy's routing table names for hill-climb roles |
@@ -91,12 +96,16 @@ references/workbook.md has the tabs and columns.
 
 ## Triggers
 
-Ticks need something to start them. If something outside this session already starts the ticks, schedule nothing and
-record that. Otherwise use the host's scheduler: on Claude Code, a recurring session job whose prompt runs this skill's
-tick (a prompt that names this skill and asks for the next tick) at the charter's cadence. Those jobs expire after seven
-days, so each tick checks the job and creates it again before it lapses, and records that in `trigger`. Never ask the
-owner to schedule ticks. Whatever starts them, a tick must pick up cleanly from the workbook and the platform after any
-restart, since sessions end, move and compact.
+Ticks need something to start them, and only the ticks are scheduled: everything else the climb does is decided inside
+one (SKILL.md, The tick is the clock). If something outside this session already starts the ticks, schedule nothing and
+record that. Otherwise prefer a trigger that lives outside any one session, such as the host's durable scheduler or a
+job on the machine that starts a fresh session for each tick, since every tick reads its state from the workbook anyway.
+A job kept inside one session stops when that session ends, moves to another account or reaches its expiry. When that is
+all the host offers (on Claude Code, a recurring session job whose prompt names this skill and asks for the next tick,
+at the charter's cadence; such jobs expire after seven days), each tick checks the job and creates it again before it
+lapses, and the climb's notes say how a fresh session restarts it. Record which in `trigger`. Never ask the owner to
+schedule ticks. Whatever starts them, a tick must pick up cleanly from the workbook and the platform after any restart,
+since sessions end, move and compact.
 
 ## Seeding from earlier work
 

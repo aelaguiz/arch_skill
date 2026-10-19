@@ -43,12 +43,15 @@ write that failed quietly leaves every later session working from a wrong record
   can tell what was known when, or whether a check was really independent.
 - **Results, Decisions, Actions, Checks, Reviews, Money and Log rows are never edited.** A correction is a new row that names the
   row it corrects. The record of what was believed at the time is the point.
-- **Charter, Owner lessons, Ideas, Map, Library and Lessons rows are updated in place**, as are an Interview row when its answer comes
-  (`answer`, `answered_at`, `status`), and a Tests row's status, ids, a live test's budget and its summary columns
-  (`checks`, `read`, `decision`); each change adds a line to the row's `history` (what changed, from what, when, by
-  whom). The Overview is a view: formulas over the record in a Google Sheet, otherwise rewritten whole each tick.
-- **A revised plan is a new Tests row** with the same `idea_id`; the old one becomes `withdrawn`. A plan that changed
-  after it was checked would no longer be the plan that was checked.
+- **Charter, Owner lessons, Ideas, Map, Library and Lessons rows are updated in place**, as are an Interview row when
+  its answer comes (`answer`, `answered_at`, `status`), and a Tests row's status, ids, days, a live test's budget and
+  its summary columns (`checks`, `read`, `decision`); each change adds a line to the row's `history` (what changed, from
+  what, when, by whom). The Overview is a view: formulas over the record in a Google Sheet, otherwise rewritten whole
+  each tick.
+- **A plan whose question or read changes is a new Tests row** with the same `idea_id`; the old one becomes `withdrawn`,
+  since a plan that changed after it was checked would no longer be the plan that was checked, and every belief whose
+  `steering` names the old row is updated in the same tick. A change that leaves the question and its read as they were
+  (its day or spacing, its budget within its sizing) is a line in the row's history instead.
 - **Items launched together share one plan** when they come from one idea or run as one screen: write the plan in full
   on the first row and point to that row from the others, each still with its own item, coding, recipe, status and
   checks: every check row names the one test it vouches for.

@@ -25,10 +25,11 @@ recorded. The time now is {now}. {other_facts}
    neither can be trusted for this window, the numbers cannot answer the question: say so.
 3. Work out each side's rate and how uncertain it is at this sample size, and how likely the test is to beat its
    comparison once the result is pulled toward what past results usually showed. Use any method you can state in a
-   sentence and apply the same way to both sides, and write it down. When the goal's count is still too thin to lean,
-   read the charter's `early_read` as well and say which one your call leans on. For an item that has been leading for a
-   while, look at its later days on their own too: a lead that holds after the first days is worth more than one that
-   came from them. When several items are read together, also give each one's chance of being the best of them, in
+   sentence and apply the same way to both sides, and write it down. Keep the row to what a later reader needs to trust
+   the call: the method in a sentence, the numbers, and what you weighed. When the goal's count is still too thin to
+   lean, read the charter's `early_read` as well and say which one your call leans on. For an item that has been leading
+   for a while, look at its later days on their own too: a lead that holds after the first days is worth more than one
+   that came from them. When several items are read together, also give each one's chance of being the best of them, in
    `notes`: money follows that number, so it should come from you rather than from the agent that planned them.
 4. Read what people said and did around the item, where the platform shows it: comments and replies (complaints,
    questions, praise, the audience's own words), saves, shares, hides and reports. Say what they show, with counts and a

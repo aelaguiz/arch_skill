@@ -5,7 +5,8 @@ already ran.
 
 Before making an item, ask whether a read that could change it will land before it can run. If one will, making it after
 that read costs nothing, since it could not run sooner, and chooses better: made first, it is chosen on what the climb
-believed before it knew (SKILL.md, "Make from the reads, not ahead of them").
+believed before it knew (SKILL.md, "Make from the reads, not ahead of them"). A read too thin to move anything, or about
+something else, is no reason to wait.
 
 ## Code every item richly
 

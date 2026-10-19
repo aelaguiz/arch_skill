@@ -19,9 +19,11 @@ deserve it (SKILL.md, "Make from the reads, not ahead of them"). When the owner 
 money in hand sets when to ask, never how slowly to spend. On most auction platforms a result costs more as one item's
 daily budget rises, so more money usually means more items rather than more per item. When what the climb spends is a
 scarce count rather than money (posts, sends, slots), how often to spend it is itself something to learn: try more and
-less and read what the audience does, within what `must_not_waste` says, rather than settling on a ration at intake.
-Work out each round's sizes from what its reads need (references/evidence.md) rather than copying what earlier tests
-were given: a size set for one question is rarely the cheapest read for the next.
+less and read what the audience does, within what `must_not_waste` says, rather than settling on a ration at intake. An
+item that does not spend the count (a post shown only to people who don't follow the account) is not rationed by it, and
+when the climb's own review names the pace as what limits learning, the pace changes in that tick rather than waiting
+for the next round's plans. Work out each round's sizes from what its reads need (references/evidence.md) rather than
+copying what earlier tests were given: a size set for one question is rarely the cheapest read for the next.
 
 Committed daily spend is the summed `daily_budget` of the tests that will spend soon: live ones, and checked ones about
 to launch. Set it by what the climb can learn from now, and when it sits well below that, say what is holding it back.

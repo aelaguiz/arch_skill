@@ -26,6 +26,8 @@ The time now is {now}. {other_facts}
   read; how much of what waits to run (planned, built or approved) was made before the reads it depends on; beliefs that
   moved while the money, tests and waiting items they bear on stayed as they were; the money each cost; and what limits
   learning now;
+- where the period's hours went: acting on reads, against rewriting the method, correcting rows and planning again; a
+  climb busy repairing its own record learns slower than its reads allow;
 - whether exploring is getting what it needs: the share of committed spend actually reaching untried options and how it
   has moved, against how much of the map is untried, how fast results drift, and what the charter's `exploring` says
   this climb means to keep reaching for; a share sliding while one option wins big is the usual way a climb gets stuck;

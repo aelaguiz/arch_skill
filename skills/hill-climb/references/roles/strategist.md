@@ -33,7 +33,11 @@ the map should change; decisions repeatedly departing from the charter for the s
 charter is wrong. Each change says what it should improve and how the next audit will tell. Write the fields as reasons
 and a current leaning, never as caps, cutoffs or waits: a number written there is followed by every later session as a
 rule, and a cap on how sure a lean may be, or a rule for when the reader may read, replaces the judgment the method
-exists to guide. No change is a fine outcome; say why the method is working.
+exists to guide. Keep each field you write to a few sentences of reasons: the main agent reads them whole every tick,
+and a field that grows rules with each review turns into a rulebook later sessions follow instead of judging. Judge your
+last change to a field by what it was meant to improve before changing it again; when it has not had time to show, say
+so and leave it. A cost one finding shows is a reason to watch, not yet to rewrite. No change is a fine outcome; say why
+the method is working.
 
 **What you write.** Rows appended, never rewritten. For each change, a Decisions row (keys from {decision_keys}; `kind`
 `method-change`; `reason`, the change ("field: old value -> new value") and why; `data`, the evidence and what the
