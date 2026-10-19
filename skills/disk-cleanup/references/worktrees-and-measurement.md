@@ -94,13 +94,17 @@ name="salvage/$(basename "$wt")-$(date +%Y%m%d)"
 git -C "$wt" fetch --quiet origin         # fresh remote refs for the check below
 git -C "$wt" add -A -- . ':(exclude)<nested-repo-path>'   # .gitignore keeps ignored files out
 tree=$(git -C "$wt" write-tree)
-commit=$(git -C "$wt" commit-tree "$tree" -p HEAD -m "salvage: unsaved work from $wt")
+commit=$(git -C "$wt" commit-tree "$tree" -p HEAD -m "salvage: unsaved work from $wt [skip ci]")
 # no commits yet (HEAD does not resolve): omit -p HEAD to build a root commit
-# clean checkout: commit=$(git -C "$wt" rev-parse HEAD)
+# clean checkout with unpushed commits: wrap HEAD so the pushed head still says [skip ci]:
+# commit=$(git -C "$wt" commit-tree "$(git -C "$wt" rev-parse 'HEAD^{tree}')" -p HEAD -m "salvage: unpushed commits from $wt [skip ci]")
+# (clean and already on the remote: nothing to push)
 git -C "$wt" rev-list --count "$commit" --not --remotes   # 0 means already on the remote
 git -C "$wt" push --no-verify origin "$commit:refs/heads/$name"
 git -C "$wt" ls-remote origin "refs/heads/$name"          # must print $commit
 ```
+
+Every salvage push lands a head commit whose message carries `[skip ci]`: a backup branch never needs CI, and on 2026-10-01 one cleanup's pushes started 475 CircleCI jobs across Cratejoy's repos ($48). Cratejoy's CircleCI configs also ignore `salvage/` branches.
 
 The checkout's deletion depends on that last line printing `$commit`. An empty
 `$commit`, a count computed from an empty value, a rejected push, or an empty

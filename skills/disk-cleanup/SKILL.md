@@ -158,7 +158,7 @@ output (RustAI). If an old checkout holds them, keep that checkout and report
 it.
 
 The salvage protects only what would otherwise be lost, so it needs no
-ceremony: one commit with hooks skipped, pushed to
+ceremony: one commit with hooks skipped and `[skip ci]` in its message, pushed to
 `salvage/<checkout-name>-<YYYYMMDD>` on the repository's own remote. Do not
 commit onto, push to, or rewrite the task's own branch (it may back an open
 PR), and do not delete branches. Keep
