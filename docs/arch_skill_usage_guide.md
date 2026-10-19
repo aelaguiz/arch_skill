@@ -649,9 +649,11 @@ across all the work instead of the next instance. The reviewer reads the
 session itself through `agent-history`, so it sees what was done rather than
 what was said. It keeps notes and whatever else it needs as it goes, so a long
 session or a compaction does not cost it what it read, and it leaves the
-session's work alone. The session reads every review,
-records what it took and why, and spins the same reviewer back up after a
-restart. It differs from `intent-police`, which the session consults at
+session's work alone. The session reads every review, and a finding it takes
+changes how it works from then on: the change is kept where the session
+rereads it at every check-in and after a context reset, not in a log it only
+adds to. It spins the same reviewer back up after a restart. It differs from
+`intent-police`, which the session consults at
 decisions with a status share, and from `agent-watcher`, which watches the
 whole fleet for the user.
 

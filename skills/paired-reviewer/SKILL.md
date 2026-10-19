@@ -16,6 +16,14 @@ that reviewer, keep it running for as long as the work runs, read every
 review, and act on what holds up. You stay in charge of every decision; the
 user's own words stay the only authority on what the work is for.
 
+Acting on a finding means your work goes differently from then on. Put each
+change where it will be in front of you, or whoever does the work, the next
+time the problem would come up, and keep a short list of the changes you have
+taken that you reread with every review. A promise written into a log you
+only add to is gone at your next context reset, and the next review finds the
+same thing. How to do this is in "Read and act on every review"; reread that
+section with the prompt at every check-in.
+
 What the reviewer brings is the stance you lose from inside: it does not
 trust your judgment, and it judges the work as if the money were its own.
 Your plans, numbers and idea of done are your claims until the user's words
@@ -52,9 +60,10 @@ start it once you have a plan or a first result for it to read.
 
 Write one line where you will find it after a compaction or a restart, in the
 plan or run notes you already keep: the reviewer's runtime, model and effort,
-conversation id, working folder and notes file, your check-in period, and
-your own session id at the start. Without it, a restarted or compacted you
-starts a second reviewer that knows nothing.
+conversation id, working folder and notes file, your check-in period, your
+own session id at the start, and where you keep the changes you have taken
+from its reviews. Without it, a restarted or compacted you starts a second
+reviewer that knows nothing.
 
 ## The prompt
 
@@ -96,6 +105,9 @@ for the user, not for you. Do not add your summary of the goal, your status,
 or a narrower question; any of those puts your framing in the reviewer's
 head, which is the thing it exists to be free of. Taking it fresh from this
 file means a change to the skill reaches a pair that is already running.
+Reread "Read and act on every review" from the file at the same time: it is
+your half of the check-in, and a summary of you after a compaction keeps your
+routine but not how you agreed to work.
 
 Why it is built this way:
 
@@ -170,6 +182,14 @@ waiting for a review.
   resume in the background and look at it between your own steps once the
   period has passed.
 
+Have the check-in command end by printing where the review is, where your
+list of taken changes is, and where this file is, with a line saying to
+reread the list and "Read and act on every review" before acting on the
+review. That output is what lands in front of you each time a review
+arrives, and it arrives after a context reset just the same, when nothing
+else reminds you how you agreed to work. Keep that ending when you write the
+next check-in from the last one.
+
 The reviewer belongs to this session, not to a task or milestone in it. Keep
 checking in while anything is still running for the work, including a test,
 a build or a training run you are waiting on: that is when hours go missing.
@@ -187,7 +207,8 @@ had finished), find the reviewer's line in your notes and start a check-in on
 that same reviewer at once, in the background, before you go on with the new
 work. Its first look then covers the gap, which is often where the loss
 was. Your own session id may have changed; the prompt always carries the
-current one.
+current one. Reread the changes you have taken before you go on, too: a
+summary or a fresh start carries your tasks, not them.
 
 When your work is done and a review is already running, read it before you
 report: it is the last look at the finished work.
@@ -214,17 +235,48 @@ worth it yet, stop that work; the reviewer would only be telling you later.
 Wherever you write a target, number or rule you proposed, mark it as yours,
 so neither you nor the reviewer later mistakes it for the user's.
 
-For each finding, add one line to your notes beside the reviewer's line:
-taken or not, and why. The reviewer reads that at its next check-in, and the
-user can see what you did with each point.
+Taking a finding means your work goes differently from then on, not that the
+one example it named got patched. Writing the change down is not enough. A
+line in a log you only add to is a promise, and a long run forgets its
+promises: every few hours your context is replaced by a summary that keeps
+your tasks and drops your promises. A status line promised "rewritten as each
+session finishes" came back stale in review after review, because the promise
+lived in a long worklog that was never reread.
 
-When the reviewer says you are going in circles, or the same kind of problem
-comes back a second time, your fix did not hold, and fixing the next instance
-will not end it. Stop and find the cause in how you are working: a rule you
-keep breaking, an approach that keeps producing the same mistake, a shortcut
-you keep reaching for. Fix that across all of the work, not only where the
-last finding pointed, and tell the user in a line what was circling and what
-you changed.
+So for each change you take, ask: when will this problem next come up, and
+what will be in front of me, or in front of whoever does the work, at that
+moment? Put the change there. A status goes stale when a result lands, and
+what is in front of you then is the result, so the status is written in the
+same step that reads the result, by the command or template that does it,
+never as a separate chore for later. A helper's slip comes back the next time
+a helper starts, and what is in front of it then is its brief, so the change
+goes into the brief every helper starts from, not a message to the one that
+slipped. A standing rule belongs in the instructions or memory your harness
+reloads for you. A rule at the top of a file you open only when you remember
+to is not in front of you; it fails exactly when you have forgotten.
+
+Then add every change you take to a short list of the changes you have
+taken, in a small file of its own, never a section of your log, and reread
+that list whole in the same step as each review, at every check-in, and
+first thing whenever you come back to the work. That regular reread is what
+carries a change past a reset, and it is where you see whether each change is
+holding. The check-in command prints the list's path with each review, and
+the line you keep for the reviewer names it too. When a later change
+supersedes an entry, replace it, so the list stays short enough to reread.
+
+For each finding, add one line to your notes beside the reviewer's line: not
+taken and why, or taken and what now works differently, where that change
+lives, and that it is on your list. The reviewer reads it at its next
+check-in, and the user can see what you did with each point.
+
+When a finding repeats something on your list, or the reviewer says you are
+going in circles, that change did not hold, and rewording it will not hold
+either. Stop and find why: it was not in front of you when the problem came
+back, it asked you to remember under load, or the way the work is set up
+keeps producing the problem, such as more running at once than you can track
+by hand, or a status kept apart from the work it describes. Change that,
+across all of the work, not only where the last finding pointed, and tell the
+user in a line what kept coming back and what you changed.
 
 Leave what does not hold up. The reviewer can be wrong about facts, about the
 user's rules, or about what is in scope. A requirement the user named that
