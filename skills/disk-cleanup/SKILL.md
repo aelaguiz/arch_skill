@@ -157,6 +157,15 @@ The one ignored class that is not a copy is model policies and training-run
 output (RustAI). If an old checkout holds them, keep that checkout and report
 it.
 
+Since October 20, 2026, Amir keeps RustAI's serving policies on external
+policy drives mounted at `/Volumes/rustai-policies`, because on an internal
+disk each cleanup deleted them and the next test downloaded them again. A
+cleanup never touches a policy drive, and a checkout's `policies`,
+`policies_blueprint`, `runs/policies` or `artifacts/cardabs` link into one
+holds no space on this disk, so it is no reason to keep that checkout. A
+policy still on an internal disk is one the convention moves off it: report
+it with its size for Amir's call rather than deleting it.
+
 The salvage protects only what would otherwise be lost, so it needs no
 ceremony: one commit with hooks skipped and `[skip ci]` in its message, pushed to
 `salvage/<checkout-name>-<YYYYMMDD>` on the repository's own remote. Do not
