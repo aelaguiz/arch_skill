@@ -76,7 +76,17 @@ like.
   numbers, no "the X" that points to another slide, plan, or conversation.
 - **Show the thing:** the real screen, ad, listing, chart of real data,
   diagram, or a labeled mock. "You should never use words to describe an
-  image. You should always put the image."
+  image. You should always put the image." He can't judge a mock until he
+  knows what it is and where a person meets it: a screen in our app, a page
+  on our website, a post or ad on someone else's site, an email. The picture
+  shows that by itself, drawn inside that place's own frame from captures of
+  it (a website page in a browser with the pokerskill.com address bar), and
+  the slide says it in words ("Mock · pokerskill.com · hand page"). A
+  concept with no home yet is not ready to mock: decide where it lives
+  first, from what it is for; that call is usually yours. Amir, October 23,
+  2026, of nine concept mocks drawn as free-standing pictures, which left
+  him to decide they belonged on our website: "I don't know if I'm looking
+  at a web page or an app or what the fuck these are."
 - **The answer first, then parts opened by section dividers.** The headlines,
   read alone in order, tell the whole story.
 - **Every slide is numbered,** cover and dividers included, so he can say
@@ -224,7 +234,10 @@ defining it keeps the word, and he trips on it again.
 - **Order for the reader, not for the work.** His worry or the answer first,
   a simple picture before the deep dive, a complicated system built up a
   layer per slide ("you need to ease me into the architecture"), cause before
-  effect, evidence before the proposal.
+  effect, evidence before the proposal. Walk him through a product
+  experience in the order a person meets it, from where they arrive (a
+  Google search, an ad, a push): "Walk me through it so I can see it as a
+  fucking website."
 - **Chain the headlines** by the order of the ideas, never by a word an
   earlier slide set up: he lands on slide 14 without slide 13, so "the same
   gap" names nothing. A total in the short version or on a divider
