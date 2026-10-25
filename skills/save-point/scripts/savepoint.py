@@ -302,7 +302,7 @@ def stop_one(p):
         scr = pane_read(s, pane, 25)
         if a['kind'] == 'ssh' and re.search(r'Resume this session with|To continue this session|To resume this session', scr):
             break
-        if re.search(r'Feedback drafts|Send feedback|d to discard', scr):
+        if re.search(r'Feedback drafts|Send feedback|d to discard|unsent feedback draft|Esc to discard', scr):
             keys(s, pane, 'esc')  # a feedback draft is never sent
             continue
         if re.search(r'stop tasks|Background work is running', scr):
