@@ -45,6 +45,7 @@ Other shipped skills are:
 - `browseros` — canonical preflight and operating contract to apply before direct BrowserOS MCP use; owns safe page reuse, provenance, profile and target identity, logins/SSO/OAuth placement in the Work window, connector discovery, proof, timeout recovery, secrets, and task-created browser cleanup
 - `chatgpt-web` — explicit ChatGPT web-provider/browser lane with optional attachments; writes each submission from the matching family in `references/consultation-templates.md` in the user's voice with sources attached whole (no verdict token, answer cap, scope fence, or SHA pin), defaults to a new clean conversation, continues an exact conversation only when requested, and defaults to Pro with Extended thinking unless the user specifies another mode or effort
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
+- `intuition-building` — shows what an intuition is, how to build one, what it is not, and when a plain rule is right, with like-this and not-like-that examples, for any agent writing guidance another agent will learn from
 - `herdr-helper` — higher-level Herdr workflows that safely reconstruct workspaces across sessions, preserve exact resumable agent continuity when available, verify the destination, and require confirmation before removing the source
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
 - `fal-ai-tools` — prompt-first fal.ai tool workflow for model discovery, schema and pricing lookup, file upload, background removal, media generation or editing, inference, polling, and result receipts using MCP when available and SDK/HTTP fallback otherwise
@@ -494,6 +495,10 @@ It puts critical instructions first, gives line and token review thresholds,
 and checks the full required reading against actual tool-output budgets.
 Detailed guidance lives in the skill's packaging reference; size targets never
 justify deleting essential constraints or accepting truncated instructions.
+
+### `intuition-building`
+
+Use when an agent is asked to teach or build an intuition, or is turning a request, correction, review finding, failed test or lesson into a skill, prompt, instruction file, memory or worker brief. It teaches what an intuition is, how to build one, what it is not, and when a plain rule is the right tool, through like-this and not-like-that examples. It is prompt-only; `skill-authoring` still owns packaging and `prompt-authoring` owns prompt structure.
 
 ### `herdr-helper`
 

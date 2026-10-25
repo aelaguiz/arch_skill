@@ -575,6 +575,15 @@ Examples:
 
 - `Use $skill-authoring to audit this skill package`
 
+### `intuition-building`
+
+Use when an agent has to teach another agent something: building an intuition, or turning a request, correction, review finding or failed test into lasting guidance. It shows what an intuition is, how to build one, what it is not, and when a plain rule is right, with like-this and not-like-that examples.
+
+Examples:
+
+- `Use $intuition-building to turn this correction into guidance for the agent`
+- `Use $intuition-building to check whether this skill teaches intuitions or rules`
+
 ### `figma-best-practices`
 
 Use when the user wants to create, audit, or repair a Figma file, component library, variable/token system, prototype, Dev Mode surface, Code Connect mapping, Make kit, Sites page, Buzz template, Slides deck, or MCP-readable design artifact. The skill is prompt-only and applies bundled Figma file-craft doctrine; use implementation or Figma automation skills instead when the task is building code from a design or operating the Figma UI.
