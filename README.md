@@ -489,12 +489,11 @@ expert's question with a demand to finish immediately.
 
 ### `skill-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a reusable agent skill package so it stays prompt-first, simple by default, generalized from user intent, anti-heuristic, and clear about peer boundaries, packaging, references, and validation.
+Use when a skill package needs to be created, restructured, re-scoped against sibling skills, slimmed, or validated: its trigger description, entry file, references, scripts and metadata, and whether it loads when it should and reaches the agent whole.
 
-It puts critical instructions first, gives line and token review thresholds,
-and checks the full required reading against actual tool-output budgets.
-Detailed guidance lives in the skill's packaging reference; size targets never
-justify deleting essential constraints or accepting truncated instructions.
+It explains how runtimes pick and load skills rather than listing rules, and
+hands what the skill teaches to `prompt-authoring` (prose) and
+`intuition-building` (judgment).
 
 ### `intuition-building`
 

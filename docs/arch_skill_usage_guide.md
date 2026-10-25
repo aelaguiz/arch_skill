@@ -565,11 +565,7 @@ responsibilities to the calling workflow.
 
 ### `skill-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a reusable agent skill package with precise triggers, lean packaging, and self-contained references.
-
-Apply its guidance on critical instructions first, line and token size review,
-selective reference loading, and verifying that all required instructions reach
-the agent without tool-output truncation.
+Use when a skill package needs to be created, restructured, re-scoped, slimmed, or validated: a description that decides when it loads, an entry file that puts what the agent most needs first, references loaded only when needed, and a check that it reaches the agent whole. What the skill teaches is written with `prompt-authoring` and `intuition-building`.
 
 Examples:
 

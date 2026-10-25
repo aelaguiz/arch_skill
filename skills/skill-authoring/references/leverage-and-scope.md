@@ -19,7 +19,7 @@ The first question is not "what files should this skill contain?" It is:
 
 > What repeated user problem will be solved better because this skill exists?
 
-Write 2-3 concrete user asks first. Good asks are specific enough that you can imagine the exact turn where the skill should trigger.
+Write a few concrete user asks first. Good asks are specific enough that you can imagine the exact turn where the skill should trigger.
 
 Examples:
 
@@ -65,7 +65,10 @@ Use ordinary docs when:
 ## Generalize from intent
 
 A skill should capture the durable move behind the user's examples, not freeze
-the first example into control flow.
+the first example into control flow. How to turn what someone said into
+guidance that carries to new cases is `$intuition-building`'s subject; this
+section is about the package not hardening examples into branches, inputs or
+scripts.
 
 Good generalization:
 

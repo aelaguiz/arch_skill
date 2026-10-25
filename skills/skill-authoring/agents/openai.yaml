@@ -1,7 +1,7 @@
 interface:
   display_name: "Skill Authoring"
-  short_description: "Create prompt-first reusable skills"
-  default_prompt: "Use $skill-authoring to design or repair this skill. Preserve user intent, put critical instructions first, apply its size and complete-loading guidance, and validate the resulting workflow."
+  short_description: "Assemble and check prompt-first skill packages"
+  default_prompt: "Use $skill-authoring to build, restructure, or check this skill package: a description that decides loading, an entry file that puts what the agent most needs first, references loaded only when needed, and a check that it triggers and reaches the agent whole. Build whatever the skill teaches with $intuition-building."
 
 policy:
   allow_implicit_invocation: true

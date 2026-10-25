@@ -128,7 +128,7 @@ A bot's description said it "always picks its bigger bet sizes."
 - **Like this:** "Try the guidance on a case nobody wrote down beforehand, and on one where the right move is different."
 - **Why:** Saved scenarios become the thing the guidance is written toward. A new case can't be fitted that way.
 
-## Describing a tool
+## Describing tools and things that change
 
 ### A label on a page
 
@@ -141,6 +141,13 @@ A bot's description said it "always picks its bigger bet sizes."
 An agent marked every slide it wrote so it would never overwrite the user's edits. The API changes two values on every read, so every slide looked edited and was held back.
 
 - **Like this:** "The point is not to overwrite what the user changed. What they change is a slide's words and pictures, so compare those with what you last wrote. Values the API changes on its own say nothing about them."
+
+### Today's details in a lasting skill
+
+Asked to make the monitoring skills aware of a new ad channel, an agent wrote in the current test's budget, launch date, ad count, campaign names and stop threshold.
+
+- **Like this:** "Name the channel, where its data lives, what to check beside the other channels, and any trap in the data (its installs also count under a lookalike source). This test's budget, dates and names live in the plan that owns the test."
+- **Why:** The skill outlives the test. Once the budget or the names change, the frozen details become confident, wrong instructions, and they crowd out what the reader needed: that the channel exists and how to check it.
 
 ## Pushing against a bad habit
 
@@ -178,6 +185,12 @@ A report had judged wins with four checks. The user asked, "What's a win?" A fir
 
 - **Like this:** "A win is when something we did met reality and we came out ahead: either reality rewarded it, or it taught us something true we can act on. It came from us, it is real (the thing itself changed, not a side number), and it leaves us stronger for what is next. So a bold experiment that failed clearly is a win, told as the lesson, and a good week that happened to us is weather."
 - **Why:** It replaced the checks instead of joining them, and it handles weeks that look nothing like the one it came from.
+
+### Cutting a messy section
+
+- **Not this:** deleting a long, messy section of a skill and putting one line of general advice in its place.
+- **Like this:** ask what the section was protecting, write that, and keep any concrete case from it that still teaches as an example.
+- **Why:** A section is often messy because it was handling something real. Deleting it without asking what loses that, and the next failure puts the mess back.
 
 ## Where a rule was the right call
 
