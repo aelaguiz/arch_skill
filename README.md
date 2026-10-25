@@ -47,6 +47,7 @@ Other shipped skills are:
 - `skill-authoring` — writes, edits, refactors, and audits prompt-first reusable agent skill packages
 - `intuition-building` — shows what an intuition is, how to build one, what it is not, and when a plain rule is right, with like-this and not-like-that examples, for any agent writing guidance another agent will learn from
 - `herdr-helper` — higher-level Herdr workflows that safely reconstruct workspaces across sessions, preserve exact resumable agent continuity when available, verify the destination, and require confirmation before removing the source
+- `save-point` — saves every agent session running in Herdr on this machine (live resume ids, unsent drafts, live work, ssh panes, detached jobs) in seconds, optionally stops them all, and resumes them from the save point, including across a computer restart
 - `figma-best-practices` — prompt-only Figma file-craft doctrine for creating, auditing, or repairing structurally honest Figma files, libraries, variables, components, Dev Mode prep, Code Connect mapping, and Make/Sites/Buzz/Slides/MCP readiness
 - `fal-ai-tools` — prompt-first fal.ai tool workflow for model discovery, schema and pricing lookup, file upload, background removal, media generation or editing, inference, polling, and result receipts using MCP when available and SDK/HTTP fallback otherwise
 - `transcribe-audio`: transcribes local recordings to verified plain-text files with live OpenAI transcription-model discovery, transport adaptation, ordered chunking, requested parallelism, and secret-safe API use
@@ -508,6 +509,10 @@ focus, attaching the exact resumable agent conversation when available,
 verifying both sides, and obtaining fresh confirmation before closing the
 source. Use `$herdr` directly for ordinary navigation, splitting, renaming, or
 same-session pane movement.
+
+### `save-point`
+
+Use when the user wants everything saved, stopped, or brought back: before restarting or shutting down the computer, when stopping all agents for a while, or when restoring afterwards. `scripts/savepoint.py save` records every Herdr pane and its agent's live resume id from the agent's own records (Claude Code's `sessions/<pid>.json`, Codex's open rollout file) in about two seconds; `stop` exits the agents in parallel and leaves alone any pane with typed text in its input box; `resume` brings them back a few at a time with live work first and puts unsent drafts back; `tmp-save` and `tmp-restore` clone `/tmp` across a restart. The skill teaches the judgment around the script: drafts belong to whoever typed them, remote sessions tied to an ssh connection die with it, what a stop takes with it and the note that brings it back. Use `$herdr-helper` to move one workspace between Herdr sessions and `$agent-watcher` to move one stalled session to an account with room.
 
 ### `figma-best-practices`
 
