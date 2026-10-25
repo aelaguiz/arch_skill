@@ -18,11 +18,11 @@ Each command prints a short summary. Read `save.json` when you need the detail.
 
 ## The usual path
 
-1. Run `save` and read its summary. Save is cheap and safe, so when he only wants a save point, this is the whole job.
+1. Run `save` and read its summary. Save is cheap and safe, so when he only wants a save point, this is the whole job. Note the save point path it prints, and pass that path to `stop`, `resume` and the tmp commands. Without a path they use `latest`, and any later save (a dry run, another session's) moves `latest`. Herdr sessions that weren't running hold no agents, so there is nothing in them to save. Herdr keeps their layouts regardless.
 2. Before anything stops, look at what the summary flagged: input boxes with text in them, ssh panes, sessions with live work, and your own session. The sections below say why each matters.
 3. If he asked to stop everything, or is restarting, run `stop`. For a restart, also run `tmp-save` in the background as soon as you know, because it takes minutes on a large /tmp. Then read [references/restart.md](references/restart.md) for what else a restart takes away.
 4. Tell him in a few lines what is saved, what you left alone and why, the one command that resumes you, and when it is safe to restart.
-5. To bring things back: after a restart, `tmp-restore` first, then `resume`. Then send a note to each session that had live work, and restart the detached jobs that need it.
+5. To bring things back: after a restart, `tmp-restore` first, then `resume`. Then send a note to each session that had live work, reattach the ssh panes (`resume` lists them with their commands), and restart the detached jobs that need it.
 
 ## What to keep in mind
 

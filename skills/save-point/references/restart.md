@@ -10,7 +10,7 @@ macOS empties `/private/tmp` when it starts. Agents keep real work there: every 
 
 ## Detached jobs die and only some come back
 
-`save.json` lists the processes nobody's terminal owns any more (`detached_jobs`), each with its command and folder, and whether launchd owns it. launchd's jobs (MCP servers, listeners, scheduled routines) come back on their own. The others need someone to start them again:
+`save.json` lists the processes nobody's terminal owns any more (`detached_jobs`), each with its command and folder, and whether launchd owns it. It can't tell which session started a job, because the job outlived its parent. The folder and command usually say: workers in a build's worktrees belong to that build's session, and a script under a session's scratchpad belongs to that session. Your own helpers are on the list too. launchd's jobs (MCP servers, listeners, scheduled routines) come back on their own. The others need someone to start them again:
 
 - **A job a session started for itself**, such as a dev server, a tunnel or a build's workers, is that session's to restart. In its resume note, say which of its jobs died, rather than starting them yourself and racing it.
 - **A standalone job that keeps something on schedule** is yours to restart, the same way it was started. Read its first lines or its docstring for the command. The Apple Ads on/off timer was one: it keeps a paid test switching campaigns on the right days. Check its log after the restart to confirm it ran.
