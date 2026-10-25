@@ -346,8 +346,9 @@ type new to you.
   changed and send it back fast.
 - Keep the feedback log as a file, newest round first: his words, your
   reading, what changed.
-- When a correction should change every future deck, teach it into this skill
-  as an intuition with examples, using `$skill-authoring`.
+- When a correction should change every future deck, fold it into what this
+  skill already teaches, as an intuition with examples, using
+  `$intuition-building`.
 
 ## References
 

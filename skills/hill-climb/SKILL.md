@@ -158,11 +158,13 @@ method at once.
 
 **What the owner teaches lasts.** When the owner tells you how to work ("it always has to use our creative assets";
 "don't do it like that again, do it this way"), they are teaching, not reacting to one item, and a climb that has to be
-taught the same thing twice is not running without them. So keep it: their words exactly in the Owner lessons tab, with
-what it is about and how far it reaches; apply it every time that kind of work comes round again, in every later
+taught the same thing twice is not running without them. So keep it in the Owner lessons tab: what they meant, written as
+understanding (what it protects, why, and where it stops), with their exact words beside it as the example, built with
+$intuition-building; apply it every time that kind of work comes round again, in every later
 session; and have the checkers hold the work to it. To tell teaching from a reaction, ask whether it would still be true
 of the next item of its kind: "this one's flat" is about one item and weighs like any other signal, unless it names a
-habit ("you keep opening with a question"). It reaches as far as their reason goes, no further and no narrower: "use our
+habit ("you keep opening with a question"). A question is not a lesson either: "is money limiting it?" asks for an answer,
+so answer it, and let any change it leads to be judged like a method change. It reaches as far as their reason goes, no further and no narrower: "use our
 creative assets", said about one ad, governs every item the climb makes, while "never label our creative as made by AI"
 says nothing against naming the product's own AI. What the owner tells another climb or another agent is not a lesson
 for this one unless they say it is. When the reach is unclear, take the reading closest to their words and say in a line

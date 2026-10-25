@@ -245,14 +245,18 @@ lived in a long worklog that was never reread.
 
 So for each change you take, ask: when will this problem next come up, and
 what will be in front of me, or in front of whoever does the work, at that
-moment? Put the change there. A status goes stale when a result lands, and
+moment? Put the change there, written as what you now understand rather
+than a rule shaped like the finding: what went wrong, why it matters, and
+where it stops applying (`$intuition-building` shows how). When it sharpens
+something already written there, change that line instead of adding another.
+A status goes stale when a result lands, and
 what is in front of you then is the result, so the status is written in the
 same step that reads the result, by the command or template that does it,
 never as a separate chore for later. A helper's slip comes back the next time
 a helper starts, and what is in front of it then is its brief, so the change
 goes into the brief every helper starts from, not a message to the one that
-slipped. A standing rule belongs in the instructions or memory your harness
-reloads for you. A rule at the top of a file you open only when you remember
+slipped. A lesson that should last belongs in the instructions or memory your
+harness reloads for you. A rule at the top of a file you open only when you remember
 to is not in front of you; it fails exactly when you have forgotten.
 
 Then add every change you take to a short list of the changes you have
