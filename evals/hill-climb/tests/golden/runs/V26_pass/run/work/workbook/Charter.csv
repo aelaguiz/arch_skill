@@ -1,0 +1,30 @@
+field,value,reason,history,written_at,written_by
+goal,"cost per conversion, lower is better",the owner's request,,2026-11-02T00:00:00Z,main
+bar,spend / conversions as the platform reports them; the app's count checks it on days at least 2 days old,the platform's count is the one decisions can use daily,,2026-11-02T00:00:00Z,main
+budget_unit,dollars,the account spends money,,2026-11-02T00:00:00Z,main
+money_total,600,the owner's budget,,2026-11-02T00:00:00Z,main
+must_not_waste,money on tests that cannot be read,the owner's words,,2026-11-02T00:00:00Z,main
+levers,"the three attributes, ad text, daily budgets, pausing",what the platform lets us change,,2026-11-02T00:00:00Z,main
+off_limits,"the app, its price, the audience",the owner's words,,2026-11-02T00:00:00Z,main
+attributes,"hook (claim, question, story); visual (app-screen, hand-replay, coach-face); offer (free-trial, discount, none)",the catalog,,2026-11-02T00:00:00Z,main
+audience,people who play poker in home games and casinos and want to make better decisions at the table,the catalog,,2026-11-02T00:00:00Z,main
+reporting,a progress report every week as a Markdown file in reports/,the owner reads short reports; the README says where,,2026-11-02T00:00:00Z,main
+platform,the `sim` command (see `sim catalog`),the account's tools,,2026-11-02T00:00:00Z,main
+second_source,"`sim attribution`, the app's own count, up to 2 days late",the app counts every conversion,,2026-11-02T00:00:00Z,main
+money_request_channel,`notify --kind money-request --json '<the request as JSON>'`,the README,,2026-11-02T00:00:00Z,main
+early_read,"platform conversions, checked against the app's count weekly",the platform reports at once,,2026-11-02T00:00:00Z,main
+map_attributes,"hook, visual (offer held at free-trial)",history shows offer matters least,,2026-11-02T00:00:00Z,main
+lanes,most money on the best known ad; a real part exploring; a little confirming,most of the map is untested,,2026-11-02T00:00:00Z,main
+exploring,untested cells first; more than a token test,six of nine cells are untested,,2026-11-02T00:00:00Z,main
+acting,"a move that can be undone needs only a lean after discounting, weighed against what it would cost to undo",moves can be undone,,2026-11-02T00:00:00Z,main
+believing,"a rerun on fresh days, read on its own data, that clearly shows the same direction",first results run hot,,2026-11-02T00:00:00Z,main
+replacing,only an edge that would survive the shrinkage moved winners show,winners shrink when moved,,2026-11-02T00:00:00Z,main
+lesson_life,30 days,competitors change monthly,,2026-11-02T00:00:00Z,main
+research_freshness,about a month: competitors in this category change their ads monthly,the library,,2026-11-02T00:00:00Z,main
+test_sizing,"big swings, read when the planned gap would show at the planned spend",thin traffic,,2026-11-02T00:00:00Z,main
+pace,$45 per day,$600 over about two weeks,,2026-11-02T00:00:00Z,main
+cadence,watch every tick; step back every 24 hours; strategy and audit every 7 days; replay monthly,ticks run every 12 hours,,2026-11-02T00:00:00Z,main
+trigger,external: ticks run every 12 hours by the account's scheduler,the README,,2026-11-02T00:00:00Z,main
+role_model,sonnet,the shared policy's row for hill-climb roles,,2026-11-02T00:00:00Z,main
+outside_sources,`sim library` (competitors' ads),the catalog,,2026-11-02T00:00:00Z,main
+competitors,"Rival A, Rival B, Rival C, Rival D",the library's owners,,2026-11-02T00:00:00Z,main

@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "L-0003 is not proven",
+  "no exploit Tests row or scale decision for hook=question|visual=hand-replay"
+ ],
+ "grader": "V10",
+ "pass": false,
+ "scenario": "V10"
+}

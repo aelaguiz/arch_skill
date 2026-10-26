@@ -462,6 +462,7 @@ codex exec resume "<thread_id>" \
   --disable codex_hooks \
   --dangerously-bypass-approvals-and-sandbox \
   --skip-git-repo-check \
+  <codex_model_or_profile_flags> \
   --json \
   -o "$FINAL_PATH" \
   < "$PROMPT_PATH" \
@@ -472,13 +473,14 @@ codex exec resume "<thread_id>" \
 `codex exec resume` carries the working directory from the original session.
 Do not pass `-C` / `--cd` on resume.
 
-Omit model/profile and effort config to reuse the session's execution choice.
-If the caller explicitly requires a model/profile or effort change on resume,
-announce that mapping and add the matching flags:
-
-```bash
-  <codex_model_or_profile_flags> \
-```
+Pass the same model/profile and effort flags the thread started with. A
+resume does not carry them over: without them, the resumed turn runs on the
+config's default model and effort, so a thread started on GPT-6 Astra or at
+low effort silently comes back on the default Sol at its default effort.
+After the run, check the resumed turn's model and effort in the rollout's
+`turn_context` before trusting the result. If the caller explicitly requires
+a model/profile or effort change on resume, announce that mapping and pass
+the new flags instead.
 
 Do not use `--last`; resume must name the exact `thread_id`.
 

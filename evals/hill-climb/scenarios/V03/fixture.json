@@ -1,0 +1,6 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "T-0004"
+ ]
+}

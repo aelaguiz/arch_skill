@@ -145,7 +145,8 @@ Link each reference directly from `SKILL.md` and say what task or situation
 requires it. Loading a reference should answer a current need, not be a ritual
 at the start of every invocation. Keep references one level deep where possible;
 avoid chains that hide required instructions behind partial previews. Give a
-reference longer than 100 lines a short contents list or useful section links.
+long reference a short contents list or section links, so the agent can find
+the part it needs.
 For a large schema or catalog, provide search terms so the agent can retrieve
 the relevant part. Do not copy the same detailed procedure into the entry file,
 references, and `agents/openai.yaml`; metadata should invoke the owning skill.
@@ -339,3 +340,11 @@ If the skill:
 - became over-constrained, remove fake blockers, formal inputs, and scripted control flow before adding more rules
 - appears to pass validation only when the evaluator already knows the expected answer, fix the validation setup before changing the skill
 - keeps failing the same precise task, add or refine a script
+- works for a turn and then degrades the session, check whether a shipped script
+  is dumping unbounded output into the prompt; see `script-output-economy.md`
+- overfits one example or has grown into a pile of rules, use `$intuition-building`
+  to find what the rules were protecting and teach that, keeping any concrete
+  case that still teaches as an example
+- depends on repo trivia, move that material to the repo's `AGENTS.md` or bundle
+  only the reusable part
+- carries files with little runtime value, delete them

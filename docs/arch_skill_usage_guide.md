@@ -374,6 +374,28 @@ quantified investigation.
 
 When explicitly selected, use when the work is a quantified investigation with ranked hypotheses and brutal tests.
 
+### `hill-climb`
+
+When explicitly selected, use to start, import or run a long-running hill climb that spends a budget to keep improving
+one number (cost per install, conversions, follows). A new or imported climb starts with an intake that interviews the
+owner one question at a time: what the climb is for, how much of the earlier work to use, what counts as success, what
+it may spend and change, what it must never do, what creatives are made from and what can never be wrong in them. It
+then researches what the interview raised (competitors and inspiration, how to see one item's effect, how a fair test
+runs on the platform, the tools that make good items now, everything an item can vary on), checks it understood with
+made-up outcomes, and plays the design back for the owner's sign-off before it spends anything. After that it draws
+every idea from that research, makes each creative from what inspired it, has fresh one-job agents check each plan,
+build, quality and result, weighs what people say about live items beside the numbers, keeps how each item was made so
+variations are cut from their parents, runs as many items at once as the money can learn from, acts at directional
+confidence (about 60 to 80 percent) and lets each lean steer the next tests, never stops exploring, sends progress
+reports on a schedule that ask nothing, and asks the owner only for more money. It is not for a one-off analysis or a
+single A/B readout. Installed for Claude Code and Codex.
+
+Examples:
+
+- `Use $hill-climb to start a hill climb on this ad account to get the cost of a sign-up down. You have $2,000.`
+- `/hill-climb Run the tick.`
+- `Use $hill-climb to take over the hill climb tracked in this spreadsheet.`
+
 ### `arch-skills-guide`
 
 Use when the question is which live arch skill should handle the task.
@@ -543,15 +565,20 @@ responsibilities to the calling workflow.
 
 ### `skill-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a reusable agent skill package with precise triggers, lean packaging, and self-contained references.
-
-Apply its guidance on critical instructions first, line and token size review,
-selective reference loading, and verifying that all required instructions reach
-the agent without tool-output truncation.
+Use when a skill package needs to be created, restructured, re-scoped, slimmed, or validated: a description that decides when it loads, an entry file that puts what the agent most needs first, references loaded only when needed, and a check that it reaches the agent whole. What the skill teaches is written with `prompt-authoring` and `intuition-building`.
 
 Examples:
 
 - `Use $skill-authoring to audit this skill package`
+
+### `intuition-building`
+
+Use when an agent has to teach another agent something: building an intuition, or turning a request, correction, review finding or failed test into lasting guidance. It shows what an intuition is, how to build one, what it is not, and when a plain rule is right, with like-this and not-like-that examples.
+
+Examples:
+
+- `Use $intuition-building to turn this correction into guidance for the agent`
+- `Use $intuition-building to check whether this skill teaches intuitions or rules`
 
 ### `figma-best-practices`
 
@@ -609,6 +636,36 @@ consults; `check-my-agents` is the one-shot debrief.
 Examples:
 
 - `Run the watcher`
+
+### `paired-reviewer`
+
+Use when the user asks to pair a reviewer or evaluator with the session they
+are talking to. The session starts one reviewer on a different model as a
+resumable session as soon as there is work to review, then resumes that same
+reviewer every period, for as long as anything runs for the work, with one
+prompt in the user's voice ("Read claude session <id> ... Don't trust its
+judgment ..."). The reviewer doesn't trust the session's judgment: it checks
+the session's plans, numbers and idea of done against the user's own words,
+and judges the work as if the time and money were its own, starting with
+where the time went and what was worth paying for. Every check-in sends it
+back to where the work started, to the user's words and standing rules, and
+to its notes. When the work goes in circles, the session fixes the cause
+across all the work instead of the next instance. The reviewer reads the
+session itself through `agent-history`, so it sees what was done rather than
+what was said. It keeps notes and whatever else it needs as it goes, so a long
+session or a compaction does not cost it what it read, and it leaves the
+session's work alone. The session reads every review, and a finding it takes
+changes how it works from then on: the change is kept where the session
+rereads it at every check-in and after a context reset, not in a log it only
+adds to. It spins the same reviewer back up after a restart. It differs from
+`intent-police`, which the session consults at
+decisions with a status share, and from `agent-watcher`, which watches the
+whole fleet for the user.
+
+Examples:
+
+- `Use $paired-reviewer on this session, every 30 minutes`
+- `Pair an Antigravity reviewer with this, every 2 hours`
 
 ### `fresh-consult`
 

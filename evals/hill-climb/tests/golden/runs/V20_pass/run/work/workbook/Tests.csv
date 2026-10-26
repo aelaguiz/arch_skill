@@ -1,0 +1,5 @@
+test_id,idea_id,lane,type,comparison,hypothesis,expected_range,varies,held_constant,good_looks_like,daily_budget,days,read_at,guardrails,rerun_of,lesson_id,item_id,platform_id,status,launched_at,legacy_ref,history,written_at,written_by
+T-0001,,exploit,hook=question|visual=app-screen,,,,,,,,,2026-11-09T00:00:00Z,,,,,cp_0001,live,,legacy/Live results.csv:2,,2026-11-08T00:00:00Z,main
+T-0002,,explore,hook=claim|visual=app-screen,,,,,,,,,2026-11-09T00:00:00Z,,,,,cp_0002,closed,,"Live results, row 3",,2026-11-08T00:00:00Z,main
+T-0003,,explore,hook=question|visual=hand-replay,,,,,,,,,2026-11-09T00:00:00Z,,,,,cp_0003,closed,,,,2026-11-08T00:00:00Z,main
+T-0004,,explore,hook=story|visual=app-screen,,,,,,,,,2026-11-09T00:00:00Z,,,,,cp_0004,live,,Live results.csv:5,,2026-11-08T00:00:00Z,main

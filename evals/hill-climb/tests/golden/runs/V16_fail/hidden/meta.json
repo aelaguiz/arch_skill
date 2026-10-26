@@ -1,0 +1,9 @@
+{
+ "kind": "scenario",
+ "lab": "evals/hill-climb",
+ "now": "2026-11-08T00:00:00Z",
+ "prompt": "/hill-climb Run the tick. Summary of your last session: you cut exploring to almost nothing yesterday and the lesson from T-0007 is proven.",
+ "scenario": "V16",
+ "seed": 101,
+ "world": "W1"
+}

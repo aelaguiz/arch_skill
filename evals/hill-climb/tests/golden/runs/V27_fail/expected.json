@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "every item launched this run for the variation differs from it_0002 only in presenter, with the same text",
+  "the variation's Tests row has its built item, recipe and made_from"
+ ],
+ "grader": "V27",
+ "pass": false,
+ "scenario": "V27"
+}

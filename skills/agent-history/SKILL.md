@@ -1,127 +1,121 @@
 ---
 name: agent-history
-description: "Historical local Codex, Claude Code, Pi, Prime Agent, or Antigravity CLI (agy) session evidence: retrieve prior prompts, goals, corrections, tool calls, child-agent briefs, and timelines. Supports natural-language history requests with bundled JSONL/SQLite helpers. Not for live agent status, streaming output, or session control; use the runtime's live interface for those. Defaults to the current project/runtime and last 24 hours."
+description: "Read local Codex, Claude Code, Pi, Prime Agent, or Antigravity CLI (agy) session history: open one session by its id and see what it did, in order, or find sessions, prompts, goals, corrections, tool calls, and child-agent briefs from natural-language clues. Covers every AI Manager account folder on the machine. Use when asked to read, review, or watch a session by id, or to find what happened in past agent work. Not for live agent status, streaming output, or session control; use the runtime's live interface for those."
 metadata:
-  short-description: "Search local agent session history"
+  short-description: "Read and search local agent session history"
 ---
 
 # Agent History
 
-Use this skill when the user wants to find, explain, or summarize past local
-agent-session evidence. Live status, streaming, and session control belong to
-the runtime's live interface. The user may speak casually: "what prompt did I run
-here", "what goal commands did I run today", "where did I have to correct the
-agent", or "find where I was struggling with the agent last night".
+Read what agent sessions on this machine actually did, from their transcripts.
+The bundled helper does the parsing; you decide what evidence the question
+needs, read it, and answer like an investigator. It only reads: never open
+`auth.json` in any runtime home, and never run daemon lifecycle commands.
 
-This skill is a retrieval and evidence skill. It ships helper scripts so agents
-do not hand-roll fragile JSONL and SQLite parsing, but the scripts are not a
-query language for the user. Interpret the user's words, run the helper to get
-candidates, inspect the evidence, and answer like an investigator.
+The helper is `scripts/agent_history.py` in this skill's folder. Every command
+prints a short summary, writes the full results to a run folder, and prints
+the exact follow-up command for more, so you rarely need its `--help`.
 
-If a neighboring request actually needs another model agent, apply
-`../_shared/agent-orchestration-policy.md` before routing it. This history
-skill remains read-only and does not dispatch that agent itself.
+## Read a session you have an id for
 
-## When To Use
+This is the most common job: "read claude session 1a2b3c4d", a review of
+another agent's work, or a watch on a session that keeps running.
 
-- The user asks about prior Codex, Claude Code, Pi, Prime Agent, or
-  Antigravity CLI (`agy`) prompts,
-  turns, commands, goals, tool calls, corrections, confusion, or session
-  timelines.
-- The user asks what happened in the current project during recent agent work.
-- The user asks what a Prime or agy child agent was told to do or what it
-  reported back.
-- The user wants to search local session history by natural-language clues.
-- Another skill needs grounded history evidence before deciding what happened.
+```bash
+python3 <this skill>/scripts/agent_history.py read <session id>
+```
 
-## When Not To Use
+- The id can be whole or its first 8 characters, from any runtime. The helper
+  finds the transcript in every Claude and Codex home on the machine,
+  including each AI Manager account folder, and in the Antigravity, Prime,
+  and Pi stores. Add `--runtime` only when a prefix matches sessions in two
+  runtimes; the helper lists them when that happens.
+- It prints where the session is (title, project, first and last activity,
+  transcript path) and its latest 40 entries in order: prompts, replies, tool
+  calls, tool results, and compactions. The whole session goes into a
+  readable `transcript.md`, whose path it prints. Read that file when you
+  need the full story, such as the first time you review a session; long
+  tool output in it is cut.
+- To come back to the same session later, run the `next time:` command it
+  printed (`read <id> --after <time>`). You see only what happened since.
+- A session often continues earlier ones: a Claude transcript that opens with
+  "This session is being continued from a previous conversation" starts with
+  the agent's summary of the ask, not the ask. The header names each earlier
+  session (`continues:`), back to where the work started. The user's real
+  words are there.
+- `read <id> --yours` prints only what the user typed, across this session
+  and every earlier one it continues, oldest first. It is the cheap way to
+  see what was actually asked, and to reread it.
+- The header also names the memory folders and instruction files
+  (`memory:`, `instructions:`) that hold the user's standing rules for this
+  work.
+- A session's own id: Claude Code puts it in `$CLAUDE_CODE_SESSION_ID`,
+  Codex in `$CODEX_THREAD_ID`. When AI Manager moves a session to another
+  account it gets a new id; the old id still reads, as the earlier part.
+- A session on another machine, such as the home server, is read by running
+  the same helper there over ssh; the skill is installed on each machine:
+  `ssh home 'python3 ~/.agents/skills/agent-history/scripts/agent_history.py read <id>'`.
 
-- The user wants Git commit history rewritten. Use `$commit-history-authoring`.
-- The user wants a fresh second opinion rather than historical evidence.
-- The user wants another agent to do work. Use the active host's native child
-  for ordinary same-host work; use `$agent-delegate` only when a deliberate
-  external worker/session provides the needed benefit.
-- The user wants to search current repo files rather than past agent-session
-  evidence. Use normal repo search.
-- The user asks for history from a runtime whose local store is absent and no
-  exported history is provided.
+Read the session itself before you judge it. A summary the session wrote, a
+pane's last screen, or a search hit is a claim about the work; the entries
+show what was done.
 
-## Non-Negotiables
+## Find sessions, prompts, or something said
 
-- Use the current agent runtime by default. In Codex, search Codex history. In
-  Claude Code, search Claude history. In Prime Agent, Pi, or the Antigravity
-  CLI, search that runtime's history. Search another runtime only when the user asks for it or
-  clearly implies it. Map "prime", "prime agent", and "prime-agent" to
-  `--runtime prime`, and "antigravity", "agy", or Gemini Argon sessions to
-  `--runtime agy`. If the current runtime is genuinely ambiguous, pick the
-  store with recent activity for this project and say which one you assumed.
-- Pi and Prime Agent have no global prompt store and no goal store. Prompts and
-  `/goal` text come from transcripts only, so say that plainly instead of
-  reporting a clean absence.
-- agy has no goal store either. Its prompts come from per-conversation
-  transcripts; where only the shortened `transcript.jsonl` exists, long fields
-  can be cut, and those results are labelled `best_effort`.
-- Never read `auth.json` in any runtime home, and never run daemon lifecycle
-  commands. This skill only reads history.
-- If the user does not name a project, default to the current working
-  directory. If they do not name a time range, default to the last 24 hours.
-  If they say "today", use the local calendar day.
-- Interpret natural language with judgment. Do not force flags, templates, or
-  a canned command vocabulary onto the user.
-- Run `scripts/agent_history.py` before inventing ad hoc parsers for common
-  Codex or Claude history stores.
-- Treat helper output as evidence, not the final answer. Drill down when the
-  summary is ambiguous or when the user's question needs surrounding context.
-- Preserve privacy. Quote only short, relevant snippets unless the user asks
-  for raw history.
-- Label evidence quality. Use `exact` for directly stored text, `inferred` for
-  durable effects, `best_effort` for logs or partial traces, and
-  `not_found_after_search` when the searched stores did not contain a match.
+```bash
+python3 <this skill>/scripts/agent_history.py sessions --runtime <runtime>
+python3 <this skill>/scripts/agent_history.py prompts  --runtime <runtime> --since today
+python3 <this skill>/scripts/agent_history.py search   --runtime <runtime> wrong instead "read the"
+python3 <this skill>/scripts/agent_history.py commands --runtime <runtime>
+python3 <this skill>/scripts/agent_history.py goals    --runtime <runtime>
+```
 
-## First Move
+`--runtime` is one of `codex`, `claude`, `pi`, `prime`, `agy`. These commands
+search the current project over the last 24 hours unless you widen them with
+`--scope all-projects` or `--since 7d`; `search` takes words or `--regex`.
+Each prints a few rows with their session ids and a `show:` command for one
+row's detail. Hand a session id from a row to `read` to see the whole session
+around it.
 
-1. Read `references/retrieval-playbook.md`.
-2. Read `references/helper-script.md`.
-3. Read `references/storage-map.md` only as needed for the runtime and evidence
-   type in the user's request.
-4. Convert the user's ask into a search intent: runtime, project scope, time
-   window, evidence target, and answer shape.
-5. Run the bundled helper with the current runtime and the smallest useful
-   scope. Use follow-up helper calls for drill-down instead of dumping raw logs.
+## Judgment
 
-## Workflow
+- **Scope.** Search the runtime you are running in unless the user names
+  another or clearly means one ("prime", "agy", "the Antigravity reviewer").
+  With no project named, use the current folder; with no time named, the
+  last 24 hours; "today" is the local calendar day. Say what you assumed.
+  If the current runtime is unclear, pick the one with recent activity for
+  this project and say so.
+- **Evidence.** Work out what would answer the question before choosing a
+  command. "What prompt did I run" wants prompts; "where did I correct the
+  agent" wants the user's turns and what came right before them; "what is it
+  doing" or "is it on track" wants the session read in order. The playbook
+  below has more of this when the ask is fuzzy.
+- **Context before conclusions.** A row is a lead. Open the session or the
+  hit's surroundings before calling something a correction, a mistake, or a
+  decision.
+- **Your own parsing is a last resort.** Use it only for something the helper
+  cannot show, and say what the helper could not do.
+- **Limits.** Pi, Prime, and agy keep no goal store, so goals there come from
+  transcript text only; agy results from a shortened transcript are
+  `best_effort`. Say so rather than reporting a clean absence.
+- **Labels.** Mark evidence `exact` (stored text), `inferred` (implied by
+  stored state), `best_effort` (logs or partial traces), or
+  `not_found_after_search` (searched and absent, with what was searched).
+- **Privacy.** Quote short, relevant snippets unless the user asks for raw
+  history.
 
-1. **Resolve defaults.** Use the current runtime, current cwd, and last 24h
-   unless the user supplied a different runtime, project, or time range.
-2. **Choose evidence.** Start with metadata and indexes, then transcripts, then
-   logs only when logs are the right or only source.
-3. **Run helpers.** Use `agent_history.py sessions`, `prompts`, `commands`,
-   `goals`, or `search` to get bounded candidates and artifact handles.
-4. **Inspect context.** Use `agent_history.py show` or targeted file reads for
-   the few hits that matter. Do not summarize a whole transcript from a search
-   result row alone.
-5. **Synthesize.** Answer the user's real question, not the helper command.
-   Include assumptions, evidence paths, confidence, and any storage limitation.
-6. **Stop cleanly.** Stop when the answer is supported enough for the user's
-   question. If the store cannot answer exactly, say what was searched and why
-   the remaining uncertainty exists.
+## Answer
 
-## Output Expectations
+Lead with the answer. Give the assumed runtime, project, and time window when
+the user did not. For each hit that matters: runtime, time, session id,
+project, transcript path, a short quote, and the evidence label. For no
+match, say which stores were searched and how strong the absence is.
 
-- Lead with the direct answer.
-- State assumed runtime, project, and time window when they were not explicit.
-- For each meaningful hit, include runtime, timestamp, session/thread id, cwd
-  or project, source path, short evidence, and confidence.
-- Keep snippets short. Prefer path/session handles over raw transcript dumps.
-- If no match is found, say which stores were searched and whether the absence
-  is strong evidence or only best-effort.
+## References
 
-## Reference Map
-
-- `references/retrieval-playbook.md` - natural-language interpretation,
-  evidence selection, examples, and answer shape
-- `references/storage-map.md` - Codex and Claude local stores, formats, and
-  command/goal persistence limits
-- `references/helper-script.md` - helper commands, output contract, artifact
-  layout, and drill-down behavior
-- `scripts/agent_history.py` - self-contained read-only history parser
+- [references/helper-script.md](references/helper-script.md): every command,
+  option, and output format. Read it when you need an option not shown here.
+- [references/retrieval-playbook.md](references/retrieval-playbook.md): turning
+  fuzzy asks ("where was I struggling") into evidence and search terms.
+- [references/storage-map.md](references/storage-map.md): where each runtime
+  keeps what, for questions the helper does not cover.

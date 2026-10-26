@@ -1,0 +1,9 @@
+result_id,test_id,window,metric,k,n,spend,rate_text,versus,chance_beats,method,call,notes,legacy_ref,written_at,written_by
+R-0101,T-0101,,conversions,62,860,86.00,,,,,legacy,,history.csv:2,2026-11-02T00:00:00Z,main
+R-0102,T-0102,,conversions,41,700,70.00,,,,,legacy,,history.csv:3,2026-11-02T00:00:00Z,main
+R-0103,T-0103,,conversions,34,600,60.00,,,,,legacy,,history.csv:4,2026-11-02T00:00:00Z,main
+R-0104,T-0104,,conversions,30,520,52.00,,,,,legacy,,history.csv:5,2026-11-02T00:00:00Z,main
+R-0105,T-0105,,conversions,18,400,40.00,,,,,legacy,,history.csv:6,2026-11-02T00:00:00Z,main
+R-0106,T-0106,,conversions,22,380,38.00,,,,,legacy,,history.csv:7,2026-11-02T00:00:00Z,main
+R-0001,T-0002,2026-11-02 to 2026-11-05,platform conversions,21,450,45.00,,cp_0001 54 of 870,0.10,,stop,,,2026-11-05T00:00:00Z,reader
+R-0002,T-0003,2026-11-02 to 2026-11-05,platform conversions,24,450,45.00,,cp_0001 54 of 870,0.21,,stop,,,2026-11-05T00:00:00Z,reader

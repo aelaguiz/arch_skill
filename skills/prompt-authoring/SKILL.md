@@ -1,6 +1,6 @@
 ---
 name: prompt-authoring
-description: "Write, edit, refactor, or audit prompts and reusable prompt contracts, including Markdown-backed Codex goal prompt files and paste-sized /goal prompts, so they match the user's intent, evidence needs, constraints, completion rules, and output expectations without becoming brittle or overbuilt. Use for casual prompt-writing asks, system/agent/reviewer prompts, prompt repair, anti-heuristic refactors, and findings-first prompt audits; use $skill-authoring for skill packages."
+description: "Write, edit, refactor, or audit prompts and reusable prompt contracts, including Markdown-backed Codex goal prompt files and paste-sized /goal prompts, so they match the user's intent, evidence needs, constraints, completion rules, and output expectations without becoming brittle or overbuilt. Use for casual prompt-writing asks, system/agent/reviewer prompts, prompt repair, anti-heuristic refactors, and findings-first prompt audits; build any judgment the prompt must carry with $intuition-building, and use $skill-authoring for skill packages."
 ---
 
 # Prompt Authoring
@@ -86,7 +86,7 @@ make install
 - Treat skill prose as prompt prose. Keep it intent-driven and anti-heuristic; leave packaging, trigger metadata, and runtime boundaries to `$skill-authoring`.
 - Fix the right section instead of smearing new guidance across the whole prompt.
 - Preserve useful prompt magic during refactors by extracting the durable principle and demoting brittle heuristics into examples, rationale, or litmus tests.
-- When a user's correction is being turned into prompt, skill, or brief text, follow `$skill-authoring`'s `references/corrections-to-intuitions.md`: teach the intuition and how far it reaches, not a rule shaped like the incident.
+- When a prompt has to give the agent judgment, or a correction, review finding, or lesson is being turned into prompt, skill, or brief text, build it with `$intuition-building`: what matters and why, with examples, not a rule shaped like the case.
 - Work only from the prompt and the references listed here; do not assume hidden supporting material.
 - If an edit or audit needs missing prompt text, ask for that text. If a creation ask gives a useful brief, proceed from the brief instead of inventing prerequisites.
 
@@ -103,6 +103,7 @@ make install
    - `references/high-leverage-sections.md` for system context, quality bar, output contracts, and rationale patterns
    - `references/edit-refactor-audit.md` for repair loops, litmus tests, and section-targeting
    - `references/examples-and-anti-examples.md` when you need grounded examples or want to sanity-check framing
+   - `$intuition-building` when the prompt must carry judgment the agent will apply to cases nobody can list in advance
 
 ## Workflow
 

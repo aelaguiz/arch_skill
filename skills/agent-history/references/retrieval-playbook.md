@@ -56,25 +56,37 @@ actual wording, inspect context, and revise if the first pass is too narrow.
 
 ## Helper Use
 
-Use `scripts/agent_history.py` before writing one-off parsing commands.
-
-Typical flow:
+Use `scripts/agent_history.py` before writing one-off parsing commands. When
+you already have a session id, start with `read`; when you are hunting for
+the session or the moment, start with a search and hand the session id you
+find to `read`.
 
 ```bash
-python3 skills/agent-history/scripts/agent_history.py prompts --runtime codex
-python3 skills/agent-history/scripts/agent_history.py goals --runtime codex --since today
-python3 skills/agent-history/scripts/agent_history.py commands --runtime claude --since today
-python3 skills/agent-history/scripts/agent_history.py search --runtime claude struggling correction wrong instead
-python3 skills/agent-history/scripts/agent_history.py sessions --runtime prime --since today
-python3 skills/agent-history/scripts/agent_history.py search --runtime prime --include-sidechains worktree
-python3 skills/agent-history/scripts/agent_history.py prompts --runtime pi --scope all-projects --since 30d
-python3 skills/agent-history/scripts/agent_history.py sessions --runtime agy --since 7d
-python3 skills/agent-history/scripts/agent_history.py search --runtime agy --include-sidechains invoke_subagent
-python3 skills/agent-history/scripts/agent_history.py show --run /tmp/agent-history/<run> --id <id> --context 3
+python3 <this skill>/scripts/agent_history.py read 1a2b3c4d
+python3 <this skill>/scripts/agent_history.py read 1a2b3c4d-... --after 2026-10-15T07:28:36-05:00
+python3 <this skill>/scripts/agent_history.py prompts --runtime codex
+python3 <this skill>/scripts/agent_history.py goals --runtime codex --since today
+python3 <this skill>/scripts/agent_history.py commands --runtime claude --since today
+python3 <this skill>/scripts/agent_history.py search --runtime claude struggling correction wrong instead
+python3 <this skill>/scripts/agent_history.py sessions --runtime prime --since today
+python3 <this skill>/scripts/agent_history.py search --runtime prime --include-sidechains worktree
+python3 <this skill>/scripts/agent_history.py prompts --runtime pi --scope all-projects --since 30d
+python3 <this skill>/scripts/agent_history.py sessions --runtime agy --since 7d
+python3 <this skill>/scripts/agent_history.py search --runtime agy --include-sidechains invoke_subagent
+python3 <this skill>/scripts/agent_history.py show --run <run folder> --id <row id> --context 3
 ```
 
 Replace `--runtime` with the current runtime. Add `--scope all-projects` only
 when the user asks beyond the current project.
+
+### Reviewing or watching a session
+
+A review or watch of another session is a read of what it did, not of what it
+says. Read it from the start once (`transcript.md` has all of it), then use
+the printed `--after` command each time you come back. Compare what the
+session reports with what its tool calls and results show. If it moved to a
+new session id, the earlier id still holds the earlier part of the work,
+including what it was first asked to do.
 
 ## Common Searches
 

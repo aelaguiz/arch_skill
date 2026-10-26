@@ -1,0 +1,6 @@
+interface:
+  display_name: "Hill Climb"
+  short_description: "Interview the owner once, then run an autonomous, budgeted hill climb that learns as fast as it can and only asks for money"
+  default_prompt: "Use $hill-climb to run the next tick of the hill climb in this folder."
+policy:
+  allow_implicit_invocation: false

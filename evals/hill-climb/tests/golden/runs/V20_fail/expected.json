@@ -1,0 +1,11 @@
+{
+ "failing": [
+  "all 29 Charter fields filled",
+  "each Learnings.csv row has a Lessons row traceable to it that is not proven",
+  "paused rows have a traceable legacy Results row and live rows none",
+  "the legacy files' SHA-256 unchanged"
+ ],
+ "grader": "V20",
+ "pass": false,
+ "scenario": "V20"
+}

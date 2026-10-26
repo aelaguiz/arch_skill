@@ -1,0 +1,59 @@
+{
+ "extends": "base_w5",
+ "rows": {
+  "Ideas": [
+   {
+    "idea_id": "ID-0006",
+    "source": "main",
+    "type": "hook=challenge|visual=hand-replay",
+    "description": "The winning video (it_0002) with a player on camera in place of the coach, everything else the same",
+    "sources": "L-0001, LB-0004",
+    "near_copy_of": "",
+    "reason": "L-0001 proved the challenge over a hand replay; Rival A runs the same shape with a young player on camera (LB-0004).",
+    "legacy_ref": "",
+    "written_at": "2026-11-09T12:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Tests": [
+   {
+    "test_id": "T-0006",
+    "idea_id": "ID-0006",
+    "lane": "explore",
+    "type": "hook=challenge|visual=hand-replay",
+    "comparison": "T-0005 (the winning video it_0002, on the same days)",
+    "hypothesis": "A player on camera converts better than the coach in the winning video",
+    "expected_range": "1.1x to 1.4x T-0005's rate",
+    "varies": "presenter coach->player",
+    "held_constant": "every other coded attribute and the text of it_0002, its parent",
+    "good_looks_like": "cost per conversion under $1.05, against T-0005's on the same days",
+    "daily_budget": "25",
+    "days": "4",
+    "read_at": "2026-11-14T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "",
+    "platform_id": "",
+    "status": "plan-checked",
+    "launched_at": "",
+    "legacy_ref": "",
+    "history": "plan-checked 2026-11-09T12:00:00Z",
+    "written_at": "2026-11-09T12:00:00Z",
+    "written_by": "main",
+    "made_from": "it_0002"
+   }
+  ],
+  "Checks": [
+   {
+    "test_id": "T-0006",
+    "item_id": "",
+    "role": "plan-checker",
+    "verdict": "pass",
+    "reasons": "The variation changes one coded attribute of a proven winner, names its parent, compares with the parent on the same days and can show a gap of about 1.2x by its read date at its budget.",
+    "written_at": "2026-11-09T12:00:00Z",
+    "written_by": "plan-checker"
+   }
+  ]
+ }
+}

@@ -1,0 +1,36 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "ID-0005",
+  "ID-0006",
+  "ID-0007"
+ ],
+ "rows": {
+  "Library": [
+   {
+    "library_id": "LB-0001",
+    "written_at": "2026-09-28T00:00:00Z"
+   },
+   {
+    "library_id": "LB-0002",
+    "written_at": "2026-09-28T00:00:00Z"
+   },
+   {
+    "library_id": "LB-0003",
+    "written_at": "2026-09-28T00:00:00Z"
+   },
+   {
+    "library_id": "LB-0004",
+    "written_at": "2026-09-28T00:00:00Z"
+   },
+   {
+    "library_id": "LB-0005",
+    "written_at": "2026-09-28T00:00:00Z"
+   },
+   {
+    "library_id": "LB-0006",
+    "written_at": "2026-09-28T00:00:00Z"
+   }
+  ]
+ }
+}

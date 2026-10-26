@@ -1,0 +1,10 @@
+type,best_test_id,best_result,tests_count,last_tested,status,history,written_at,written_by
+hook=claim|visual=app-screen,,,1,,tested,,2026-11-05T00:00:00Z,main
+hook=claim|visual=hand-replay,,,1,,tested,,2026-11-05T00:00:00Z,main
+hook=claim|visual=coach-face,,,0,,untested,,2026-11-05T00:00:00Z,main
+hook=question|visual=app-screen,T-0001,,1,,best,,2026-11-05T00:00:00Z,main
+hook=question|visual=hand-replay,,,1,,tested,,2026-11-05T00:00:00Z,main
+hook=question|visual=coach-face,,,0,,untested,,2026-11-05T00:00:00Z,main
+hook=story|visual=app-screen,,,1,,untested,,2026-11-05T00:00:00Z,main
+hook=story|visual=hand-replay,,,0,,untested,,2026-11-05T00:00:00Z,main
+hook=story|visual=coach-face,,,0,,untested,,2026-11-05T00:00:00Z,main

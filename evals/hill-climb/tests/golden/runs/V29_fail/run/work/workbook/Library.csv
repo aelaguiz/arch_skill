@@ -1,0 +1,6 @@
+library_id,kind,source,link,owner,content,signal,type,status,notes,legacy_ref,written_at,written_by,coding
+LB-0001,competitor-ad,Rival A,sim library,Rival A,a video ad from sim library,running 21 days,hook=challenge|visual=hand-replay,fresh,,,2026-11-02T00:00:00Z,scout,
+LB-0002,competitor-ad,Rival B,sim library,Rival B,a video ad from sim library,running 22 days,hook=question|visual=app-screen,fresh,,,2026-11-02T00:00:00Z,scout,
+LB-0003,competitor-ad,Rival C,sim library,Rival C,a video ad from sim library,running 23 days,hook=story|visual=table-footage,fresh,,,2026-11-02T00:00:00Z,scout,
+LB-0004,competitor-ad,Rival A,sim library,Rival A,a video ad from sim library,running 24 days,hook=challenge|visual=hand-replay,fresh,,,2026-11-02T00:00:00Z,scout,
+LB-0005,competitor-ad,Rival D,sim library,Rival D,a video ad from sim library,running 25 days,hook=claim|visual=app-screen,fresh,,,2026-11-02T00:00:00Z,scout,

@@ -1,0 +1,64 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "T-0004"
+ ],
+ "ops": [
+  {
+   "op": "build",
+   "id": "it_0014",
+   "attrs": {
+    "hook": "question",
+    "visual": "coach-face",
+    "offer": "free-trial"
+   },
+   "text": "Coach Dana on the river call most home game players get wrong. Try the app free for 7 days.",
+   "at": "2026-11-05T12:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0014",
+   "item": "it_0014",
+   "daily_budget": 15,
+   "at": "2026-11-06T00:00:00Z"
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0014",
+   "from": "2026-11-06T00:00:00Z",
+   "to": "2026-11-08T00:00:00Z",
+   "clicks": 300,
+   "conversions": 33
+  }
+ ],
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0014",
+    "idea_id": "ID-0007",
+    "lane": "explore",
+    "type": "hook=question|visual=coach-face",
+    "comparison": "T-0001",
+    "hypothesis": "A coach on camera converts better than the app screen",
+    "expected_range": "0.9x to 1.4x T-0001's rate",
+    "varies": "visual app-screen->coach-face",
+    "held_constant": "hook=question; offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "15",
+    "days": "5",
+    "read_at": "2026-11-11T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0014",
+    "platform_id": "cp_0014",
+    "status": "live",
+    "launched_at": "2026-11-06T00:00:00Z",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-05T12:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

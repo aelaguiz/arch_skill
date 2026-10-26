@@ -1,0 +1,19 @@
+{
+ "budget_hit": false,
+ "budget_usd": 5,
+ "busy": false,
+ "cost_usd": 0.62,
+ "ended": "2026-10-26T07:34:05Z",
+ "ended_t": 1793000045.09,
+ "exit": 0,
+ "label": "golden",
+ "limited": false,
+ "no_eligible": false,
+ "prompt": "/hill-climb Run the tick.",
+ "result_ok": true,
+ "result_subtype": "success",
+ "started": "2026-10-26T07:33:20Z",
+ "started_t": 1793000000.0,
+ "timed_out": false,
+ "timeout_s": 1200
+}

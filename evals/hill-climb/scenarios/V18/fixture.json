@@ -1,0 +1,226 @@
+{
+ "extends": "base_w1",
+ "now": "2026-11-10T00:00:00Z",
+ "ops": [
+  {
+   "op": "record",
+   "campaign": "cp_0004",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-09T00:00:00Z",
+   "clicks": 560,
+   "conversions": 30
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0001",
+   "from": "2026-11-08T00:00:00Z",
+   "to": "2026-11-10T00:00:00Z",
+   "clicks": 580,
+   "conversions": 36
+  },
+  {
+   "op": "build",
+   "id": "it_0005",
+   "attrs": {
+    "hook": "claim",
+    "visual": "coach-face",
+    "offer": "free-trial"
+   },
+   "text": "Our coach has played 2 million hands and will fix your river decisions. Try the app free for 7 days.",
+   "at": "2026-11-04T12:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0005",
+   "item": "it_0005",
+   "daily_budget": 15,
+   "at": "2026-11-05T00:00:00Z"
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0005",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-09T00:00:00Z",
+   "clicks": 600,
+   "conversions": 27
+  },
+  {
+   "op": "build",
+   "id": "it_0006",
+   "attrs": {
+    "hook": "story",
+    "visual": "hand-replay",
+    "offer": "free-trial"
+   },
+   "text": "This is the hand where I finally stopped chasing my flush draw, replayed. Try the app free for 7 days.",
+   "at": "2026-11-04T12:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0006",
+   "item": "it_0006",
+   "daily_budget": 15,
+   "at": "2026-11-05T00:00:00Z"
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0006",
+   "from": "2026-11-05T00:00:00Z",
+   "to": "2026-11-09T00:00:00Z",
+   "clicks": 600,
+   "conversions": 30
+  }
+ ],
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0004",
+    "status": "closed",
+    "history": "closed at its read on 2026-11-09 (R-0004)"
+   },
+   {
+    "test_id": "T-0005",
+    "idea_id": "ID-0005",
+    "lane": "explore",
+    "type": "hook=claim|visual=coach-face",
+    "comparison": "T-0001",
+    "hypothesis": "The claim/coach-face cell converts better than the exploit's cell",
+    "expected_range": "0.8x to 1.4x T-0001's rate",
+    "varies": "hook question->claim; visual app-screen->coach-face",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "15",
+    "days": "4",
+    "read_at": "2026-11-09T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0005",
+    "platform_id": "cp_0005",
+    "status": "closed",
+    "launched_at": "2026-11-05T00:00:00Z",
+    "legacy_ref": "",
+    "history": "closed at its read on 2026-11-09 (R-0005)",
+    "written_at": "2026-11-04T12:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0006",
+    "idea_id": "ID-0006",
+    "lane": "explore",
+    "type": "hook=story|visual=hand-replay",
+    "comparison": "T-0001",
+    "hypothesis": "The story/hand-replay cell converts better than the exploit's cell",
+    "expected_range": "0.7x to 1.3x T-0001's rate",
+    "varies": "hook question->story; visual app-screen->hand-replay",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "15",
+    "days": "4",
+    "read_at": "2026-11-09T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0006",
+    "platform_id": "cp_0006",
+    "status": "closed",
+    "launched_at": "2026-11-05T00:00:00Z",
+    "legacy_ref": "",
+    "history": "closed at its read on 2026-11-09 (R-0006)",
+    "written_at": "2026-11-04T12:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Results": [
+   {
+    "result_id": "R-0004",
+    "test_id": "T-0004",
+    "k": "30",
+    "n": "560",
+    "call": "stop",
+    "notes": "the story hook trailed the exploit on the same days",
+    "legacy_ref": "",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "reader"
+   },
+   {
+    "result_id": "R-0005",
+    "test_id": "T-0005",
+    "k": "27",
+    "n": "600",
+    "call": "stop",
+    "notes": "the coach's claim trailed the exploit on the same days",
+    "legacy_ref": "",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "reader"
+   },
+   {
+    "result_id": "R-0006",
+    "test_id": "T-0006",
+    "k": "30",
+    "n": "600",
+    "call": "stop",
+    "notes": "the story over a replay trailed the exploit on the same days",
+    "legacy_ref": "",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "reader"
+   }
+  ],
+  "Lessons": [
+   {
+    "lesson_id": "L-0003",
+    "subject": "hook over the app screen",
+    "statement": "A question hook converts better than a story hook over the app screen",
+    "winner": "hook=question|visual=app-screen",
+    "loser": "hook=story|visual=app-screen",
+    "status": "lean",
+    "evidence": "T-0004",
+    "recheck_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "lesson_id": "L-0004",
+    "subject": "cell against the exploit",
+    "statement": "The question/app-screen cell converts better than the claim/coach-face cell",
+    "winner": "hook=question|visual=app-screen",
+    "loser": "hook=claim|visual=coach-face",
+    "status": "lean",
+    "evidence": "T-0005",
+    "recheck_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "lesson_id": "L-0005",
+    "subject": "cell against the exploit",
+    "statement": "The question/app-screen cell converts better than the story/hand-replay cell",
+    "winner": "hook=question|visual=app-screen",
+    "loser": "hook=story|visual=hand-replay",
+    "status": "lean",
+    "evidence": "T-0006",
+    "recheck_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-09T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Reviews": [
+   {
+    "review_id": "RV-0004",
+    "role": "meta-analyst",
+    "period": "2026-11-07 to 2026-11-09",
+    "findings": "Five explore reads so far, each a stop against the exploit; three of the nine cells are still untested.",
+    "call": "keep exploring untested cells",
+    "changes": "none",
+    "written_at": "2026-11-09T12:00:00Z",
+    "written_by": "meta-analyst"
+   }
+  ]
+ }
+}

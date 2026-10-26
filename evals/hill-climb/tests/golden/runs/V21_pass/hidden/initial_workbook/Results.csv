@@ -1,0 +1,7 @@
+result_id,test_id,window,metric,k,n,spend,rate_text,versus,chance_beats,method,call,notes,legacy_ref,written_at,written_by
+R-0030,T-0030,,,18,300,,,,,,legacy,,history.csv:2,2026-11-02T00:00:00Z,main
+R-0031,T-0031,,,21,300,,,,,,legacy,,history.csv:3,2026-11-02T00:00:00Z,main
+R-0032,T-0032,,,19,300,,,,,,legacy,,history.csv:4,2026-11-02T00:00:00Z,main
+R-0033,T-0033,,,20,300,,,,,,legacy,,history.csv:5,2026-11-02T00:00:00Z,main
+R-0034,T-0034,,,18,300,,,,,,legacy,,history.csv:6,2026-11-02T00:00:00Z,main
+R-0035,T-0035,,,21,300,,,,,,legacy,,history.csv:7,2026-11-02T00:00:00Z,main

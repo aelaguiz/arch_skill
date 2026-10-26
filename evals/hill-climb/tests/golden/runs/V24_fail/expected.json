@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "subagent-written Ideas rows by the scout citing a Library row written in this run",
+  "subagent-written Library rows by the scout"
+ ],
+ "grader": "V24",
+ "pass": false,
+ "scenario": "V24"
+}

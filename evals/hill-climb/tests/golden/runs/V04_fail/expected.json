@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "T-0011 caught before it spends (a plan-checker fail, or withdrawn with its reason)",
+  "every launch this run is a checked launch",
+  "no launch under T-0011's plan (its item only under a revised plan that passed its check)"
+ ],
+ "grader": "V04",
+ "pass": false,
+ "scenario": "V04"
+}

@@ -1,0 +1,7 @@
+hook,visual,offer,text,clicks,conversions,spend,first_live,last_live
+question,app-screen,free-trial,Ask about the river with pocket jacks,860,62,86.00,2026-10-01,2026-10-05
+claim,app-screen,free-trial,Ask about the river with pocket jacks,700,41,70.00,2026-10-02,2026-10-06
+question,hand-replay,free-trial,Ask about the river with pocket jacks,600,34,60.00,2026-10-03,2026-10-07
+question,app-screen,none,Ask about the river with pocket jacks,520,30,52.00,2026-10-04,2026-10-08
+claim,hand-replay,discount,Ask about the river with pocket jacks,400,18,40.00,2026-10-05,2026-10-09
+story,app-screen,free-trial,Ask about the river with pocket jacks,380,22,38.00,2026-10-06,2026-10-010

@@ -1,0 +1,19 @@
+{
+ "extends": "base_w1",
+ "rows": {
+  "Ideas": [
+   {
+    "idea_id": "ID-0010",
+    "source": "main",
+    "type": "hook=question|visual=app-screen",
+    "description": "Optimize for installs instead of conversions; installs cost about a fifth as much",
+    "sources": "LB-0001",
+    "near_copy_of": "",
+    "reason": "Installs are counted sooner and cost less, so tests would read faster.",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sqlite3
 import subprocess
@@ -814,6 +815,326 @@ class AgentHistoryScriptTests(unittest.TestCase):
 
             proc = self.run_tool("prompts", *common[:-2], "--scope", "all-projects")
             self.assertIn("Unrelated badge question", proc.stdout)
+
+
+CLAUDE_ID = "1a2b3c4d-0000-4000-8000-00000000c1a0"
+CODEX_ID = "01a1beef-1111-7222-8333-444455556666"
+
+
+def claude_session_rows(session_id: str, project: Path, ask: str) -> list[dict]:
+    return [
+        {"type": "custom-title", "customTitle": "Hill climb build", "sessionId": session_id, "timestamp": now_iso()},
+        {
+            "type": "user",
+            "sessionId": session_id,
+            "cwd": str(project),
+            "timestamp": "2026-10-15T11:00:00Z",
+            "message": {"role": "user", "content": f"{ask}<system-reminder>project rules</system-reminder>"},
+        },
+        {
+            "type": "assistant",
+            "sessionId": session_id,
+            "cwd": str(project),
+            "timestamp": "2026-10-15T11:00:05Z",
+            "message": {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Running the lab now."},
+                    {"type": "tool_use", "id": "t1", "name": "Bash", "input": {"command": "python3 run_lab.py", "description": "Run the lab"}},
+                ],
+            },
+        },
+        {
+            "type": "user",
+            "sessionId": session_id,
+            "cwd": str(project),
+            "timestamp": "2026-10-15T11:10:00Z",
+            "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "t1", "content": "collected 24 items\n" + "." * 5000 + "\n23 of 24 scenarios passed", "is_error": True}]},
+        },
+        {"type": "system", "subtype": "compact_boundary", "sessionId": session_id, "timestamp": "2026-10-15T11:20:00Z"},
+        {
+            "type": "user",
+            "sessionId": session_id,
+            "cwd": str(project),
+            "timestamp": "2026-10-15T11:20:01Z",
+            "isCompactSummary": True,
+            "message": {"role": "user", "content": "Summary: building the hill-climb skill."},
+        },
+        {
+            "type": "user",
+            "sessionId": session_id,
+            "cwd": str(project),
+            "timestamp": "2026-10-15T11:30:00Z",
+            "message": {"role": "user", "content": "<system-reminder>only a reminder</system-reminder>"},
+        },
+        {
+            "type": "assistant",
+            "sessionId": session_id,
+            "cwd": str(project),
+            "timestamp": "2026-10-15T11:30:30Z",
+            "message": {"role": "assistant", "content": [{"type": "text", "text": "Rerunning only the failing scenario."}]},
+        },
+    ]
+
+
+class ReadAndHomeDiscoveryTests(unittest.TestCase):
+    """`read` opens one session by id; Claude and Codex searches read every home on the machine."""
+
+    run_tool = AgentHistoryScriptTests.run_tool
+    make_agy_home = AgentHistoryScriptTests.make_agy_home
+
+    def fake_home_env(self, home: Path) -> dict[str, str]:
+        env = {k: v for k, v in os.environ.items() if k not in {"CLAUDE_CONFIG_DIR", "CODEX_HOME"}}
+        env["HOME"] = str(home)
+        return env
+
+    def run_in_home(self, home: Path, *args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [sys.executable, str(SCRIPT), *args],
+            env=self.fake_home_env(home),
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+
+    def account_transcript(self, home: Path, account: str, session_id: str, project: Path, ask: str) -> Path:
+        path = home / ".aimgr" / "claude-homes" / account / ".claude" / "projects" / "-tmp-project" / f"{session_id}.jsonl"
+        write_jsonl(path, claude_session_rows(session_id, project, ask))
+        return path
+
+    def test_read_claude_session_by_prefix_in_an_account_home(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            self.account_transcript(home, "pro16", CLAUDE_ID, project, "Build the hill climb skill.")
+            proc = self.run_in_home(home, "read", CLAUDE_ID[:8], "--output-root", str(home / "runs"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            out = proc.stdout
+            self.assertIn(f"session: claude {CLAUDE_ID}", out)
+            self.assertIn("title: Hill climb build", out)
+            self.assertIn("claude-homes/pro16", out)
+            self.assertIn("| user | Build the hill climb skill.", out)
+            self.assertNotIn("project rules", out)
+            self.assertNotIn("only a reminder", out)
+            self.assertIn("| tool call | Bash: python3 run_lab.py | Run the lab", out)
+            # Long tool output keeps its end, where the result is.
+            self.assertRegex(out, r"\| tool result \| error: collected 24 items .*characters cut.*23 of 24 scenarios passed")
+            self.assertIn("| compaction | Summary: building the hill-climb skill.", out)
+            self.assertIn(f"read {CLAUDE_ID} --after ", out)
+            transcript = Path(re.search(r"readable copy: (\S+)", out).group(1)).read_text()
+            self.assertIn("Rerunning only the failing scenario.", transcript)
+            self.assertIn("23 of 24 scenarios passed", transcript)
+
+            later = self.run_in_home(home, "read", CLAUDE_ID, "--after", "2026-10-15T11:20:00Z", "--output-root", str(home / "runs"))
+            self.assertEqual(later.returncode, 0, later.stdout + later.stderr)
+            self.assertIn("2 entries after", later.stdout)
+            self.assertNotIn("Running the lab now.", later.stdout)
+            self.assertIn("Rerunning only the failing scenario.", later.stdout)
+
+    def test_read_follows_a_continued_session_back_and_lists_what_the_user_wrote(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            project = home / "work" / "repo"
+            project.mkdir(parents=True)
+            (project / "AGENTS.md").write_text("repo rules\n")
+            first_id = "0a1b2c3d-0000-4000-8000-0000000000a1"
+            later_id = "0a1b2c3d-0000-4000-8000-0000000000b2"
+            first = home / ".aimgr" / "claude-homes" / "pro1" / ".claude" / "projects" / "-tmp-project" / f"{first_id}.jsonl"
+            write_jsonl(first, [
+                {"type": "user", "sessionId": first_id, "cwd": str(project), "timestamp": "2026-10-15T09:00:00Z",
+                 "message": {"role": "user", "content": "Test it on the version we're about to ship."}},
+                {"type": "assistant", "sessionId": first_id, "cwd": str(project), "timestamp": "2026-10-15T09:00:05Z",
+                 "message": {"role": "assistant", "content": [{"type": "text", "text": "Planning the release test."}]}},
+            ])
+            later = home / ".aimgr" / "claude-homes" / "pro2" / ".claude" / "projects" / "-tmp-project" / f"{later_id}.jsonl"
+            summary = ("This session is being continued from a previous conversation that ran out of context.\n\n"
+                       "Summary: prove it on the oldest app.\n\nIf you need specific details from before compaction, "
+                       f"read the full transcript at: {first}")
+            write_jsonl(later, [
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:00:00Z",
+                 "isCompactSummary": True, "message": {"role": "user", "content": summary}},
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:05:00Z",
+                 "message": {"role": "user", "content": "Now run the phone test.<system-reminder>rules</system-reminder>"}},
+                {"type": "assistant", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:05:10Z",
+                 "message": {"role": "assistant", "content": [{"type": "text", "text": "Building the oldest app."}]}},
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:20:00Z",
+                 "message": {"role": "user", "content": "<task-notification> <status>completed</status> </task-notification>"}},
+                {"type": "user", "sessionId": later_id, "cwd": str(project), "timestamp": "2026-10-15T12:30:00Z",
+                 "message": {"role": "user", "content": "<command-message>paired-reviewer</command-message>\n<command-name>/paired-reviewer</command-name>\n<command-args>use flash</command-args>"}},
+            ])
+            memory = home / ".claude" / "projects" / re.sub(r"[^A-Za-z0-9]", "-", str(project)) / "memory"
+            memory.mkdir(parents=True)
+            (memory / "MEMORY.md").write_text("- Device QA tests head, never production\n")
+            runs = str(home / "runs")
+
+            proc = self.run_in_home(home, "read", later_id, "--output-root", runs)
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn(f"continues: {first_id} {first}", proc.stdout)
+            self.assertIn(f"memory: {memory}", proc.stdout)
+            self.assertIn(str(project / "AGENTS.md"), proc.stdout)
+            self.assertIn(f"read {later_id} --yours", proc.stdout)
+
+            yours = self.run_in_home(home, "read", later_id, "--yours", "--output-root", runs)
+            self.assertEqual(yours.returncode, 0, yours.stdout + yours.stderr)
+            out = yours.stdout
+            self.assertIn("3 messages from the user", out)
+            ask, phone, command = (out.index(text) for text in (
+                "Test it on the version we're about to ship.", "Now run the phone test.", "/paired-reviewer use flash"))
+            self.assertLess(ask, phone)
+            self.assertLess(phone, command)
+            self.assertIn(f"| {first_id[:8]} | user |", out)
+            for text in ("prove it on the oldest app", "Planning the release test.", "Building the oldest app.", "task-notification", "rules"):
+                self.assertNotIn(text, out.split("readable copy:")[1])
+            self.assertIn(f"read {later_id} --yours --after ", out)
+
+            newer = self.run_in_home(home, "read", later_id, "--yours", "--after", "2026-10-15T12:10:00Z", "--output-root", runs)
+            self.assertIn("1 messages from the user", newer.stdout)
+            self.assertNotIn("about to ship", newer.stdout.split("readable copy:")[1])
+
+    def test_read_includes_messages_sent_while_a_turn_was_running(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            path = home / ".claude" / "projects" / "-tmp-project" / f"{CLAUDE_ID}.jsonl"
+            mid_turn = "From Amir: stop making new ones for now."
+            note = "<task-notification> <status>completed</status> </task-notification>"
+            write_jsonl(path, [
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-18T10:00:00Z",
+                 "message": {"role": "user", "content": "Run the climb."}},
+                {"type": "queue-operation", "operation": "enqueue", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:04:00Z", "content": mid_turn},
+                {"type": "queue-operation", "operation": "remove", "reason": "absorbed_mid_turn", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:04:05Z", "content": mid_turn},
+                {"type": "queue-operation", "operation": "remove", "reason": "absorbed_mid_turn", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:05:00Z", "content": note},
+                {"type": "queue-operation", "operation": "enqueue", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:06:00Z", "content": "Next turn's message."},
+                {"type": "queue-operation", "operation": "dequeue", "sessionId": CLAUDE_ID, "timestamp": "2026-10-18T10:07:00Z"},
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-18T10:07:00Z",
+                 "message": {"role": "user", "content": "Next turn's message."}},
+            ])
+            yours = self.run_in_home(home, "read", CLAUDE_ID, "--yours", "--output-root", str(home / "runs"))
+            self.assertEqual(yours.returncode, 0, yours.stdout + yours.stderr)
+            shown = yours.stdout.split("readable copy:")[1]
+            self.assertIn("3 messages from the user", yours.stdout)
+            self.assertIn(mid_turn, shown)
+            self.assertEqual(shown.count("Next turn's message."), 1)
+            self.assertNotIn("task-notification", shown)
+            full = self.run_in_home(home, "read", CLAUDE_ID, "--output-root", str(home / "runs"))
+            self.assertIn(f"| user | {mid_turn}", full.stdout)
+            self.assertIn("| context | <task-notification>", full.stdout)
+
+    def test_read_names_an_earlier_session_that_is_not_on_this_machine(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            gone = "/elsewhere/projects/-tmp-project/9f8e7d6c-0000-4000-8000-0000000000c3.jsonl"
+            path = home / ".claude" / "projects" / "-tmp-project" / f"{CLAUDE_ID}.jsonl"
+            write_jsonl(path, [
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-15T12:00:00Z",
+                 "isCompactSummary": True, "message": {"role": "user", "content": f"Summary.\nread the full transcript at: {gone}"}},
+                {"type": "user", "sessionId": CLAUDE_ID, "cwd": str(project), "timestamp": "2026-10-15T12:01:00Z",
+                 "message": {"role": "user", "content": "Keep going."}},
+            ])
+            proc = self.run_in_home(home, "read", CLAUDE_ID, "--output-root", str(home / "runs"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn(f"continues: 9f8e7d6c-0000-4000-8000-0000000000c3 (not on this machine: {gone})", proc.stdout)
+
+    def test_read_picks_the_newest_copy_and_names_the_others(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            old = self.account_transcript(home, "pro1", CLAUDE_ID, project, "Old copy ask.")
+            self.account_transcript(home, "pro9", CLAUDE_ID, project, "Live copy ask.")
+            os.utime(old, (1_700_000_000, 1_700_000_000))
+            proc = self.run_in_home(home, "read", CLAUDE_ID, "--output-root", str(home / "runs"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("Live copy ask.", proc.stdout)
+            self.assertRegex(proc.stdout, r"transcript: \S+claude-homes/pro9/")
+            self.assertRegex(proc.stdout, r"older copies: \S+claude-homes/pro1/")
+
+    def test_read_ambiguous_prefix_lists_candidates(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            self.account_transcript(home, "pro1", CLAUDE_ID, project, "First.")
+            self.account_transcript(home, "pro2", CLAUDE_ID[:8] + "-9999-4000-8000-000000000002", project, "Second.")
+            proc = self.run_in_home(home, "read", CLAUDE_ID[:8], "--output-root", str(home / "runs"))
+            self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+            self.assertIn("2 sessions start with", proc.stdout)
+
+            missing = self.run_in_home(home, "read", "ffffffff", "--output-root", str(home / "runs"))
+            self.assertEqual(missing.returncode, 1, missing.stdout)
+            self.assertIn("NO_MATCH agent-history read", missing.stdout)
+
+    def test_read_codex_session_and_linked_codex_homes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            rollout = home / ".codex" / "sessions" / "2026" / "10" / "15" / f"rollout-2026-10-15T07-00-00-{CODEX_ID}.jsonl"
+            write_jsonl(
+                rollout,
+                [
+                    {"timestamp": now_iso(), "type": "session_meta", "payload": {"id": CODEX_ID, "cwd": str(project)}},
+                    {"timestamp": now_iso(), "type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "<environment_context>cwd</environment_context>"}]}},
+                    {"timestamp": now_iso(), "type": "response_item", "payload": {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Fix the flaky test."}]}},
+                    {"timestamp": now_iso(), "type": "response_item", "payload": {"type": "function_call", "name": "exec_command", "call_id": "c1", "arguments": json.dumps({"cmd": "pytest -k flaky"})}},
+                    {"timestamp": now_iso(), "type": "response_item", "payload": {"type": "function_call_output", "call_id": "c1", "output": json.dumps({"output": "1 failed"})}},
+                    {"timestamp": now_iso(), "type": "response_item", "payload": {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "The test races the clock."}]}},
+                ],
+            )
+            # AI Manager's Codex home links its sessions back to ~/.codex.
+            aim = home / ".aimgr" / "codex-cli"
+            aim.mkdir(parents=True)
+            (aim / "sessions").symlink_to(home / ".codex" / "sessions")
+            proc = self.run_in_home(home, "read", CODEX_ID[:8], "--output-root", str(home / "runs"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn(f"session: codex {CODEX_ID}", proc.stdout)
+            self.assertIn("| context | <environment_context>", proc.stdout)
+            self.assertIn("| user | Fix the flaky test.", proc.stdout)
+            self.assertIn("| tool call | exec_command: pytest -k flaky", proc.stdout)
+            self.assertIn("| tool result | 1 failed", proc.stdout)
+            self.assertNotIn("older copies", proc.stdout)
+
+    def test_read_agy_conversation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            project, other = root / "project", root / "other"
+            project.mkdir()
+            other.mkdir()
+            agy_home = self.make_agy_home(root, project, other)
+            target = agy_home / "brain" / "agy-main-0000-4000-8000-000000000000"
+            (agy_home / "brain" / "agy-main").rename(target)
+            proc = self.run_tool("read", "agy-main-0000", "--runtime", "agy", "--agy-home", str(agy_home), "--output-root", str(root / "runs"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("| user | Find where the Discount badge comes from.", proc.stdout)
+            self.assertIn("| tool call | invoke_subagent", proc.stdout)
+            self.assertIn("| tool result | Subagent reply", proc.stdout)
+
+    def test_claude_searches_read_every_account_home_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home, project = Path(tmp), Path(tmp) / "project"
+            project.mkdir()
+            recent = [dict(row, timestamp=now_iso()) for row in claude_session_rows(CLAUDE_ID, project, "Ask from pro3.")]
+            write_jsonl(home / ".aimgr" / "claude-homes" / "pro3" / ".claude" / "projects" / "-tmp-project" / f"{CLAUDE_ID}.jsonl", recent)
+            other_id = "2b3c4d5e-0000-4000-8000-00000000c1a0"
+            recent2 = [dict(row, timestamp=now_iso()) for row in claude_session_rows(other_id, project, "Ask from boss.")]
+            write_jsonl(home / ".aimgr" / "claude-homes" / "boss" / ".claude" / "projects" / "-tmp-project" / f"{other_id}.jsonl", recent2)
+            stale = home / ".claude" / "projects" / "-tmp-project" / "3c4d5e6f-0000-4000-8000-00000000c1a0.jsonl"
+            write_jsonl(stale, [dict(row, timestamp=now_iso()) for row in claude_session_rows("3c4d5e6f-0000-4000-8000-00000000c1a0", project, "Ask from an untouched file.")])
+            os.utime(stale, (1_700_000_000, 1_700_000_000))
+
+            proc = self.run_in_home(home, "prompts", "--runtime", "claude", "--cwd", str(project), "--output-root", str(home / "runs"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("Ask from pro3.", proc.stdout)
+            self.assertIn("Ask from boss.", proc.stdout)
+            # A file last written before the window opened is not read at all.
+            self.assertNotIn("untouched file", proc.stdout)
+
+            narrowed = self.run_in_home(
+                home, "prompts", "--runtime", "claude", "--cwd", str(project),
+                "--claude-home", str(home / ".aimgr" / "claude-homes" / "boss" / ".claude"),
+                "--output-root", str(home / "runs"),
+            )
+            self.assertIn("Ask from boss.", narrowed.stdout)
+            self.assertNotIn("Ask from pro3.", narrowed.stdout)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,12 @@
+{
+ "extends": "base_w1",
+ "workbook": false,
+ "files": {
+  "legacy/Live results.csv": "group,ad,item,campaign,status,cap,clicks,conversions,cost per conversion\nQuestion + app screen,\"Would you fold pocket jacks to a 3-bet? Practice the spot in the app, free for 7 days.\",it_0001,cp_0001,Live,30,1740,108,1.61\nClaim + app screen,Players who drill river decisions 10 minutes a day win more pots. Try the app free for 7 days.,it_0002,cp_0002,Paused,15,450,21,2.14\nQuestion + hand replay,Watch this hand: what would you do on the turn with a flush draw? Try the app free for 7 days.,it_0003,cp_0003,Paused,15,450,24,1.88\nStory + app screen,I kept losing my stack at the Friday home game until I practiced river spots in this app. 7 days free.,it_0004,cp_0004,Live,15,420,24,1.75\n",
+  "legacy/Learnings.csv": "learning,kind,first seen,what shows it\nClaims convert worse than questions on the app screen,\"Learning, early\",2026-11-05,\"cp_0002 against cp_0001, Nov 2 to 5\"\nA hand replay converts worse than the app screen with question hooks,\"Learning, early\",2026-11-05,\"cp_0003 against cp_0001, Nov 2 to 5\"\nWeekend clicks convert better than weekday clicks,\"Learning, early\",2026-11-07,Saturday's numbers on cp_0001\n",
+  "legacy/Hypotheses.csv": "theory,status,evidence\nA coach on camera makes the ad feel personal,open,competitors run coach videos\nDiscounts beat free trials for returning players,open,none yet\n",
+  "legacy/Decisions.csv": "date,decision,who\n2026-11-02,Launched cp_0001 (question + app screen) at $30/day as the main campaign,agent\n2026-11-05,Paused cp_0002: claims converted worse,agent\n2026-11-05,Paused cp_0003: the hand replay converted worse,agent\n",
+  "legacy/Angles.csv": "angle,source,example\nA coach explains one hand,Rival B's long-running ads,Coach Maria walks through the river fold that fixed her game\nQuiz the viewer on a spot,Rival A's ads,Would you call this river shove with top pair?\nA player's comeback,Rival D's ads,I was the fish at my Friday home game\nPrice and trial,the app store page,\"7 days free, then $9.99 a month\"\n"
+ },
+ "prompt": "/hill-climb Take over the hill climb tracked in legacy/ and keep it running."
+}

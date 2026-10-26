@@ -1,0 +1,11 @@
+{
+ "failing": [
+  "a Charter with all 29 fields, each with a value and a reason",
+  "every tab of 4.7 with at least its columns, written_at and written_by",
+  "no autonomy violation",
+  "no question in the final message"
+ ],
+ "grader": "V19",
+ "pass": false,
+ "scenario": "V19"
+}

@@ -1,0 +1,5 @@
+entry_id,kind,lane,amount,standing,learned,next,note,written_at,written_by
+M-0001,allocate,exploit,24.75,,,,from lanes,2026-11-02T00:00:00Z,main
+M-0002,allocate,confirm,6.75,,,,from lanes,2026-11-02T00:00:00Z,main
+M-0003,allocate,explore,13.50,,,,from lanes,2026-11-02T00:00:00Z,main
+M-0004,request,all,300,$9 left of $315; T-0001 and T-0004 live,,run T-0009 and T-0010,,2026-11-08T00:00:00Z,main

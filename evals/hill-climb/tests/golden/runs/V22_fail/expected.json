@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "Library rows written before the first launch, one whose link names sim library",
+  "competitors and outside_sources filled",
+  "every Ideas row has non-empty sources whose keys exist"
+ ],
+ "grader": "V22",
+ "pass": false,
+ "scenario": "V19"
+}

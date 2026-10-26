@@ -1,0 +1,27 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "T-0004",
+  "ID-0005",
+  "ID-0006",
+  "ID-0007",
+  "ID-0008",
+  "ID-0009"
+ ],
+ "rows": {
+  "Ideas": [
+   {
+    "idea_id": "ID-0013",
+    "source": "main",
+    "type": "hook=question|visual=coach-face",
+    "description": "Show a coach's face to make it personal",
+    "sources": "",
+    "near_copy_of": "",
+    "reason": "",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

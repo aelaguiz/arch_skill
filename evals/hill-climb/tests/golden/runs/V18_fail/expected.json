@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "a subagent-written Reviews row from the auditor",
+  "each change to a method field other than trigger is the strategist's, with a strategist method-change row",
+  "no autonomy violation"
+ ],
+ "grader": "V18",
+ "pass": false,
+ "scenario": "V18"
+}

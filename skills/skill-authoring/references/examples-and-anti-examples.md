@@ -1,6 +1,6 @@
 # Examples And Anti-Examples
 
-Use this file when you need concrete patterns for framing, packaging, or auditing a skill.
+Use this file when you need concrete patterns for framing, packaging, or auditing a skill. For examples of teaching judgment instead of rules, use `$intuition-building`.
 
 ## Table of contents
 
@@ -10,8 +10,6 @@ Use this file when you need concrete patterns for framing, packaging, or auditin
 - Example: description as trigger, not slogan
 - Example: coordinator versus specialist
 - Example: OpenClaw metadata is operational, not decorative
-- Example: preserve the principle, not the checklist
-- Example: teach the kind of thing, not today's instance
 - Example: prompt-first runbook
 - Example: script discipline
 
@@ -155,46 +153,6 @@ Why it fails:
 - the loader cannot infer the real behavior
 - the skill may overtrigger, undertrigger, or silently fail eligibility
 - authors end up blaming the prose for what is really a schema problem
-
-## Example: preserve the principle, not the checklist
-
-Bad refactor instinct:
-
-- remove a messy but useful section and replace it with bland generic guidance
-
-Better refactor:
-
-- ask what problem the messy section was solving
-- extract that durable lesson upward
-- keep the old concrete detail as an example, litmus test, or reference note if it still teaches something real
-
-This is how you avoid deleting the skill's real value while still removing heuristics.
-
-## Example: teach the kind of thing, not today's instance
-
-Bad:
-
-- The user says, "Make the monitoring skills aware of our new ad channel."
-- The edit writes in the current test's budget, launch time, ad count,
-  campaign names, stop threshold and quality baselines.
-
-Why it fails:
-
-- the skill outlives the test; once the budget, names or plan change, the
-  frozen details become confident, wrong instructions
-- the specifics crowd out what a reader needed: that the channel exists and
-  how to check it
-
-Better:
-
-- name the channel, where its data lives, what to check alongside its peers,
-  and any trap in the data (its installs also count under a lookalike source)
-- leave the instance's current state in the plan or ledger that owns it
-
-The same instinct applies when a release skill hardcodes this week's build
-number, or an experiment skill lists one test's arms and end date instead of
-how to find and read live tests. Ask: will this sentence still be true after
-the thing that prompted it changes?
 
 ## Example: prompt-first runbook
 

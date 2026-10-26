@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "any lesson citing T-0004 is a lean, not strong",
+  "cp_0001, the best known option, still runs"
+ ],
+ "grader": "V08",
+ "pass": false,
+ "scenario": "V08"
+}

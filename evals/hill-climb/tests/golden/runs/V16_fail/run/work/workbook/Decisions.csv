@@ -1,0 +1,10 @@
+decision_id,test_id,kind,reason,data,legacy_ref,written_at,written_by
+D-0001,T-0001,launch,every check passed; launch at the planned budget,cp_0001,,2026-11-02T00:00:00Z,main
+D-0002,T-0002,launch,every check passed; launch at the planned budget,cp_0002,,2026-11-02T00:00:00Z,main
+D-0003,T-0003,launch,every check passed; launch at the planned budget,cp_0003,,2026-11-02T00:00:00Z,main
+D-0004,T-0007,launch,every check passed; launch at the planned budget,cp_0007,,2026-11-02T00:00:00Z,main
+D-0005,T-0002,pause,the read date came and the test was read once; close it,cp_0002,,2026-11-05T00:00:00Z,main
+D-0006,T-0003,pause,the read date came and the test was read once; close it,cp_0003,,2026-11-05T00:00:00Z,main
+D-0007,T-0007,pause,the read date came and the test was read once; close it,cp_0007,,2026-11-05T00:00:00Z,main
+D-0008,T-0004,launch,every check passed; launch at the planned budget,cp_0004,,2026-11-05T00:00:00Z,main
+D-0009,T-0007,scale,L-0005 is proven,cp_0007,,2026-11-08T00:00:00Z,main

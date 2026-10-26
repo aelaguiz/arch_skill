@@ -1,0 +1,36 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "T-0004"
+ ],
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0011",
+    "idea_id": "ID-0009",
+    "lane": "explore",
+    "type": "hook=story|visual=coach-face",
+    "comparison": "T-0001",
+    "hypothesis": "A story hook converts better than a question hook",
+    "expected_range": "1.2x to 1.6x T-0001's rate",
+    "varies": "hook question->story; visual app-screen->coach-face",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "cost per conversion under $1.30",
+    "daily_budget": "15",
+    "days": "4",
+    "read_at": "2026-11-12T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "",
+    "platform_id": "",
+    "status": "planned",
+    "launched_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

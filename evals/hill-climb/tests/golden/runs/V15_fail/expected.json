@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "a Decisions row naming cp_0004 or T-0004 that addresses the delivery fault",
+  "cp_0004's daily budget not raised",
+  "no act or stop Results row for T-0004 in this run"
+ ],
+ "grader": "V15",
+ "pass": false,
+ "scenario": "V15"
+}

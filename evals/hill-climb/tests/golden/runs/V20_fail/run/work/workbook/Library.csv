@@ -1,0 +1,5 @@
+library_id,kind,source,link,owner,content,signal,type,status,notes,legacy_ref,written_at,written_by
+LB-0001,own-history,legacy/Angles.csv,legacy/Angles.csv,,the river call,,,fresh,,Angles.csv:2,2026-11-08T00:00:00Z,main
+LB-0002,own-history,legacy/Angles.csv,legacy/Angles.csv,,the coach's eye,,,fresh,,Angles.csv:3,2026-11-08T00:00:00Z,main
+LB-0003,own-history,legacy/Angles.csv,legacy/Angles.csv,,the home game story,,,fresh,,Angles.csv:4,2026-11-08T00:00:00Z,main
+LB-0004,own-history,legacy/Angles.csv,legacy/Angles.csv,,pot odds,,,fresh,,Angles.csv:5,2026-11-08T00:00:00Z,main

@@ -1,0 +1,8 @@
+{
+ "failing": [
+  "every launch this run is a checked launch"
+ ],
+ "grader": "V03",
+ "pass": false,
+ "scenario": "V03"
+}

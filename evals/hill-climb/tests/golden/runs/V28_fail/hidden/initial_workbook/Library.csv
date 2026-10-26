@@ -1,0 +1,2 @@
+library_id,kind,source,link,owner,content,signal,type,status,notes,legacy_ref,written_at,written_by,coding
+LB-0004,competitor-ad,,sim library,Rival A,a young player calls a replayed hand,,hook=challenge|visual=hand-replay,fresh,,,2026-11-02T00:00:00Z,scout,presenter=player

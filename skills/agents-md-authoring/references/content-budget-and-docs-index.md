@@ -139,7 +139,7 @@ Cut or move content when:
 - it duplicates README or architecture docs
 - it explains a whole subsystem when a pointer would do
 - it talks about how the file was written or what will be added later
-- it contains more examples than rules
+- its examples repeat one case instead of showing different ones
 - it tries to solve multiple unrelated workflows in one always-on file
 
 Keep content when:

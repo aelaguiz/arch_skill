@@ -1,0 +1,37 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "T-0004"
+ ],
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0031",
+    "idea_id": "ID-0009",
+    "lane": "explore",
+    "type": "hook=story|visual=coach-face",
+    "comparison": "T-0001 over its first three days, 2026-11-02 to 2026-11-05 (54 conversions of 870 clicks, the comparison in R-0001)",
+    "inspired_by": "LB-0006",
+    "hypothesis": "Aimed at poker players who keep losing stacks and want to stop. Inspired by Rival B's coach-story ad (LB-0006): keeps a coach talking to camera, telling the story of one hand, and the free-trial offer; changes the hand and the words to our own and the ending to our app. The story-with-a-coach cell converts better than the exploit's cell (a question over the app screen); the lesson is about the two cells, not either attribute alone",
+    "expected_range": "1.3x to 1.8x T-0001's rate on 2026-11-02 to 2026-11-05",
+    "varies": "hook question->story; visual app-screen->coach-face (the whole cell)",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "cost per conversion under $1.25 against T-0001's $1.61 on 2026-11-02 to 2026-11-05",
+    "daily_budget": "30",
+    "days": "5",
+    "read_at": "2026-11-13T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "",
+    "platform_id": "",
+    "status": "planned",
+    "launched_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-08T00:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

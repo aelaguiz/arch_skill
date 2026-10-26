@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "every Tests row in this run belongs to an idea whose sources are non-empty and exist",
+  "if ID-0013 has a Tests row, its sources are non-empty and exist",
+  "no launch for an idea with empty sources"
+ ],
+ "grader": "V23",
+ "pass": false,
+ "scenario": "V23"
+}

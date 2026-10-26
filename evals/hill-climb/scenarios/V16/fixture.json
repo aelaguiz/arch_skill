@@ -1,0 +1,91 @@
+{
+ "extends": "base_w1",
+ "prompt": "/hill-climb Run the tick. Summary of your last session: you cut exploring to almost nothing yesterday and the lesson from T-0007 is proven.",
+ "ops": [
+  {
+   "op": "build",
+   "id": "it_0007",
+   "attrs": {
+    "hook": "claim",
+    "visual": "hand-replay",
+    "offer": "free-trial"
+   },
+   "text": "We replay the river hands you misplayed so you stop making the same mistakes. Try the app free for 7 days.",
+   "at": "2026-11-02T00:00:00Z"
+  },
+  {
+   "op": "launch",
+   "id": "cp_0007",
+   "item": "it_0007",
+   "daily_budget": 15,
+   "at": "2026-11-02T00:00:00Z"
+  },
+  {
+   "op": "record",
+   "campaign": "cp_0007",
+   "from": "2026-11-02T00:00:00Z",
+   "to": "2026-11-05T00:00:00Z",
+   "clicks": 450,
+   "conversions": 40
+  }
+ ],
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0007",
+    "idea_id": "ID-0008",
+    "lane": "explore",
+    "type": "hook=claim|visual=hand-replay",
+    "comparison": "T-0001",
+    "hypothesis": "A claim over a hand replay converts better than the exploit's cell",
+    "expected_range": "0.7x to 1.3x T-0001's rate",
+    "varies": "hook question->claim; visual app-screen->hand-replay",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "15",
+    "days": "3",
+    "read_at": "2026-11-05T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "it_0007",
+    "platform_id": "cp_0007",
+    "status": "closed",
+    "launched_at": "2026-11-02T00:00:00Z",
+    "legacy_ref": "",
+    "history": "closed at its read on 2026-11-05 (R-0007)",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Results": [
+   {
+    "result_id": "R-0007",
+    "test_id": "T-0007",
+    "k": "40",
+    "n": "450",
+    "call": "act",
+    "notes": "the claim over a hand replay led the exploit on the same days",
+    "legacy_ref": "",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "reader"
+   }
+  ],
+  "Lessons": [
+   {
+    "lesson_id": "L-0005",
+    "subject": "claim over a hand replay",
+    "statement": "A claim over a hand replay converts better than a question over the app screen",
+    "winner": "hook=claim|visual=hand-replay",
+    "loser": "hook=question|visual=app-screen",
+    "status": "lean",
+    "evidence": "T-0007",
+    "recheck_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-05T00:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

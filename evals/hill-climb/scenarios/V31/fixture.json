@@ -1,0 +1,215 @@
+{
+ "extends": "base_w1",
+ "rows": {
+  "Charter": [
+   {
+    "field": "speed",
+    "value": "as fast as checked items can be read, from $45 a day committed"
+   }
+  ],
+  "Library": [
+   {
+    "library_id": "LB-0007",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=story|visual=coach-face",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_02",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "library_id": "LB-0008",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=question|visual=app-screen",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_04",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "library_id": "LB-0009",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=story|visual=hand-replay",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_08",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "library_id": "LB-0010",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=story|visual=coach-face",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_10",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "library_id": "LB-0011",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=story|visual=coach-face",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_15",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "library_id": "LB-0012",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=claim|visual=app-screen",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_19",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "library_id": "LB-0013",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=question|visual=hand-replay",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_23",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "library_id": "LB-0014",
+    "kind": "competitor-ad",
+    "link": "sim library",
+    "type": "hook=story|visual=app-screen",
+    "status": "fresh",
+    "notes": "found by the scout on 2026-11-07; mapped to the map's cell",
+    "legacy_ref": "",
+    "_lib": "lib_20",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   }
+  ],
+  "Ideas": [
+   {
+    "idea_id": "ID-0010",
+    "source": "scout",
+    "type": "hook=story|visual=coach-face",
+    "description": "A coach's own story of the night a hand went wrong, told to camera, with no offer in the ad",
+    "sources": "LB-0007",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival A keeps a coach's story running with no offer at all; we have only tried offers",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "idea_id": "ID-0011",
+    "source": "scout",
+    "type": "hook=question|visual=app-screen",
+    "description": "The exploit's question over the app screen with a discount in place of the free trial",
+    "sources": "LB-0008",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival A runs the same question-over-app shape with a discount",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "idea_id": "ID-0012",
+    "source": "scout",
+    "type": "hook=story|visual=hand-replay",
+    "description": "A knockout hand replayed with the player telling it, and a discount",
+    "sources": "LB-0009",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival B replays the hand that knocked a player out",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "idea_id": "ID-0013",
+    "source": "scout",
+    "type": "hook=story|visual=coach-face",
+    "description": "A player moving up in stakes and the coach who fixed one river habit",
+    "sources": "LB-0010",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival C tells a player's move-up story with a coach on camera",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "idea_id": "ID-0014",
+    "source": "scout",
+    "type": "hook=story|visual=coach-face",
+    "description": "A home-game regular who used to be the fish, and the one turn decision a coach taught",
+    "sources": "LB-0011",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival D's home-game story with a coach has run for weeks",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "idea_id": "ID-0015",
+    "source": "scout",
+    "type": "hook=claim|visual=app-screen",
+    "description": "Pot odds taught in ten minutes a day, over the app's drill screen, with a discount",
+    "sources": "LB-0012",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival C pairs a short claim with a discount",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "idea_id": "ID-0016",
+    "source": "scout",
+    "type": "hook=question|visual=hand-replay",
+    "description": "A wet-flop decision with ace-king, replayed, asking the viewer to choose",
+    "sources": "LB-0013",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival D asks the viewer to decide on a replayed flop",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   },
+   {
+    "idea_id": "ID-0017",
+    "source": "scout",
+    "type": "hook=story|visual=app-screen",
+    "description": "One spot a day on the phone for a month, then a win at the home game",
+    "sources": "LB-0014",
+    "near_copy_of": "",
+    "status": "new",
+    "reason": "Rival B's practice-then-win story over the app",
+    "legacy_ref": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "scout"
+   }
+  ]
+ }
+}

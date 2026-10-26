@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "a new explore Tests row whose hook is not question",
+  "a subagent-written meta-analyst Reviews row"
+ ],
+ "grader": "V21",
+ "pass": false,
+ "scenario": "V21"
+}

@@ -1,0 +1,10 @@
+{
+ "failing": [
+  "each live campaign's platform budget equals its Tests row's daily_budget",
+  "explore's share of committed daily spend is at least a quarter",
+  "exploring grows through checked spend: a new explore Tests row with a subagent-written plan-checker pass, or a live explore test's budget raised"
+ ],
+ "grader": "V11",
+ "pass": false,
+ "scenario": "V11"
+}

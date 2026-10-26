@@ -1,0 +1,2 @@
+{"argv": ["sim", "status"], "exit": 0, "sim_time": "2026-11-08T00:00:00Z", "stdout_head": "Now: 2026-11-08T00:00:00Z (day 6).\nBalance $294.00 of $600.00. Live: cp_0001, cp_0004. Spend today $0.00.", "wall_time": 1793000004.0}
+{"argv": ["sim", "launch", "it_0013", "--daily-budget", "15"], "exit": 0, "sim_time": "2026-11-08T00:00:00Z", "stdout_head": "Now: 2026-11-08T00:00:00Z (day 6).\nLaunched cp_0023 (item it_0013) at $15.00/day.", "wall_time": 1793000015.33}

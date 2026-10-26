@@ -1,0 +1,9 @@
+test_id,idea_id,lane,type,comparison,hypothesis,expected_range,varies,held_constant,good_looks_like,daily_budget,days,read_at,guardrails,rerun_of,lesson_id,item_id,platform_id,status,launched_at,legacy_ref,history,written_at,written_by
+T-0001,ID-0001,exploit,hook=question|visual=app-screen,,hook=question|visual=app-screen converts at least as well as the best of history,0.8x to 1.5x,hook=question|visual=app-screen,offer=free-trial,cost per conversion under $1.50,30,30,2026-12-02T00:00:00Z,pause on a tracking or delivery fault,,,it_0001,cp_0001,live,2026-11-02T00:00:00Z,,,2026-11-01T23:00:00Z,main
+T-0030,,explore,hook=question|visual=hand-replay,,,,,,,,2,,,,,,,closed,2026-10-20T00:00:00Z,history.csv:2,imported from history.csv at setup,2026-11-02T00:00:00Z,main
+T-0031,,explore,hook=question|visual=app-screen,,,,,,,,2,,,,,,,closed,2026-10-22T00:00:00Z,history.csv:3,imported from history.csv at setup,2026-11-02T00:00:00Z,main
+T-0032,,explore,hook=question|visual=hand-replay,,,,,,,,2,,,,,,,closed,2026-10-24T00:00:00Z,history.csv:4,imported from history.csv at setup,2026-11-02T00:00:00Z,main
+T-0033,,explore,hook=question|visual=app-screen,,,,,,,,2,,,,,,,closed,2026-10-26T00:00:00Z,history.csv:5,imported from history.csv at setup,2026-11-02T00:00:00Z,main
+T-0034,,explore,hook=question|visual=hand-replay,,,,,,,,2,,,,,,,closed,2026-10-28T00:00:00Z,history.csv:6,imported from history.csv at setup,2026-11-02T00:00:00Z,main
+T-0035,,explore,hook=question|visual=app-screen,,,,,,,,2,,,,,,,closed,2026-10-30T00:00:00Z,history.csv:7,imported from history.csv at setup,2026-11-02T00:00:00Z,main
+T-0040,ID-0009,explore,hook=story|visual=coach-face,T-0001,hook=story|visual=coach-face converts better than T-0001,1.2x to 1.6x T-0001's rate,hook=story|visual=coach-face,offer=free-trial,cost per conversion under $1.30,15,4,2026-11-12T00:00:00Z,pause on a tracking or delivery fault,,,,,planned,,,,2026-11-08T00:00:00Z,main

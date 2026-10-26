@@ -1,0 +1,2 @@
+tick_id,platform_time,read,did,next,written_at,written_by
+LG-0001,2026-11-10T00:00:00Z,workbook and platform,it_0006 failed its build check on the music; rebuilt as it_0007 and launched,next tick,2026-11-10T00:00:00Z,main

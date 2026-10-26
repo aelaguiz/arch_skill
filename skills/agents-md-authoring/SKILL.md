@@ -1,6 +1,6 @@
 ---
 name: agents-md-authoring
-description: "Write, edit, refactor, or audit `AGENTS.md` files for coding projects so they stay concise, repo-present, plain-English, command-first, scope-aware, and non-inferable. Use when a repo needs a new root or path-local `AGENTS.md`, an `AGENTS.override.md`, a compressed docs index, or a findings-first review of existing agent instructions."
+description: "Write, edit, refactor, or audit `AGENTS.md` files for coding projects so they stay concise, repo-present, plain-English, command-first, scope-aware, and non-inferable. Use when a repo needs a new root or path-local `AGENTS.md`, an `AGENTS.override.md`, a compressed docs index, or a findings-first review of existing agent instructions. Lessons and judgment the file carries are built with $intuition-building."
 ---
 
 # AGENTS.md Authoring
@@ -47,6 +47,7 @@ make install
 - Design root, path-local, and override files consciously. Scope is part of correctness.
 - Keep commands runnable and current. If the file names checks that should pass after edits, run them whenever feasible.
 - If the repo context is missing, stop and say so instead of inventing commands, paths, or conventions.
+- When a correction, incident, or repeated agent mistake is turning into a line in an `AGENTS.md`, build it with `$intuition-building`: what the agent was missing and why it matters, folded into the guidance it belongs to, not a rule shaped like the incident. Facts such as an exact command, a path, or a required approval stay plain lines.
 
 ## First move
 
@@ -85,5 +86,6 @@ make install
 - `references/structure-and-scope.md` - precedence, root vs path-local placement, overrides, and directory strategy
 - `references/content-budget-and-docs-index.md` - command-first content, non-inferable detail, passive context, and anti-patterns
 - `references/examples-and-anti-examples.md` - strong section shapes, templates, and common failure modes
+- `$intuition-building` - what an intuition is and how to build one, for any lesson or judgment the file has to carry
 - `references/maintenance-and-portability.md` - cross-tool compatibility, self-improvement, and upkeep loops
 - `../_shared/agent-orchestration-policy.md` - on-demand shared semantics to route to when repo instructions govern model-agent dispatch

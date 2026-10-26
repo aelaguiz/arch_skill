@@ -94,7 +94,7 @@ Avoid these failure modes aggressively:
 - **One giant file for every service**
   - no scope control, no local ownership, no hierarchy
 - **Vague danger rules**
-  - "be careful" instead of "ask before running migrations" or "never delete generated snapshots to make tests pass"
+  - "be careful" instead of saying what the danger is: "migrations change shared data, so ask before running one" or "generated snapshots are the expected output, so deleting one to make a test pass hides the failure"
 
 ## Symptom-to-fix map
 

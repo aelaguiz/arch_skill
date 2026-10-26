@@ -27,19 +27,11 @@ If mirrors are still needed for tool compatibility:
 - treat manual divergence as a bug
 - document the mirroring rule in the repo's contributing or agent docs, not inside every local file
 
-## Self-improving AGENTS loop
+## Learning from agent mistakes
 
-A good `AGENTS.md` evolves by encoding real observed failures, not by preemptively dumping every possible rule.
+A good `AGENTS.md` grows from real failures, not from listing every possible rule up front. When agents keep making a mistake, work out what they were missing: what the person who corrected them saw, why it matters, and where it applies and where it doesn't. Then change the guidance that should have covered it, so the file says one thing, instead of adding an instruction shaped like the incident. `$intuition-building` shows how. Some lessons are facts, such as an exact command, a path, or a required approval, and those belong as plain lines.
 
-Healthy loop:
-
-1. Observe a repeated agent mistake.
-2. Ask what durable truth would have prevented it.
-3. Add the smallest instruction that prevents the failure.
-4. Re-run the relevant checks and confirm the new rule actually helps.
-5. Delete or tighten stale rules when the repo or tooling changes.
-
-This keeps the file empirical instead of speculative.
+Check that the change carries by picturing an agent in a case that looks nothing like the incident, including one where the right move is different. Retire or tighten guidance when the repo or tooling changes; a line nobody needs any more still costs every run.
 
 ## When to update the file
 

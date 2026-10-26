@@ -1,0 +1,331 @@
+{
+ "campaigns": {
+  "cp_0001": {
+   "budget_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     15
+    ]
+   ],
+   "item": "it_0001",
+   "launched_at": "2026-11-02T00:00:00Z",
+   "status": "live",
+   "status_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     "live"
+    ]
+   ]
+  },
+  "cp_0002": {
+   "budget_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     20
+    ]
+   ],
+   "item": "it_0002",
+   "launched_at": "2026-11-02T00:00:00Z",
+   "status": "paused",
+   "status_events": [
+    [
+     "2026-11-02T00:00:00Z",
+     "live"
+    ],
+    [
+     "2026-11-05T00:00:00Z",
+     "paused"
+    ]
+   ]
+  },
+  "cp_0004": {
+   "budget_events": [
+    [
+     "2026-11-05T00:00:00Z",
+     25
+    ]
+   ],
+   "item": "it_0002",
+   "launched_at": "2026-11-05T00:00:00Z",
+   "status": "paused",
+   "status_events": [
+    [
+     "2026-11-05T00:00:00Z",
+     "live"
+    ],
+    [
+     "2026-11-08T00:00:00Z",
+     "paused"
+    ]
+   ]
+  },
+  "cp_0005": {
+   "budget_events": [
+    [
+     "2026-11-08T00:00:00Z",
+     25
+    ]
+   ],
+   "item": "it_0002",
+   "launched_at": "2026-11-08T00:00:00Z",
+   "status": "live",
+   "status_events": [
+    [
+     "2026-11-08T00:00:00Z",
+     "live"
+    ]
+   ]
+  },
+  "cp_0007": {
+   "budget_events": [
+    [
+     "2026-11-10T00:00:00Z",
+     25.0
+    ]
+   ],
+   "item": "it_0007",
+   "launched_at": "2026-11-10T00:00:00Z",
+   "status": "live",
+   "status_events": [
+    [
+     "2026-11-10T00:00:00Z",
+     "live"
+    ]
+   ]
+  }
+ },
+ "config": {
+  "attributes": {
+   "captions": [
+    "burned-in",
+    "none"
+   ],
+   "closing_ask": [
+    "download",
+    "try-free",
+    "learn-more"
+   ],
+   "format": [
+    "vertical",
+    "square",
+    "horizontal"
+   ],
+   "hook": [
+    "question",
+    "story",
+    "claim",
+    "challenge"
+   ],
+   "length": [
+    "15s",
+    "30s",
+    "60s"
+   ],
+   "music": [
+    "none",
+    "lo-fi",
+    "upbeat",
+    "cinematic"
+   ],
+   "offer": [
+    "free-trial",
+    "discount",
+    "none"
+   ],
+   "opening": [
+    "face",
+    "cards",
+    "text-card"
+   ],
+   "palette": [
+    "dark",
+    "bright",
+    "felt-green"
+   ],
+   "presenter": [
+    "coach",
+    "player",
+    "none"
+   ],
+   "visual": [
+    "app-screen",
+    "hand-replay",
+    "table-footage"
+   ],
+   "voice": [
+    "calm",
+    "energetic"
+   ]
+  },
+  "base": -3.1,
+  "cap": 300,
+  "cpc": 0.1,
+  "days": 14,
+  "effects": {
+   "hook": {
+    "challenge": 0.25,
+    "claim": -0.05,
+    "question": 0.1
+   },
+   "offer": {
+    "discount": 0.05,
+    "free-trial": 0.2
+   },
+   "visual": {
+    "app-screen": 0.15,
+    "hand-replay": 0.3
+   }
+  },
+  "name": "W5",
+  "pockets": [],
+  "q": 0.25,
+  "truth_attributes": [
+   "hook",
+   "visual",
+   "offer"
+  ]
+ },
+ "faults": [],
+ "hourly": {},
+ "items": {
+  "it_0001": {
+   "attrs": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "question",
+    "length": "30s",
+    "music": "lo-fi",
+    "offer": "free-trial",
+    "opening": "face",
+    "palette": "dark",
+    "presenter": "coach",
+    "visual": "app-screen",
+    "voice": "calm"
+   },
+   "built_at": "2026-11-02T00:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "question",
+    "length": "30s",
+    "music": "lo-fi",
+    "offer": "free-trial",
+    "opening": "face",
+    "palette": "dark",
+    "presenter": "coach",
+    "visual": "app-screen",
+    "voice": "calm"
+   },
+   "text": "Would you call this river shove with pocket tens? Try it free."
+  },
+  "it_0002": {
+   "attrs": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "upbeat",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "coach",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "built_at": "2026-11-02T00:00:00Z",
+   "quality": "specific",
+   "requested": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "upbeat",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "coach",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "text": "Beat this hand: pocket jacks on the button, and the river brings a third heart. Call or fold?"
+  },
+  "it_0006": {
+   "attrs": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "lo-fi",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "player",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "built_at": "2026-11-10T00:00:00Z",
+   "made_from": "it_0002",
+   "quality": "specific",
+   "requested": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "upbeat",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "player",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "text": "Beat this hand: pocket jacks on the button, and the river brings a third heart. Call or fold?"
+  },
+  "it_0007": {
+   "attrs": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "upbeat",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "player",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "built_at": "2026-11-10T00:00:00Z",
+   "made_from": "it_0002",
+   "quality": "specific",
+   "requested": {
+    "captions": "burned-in",
+    "closing_ask": "try-free",
+    "format": "vertical",
+    "hook": "challenge",
+    "length": "15s",
+    "music": "upbeat",
+    "offer": "free-trial",
+    "opening": "cards",
+    "palette": "felt-green",
+    "presenter": "player",
+    "visual": "hand-replay",
+    "voice": "energetic"
+   },
+   "text": "Beat this hand: pocket jacks on the button, and the river brings a third heart. Call or fold?"
+  }
+ },
+ "now": "2026-11-10T00:00:00Z",
+ "posts": {},
+ "truth": {
+  "money_received": 800
+ }
+}

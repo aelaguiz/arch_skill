@@ -1,0 +1,238 @@
+{
+ "id": "W4",
+ "name": "easy stationary",
+ "kind": "paid",
+ "days": 7,
+ "tick_hours": 12,
+ "start": "2026-11-02T00:00:00Z",
+ "attributes": [
+  {
+   "name": "angle",
+   "values": [
+    "price",
+    "speed",
+    "fun"
+   ]
+  },
+  {
+   "name": "format",
+   "values": [
+    "static",
+    "video",
+    "carousel"
+   ]
+  }
+ ],
+ "base": -3.0,
+ "effects": {
+  "angle": {
+   "price": 0.0,
+   "speed": 0.05,
+   "fun": 0.2
+  },
+  "format": {
+   "static": 0.0,
+   "video": 0.15,
+   "carousel": -0.05
+  }
+ },
+ "pockets": [],
+ "q": 0.25,
+ "n0": 0.0,
+ "f": 0.0,
+ "weekday": [
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0,
+  1.0
+ ],
+ "cpc": 0.1,
+ "cap": 300,
+ "cap_scope": "campaign",
+ "budget_min": 5,
+ "budget_max": 100,
+ "money": 300,
+ "grants": [],
+ "build_fault_p": 0.0,
+ "rejection_p": 0.0,
+ "faults": [],
+ "app_lag_p": [
+  0.5,
+  0.3,
+  0.2
+ ],
+ "audience": "people who play poker in home games and casinos and want to make better decisions at the table",
+ "generic_phrases": [
+  "level up",
+  "next level",
+  "best app",
+  "best poker app",
+  "game changer",
+  "download now",
+  "improve your skills",
+  "get better at poker",
+  "take your game",
+  "ultimate",
+  "amazing",
+  "you won't believe"
+ ],
+ "specific_terms": [
+  "flop",
+  "turn",
+  "river",
+  "3-bet",
+  "4-bet",
+  "c-bet",
+  "pot odds",
+  "outs",
+  "equity",
+  "range",
+  "position",
+  "button",
+  "big blind",
+  "small blind",
+  "stack",
+  "pocket",
+  "aces",
+  "kings",
+  "queens",
+  "jacks",
+  "suited",
+  "bluff",
+  "fold",
+  "raise",
+  "check-raise",
+  "all-in",
+  "tournament",
+  "cash game",
+  "home game",
+  "$1/$2",
+  "$2/$5",
+  "chips",
+  "showdown",
+  "kicker",
+  "flush",
+  "straight",
+  "set",
+  "overpair",
+  "draw"
+ ],
+ "library": {
+  "kind": "ads",
+  "seed": 4,
+  "running_days": {
+   "offset": 10,
+   "scale": 900,
+   "center": 0.05,
+   "noise_sd": 6,
+   "min": 2,
+   "max": 90
+  },
+  "items": [
+   {
+    "id": "lib_01",
+    "owner": "Rival C",
+    "type": {
+     "angle": "speed",
+     "format": "carousel"
+    },
+    "text": "Swipe: 4 spots, 4 answers, 1 minute. Learn pot odds before your next home game.",
+    "shows": "four swipeable cards with one spot each",
+    "offer": "first week free"
+   },
+   {
+    "id": "lib_02",
+    "owner": "Rival A",
+    "type": {
+     "angle": "price",
+     "format": "static"
+    },
+    "text": "Cheaper than one buy-in: a full year of river and turn drills for $59.",
+    "shows": "a single still image of the app's pricing card",
+    "offer": "$59 a year"
+   },
+   {
+    "id": "lib_03",
+    "owner": "Rival D",
+    "type": {
+     "angle": "fun",
+     "format": "video"
+    },
+    "text": "Watch friends battle over the same flop and see who plays it right.",
+    "shows": "a 30-second film of friends laughing over a phone",
+    "offer": "7 days free"
+   },
+   {
+    "id": "lib_04",
+    "owner": "Rival B",
+    "type": {
+     "angle": "price",
+     "format": "video"
+    },
+    "text": "Less than the cost of one $1/$2 rebuy. Watch what a month of training covers.",
+    "shows": "a 30-second film of the app's lessons, ending on what it costs",
+    "offer": "first month $4.99"
+   },
+   {
+    "id": "lib_05",
+    "owner": "Rival D",
+    "type": {
+     "angle": "speed",
+     "format": "static"
+    },
+    "text": "Fix your preflop ranges in 5 minutes a day. No long lessons.",
+    "shows": "a single still image with a stopwatch",
+    "offer": "7 days free"
+   },
+   {
+    "id": "lib_06",
+    "owner": "Rival C",
+    "type": {
+     "angle": "fun",
+     "format": "static"
+    },
+    "text": "Poker trivia night, every night: guess the pro's fold and climb the leaderboard.",
+    "shows": "a single still image of the app's leaderboard",
+    "offer": "free to play"
+   },
+   {
+    "id": "lib_07",
+    "owner": "Rival A",
+    "type": {
+     "angle": "speed",
+     "format": "video"
+    },
+    "text": "Two minutes a day on river spots. Watch a full session from start to finish.",
+    "shows": "a 60-second film of one quick session",
+    "offer": "7 days free"
+   },
+   {
+    "id": "lib_08",
+    "owner": "Rival B",
+    "type": {
+     "angle": "price",
+     "format": "carousel"
+    },
+    "text": "Swipe to compare: one coaching hour, or a year of hand drills for less than a stack.",
+    "shows": "five swipeable cards comparing prices",
+    "offer": "40% off a year"
+   },
+   {
+    "id": "lib_09",
+    "owner": "Rival A",
+    "type": {
+     "angle": "fun",
+     "format": "carousel"
+    },
+    "text": "Swipe through the 6 funniest bluffs our players made this week.",
+    "shows": "six swipeable cards of player bluffs",
+    "offer": "no offer mentioned"
+   }
+  ]
+ },
+ "readme": "# This account\n\nThis is the ad account for a poker training app. Its ads run on the platform behind the `sim` command; `sim catalog` describes what the platform offers.\n\nThis campaign runs for 7 days.\n\nTicks run for you every 12 hours.\n\nTo reach me, run `notify`; `notify --help` says how it works.\n\nThis account has no Google access; keep the hill climb's workbook as CSV files in `workbook/`.\n\nReports for me go in `reports/` as HTML or Markdown files.\n",
+ "setup_prompt": "/hill-climb Set up a hill climb on this ad account to get the cost of a conversion as low as possible. You have $300."
+}

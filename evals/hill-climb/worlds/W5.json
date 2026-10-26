@@ -1,0 +1,743 @@
+{
+ "id": "W5",
+ "name": "rich-coded video ads",
+ "kind": "paid",
+ "days": 14,
+ "tick_hours": 12,
+ "start": "2026-11-02T00:00:00Z",
+ "attributes": [
+  {
+   "name": "hook",
+   "values": [
+    "question",
+    "story",
+    "claim",
+    "challenge"
+   ]
+  },
+  {
+   "name": "visual",
+   "values": [
+    "app-screen",
+    "hand-replay",
+    "table-footage"
+   ]
+  },
+  {
+   "name": "offer",
+   "values": [
+    "free-trial",
+    "discount",
+    "none"
+   ]
+  },
+  {
+   "name": "presenter",
+   "values": [
+    "coach",
+    "player",
+    "none"
+   ]
+  },
+  {
+   "name": "voice",
+   "values": [
+    "calm",
+    "energetic"
+   ]
+  },
+  {
+   "name": "music",
+   "values": [
+    "none",
+    "lo-fi",
+    "upbeat",
+    "cinematic"
+   ]
+  },
+  {
+   "name": "captions",
+   "values": [
+    "burned-in",
+    "none"
+   ]
+  },
+  {
+   "name": "length",
+   "values": [
+    "15s",
+    "30s",
+    "60s"
+   ]
+  },
+  {
+   "name": "opening",
+   "values": [
+    "face",
+    "cards",
+    "text-card"
+   ]
+  },
+  {
+   "name": "closing_ask",
+   "values": [
+    "download",
+    "try-free",
+    "learn-more"
+   ]
+  },
+  {
+   "name": "palette",
+   "values": [
+    "dark",
+    "bright",
+    "felt-green"
+   ]
+  },
+  {
+   "name": "format",
+   "values": [
+    "vertical",
+    "square",
+    "horizontal"
+   ]
+  }
+ ],
+ "truth_attributes": [
+  "hook",
+  "visual",
+  "offer"
+ ],
+ "partial_builds": true,
+ "base": -3.1,
+ "effects": {
+  "hook": {
+   "question": 0.1,
+   "story": 0.0,
+   "claim": -0.05,
+   "challenge": 0.25
+  },
+  "visual": {
+   "app-screen": 0.15,
+   "hand-replay": 0.3,
+   "table-footage": 0.0
+  },
+  "offer": {
+   "free-trial": 0.2,
+   "discount": 0.05,
+   "none": 0.0
+  }
+ },
+ "pockets": [],
+ "q": 0.25,
+ "n0": 0.35,
+ "f": 0.03,
+ "weekday": [
+  1.0,
+  1.0,
+  0.95,
+  0.95,
+  1.0,
+  1.1,
+  1.1
+ ],
+ "cpc": 0.1,
+ "cap": 300,
+ "cap_scope": "campaign",
+ "budget_min": 5,
+ "budget_max": 100,
+ "money": 600,
+ "grants": [
+  600
+ ],
+ "build_fault_p": 0.2,
+ "rejection_p": 0.05,
+ "faults": [],
+ "app_lag_p": [
+  0.5,
+  0.3,
+  0.2
+ ],
+ "audience": "people who play poker in home games and casinos and want to make better decisions at the table",
+ "generic_phrases": [
+  "level up",
+  "next level",
+  "best app",
+  "best poker app",
+  "game changer",
+  "download now",
+  "improve your skills",
+  "get better at poker",
+  "take your game",
+  "ultimate",
+  "amazing",
+  "you won't believe"
+ ],
+ "specific_terms": [
+  "flop",
+  "turn",
+  "river",
+  "3-bet",
+  "4-bet",
+  "c-bet",
+  "pot odds",
+  "outs",
+  "equity",
+  "range",
+  "position",
+  "button",
+  "big blind",
+  "small blind",
+  "stack",
+  "pocket",
+  "aces",
+  "kings",
+  "queens",
+  "jacks",
+  "suited",
+  "bluff",
+  "fold",
+  "raise",
+  "check-raise",
+  "all-in",
+  "tournament",
+  "cash game",
+  "home game",
+  "$1/$2",
+  "$2/$5",
+  "chips",
+  "showdown",
+  "kicker",
+  "flush",
+  "straight",
+  "set",
+  "overpair",
+  "draw"
+ ],
+ "reception": {
+  "exposure": "clicks",
+  "comment_rate": 0.03,
+  "kinds": [
+   "praise",
+   "question",
+   "complaint",
+   "spam call-out"
+  ],
+  "mix": {
+   "generic": [
+    0.25,
+    0.1,
+    0.15,
+    0.5
+   ],
+   "neutral": [
+    0.4,
+    0.25,
+    0.15,
+    0.2
+   ],
+   "specific": [
+    0.4,
+    0.4,
+    0.1,
+    0.1
+   ]
+  },
+  "overpromise_phrases": [
+   "guarantee",
+   "never lose",
+   "win every",
+   "can't lose",
+   "cannot lose",
+   "sure win",
+   "100% win"
+  ],
+  "overpromise_complaint_share": 0.6,
+  "save_rate": {
+   "generic": 0.004,
+   "neutral": 0.01,
+   "specific": 0.025
+  },
+  "hide_rate": {
+   "generic": 0.03,
+   "neutral": 0.015,
+   "specific": 0.008
+  },
+  "overpromise_hide_rate": 0.04,
+  "samples": {
+   "praise": [
+    "Did the river drills for a week and stopped paying off big bets at my Friday game.",
+    "The hand breakdowns here are the real deal.",
+    "Finally someone explains pot odds without a lecture.",
+    "My home game crew is using this now. The 3-bet spots helped.",
+    "This is exactly where I leak chips, on the turn. Good stuff.",
+    "Saved this. Folding more on the river already paid off."
+   ],
+   "question": [
+    "Does the free week include tournament spots or only cash games?",
+    "Is there anything for $1/$2 live games?",
+    "Can I practice short stack play with this?",
+    "Does it work on a tablet?",
+    "How many hands are in the river trainer?",
+    "Do I need to enter a card for the trial?"
+   ],
+   "complaint": [
+    "Seeing this five times a day now.",
+    "The trial wanted my card up front, not cool.",
+    "Way too loud for my feed.",
+    "This keeps following me everywhere."
+   ],
+   "misleading": [
+    "This is misleading. Nobody wins every hand, poker has variance.",
+    "That promise is not how poker works. Reported as misleading.",
+    "Misleading. No app stops you from losing hands.",
+    "Promising results like that is a lie and you know it.",
+    "Calling this out as misleading. Variance exists.",
+    "No one can promise that at a poker table. Stop overselling."
+   ],
+   "spam call-out": [
+    "Bots in the comments again.",
+    "Looks like every other spammy poker promo in my feed.",
+    "Another one of these. Blocked.",
+    "Feels like spam, not sure this is even real.",
+    "Same thing, different account. Spam."
+   ]
+  }
+ },
+ "library": {
+  "kind": "ads",
+  "seed": 5,
+  "running_days": {
+   "offset": 10,
+   "scale": 900,
+   "center": 0.05,
+   "noise_sd": 6,
+   "min": 2,
+   "max": 90
+  },
+  "items": [
+   {
+    "id": "lib_01",
+    "owner": "Rival A",
+    "type": {
+     "hook": "challenge",
+     "visual": "hand-replay",
+     "offer": "free-trial",
+     "presenter": "coach",
+     "voice": "energetic",
+     "music": "upbeat",
+     "captions": "burned-in",
+     "length": "15s",
+     "opening": "cards",
+     "closing_ask": "try-free",
+     "palette": "felt-green",
+     "format": "vertical"
+    },
+    "text": "Pocket jacks, three hearts on the river, and a big bet. Call or fold? Most players get this wrong.",
+    "shows": "opens on two cards dealt face up, then an animated replay of the hand on green felt while a coach snaps through the action in a quick, punchy voice; words on screen the whole time; an upbeat electronic track; about 15 seconds, filmed tall for phones; ends with 'try it free'",
+    "offer": "7 days free"
+   },
+   {
+    "id": "lib_02",
+    "owner": "Rival B",
+    "type": {
+     "hook": "question",
+     "visual": "app-screen",
+     "offer": "free-trial",
+     "presenter": "none",
+     "voice": "calm",
+     "music": "lo-fi",
+     "captions": "burned-in",
+     "length": "30s",
+     "opening": "text-card",
+     "closing_ask": "download",
+     "palette": "dark",
+     "format": "vertical"
+    },
+    "text": "What would you do with ace-king on a wet flop?",
+    "shows": "a title card asks the question, then the app's quiz screen on a phone with no one on camera; a calm voice reads the options over a mellow beat; captions throughout; a dark background; about 30 seconds, tall; closes on 'download the app'",
+    "offer": "first week free"
+   },
+   {
+    "id": "lib_03",
+    "owner": "Rival C",
+    "type": {
+     "hook": "story",
+     "visual": "table-footage",
+     "offer": "none",
+     "presenter": "player",
+     "voice": "calm",
+     "music": "cinematic",
+     "captions": "none",
+     "length": "60s",
+     "opening": "face",
+     "closing_ask": "learn-more",
+     "palette": "dark",
+     "format": "horizontal"
+    },
+    "text": "I lost three buy-ins in one night at my home game. This is what I changed.",
+    "shows": "a player's face fills the first frame, then real footage from a casino table as he tells the story in a quiet voice; sweeping film-score music; no captions; dim, moody light; a full minute, shot wide like a film; ends asking you to learn more",
+    "offer": "no offer mentioned"
+   },
+   {
+    "id": "lib_04",
+    "owner": "Rival A",
+    "type": {
+     "hook": "challenge",
+     "visual": "hand-replay",
+     "offer": "free-trial",
+     "presenter": "player",
+     "voice": "energetic",
+     "music": "upbeat",
+     "captions": "burned-in",
+     "length": "15s",
+     "opening": "cards",
+     "closing_ask": "try-free",
+     "palette": "bright",
+     "format": "vertical"
+    },
+    "text": "Bet you fold this river with a set. Watch the replay and prove me wrong.",
+    "shows": "starts on a pair of cards, then a bright animated replay of the hand while a young player calls the action fast and loud; captions on screen; a bouncy pop track; about 15 seconds, filmed tall; ends with 'try it free for a week'",
+    "offer": "a week free"
+   },
+   {
+    "id": "lib_05",
+    "owner": "Rival D",
+    "type": {
+     "hook": "claim",
+     "visual": "app-screen",
+     "offer": "discount",
+     "presenter": "coach",
+     "voice": "calm",
+     "music": "none",
+     "captions": "burned-in",
+     "length": "30s",
+     "opening": "face",
+     "closing_ask": "download",
+     "palette": "bright",
+     "format": "square"
+    },
+    "text": "Ten minutes of drills a day fixed my preflop ranges for good.",
+    "shows": "a coach's face to camera first, then the app's drill screen on a phone; she speaks slowly and evenly with no music at all; captions on the picture; bright, clean colors in a square frame for the feed; about 30 seconds; ends asking you to download the app",
+    "offer": "25% off the first month"
+   },
+   {
+    "id": "lib_06",
+    "owner": "Rival B",
+    "type": {
+     "hook": "question",
+     "visual": "hand-replay",
+     "offer": "free-trial",
+     "presenter": "coach",
+     "voice": "calm",
+     "music": "lo-fi",
+     "captions": "none",
+     "length": "30s",
+     "opening": "cards",
+     "closing_ask": "try-free",
+     "palette": "felt-green",
+     "format": "vertical"
+    },
+    "text": "Is this a fold or a call on the turn with a flush draw?",
+    "shows": "opens on the hole cards, then a replay of the hand on green felt; a coach talks it through calmly over a soft hip-hop beat; no captions; about 30 seconds, tall; ends inviting you to try it free",
+    "offer": "7 days free"
+   },
+   {
+    "id": "lib_07",
+    "owner": "Rival C",
+    "type": {
+     "hook": "story",
+     "visual": "app-screen",
+     "offer": "discount",
+     "presenter": "player",
+     "voice": "energetic",
+     "music": "upbeat",
+     "captions": "burned-in",
+     "length": "60s",
+     "opening": "face",
+     "closing_ask": "download",
+     "palette": "bright",
+     "format": "vertical"
+    },
+    "text": "Six months ago I was the fish at the $1/$2 table. Here is the app that turned it around.",
+    "shows": "a grinning player talks straight to camera, cutting to the app on his phone; fast and excited over a cheerful track; captions on screen; bright colors; about a minute, tall; ends with 'get the app'",
+    "offer": "half price for 2 months"
+   },
+   {
+    "id": "lib_08",
+    "owner": "Rival D",
+    "type": {
+     "hook": "claim",
+     "visual": "table-footage",
+     "offer": "none",
+     "presenter": "none",
+     "voice": "calm",
+     "music": "cinematic",
+     "captions": "none",
+     "length": "30s",
+     "opening": "text-card",
+     "closing_ask": "learn-more",
+     "palette": "dark",
+     "format": "horizontal"
+    },
+    "text": "Every hand in this course comes from real tournament final tables.",
+    "shows": "a title card, then slow footage of chips and cards at a live tournament table with no one presenting; a low narrator's voice and dramatic orchestral music; no captions; dark and moody; about 30 seconds, widescreen; ends asking you to learn more",
+    "offer": "no offer mentioned"
+   },
+   {
+    "id": "lib_09",
+    "owner": "Rival A",
+    "type": {
+     "hook": "challenge",
+     "visual": "table-footage",
+     "offer": "free-trial",
+     "presenter": "coach",
+     "voice": "energetic",
+     "music": "upbeat",
+     "captions": "burned-in",
+     "length": "15s",
+     "opening": "face",
+     "closing_ask": "try-free",
+     "palette": "dark",
+     "format": "vertical"
+    },
+    "text": "You have 15 big blinds on the button. Shove or fold? You have 5 seconds.",
+    "shows": "a coach's face up close, then quick cuts of a real table as he dares you to answer before a timer runs out; a punchy beat; captions; dark tones; 15 seconds, tall; ends with 'try it free'",
+    "offer": "a free week"
+   },
+   {
+    "id": "lib_10",
+    "owner": "Rival B",
+    "type": {
+     "hook": "question",
+     "visual": "app-screen",
+     "offer": "discount",
+     "presenter": "coach",
+     "voice": "calm",
+     "music": "none",
+     "captions": "burned-in",
+     "length": "60s",
+     "opening": "text-card",
+     "closing_ask": "learn-more",
+     "palette": "bright",
+     "format": "square"
+    },
+    "text": "Do you know your pot odds when someone bets half the pot on the river?",
+    "shows": "a title card with the question, then a coach beside the app's screen walking through the math slowly; no music; captions; bright and plain; a full minute in a square frame; ends asking you to learn more",
+    "offer": "30% off a year"
+   },
+   {
+    "id": "lib_11",
+    "owner": "Rival C",
+    "type": {
+     "hook": "challenge",
+     "visual": "hand-replay",
+     "offer": "discount",
+     "presenter": "none",
+     "voice": "energetic",
+     "music": "upbeat",
+     "captions": "burned-in",
+     "length": "15s",
+     "opening": "cards",
+     "closing_ask": "download",
+     "palette": "felt-green",
+     "format": "vertical"
+    },
+    "text": "Can you find the bluff in this hand before the showdown?",
+    "shows": "opens on face-up cards, then the replay on green felt with nobody on camera; a fast narrator over a bouncy track; words on screen; 15 seconds, tall; ends with 'get the app'",
+    "offer": "20% off the first month"
+   },
+   {
+    "id": "lib_12",
+    "owner": "Rival D",
+    "type": {
+     "hook": "story",
+     "visual": "hand-replay",
+     "offer": "free-trial",
+     "presenter": "coach",
+     "voice": "calm",
+     "music": "lo-fi",
+     "captions": "none",
+     "length": "60s",
+     "opening": "face",
+     "closing_ask": "try-free",
+     "palette": "dark",
+     "format": "horizontal"
+    },
+    "text": "The worst fold I ever made cost me a seat at the final table. Let me show you the hand.",
+    "shows": "the coach's face first, then she replays the hand slowly on a dark table graphic while telling the story; a soft, mellow beat; no captions; a full minute, widescreen; ends inviting you to try it free",
+    "offer": "first 7 days free"
+   },
+   {
+    "id": "lib_13",
+    "owner": "Rival A",
+    "type": {
+     "hook": "claim",
+     "visual": "app-screen",
+     "offer": "free-trial",
+     "presenter": "player",
+     "voice": "calm",
+     "music": "lo-fi",
+     "captions": "burned-in",
+     "length": "30s",
+     "opening": "text-card",
+     "closing_ask": "try-free",
+     "palette": "bright",
+     "format": "vertical"
+    },
+    "text": "Players who drill river spots 10 minutes a day win more pots at home games.",
+    "shows": "a title card with the claim, then a player scrolling through the app's drills, speaking evenly over a soft background beat; captions; bright colors; about 30 seconds, tall; ends with 'try it free'",
+    "offer": "7 days free"
+   },
+   {
+    "id": "lib_14",
+    "owner": "Rival B",
+    "type": {
+     "hook": "challenge",
+     "visual": "hand-replay",
+     "offer": "free-trial",
+     "presenter": "coach",
+     "voice": "calm",
+     "music": "cinematic",
+     "captions": "burned-in",
+     "length": "30s",
+     "opening": "cards",
+     "closing_ask": "try-free",
+     "palette": "felt-green",
+     "format": "square"
+    },
+    "text": "Three players, one pot, and you hold queens. Make the call the pros made.",
+    "shows": "starts on a pair of queens, then a replay of a three-way pot on green felt; a coach lays out the choice in a level voice over sweeping strings; captions; about 30 seconds, square; ends with 'try it free'",
+    "offer": "a week free"
+   },
+   {
+    "id": "lib_15",
+    "owner": "Rival C",
+    "type": {
+     "hook": "question",
+     "visual": "table-footage",
+     "offer": "none",
+     "presenter": "player",
+     "voice": "energetic",
+     "music": "upbeat",
+     "captions": "none",
+     "length": "15s",
+     "opening": "face",
+     "closing_ask": "download",
+     "palette": "bright",
+     "format": "vertical"
+    },
+    "text": "Would you check-raise here with top pair?",
+    "shows": "a player's face, then a quick clip from a live cash game; he asks fast and laughs; an upbeat track; no captions; bright; 15 seconds, tall; ends with 'get the app'",
+    "offer": "no offer mentioned"
+   },
+   {
+    "id": "lib_16",
+    "owner": "Rival D",
+    "type": {
+     "hook": "story",
+     "visual": "table-footage",
+     "offer": "discount",
+     "presenter": "coach",
+     "voice": "calm",
+     "music": "cinematic",
+     "captions": "burned-in",
+     "length": "60s",
+     "opening": "text-card",
+     "closing_ask": "learn-more",
+     "palette": "dark",
+     "format": "horizontal"
+    },
+    "text": "In 2019 I busted a tournament on the bubble with kings. Here is what I wish I had known.",
+    "shows": "a title card with the year, then a coach telling the story over footage from a tournament room; film-score music; captions; dark and dramatic; a full minute, widescreen; ends asking you to learn more",
+    "offer": "40% off this month"
+   },
+   {
+    "id": "lib_17",
+    "owner": "Rival A",
+    "type": {
+     "hook": "challenge",
+     "visual": "hand-replay",
+     "offer": "free-trial",
+     "presenter": "coach",
+     "voice": "energetic",
+     "music": "lo-fi",
+     "captions": "burned-in",
+     "length": "15s",
+     "opening": "cards",
+     "closing_ask": "try-free",
+     "palette": "dark",
+     "format": "vertical"
+    },
+    "text": "Beat this river: pocket nines, an ace on board, and a shove. Your move.",
+    "shows": "opens on the hole cards, then a replay on a dark table graphic; a coach fires the question with energy over a soft beat; captions; 15 seconds, tall; ends with 'try it free'",
+    "offer": "7 days free"
+   },
+   {
+    "id": "lib_18",
+    "owner": "Rival B",
+    "type": {
+     "hook": "claim",
+     "visual": "hand-replay",
+     "offer": "none",
+     "presenter": "none",
+     "voice": "calm",
+     "music": "none",
+     "captions": "none",
+     "length": "30s",
+     "opening": "cards",
+     "closing_ask": "learn-more",
+     "palette": "felt-green",
+     "format": "square"
+    },
+    "text": "Our replays show the exact turn decisions that cost players chips.",
+    "shows": "cards first, then a quiet replay on green felt with a calm narrator and no music; no captions; about 30 seconds, square; ends asking you to learn more",
+    "offer": "no offer mentioned"
+   },
+   {
+    "id": "lib_19",
+    "owner": "Rival C",
+    "type": {
+     "hook": "question",
+     "visual": "app-screen",
+     "offer": "free-trial",
+     "presenter": "coach",
+     "voice": "energetic",
+     "music": "upbeat",
+     "captions": "burned-in",
+     "length": "30s",
+     "opening": "face",
+     "closing_ask": "try-free",
+     "palette": "bright",
+     "format": "vertical"
+    },
+    "text": "How often should you c-bet a dry flop? Answer in the app.",
+    "shows": "a coach's face to camera, then the app's quiz on a phone; quick and lively over an upbeat track; captions; bright; about 30 seconds, tall; ends with 'try it free'",
+    "offer": "first week free"
+   },
+   {
+    "id": "lib_20",
+    "owner": "Rival D",
+    "type": {
+     "hook": "challenge",
+     "visual": "app-screen",
+     "offer": "discount",
+     "presenter": "player",
+     "voice": "calm",
+     "music": "lo-fi",
+     "captions": "none",
+     "length": "60s",
+     "opening": "text-card",
+     "closing_ask": "download",
+     "palette": "dark",
+     "format": "horizontal"
+    },
+    "text": "Think you can beat the app's river quiz? 9 out of 10 players miss question one.",
+    "shows": "a title card throws down the challenge, then a player works through the app's quiz on a laptop, speaking quietly over a mellow beat; no captions; dark; a full minute, widescreen; ends asking you to download the app",
+    "offer": "half price for 3 months"
+   }
+  ]
+ },
+ "readme": "# This account\n\nThis is the video ad account for a poker training app. Its video ads run on the platform behind the `sim` command; `sim catalog` describes what the platform offers and how a video is made.\n\nTicks run for you every 12 hours.\n\nTo reach me, run `notify`; `notify --help` says how it works.\n\nThis account has no Google access; keep the hill climb's workbook as CSV files in `workbook/`.\n\nReports for me go in `reports/` as HTML or Markdown files.\n",
+ "setup_prompt": "/hill-climb Set up a hill climb on this video ad account to get the cost of a conversion as low as possible. You have $600; ask me if you need more."
+}

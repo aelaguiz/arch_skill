@@ -1,0 +1,5 @@
+review_id,role,period,findings,call,changes,written_at,written_by
+RV-0001,strategist,2026-11-02,method set at setup,keep,,2026-11-02T00:00:00Z,strategist
+RV-0002,auditor,2026-11-02,imports reconcile with history.csv,keep,,2026-11-02T00:00:00Z,auditor
+RV-0003,meta-analyst,2026-11-06 to 2026-11-07,exploring on schedule,keep,,2026-11-07T00:00:00Z,meta-analyst
+RV-0004,meta-analyst,2026-11-07 to 2026-11-08,every test so far used a question hook; six cells untested,explore away from question hooks,,2026-11-08T00:00:00Z,meta-analyst

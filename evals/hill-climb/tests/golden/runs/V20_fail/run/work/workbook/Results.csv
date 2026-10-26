@@ -1,0 +1,4 @@
+result_id,test_id,window,metric,k,n,spend,rate_text,versus,chance_beats,method,call,notes,legacy_ref,written_at,written_by
+R-0002,T-0002,,,21,450,,,,,,legacy,,Live results row 3,2026-11-08T00:00:00Z,main
+R-0003,T-0003,,,24,450,,,,,,legacy,,cp_0003 in the old tracker,2026-11-08T00:00:00Z,main
+R-0001,T-0001,,,108,1740,,,,,,legacy,,Live results.csv:2,2026-11-08T00:00:00Z,main

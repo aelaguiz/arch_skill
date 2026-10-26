@@ -1,0 +1,75 @@
+{
+ "extends": "base_w1",
+ "remove": [
+  "T-0002"
+ ],
+ "files": {
+  "history.csv": "hook,visual,offer,text,clicks,conversions,spend,first_live,last_live\nquestion,app-screen,free-trial,\"Would you call a 3-bet with pocket tens? Find out in the app, free for 7 days.\",860,62,86.00,2026-10-01,2026-10-05\nclaim,app-screen,free-trial,The app that fixes the river mistakes costing you chips. Try it free.,700,41,70.00,2026-10-01,2026-10-05\nquestion,hand-replay,free-trial,Watch this hand: fold or call on the turn? Try 7 days free.,600,34,60.00,2026-10-08,2026-10-12\nquestion,app-screen,none,What is your move with ace-king on a wet flop? Practice it in the app.,520,30,52.00,2026-10-08,2026-10-12\nclaim,hand-replay,discount,We replay the hands you misplayed so you stop repeating them. 20% off.,400,18,40.00,2026-10-15,2026-10-19\nstory,app-screen,free-trial,Last month I finally stopped spewing chips at my home game. This is the app I used. 7 days free.,380,22,38.00,2026-10-15,2026-10-19\nclaim,app-screen,free-trial,Better river decisions in 10 minutes a day. Try the app free.,300,13,30.00,2026-10-06,2026-10-07\n"
+ },
+ "rows": {
+  "Tests": [
+   {
+    "test_id": "T-0107",
+    "idea_id": "",
+    "lane": "develop",
+    "type": "hook=claim|visual=app-screen",
+    "comparison": "",
+    "hypothesis": "",
+    "expected_range": "",
+    "varies": "",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "",
+    "daily_budget": "",
+    "days": "2",
+    "read_at": "",
+    "guardrails": "",
+    "rerun_of": "T-0102",
+    "lesson_id": "L-0001",
+    "item_id": "",
+    "platform_id": "",
+    "status": "closed",
+    "launched_at": "2026-10-06T00:00:00Z",
+    "legacy_ref": "history.csv:8",
+    "history": "imported from history.csv at setup",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Results": [
+   {
+    "result_id": "R-0107",
+    "test_id": "T-0107",
+    "window": "2026-10-06 to 2026-10-07",
+    "metric": "conversions per click",
+    "k": "13",
+    "n": "300",
+    "spend": "30.00",
+    "rate_text": "4.3% (13 of 300)",
+    "versus": "",
+    "chance_beats": "",
+    "method": "",
+    "call": "legacy",
+    "notes": "imported from history.csv; a rerun of T-0102",
+    "legacy_ref": "history.csv:8",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Lessons": [
+   {
+    "lesson_id": "L-0001",
+    "subject": "hook over the app screen",
+    "statement": "A question hook converts better than a claim hook over the app screen",
+    "winner": "hook=question|visual=app-screen",
+    "loser": "hook=claim|visual=app-screen",
+    "status": "strong",
+    "evidence": "T-0102, T-0107",
+    "recheck_at": "2026-11-06T00:00:00Z",
+    "legacy_ref": "history.csv:3, history.csv:8",
+    "history": "proven on 2026-10-07 when the rerun T-0107 showed the same gap; imported at setup",
+    "written_at": "2026-11-02T00:00:00Z",
+    "written_by": "main"
+   }
+  ]
+ }
+}

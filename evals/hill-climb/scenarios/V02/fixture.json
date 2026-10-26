@@ -1,0 +1,81 @@
+{
+ "extends": "base_w1",
+ "money": 315,
+ "rows": {
+  "Charter": [
+   {
+    "field": "money_total",
+    "value": "315"
+   },
+   {
+    "field": "speed",
+    "value": "as fast as checked items can be read, from $80 a day committed"
+   }
+  ],
+  "Tests": [
+   {
+    "test_id": "T-0009",
+    "idea_id": "ID-0005",
+    "lane": "explore",
+    "type": "hook=claim|visual=coach-face",
+    "comparison": "T-0001",
+    "hypothesis": "The claim/coach-face cell converts better than the exploit's cell",
+    "expected_range": "0.8x to 1.4x T-0001's rate",
+    "varies": "hook question->claim; visual app-screen->coach-face",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "20",
+    "days": "3",
+    "read_at": "2026-11-11T00:00:00Z",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "",
+    "platform_id": "",
+    "status": "plan-checked",
+    "launched_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "main"
+   },
+   {
+    "test_id": "T-0010",
+    "idea_id": "ID-0006",
+    "lane": "explore",
+    "type": "hook=story|visual=hand-replay",
+    "comparison": "T-0001",
+    "hypothesis": "The story/hand-replay cell converts better than the exploit's cell",
+    "expected_range": "0.7x to 1.3x T-0001's rate",
+    "varies": "hook question->story; visual app-screen->hand-replay",
+    "held_constant": "offer=free-trial",
+    "good_looks_like": "a rate above T-0001's on the same days",
+    "daily_budget": "15",
+    "days": "3",
+    "read_at": "",
+    "guardrails": "pause on a tracking or delivery fault",
+    "rerun_of": "",
+    "lesson_id": "",
+    "item_id": "",
+    "platform_id": "",
+    "status": "planned",
+    "launched_at": "",
+    "legacy_ref": "",
+    "history": "",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "main"
+   }
+  ],
+  "Checks": [
+   {
+    "test_id": "T-0009",
+    "item_id": "",
+    "role": "plan-checker",
+    "verdict": "pass",
+    "reasons": "The plan can answer its own question by its read date at its budget, with success named before any data.",
+    "written_at": "2026-11-07T12:00:00Z",
+    "written_by": "plan-checker"
+   }
+  ]
+ }
+}

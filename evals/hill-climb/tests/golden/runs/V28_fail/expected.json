@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "a build-checker fail names it_0006, or a row of this run names it with its unplanned music change",
+  "it_0006 never launched"
+ ],
+ "grader": "V28",
+ "pass": false,
+ "scenario": "V28"
+}

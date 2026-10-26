@@ -6,6 +6,12 @@ summaries can all contain sensitive data.
 
 ## Codex
 
+A machine can have more than one Codex home: `$CODEX_HOME` when set,
+`~/.codex`, and AI Manager's `~/.aimgr/codex-cli`. On Amir's Mac the AI
+Manager home's `sessions`, `archived_sessions`, `state_5.sqlite`, and
+`history.jsonl` are links back to `~/.codex`, so both name the same store. The
+paths below are relative to whichever home holds the session.
+
 ### Primary Stores
 
 - `~/.codex/sessions/YYYY/MM/DD/rollout-YYYY-MM-DDThh-mm-ss-<thread_id>.jsonl`
@@ -114,6 +120,13 @@ Agent-set goals:
   function calls and outputs.
 
 ## Claude Code
+
+Claude Code keeps one config folder per login. AI Manager gives each account
+its own, `~/.aimgr/claude-homes/<account>/.claude`, and a running session's
+folder is in `$CLAUDE_CONFIG_DIR`. Most of Amir's Claude sessions live in those
+account folders, not in `~/.claude`. Moving a session to another account
+starts a new session id in the new account's folder and leaves the old
+transcript where it was. The paths below are relative to one config folder.
 
 ### Primary Stores
 

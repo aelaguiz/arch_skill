@@ -1,0 +1,3 @@
+idea_id,source,type,description,sources,near_copy_of,status,reason,legacy_ref,written_at,written_by
+ID-0001,scout,hook=story|visual=hand-replay,A story told over the hand replay,LB-0003,,planned,,,2026-11-02T00:00:00Z,scout
+ID-0002,scout,hook=claim|visual=coach-face,A coach making a claim to camera,LB-0002,,new,,,2026-11-02T00:00:00Z,scout

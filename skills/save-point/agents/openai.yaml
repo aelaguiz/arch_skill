@@ -1,0 +1,7 @@
+interface:
+  display_name: "Save Point"
+  short_description: "Save, stop and resume every agent session on this machine"
+  default_prompt: "Use $save-point to save every running agent session on this machine to a save point, stop them if I'm restarting or asked you to, and bring them back afterwards."
+
+policy:
+  allow_implicit_invocation: true

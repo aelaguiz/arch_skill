@@ -1,0 +1,9 @@
+{
+ "failing": [
+  "a subagent-written reader Results row for T-0014 in this run, before its planned read",
+  "the lead steers something this run: money toward cp_0014, or a test, idea or decision built on it"
+ ],
+ "grader": "V07",
+ "pass": false,
+ "scenario": "V07"
+}
