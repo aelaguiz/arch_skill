@@ -48,6 +48,14 @@ checks. Never touch EFI, system pseudo-filesystems or unrelated mounted data.
   `/mnt/p3/policies_blueprint_0422`, `policies_extra_20260917`, and
   `/mnt/p2/rustai_local/policies_archive`. Resolve catalog entries through
   these aliases before deciding any child policy is unreferenced.
+- The agents' RustAI checkout `~/workspace/rustai-agents` and its policy store
+  `/mnt/p2/rustai-agents` (`policies/`, `policies_blueprint/`, `runs/policies/`,
+  `artifacts/cardabs/`) make this machine a RustAI policy box for agents (the
+  `machines` skill, since 2026-10-27). That checkout's four links reference every
+  policy in the store and it serves Practice vs AI and Sit & Go, so none of it is
+  unreferenced; only its `target/` is ordinary build output. Many store entries
+  are hard links to the same files as Amir's `/mnt/p2` policy folders, so
+  deleting either copy frees no space while the other remains.
 - `~/workspace/rustai/artifacts/policies`, `rustai2/artifacts/policies`,
   per-worktree test outputs and recorded short-run directories are useful
   leads for obsolete throwaway policies. Preserve production/retained-model
