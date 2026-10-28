@@ -1,0 +1,7 @@
+interface:
+  display_name: "Model Routing"
+  short_description: "Pick a helper's model and thinking level"
+  default_prompt: "Use $model-routing to choose the model and thinking level for the helper you are about to start: decide whether the material you hand it carries the answer and you will check what comes back, and if so run it on the same strong model at a lower thinking level; otherwise keep what the user named or your default."
+
+policy:
+  allow_implicit_invocation: true

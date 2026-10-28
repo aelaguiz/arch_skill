@@ -31,7 +31,7 @@ schema over this file when they disagree.
 | Capability | Prime Agent | Codex CLI (multi_agent_v2) | Claude Code | Antigravity CLI (`agy`) |
 |---|---|---|---|---|
 | Pin child **model** | `model="provider/id"` on the spawn call. Exact selector; it must be in the authenticated catalog or the spawn hard-fails | `spawn_agent(model=...)`. The slug must be catalog-tagged for v2; on a typical host that is only the `gpt-5.6-*` family | Three levers, in order: `CLAUDE_CODE_SUBAGENT_MODEL` env, per-call `model`, agent frontmatter `model:`. The per-call form is a closed alias enum, not full IDs | `invoke_subagent` `Model` is a tier, not an id: `inherit` (default), `flash_lite`, `flash`, `pro`. An exact model such as `gemini-4-argon` cannot be named |
-| Pin child **thinking / effort** | `thinking=` with `off, minimal, low, medium, high, xhigh, max` | `reasoning_effort=` with `none, minimal, low, medium, high, xhigh, max, ultra` | Agent frontmatter `effort:` with `low, medium, high, xhigh, max`. **No per-call effort parameter**, and no per-subagent extended-thinking toggle | **Not offered.** A child runs its tier's own level |
+| Pin child **thinking / effort** | `thinking=` with `off, minimal, low, medium, high, xhigh, max` | `reasoning_effort=` with `none, minimal, low, medium, high, xhigh, max, ultra` | The Agent tool's `effort` on each call (`low, medium, high, xhigh, max`, or `lower` or `higher` than the parent; seen on 2.1.312, October 28, 2026), or agent frontmatter `effort:`. No per-subagent extended-thinking toggle | **Not offered.** A child runs its tier's own level |
 | Unsupported level | Hard spawn failure when set explicitly; an inherited level is silently clamped | Rejected with the model's supported list | Frontmatter value applies to that agent definition | Not applicable; there is no effort parameter |
 | **Cross-provider** child | **Yes** — provider is not a constraint in the spawn path. The gate is the authenticated catalog: a host logged in to two providers can spawn a child on either | **No** through `model` — the child's provider is copied from the parent turn. Reachable only through a human-installed role whose config file sets its own provider | **No** — the vendor does not route Claude Code to non-Claude models through any gateway; the base-URL override is process-wide and changes where requests go, not which model answers | **No.** The tiers are Gemini tiers, although the parent's own catalog also lists Claude and GPT-OSS models |
 | Starting context | Clean only; no fork option exists | `fork_turns`: `none`, `all`, or a positive-integer string. **Omitting it means `all`** | Clean by default; the explicit fork form inherits everything and forces the parent model | Clean: the child type's system prompt plus the `Prompt` you write. The built-in `self` type copies the parent's configuration (tools, system prompt, model), not its conversation |
@@ -52,10 +52,11 @@ the same child several times over a long run should either keep slices short
 enough to stay resident, express the profile as a role, or use an external
 session whose model is fixed by its own process.
 
-**A model pin is not always an effort pin.** Claude Code can pin a subagent's
-model at the call site but not its effort. Pinning effort there means authoring
-an agent definition that carries both fields. A workflow that treats "pinned
-model" as "pinned profile" will get the parent's session effort on Claude.
+**A model pin is not always an effort pin.** Claude Code through 2.1.274 could pin
+a subagent's model at the call site but not its effort, so pinning effort meant
+authoring an agent definition that carried both fields; current builds take both
+on the Agent tool call. On any host, a workflow that treats "pinned model" as
+"pinned profile" without checking gets the parent's session effort.
 
 **Fan-out is a host fact, not a universal one.** A child that is told it may
 create its own native sub-agents will simply fail on a host whose depth limit is

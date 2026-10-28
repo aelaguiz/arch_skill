@@ -107,6 +107,14 @@ Context isolation does not imply filesystem or permission isolation. Give
 parallel editors non-overlapping ownership, keep fanout parent-owned, and make
 every child return integration-ready evidence.
 
+### Choose a helper's model and thinking level
+
+Before starting a helper, choose its model and thinking level with
+`model-routing`. It judges by how soon the parent has an answer it can act
+on, and shows by example which helper work runs as well on the same strong
+model at a lower thinking level; everything else keeps the user's choice or
+the default.
+
 ### One planning artifact
 
 - Full-arch and mini-plan work keep one canonical `DOC_PATH`.

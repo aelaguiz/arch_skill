@@ -156,6 +156,11 @@ the model of an existing session.
 
 ## Pin model and thinking level, or inherit knowingly
 
+Which model and thinking level a helper should run on is the `model-routing`
+skill's question, judged by how soon the parent has an answer it can act on
+rather than by what the child bills. This section is about making that choice
+hold.
+
 A native child normally inherits the parent's model and thinking level. That
 inheritance is the whole cost question. An unpinned native child runs the
 parent's model on whatever you gave it, so bulk reading and long implementation
