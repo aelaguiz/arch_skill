@@ -113,7 +113,7 @@ workflow names for a run still wins over the table for that run.
 | Website page cold reader (Poker Skill) | Claude Opus 5.5, high | Always a clean session |
 | Adversarial post-build reviewer | Claude Opus 5.5, high | Always a clean session |
 | Plan reviewer before dispatch | GPT-6.1 Sol, xhigh, and/or Claude Opus 5.5, high | Always a clean session |
-| Hill-climb roles: plan-checker, build-checker, critic, reader, meta-analyst, strategist, auditor, scout (`hill-climb`) | Claude Sonnet 5.5 (`claude-sonnet-5-5`); under a Codex parent, GPT-6.1 Sol, low | Always a clean session |
+| Hill-climb roles: plan-checker, build-checker, critic, reader, meta-analyst, strategist, auditor, scout (`hill-climb`) | Claude Opus 5.5 (`claude-opus-5-5`), medium; under a Codex parent, GPT-6.1 Sol, low | Always a clean session |
 | Replay-review workers (Poker Skill) | Claude Opus 5.5, medium | As the skill defines |
 
 Codex roles default to GPT-6.1 Sol. Workers under an Astra parent use it at
