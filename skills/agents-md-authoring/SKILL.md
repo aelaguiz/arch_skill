@@ -1,91 +1,48 @@
 ---
 name: agents-md-authoring
-description: "Write, edit, refactor, or audit `AGENTS.md` files for coding projects so they stay concise, repo-present, plain-English, command-first, scope-aware, and non-inferable. Use when a repo needs a new root or path-local `AGENTS.md`, an `AGENTS.override.md`, a compressed docs index, or a findings-first review of existing agent instructions. Lessons and judgment the file carries are built with $intuition-building."
+description: "Write, revise or audit always-on instruction files (AGENTS.md, CLAUDE.md, GEMINI.md, AGENTS.override.md, global instruction files) as a few intuitions about the project rather than a pile of rules: land each new lesson or correction by deepening the intuition it belongs to, collapse rules into the understanding under them, and keep the docs the file points to teaching the same thing. Use when creating one of these files, adding a lesson, correction or rule to one, or when one has grown long, rule-heavy or contradictory. Builds each intuition with $intuition-building. Not for skills ($skill-authoring) or prompts ($prompt-authoring)."
 ---
 
 # AGENTS.md Authoring
 
-Use this skill when the work is authoring repo instruction files for coding agents, not generic documentation writing or OpenClaw workspace-bootstrap design.
+An always-on file is how a project passes its understanding to every agent that works in it. Each session reads it first, then meets situations its authors never pictured. A list of what to do helps only in the cases on the list. What carries into the rest is a sense of what matters here and why: what is at stake, who pays when it goes wrong, what looks important and isn't. That is an intuition, and a good file is mostly a handful of them. Build each one with `$intuition-building`. Current models act well on an understood reason and get worse with every special case they have to steer around.
 
-## Install
+## Find the intuition under the rules
 
-```bash
-git clone git@github.com:aelaguiz/arch_skill.git
-cd arch_skill
-make install
-```
+Most long files are rules that one intuition would have produced. Five numbered bans on faking a review (gating copy after it shipped, calling a skill "passed" without running it, checking three claims and calling the page checked) are one idea: a check counts only if it happened, and saying it did tells everyone else to stop looking. "Proof attaches to the mechanism, not the clock" covers shrinking a timeout to test it, entering a long journey at the failing step, and, read the other way, waiting out a delay that is itself the thing being tested. When a group of lines keeps circling one concern, say the concern, and the lines it produces can go.
 
-## When to use
+An intuition someone understands fits in a breath. If it takes a paragraph, the incident it came from is still in it: the date, the story, the quote. Those belong in the commit message; the file keeps what the incident taught.
 
-- The user wants a new repo-root or path-local `AGENTS.md` for Codex, Copilot, Cursor, Claude Code, or another compatible coding agent.
-- The user wants to tighten, split, or refactor an existing `AGENTS.md` so it stops wasting prompt budget every run.
-- The user wants an `AGENTS.override.md` for a subtree, release hold, incident mode, or security-sensitive service.
-- The user wants a findings-first audit of instructions for missing commands, weak definition-of-done rules, stale scope boundaries, or noisy inferred content.
-- The user wants to add a compressed docs index or a compact map of deeper docs without copying a whole documentation tree into always-on context.
-- The repo's agent instructions create, resume, replace, or coordinate model agents and need a concise route to the shared orchestration policy.
+## When a lesson arrives
 
-## When not to use
+A correction or a mistake shows that an agent couldn't see something. It usually arrives already phrased as a rule ("never X", "always Y", a date, a quote), because that is how a person states a fix in the middle of work. The wording tells you what they saw; it is not the line to add, and attaching a reason to it doesn't change that. Find the intuition in the file that should have let the agent see, and work out why it didn't: it was missing, too vague, or read too literally. Rewrite that intuition's own words so it would have caught this case and still handles the old ones. Add a new intuition only when nothing in the file is about this. A line shaped like the incident helps only if the next case looks the same, and it won't.
 
-- The task is writing `SOUL.md`, `SKILL.md`, prompt contracts, or other agent surfaces rather than repo `AGENTS.md`.
-- The right artifact is ordinary docs, a project plan, or a README rather than a persistent instruction file.
-- The content is generic style guidance or architecture summary the agent can infer from the codebase or tooling.
-- The target repo or existing instruction file cannot be inspected and there is no reliable local context from which to author one.
+A lesson that landed well usually leaves the file about as long as it found it, and a reader meets it inside an idea that was already there. If your edit gives the lesson a paragraph of its own beside the guidance it belongs to, you have added a rule with a reason; go back and change the guidance instead.
 
-## Non-negotiables
+Then reread the whole file and the docs it points to. A deepened intuition usually makes other lines unnecessary; take them out. Where a linked doc says something different about the same thing, each usually holds a rule from a different incident. Find the understanding both were reaching for and make them say it, or have one point to the other.
 
-- Treat `AGENTS.md` as always-on prompt budget. Every line must earn its keep.
-- Write current repo truth only. `AGENTS.md` is about how the repo works now, not how you planned the file, what you might add later, or what just happened in a prior edit.
-- Every authored `AGENTS.md` should either contain or inherit a short plain-English communication invariant. Root files should usually own it unless an equivalent stronger rule already exists in inherited repo guidance.
-- Start with the repo's verification path: setup, build, lint, test, typecheck, file-scoped commands when possible, definition of done, and blocked-state rules.
-- Prefer non-inferable repo truths: unusual commands, dangerous paths, required approvals, critical docs, required skills, and exceptions to default behavior.
-- Do not use `AGENTS.md` as a generic architecture dump, style manifesto, or codebase mirror.
-- Do not leak authoring-process narration into the file: no planning talk, no retrospective notes, no "this file exists to...", and no self-referential instructions about this skill unless the repo itself has a real operational need for that rule.
-- Plain-speak rules should be concrete, not philosophical: write in plain natural English, lead with the concrete answer in 1-3 sentences, name the exact thing that changed, translate shorthand immediately, and avoid workflow jargon unless the user explicitly asked for it.
-- Separate always-on rules from on-demand depth. Point to docs, indexes, or skills instead of copying entire references inline.
-- When an `AGENTS.md` governs model-agent dispatch, read the installed sibling policy at `../_shared/agent-orchestration-policy.md`, then keep the authored file to one concise, resolvable routing rule plus any genuinely repo-local exceptions. Do not copy the policy's transport, context, continuation, isolation, topology, or integration doctrine into always-on context.
-- Make the route valid for the target repo and runtime: point to an exact repo path when the repo owns the policy, or clearly direct the agent to the installed sibling. Do not invent a path that the runtime cannot resolve.
-- Design root, path-local, and override files consciously. Scope is part of correctness.
-- Keep commands runnable and current. If the file names checks that should pass after edits, run them whenever feasible.
-- If the repo context is missing, stop and say so instead of inventing commands, paths, or conventions.
-- When a correction, incident, or repeated agent mistake is turning into a line in an `AGENTS.md`, build it with `$intuition-building`: what the agent was missing and why it matters, folded into the guidance it belongs to, not a rule shaped like the incident. Facts such as an exact command, a path, or a required approval stay plain lines.
+## Is it an intuition?
 
-## First move
+Take it to a case it never mentions, then to one where the obvious move is wrong. An intuition gets both right; a rule gives the same answer to both. "Set long timers to 30 seconds when verifying a fix" is a rule, and it fakes the proof when the delay is the bug, as with a cache that must expire. "Proof attaches to the mechanism, not the clock" shrinks the timer when the mechanism stays the same and waits it out when the wait is the mechanism.
 
-1. Classify the job as `author`, `edit`, `refactor`, or `audit`.
-2. Read `references/agents-md-pattern-contract.md`.
-3. If the target instructions discuss agent dispatch, read `../_shared/agent-orchestration-policy.md` before deciding what belongs in always-on context.
-4. Read the smallest additional reference that matches the job:
-   - `references/structure-and-scope.md` for discovery, layering, overrides, and monorepo placement
-   - `references/content-budget-and-docs-index.md` for command priority, non-inferable content, compressed docs indexes, and anti-bloat rules
-   - `references/examples-and-anti-examples.md` when you need grounded file shapes, section patterns, or audit examples
-   - `references/maintenance-and-portability.md` for cross-tool compatibility, self-improving loops, and long-term upkeep
+Not everything is judgment. A command, a path, a name, or a choice the owner made that no understanding would produce, such as a standing exception, is a fact and sits as a plain line beside the intuition it serves. A list the intuition already produces is not a fact: keep only the items it wouldn't.
 
-## Workflow
+## Revising, starting or auditing a file
 
-1. Lock 2-3 canonical user asks and one nearby anti-case before drafting.
-2. Decide whether the right artifact is `AGENTS.md`, `AGENTS.override.md`, a path-local file, ordinary docs, or a skill.
-3. Inventory the repo truths the agent cannot reliably infer: exact commands, dangerous paths, required approvals, critical docs, and special-case workflows.
-4. If the repo governs agent dispatch, locate the shared policy surface the runtime can resolve and add a compact route to it. Keep only repo-local ownership or safety exceptions in `AGENTS.md`.
-5. Put commands first: setup, build, lint, test, typecheck, file-scoped variants when possible, then definition of done and blocked-state rules.
-6. Shape scope intentionally: root for cross-cutting rules, deeper files for local doctrine, overrides only when replacement is safer than inheritance.
-7. Add or preserve a short plain-speak section in the owning layer. Root files should usually own it; deeper files should only add to it when local jargon or special user-facing terms need stricter rules.
-8. Keep the file lean. Move depth into linked docs or a compressed index instead of copying whole references.
-9. Run a meta scrub before you finish: delete any sentence about the drafting process, future plans for the file, or which skill or workflow produced it.
-10. Validate the result for cold-start usefulness: can a new coding agent tell what to run, when to stop, where truth lives, and how to answer in plain English?
+Revising a file that has grown starts from the whole of it. Read it end to end and say what it keeps worrying about: usually a handful of concerns, scattered under headings that grew one incident at a time. Those concerns, each said in a breath, are the file. Every existing line is then something one of them produces, which goes; a fact an agent couldn't work out, which stays as a plain line under the intuition it serves; or something no longer true, which goes. Trimming each section in place leaves the same pile, smaller.
 
-## Output expectations
+For a new file, read the repo and whatever shows what its people correct agents for: review comments, the README's warnings, the history of the code that keeps breaking. Write the few things an agent new here would get wrong, as intuitions, and the facts it can't find by looking, such as how to check its work. A short file that teaches what matters beats a complete one.
 
-- `author`: return or create the finished `AGENTS.md` package with the leanest viable file set.
-- `edit`: patch the instruction file and briefly name which layer changed: commands, scope, done criteria, escalation, or docs map.
-- `refactor`: preserve the useful repo doctrine while relocating noise into the correct layer.
-- `audit`: return findings first. For each finding, state the issue, why it hurts agent performance, and which file or section should change.
+An audit looks for the same things a revision fixes: groups of lines circling one concern, places where the file and its docs disagree, lines the repo or the models have outgrown, and situations an agent would still get wrong. Name the intuition each group was reaching for, not just the lines to cut.
 
-## Reference map
+## Where things go
 
-- `references/agents-md-pattern-contract.md` - the contract for high-signal repo instruction files
-- `references/structure-and-scope.md` - precedence, root vs path-local placement, overrides, and directory strategy
-- `references/content-budget-and-docs-index.md` - command-first content, non-inferable detail, passive context, and anti-patterns
-- `references/examples-and-anti-examples.md` - strong section shapes, templates, and common failure modes
-- `$intuition-building` - what an intuition is and how to build one, for any lesson or judgment the file has to carry
-- `references/maintenance-and-portability.md` - cross-tool compatibility, self-improvement, and upkeep loops
-- `../_shared/agent-orchestration-policy.md` - on-demand shared semantics to route to when repo instructions govern model-agent dispatch
+An intuition goes in the narrowest file that covers everywhere it applies. Worked cases, procedures and reference go in a doc the file points to, with when to read it. Leave out what an agent sees by looking: layout, frameworks, what the linter already enforces. A file that tells agents how to start other agents points to `../_shared/agent-orchestration-policy.md` instead of restating it. Codex reads one file per folder from the repo root down, an `AGENTS.override.md` replaces its folder's file, and everything past 32 KiB combined is dropped.
+
+Agents often write a lesson into the file in the middle of other work, without this skill. A line at the top saying how the file is kept, such as "This file is a few intuitions about working here; a new lesson deepens the one it belongs to", lets them do it well.
+
+## Check the file
+
+Give a fresh agent the file and a few situations it never mentions, including one where the obvious move is wrong, and watch what it does. Taking a line out is a guess until an agent shows the case still comes out right.
+
+[references/examples.md](references/examples.md) shows real rule piles next to the intuitions under them, a long paragraph said in a breath, a correction phrased as a rule landing inside the idea it belonged to, and what a revised file looks like. Read it before your first revision of a file.

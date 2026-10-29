@@ -1,6 +1,6 @@
 # Intuitions next to the rules they replace
 
-Each pair shows a situation, the rule an agent wrote or would write, and the intuition that handles more than the case in front of it. Most come from real work. The point of each is the idea under it, not the case.
+Each pair shows a situation, the rule an agent wrote or would write, and the intuition that handles more than the case in front of it. Most come from real work. The point of each is the idea under it, not the case. The longer "Like this" versions spell out the reasoning; in a file every session reads, the same intuition is said in a breath, as in the first section.
 
 ## Intuitions in one breath
 

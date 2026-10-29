@@ -414,7 +414,7 @@ Use when the user wants a cold-read score, rationale, and improvement plan for a
 
 ### `agents-md-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a repo-root or path-local `AGENTS.md` so it stays command-first, scope-aware, and about current repo truth only.
+Use when the user wants to write, revise, or audit an `AGENTS.md`, `CLAUDE.md`, or other always-on instruction file, or to add a lesson or correction to one. The file it writes is a handful of intuitions about the project, built with `intuition-building`, with facts such as commands and paths as plain lines; a new lesson deepens the intuition it belongs to instead of adding a rule, and the docs the file points to are kept saying the same thing.
 
 Examples:
 

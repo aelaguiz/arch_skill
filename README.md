@@ -40,7 +40,7 @@ Use `miniarch-step` when the work still needs a real full-arch artifact and auto
 Other shipped skills are:
 - [`sentry-triage`](skills/sentry-triage/SKILL.md) handles recurring Sentry noise, duplicate error grouping, explicit archive policies, and verification that actionable alerts remain eligible. It uses connected tools first and documented API or browser access for operations the connector does not expose.
 - `agent-definition-auditor` — cold-reader scoring and findings for `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `SOUL.md`, system prompts, and other agent-definition markdown
-- `agents-md-authoring` — writes, edits, refactors, and audits concise repo-present `AGENTS.md` files
+- `agents-md-authoring` — writes, revises, and audits `AGENTS.md` and `CLAUDE.md` files as a few intuitions instead of a pile of rules
 - `prompt-authoring` — writes, edits, refactors, and audits prompts, reusable prompt contracts, Markdown-backed Codex goal prompt files, and paste-sized `/goal` mission briefs
 - `browseros` — canonical preflight and operating contract to apply before direct BrowserOS MCP use; owns safe page reuse, provenance, profile and target identity, logins/SSO/OAuth placement in the Work window, connector discovery, proof, timeout recovery, secrets, and task-created browser cleanup
 - `chatgpt-web` — explicit ChatGPT web-provider/browser lane with optional attachments; writes each submission from the matching family in `references/consultation-templates.md` in the user's voice with sources attached whole (no verdict token, answer cap, scope fence, or SHA pin), defaults to a new clean conversation, continues an exact conversation only when requested, and defaults to Pro with Extended thinking unless the user specifies another mode or effort
@@ -406,7 +406,7 @@ Use when the user wants a cold-read score, rationale, and prioritized improvemen
 
 ### `agents-md-authoring`
 
-Use when the user wants to write, edit, refactor, or audit a repo-root or path-local `AGENTS.md` so it stays command-first, scope-aware, and about current repo truth only.
+Use when the user wants to write, revise, or audit an `AGENTS.md`, `CLAUDE.md`, or other always-on instruction file, or to add a lesson or correction to one. The file it writes is a handful of intuitions about the project, built with `intuition-building`, with facts such as commands and paths as plain lines; a new lesson deepens the intuition it belongs to instead of adding a rule, and the docs the file points to are kept saying the same thing.
 
 ### `prompt-authoring`
 

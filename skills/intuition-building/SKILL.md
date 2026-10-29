@@ -27,6 +27,8 @@ Then look past the case in front of you. Picture situations that look nothing li
 
 Write it so a newcomer could use it. Say why, plainly. Name what to pay attention to and what to ignore. Prefer the concrete cost to the abstract instruction: "a recursive search from this folder reads half a terabyte" teaches more than "search narrowly." Give a few examples that look different from each other, including one where the answer goes the other way, so the reader finds the idea between them instead of copying one case. This is not a list of edge cases to cover. One or two examples that show where the answer turns are enough; the reader takes the rest from the reason.
 
+Once you understand it, an intuition usually fits in a breath. That is the form for anything read on every task, such as an AGENTS.md or CLAUDE.md line: the examples and the reasoning that got you there go where they are read when needed. `$agents-md-authoring` covers where a lesson for one of those files lands and what it replaces.
+
 If what you are teaching sharpens or corrects something already written, change that text so it says one thing. A second paragraph beside the old one leaves the next agent two instructions to reconcile.
 
 Then read it as someone who never saw today's case, and picture them in a new one, including a case where the right move is different. If your text would hand them today's answer anyway, you have written a rule; go back and understand more, rather than adding an exception. If you can't picture any case where the right answer would differ, you may be holding a fact, and a plain rule is fine.
