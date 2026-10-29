@@ -22,6 +22,11 @@ machine. That is the harm this skill exists to prevent. What stays: canonical
 checkouts, anything in live use, work someone did recently, and data that is
 not a copy of anything (credentials, model policies, VM volumes).
 
+Agents also leave output that is not a copy: QA runs, device captures, renders, tuning runs, recovery copies, scratch.
+It lives as long as its task, and nothing ever comes back for it, so it piles up the same way. The shared deletion
+guide says when a task is over. Amir's own files are different: on his laptop, his documents, downloads and own
+projects are his, and a cleanup reports them rather than judging them.
+
 **Delete only what you know is safe to lose.** Every check before a deletion,
 such as the salvage reaching the remote or nothing using the path, has to come
 back with an answer you have seen for that path. A check that errors, times
@@ -39,9 +44,12 @@ the data intact and report the exact opportunity instead of waiting for input
 or expanding deletion scope to force a larger result.
 
 Amir's daily housekeeping authorization includes old task checkouts and
-worktrees (after salvaging their unsaved work as described below), confirmed
-unused task simulators and emulators and their saved state, and inactive
-Prime session/recovery state. Perform that cleanup without asking again,
+worktrees (after salvaging their unsaved work as described below), output
+that agents made for finished tasks (October 28: "the whole point of this
+cleanup skill was to get rid of old stuff in the workspace directory"),
+confirmed unused task simulators and emulators and their saved state,
+inactive Prime session/recovery state, and the Time Machine local snapshots
+the backup drive already has. Perform that cleanup without asking again,
 including the salvage commits and pushes. Preserve active or recently used
 devices associated with ongoing work, credentials, canonical checkouts, model
 policies, and VM volumes. A current request to preserve a storage class
@@ -68,7 +76,10 @@ likely large owners and the saved-inventory locations. Read
 [worktrees-and-measurement.md](references/worktrees-and-measurement.md) before
 removing checkouts or interpreting reclaimed bytes; it has the salvage commands.
 
-1. Measure capacity and available bytes on the volume containing `~/workspace`.
+1. Measure capacity and available bytes on the volume containing `~/workspace`. With Time Machine on (the laptop
+   and the M3 Max), deletions show up as free space only once the local snapshots holding them are gone: read
+   [time-machine-local-snapshots.md](../_shared/time-machine-local-snapshots.md) first, and delete the snapshots the
+   backup drive already has as it describes, at the end of the run.
    Carry forward the user's target and cleanup authorization from the conversation.
    Distinguish a target for total free space from an amount to reclaim.
    Establish the protected canonical roots below before selecting any candidates.
@@ -90,9 +101,10 @@ removing checkouts or interpreting reclaimed bytes; it has the salvage commands.
    prepare the exact paths, salvage plan, and estimated space first, then
    ask once. A preview-only request remains read-only.
 5. Continue through the next material owner when actual free space is still
-   below target. Broaden discovery only when the known locations do not explain
-   the usage or cannot supply the needed reclaimable space. Stop when the target
-   is reached, or identify the concrete remaining data that requires a user decision.
+   below target. The known locations are where space usually is, not the edge
+   of the search: when the biggest owners are elsewhere, open them and say what
+   they are. Stop when the target is reached, or identify the concrete remaining
+   data that requires a user decision.
 
 ## Canonical checkouts are protected
 

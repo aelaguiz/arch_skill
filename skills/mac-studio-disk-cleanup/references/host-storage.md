@@ -1,14 +1,20 @@
 # Mac Studio storage operations
 
 All paths below are on `agents@amirs-mac-studio`, with home `/Users/agents`.
-These are inspection leads. Confirm what exists and what uses it on each run.
+These are inspection leads: where things usually are and how to check them. They are not the limit of where to look;
+the skill's measurement covers the whole Data volume. Confirm what exists and what uses it on each run.
 
 ## Baseline and activity
 
-Use `df -k /System/Volumes/Data` or Python `shutil.disk_usage('/System/Volumes/Data')`
-for actual free bytes. Use `du -x -k -d 1 <known-root>` for allocated owner sizes.
+Free space is what `df` reports; Time Machine's local snapshots hold deleted data until they go
+([time-machine-local-snapshots.md](../../_shared/time-machine-local-snapshots.md)). Use one deep `sudo du -x -k` pass
+for allocated owner sizes, once per tree per run.
 Bound unfamiliar commands to 60 seconds and narrow on timeout. Do not traverse
 mounted simulator runtimes repeatedly or sum APFS clone sizes as reclaimed space.
+
+Whether anything has written inside a folder in the last two days, anywhere in it:
+`find <path> -xdev -type f -newermt '-48 hours' -not -path '*/.git/*' -print -quit` (it stops at the first hit, so
+it is quick for folders in use and reads the whole folder only when nothing is recent).
 
 Inspect process arguments and open paths privately, scoped to candidates.
 Use `lsof` plus process ownership; absent output is useful only when the probe
@@ -25,11 +31,11 @@ branches or unique commits.
 
 ## Rolling 48-hour worktree retention
 
-Every nightly run audits linked Git worktrees and orphaned checkout directories
-under `~/work/`, `~/worktrees/`,
-`~/workspace/prime-agent-worktrees/`, `~/workspace/work/**/worktrees/`, and
-`~/workspace/agents/work/**/worktrees/`. Use Git's registration (`git worktree
-list --porcelain`) to distinguish a linked worktree from a primary checkout.
+Every nightly run audits Git worktrees, task clones and orphaned checkout directories wherever they are. Most sit in
+`~/workspace/*-worktrees/` (PS Mobile, website and others), top-level task clones in `~/workspace/` (on October 28 a
+15 GB psbrain clone and an 8.8 GB psagentspace clone), `~/work/`, `~/worktrees/`,
+`~/workspace/prime-agent-worktrees/`, `~/workspace/work/**/worktrees/` and `~/workspace/agents/work/**/worktrees/`.
+Use Git's registration (`git worktree list --porcelain`) to distinguish a linked worktree from a primary checkout.
 The cutoff is 48 hours before the run starts. A worktree is recent if its
 directory, any source file (tracked or untracked), or HEAD commit was modified
 after the cutoff. Exclude generated build/cache output and Git administrative
@@ -69,9 +75,14 @@ following symlinks, and verify it disappeared. If the parent repo still exists
 or the Git target is only temporarily inaccessible, defer it for repair rather
 than treating it as garbage.
 
-Keep `/Users/agents/workspace/work/agent_coder/repos/psmobile` as the PS Mobile
-primary checkout and `/Users/agents/workspace/work/agent_ops/repos/rustai` as
-the RustAI primary checkout. Inspect any new duplicate primary clones, but
+The PS Mobile primary checkout is `/Users/agents/workspace/work/agent_coder/repos/psmobile` (it owns linked
+worktrees). On October 28 the RustAI checkout in use was `~/workspace/rustai`, not the September clone at
+`work/agent_ops/repos/rustai` that this note used to name. Confirm what Studio work runs from before relying on either;
+a primary nobody uses is a copy like any other.
+
+Most folders under `~/workspace/*-worktrees/` are standalone clones, not linked worktrees, so `git worktree list`
+doesn't show them. Salvage them the way [disk-cleanup's worktree notes](../../disk-cleanup/references/worktrees-and-measurement.md)
+describe for standalone clones. Inspect any new duplicate primary clones, but
 remove one only after confirming it is inactive and preserving unique branches
 and commits; retain a compatible entrypoint if a current workflow references
 its old path. This is slower than linked-worktree removal and should be
@@ -79,21 +90,16 @@ reported as deferred if it cannot be established safely in the nightly budget.
 
 ## Recurring owners and retention
 
-**Known live owner, verified September 22:**
-`~/.hermes/hermes-agent.backup.20260424T000553Z` contains the running Camofox
-browser service. PID 40114 then had its working directory under that tree's
-`node_modules/@askjo/camofox-browser` and loaded `better-sqlite3`/`impit` binaries
-there. Its command is merely `node server.js`; searching command text for
-Hermes misses it. Preserve this tree during nightly cleanup. Do not infer it
-is retired because gateways use the newer `~/.hermes/hermes-agent` tree.
-Service migration or removal is a separate operator action; do not stop it to
-make the backup folder eligible.
+**A live service that hides its owner:** the Camofox browser service runs as a bare `node server.js`, so searching
+command lines for Hermes misses it. On September 22 it ran from a Hermes backup tree; by October 28 that tree was gone
+and it ran from `~/.hermes/hermes-agent`. Find where it runs now from its working directory and loaded files before
+touching any Hermes copy.
 
 | Owner | Inspect | Authorized treatment |
 | --- | --- | --- |
 | Hermes | `~/.hermes/profiles/*/logs/`, root logs, `~/.hermes/backups/`, old staging/copy directories | Compact text logs over 128 MiB to the last 4 MiB in place; remove rotated logs older than 7 days. Remove obsolete migration/staging/runtime copies only after checking processes, open files and launch configuration. Keep live databases, memories, sessions, skills, auth and configuration. |
 | AIM | Direct children of `~/.aimgr/` | Delete timestamped `secrets.json.bak.*` and `local-state.json.bak.*` snapshots older than 7 days by both name timestamp and mtime. Preserve current files, recent snapshots and open files. Never read or print their values. |
-| Development | `~/work/`, `~/worktrees/`, `~/workspace/prime-agent-worktrees/`, `~/workspace/work/**/worktrees/`, `~/workspace/agents/work/**/worktrees/` | Remove linked worktrees and verified orphaned checkout directories after 48 hours of source inactivity using the procedures above. For retained checkouts, remove ignored, untracked `apps/flutter/build` and generated `.dart_tool` output when inactive and older than 24 hours. Under capacity pressure, recent reproducible output is also eligible once current activity is ruled out. Preserve chosen primary checkouts and accessible Git history. |
+| Development | Git worktrees and task clones anywhere; the usual places are listed under the 48-hour retention above | Remove linked worktrees and verified orphaned checkout directories after 48 hours of source inactivity using the procedures above. For retained checkouts, remove ignored, untracked `apps/flutter/build` and generated `.dart_tool` output when inactive and older than 24 hours. Under capacity pressure, recent reproducible output is also eligible once current activity is ruled out. Preserve chosen primary checkouts and accessible Git history. |
 | Developer caches | `~/.gradle/caches`, `~/Library/Developer/Xcode/DerivedData`, package/build caches identified by owner | Clear stale reproducible output when no current build/open files use it. Prefer old entries; do not repeatedly evict healthy hot caches simply to increase the reclaimed counter. |
 | Figma updater | `~/Library/Caches/com.figma.Desktop.ShipIt/ShipIt_stderr.log` | Use the same 128 MiB trigger and 4 MiB recent tail as Hermes logs. |
 

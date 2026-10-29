@@ -29,6 +29,16 @@ why path totals differ from actual recovered space. Measure after deletion;
 moving files into Trash or a preservation directory on the same disk frees
 no space by itself.
 
+Clones can make a folder of copies look enormous. On the M3 Max on October 28, 248 leftover copies of Chrome in the
+user's temporary folder (`/private/var/folders/.../X`) read 555 GB in `du` and held about 2 GB: they were one clone
+family. When many copies of the same thing top a size list, check before ranking them: files in one family share a
+clone ID and carry a clone count (`getattrlist` with `ATTR_CMNEXT_CLONEID` and `ATTR_CMNEXT_CLONE_REFCNT`), or delete
+one copy and watch `df`. "Bytes not shared with any other file" is no help on a Mac with Time Machine, because every
+file older than the newest snapshot shares its blocks with that snapshot.
+
+Run the size pass at normal priority. At background priority macOS keeps it on the efficiency cores, and a 2 TB disk
+took over 40 minutes while a backup ran.
+
 ## Protected set
 
 Build the protected canonical-root set first (see `SKILL.md`). Before any
@@ -119,13 +129,25 @@ file the same way and rebuild the commit.
 A linked worktree shares branches and stashes with its common repository, so
 the commit above covers it. A standalone clone keeps its own: also push every
 local branch that has commits missing from the remote, and each stash entry.
-Use names that cannot collide with `$name` (Git cannot hold a branch and a
-folder of the same name):
+Wrap each in a `[skip ci]` commit, as above, so the pushed head never starts CI
+(a salvage of 16 task branches would otherwise start 16 CI runs). Use names that
+cannot collide with `$name` (Git cannot hold a branch and a folder of the same
+name):
 
 ```sh
-git -C "$wt" push --no-verify origin "refs/heads/$branch:refs/heads/$name-$branch"
-git -C "$wt" push --no-verify origin "$(git -C "$wt" rev-parse "stash@{$n}"):refs/heads/$name-stash-$n"
+tip=$(git -C "$wt" rev-parse "refs/heads/$branch")   # or "stash@{$n}"
+c=$(git -C "$wt" commit-tree "$(git -C "$wt" rev-parse "$tip^{tree}")" -p "$tip" -m "salvage: $branch from $wt [skip ci]")
+git -C "$wt" push --no-verify origin "$c:refs/heads/$name-$branch"   # or $name-stash-$n
 ```
+
+A linked worktree whose Git link is broken (its `.git` file points at an admin
+folder that no longer exists, so every Git command fails in it) can still be
+saved. If a repository still lists it in `git worktree list`, run
+`git -C <that repository> worktree repair <path>` and salvage it as usual. If
+its repository is gone, commit its files as a fresh root commit against the
+right remote, found from the folder's name, its files or the remotes of its
+neighbours, and push that. When no remote can be identified, it is a checkout
+whose work can't be saved: report it.
 
 For submodules and nested repositories with their own dirty work or unpushed
 commits, run the same salvage inside each one against its own remote. Find them

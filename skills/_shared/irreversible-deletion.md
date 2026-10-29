@@ -14,14 +14,43 @@ the rest of the cleanup.
 
 ## Why it matters
 
-Deletion is the one step of a cleanup that cannot be retried. A path you keep
-tonight costs some disk until the next run, which can try again with a better
-check. A path you delete wrongly costs the person work that existed nowhere
-else, or breaks a job that was running. These runs are unattended, so nobody
-sees a check fail quietly; the person finds out days later, when they look for
-the work. Checks fail most often on the unusual cases: a repository with no
-commits, no remote, a nested clone, a permission boundary. The unusual cases
-are also where unique work tends to live.
+Deletion is the one step of a cleanup that cannot be retried, unless a backup holds the path. A path you delete
+wrongly costs the person work that existed nowhere else, or breaks a job that was running. These runs are unattended,
+so nobody sees a check fail quietly; the person finds out days later, when they look for the work. Checks fail most
+often on the unusual cases: a repository with no commits, no remote, a nested clone, a permission boundary. The
+unusual cases are also where unique work tends to live.
+
+Keeping has a cost too, and it is just as real. A path kept "to be safe" stays until someone decides about it, and on
+machines where agents make things and then leave, nobody ever does. On the Mac Studio, run after run deferred the same
+folders, or never opened them, until 155 GB of finished tasks' output sat in the agents' home folder and CI ran with
+15 GB free. A full disk stops every agent, build and Git operation on the machine. So a check that failed is a reason
+to keep a path; a folder nobody opened is not. Look first, then decide.
+
+## When the question is whether a task is over
+
+Most of what agents leave on a disk is not a copy of anything and doesn't regenerate: QA runs, device captures,
+renders, tuning runs, recovery copies, scratch. It was made for a task, and it is done when the task is. The task is
+over when nothing is doing its work any more: no process is running from the folder, serving from it or writing into
+it, and nobody has worked in it for a couple of days. Those are answers you can see, and they are the ones to look
+for. The agent that made it is gone, so waiting for its permission means keeping it forever.
+
+Read what the evidence is, not only that it exists. A `.env` rewritten in every checkout in the same minute is a sync
+script, not work; so are a rebuilt virtualenv, a refreshed `.pid` file and a touch across hundreds of folders at once.
+A `tail -f` left on the log of a render that finished two days ago is a leftover, not use, and goes with the folder.
+So is a process whose parent is gone and that has done nothing for days: on the M3 Max on October 28, about 54
+download workers from October 15 sat at 0% CPU, still holding 31 GB of policy files deleted a week earlier. Stopping
+those exact processes is part of cleaning up after their task, and it frees what they hold open. The other way round, a note in the folder that
+says who owns it and until when (an `OWNER.md` saying a batch's backend is needed until November 10) is the best
+evidence there is that a quiet folder's task is still running, and a past report that saw services running from it
+counts too. Work comes in bursts; two quiet days in the middle of a batch is not the end of it.
+
+Then ask what in it anyone would come back for. Usually it is one small thing that belongs somewhere else: the final
+cut of a render, a report, a configuration file. Put that where it belongs, or name it in the report, and the rest is
+the task's scratch. Something nobody else has that someone would come back for (a scraped corpus with no remote,
+unpublished work, the only copy of what a broken service needs to start again) needs a home or a person's decision,
+not a cleanup's. On a machine whose backups are current (see
+[time-machine-local-snapshots.md](time-machine-local-snapshots.md)), a wrong call about a task folder comes back from
+the backup. A backup buys time, not a home: it keeps a deleted folder for weeks, not for good.
 
 ## What it looks like
 

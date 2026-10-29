@@ -145,15 +145,19 @@ unique training outputs; report potential deduplication for a user decision.
 Honor repository payload-access restrictions. In RustAI, never fetch, expand,
 hash, or load multiplayer policy payloads to investigate metadata or disk use.
 
-## Broaden only for an unexplained remainder
+## Everything else on the disk
 
-Use one shallow measurement at a time for the remaining likely owner, such as
-`~/Library`, `/private/tmp`, or `/private/var`. Inspect APFS snapshots or
-deleted-but-open files when deletion does not translate into available space.
-macOS may deny access to protected directories; continue with accessible
-material owners rather than making Full Disk Access a prerequisite.
+The places above are where space usually is. When they don't explain the usage, size the rest of the home folder
+and the volume's other top-level folders once (`~/Library`, `/private/tmp`, `/private/var`, other users' homes) and
+open the biggest owners. macOS may deny access to protected directories; continue with accessible material owners
+rather than making Full Disk Access a prerequisite. When deletion does not translate into available space, the cause
+is almost always Time Machine's local snapshots
+([time-machine-local-snapshots.md](../../_shared/time-machine-local-snapshots.md)), occasionally a deleted file a
+process still holds open.
 
-Archives, project datasets, models, research, recordings, and downloads can be
-large intentional assets. Size and a directory name such as `tmp`, `artifacts`,
-or `backup` do not authorize their deletion. Keep the cleanup focused on the
-user's requested disposable storage.
+What decides a large folder is who made it and whether its use is over, not its size or its name. Amir's own files
+(documents, downloads, recordings, his own projects and research) are his: report them. Datasets, models and policies
+that later work reads are not task output either. A folder an agent made for a task (a QA run, a render, captures,
+scratch, a recovery copy, downloaded builds) is done when its task is, as the shared deletion guide describes. A name
+like `tmp`, `artifacts` or `backup` doesn't make a folder disposable, and a name like `data` doesn't make it
+precious.
