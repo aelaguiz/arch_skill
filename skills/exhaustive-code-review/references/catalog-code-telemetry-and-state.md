@@ -3,56 +3,85 @@
 Applies when the change touches analytics events, a persisted or published
 status field, the shape of state a caller has to interpret, a clock read, or a
 schema, wire or dependency contract. Needs the diff and the repository at head;
-C-14 and C-33 also need the other side of the contract — the event definitions
-and the queries that read them, or the client, second repository or lockfile
+C-14 and C-33 also need the relevant contract context — the event definitions
+and their intended uses or readers, or the client, second repository or lockfile
 still holding the old shape. These five checks ask what the system records and
 how it represents it. Report each defect once, under the check that found it.
 
-## C-14 Telemetry removed, renamed, gated, or absent
+## C-14 Telemetry value, volume, and decision continuity
 
-Question: Did this change lose an event, or ship a flow without one?
+Question: Does each added signal justify its cost, and can the decisions that
+depend on changed telemetry still be made?
 
-Needs: the diff against the branch point; the repository at head, for the event
-definitions, the sibling events and the queries that read them; the issue or
-plan, to see whether the flow is new and user-visible.
+Needs: the diff; event definitions, emit sites, enrichment and destinations;
+affected queries, metrics and alerts; the product or engineering question the
+change serves. A concrete planned use can justify a new signal before its
+dashboard exists.
 
-Read: Compare the event surface before and after the change: constants removed,
-renamed or moved to a different point in the flow; new conditions inside the
-path that emits an event; changed parameter names; and paired events out of
-symmetry, where an opening event still fires on every branch but its result
-sibling does not. An event defined in a new place is a different event, so
-compare emit sites rather than names — re-adding an event at a new position is
-not a restoration — and a name that still describes the old behavior now means
-something it does not say. For a new user-visible flow, look for shown,
-completed and error coverage and for the identity fields that make an event
-joinable; a binder defined but never started leaves a stream that looks healthy
-and joins to nothing. Then read the queries downstream of every touched name.
+Read: Telemetry earns its collection and storage cost by answering a named,
+actionable question. Valuable signals measure whether an experience is reached,
+started or finished, where people drop or convert, an experiment's exposure and
+outcome, or a reliability/performance condition an engineer can act on. Preserve
+the denominators, identity and diagnostic detail those uses need. A rare failure
+can matter more than a frequent action; volume alone says nothing about value.
 
-Block when: an event disappears, changes meaning or becomes conditional on the
-path that emits it; a new user-visible flow ships with no shown, completed or
-error coverage; or a downstream query selects a name the code no longer emits.
+First check whether a shared event, screen view, durable server row or error
+report already answers the question at the needed population, timing and grain.
+If it does, require no new event. A record of every tap, panel, network request
+or repeated callback is extraneous when it adds no distinct answer. "Coverage"
+and "might be useful someday" do not explain what someone would decide or do.
+Dev-, QA- and staging-only surfaces do not need product analytics coverage.
 
-Do not block when: the change adds events or fields; identity enrichment is not
-optional and more data is the preferred direction. New validation that withholds
-an event unless fields the vendor is only assumed to require are present is the
-inverse finding: cite the vendor's documentation or send the event. A missing
-unit test for an event is never the finding. A control that can stop a whole
-event stream is always the finding, and a possible drop has to raise an alarm.
+For additions or broader emission, require an estimate of events per user or
+session and in aggregate, plus expected property cardinality; state assumptions
+where volume is not yet measured. Prefer the lowest-volume semantic action or
+durable state transition. Repeated render, animation, polling or visibility
+callbacks should not recount the same fact. Consider aggregation, sampling and
+selective destination routing where they retain the needed answer. Check their
+effect on rates, rare failures, latency tails, experiment populations and
+conversion delivery; sampling only successes can silently change a denominator.
+
+Trace changed signals from emit sites through enrichment and routing to their
+readers. Compare timing, population, count and fields, not just event names:
+moving an emit can change its meaning, and an unstarted identity binder can
+leave an apparently healthy stream unjoinable. Require fields the actual
+contract needs, not assumed vendor requirements or authenticated identity before
+login. Before endorsing removal, establish the producer and what decisions or
+diagnostics survive. A search that finds no consumer is incomplete evidence,
+not proof of no value; report unavailable readers or unresolved purpose instead
+of inventing a dependency or recommending blind deletion.
+
+Block when: a new experience's necessary exposure or outcome cannot be measured
+by any record; an emit is wired to the wrong moment, population or count; or a
+change breaks a metric, alert, experiment or conversion dependency. Name the
+question or operational action that becomes unanswerable or misleading, and the
+broken contract. Missing optional detail is not a blocker. Report redundant or
+unjustified additions and missing volume/cardinality estimates as observations
+(SHOULD-FIX), unless a concrete correctness or operational consequence warrants
+a required repair. Existing untouched events are outside the PR's repair scope.
+
+Do not block when: existing records answer the question, or a justified
+consolidation, removal, aggregation, sampling or routing change preserves the
+needed measurement and diagnostics. Do not demand shown, completed and error
+events for every control, or a unit test for every event. New events and fields
+receive the same value-and-cost scrutiny as existing ones touched by the diff.
 
 Examples:
 
-- **[REQUIRED REPAIR] The identity binder is defined but never started.** Every
-  event shipped without the field that joins it to a user, and the gap was
-  invisible because events kept flowing. Compared the binder's definition with
-  the startup path. Repair target: bind the identity before the first event.
-- **[REQUIRED REPAIR] A runtime switch can turn a whole stream off.** A change
-  added a control that stops sending to a conversions endpoint entirely.
-  Compared the new condition with the event's delivery obligation. Repair
-  target: remove the switch and alarm on any drop.
-- **[REQUIRED REPAIR] An event moved in the flow and reported as restored.** A
-  refactor re-added a removed event at a different point, so it now fires under
-  a different condition than downstream queries assume. Compared emit sites
-  before and after. Repair target: emit it at the original point.
+- **[OBSERVATION] Every request gains another success event.** Existing service
+  metrics already provide the required error rate and latency distribution;
+  the new event duplicates that answer at request volume. Repair target: use
+  the existing metrics, or explain the distinct question and the least costly
+  signal that answers it.
+- **[REQUIRED REPAIR] Sampling destroys an experiment's conversion rate.** The
+  change samples exposures but leaves outcomes and the reader's denominator
+  unchanged. Repair target: preserve a valid population and measurement method.
+- **[REQUIRED REPAIR] Failure diagnosis loses its join.** An identity binder is
+  never started, so error events cannot be joined to the affected operation.
+  Repair target: restore the correlation required for diagnosis.
+- **[NO FINDING] Extra panel events are absent.** An existing screen view and
+  durable completion record already answer reach and completion for the new
+  experience. Another event for each panel would add no decision-relevant fact.
 
 ## C-25 Derived status recorded as observed fact
 
