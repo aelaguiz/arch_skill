@@ -1,24 +1,35 @@
 # Catalog Slice: Telemetry And State
 
-Applies when the change touches analytics events, a persisted or published
-status field, the shape of state a caller has to interpret, a clock read, or a
-schema, wire or dependency contract. Needs the diff and the repository at head;
-C-14 and C-33 also need the relevant contract context — the event definitions
+Applies when the change introduces or changes a user-visible flow, or touches
+analytics events, a persisted or published status field, the shape of state a
+caller has to interpret, a clock read, or a schema, wire or dependency contract.
+Apply C-14 to new flows even when the diff contains no telemetry changes;
+missing instrumentation is something to investigate, not a reason to skip it.
+Needs the diff and the repository at head; C-14 and C-33 also need the relevant
+contract context — the event definitions
 and their intended uses or readers, or the client, second repository or lockfile
 still holding the old shape. These five checks ask what the system records and
 how it represents it. Report each defect once, under the check that found it.
 
 ## C-14 Telemetry value, volume, and decision continuity
 
-Question: Does each added signal justify its cost, and can the decisions that
-depend on changed telemetry still be made?
+Question: Did this change lose useful visibility, or ship a flow whose necessary
+exposure, outcome, or failure cannot be measured? Does each added signal justify
+its cost?
 
 Needs: the diff; event definitions, emit sites, enrichment and destinations;
 affected queries, metrics and alerts; the product or engineering question the
 change serves. A concrete planned use can justify a new signal before its
 dashboard exists.
 
-Read: Telemetry earns its collection and storage cost by answering a named,
+Read: Explicitly inspect both removed events and newly introduced user-visible
+flows. Compare emit paths before and after the change for deleted calls, new
+guards, and lost outcome or failure branches, even when the event's name and
+definition survive. For each new flow, identify its necessary exposure, outcome
+and failure visibility and the records that provide it, even if no telemetry
+code changed. Absence of a telemetry diff does not establish adequate visibility.
+
+Telemetry earns its collection and storage cost by answering a named,
 actionable question. Valuable signals measure whether an experience is reached,
 started or finished, where people drop or convert, an experiment's exposure and
 outcome, or a reliability/performance condition an engineer can act on. Preserve
@@ -51,11 +62,12 @@ diagnostics survive. A search that finds no consumer is incomplete evidence,
 not proof of no value; report unavailable readers or unresolved purpose instead
 of inventing a dependency or recommending blind deletion.
 
-Block when: a new experience's necessary exposure or outcome cannot be measured
-by any record; an emit is wired to the wrong moment, population or count; or a
-change breaks a metric, alert, experiment or conversion dependency. Name the
-question or operational action that becomes unanswerable or misleading, and the
-broken contract. Missing optional detail is not a blocker. Report redundant or
+Block when: a new experience's necessary exposure, outcome or failure cannot be
+measured by any record; an emit is wired to the wrong moment, population or
+count; or a change breaks a metric, alert, experiment, conversion dependency or
+required diagnostic. Name the question or operational action that becomes
+unanswerable or misleading, and the broken contract. Missing optional detail is
+not a blocker. Report redundant or
 unjustified additions and missing volume/cardinality estimates as observations
 (SHOULD-FIX), unless a concrete correctness or operational consequence warrants
 a required repair. Existing untouched events are outside the PR's repair scope.
