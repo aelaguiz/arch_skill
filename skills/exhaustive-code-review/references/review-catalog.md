@@ -7,8 +7,10 @@ are in the slice files: what to read and compare, when to block, when not to,
 and example findings.
 
 A slice applies when the target actually contains what its header says it
-needs. Record slices that do not apply in `coverage.md` with the input that was
-missing.
+needs. For C-14, a new user-visible flow is sufficient to apply the check even
+when no telemetry code changes; absent instrumentation is not a missing input
+that excuses review. Record slices that do not apply in `coverage.md` with the
+input that was missing.
 
 
 ## Code and pull request checks
@@ -115,9 +117,9 @@ Applies when the change has a diff and the target carries the request that commi
 
 ### `catalog-code-telemetry-and-state.md`
 
-Applies when the change touches analytics events, a persisted or published status field, the shape of state a caller has to interpret, a clock read, or a schema, wire or dependency contract. Needs the diff and the repository at head; C-14 and C-33 also need the other side of the contract — the event definitions and the queries that read them, or the client, second repository or lockfile still holding the old shape. These five checks ask what the system records and how it represents it. Report each defect once, under the check that found it.
+Applies when the change introduces or changes a user-visible flow, or touches analytics events, a persisted or published status field, the shape of state a caller has to interpret, a clock read, or a schema, wire or dependency contract. Apply C-14 to new flows even when the diff contains no telemetry changes; missing instrumentation is something to investigate, not a reason to skip it. Needs the diff and the repository at head; C-14 and C-33 also need the relevant contract context — the event definitions and their intended uses or readers, or the client, second repository or lockfile still holding the old shape. These five checks ask what the system records and how it represents it. Report each defect once, under the check that found it.
 
-- **C-14 Telemetry removed, renamed, gated, or absent.** Did this change lose an event, or ship a flow without one?
+- **C-14 Telemetry value, volume, and decision continuity.** Did this change lose useful visibility, or ship a flow whose necessary exposure, outcome, or failure cannot be measured? Does each added signal justify its cost?
 - **C-25 Derived status recorded as observed fact.** Does each status field's name match the event that sets it?
 - **C-29 One field carrying two meanings.** Does any field this change touches take part in two decisions?
 - **C-32 Device clock used to derive product state.** Is a clock read here stamping an event, or deciding something?
