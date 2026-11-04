@@ -48,4 +48,4 @@ Each judge scored its own family's answers about 1.5 points higher than the othe
 
 ## Measuring again
 
-The back-test's scripts, tasks, runs and scores are in psbrain at `projects/agent-watcher/efficiency-profile/task-routing/` (method and log in `PLAN.md`; `backtest.py` reruns, `judge.py` scores, `analyze_scores.py` tabulates). To check a new model or level, rerun a few tasks of each kind on it beside the current setting, and score them with judges who compare a model with itself, or from neither family.
+When a new model or level arrives, `$model-eval` runs the back-test again for it and updates this skill from the result. The first run's method, log, tasks, tooling and scores are in psbrain at `projects/agent-watcher/efficiency-profile/task-routing/`.

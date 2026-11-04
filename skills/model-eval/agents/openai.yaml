@@ -1,0 +1,7 @@
+interface:
+  display_name: "Model Eval"
+  short_description: "Back-test a new model and update model-routing"
+  default_prompt: "Use $model-eval to evaluate the new model for our helper work: work out what its arrival asks, run only the new model on the last back-test's tasks, have blind judges chosen for the comparison score its answers beside the stored ones, and update model-routing from what holds up."
+
+policy:
+  allow_implicit_invocation: false

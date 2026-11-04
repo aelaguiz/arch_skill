@@ -115,6 +115,11 @@ on, and shows by example which helper work runs as well on the same strong
 model at a lower thinking level; everything else keeps the user's choice or
 the default.
 
+When a new model or version comes out, `model-eval` runs only the new model on
+the last back-test's helper tasks, has blind judges score its answers beside
+the stored ones, and updates `model-routing` from what holds up. The user sees the
+change and what the run cost before it is published.
+
 ### One planning artifact
 
 - Full-arch and mini-plan work keep one canonical `DOC_PATH`.
