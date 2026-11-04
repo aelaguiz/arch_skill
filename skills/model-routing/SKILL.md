@@ -9,6 +9,8 @@ metadata:
 
 When you hand work to a helper, you choose its model and how hard it thinks. The goal is the answer you can act on, as soon as possible. Speed here is wall-clock time until you have that answer, not tokens or money. A fast wrong answer is slower than a slow right one, because you act on it or redo it.
 
+Always refer to a model as "it" or "its" ("its answer", "it skipped the check"), never as "he" or "she".
+
 ## What a thinking level buys
 
 A higher thinking level does not make a model write faster. It makes it do more before it answers: check everything the brief asks for, find a way around an obstacle, keep many rules in mind at once. That costs minutes, and whether the minutes buy anything depends on where the answer's value comes from.
