@@ -80,7 +80,9 @@ A check compares work with a standard someone handed over: did this session stay
 
 A second opinion looks for what nobody pointed it at: what is wrong with this plan, what did we miss, what will this change break. There the thinking is the job. It earns the deep setting because it runs once, when what it finds can still change the work. Its first pass finds what matters, each pass after that returns a smaller list, and a strict reader always finds one more.
 
-What it is asked to find decides which one you have. How often it runs decides what it costs. A reviewer on a timer that only compares a session with its brief is a check. One asked what the session has stopped seeing (a goal nobody set, an assumption nobody settled, whether the work deserves its time) is doing the deep job over and over, which is why it can be the largest use of an allowance. So run it less before you run it cheaper: a review with nothing new to read has nothing to say, and its pace can fit how fast the work can go wrong. Whether a cheaper setting keeps its catches is a measurement, and `references/evidence.md` says what has been measured.
+What it is asked to find decides which one you have. How often it runs decides what it costs. A reviewer on a timer that only compares a session with its brief is a check. One asked what the session has stopped seeing (a goal nobody set, an assumption nobody settled, whether the work deserves its time) is doing the deep job over and over, which is why it can be the largest use of an allowance. So run it less before you run it cheaper: a review with nothing new to read has nothing to say, and its pace can fit how fast the work can go wrong.
+
+Running it cheaper is a real trade, so look at what its catches are. When a timed reviewer was rerun one model down from a frozen copy, it raised at least in part about three quarters of the findings that had changed real work, at about a fifth of the price, and about half of what it lost outright was corrections to records and notes. It still lost a few findings that had changed real work, and it fell furthest on the job where reviews change real work most often. So the step down suits a review that mostly keeps records honest, and costs more where the review is what's steering the work. `references/evidence.md` has the numbers.
 
 ## Step up on a miss, once
 
@@ -96,7 +98,9 @@ Crossing itself costs little, so let it decide little. In a small test, crossing
 
 What decided speed and cost was the helper. On small jobs with checkable answers, every route got every answer right, and the helper's own work differed far more than the crossing did. Sonnet at medium was quickest, Terra at xhigh cost about a third as much, and Opus at medium cost the most and wasn't faster than either. So from a Claude parent, when someone is waiting on a small checked job, native Sonnet gets there first, and when nobody is waiting, Terra is worth the two seconds. Those jobs took a minute or two and nobody judged anything but the answer, so they say nothing about holding a long brief, where "When a smaller model holds up" still applies.
 
-A second opinion goes to a maker other than the one that made the work, which may not be your own family: a Codex parent checking a plan Opus wrote wants Codex. One thing is still open: Sol and Terra took about twice as long on reading jobs when a Claude parent briefed them, and Opus didn't slow down the other way. Longer briefs are the likely reason, so keep a crossing brief as short as what it needs.
+A second opinion goes to a maker other than the one that made the work, which may not be your own family: a Codex parent checking a plan Opus wrote wants Codex.
+
+The brief moves a helper's speed more than crossing does. Sol and Terra first looked about twice as slow when a Claude parent briefed them, but given the same brief they slowed about as much under their own parent. So keep any brief to what the job needs, on either side.
 
 ## When speed is worth paying for
 

@@ -28,6 +28,7 @@ A typical run is the median Opus 5.5 medium helper run across 88 real tasks from
 
 | Setting | Share of a typical run | About |
 |---|---:|---:|
+| Terra 6.1 xhigh | 0.12 | $0.21 |
 | Sol 6.1 low | 0.21 | $0.36 |
 | Sol 6.1 medium | 0.27 | $0.46 |
 | Sonnet 5.5 low | 0.30 | $0.51 |
@@ -37,15 +38,16 @@ A typical run is the median Opus 5.5 medium helper run across 88 real tasks from
 | Opus 5.5 low | 0.50 | $0.86 |
 | Opus 5.5 medium | 1.00 | $1.71 |
 | Opus 5.5 high | 1.19 | $2.03 |
+| Astra 6.0 xhigh | 1.81 | $3.10 |
 | Sonnet 5.5 max | 1.90 | $3.25 |
 | Opus 5.5 xhigh | 1.99 | $3.40 |
 | Opus 5.5 max | 3.33 | $5.69 |
 
-Terra and Astra have never been back-tested. Worked from Sol's token use at their prices, Terra at xhigh comes to about $0.34 a run and Astra at xhigh about $3.40, and each is an estimate until `$model-eval` measures it. Multiply a Codex row by 2 to 2.5 for Fast: Sol at xhigh on Fast is about $1.37 to $1.71, close to Opus at medium.
+Terra at xhigh and Astra at xhigh were measured November 5, 2026, against Opus at medium on the same real tasks: Terra on 4 tasks, 0.06 to 0.14 times, in about the same time; Astra on 3 tasks, 1.61 to 2.17 times, in about 2.5 times as long. So few tasks give a direction, and both came in below the estimate worked from Sol's tokens, which said 0.20 and 1.99. Five more tasks put Opus at high at 1.14. Multiply a Codex row by 2 to 2.5 for Fast: Sol at xhigh on Fast is about $1.37 to $1.71, close to Opus at medium.
 
 ## Multiply by runs
 
-A run's price is the smaller half of the sum. A setting at $3.40 that runs once costs $3.40. The same setting checking in every half hour on a build that lasts a week runs 336 times and costs about $1,100. Sol at high on that timer costs about $190, and skipping the check-ins where nothing changed costs less again.
+A run's price is the smaller half of the sum, and a reviewer that keeps its thread costs more than a fresh run, because each look carries everything before it. A median Astra xhigh look on a live timer cost $7.43 against about $3 for a fresh run. Checking in every half hour on a build that lasts a week, that's 336 looks and about $2,500. Sol at high on that timer would be about a fifth by price, about $500, and skipping the check-ins where nothing changed costs less again.
 
 ## What crossing families adds
 
@@ -64,3 +66,5 @@ Measured November 5, 2026: 28 runs on four small jobs with checkable answers, se
 From a Claude parent, crossing adds about 2 seconds of setup and up to a cent of reading. From a Codex parent it adds about 17 seconds of briefing, 2 of setup, and 2 to 3 cents, because the parent writes the brief to a file, starts the helper in a second call and polls while it runs.
 
 These are floors: each parent was handed a one-line command with the account and model already chosen. Four jobs show a direction, and fixed overheads weigh less on longer work. The helpers' cost and speed are for jobs of a minute or two.
+
+That test also found Sol and Terra taking about twice as long on two reading jobs when a Claude parent briefed them. It turned out to be mostly the brief. Given the identical brief, one run each, native runs took 1.6 to 2.1 times as long as on their own parent's brief, and three of four gaps between native and crossed closed to 7 seconds or less. What a brief asks for seems to matter as much as how long it is.
