@@ -54,13 +54,13 @@ An audit of every Codex and Claude session across five machines, October 29 to N
 - Reviewers on a timer at the top Codex model took 59% of that week's Codex allowance. Of 2,086 check-ins read closely, 576 came after a session that had done nothing but handle the last review.
 - One plan took 179 reviews across 22 drafts, each reasonable from inside its round.
 - A build check at medium wrote 18k tokens in about 4 minutes, and at max 113k tokens in about 20.
-- No Terra build from a full spec was found that Sol had to redo. 13 of 105 cheap device workers died on a request error, which says nothing about the model's work.
+- No Terra xhigh build from a full spec was found that Sol had to redo. 13 of 105 cheap device workers died on a request error, which says nothing about the model's work.
 
 ## Crossing families and small jobs
 
 28 runs, November 5, 2026: four small jobs with known answers through seven routes from both parents. All 28 were right, so this measures speed and cost, not quality. Sonnet at medium beat crossing to Sol at high on speed on all four jobs (44 against 82 seconds in total) and tied on cost ($0.36 against $0.38 with the parent). The numbers are in `costs.md`. This is why "Mechanical work" and "Fix a well-defined bug" name Sonnet at medium: those rows end in a check. It rests on two small code jobs, against a back-test where Sonnet at medium misled on about 3 tasks in 10 with no check at the end.
 
-A second round gave Sol and Terra one identical brief from both parents, and most of a remaining gap closed: see the end of `costs.md`.
+A second round gave Sol at high and Terra at xhigh one identical brief from both parents, and most of a remaining gap closed: see the end of `costs.md`.
 
 ## A timed reviewer moved to a cheaper model
 
@@ -73,9 +73,9 @@ November 5, 2026: 20 saved check-ins from three long-running jobs reran on Sol 6
 | 9 that corrected what a person had been told | 4 | 1 | 4 |
 | 18 that corrected a record or note | 5 to 6 | 1 to 2 | 11 |
 
-These are a floor on what Sol would catch live: it had no live records, no earlier thread and shortened tool output. Of the 19 findings both readers said it missed, the evidence was fully in its copy for 4. Astra rerun from the same frozen copies also lost findings, missing 2 to 4 of 14 on five looks where Sol missed 4 to 5, so that gap is too small to divide between the model and the setup.
+The step moved the model and the level together, so these figures describe Sol at high and say nothing about Sol at xhigh, which wasn't tested on this job. They are also a floor on what Sol at high would catch live: it had no live records, no earlier thread and shortened tool output. Of the 19 findings both readers said it missed, the evidence was fully in its copy for 4. Astra rerun from the same frozen copies also lost findings, missing 2 to 4 of 14 on five looks where Sol missed 4 to 5, so that gap is too small to divide between the model and the setup.
 
-Sol lost most on the job where reviews most often change real work, though that job's reviews also lean most on files a transcript doesn't hold. It lost least on the job whose reviews mostly correct records. Readers counted 24 to 33 further findings from Sol that would change real work, and nobody checked whether those were true. A cold look cost $0.53 on Sol against $7.43 for Astra's live look; by price alone, a live Sol look would be about a fifth of Astra's.
+Sol lost most on the job where reviews most often change real work, though that job's reviews also lean most on files a transcript doesn't hold. It lost least on the job whose reviews mostly correct records. Readers counted 24 to 33 further findings from Sol that would change real work, and nobody checked whether those were true. A cold look cost $0.53 on Sol at high against $3.75 on Astra at xhigh, about a seventh, and Astra's live look cost $7.43. Price per token alone says a fifth, but that ignores what the level does to the tokens.
 
 ## How firm the table is
 

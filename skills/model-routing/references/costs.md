@@ -47,7 +47,7 @@ Terra at xhigh and Astra at xhigh were measured November 5, 2026, against Opus a
 
 ## Multiply by runs
 
-A run's price is the smaller half of the sum, and a reviewer that keeps its thread costs more than a fresh run, because each look carries everything before it. A median Astra xhigh look on a live timer cost $7.43 against about $3 for a fresh run. Checking in every half hour on a build that lasts a week, that's 336 looks and about $2,500. Sol at high on that timer would be about a fifth by price, about $500, and skipping the check-ins where nothing changed costs less again.
+A run's price is the smaller half of the sum, and a reviewer that keeps its thread costs more than a fresh run, because each look carries everything before it. A median Astra xhigh look on a live timer cost $7.43 against about $3 for a fresh run. Checking in every half hour on a build that lasts a week, that's 336 looks and about $2,500. Sol at high on that timer would be about $350 to $500, a seventh of Astra's cost on a cold look and a fifth by price per token, and skipping the check-ins where nothing changed costs less again.
 
 ## What crossing families adds
 
@@ -67,4 +67,4 @@ From a Claude parent, crossing adds about 2 seconds of setup and up to a cent of
 
 These are floors: each parent was handed a one-line command with the account and model already chosen. Four jobs show a direction, and fixed overheads weigh less on longer work. The helpers' cost and speed are for jobs of a minute or two.
 
-That test also found Sol and Terra taking about twice as long on two reading jobs when a Claude parent briefed them. It turned out to be mostly the brief. Given the identical brief, one run each, native runs took 1.6 to 2.1 times as long as on their own parent's brief, and three of four gaps between native and crossed closed to 7 seconds or less. What a brief asks for seems to matter as much as how long it is.
+That test also found Sol at high and Terra at xhigh taking about twice as long on two reading jobs when a Claude parent briefed them. It turned out to be mostly the brief. Given the identical brief, one run each, native runs took 1.6 to 2.1 times as long as on their own parent's brief, and three of four gaps between native and crossed closed to 7 seconds or less. What a brief asks for seems to matter as much as how long it is.

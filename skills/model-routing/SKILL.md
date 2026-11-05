@@ -45,7 +45,7 @@ When the value is in what the helper notices that nobody pointed it at, the thin
 
 Moving to a smaller model is a different bet from lowering the level. A strong model at a lower level keeps its grip on the brief and does less extra work. A smaller model can lose the grip: in a back-test, Sonnet and Haiku, and Opus at its lowest level, dropped rules of the brief and missed the point about a third of the time or more, against 7% for Opus at medium. A read-only review on Sonnet found the real defects and then wrote files anyway. Sonnet has no room to step down either: at medium it does markedly worse than at max.
 
-That is a finding about work where the brief in the helper's head is all that keeps it honest. Where the spec is complete and a test or a build shows whether the work is right, a smaller model does well: we found no Terra build from a full spec that Sol had to redo. So ask what keeps this helper honest, and how much of the work a check really proves. A hidden test proves the code does what the test checks. A green build says nothing about whether a PR's description is true, or whether every rule in the brief was kept. If the check covers what could go wrong, the smaller model is likely as good and cheaper. If only the brief does, keep the strong model at a lower level.
+That is a finding about work where the brief in the helper's head is all that keeps it honest. Where the spec is complete and a test or a build shows whether the work is right, a smaller model does well: we found no Terra xhigh build from a full spec that Sol had to redo. So ask what keeps this helper honest, and how much of the work a check really proves. A hidden test proves the code does what the test checks. A green build says nothing about whether a PR's description is true, or whether every rule in the brief was kept. If the check covers what could go wrong, the smaller model is likely as good and cheaper. If only the brief does, keep the strong model at a lower level.
 
 ## Which setting does which kind of work
 
@@ -82,7 +82,7 @@ A second opinion looks for what nobody pointed it at: what is wrong with this pl
 
 What it is asked to find decides which one you have. How often it runs decides what it costs. A reviewer on a timer that only compares a session with its brief is a check. One asked what the session has stopped seeing (a goal nobody set, an assumption nobody settled, whether the work deserves its time) is doing the deep job over and over, which is why it can be the largest use of an allowance. So run it less before you run it cheaper: a review with nothing new to read has nothing to say, and its pace can fit how fast the work can go wrong.
 
-Running it cheaper is a real trade, so look at what its catches are. When a timed reviewer was rerun one model down from a frozen copy, it raised at least in part about three quarters of the findings that had changed real work, at about a fifth of the price, and about half of what it lost outright was corrections to records and notes. It still lost a few findings that had changed real work, and it fell furthest on the job where reviews change real work most often. So the step down suits a review that mostly keeps records honest, and costs more where the review is what's steering the work. `references/evidence.md` has the numbers.
+Running it cheaper is a real trade, so look at what its catches are. When a timed reviewer on Astra at xhigh was rerun on Sol at high from a frozen copy, it raised at least in part about three quarters of the findings that had changed real work, at about a seventh of the cost, and about half of what it lost outright was corrections to records and notes. It still lost a few findings that had changed real work, and it fell furthest on the job where reviews change real work most often. That step moved the model and the level together, so it can't say which one cost the catches. So far it suggests the step suits a review that mostly keeps records honest, and costs more where the review is what's steering the work. `references/evidence.md` has the numbers.
 
 ## Step up on a miss, once
 
@@ -100,7 +100,7 @@ What decided speed and cost was the helper. On small jobs with checkable answers
 
 A second opinion goes to a maker other than the one that made the work, which may not be your own family: a Codex parent checking a plan Opus wrote wants Codex.
 
-The brief moves a helper's speed more than crossing does. Sol and Terra first looked about twice as slow when a Claude parent briefed them, but given the same brief they slowed about as much under their own parent. So keep any brief to what the job needs, on either side.
+The brief moves a helper's speed more than crossing does. Sol at high and Terra at xhigh first looked about twice as slow when a Claude parent briefed them, but given the same brief they slowed about as much under their own parent. So keep any brief to what the job needs, on either side.
 
 ## When speed is worth paying for
 
