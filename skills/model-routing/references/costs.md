@@ -42,11 +42,11 @@ A typical run is the median Opus 5.5 medium helper run across 88 real tasks from
 
 A ~ marks a cell worked out from price, because no run measured it. Those run high: Terra's lower levels sit above its measured xhigh. Fast rows use 2.5 times, the rate on included usage; on purchased credits it's 2 times. Codex also offers an ultra level, which has never been run on helper work.
 
-Terra at xhigh and Astra at xhigh were measured November 5, 2026, against Opus at medium on the same real tasks: Terra on 4 tasks, 0.06 to 0.14 times, in about the same time; Astra on 3 tasks, 1.61 to 2.17 times, in about 2.5 times as long. So few tasks give a direction, and both came in below the estimate worked from Sol's tokens, which said 0.20 and 1.99. Five more tasks put Opus at high at 1.14. Sol at xhigh on Fast comes close to Opus at medium.
+Terra 6.1 at xhigh and Astra 6.0 at xhigh were measured November 5, 2026, against Opus 5.5 at medium on the same real tasks: Terra on 4 tasks, 0.06 to 0.14 times, in about the same time; Astra on 3 tasks, 1.61 to 2.17 times, in about 2.5 times as long. So few tasks give a direction, and both came in below the estimate worked from Sol's tokens, which said 0.20 and 1.99. Five more tasks put Opus 5.5 at high at 1.14. Sol 6.1 at xhigh on Fast comes close to Opus 5.5 at medium.
 
 ## Multiply by runs
 
-A run's price is the smaller half of the sum, and a reviewer that keeps its thread costs more than a fresh run, because each look carries everything before it. A median Astra xhigh look on a live timer cost $7.43 against about $3 for a fresh run. Checking in every half hour on a build that lasts a week, that's 336 looks and about $2,500. Sol at high on that timer would be about $350 to $500, a seventh of Astra's cost on a cold look and a fifth by price per token, and skipping the check-ins where nothing changed costs less again.
+A run's price is the smaller half of the sum, and a reviewer that keeps its thread costs more than a fresh run, because each look carries everything before it. A median Astra 6.0 xhigh look on a live timer cost $7.43 against about $3 for a fresh run. Checking in every half hour on a build that lasts a week, that's 336 looks and about $2,500. Sol 6.1 at high on that timer would be about $350 to $500, a seventh of Astra's cost on a cold look and a fifth by price per token, and skipping the check-ins where nothing changed costs less again.
 
 ## What crossing families adds
 
@@ -66,4 +66,4 @@ From a Claude parent, crossing adds about 2 seconds of setup and up to a cent of
 
 These are floors: each parent was handed a one-line command with the account and model already chosen. Four jobs show a direction, and fixed overheads weigh less on longer work. The helpers' cost and speed are for jobs of a minute or two.
 
-That test also found Sol at high and Terra at xhigh taking about twice as long on two reading jobs when a Claude parent briefed them. It turned out to be mostly the brief. Given the identical brief, one run each, native runs took 1.6 to 2.1 times as long as on their own parent's brief, and three of four gaps between native and crossed closed to 7 seconds or less. What a brief asks for seems to matter as much as how long it is.
+That test also found Sol 6.1 at high and Terra 6.1 at xhigh taking about twice as long on two reading jobs when a Claude parent briefed them. It turned out to be mostly the brief. Given the identical brief, one run each, native runs took 1.6 to 2.1 times as long as on their own parent's brief, and three of four gaps between native and crossed closed to 7 seconds or less. What a brief asks for seems to matter as much as how long it is.
