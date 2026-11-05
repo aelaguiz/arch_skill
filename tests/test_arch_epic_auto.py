@@ -136,9 +136,22 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 f"astra {effort}", codex_models=["gpt-6-astra"])
             self.assertEqual(result.effort, effort)
             self.assertEqual(result.effort_source, "explicit")
-        with self.assertRaises(self.model_resolution.ModelResolutionError):
-            self.model_resolution.resolve_execution_phrase(
-                "codex", codex_models=["gpt-6-sol"])
+        result = self.model_resolution.resolve_execution_phrase(
+            "codex", codex_models=["gpt-6-sol"])
+        self.assertEqual(result.model, "gpt-6-sol")
+
+    def test_bare_family_takes_its_newest_runnable_version(self):
+        catalog = ["gpt-5.6-terra", "gpt-6.1-terra", "gpt-6.2-terra"]
+        result = self.model_resolution.resolve_execution_phrase("terra xhigh", codex_models=catalog)
+        self.assertEqual(result.model, "gpt-6.2-terra")
+        result = self.model_resolution.resolve_execution_phrase("terra xhigh", codex_models=["gpt-5.6-terra"])
+        self.assertEqual(result.model, "gpt-5.6-terra")
+        result = self.model_resolution.resolve_execution_phrase("gpt-5.6-terra xhigh", codex_models=catalog)
+        self.assertEqual(result.model, "gpt-5.6-terra")
+
+    def test_sonnet_resolves(self):
+        result = self.model_resolution.resolve_execution_phrase("sonnet medium", codex_models=[])
+        self.assertEqual((result.runtime, result.model, result.effort), ("claude", "sonnet", "medium"))
 
     def test_explicit_older_models_are_preserved_without_astra_recommendation(self):
         cases = [("gpt-6-sol", "gpt-6-sol"), ("Sol 6", "gpt-6-sol"),
