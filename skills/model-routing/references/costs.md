@@ -26,24 +26,22 @@ Codex and Claude draw on separate pools of accounts, so their costs compare only
 
 A typical run is the median Opus 5.5 medium helper run across 88 real tasks from the October 27 back-test: $1.71. The other measured settings scale it by what they cost on the same tasks, at list price and standard speed.
 
-| Setting | Share of a typical run | About |
-|---|---:|---:|
-| Terra 6.1 xhigh | 0.12 | $0.21 |
-| Sol 6.1 low | 0.21 | $0.36 |
-| Sol 6.1 medium | 0.27 | $0.46 |
-| Sonnet 5.5 low | 0.30 | $0.51 |
-| Sol 6.1 high | 0.34 | $0.58 |
-| Sol 6.1 xhigh | 0.40 | $0.68 |
-| Sonnet 5.5 medium | 0.43 | $0.74 |
-| Opus 5.5 low | 0.50 | $0.86 |
-| Opus 5.5 medium | 1.00 | $1.71 |
-| Opus 5.5 high | 1.19 | $2.03 |
-| Astra 6.0 xhigh | 1.81 | $3.10 |
-| Sonnet 5.5 max | 1.90 | $3.25 |
-| Opus 5.5 xhigh | 1.99 | $3.40 |
-| Opus 5.5 max | 3.33 | $5.69 |
+| Model | Low | Medium | High | Xhigh | Max |
+|---|---:|---:|---:|---:|---:|
+| Terra 6.1 | ~$0.18 | ~$0.23 | ~$0.29 | $0.21 | not listed |
+| Terra 6.1 on Fast | ~$0.45 | ~$0.58 | ~$0.73 | $0.53 | not listed |
+| Sol 6.1 | $0.36 | $0.46 | $0.58 | $0.68 | not run |
+| Sol 6.1 on Fast | $0.90 | $1.15 | $1.45 | $1.70 | not run |
+| Astra 6.0 | ~$1.80 | ~$2.30 | ~$2.90 | $3.10 | not run |
+| Astra 6.0 on Fast | ~$4.50 | ~$5.75 | ~$7.25 | $7.75 | not run |
+| Opus 5.5 | $0.85 | $1.71 | $2.03 | $3.40 | $5.69 |
+| Sonnet 5.5 | $0.51 | $0.74 | not run | not run | $3.25 |
+| Haiku 5.5 | ~$0.25 | not run | not run | not run | not run |
+| Fable 5.1 | ~$1.80 | ~$3.59 | ~$4.27 | ~$7.15 | ~$11.96 |
 
-Terra at xhigh and Astra at xhigh were measured November 5, 2026, against Opus at medium on the same real tasks: Terra on 4 tasks, 0.06 to 0.14 times, in about the same time; Astra on 3 tasks, 1.61 to 2.17 times, in about 2.5 times as long. So few tasks give a direction, and both came in below the estimate worked from Sol's tokens, which said 0.20 and 1.99. Five more tasks put Opus at high at 1.14. Multiply a Codex row by 2 to 2.5 for Fast: Sol at xhigh on Fast is about $1.37 to $1.71, close to Opus at medium.
+A ~ marks a cell worked out from price, because no run measured it. Those run high: Terra's lower levels sit above its measured xhigh. Fast rows use 2.5 times, the rate on included usage; on purchased credits it's 2 times.
+
+Terra at xhigh and Astra at xhigh were measured November 5, 2026, against Opus at medium on the same real tasks: Terra on 4 tasks, 0.06 to 0.14 times, in about the same time; Astra on 3 tasks, 1.61 to 2.17 times, in about 2.5 times as long. So few tasks give a direction, and both came in below the estimate worked from Sol's tokens, which said 0.20 and 1.99. Five more tasks put Opus at high at 1.14. Sol at xhigh on Fast comes close to Opus at medium.
 
 ## Multiply by runs
 

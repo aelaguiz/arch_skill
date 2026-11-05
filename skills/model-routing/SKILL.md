@@ -49,28 +49,15 @@ That is a finding about work where the brief in the helper's head is all that ke
 
 ## Which setting does which kind of work
 
-Each row is where to start: the cheapest setting we have seen do that kind of work well, for each family. [references/evidence.md](references/evidence.md) says how firm each is, and some rest on very little. Names are families, so use the newest version of each. A task that is plainly one of these under another name starts in the same place, and one that is harder than its row starts higher. "Native or external" below says which column to take.
+A model at a level is its own tool, with its own quality, speed and cost, so the choice is always the pair. A model's name alone leaves out half of it: Sol at low and Sol at xhigh are different helpers, as far apart in cost as Sol is from Terra.
 
-| Kind of work | For example | Claude | Codex | Why that is enough |
-|---|---|---|---|---|
-| Mechanical work | Rebase, run the tests and report what failed | Sonnet medium | Terra xhigh | The steps are known and the result shows whether they worked |
-| Bring text in line with the facts | PR text, docs after a change | Opus medium | Terra xhigh | The facts are in hand, but no test reads the meaning, so you do |
-| Look something up | Research a question, analyze a dataset, explain how code behaves | Opus medium | Sol high | The sources hold the answer, and you read what comes back with them |
-| Work out a problem with one right answer | "Which of these three options is correct, and why?" | Opus medium | Sol high | The answer can be checked; more thinking re-derives what medium finds |
-| Check work against a stated standard | Did the build stay inside its spec, label by a codebook, judge copy or images by a style guide | Opus medium | Sol high | The standard is handed over; the helper compares rather than invents |
-| Check in on running work | "Is this session still doing what it was asked?" | Opus medium | Sol high | The same kind of check, run many times |
-| Fix a well-defined bug | Cause known, one or two files, one part of a full spec | Sonnet medium | Terra xhigh | The thinking is done, and the tests prove the fix |
-| Walk a test plan on a device | Capture each screen and compare it with what was decided | Opus high | Terra xhigh | A long brief, held for many steps |
-| Find a bug's cause | Reproduce it and name the cause, a red CI job nobody has read | Opus medium | Sol xhigh | The cause is unknown, so the search has to stay honest |
-| Build across several parts from a spec | App and backend, several screens | Opus medium | Sol xhigh | The spec makes the calls; the helper has to keep all of them in view |
-| New feature with algorithmic changes | A new game rule, a ratings change, a spec with open design calls | Opus high | Sol xhigh | The design is still being made, so a cheap first try costs more |
-| Write words people read | Scripts, ad copy, the product's own lines | Opus high | Sol xhigh | The value is in what it notices |
-| Plan or design | An implementation plan and its test plan | Opus high | Sol xhigh | The value is in what it notices |
-| Second opinion, once | A plan or PR, looking for what you missed | Opus high | Astra xhigh | One deep pass, from a maker other than the one that made the work |
+Every kind of work has a level on each model where more thinking stops buying anything. Above it you spend minutes and allowance for nothing, and below it the work falls off. Where that point sits depends on the kind of work, so nothing about the model tells you. In one back-test, Sol held from high down to low on research and on judging images. On judging writing against a standard it fell more than a point from high to medium, and on short copy it held at medium and fell hard at low.
+
+So the question is what's the cheapest setting that does this well, and the same model at a lower level is in the running before any other model. [references/task-types.md](references/task-types.md) says where each kind of work starts from each family and what stands behind it. Read it before you choose. It's a dated reading of the evidence, and it changes as the evidence does.
 
 A task that fits no row still gets chosen, never left to a default. Ask what carries the answer, what will catch a mistake, and which row it is closest to.
 
-The table gives the cheapest setting that does each kind well, and the goal is still the soonest usable answer. Where a dearer setting finishes sooner, someone is waiting and the accounts have room, take it.
+The goal is still the soonest usable answer. Where a dearer setting finishes sooner, someone is waiting and the accounts have room, take it.
 
 ## Which reviews need deep thinking
 
@@ -86,7 +73,7 @@ Running it cheaper is a real trade, so look at what its catches are. When a time
 
 ## Step up on a miss, once
 
-Work that plainly needs deep thinking starts deep, because climbing through three settings takes longer than starting in the right place. Everything else starts at its row. When a helper misses, go up one step and try once: on Claude one level, on Codex from Terra to Sol to Astra. Running the same setting again mostly buys the same answer. If the step up misses the same way, stop spending and look at the brief, because two settings failing alike usually means the task was unclear or too big.
+Work that plainly needs deep thinking starts deep, because climbing through three settings takes longer than starting in the right place. Everything else starts at its row. When a helper misses, go up one step and try once: one level on the same model, and past its top, the next model up. Running the same setting again mostly buys the same answer. If the step up misses the same way, stop spending and look at the brief, because two settings failing alike usually means the task was unclear or too big.
 
 A miss is about the work: wrong, unfinished, or a rule of the brief dropped. A helper that died on a launch error, an account limit or a broken tool didn't miss. Fix that and run the same setting again. No amount of model would have saved the one worker in eight that died on a request error in one batch of cheap device runs.
 

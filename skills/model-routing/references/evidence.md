@@ -27,22 +27,32 @@ Both judges agree on these, because each compares a model with itself.
 | Sonnet at low | 78 | −1.4 | 31 (40%) | 19% |
 | Haiku at low | 78 | −1.6 | 40 (51%) | 24% |
 
-## The examples, kind by kind (Opus at medium against the original)
+## Each kind of work, level by level
 
-| Kind of task | Tasks | Score change | Misled | Time |
-|---|---:|---:|---:|---:|
-| Research a question from sources | 5 | −0.1 | 0 | 51% |
-| Analyze a dataset | 5 | −0.5 | 0 | 40% |
-| Label items by a codebook | 5 | +0.3 | 0 | 26% |
-| Explain how code behaves or why it broke | 4 | 0.0 | 0 | 58% |
-| Work out a problem with one right answer | 4 | −0.4 | 0 | 73% |
-| Check another agent's work against its brief | 4 | −0.4 | 0 | 43% |
-| Judge images or frames against a standard | 5 | −0.5 | 0 | 26% |
-| Judge writing against a standard | 5 | −0.3 | 0 | 42% |
+Each cell is the average blind score, 1 to 5, from Sol's judge and then Opus's judge. The top setting is what the task first ran on, mostly Opus at xhigh or max, and on reviews of code or plans mostly Sol at xhigh. Read along a row within one family, for the reason in the next section: each judge favours its own family, but a judge's lean is the same for two levels of one model. The rows run from where levels mattered least to where they mattered most.
 
-Each kind has 4 or 5 tasks, so a row is a direction, not a verdict.
+| Kind of work | Tasks | Top setting | Opus medium | Opus low | Sonnet medium | Sol high | Sol medium | Sol low |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Research a question from sources | 5 | 2.6 / 4.4 | 2.6 / 4.2 | 2.2 / 3.2 | 2.0 / 3.4 | 3.8 / 4.0 | 3.6 / 4.0 | 3.8 / 4.2 |
+| Judge images or frames against a standard | 5 | 4.0 / 4.2 | 3.2 / 4.0 | 2.2 / 3.2 | 2.6 / 3.8 | 4.0 / 4.0 | 3.8 / 4.0 | 4.0 / 4.0 |
+| Work out a problem with one right answer | 4 | 3.5 / 3.2 | 2.5 / 3.5 | 2.8 / 3.0 | 2.8 / 3.0 | 4.3 / 3.0 | 4.5 / 3.5 | 4.2 / 3.2 |
+| Check another agent's work against its brief | 4 | 3.8 / 4.8 | 3.2 / 4.5 | 2.8 / 4.0 | 2.5 / 3.2 | 4.8 / 4.0 | 4.5 / 4.0 | 4.8 / 4.0 |
+| Write an internal document | 3 | 3.3 / 4.7 | 3.7 / 4.3 | 3.3 / 4.0 | 2.7 / 4.0 | 4.3 / 3.3 | 4.0 / 3.7 | 4.0 / 3.3 |
+| Read a document cold | 4 | 3.0 / 4.2 | 2.5 / 3.2 | 2.8 / 4.0 | 2.2 / 2.8 | 3.2 / 3.5 | 3.5 / 3.5 | 3.2 / 3.5 |
+| Analyze a dataset | 5 | 2.8 / 4.2 | 2.2 / 3.8 | 2.2 / 2.4 | 2.2 / 3.2 | 4.2 / 3.4 | 4.0 / 3.6 | 3.4 / 3.0 |
+| Check numbers and quotes against sources | 6 | 4.2 / 4.7 | 3.2 / 4.0 | 2.0 / 3.0 | 2.5 / 3.5 | 4.5 / 3.8 | 3.8 / 3.8 | 3.8 / 3.8 |
+| Label items by a codebook | 5 | 3.6 / 4.4 | 3.8 / 4.8 | 3.4 / 3.6 | 3.0 / 3.4 | 4.0 / 3.8 | 3.8 / 3.6 | 3.2 / 3.4 |
+| Plan or design work | 5 | 4.2 / 4.8 | 2.8 / 4.0 | 2.6 / 3.8 | 2.4 / 4.0 | 4.8 / 3.8 | 5.0 / 3.4 | 4.6 / 3.2 |
+| Write short copy people read | 5 | 4.0 / 4.6 | 3.0 / 3.5 | 2.2 / 2.6 | 2.8 / 3.4 | 4.5 / 4.0 | 4.5 / 3.8 | 3.0 / 2.8 |
+| Explain how code behaves or why it broke | 4 | 4.0 / 4.8 | 3.8 / 5.0 | 2.0 / 2.2 | 2.2 / 2.5 | 4.0 / 4.0 | 3.8 / 2.8 | 3.8 / 3.2 |
+| Judge writing against a standard | 5 | 3.4 / 4.6 | 3.2 / 4.2 | 2.8 / 3.0 | 2.4 / 3.6 | 4.6 / 3.6 | 3.2 / 2.6 | 2.8 / 2.4 |
+| Review code or a plan | 5 | 4.0 / 4.5 | 2.4 / 3.8 | 2.0 / 3.0 | 2.0 / 3.8 | 4.2 / 4.5 | 3.6 / 3.5 | 3.8 / 4.0 |
+| Build a content item through its steps | 6 | 3.2 / 4.3 | 2.6 / 4.2 | 2.3 / 4.0 | 2.2 / 3.7 | 3.0 / 3.3 | 2.8 / 3.0 | 2.7 / 2.8 |
+| Translate text | 5 | 4.8 / 5.0 | 4.0 / 4.2 | 3.0 / 3.2 | 3.0 / 3.2 | 4.0 / 3.2 | 4.2 / 3.2 | 3.8 / 3.0 |
 
-## Why the table doesn't rank one family against the other
+Each kind has 3 to 6 tasks, so a row is a direction, not a verdict. Across all kinds, Sol at high scored 3.9, medium 3.7 and low 3.5, and misled on 4%, 12% and 10% of tasks. Terra and Astra weren't in this test, and neither were writing code, builds or device work, because the test was stopped before its code-writing tasks ran.
+
+## Why the scores don't rank one family against the other
 
 Each judge scored its own family's answers about 1.5 points higher than the other judge did, though neither knew which model wrote which answer. Sol's judge put Sol at high 0.6 points above the original Opus answers; Opus's judge put it 0.9 below. Averaging the two does not remove that, so the back-test cannot say whether Sol can replace Opus or the reverse. Settling it needs a judge from neither family, or tasks whose answers can be checked.
 
@@ -77,9 +87,9 @@ The step moved the model and the level together, so these figures describe Sol a
 
 Sol lost most on the job where reviews most often change real work, though that job's reviews also lean most on files a transcript doesn't hold. It lost least on the job whose reviews mostly correct records. Readers counted 24 to 33 further findings from Sol that would change real work, and nobody checked whether those were true. A cold look cost $0.53 on Sol at high against $3.75 on Astra at xhigh, about a seventh, and Astra's live look cost $7.43. Price per token alone says a fifth, but that ignores what the level does to the tokens.
 
-## How firm the table is
+## How firm the rows are
 
-Rows on Opus at medium and Sol at high rest on the back-test above. Opus at high was measured on 15 tasks, plus 4 blind-scored on November 5, where it pulled clearly ahead of Opus at medium on none. Terra at xhigh and Astra at xhigh were run on a few real tasks each, November 5: within each family, neither pulled clearly ahead of or behind the stored settings on blind scores, on three tasks a side. Their rows still rest mostly on field use. Each kind has 4 or 5 tasks at most, so a row is a direction.
+`task-types.md` says what stands behind each row. Rows with a task count rest on the level-by-level scores above, compared within a family. Rows marked not measured are starting guesses from field use. Opus at high was measured on 15 tasks, plus 4 blind-scored on November 5, where it pulled clearly ahead of Opus at medium on none. Terra at xhigh and Astra at xhigh were run on a few real tasks each, November 5: neither pulled clearly ahead of or behind Sol on blind scores, on three tasks a side.
 
 ## Measuring again
 
