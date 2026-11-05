@@ -56,6 +56,10 @@ An audit of every Codex and Claude session across five machines, October 29 to N
 - A build check at medium wrote 18k tokens in about 4 minutes, and at max 113k tokens in about 20.
 - No Terra build from a full spec was found that Sol had to redo. 13 of 105 cheap device workers died on a request error, which says nothing about the model's work.
 
+## Crossing families and small jobs
+
+28 runs, November 5, 2026: four small jobs with known answers through seven routes from both parents. All 28 were right, so this measures speed and cost, not quality. Sonnet at medium beat crossing to Sol at high on speed on all four jobs (44 against 82 seconds in total) and tied on cost ($0.36 against $0.38 with the parent). The numbers are in `costs.md`. This is why "Mechanical work" and "Fix a well-defined bug" name Sonnet at medium: those rows end in a check. It rests on two small code jobs, against a back-test where Sonnet at medium misled on about 3 tasks in 10 with no check at the end.
+
 ## How firm the table is
 
 Rows on Opus at medium and Sol at high rest on the back-test above. Opus at high was measured on only 15 tasks. Terra and Astra have never been back-tested, so their rows rest on field use and their price rows on Sol's token use. Each kind has 4 or 5 tasks at most, so a row is a direction.

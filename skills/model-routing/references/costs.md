@@ -49,4 +49,18 @@ A run's price is the smaller half of the sum. A setting at $3.40 that runs once 
 
 ## What crossing families adds
 
-Not yet measured. This section will carry what an external helper adds in briefing, launch and reading the answer, from each parent, once a test has reported.
+Measured November 5, 2026: 28 runs on four small jobs with checkable answers, seven routes, standard speed. Every answer was right, and no launch failed. Each parent was a real session that briefed a helper, waited, read the answer and acted on it. Medians:
+
+| Route | Briefing s | Setup s | Helper s | Reading s | Helper's cost |
+|---|---:|---:|---:|---:|---:|
+| Claude parent, native Opus 5.5 medium | 16 | 0.0 | 41 | 11 | $0.26 |
+| Claude parent, native Sonnet 5.5 medium | 10 | 0.0 | 25 | 9 | $0.10 |
+| Claude parent, external Sol 6.1 high | 12 | 2.3 | 56 | 12 | $0.10 |
+| Claude parent, external Terra 6.1 xhigh | 12 | 1.9 | 41 | 10 | $0.03 |
+| Codex parent, native Sol 6.1 high | 12 | 0.2 | 34 | 10 | $0.04 |
+| Codex parent, native Terra 6.1 xhigh | 13 | 0.2 | 27 | 12 | $0.03 |
+| Codex parent, external Opus 5.5 medium | 29 | 1.8 | 36 | 12 | $0.21 |
+
+From a Claude parent, crossing adds about 2 seconds of setup and up to a cent of reading. From a Codex parent it adds about 17 seconds of briefing, 2 of setup, and 2 to 3 cents, because the parent writes the brief to a file, starts the helper in a second call and polls while it runs.
+
+These are floors: each parent was handed a one-line command with the account and model already chosen. Four jobs show a direction, and fixed overheads weigh less on longer work. The helpers' cost and speed are for jobs of a minute or two.

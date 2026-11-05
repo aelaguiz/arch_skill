@@ -53,12 +53,12 @@ Each row is the cheapest setting we have seen do that kind of work well, for eac
 
 | Kind of work | For example | Claude | Codex | Why that is enough |
 |---|---|---|---|---|
-| Mechanical work | Rebase, run the tests and report what failed, write PR text, bring docs in line | Opus medium | Terra xhigh | The steps are known and the result shows whether they worked |
+| Mechanical work | Rebase, run the tests and report what failed, write PR text, bring docs in line | Sonnet medium | Terra xhigh | The steps are known and the result shows whether they worked |
 | Look something up | Research a question, analyze a dataset, explain how code behaves | Opus medium | Sol high | The sources hold the answer, and you read what comes back with them |
 | Work out a problem with one right answer | "Which of these three options is correct, and why?" | Opus medium | Sol high | The answer can be checked; more thinking re-derives what medium finds |
 | Check work against a stated standard | Did the build stay inside its spec, label by a codebook, judge copy or images by a style guide | Opus medium | Sol high | The standard is handed over; the helper compares rather than invents |
 | Check in on running work | "Is this session still doing what it was asked?" | Opus medium | Sol high | The same kind of check, run many times |
-| Fix a well-defined bug | Cause known, one or two files, a red CI job, one part of a full spec | Opus medium | Terra xhigh | The thinking is done, and the tests prove the fix |
+| Fix a well-defined bug | Cause known, one or two files, a red CI job, one part of a full spec | Sonnet medium | Terra xhigh | The thinking is done, and the tests prove the fix |
 | Walk a test plan on a device | Capture each screen and compare it with what was decided | Opus high | Terra xhigh | A long brief, held for many steps |
 | Find a bug's cause | Reproduce it and name the cause | Opus medium | Sol xhigh | The cause is unknown, so the search has to stay honest |
 | Build across several parts from a spec | App and backend, several screens | Opus medium | Sol xhigh | The spec makes the calls; the helper has to keep all of them in view |
@@ -91,7 +91,11 @@ A miss is about the work: wrong, unfinished, or a rule of the brief dropped. A h
 
 A native helper comes from your host's own subagent tool: Opus, Sonnet or Haiku from a Claude parent, Sol, Terra or Astra from a Codex parent. An external helper is another command line's run, `codex exec` from Claude or `claude -p` from Codex. Either parent can cross, and nothing here assumes which parent you are.
 
-A second opinion crosses, since the other maker is why it exists. Whether crossing pays for a cheap, fast helper is still open. An external run adds a process to launch, an account to use, an answer to read back and a launch that can fail, and nobody has yet measured whether that costs more than a lower price saves. `references/costs.md` will carry the measurement when it exists. Until then, what we know is the shape: that overhead is about the same for any job, so it weighs on a two-minute lookup and hardly at all on a two-hour build. Weigh it that way rather than assuming either answer.
+Crossing itself costs little, so let it decide little. In a small test, crossing from a Claude parent added about 2 seconds and a cent, and from a Codex parent 13 to 33 seconds and about 3 cents, mostly extra turns to write the brief down and wait. No launch failed. Those are floors, because the parents were handed the command: finding an account or recovering from a refused launch would add to them. [references/costs.md](references/costs.md) has the stages.
+
+What decided speed and cost was the helper. On small jobs with checkable answers, every route got every answer right, and the helper's own work differed far more than the crossing did. Sonnet at medium was quickest, Terra at xhigh cost about a third as much, and Opus at medium cost the most and wasn't faster than either. So from a Claude parent, when someone is waiting on a small checked job, native Sonnet gets there first, and when nobody is waiting, Terra is worth the two seconds. Those jobs took a minute or two and nobody judged anything but the answer, so they say nothing about holding a long brief, where "When a smaller model holds up" still applies.
+
+A second opinion crosses, since the other maker is why it exists. One thing is still open: Sol and Terra took about twice as long on reading jobs when a Claude parent briefed them, and Opus didn't slow down the other way. Longer briefs are the likely reason, so keep a crossing brief as short as what it needs.
 
 ## When speed is worth paying for
 
