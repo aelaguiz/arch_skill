@@ -28,8 +28,8 @@ A typical run is the median Opus 5.5 medium helper run across 88 real tasks from
 
 | Model | Low | Medium | High | Xhigh | Max |
 |---|---:|---:|---:|---:|---:|
-| Terra 6.1 | ~$0.18 | ~$0.23 | ~$0.29 | $0.21 | not listed |
-| Terra 6.1 on Fast | ~$0.45 | ~$0.58 | ~$0.73 | $0.53 | not listed |
+| Terra 6.1 | ~$0.18 | ~$0.23 | ~$0.29 | $0.21 | not run |
+| Terra 6.1 on Fast | ~$0.45 | ~$0.58 | ~$0.73 | $0.53 | not run |
 | Sol 6.1 | $0.36 | $0.46 | $0.58 | $0.68 | not run |
 | Sol 6.1 on Fast | $0.90 | $1.15 | $1.45 | $1.70 | not run |
 | Astra 6.0 | ~$1.80 | ~$2.30 | ~$2.90 | $3.10 | not run |
