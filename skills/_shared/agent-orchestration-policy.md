@@ -73,13 +73,10 @@ binding with native children: avoid long model-pinned Codex work there and
 rotate the root with `aim prime resume <session> --rotate`. Codex and Claude
 Code parents remain their own runtimes even when AIMgr launched them.
 
-## Default dispatch for a parent model this repo does not name
+## Default dispatch
 
-This repo names a worker for one parent: Astra. Every other parent —
-Sol, Terra, Luna, Opus, Fable, Argon, DeepSeek, GLM, Fugu, and whatever is
-added later — takes the default below, in every host. A role in the routing table
-below still gets its routed model. The Codex model preference below is about
-choosing a model for a Codex lane; it does not name a worker for a Codex parent.
+This holds for every parent model, in every host. A role in the table below keeps
+its family and session boundary.
 
 When the user names no model and the calling workflow names none, choose the
 child's model and thinking level with the `model-routing` skill and pass both. A

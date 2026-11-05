@@ -47,7 +47,7 @@ are never re-interviewed.
 | Worktree | Cut off origin/main; path pinned in the plan document |
 | Simulator (mobile work) | A new, renamed, dedicated sim pinned in the document — never a booted one taken over |
 | Branching | One branch, one PR; the PR happens when the work is fully done |
-| Plan review before dispatch | The plan reviewer from the same routing table, 1–3 rounds hard cap |
+| Plan review before dispatch | Model and level from `$model-routing`, one round unless the user named a count |
 
 ## Autonomy defaults (attendance + one question)
 

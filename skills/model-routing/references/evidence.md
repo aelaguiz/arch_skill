@@ -50,8 +50,8 @@ Each judge scored its own family's answers about 1.5 points higher than the othe
 
 An audit of every Codex and Claude session across five machines, October 29 to November 5, 2026.
 
-- 1,545 of the 1,622 helpers at the two top levels had inherited that level or forked. Nobody had chosen it.
-- Reviewers on a timer at the top Codex model took 59% of that week's Codex allowance. Of 2,113 check-ins, about a quarter came after a session that had done nothing but handle the last review.
+- 1,565 of the 1,621 helpers at the two top levels had inherited that level or forked. Nobody had chosen it.
+- Reviewers on a timer at the top Codex model took 59% of that week's Codex allowance. Of 2,086 check-ins read closely, 576 came after a session that had done nothing but handle the last review.
 - One plan took 179 reviews across 22 drafts, each reasonable from inside its round.
 - A build check at medium wrote 18k tokens in about 4 minutes, and at max 113k tokens in about 20.
 - No Terra build from a full spec was found that Sol had to redo. 13 of 105 cheap device workers died on a request error, which says nothing about the model's work.
