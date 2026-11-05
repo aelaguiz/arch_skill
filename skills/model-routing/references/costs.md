@@ -38,8 +38,9 @@ A typical run is the median Opus 5.5 medium helper run across 88 real tasks from
 | Sonnet 5.5 | $0.51 | $0.74 | not run | not run | $3.25 |
 | Haiku 5.5 | ~$0.25 | not run | not run | not run | not run |
 | Fable 5.1 | ~$1.80 | ~$3.59 | ~$4.27 | ~$7.15 | ~$11.96 |
+| Luna | not run | not run | not run | not run | not run |
 
-A ~ marks a cell worked out from price, because no run measured it. Those run high: Terra's lower levels sit above its measured xhigh. Fast rows use 2.5 times, the rate on included usage; on purchased credits it's 2 times.
+A ~ marks a cell worked out from price, because no run measured it. Those run high: Terra's lower levels sit above its measured xhigh. Fast rows use 2.5 times, the rate on included usage; on purchased credits it's 2 times. Codex also offers an ultra level, which has never been run on helper work.
 
 Terra at xhigh and Astra at xhigh were measured November 5, 2026, against Opus at medium on the same real tasks: Terra on 4 tasks, 0.06 to 0.14 times, in about the same time; Astra on 3 tasks, 1.61 to 2.17 times, in about 2.5 times as long. So few tasks give a direction, and both came in below the estimate worked from Sol's tokens, which said 0.20 and 1.99. Five more tasks put Opus at high at 1.14. Sol at xhigh on Fast comes close to Opus at medium.
 

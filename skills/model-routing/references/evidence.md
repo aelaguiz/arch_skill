@@ -29,26 +29,26 @@ Both judges agree on these, because each compares a model with itself.
 
 ## Each kind of work, level by level
 
-Each cell is the average blind score, 1 to 5, from Sol's judge and then Opus's judge. The top setting is what the task first ran on, mostly Opus at xhigh or max, and on reviews of code or plans mostly Sol at xhigh. Read along a row within one family, for the reason in the next section: each judge favours its own family, but a judge's lean is the same for two levels of one model. The rows run from where levels mattered least to where they mattered most.
+Each score is the average blind score, 1 to 5, from Sol's judge and then Opus's judge. "First ran on" gives the setting each task started on, because the mix differs by kind: on planning it was two Sonnet at max, two Opus and one Sol. So "Score there" is not one model's top level, and a lower setting compares with it fairly only on the tasks that first ran on that same model. `task-types.md` makes that comparison where it matters, and names how many tasks it covers. Otherwise read along a row within one family, for the reason in the next section: each judge favours its own family, but a judge's lean is the same for two levels of one model. The rows run from where levels mattered least to where they mattered most.
 
-| Kind of work | Tasks | Top setting | Opus medium | Opus low | Sonnet medium | Sol high | Sol medium | Sol low |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Research a question from sources | 5 | 2.6 / 4.4 | 2.6 / 4.2 | 2.2 / 3.2 | 2.0 / 3.4 | 3.8 / 4.0 | 3.6 / 4.0 | 3.8 / 4.2 |
-| Judge images or frames against a standard | 5 | 4.0 / 4.2 | 3.2 / 4.0 | 2.2 / 3.2 | 2.6 / 3.8 | 4.0 / 4.0 | 3.8 / 4.0 | 4.0 / 4.0 |
-| Work out a problem with one right answer | 4 | 3.5 / 3.2 | 2.5 / 3.5 | 2.8 / 3.0 | 2.8 / 3.0 | 4.3 / 3.0 | 4.5 / 3.5 | 4.2 / 3.2 |
-| Check another agent's work against its brief | 4 | 3.8 / 4.8 | 3.2 / 4.5 | 2.8 / 4.0 | 2.5 / 3.2 | 4.8 / 4.0 | 4.5 / 4.0 | 4.8 / 4.0 |
-| Write an internal document | 3 | 3.3 / 4.7 | 3.7 / 4.3 | 3.3 / 4.0 | 2.7 / 4.0 | 4.3 / 3.3 | 4.0 / 3.7 | 4.0 / 3.3 |
-| Read a document cold | 4 | 3.0 / 4.2 | 2.5 / 3.2 | 2.8 / 4.0 | 2.2 / 2.8 | 3.2 / 3.5 | 3.5 / 3.5 | 3.2 / 3.5 |
-| Analyze a dataset | 5 | 2.8 / 4.2 | 2.2 / 3.8 | 2.2 / 2.4 | 2.2 / 3.2 | 4.2 / 3.4 | 4.0 / 3.6 | 3.4 / 3.0 |
-| Check numbers and quotes against sources | 6 | 4.2 / 4.7 | 3.2 / 4.0 | 2.0 / 3.0 | 2.5 / 3.5 | 4.5 / 3.8 | 3.8 / 3.8 | 3.8 / 3.8 |
-| Label items by a codebook | 5 | 3.6 / 4.4 | 3.8 / 4.8 | 3.4 / 3.6 | 3.0 / 3.4 | 4.0 / 3.8 | 3.8 / 3.6 | 3.2 / 3.4 |
-| Plan or design work | 5 | 4.2 / 4.8 | 2.8 / 4.0 | 2.6 / 3.8 | 2.4 / 4.0 | 4.8 / 3.8 | 5.0 / 3.4 | 4.6 / 3.2 |
-| Write short copy people read | 5 | 4.0 / 4.6 | 3.0 / 3.5 | 2.2 / 2.6 | 2.8 / 3.4 | 4.5 / 4.0 | 4.5 / 3.8 | 3.0 / 2.8 |
-| Explain how code behaves or why it broke | 4 | 4.0 / 4.8 | 3.8 / 5.0 | 2.0 / 2.2 | 2.2 / 2.5 | 4.0 / 4.0 | 3.8 / 2.8 | 3.8 / 3.2 |
-| Judge writing against a standard | 5 | 3.4 / 4.6 | 3.2 / 4.2 | 2.8 / 3.0 | 2.4 / 3.6 | 4.6 / 3.6 | 3.2 / 2.6 | 2.8 / 2.4 |
-| Review code or a plan | 5 | 4.0 / 4.5 | 2.4 / 3.8 | 2.0 / 3.0 | 2.0 / 3.8 | 4.2 / 4.5 | 3.6 / 3.5 | 3.8 / 4.0 |
-| Build a content item through its steps | 6 | 3.2 / 4.3 | 2.6 / 4.2 | 2.3 / 4.0 | 2.2 / 3.7 | 3.0 / 3.3 | 2.8 / 3.0 | 2.7 / 2.8 |
-| Translate text | 5 | 4.8 / 5.0 | 4.0 / 4.2 | 3.0 / 3.2 | 3.0 / 3.2 | 4.0 / 3.2 | 4.2 / 3.2 | 3.8 / 3.0 |
+| Kind of work | Tasks | First ran on | Score there | Opus medium | Opus low | Sonnet medium | Sonnet low | Haiku low | Sol high | Sol medium | Sol low |
+|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Research a question from sources | 5 | Opus xhigh 3, Opus high 1, Opus max 1 | 2.6 / 4.4 | 2.6 / 4.2 | 2.2 / 3.2 | 2.0 / 3.4 | 2.2 / 3.6 | 1.8 / 2.2 | 3.8 / 4.0 | 3.6 / 4.0 | 3.8 / 4.2 |
+| Judge images or frames against a standard | 5 | Sonnet max 3, Opus high 1, Sol xhigh 1 | 4.0 / 4.2 | 3.2 / 4.0 | 2.2 / 3.2 | 2.6 / 3.8 | 2.4 / 3.2 | 2.2 / 2.6 | 4.0 / 4.0 | 3.8 / 4.0 | 4.0 / 4.0 |
+| Work out a problem with one right answer | 4 | Opus high 2, Sol high 1, Sol xhigh 1 | 3.5 / 3.2 | 2.5 / 3.5 | 2.8 / 3.0 | 2.8 / 3.0 | 2.8 / 3.0 | 2.8 / 2.5 | 4.3 / 3.0 | 4.5 / 3.5 | 4.2 / 3.2 |
+| Check another agent's work against its brief | 4 | Opus xhigh 3, Opus max 1 | 3.8 / 4.8 | 3.2 / 4.5 | 2.8 / 4.0 | 2.5 / 3.2 | 2.2 / 3.2 | 2.5 / 2.8 | 4.8 / 4.0 | 4.5 / 4.0 | 4.8 / 4.0 |
+| Write an internal document | 3 | Opus xhigh 3 | 3.3 / 4.7 | 3.7 / 4.3 | 3.3 / 4.0 | 2.7 / 4.0 | 2.3 / 3.0 | 2.7 / 3.0 | 4.3 / 3.3 | 4.0 / 3.7 | 4.0 / 3.3 |
+| Read a document cold | 4 | Opus xhigh 2, Opus max 1, Sonnet max 1 | 3.0 / 4.2 | 2.5 / 3.2 | 2.8 / 4.0 | 2.2 / 2.8 | 2.2 / 2.5 | 2.0 / 3.8 | 3.2 / 3.5 | 3.5 / 3.5 | 3.2 / 3.5 |
+| Analyze a dataset | 5 | Opus xhigh 3, Opus max 1, Sol xhigh 1 | 2.8 / 4.2 | 2.2 / 3.8 | 2.2 / 2.4 | 2.2 / 3.2 | 2.2 / 2.8 | 2.6 / 2.4 | 4.2 / 3.4 | 4.0 / 3.6 | 3.4 / 3.0 |
+| Check numbers and quotes against sources | 6 | Opus xhigh 2, Sol xhigh 1, Opus max 1, Sonnet max 1, Opus high 1 | 4.2 / 4.7 | 3.2 / 4.0 | 2.0 / 3.0 | 2.5 / 3.5 | 2.0 / 2.7 | 1.8 / 2.5 | 4.5 / 3.8 | 3.8 / 3.8 | 3.8 / 3.8 |
+| Label items by a codebook | 5 | Sonnet max 3, Opus max 1, Opus xhigh 1 | 3.6 / 4.4 | 3.8 / 4.8 | 3.4 / 3.6 | 3.0 / 3.4 | 2.8 / 2.8 | 2.6 / 2.8 | 4.0 / 3.8 | 3.8 / 3.6 | 3.2 / 3.4 |
+| Plan or design work | 5 | Sonnet max 2, Opus xhigh 1, Opus max 1, Sol xhigh 1 | 4.2 / 4.8 | 2.8 / 4.0 | 2.6 / 3.8 | 2.4 / 4.0 | 2.6 / 3.8 | 2.0 / 2.4 | 4.8 / 3.8 | 5.0 / 3.4 | 4.6 / 3.2 |
+| Write short copy people read | 5 | Opus max 2, Sonnet max 1, Opus medium 1, Opus xhigh 1 | 4.0 / 4.6 | 3.0 / 3.5 | 2.2 / 2.6 | 2.8 / 3.4 | 2.4 / 3.2 | 2.0 / 2.4 | 4.5 / 4.0 | 4.5 / 3.8 | 3.0 / 2.8 |
+| Explain how code behaves or why it broke | 4 | Opus xhigh 3, Opus high 1 | 4.0 / 4.8 | 3.8 / 5.0 | 2.0 / 2.2 | 2.2 / 2.5 | 2.2 / 2.8 | 2.2 / 2.0 | 4.0 / 4.0 | 3.8 / 2.8 | 3.8 / 3.2 |
+| Judge writing against a standard | 5 | Opus xhigh 2, Opus high 2, Opus max 1 | 3.4 / 4.6 | 3.2 / 4.2 | 2.8 / 3.0 | 2.4 / 3.6 | 1.8 / 2.6 | 2.0 / 2.8 | 4.6 / 3.6 | 3.2 / 2.6 | 2.8 / 2.4 |
+| Review code or a plan | 5 | Sol xhigh 4, Opus high 1 | 4.0 / 4.5 | 2.4 / 3.8 | 2.0 / 3.0 | 2.0 / 3.8 | 2.6 / 3.5 | 2.2 / 2.8 | 4.2 / 4.5 | 3.6 / 3.5 | 3.8 / 4.0 |
+| Build a content item through its steps | 6 | Opus xhigh 3, Opus high 1, Sol xhigh 1, Opus medium 1 | 3.2 / 4.3 | 2.6 / 4.2 | 2.3 / 4.0 | 2.2 / 3.7 | 1.8 / 3.3 | 2.2 / 3.2 | 3.0 / 3.3 | 2.8 / 3.0 | 2.7 / 2.8 |
+| Translate text | 5 | Opus max 3, Opus xhigh 2 | 4.8 / 5.0 | 4.0 / 4.2 | 3.0 / 3.2 | 3.0 / 3.2 | 2.6 / 2.8 | 2.0 / 2.2 | 4.0 / 3.2 | 4.2 / 3.2 | 3.8 / 3.0 |
 
 Each kind has 3 to 6 tasks, so a row is a direction, not a verdict. Across all kinds, Sol at high scored 3.9, medium 3.7 and low 3.5, and misled on 4%, 12% and 10% of tasks. Terra and Astra weren't in this test, and neither were writing code, builds or device work, because the test was stopped before its code-writing tasks ran.
 
