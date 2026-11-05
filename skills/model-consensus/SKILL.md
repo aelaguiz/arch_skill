@@ -100,9 +100,9 @@ architecture, and avoids kitchen-sink plans.
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
   runs `kimi-code/k3` and defaults an omitted effort to `max`; the Antigravity
   CLI (`agy`) runs only Gemini models, defaults to `gemini-4-argon` at `high`,
-  and runs `gemini-3.8-flash` only when Flash is named. An omitted Codex
-  participant model defaults to `gpt-6.1-sol`, and an omitted effort on that
-  Sol lane defaults to `xhigh`. Preserve explicit legacy Grok ids exactly.
+  and runs `gemini-3.8-flash` only when Flash is named. With no model or
+  level named, choose both with `$model-routing`; Kimi and agy lanes keep the
+  harness defaults above. Preserve explicit legacy Grok ids exactly.
   Never silently substitute model family/version or cross runtimes.
 - Keep the runner intelligent. The parent may tighten a round, require missing
   evidence, or stop on genuine agreement. It must not reduce the work to
@@ -144,10 +144,10 @@ Then:
    constraints, desired output, and exact user-named inputs without adding the
    caller's theory or file map. Audit the actual populated participant prompt,
    not only the reusable shape.
-3. Resolve both participant provider/model/profile/effort choices exactly. Use
-   the Codex `gpt-6.1-sol`/`xhigh` preference defaults, Kimi's
-   `kimi-code/k3`/`max` defaults, and agy's `gemini-4-argon`/`high` defaults,
-   then ask one concise question if another load-bearing participant choice
+3. Resolve both participant provider/model/profile/effort choices exactly.
+   With no model or level named, choose both with `$model-routing`. Kimi and
+   agy lanes keep their harness defaults (`kimi-code/k3` at `max`,
+   `gemini-4-argon` at `high`). Then ask one concise question if another load-bearing participant choice
    remains ambiguous.
 4. Inspect the active host's native child capabilities and choose transport for
    each participant separately. Record the concrete reason for any external

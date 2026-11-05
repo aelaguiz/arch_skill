@@ -102,12 +102,10 @@ break.
   dangerous / skip-permissions / no-sandbox convention; that convention does
   not describe native children.
 - Native same-host roles need no invented runtime/model promise. For an
-  external lane, base runtime and normally effort are supplied by the user or target
-  doctrine for worker and critic independently. Models are also supplied
-  except that an external Codex lane with no named model defaults to
-  `gpt-6.1-sol`, and that Sol lane defaults an omitted effort to `xhigh`; Kimi
-  defaults to `kimi-code/k3` and an omitted effort to `max`; agy defaults to
-  `gemini-4-argon` and an omitted effort to `high`. Natural Grok
+  external lane, base runtime is supplied by the user or target doctrine for
+  worker and critic independently. With no model or level named, choose both
+  with `$model-routing`. Kimi and agy lanes keep their harness defaults
+  (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Natural Grok
   wording resolves to `grok-4.6`, while explicit legacy Grok ids stay exact.
   Ask once only for missing load-bearing external values.
 - Optional execution preferences are interpreted after the Step Manifest is

@@ -20,12 +20,7 @@ fully external worker-and-critic policy has six values:
 - `execution_defaults.critic.model` - external critic model or profile
 - `execution_defaults.critic.effort` - external critic reasoning effort
 
-External runtime and normally effort come from the user or target doctrine.
-Models do too, except that an external Codex worker or critic with no named
-model uses `gpt-6.1-sol`; that Sol lane uses `xhigh` when effort is omitted. An
-external Kimi lane uses `kimi-code/k3` and defaults an omitted effort to `max`.
-An external agy lane uses `gemini-4-argon` and defaults an omitted effort to
-`high`.
+External runtime comes from the user or target doctrine. With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
 When an external Codex lane uses Fugu, its execution block also stores
 `codex_profile` as `fugu` or `fugu-ultra`.
 
@@ -37,10 +32,8 @@ resolved from explicit user preferences or hard target-repo doctrine. See
 
 Different external work deserves different price points. A lesson-authoring
 run may want strong worker steps and a strong critic. A many-step drill may want
-cheap workers and a stronger critic. The right runtime and effort baseline is a
-user judgment. The narrow preference exceptions are the established Codex
-fallback and its Sol effort default: omitted model means `gpt-6.1-sol`, and
-omitted effort on that Sol lane means `xhigh`.
+cheap workers and a stronger critic. The right runtime baseline is a user
+judgment. With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
 
 Ask only after the orchestrator has selected an external lane. Guessing wrong
 is expensive: wrong runtime or model wastes money or quality; wrong effort
@@ -57,7 +50,7 @@ requested capability. Any of these is clear:
 - "use Codex Fugu high for steps and Codex Fugu Ultra xhigh for critic"
 - "Codex gpt-6.1-sol high everywhere" (one value reused for all defaults)
 - "Codex luna high for steps and terra xhigh for critic"
-- "Codex high everywhere" (`gpt-6.1-sol` is the omitted model default)
+- "Codex high everywhere" (the omitted model comes from `$model-routing`)
 - "Grok Build high for steps and Codex gpt-6.1-sol xhigh for critic"
 - "Kimi K3 high for steps and Kimi max for critic"
 - "Argon high for steps and Codex gpt-6.1-sol xhigh for critic"
@@ -88,11 +81,10 @@ This is reasoning, not a lookup table:
   aliases such as `fable` or `opus` are acceptable only when the user did not
   pin a version.
 - For ordinary Codex model ids, accept `sol`, `astra`, `luna`, and `terra` as
-  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`. Compact forms such as
+  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`. Compact forms such as
   `GPT6LUNAXI` and `GPT56TERRAXI` preserve the variant and imply `xhigh`.
-  When a Codex lane names no model or profile, use `gpt-6.1-sol` and report
-  `model_source=default`. When that Sol lane names no effort, use `xhigh` and
-  report `effort_source=preference_default`. Inspect the installed CLI's model
+  With no model or level named, choose both with `$model-routing`;
+  the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`. Inspect the installed CLI's model
   list when needed (`codex debug models`) and choose the available identifier
   with the same family and exact version. For example, "gpt-6.1-sol" resolves
   to `gpt-6.1-sol` if that exact model appears, and "gpt 5.3 codex" resolves
@@ -137,8 +129,8 @@ effort_source=model_default` records the K3 default explicitly.
 `Argon -> runtime=agy, model=gemini-4-argon, effort=high,
 effort_source=preference_default` records the agy default the same way.
 `Codex -> runtime=codex, model=gpt-6.1-sol, effort=xhigh,
-model_source=default, effort_source=preference_default` records the Sol
-preference defaults.
+model_source=default, effort_source=preference_default` records the resolver's
+last resort.
 `Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra,
 codex_profile=fugu-ultra, effort=xhigh` is the same kind of exact Codex
 mapping.
@@ -168,9 +160,9 @@ exact-version preservation and fail-loud behavior.
 ## Asking when missing
 
 Do not ask for runtime/model/effort merely to run a capable same-host native
-child. After an external lane has been selected, apply the Codex
-`gpt-6.1-sol`/`xhigh` preference defaults, Kimi's `kimi-code/k3`/`max`
-defaults, and agy's `gemini-4-argon`/`high` defaults; if a load-bearing
+child. After an external lane has been selected, choose any model or level
+nobody named with `$model-routing`, keeping Kimi's `kimi-code/k3`/`max`
+defaults and agy's `gemini-4-argon`/`high` defaults; if a load-bearing
 external value is still
 unspecified and cannot be inferred unambiguously, ask ONE consolidated
 question listing what is missing and what it controls:
@@ -178,19 +170,15 @@ question listing what is missing and what it controls:
 ```
 I need the external execution choices before dispatching these roles.
 
-- step runtime plus any non-default effort and a model/profile outside the
-  Codex, Kimi, and agy defaults: runs each step
+- step runtime: runs each step
   unless a confirmed per-step preference overrides it.
-- critic runtime plus any non-default effort and a model/profile outside the
-  Codex, Kimi, and agy defaults:
-  independently checks each step. Worker routing
+- critic runtime: independently checks each step. Worker routing
   preferences do not apply to critics unless you say so.
 
 What should I use?
 ```
 
-Do not ask six separate questions. Do not invent runtime, model, or effort
-defaults beyond the documented Sol, Kimi, and agy exceptions. Ask and wait. If
+Do not ask six separate questions. Do not invent a runtime. Ask and wait. If
 native children can do the job and no external benefit was requested or
 discovered, proceed natively instead of manufacturing this question.
 
@@ -257,4 +245,4 @@ model, or effort. agy critics receive the verdict schema through
 `--json-schema` and are new clean conversations that are never resumed,
 although agy still persists them.
 
-Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: default omitted Codex models and bare `sol` to `gpt-6.1-sol` at `xhigh`. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.
+Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: `$model-routing` chooses for a Codex lane, and bare `sol` means the newest Sol. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.

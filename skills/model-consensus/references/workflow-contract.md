@@ -7,8 +7,9 @@ controller, or hide the process behind a harness.
 The parent agent's job is orchestration only:
 
 - preserve the user's goal and constraints
-- apply the documented Codex Sol, Kimi, and agy model/effort defaults, then
-  ask for other missing execution choices once
+- choose any model or level nobody named with `$model-routing`, keep the
+  documented Kimi and agy defaults, then ask for other missing execution
+  choices once
 - prepare high-quality prompts
 - preserve child discovery freedom when the task is a cross-check or
   investigation
@@ -77,12 +78,10 @@ adversarial mode, set one role to `adversary`. The adversary is not hostile; it
 is responsible for simpler alternatives, counterarguments, failure modes, and
 resisting bloated compromise.
 
-If a participant is on Codex and its model is omitted, use `gpt-6.1-sol`; if
-that Sol participant also omits effort, use `xhigh`. An agy participant with no
-model uses `gemini-4-argon`, and with no effort uses `high`. Announce each
-default and its provenance. If another load-bearing provider, model/profile,
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Announce each
+choice and its provenance. If another load-bearing provider, model/profile,
 or effort choice is missing or ambiguous, ask one consolidated question. Do not
-invent defaults beyond the documented Sol, Kimi, and agy defaults.
+invent other defaults.
 
 Choose transport independently after inspecting the active host. Same-host
 participants use separate native children when the host can satisfy their

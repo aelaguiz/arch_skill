@@ -89,11 +89,9 @@ automation.
   and exact user-named inputs before launch. Keep the parent's diagnosis,
   preferred implementation, and selected evidence path advisory unless the
   authoritative source actually chose them.
-- Runtime must be known. Effort must also be known except that GPT-6.1 Sol
-  defaults an omitted effort to `xhigh`, Kimi K3 defaults it to `max`, and an
-  agy lane defaults it to `high`. Model or profile must be known except that a
-  Codex lane with no named model defaults to `gpt-6.1-sol`, a Kimi lane
-  defaults to `kimi-code/k3`, and an agy lane defaults to `gemini-4-argon`.
+- Runtime must be known. With no model or level named, choose both with
+  `$model-routing`. Kimi and agy lanes keep their harness defaults
+  (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
   Codex runs GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs
   supported Claude models, Cursor Agent runs `composer-2.5-fast`, Grok CLI
   naturally resolves to `grok-4.6`, Kimi Code runs `kimi-code/k3`, and agy runs
@@ -192,11 +190,9 @@ automation.
 6. Identify the delegation mode. Use `fresh-resumable` unless the caller
    explicitly asks for a stateless one-shot worker or to resume a previous
    delegate.
-7. When an external Codex lane omits its model, apply `gpt-6.1-sol`; when that
-   Sol lane also omits effort, apply the preference default `xhigh`. For Kimi,
-   apply `kimi-code/k3` and the model-default `max` effort when omitted. For
-   agy, apply `gemini-4-argon` and the preference-default `high` effort when
-   omitted. If another required execution value, write scope, or resume handle
+7. With no model or level named, choose both with `$model-routing`. Kimi and
+   agy lanes keep their harness defaults (`kimi-code/k3` at `max`,
+   `gemini-4-argon` at `high`). If another required execution value, write scope, or resume handle
    is incomplete, ask one question that names exactly what is missing and what
    it controls.
 8. Confirm the selected CLI exists with `command -v codex`, `command -v

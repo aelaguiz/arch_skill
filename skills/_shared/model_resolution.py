@@ -45,6 +45,11 @@ AGY_HEADLESS_ARGS = (
 )
 CODEX_6_VARIANTS = ("sol", "luna")
 CODEX_56_VARIANTS = ("terra",)
+CODEX_BARE_MODELS = {
+    "sol": PREFERRED_CODEX_MODEL,
+    "luna": "gpt-6-luna",
+    "terra": "gpt-6.1-terra",
+}
 BLOCKED_CODEX_MODELS = frozenset({"gpt-5.4", "gpt-5.5"})
 
 _CLAUDE_FAMILIES = {"fable", "opus"}
@@ -93,7 +98,13 @@ _FUGU_PROFILE_DEFAULT_EFFORTS = {
     "fugu": "high",
     "fugu-ultra": "xhigh",
 }
-_CODEX_ULTRA_MODELS = {"gpt-6-astra", "gpt-6-sol", "gpt-5.6-terra"}
+_CODEX_ULTRA_MODELS = {
+    "gpt-6-astra",
+    "gpt-6-sol",
+    "gpt-6.1-sol",
+    "gpt-5.6-terra",
+    "gpt-6.1-terra",
+}
 _CLAUDE_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 _KIMI_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 _AGY_EFFORTS = {"low", "medium", "high"}
@@ -422,6 +433,7 @@ def resolve_execution_phrase(
     - "sol" -> codex / gpt-6.1-sol / xhigh
     - "astra" -> codex / gpt-6-astra / xhigh
     - "luna xhigh" -> codex / gpt-6-luna / xhigh
+    - "terra xhigh" -> codex / gpt-6.1-terra / xhigh
     - "GPT56TERRAXI" -> codex / gpt-5.6-terra / xhigh
     - "codex high" -> codex / gpt-6.1-sol / high
     - "Fugu high" -> codex / profile fugu / high
@@ -789,14 +801,7 @@ def _resolve_codex_model(
     elif sol_version:
         candidate = f"gpt-{sol_version.group('version')}-sol"
     elif bare_variant:
-        variant = bare_variant.group("variant").lower()
-        candidate = (
-            PREFERRED_CODEX_MODEL
-            if variant == "sol"
-            else f"gpt-6-{variant}"
-            if variant in CODEX_6_VARIANTS
-            else f"gpt-5.6-{variant}"
-        )
+        candidate = CODEX_BARE_MODELS[bare_variant.group("variant").lower()]
     else:
         candidate = PREFERRED_CODEX_MODEL
         model_source = "default"

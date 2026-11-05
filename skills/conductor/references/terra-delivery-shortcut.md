@@ -29,7 +29,7 @@ scope such as an explicit phase range remains binding.
   unrelated worktree, and never move unknown uncommitted work between
   worktrees.
 - Resolve `terra xhigh` exactly as
-  `runtime=codex, model=gpt-5.6-terra, effort=xhigh`. Use that policy for
+  `runtime=codex, model=gpt-6.1-terra, effort=xhigh`. Use that policy for
   implementation, repair, delegated verification, the cold verifier, and the
   three cynical review sessions. Do not ask for runtime, model, or effort and
   do not silently substitute another choice.
@@ -50,7 +50,7 @@ scope such as an explicit phase range remains binding.
    worktree and branch. Record the worktree path and branch in the conductor
    log's Resume Snapshot.
 2. **Conductor implementation.** Run the normal conductor lifecycle with
-   external Codex `gpt-5.6-terra` at `xhigh`: intake, readiness, phase-sized
+   external Codex `gpt-6.1-terra` at `xhigh`: intake, readiness, phase-sized
    `$agent-delegate` fresh-resumable workers, independent verification,
    cynical parent audit, send-backs, checkpoints, plan completion annotations,
    whole-plan sweep, and cold verifier.

@@ -126,9 +126,9 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 self.assertEqual(
                     self.model_resolution.codex_model_or_profile_args(result.model, result.effort),
                     ["--model", "gpt-6.1-sol", "-c", f'model_reasoning_effort="{effort}"'])
-        with self.assertRaises(self.model_resolution.ModelResolutionError):
-            self.model_resolution.resolve_execution_phrase(
-                "gpt-6.1-sol ultra", codex_models=["gpt-6.1-sol"])
+        resolved = self.model_resolution.resolve_execution_phrase(
+            "gpt-6.1-sol ultra", codex_models=["gpt-6.1-sol"])
+        self.assertEqual(resolved.effort, "ultra")
 
     def test_astra_preserves_explicit_effort_and_requires_exact_availability(self):
         for effort in ("high", "max", "ultra"):
@@ -165,12 +165,29 @@ class ArchEpicAutoModeTests(unittest.TestCase):
     def test_codex_terra_accepts_explicit_ultra(self):
         resolved = self.model_resolution.resolve_execution_phrase(
             "terra ultra",
-            codex_models=["gpt-5.6-terra"],
+            codex_models=["gpt-6.1-terra"],
+        )
+
+        self.assertEqual(resolved.model, "gpt-6.1-terra")
+        self.assertEqual(resolved.effort, "ultra")
+        self.assertEqual(resolved.effort_source, "explicit")
+
+    def test_bare_terra_resolves_to_the_newest_terra(self):
+        resolved = self.model_resolution.resolve_execution_phrase(
+            "terra xhigh",
+            codex_models=["gpt-5.6-terra", "gpt-6.1-terra"],
+        )
+
+        self.assertEqual(resolved.model, "gpt-6.1-terra")
+        self.assertEqual(resolved.effort, "xhigh")
+
+    def test_explicit_terra_version_is_preserved(self):
+        resolved = self.model_resolution.resolve_execution_phrase(
+            "GPT56TERRAXI",
+            codex_models=["gpt-5.6-terra", "gpt-6.1-terra"],
         )
 
         self.assertEqual(resolved.model, "gpt-5.6-terra")
-        self.assertEqual(resolved.effort, "ultra")
-        self.assertEqual(resolved.effort_source, "explicit")
 
     def test_ultra_is_rejected_where_the_selected_runtime_does_not_support_it(self):
         cases = [

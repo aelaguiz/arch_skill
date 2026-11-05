@@ -104,19 +104,18 @@ workflow names for a run still wins over the table for that run.
 
 | Role | Model and effort | Session boundary |
 |---|---|---|
-| Lesson copy author (Lesson Studio) | Claude Opus 5.5 (`claude-opus-5-5`), high | Must be a Claude model |
-| Independent lesson reviewer (Lesson Studio) | Claude Opus 5.5, high | Always a clean session |
-| Charter-lane lesson author (Lesson Studio) | Claude Opus 5.5, medium | As the lane defines |
-| Puzzle final independent reviewer (Poker Skill) | Claude Opus 5.5, medium | Always a clean session |
-| Website copy verdict: the copy gate's cold read (Poker Skill) | Claude Opus 5.5, medium | Always a clean session; must be a Claude model |
-| Website page cold reader (Poker Skill) | Claude Opus 5.5, high | Always a clean session |
-| Adversarial post-build reviewer | Claude Opus 5.5, high | Always a clean session |
-| Plan reviewer before dispatch | GPT-6.1 Sol, xhigh, and/or Claude Opus 5.5, high | Always a clean session |
-| Hill-climb roles: plan-checker, build-checker, critic, reader, meta-analyst, strategist, auditor, scout (`hill-climb`) | Claude Opus 5.5 (`claude-opus-5-5`), medium; under a Codex parent, GPT-6.1 Sol, low | Always a clean session |
-| Replay-review workers (Poker Skill) | Claude Opus 5.5, medium | As the skill defines |
+| Lesson copy author (Lesson Studio) | A Claude model, level by `$model-routing` | Must be a Claude model |
+| Independent lesson reviewer (Lesson Studio) | `$model-routing` | Always a clean session |
+| Charter-lane lesson author (Lesson Studio) | `$model-routing` | As the lane defines |
+| Puzzle final independent reviewer (Poker Skill) | `$model-routing` | Always a clean session |
+| Website copy verdict: the copy gate's cold read (Poker Skill) | A Claude model, level by `$model-routing` | Always a clean session; must be a Claude model |
+| Website page cold reader (Poker Skill) | `$model-routing` | Always a clean session |
+| Adversarial post-build reviewer | `$model-routing` | Always a clean session |
+| Plan reviewer before dispatch | `$model-routing` | Always a clean session |
+| Hill-climb roles: plan-checker, build-checker, critic, reader, meta-analyst, strategist, auditor, scout (`hill-climb`) | `$model-routing` | Always a clean session |
+| Replay-review workers (Poker Skill) | `$model-routing` | As the skill defines |
 
-Codex roles default to GPT-6.1 Sol. Workers under an Astra parent use it at
-`high` (`delegated-implementation`); other Codex model choices default to `xhigh`.
+Codex roles take their model and level from `$model-routing`.
 
 Decide the session boundary for each role when it comes up, not once for the
 whole workflow:

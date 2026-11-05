@@ -53,31 +53,27 @@ native sub-agents and forbid starting external agents.
 Each participant needs a requested identity and role:
 
 - `runtime`: `claude`, `codex`, `agent`, `grok`, `kimi`, or `agy`
-- `model`: runnable model id, Codex profile name, or exact model phrase. An
-  omitted model on a Codex lane resolves to `gpt-6.1-sol`; an omitted model on
-  a Kimi lane resolves to `kimi-code/k3`; an omitted model on an agy lane
-  resolves to `gemini-4-argon`.
+- `model`: runnable model id, Codex profile name, or exact model phrase
 - `effort`: `low`, `medium`, `high`, `xhigh`, `max`, or `ultra` when supported
-  by the selected runtime/model; omitted Sol effort resolves to the `xhigh`
-  preference default, omitted Kimi effort resolves to the K3 model default,
-  `max`, and omitted agy effort resolves to the `high` preference default
+  by the selected runtime/model
 - `role`: `collaborator` or `adversary`
 - `transport`: active-host native child or external runtime session, chosen
   after inspecting whether native model capability suffices
 - `starting context`: clean for the independent first pass
 - `continuation`: the exact child/session handle after launch
 
-If any load-bearing participant choice is missing or ambiguous after applying
-the Codex, Kimi, and agy defaults, ask one consolidated question. Explain that
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+
+If any load-bearing participant choice is still missing or ambiguous after
+that, ask one consolidated question. Explain that
 only participants resolved to the external lane create external model sessions:
 
 ```text
 Before I run model-consensus, I need the two participant choices. Please give
-provider and any non-default effort for Model A and Model B, plus a
-model/profile for participants outside the Codex, Kimi, and agy defaults, and
-say whether either should be adversarial. Codex defaults to gpt-6.1-sol at
-xhigh when its model and effort are omitted; Kimi defaults to kimi-code/k3 at
-max; agy defaults to gemini-4-argon at high. I will use native children where
+provider for Model A and Model B, any model or effort you want to name, and
+say whether either should be adversarial. I will choose any model or level you
+leave out, except that Kimi stays at kimi-code/k3 at max and agy at
+gemini-4-argon at high. I will use native children where
 the active host can honor the requested capability and external sessions for
 the remaining participants; external sessions spend separate model budget.
 Cursor Agent is Composer-only; natural Grok wording resolves to grok-4.6.
@@ -88,12 +84,10 @@ Cursor Agent is Composer-only; natural Grok wording resolves to grok-4.6.
 Follow the shared model-resolution doctrine:
 
 - Accept `sol`, `astra`, `luna`, and `terra` as Codex choices. They resolve to
-  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`; compact forms such as
+  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`; compact forms such as
   `GPT6LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
-  `xhigh`. If a Codex lane names no model or profile, resolve it to
-  `gpt-6.1-sol` and report that the model came from the default. If the
-  resulting Sol lane names no effort, resolve it to `xhigh` and report
-  `effort_source=preference_default`.
+  `xhigh`. With no model or level named, choose both with `$model-routing`;
+  the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
 - Preserve family and numeric version exactly. `gpt-6-luna` may normalize to
   `gpt-6-luna`; it must not become `gpt-6.1-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
   `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`, and `opus 5.5` to `claude-opus-5-5`;
@@ -172,11 +166,11 @@ Always announce the mapping before execution:
 
 ```text
 Model A: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high
-Model B: "Claude Opus 4.7 xhigh" -> runtime=claude, model=claude-opus-4-7, effort=xhigh
+Model B: "Claude Opus 5.5 xhigh" -> runtime=claude, model=claude-opus-5-5, effort=xhigh
 Model C: "codex" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh, model_source=default, effort_source=preference_default
 Model D: "codex high" -> runtime=codex, model=gpt-6.1-sol, effort=high, model_source=default
 Model E: "luna xhigh" -> runtime=codex, model=gpt-6-luna, effort=xhigh
-Model F: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
+Model F: "terra high" -> runtime=codex, model=gpt-6.1-terra, effort=high
 Model G: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 Model H: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
 Model I: "Kimi K3 high" -> runtime=kimi, model=kimi-code/k3, effort=high
@@ -595,4 +589,4 @@ honors it. Do not silently switch among Claude, Codex, Cursor Agent, Grok,
 Kimi, and agy, downgrade models (Argon to Flash included), reduce effort,
 or replace a long-running participant with the parent agent's own answer.
 
-Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: default omitted Codex models and bare `sol` to `gpt-6.1-sol` at `xhigh`. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.
+Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: `$model-routing` chooses for a Codex lane, and bare `sol` means the newest Sol. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.

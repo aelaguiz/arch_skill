@@ -104,9 +104,9 @@ add a universal runner, controller, state machine, or harness for this skill.
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
   runs `kimi-code/k3` and defaults an omitted effort to `max`; the Antigravity
   CLI (`agy`) runs only Gemini models, defaults to `gemini-4-argon` at `high`,
-  and runs `gemini-3.8-flash` only when Flash is named. An omitted external
-  Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane
-  defaults to `xhigh`. Preserve explicitly named legacy Grok ids exactly. Never
+  and runs `gemini-3.8-flash` only when Flash is named. With no model or
+  level named, choose both with `$model-routing`; Kimi and agy lanes keep the
+  harness defaults above. Preserve explicitly named legacy Grok ids exactly. Never
   silently substitute a nearby model or cross runtimes.
 - Use bounded continuity by default: turn 1 is a new clean reviewer, turns 2
   and 3 resume the exact healthy same-line reviewer, and turn 4 starts clean

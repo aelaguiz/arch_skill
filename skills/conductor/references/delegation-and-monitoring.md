@@ -103,19 +103,13 @@ thinking level, durability, isolation, and receipts. Resolve it before choosing
 transport, and carry the same model and thinking level across whichever lane you
 choose — the fleet is defined by that profile, not by the runtime that hosts it.
 
-When the parent is a model this repo does not name and the user names no
-provider, the fleet profile is the parent's own model and thinking level.
+When the user names no provider, choose the fleet profile with `$model-routing`.
 
-The user supplies the runtime and normally the thinking level plus a
-model/profile outside the defaults. When the fleet is Codex and the model is
-omitted, use `gpt-6.1-sol`; when that Sol lane also omits the level, use
-`xhigh`. When it is Kimi, use `kimi-code/k3` and default an omitted level to
-`max`. When it is agy, use `gemini-4-argon` and default an omitted level to
-`high`. For Codex, accept `sol`, `astra`, `luna`, and `terra` as
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). For Codex, accept `sol`, `astra`, `luna`, and `terra` as
 `gpt-6.1-sol`, `gpt-6-astra`,
-`gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated question for other
-missing execution values. For a parent this repo names, the default fleet is
-GPT-6.1 Sol at xhigh; do not assume it is cheaper than the parent. Announce the
+`gpt-6-luna`, and `gpt-6.1-terra`. Ask one consolidated question for other
+missing execution values. Do not assume the fleet's model is cheaper than the
+parent. Announce the
 raw-to-resolved model mapping and the selected lane before
 the first launch, per agent-delegate's resolution doctrine. Do not silently
 change runtime, model, or thinking level mid-run; if a worker model is clearly

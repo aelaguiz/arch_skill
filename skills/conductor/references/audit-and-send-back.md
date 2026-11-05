@@ -276,9 +276,9 @@ After all phases:
    not literally true in code or in the artifacts. Its ignorance of the run
    is the feature; it catches what the conductor's accumulated context has
    normalized.
-   Give it the same scope anchors. Run it on the cheap fleet profile — a
-   whole-plan cold read is bulk reading, and an unpinned native child would
-   put it on the conductor's own model. A one-shot with no resume is the
+   Give it the same scope anchors. Choose its model and level with
+   `$model-routing`: a whole-plan cold read is bulk reading, and an unpinned
+   native child would put it on the conductor's own model. A one-shot with no resume is the
    easiest role to pin natively, because no eviction can quietly re-price it;
    take the external lane when this host cannot pin the profile. It may reject
    completion, but it may not add a newly discovered adjacent path to the
@@ -287,10 +287,10 @@ After all phases:
    `$cynical-code-review`, `$cynical-architecture-review`, and
    `$cynical-cruft-removal` skills are not part of this gate. Run one only
    when the user asked for it, and dispatch each requested review as its own
-   new clean session on the fleet profile that invokes the installed skill
-   against the repo. Never run one through an unpinned native child: a whole
-   review skill is the largest block of bulk reading in the run, and unpinned
-   it lands on the conductor's own model. Give each review the plan path, human
+   new clean session that invokes the installed skill against the repo.
+   Choose each review's model and level with `$model-routing`; a whole review
+   skill is the largest block of bulk reading in the run, and unpinned it
+   lands on the conductor's own model. Give each review the plan path, human
    baseline anchors, explicit human approval entries, approved initial closure,
    and approval anchor. What comes back is advice: the conductor triages the
    findings as claims under the normal audit machinery, never edits source on

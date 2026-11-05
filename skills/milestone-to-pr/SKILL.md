@@ -131,7 +131,7 @@ named: "primary Opus max, final Pro."
 - **The final** writes the milestone plan and reviews the milestone at its
   boundary. With none named, it is GPT-6 Astra Pro.
 - **The primary** reads each issue as it lands. With none named, it is a
-  native child on the coordinator's own model, in a clean context.
+  native child in a clean context, on the model and level `$model-routing` gives.
 
 These defaults replace the "Pro holds both" default in `issue-to-pr`. Seats
 are consultants: they never edit the worktree or act on GitHub, a worker

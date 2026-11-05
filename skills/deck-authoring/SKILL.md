@@ -315,8 +315,8 @@ type new to you.
    at the deck as a contact sheet for a wall with no dividers, one layout
    repeated across unlike ideas, or a missing answer at the front.
 7. **Cold read, once.** Read `../_shared/agent-orchestration-policy.md`, then
-   start a clean reviewer with none of your context, on your own model unless
-   he named another, and apply `$prompt-authoring` to its brief. Give it his
+   start a clean reviewer with none of your context, on the model and level
+   `$model-routing` gives a cold read unless he named another, and apply `$prompt-authoring` to its brief. Give it his
    ask verbatim and the rendered slide images, nothing else. Ask it to read
    each slide alone, as a busy founder seeing it for the first time, and
    answer four questions per slide:

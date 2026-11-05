@@ -68,10 +68,9 @@ Frontmatter rules:
   deliberately selected external completion critic. A capable same-host native
   critic leaves them null and records its clean child handle in the
   Orchestration Log. For an external critic, values are user-supplied per
-  `model-and-effort.md`, except an omitted Codex model defaults to
-  `gpt-6.1-sol`, an omitted effort on that Sol role defaults to `xhigh`,
-  Kimi defaults to `kimi-code/k3` at `max`, and agy defaults to
-  `gemini-4-argon` at `high`; store the resolved runnable
+  `model-and-effort.md`. With no model or level named, choose both with
+  `$model-routing`. Kimi and agy lanes keep their harness defaults
+  (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Store the resolved runnable
   identifier and default provenance, not raw shorthand. Natural Grok wording
   resolves to `grok-4.6`; explicit legacy Grok ids remain exact.
   During same-session `auto-plan` these fields may stay null because no critic

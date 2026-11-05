@@ -5,7 +5,7 @@
 User:
 
 ```text
-Use $model-consensus with Claude Opus 4.7 xhigh and Codex gpt-6.1-sol xhigh to
+Use $model-consensus with Claude Opus 5.5 xhigh and Codex gpt-6.1-sol xhigh to
 find the simplest architecture for making this repo's planner resumable.
 ```
 
@@ -53,7 +53,7 @@ Parent behavior:
 User:
 
 ```text
-Have $model-consensus gpt-6.1-sol xhigh and Opus 4.7 max review everything we did
+Have $model-consensus gpt-6.1-sol xhigh and Claude Opus 5.5 max review everything we did
 for docs/FAILURE_PLAN.md and start a new doc with every theory for why this
 path is producing uniform results. I want them to read everything, including
 the research, and build fast traps to prove where the bug starts.

@@ -77,9 +77,8 @@ the same doctrine used by Stepwise and fresh-consult:
 
 - preserve model family and numeric version exactly
 - infer runtime only from unambiguous family evidence
-- accept `astra`, `luna`, and `terra` as exact Codex models and use
-  `gpt-6.1-sol` when a Codex role omits its model; use `xhigh` when that Sol
-  role also omits effort
+- accept `astra`, `luna`, and `terra` as exact Codex models; with no model or
+  level named, choose both with `$model-routing`
 - inspect `codex debug models` when ordinary Codex model availability matters
 - resolve `fugu` and `fugu-xhigh` as Codex profiles, not model-list ids
 - inspect `grok models` when Grok model availability matters
@@ -127,11 +126,9 @@ running.
 Treat model text as intent, not a loose alias:
 
 - `sol`, `astra`, `luna`, and `terra` normalize to `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and
-  `gpt-5.6-terra`. Compact forms such as `GPT6LUNAXI` and `GPT56TERRAXI`
-  preserve the named variant and imply `xhigh`. A Codex role with no model or
-  profile uses `gpt-6.1-sol`, reported with `model_source=default`. If that Sol
-  role also omits effort, use `xhigh` and report
-  `effort_source=preference_default`.
+  `gpt-6.1-terra`. Compact forms such as `GPT6LUNAXI` and `GPT56TERRAXI`
+  preserve the named variant and imply `xhigh`. With no model or level named,
+  choose both with `$model-routing`; the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
 - An explicit `gpt-6-luna` may normalize to `gpt-6-luna`; it must not
   become `gpt-6.1-sol`, `gpt-5.4`, or `gpt-5.5`.
 - `gpt 5.3 codex` may normalize to `gpt-5.3-codex`.
@@ -213,7 +210,7 @@ planner: "codex" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh, model_source
 critic: "codex gpt-6.1-sol xhigh" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh
 implementation_worker: "codex high" -> runtime=codex, model=gpt-6.1-sol, effort=high, model_source=default
 implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-6-luna, effort=xhigh
-critic: "terra high" -> runtime=codex, model=gpt-5.6-terra, effort=high
+critic: "terra high" -> runtime=codex, model=gpt-6.1-terra, effort=high
 critic: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
 planner: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high
 implementation_worker: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
@@ -240,12 +237,11 @@ choices control real external processes and model budget.
 - implementation_worker: edits code/docs and runs verification
 - critic: checks North Star, plan readiness, completion, and scope drift
 
-Please give runtime plus any non-default effort for each role and a
-model/profile outside the Codex, Kimi, and agy defaults, or say which roles
-should be "same as" another role. A Codex role with no model uses
-gpt-6.1-sol, and that Sol role uses xhigh when effort is omitted; a Kimi role
-uses kimi-code/k3 and defaults an omitted effort to max; an agy role uses
-gemini-4-argon and defaults an omitted effort to high. Ordinary critic
+Please give runtime for each role, plus any model or effort you want to name,
+or say which roles should be "same as" another role. I will choose any model
+or level you leave out; a Kimi role uses kimi-code/k3 and defaults an omitted
+effort to max; an agy role uses gemini-4-argon and defaults an omitted effort
+to high. Ordinary critic
 failures resume the exact relevant planner or implementation worker session;
 there is no separate repair-worker choice in new external-harness policies.
 ```
@@ -272,4 +268,4 @@ Changing any role mid-run creates a new policy hash. The orchestrator must log
 the change in the epic Decision Log and apply it only to future child runs.
 Past worker and critic artifacts keep the invocation they actually used.
 
-Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: default omitted Codex models and bare `sol` to `gpt-6.1-sol` at `xhigh`. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.
+Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: `$model-routing` chooses for a Codex lane, and bare `sol` means the newest Sol. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.

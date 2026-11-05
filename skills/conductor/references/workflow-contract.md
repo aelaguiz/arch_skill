@@ -25,8 +25,9 @@ quality bar to finish faster.
 
 1. Intake: plan path, boundary (whole plan default), per-role transport and
    starting context, any external runtime/model/effort, max parallelism, wave
-   cap, and cold-verifier toggle. An external Codex worker with no named model
-   uses `gpt-6.1-sol`; that Sol worker uses `xhigh` when effort is omitted.
+   cap, and cold-verifier toggle. With no model or level named, choose both with
+   `$model-routing`. Kimi and agy lanes keep their harness defaults
+   (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
 2. Plan read and extraction in context; capture the start commit and inherited
    worktree state before writing the conductor log.
 3. Write the log, recording the start commit, then apply and record the

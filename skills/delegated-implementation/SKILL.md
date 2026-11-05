@@ -1,6 +1,6 @@
 ---
 name: delegated-implementation
-description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr, epic-to-prs, and milestone-to-pr for every coordinator, or when the user asks for this executive/worker split on accepted work. Astra delegates to GPT-6.1 Sol high; any other parent delegates to a native child on its own model. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
+description: "Keep the parent responsible for requirements, architecture, integration, and direct review while its subagents implement, test, and repair. Used by issue-to-pr, epic-to-prs, and milestone-to-pr for every coordinator, or when the user asks for this executive/worker split on accepted work. Each worker's model and level come from $model-routing. All skill authorship stays with the parent. Owns execution responsibilities, not a delivery lifecycle, agent launcher, read-only review, or conductor's full workflow."
 metadata:
   short-description: "Parent judgment and review, worker implementation and tests"
 ---
@@ -41,15 +41,9 @@ delegate the ordinary application code work.
 
 ## Worker selection and harness boundary
 
-An Astra parent assigns implementation and verification to GPT-6.1 Sol
-(`gpt-6.1-sol`) at `high`. Preserve this role's effort rather than applying the
-general `xhigh` default. Honor a worker the user or the
-calling workflow named, and a role the policy's routing table assigns. For any
-other parent — Sol, Terra, Luna, Opus, Fable, DeepSeek, GLM, Fugu, and whatever
-is added later — the
-worker is a native child of the active host that inherits the parent's model and
-thinking level; read the default in
-`../_shared/agent-orchestration-policy.md`.
+Choose each worker's model and level with `$model-routing`. Honor a worker the
+user or the calling workflow named, and a role the policy's routing table
+assigns.
 
 Read the installed `../_shared/agent-orchestration-policy.md` before dispatch
 and apply `$prompt-authoring` to each populated brief. The active harness

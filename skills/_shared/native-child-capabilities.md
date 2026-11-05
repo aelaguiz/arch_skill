@@ -86,10 +86,9 @@ access. Choose those independently.
 An open-source or otherwise unnamed parent model is an ordinary parent here. Three
 facts decide what its children can do:
 
-- **Inheritance is the default lane.** A child created without a model and without
-  a thinking level runs the parent's model and level on every host in the matrix.
-  That is the correct dispatch whenever nothing names a worker, and it needs no
-  pin, so a partially supported model never blocks it.
+- **A child with no model and no level runs the parent's model and level on every
+  host in the matrix.** A partially supported model never blocks that spawn, but it
+  costs what the parent costs, so set both with `$model-routing`.
 - **An explicit unsupported thinking level fails the spawn.** Prime Agent refuses
   it outright — verified on `openrouter/deepseek/deepseek-v4.1-flash` with
   `medium`, whose error names the levels it does support — while an inherited

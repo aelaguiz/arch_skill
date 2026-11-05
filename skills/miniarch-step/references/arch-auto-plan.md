@@ -93,10 +93,8 @@ performed, unresolved assumptions, and confirmation that it made no writes and
 started no external agents. Keep the parent's fanout proportional to independent
 lenses, host slots, collision risk, and its capacity to inspect every return.
 
-`gpt-6.1-sol` with `xhigh` reasoning is the preferred miniarch planning
-profile only when the active native schema can select and confirm both. If it
-cannot, use the inherited native capability and report only what the host can
-confirm. When exact model identity is load-bearing, an external exact-model
+Choose the planning profile with `$model-routing`, and report only what the
+host can confirm. When exact model identity is load-bearing, an external exact-model
 session is still available, but the dispatch must explain the concrete benefit
 that makes its model/profile guarantee worth the added process, integration,
 and shared-state cost. Do not externalize a role merely to preserve an

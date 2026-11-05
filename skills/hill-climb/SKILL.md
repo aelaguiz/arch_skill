@@ -337,8 +337,8 @@ commands, the current time, the keys its rows will use), and you add any other f
 data that was set aside. Leave out what you hope it finds and your theory of the result. Then apply
 `$prompt-authoring`'s checks to the filled brief: could the role reject your view and still do its job?
 
-Start each role as a clean native child on the model the shared policy's routing table names for hill-climb roles
-(recorded in the charter's `role_model`): in Claude Code, the Agent tool with that model; in Codex, `spawn_agent` with
+Start each role as a clean native child on the model and level `$model-routing` gives it (recorded in the charter's
+`role_model`): in Claude Code, the Agent tool with that model and level; in Codex, `spawn_agent` with
 `fork_turns: "none"`. Roles start clean and cost little next to a test spent on a wrong plan or a method left
 unexamined, so their cost is seldom a reason to put one off; what to keep small is the waiting. Give a role a whole
 round at once (every plan of a round to the plan-checker, every new item to the build-checker and the critic, started

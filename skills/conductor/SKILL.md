@@ -117,12 +117,11 @@ log beside the plan is its durable memory.
   host cannot enforce. An unpinned native child runs the conductor's own
   profile, so pin the selected model and effort before assigning bulk reading. Honor explicit user choices in both directions.
 - Model and thinking level are first-class worker values on both lanes, drawn
-  from one vocabulary, and the user normally supplies them. A Codex worker
-  with no named model defaults to `gpt-6.1-sol`, and an omitted level on that
-  Sol worker defaults to `xhigh`; a Kimi worker with omitted model and level
-  defaults to `kimi-code/k3` at `max`, and an agy worker to `gemini-4-argon`
-  at `high`. Accept `sol`, `astra`, `luna`, and `terra` as
-  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-5.6-terra`. Ask one consolidated
+  from one vocabulary, and the user normally supplies them. With no model or
+  level named, choose both with `$model-routing`. Kimi and agy lanes keep their
+  harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Accept
+  `sol`, `astra`, `luna`, and `terra` as
+  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`. Ask one consolidated
   question only for load-bearing missing values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording
@@ -298,11 +297,8 @@ log beside the plan is its durable memory.
 5. Read `../_shared/scope-and-convergence.md`.
 6. Resolve the artifact path, boundary (whole plan unless the user named a
    phase range), the worker profile, per-role lane and starting context, max
-   parallelism, wave cap, and cold-verifier toggle. When the parent is a model
-   this repo does not name, the fleet profile is the parent's own model and
-   thinking level; `../_shared/agent-orchestration-policy.md` owns what "name"
-   means here. Otherwise the fleet profile defaults to Codex `gpt-6.1-sol` at
-   `xhigh`; a user-named provider swaps the whole fleet — Kimi to `kimi-code/k3`
+   parallelism, wave cap, and cold-verifier toggle. The fleet profile comes
+   from `$model-routing`; a user-named provider swaps the whole fleet — Kimi to `kimi-code/k3`
    at `max`, agy (Gemini) to `gemini-4-argon` at `high`, Grok to `grok-4.6`,
    Cursor to `composer-2.5-fast`, Claude to a supported Claude model. Then
    pick the lane per
