@@ -79,6 +79,8 @@ Sol lost most on the job where reviews most often change real work, though that 
 
 ## How firm the table is
 
+Four rows rest on a walk down a model's levels, from the back-test above: look something up, a problem with one right answer, check against a stated standard, and check in on running work. Mechanical work and fixing a well-defined bug rest on two small code jobs. The other eight are starting guesses from the first design, held up by field use or by a pin someone named, and no test has looked for a cheaper setting on them.
+
 Rows on Opus at medium and Sol at high rest on the back-test above. Opus at high was measured on 15 tasks, plus 4 blind-scored on November 5, where it pulled clearly ahead of Opus at medium on none. Terra at xhigh and Astra at xhigh were run on a few real tasks each, November 5: within each family, neither pulled clearly ahead of or behind the stored settings on blind scores, on three tasks a side. Their rows still rest mostly on field use. Each kind has 4 or 5 tasks at most, so a row is a direction.
 
 ## Measuring again
