@@ -91,9 +91,48 @@ These figures are a floor on what either would catch live: it had no live record
 
 Sol lost most on the job where reviews most often change real work, though that job's reviews also lean most on files a transcript doesn't hold. It lost least on the job whose reviews mostly correct records. Readers counted 24 to 33 further findings from Sol that would change real work, and nobody checked whether those were true. A cold look cost $0.53 on Sol 6.1 at high against $3.75 on Astra 6.0 at xhigh, about a seventh, and Astra's live look cost $7.43. Price per token alone says a fifth, but that ignores what the level does to the tokens.
 
+## What each model adds
+
+November 5, 2026: the catches above say nothing about what a model adds that nobody needed, so that was tested too. Terra 6.1 at xhigh and Opus 5.5 at high ran the same 20 looks. Every further finding from all six settings, 445 in all, went to two blind readers, Opus 5.5 at high and Astra 6.0 at high, to sort as a case a user or the business here really meets, a risk nobody meets, or a nit. They agreed on 354. Pairs below read one reader, then the other.
+
+| 20 looks, 52 findings | Terra 6.1 xhigh | Sol 6.1 high | Astra 6.0 high | Opus 5.5 high |
+|---|---:|---:|---:|---:|
+| Raised or partly, of 52 | 30, 30 | 33, 30 | 32, 32 | 35, 31 |
+| Missed, of 25 that changed real work | 10, 10 | 4, 7 | 5, 6 | 6, 9 |
+| Further findings a look | 3.7 | 3.6 | 3.5 | 8.2 |
+| Of those, really met | 63%, 52% | 45%, 36% | 57%, 44% | 64%, 51% |
+| A risk nobody here meets | 6%, 4% | 4%, 2% | 7%, 2% | 6%, 1% |
+| Nits | 30%, 43% | 50%, 61% | 35%, 52% | 30%, 46% |
+| Cost a look | $0.15 | $0.53 | $3.33 | $1.12 |
+| Minutes a look | 2.3 | 6.0 | 4.8 | 3.7 |
+
+Four stored code-writing tasks then ran on one brief each. The same two readers said blind whether each did the job and what they'd cut.
+
+| 4 builds | Terra 6.1 xhigh | Sol 6.1 xhigh | Astra 6.0 high | Opus 5.5 medium |
+|---|---:|---:|---:|---:|
+| Ended early, by its own report | 3 | 2 | 1 | 0 |
+| Does the job: yes, partly, no, first reader | 2, 1, 1 | 2, 1, 1 | 3, 1, 0 | 4, 0, 0 |
+| Does the job, second reader | 2, 1, 1 | 1, 2, 1 | 3, 1, 0 | 3, 1, 0 |
+| Code lines | 241 | 470 | 380 | 754 |
+| Guards, a rough text match | 7 | 9 | 5 | 15 |
+| Share cut, first reader | 12% | 32% | 32% | 8% |
+| Same, without two mocked test files | 12% | 10% | 16% | 8% |
+| Share cut, second reader | 0% | 1% | 1% | 1% |
+| Cost of all four | $0.77 | $2.44 | $9.66 | $8.59 |
+| Median minutes | 3.3 | 6.6 | 4.8 | 6.9 |
+
+- **The field read isn't settled.** Every brief was tight and every run short. Open work and rounds of fixes, where people saw the adding, weren't tested.
+- **The share cut rests on one reader.** The second cut almost nothing from anyone, and the first cut its own maker least. The two mocked test files came from a copy with no keys for the live checks the brief wanted.
+- **A reader trims what it's given.** Two builds of one job, 86 and 388 code lines, both read "yes" and lost little. The share cut can't see what a smaller design would have saved.
+- **The readers saw diffs, not closing reports.** One build scored "yes" by both readers came from a run that said it hadn't finished.
+- **Two of the three causes of early endings came from the test copy:** a broken generator and missing content. The third was a contradiction in a real brief.
+- **Further findings are unchecked,** and the sort read a one-sentence summary of each.
+
+Since then, two live timers moved to Sol 6.1 at high. Over ten looks on young threads, one averaged $0.40 a look against $3.85 for the first six looks of the Astra 6.0 at xhigh thread before it, and the other $0.71 at one look an hour, all at list price. Sessions took nine of ten logged findings, two looks found nothing, and no finding asked for a new guard.
+
 ## How firm the rows are
 
-`task-types.md` says what stands behind each row. Rows with a task count rest on the level-by-level scores above, compared within a family. Rows marked not measured are starting guesses from field use. Opus 5.5 at high was measured on 15 tasks, plus 4 blind-scored on November 5, where it pulled clearly ahead of Opus 5.5 at medium on none. Terra 6.1 at xhigh and Astra 6.0 at xhigh were run on a few real tasks each, November 5: neither pulled clearly ahead of or behind Sol on blind scores, on three tasks a side.
+`task-types.md` says what stands behind each row. Rows with a task count rest on the level-by-level scores above, compared within a family. Rows marked not measured are starting guesses from field use. Opus 5.5 at high was measured on 15 tasks, plus 4 blind-scored on November 5, where it pulled clearly ahead of Opus 5.5 at medium on none. Terra 6.1 at xhigh and Astra 6.0 at xhigh were run on a few real tasks each, November 5: neither pulled clearly ahead of or behind Sol on blind scores, on three tasks a side. The four builds above add a direction for one kind of work, and no more.
 
 ## Measuring again
 
