@@ -21,7 +21,7 @@ Most helpers exist to get something done cheaply and fast: find something out, m
 
 Some exist to put another maker's biases in the mix: a second opinion on a plan, a review before a change lands. Models from one maker share blind spots and favor their own work, so here the other family is the point, and a cheaper setting in your own family doesn't do the job at any price.
 
-One helper can want both. A reviewer that checks in on long-running work wants the other maker's eye, and it runs dozens of times, so it wants the other family at a low setting.
+One helper can want both. A reviewer that checks in on long-running work wants the other maker's eye, and it runs dozens of times, so it has to earn each run.
 
 ## What things cost
 
@@ -45,27 +45,28 @@ When the value is in what the helper notices that nobody pointed it at, the thin
 
 Moving to a smaller model is a different bet from lowering the level. A strong model at a lower level keeps its grip on the brief and does less extra work. A smaller model can lose the grip: in a back-test, Sonnet and Haiku, and Opus at its lowest level, dropped rules of the brief and missed the point about a third of the time or more, against 7% for Opus at medium. A read-only review on Sonnet found the real defects and then wrote files anyway. Sonnet has no room to step down either: at medium it does markedly worse than at max.
 
-That is a finding about work where the brief in the helper's head is all that keeps it honest. Where the spec is complete and a test or a build shows whether the work is right, a smaller model does well: we found no Terra build from a full spec that Sol had to redo. So ask what keeps this helper honest. If it's the brief, keep the strong model at a lower level. If it's a check at the end, the smaller model is likely as good and cheaper.
+That is a finding about work where the brief in the helper's head is all that keeps it honest. Where the spec is complete and a test or a build shows whether the work is right, a smaller model does well: we found no Terra build from a full spec that Sol had to redo. So ask what keeps this helper honest, and how much of the work a check really proves. A hidden test proves the code does what the test checks. A green build says nothing about whether a PR's description is true, or whether every rule in the brief was kept. If the check covers what could go wrong, the smaller model is likely as good and cheaper. If only the brief does, keep the strong model at a lower level.
 
 ## Which setting does which kind of work
 
-Each row is the cheapest setting we have seen do that kind of work well, for each family. Names are families, so use the newest version of each. A task that is plainly one of these under another name gets the same setting. "Native or external" below says which column to take.
+Each row is where to start: the cheapest setting we have seen do that kind of work well, for each family. [references/evidence.md](references/evidence.md) says how firm each is, and some rest on very little. Names are families, so use the newest version of each. A task that is plainly one of these under another name starts in the same place, and one that is harder than its row starts higher. "Native or external" below says which column to take.
 
 | Kind of work | For example | Claude | Codex | Why that is enough |
 |---|---|---|---|---|
-| Mechanical work | Rebase, run the tests and report what failed, write PR text, bring docs in line | Sonnet medium | Terra xhigh | The steps are known and the result shows whether they worked |
+| Mechanical work | Rebase, run the tests and report what failed | Sonnet medium | Terra xhigh | The steps are known and the result shows whether they worked |
+| Bring text in line with the facts | PR text, docs after a change | Opus medium | Terra xhigh | The facts are in hand, but no test reads the meaning, so you do |
 | Look something up | Research a question, analyze a dataset, explain how code behaves | Opus medium | Sol high | The sources hold the answer, and you read what comes back with them |
 | Work out a problem with one right answer | "Which of these three options is correct, and why?" | Opus medium | Sol high | The answer can be checked; more thinking re-derives what medium finds |
 | Check work against a stated standard | Did the build stay inside its spec, label by a codebook, judge copy or images by a style guide | Opus medium | Sol high | The standard is handed over; the helper compares rather than invents |
 | Check in on running work | "Is this session still doing what it was asked?" | Opus medium | Sol high | The same kind of check, run many times |
-| Fix a well-defined bug | Cause known, one or two files, a red CI job, one part of a full spec | Sonnet medium | Terra xhigh | The thinking is done, and the tests prove the fix |
+| Fix a well-defined bug | Cause known, one or two files, one part of a full spec | Sonnet medium | Terra xhigh | The thinking is done, and the tests prove the fix |
 | Walk a test plan on a device | Capture each screen and compare it with what was decided | Opus high | Terra xhigh | A long brief, held for many steps |
-| Find a bug's cause | Reproduce it and name the cause | Opus medium | Sol xhigh | The cause is unknown, so the search has to stay honest |
+| Find a bug's cause | Reproduce it and name the cause, a red CI job nobody has read | Opus medium | Sol xhigh | The cause is unknown, so the search has to stay honest |
 | Build across several parts from a spec | App and backend, several screens | Opus medium | Sol xhigh | The spec makes the calls; the helper has to keep all of them in view |
 | New feature with algorithmic changes | A new game rule, a ratings change, a spec with open design calls | Opus high | Sol xhigh | The design is still being made, so a cheap first try costs more |
 | Write words people read | Scripts, ad copy, the product's own lines | Opus high | Sol xhigh | The value is in what it notices |
 | Plan or design | An implementation plan and its test plan | Opus high | Sol xhigh | The value is in what it notices |
-| Second opinion, once | A plan or PR, looking for what you missed | Opus high | Astra xhigh | One deep pass, on the family that isn't yours |
+| Second opinion, once | A plan or PR, looking for what you missed | Opus high | Astra xhigh | One deep pass, from a maker other than the one that made the work |
 
 A task that fits no row still gets chosen, never left to a default. Ask what carries the answer, what will catch a mistake, and which row it is closest to.
 
@@ -79,7 +80,7 @@ A check compares work with a standard someone handed over: did this session stay
 
 A second opinion looks for what nobody pointed it at: what is wrong with this plan, what did we miss, what will this change break. There the thinking is the job. It earns the deep setting because it runs once, when what it finds can still change the work. Its first pass finds what matters, each pass after that returns a smaller list, and a strict reader always finds one more.
 
-A timer tells you which one you have. No reviewer sees deeper for being asked every half hour, so a recurring reviewer is a check, however much the work matters, and a check with nothing new to read has nothing to say. When a check turns up something that needs real thought, that is one second opinion on that one thing.
+What it is asked to find decides which one you have. How often it runs decides what it costs. A reviewer on a timer that only compares a session with its brief is a check. One asked what the session has stopped seeing (a goal nobody set, an assumption nobody settled, whether the work deserves its time) is doing the deep job over and over, which is why it can be the largest use of an allowance. So run it less before you run it cheaper: a review with nothing new to read has nothing to say, and its pace can fit how fast the work can go wrong. Whether a cheaper setting keeps its catches is a measurement, and `references/evidence.md` says what has been measured.
 
 ## Step up on a miss, once
 
@@ -95,7 +96,7 @@ Crossing itself costs little, so let it decide little. In a small test, crossing
 
 What decided speed and cost was the helper. On small jobs with checkable answers, every route got every answer right, and the helper's own work differed far more than the crossing did. Sonnet at medium was quickest, Terra at xhigh cost about a third as much, and Opus at medium cost the most and wasn't faster than either. So from a Claude parent, when someone is waiting on a small checked job, native Sonnet gets there first, and when nobody is waiting, Terra is worth the two seconds. Those jobs took a minute or two and nobody judged anything but the answer, so they say nothing about holding a long brief, where "When a smaller model holds up" still applies.
 
-A second opinion crosses, since the other maker is why it exists. One thing is still open: Sol and Terra took about twice as long on reading jobs when a Claude parent briefed them, and Opus didn't slow down the other way. Longer briefs are the likely reason, so keep a crossing brief as short as what it needs.
+A second opinion goes to a maker other than the one that made the work, which may not be your own family: a Codex parent checking a plan Opus wrote wants Codex. One thing is still open: Sol and Terra took about twice as long on reading jobs when a Claude parent briefed them, and Opus didn't slow down the other way. Longer briefs are the likely reason, so keep a crossing brief as short as what it needs.
 
 ## When speed is worth paying for
 

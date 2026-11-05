@@ -52,7 +52,7 @@ CODEX_BARE_MODELS = {
 }
 BLOCKED_CODEX_MODELS = frozenset({"gpt-5.4", "gpt-5.5"})
 
-_CLAUDE_FAMILIES = {"fable", "opus"}
+_CLAUDE_FAMILIES = {"fable", "opus", "sonnet"}
 _CODEX_6_VARIANT_PATTERN = "|".join(CODEX_6_VARIANTS)
 _CODEX_56_VARIANT_PATTERN = "|".join(CODEX_56_VARIANTS)
 _CODEX_VARIANT_PATTERN = "|".join((*CODEX_6_VARIANTS, *CODEX_56_VARIANTS))
@@ -768,6 +768,8 @@ def _resolve_codex_model(
     candidate = _extract_fugu_model_candidate(raw.lower())
     if candidate is not None:
         return candidate, "codex_profile"
+    if codex_models is None:
+        codex_models = discover_codex_models()
 
     match = _CODEX_FAMILY_RE.search(raw)
     compact_variant = _CODEX_56_COMPACT_RE.search(raw)
@@ -797,17 +799,29 @@ def _resolve_codex_model(
         if suffix_words:
             candidate += "-" + "-".join(word.lower() for word in suffix_words)
     elif re.search(r"\bastra\b", raw, re.IGNORECASE):
-        candidate = "gpt-6-astra"
+        candidate = _newest_codex_model("astra", "gpt-6-astra", codex_models)
     elif sol_version:
         candidate = f"gpt-{sol_version.group('version')}-sol"
     elif bare_variant:
-        candidate = CODEX_BARE_MODELS[bare_variant.group("variant").lower()]
+        family = bare_variant.group("variant").lower()
+        candidate = _newest_codex_model(family, CODEX_BARE_MODELS[family], codex_models)
     else:
-        candidate = PREFERRED_CODEX_MODEL
+        candidate = _newest_codex_model("sol", PREFERRED_CODEX_MODEL, codex_models)
         model_source = "default"
 
     resolved = _resolve_codex_candidate(raw, candidate, codex_models=codex_models)
     return resolved, model_source
+
+
+def _newest_codex_model(family: str, fallback: str, models: list[str]) -> str:
+    """A bare family name means its newest runnable version."""
+    versions = []
+    for model in models:
+        match = re.fullmatch(rf"gpt-(\d+(?:\.\d+)*)-{family}", model.lower())
+        if match:
+            version = tuple(int(part) for part in match.group(1).split("."))
+            versions.append((version, model.lower()))
+    return max(versions)[1] if versions else fallback
 
 
 def _resolve_codex_candidate(

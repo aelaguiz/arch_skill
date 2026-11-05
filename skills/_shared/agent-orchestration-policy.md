@@ -78,16 +78,17 @@ Code parents remain their own runtimes even when AIMgr launched them.
 This holds for every parent model, in every host. A role in the table below keeps
 its family and session boundary.
 
-When the user names no model and the calling workflow names none, choose the
-child's model and thinking level with the `model-routing` skill and pass both. A
+When the user names no model, choose the child's model and thinking level with
+the `model-routing` skill and pass both. A
 child left unset takes the parent's, and those were set for the parent's job, so
 leaving them out is a choice nobody made. If this host cannot start a native child
 at all, say so, then either do the work in the parent or take an external lane; do
 not open an external lane merely to have a worker when a native child exists.
 
-A named value stands, and `model-routing` fills in the other one. An explicit level
-must be one that model supports. A named model, transport, or reviewer needs no
-justification.
+A model or level the user names for a run stands, and `model-routing` fills in the
+other one. A pin in a workflow stands only while the reason beside it holds, as
+`model-routing` says under "Whose pick wins". An explicit level must be one that
+model supports. A transport or reviewer the user names needs no justification.
 
 This covers every role, including review. `model-routing` says which reviews need
 another maker's eye.
@@ -96,8 +97,8 @@ another maker's eye.
 
 Skills name a role, such as the copy author or the independent reviewer, and
 this table says which model plays it. When the user changes models, change the
-row here, not every skill that uses the role. A model the user or calling
-workflow names for a run still wins over the table for that run.
+row here, not every skill that uses the role. A model the user names for a run
+still wins over the table for that run.
 
 | Role | Model and effort | Session boundary |
 |---|---|---|
@@ -117,12 +118,12 @@ Codex roles take their model and level from `$model-routing`.
 Decide the session boundary for each role when it comes up, not once for the
 whole workflow:
 
-- **Same model as the current session, no reason for a clean context: keep
-  going here.** The session that already holds the context does the role
+- **Same model and level as the current session, no reason for a clean context:
+  keep going here.** The session that already holds the context does the role
   itself and loads that role's skill. Starting a new agent that rereads the
   same instructions, skills and artifacts costs time and loses nuance for no
   gain.
-- **Different model: hand off.** Start a session on the routed model: a native
+- **Different model or level: hand off.** Start a session on the routed setting: a native
   child when the host can run that model, otherwise an external session
   through AIMgr.
 - **Same model, but the clean context is the point: hand off to a clean native

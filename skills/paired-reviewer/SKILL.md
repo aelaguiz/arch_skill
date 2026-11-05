@@ -181,11 +181,14 @@ its checkpoints. With no number and no clear step, 30 minutes.
 A check-in with nothing new to read has nothing to say. In one audit about a
 quarter of check-ins came after a session that had done nothing but handle the
 last review, and each one still paid for a full read. So the check-in looks
-before it resumes the reviewer: it notes the time once your turn has settled,
-waits out the period, and resumes only if your transcript has changed since.
-If it hasn't, the command prints that nothing happened and wakes you all the
-same, and that wake is the check. Work waiting means do it now, and
-something running means arm the next check-in. A reviewer once found seven
+before it resumes the reviewer: it counts your transcript's lines when it
+starts, waits out the period, and resumes only if you have done something
+since. If you haven't, the command prints that nothing happened and wakes you
+all the same, and that wake is the check. Work waiting means do it now, and
+something running means arm the next check-in. A skipped period costs no
+coverage, because the next review reads everything since the reviewer last
+looked. If you did real work while the last review ran and are about to wait a
+long while, start the reviewer now instead of arming a wait. A reviewer once found seven
 hours in which nothing happened, and this keeps that alarm without paying a
 reviewer to ring it. When you are waiting on the user, arm nothing.
 
@@ -196,9 +199,10 @@ reviewer to ring it. When you are waiting on the user, arm nothing.
   the reviewer while it reads. A pending check-in is also your alarm: never
   end a turn with work still to do unless one is pending, or nothing wakes
   you until someone else does. Its shape, with your transcript's path as
-  `T` and a marker file beside your notes as `M`:
-  `sleep 60; touch M; sleep <period less a minute>; if [ T -nt M ]; then <resume>; else echo "Nothing happened this period."; fi`,
-  followed by the ending described below.
+  `T`:
+  `N=$(wc -l < T); sleep <period>; if [ $(( $(wc -l < T) - N )) -ge 3 ]; then <resume>; else echo "Nothing happened this period."; fi`,
+  followed by the ending described below. Arming the check-in adds one line
+  and each tool call you make adds two, so three means you did something.
 - In Codex, nothing wakes you when a background command finishes. Between
   your own steps, once the period has passed, start the resume in the
   background if you have done anything since the reviewer last looked, and
