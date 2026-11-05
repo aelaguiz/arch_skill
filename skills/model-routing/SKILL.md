@@ -49,7 +49,7 @@ That is a finding about work where the brief in the helper's head is all that ke
 
 ## Which setting does which kind of work
 
-Each row is where to start, for each family. Most rows are informed first guesses, not the proven cheapest setting: few have been tested by walking a model down its levels, and [references/evidence.md](references/evidence.md) says which. Names are families, so use the newest version of each. A task that is plainly one of these under another name starts in the same place, and one that is harder than its row starts higher. "Native or external" below says which column to take.
+Each row is where to start: the cheapest setting we have seen do that kind of work well, for each family. [references/evidence.md](references/evidence.md) says how firm each is, and some rest on very little. Names are families, so use the newest version of each. A task that is plainly one of these under another name starts in the same place, and one that is harder than its row starts higher. "Native or external" below says which column to take.
 
 | Kind of work | For example | Claude | Codex | Why that is enough |
 |---|---|---|---|---|
@@ -70,7 +70,7 @@ Each row is where to start, for each family. Most rows are informed first guesse
 
 A task that fits no row still gets chosen, never left to a default. Ask what carries the answer, what will catch a mistake, and which row it is closest to.
 
-The goal is still the soonest usable answer. Where a dearer setting finishes sooner, someone is waiting and the accounts have room, take it.
+The table gives the cheapest setting that does each kind well, and the goal is still the soonest usable answer. Where a dearer setting finishes sooner, someone is waiting and the accounts have room, take it.
 
 ## Which reviews need deep thinking
 
