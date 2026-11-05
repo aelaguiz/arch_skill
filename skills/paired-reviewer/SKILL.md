@@ -180,33 +180,35 @@ its checkpoints. With no number and no clear step, 30 minutes.
 
 A check-in with nothing new to read has nothing to say. In one audit about a
 quarter of check-ins came after a session that had done nothing but handle the
-last review, and each one still paid for a full read. So the check-in looks
-before it resumes the reviewer: it counts your transcript's lines when it
-starts, waits out the period, and resumes only if you have done something
-since. If you haven't, the command prints that nothing happened and wakes you
-all the same, and that wake is the check. Work waiting means do it now, and
-something running means arm the next check-in. A skipped period costs no
-coverage, because the next review reads everything since the reviewer last
-looked. If you did real work while the last review ran and are about to wait a
-long while, start the reviewer now instead of arming a wait. A reviewer once found seven
-hours in which nothing happened, and this keeps that alarm without paying a
-reviewer to ring it. When you are waiting on the user, arm nothing.
+last review, and each one still paid for a full read. So the wait and the
+review are two steps, and the choice between them is yours. When the period
+ends, ask what has happened since the reviewer last looked, and whether another
+look could change anything. New work, a result or a decision is worth one. A
+build polled and found unchanged, or the last review handled and nothing else,
+isn't, so skip it. Skip only because there's nothing to read, never because you
+feel sure of the work: your sureness is what the reviewer is there to check. A
+skipped period costs no coverage, because the next review reads everything
+since the reviewer last looked. The wake is a check in its own right: work
+waiting means do it now, and something running means start the next wait. If
+you did real work while the last review ran and are about to wait a long while,
+start the reviewer now instead of a wait. A reviewer once found seven hours in
+which nothing happened, and this keeps that alarm without paying a reviewer to
+ring it. When you are waiting on the user, arm nothing.
 
-- In Claude Code, the check-in is one background shell command that waits
-  out the period and then runs the resume; its finishing wakes you. Run it
-  with the shell tool's background option, not with `&`, which would never
-  wake you, and not through a wrapper script of your own. Do not look in on
-  the reviewer while it reads. A pending check-in is also your alarm: never
-  end a turn with work still to do unless one is pending, or nothing wakes
-  you until someone else does. Its shape, with your transcript's path as
-  `T`:
-  `N=$(wc -l < T); sleep <period>; if [ $(( $(wc -l < T) - N )) -ge 3 ]; then <resume>; else echo "Nothing happened this period."; fi`,
-  followed by the ending described below. Arming the check-in adds one line
-  and each tool call you make adds two, so three means you did something.
+- In Claude Code, the wait is one background shell command, and its finishing
+  wakes you:
+  `sleep <period>; echo "Period over: decide whether to start the review (paired-reviewer, Keep it running)."`
+  If the answer is yes, start the resume as a second background command, whose
+  finishing brings you the review, with the ending described below. Run each
+  with the shell tool's background option, not with `&`, which would never wake
+  you, and not through a wrapper script of your own. Do not look in on the
+  reviewer while it reads. A pending wait or check-in is also your alarm: never
+  end a turn with work still to do unless one is pending, or nothing wakes you
+  until someone else does.
 - In Codex, nothing wakes you when a background command finishes. Between
   your own steps, once the period has passed, start the resume in the
-  background if you have done anything since the reviewer last looked, and
-  look at it between later steps.
+  background if another look could change anything, and look at it between
+  later steps.
 
 Have the check-in command end by printing where the review is, where your
 list of taken changes is, and where this file is, with a line saying to
