@@ -112,17 +112,17 @@ Four stored code-writing tasks then ran on one brief each. The same two readers 
 |---|---:|---:|---:|---:|
 | Ended early, by its own report | 3 | 2 | 1 | 0 |
 | Does the job: yes, partly, no, first reader | 2, 1, 1 | 2, 1, 1 | 3, 1, 0 | 4, 0, 0 |
-| Does the job, second reader | 2, 1, 1 | 1, 2, 1 | 3, 1, 0 | 3, 1, 0 |
+| Does the job, second reader | 2, 1, 1 | 2, 1, 1 | 3, 1, 0 | 4, 0, 0 |
 | Code lines | 241 | 470 | 380 | 754 |
 | Guards, a rough text match | 7 | 9 | 5 | 15 |
-| Share cut, first reader | 12% | 32% | 32% | 8% |
-| Same, without two mocked test files | 12% | 10% | 16% | 8% |
-| Share cut, second reader | 0% | 1% | 1% | 1% |
+| Share cut, first reader | 13% | 32% | 18% | 9% |
+| Same, without two offline test files | 13% | 10% | 16% | 9% |
+| Share cut, second reader | 1% | 2% | 2% | 1% |
 | Cost of all four | $0.77 | $2.44 | $9.66 | $8.59 |
 | Median minutes | 3.3 | 6.6 | 4.8 | 6.9 |
 
 - **The field read isn't settled.** Every brief was tight and every run short. Open work and rounds of fixes, where people saw the adding, weren't tested.
-- **The share cut rests on one reader.** The second cut almost nothing from anyone, and the first cut its own maker least. The two mocked test files came from a copy with no keys for the live checks the brief wanted.
+- **The share cut rests on one reader, and that reader moves.** The second cut almost nothing from anyone, and the first cut its own maker least. Two settings kept an offline test file, because the copy had no keys for live checks. The first reader cut one file whole and kept most of the other.
 - **A reader trims what it's given.** Two builds of one job, 86 and 388 code lines, both read "yes" and lost little. The share cut can't see what a smaller design would have saved.
 - **The readers saw diffs, not closing reports.** One build scored "yes" by both readers came from a run that said it hadn't finished.
 - **Two of the three causes of early endings came from the test copy:** a broken generator and missing content. The third was a contradiction in a real brief.
