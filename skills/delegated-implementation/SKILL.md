@@ -108,7 +108,9 @@ the affected behavior, evidence, and acceptance criteria. Workers repair code
 and rerun affected checks; the parent reviews the resulting changes and check
 evidence. Skill findings are repaired by the parent under the authorship
 exception. Continue until the accepted work is complete and required checks
-pass, using the caller's existing escalation and review cadence.
+pass, using the caller's existing escalation and review cadence. A reader you
+send gets one round unless a count was named (the shared policy's "Reviews stop
+at the rounds asked for").
 
 Record acceptance and remaining work in the existing plan or worklog. The
 calling workflow determines when the result is merge-ready or complete. This

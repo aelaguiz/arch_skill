@@ -1,15 +1,37 @@
 ---
 name: model-routing
-description: "Choose the model and thinking level for a helper before you start it: a subagent, a `claude -p` or `codex exec` run, or a worker a skill or script launches. Teaches which helper work can run on the same strong model at a lower thinking level and finish in a fraction of the time with as good an answer (research from sources, data analysis, labeling by a codebook, explaining code, problems with one right answer, checking work against a brief, judging against a stated standard), and why, so you can place tasks it does not name. Use when you are about to hand work to a helper and must set its model or effort, or when asked which model or thinking level fits a kind of task. Not for whether or how to delegate (agent-delegate and the shared orchestration policy), the model of a top-level session, or which model an application's code should call."
+description: "Required whenever you start a helper, from a Claude or a Codex parent: a subagent, a `claude -p` or `codex exec` run, a worker a skill or script launches, or a reviewer on a timer. Teaches how to choose its model and thinking level, which is part of the job and never left to inheritance: why the helper exists (a cheap, fast answer or another maker's eye), what a setting really costs once level, Fast and repeat runs are counted, which kinds of work each setting does well, which reviews need deep thinking, stepping up after a miss, native against external helpers, and whose pick wins. Use before you set a helper's model or effort, when you write a skill, script, grid or brief that starts helpers, or when asked which model or thinking level fits a kind of work. Not for whether or how to delegate (agent-delegate and the shared orchestration policy), the model of a session someone else started, or which model an application's code should call."
 metadata:
-  short-description: "Pick a helper's model and thinking level"
+  short-description: "Choose every helper's model and thinking level"
 ---
 
 # Model Routing
 
-When you hand work to a helper, you choose its model and how hard it thinks. The goal is the answer you can act on, as soon as possible. Speed here is wall-clock time until you have that answer, not tokens or money. A fast wrong answer is slower than a slow right one, because you act on it or redo it.
+Every helper you start runs on a model and a thinking level you chose. That choice is part of your job, like choosing what to ask it. There is no default to fall back on. A helper given no level takes yours, which was set for your work and not for its work: in one audit, about 19 in 20 helpers at the two top levels got there by inheriting or forking, and nobody had decided they should.
 
-Always refer to a model as "it" or "its" ("its answer", "it skipped the check"), never as "he" or "she".
+You are after the answer you can act on, as soon as possible, without spending what the work doesn't need. Speed is wall-clock time until you have that answer. A fast wrong answer is slower than a slow right one, because you act on it or redo it. Cost is how long the accounts last for every other agent drawing on them. When the two pull apart and the accounts have room, speed wins. Most of the time they don't pull apart: the setting that wastes money is usually wasting minutes too.
+
+Your own model and level were set by whoever started you, and you can't change them. Nothing here is about them. What is yours is which work you hand off and how each helper runs.
+
+Always refer to a model as "it" or "its", never as "he" or "she".
+
+## Why this helper exists
+
+Most helpers exist to get something done cheaply and fast: find something out, make a change, run a check. Any setting that gets you a usable answer soonest is right, whichever maker built it.
+
+Some exist to put another maker's biases in the mix: a second opinion on a plan, a review before a change lands. Models from one maker share blind spots and favor their own work, so here the other family is the point, and a cheaper setting in your own family doesn't do the job at any price.
+
+One helper can want both. A reviewer that checks in on long-running work wants the other maker's eye, and it runs dozens of times, so it wants the other family at a low setting.
+
+## What things cost
+
+Per-token prices alone mislead, because three things multiply them. [references/costs.md](references/costs.md) has today's prices and what a typical run costs at each setting.
+
+- **The level multiplies tokens.** The same model on the same job cost about three times as much at its top level as at medium, and one build check wrote six times the tokens.
+- **Fast multiplies the price.** It costs 2 to 2.5 times standard. Sol at xhigh on Fast comes to about what Opus at medium costs for the same job.
+- **Runs multiply everything.** Cost is price times how many times it runs. A deep review run once is cheap for what it can catch. The same review on a timer, or after every small revision, was the largest use of an allowance we have measured, well past half of a week's Codex.
+
+So the money is in what repeats. Before you start anything that does (a reviewer on a timer, a loop, a fan-out, rounds of review), multiply it out. A cheap setting on a timer can cost more than a dear one that runs once. A one-off isn't worth agonizing over: pick what fits and go.
 
 ## What a thinking level buys
 
@@ -19,33 +41,90 @@ When the material you hand the helper carries the answer (the sources, the data,
 
 When the value is in what the helper notices that nobody pointed it at, the thinking is the job. Rewriting a batch of quiz questions, the top level fixed the one question whose correct answer was marked wrong; medium answered "nothing to fix" in under a minute. A short task can be like this too: translating twelve strings under a glossary, a width limit and a check script, medium translated as well but skipped measuring the width and running the check. A fast answer that looks finished and isn't costs more than the minutes it saved.
 
-## Lower the level, not the model
+## When a smaller model holds up
 
-Step down by keeping the strong model and lowering its thinking: Opus at medium, or on Codex, Sol at high. Do not step down by moving to a smaller model. Sonnet and Haiku, and Opus at its lowest level, drop rules of the brief and miss the point: a read-only review on Sonnet found the real defects and then wrote files anyway. Sonnet has no room to step down at all; at medium it does markedly worse than Sonnet at max.
+Moving to a smaller model is a different bet from lowering the level. A strong model at a lower level keeps its grip on the brief and does less extra work. A smaller model can lose the grip: in a back-test, Sonnet and Haiku, and Opus at its lowest level, dropped rules of the brief and missed the point about a third of the time or more, against 7% for Opus at medium. A read-only review on Sonnet found the real defects and then wrote files anyway. Sonnet has no room to step down either: at medium it does markedly worse than at max.
 
-## Examples
+That is a finding about work where the brief in the helper's head is all that keeps it honest. Where the spec is complete and a test or a build shows whether the work is right, a smaller model does well: we found no Terra build from a full spec that Sol had to redo. So ask what keeps this helper honest. If it's the brief, keep the strong model at a lower level. If it's a check at the end, the smaller model is likely as good and cheaper.
 
-Each row is a different kind of helper task where the step down holds. They are examples of the idea above, so a task that is plainly one of these under another name gets the same step down.
+## Which setting does which kind of work
 
-| Kind of task | For example | Use | Why the lower level is enough |
-|---|---|---|---|
-| Research a question from documents, email or the web | "Find out who set up this account and what state it is in" | Opus at medium; on Codex, Sol at high | The sources hold the answer, and you read what comes back with its sources |
-| Analyze a dataset and say what it shows | "How did last week's sign-ups compare with the week before?" | Opus at medium; on Codex, Sol at high | The numbers decide it, and the query can be rerun |
-| Label items, or pull fields out of them, by a codebook | "Tag these 40 support tickets with the categories in this list" | Opus at medium; on Codex, Sol at high | The codebook carries the judgment; the job is applying it the same way every time |
-| Explain how some code behaves, or why something broke | "Which file decides when this request is retried?" | Opus at medium; on Codex, Sol at high | The code is the answer key, and file and line references can be checked |
-| Work out a problem that has one right answer | "Which of these three moves is correct, and why?" | Opus at medium; on Codex, Sol at high | A right answer exists and can be checked; more thinking re-derives what medium finds |
-| Check another agent's work against its brief | "Is this session still doing what it was asked to do?" | Opus at medium; on Codex, Sol at high | The brief is the standard; the helper compares rather than invents |
-| Judge images, frames or writing against a stated standard | "Does each of these screenshots follow the style guide?" | Opus at medium; on Codex, Sol at high | The standard is handed over; the helper applies it |
+Each row is the cheapest setting we have seen do that kind of work well, for each family. Names are families, so use the newest version of each. A task that is plainly one of these under another name gets the same setting. "Native or external" below says which column to take.
 
-Anything else runs on what the user named, or your default.
+| Kind of work | For example | Claude | Codex | Why that is enough |
+|---|---|---|---|---|
+| Mechanical work | Rebase, run the tests and report what failed, write PR text, bring docs in line | Opus medium | Terra xhigh | The steps are known and the result shows whether they worked |
+| Look something up | Research a question, analyze a dataset, explain how code behaves | Opus medium | Sol high | The sources hold the answer, and you read what comes back with them |
+| Work out a problem with one right answer | "Which of these three options is correct, and why?" | Opus medium | Sol high | The answer can be checked; more thinking re-derives what medium finds |
+| Check work against a stated standard | Did the build stay inside its spec, label by a codebook, judge copy or images by a style guide | Opus medium | Sol high | The standard is handed over; the helper compares rather than invents |
+| Check in on running work | "Is this session still doing what it was asked?" | Opus medium | Sol high | The same kind of check, run many times |
+| Fix a well-defined bug | Cause known, one or two files, a red CI job, one part of a full spec | Opus medium | Terra xhigh | The thinking is done, and the tests prove the fix |
+| Walk a test plan on a device | Capture each screen and compare it with what was decided | Opus high | Terra xhigh | A long brief, held for many steps |
+| Find a bug's cause | Reproduce it and name the cause | Opus medium | Sol xhigh | The cause is unknown, so the search has to stay honest |
+| Build across several parts from a spec | App and backend, several screens | Opus medium | Sol xhigh | The spec makes the calls; the helper has to keep all of them in view |
+| New feature with algorithmic changes | A new game rule, a ratings change, a spec with open design calls | Opus high | Sol xhigh | The design is still being made, so a cheap first try costs more |
+| Write words people read | Scripts, ad copy, the product's own lines | Opus high | Sol xhigh | The value is in what it notices |
+| Plan or design | An implementation plan and its test plan | Opus high | Sol xhigh | The value is in what it notices |
+| Second opinion, once | A plan or PR, looking for what you missed | Opus high | Astra xhigh | One deep pass, on the family that isn't yours |
+
+A task that fits no row still gets chosen, never left to a default. Ask what carries the answer, what will catch a mistake, and which row it is closest to.
+
+The table gives the cheapest setting that does each kind well, and the goal is still the soonest usable answer. Where a dearer setting finishes sooner, someone is waiting and the accounts have room, take it.
+
+## Which reviews need deep thinking
+
+"Review" covers two jobs that look alike and route differently, and reviews are where most of an allowance goes.
+
+A check compares work with a standard someone handed over: did this session stay on its brief, does the build do what the spec says, do the numbers tie. The standard carries the judgment, so a lower level does it as well.
+
+A second opinion looks for what nobody pointed it at: what is wrong with this plan, what did we miss, what will this change break. There the thinking is the job. It earns the deep setting because it runs once, when what it finds can still change the work. Its first pass finds what matters, each pass after that returns a smaller list, and a strict reader always finds one more.
+
+A timer tells you which one you have. No reviewer sees deeper for being asked every half hour, so a recurring reviewer is a check, however much the work matters, and a check with nothing new to read has nothing to say. When a check turns up something that needs real thought, that is one second opinion on that one thing.
+
+## Step up on a miss, once
+
+Work that plainly needs deep thinking starts deep, because climbing through three settings takes longer than starting in the right place. Everything else starts at its row. When a helper misses, go up one step and try once: on Claude one level, on Codex from Terra to Sol to Astra. Running the same setting again mostly buys the same answer. If the step up misses the same way, stop spending and look at the brief, because two settings failing alike usually means the task was unclear or too big.
+
+A miss is about the work: wrong, unfinished, or a rule of the brief dropped. A helper that died on a launch error, an account limit or a broken tool didn't miss. Fix that and run the same setting again. No amount of model would have saved the one worker in eight that died on a request error in one batch of cheap device runs.
+
+## Native or external
+
+A native helper comes from your host's own subagent tool: Opus, Sonnet or Haiku from a Claude parent, Sol, Terra or Astra from a Codex parent. An external helper is another command line's run, `codex exec` from Claude or `claude -p` from Codex. Either parent can cross, and nothing here assumes which parent you are.
+
+A second opinion crosses, since the other maker is why it exists. Whether crossing pays for a cheap, fast helper is still open. An external run adds a process to launch, an account to use, an answer to read back and a launch that can fail, and nobody has yet measured whether that costs more than a lower price saves. `references/costs.md` will carry the measurement when it exists. Until then, what we know is the shape: that overhead is about the same for any job, so it weighs on a two-minute lookup and hardly at all on a two-hour build. Weigh it that way rather than assuming either answer.
+
+## When speed is worth paying for
+
+Fast and more helpers at once spend more to get the same work sooner. That pays when someone is waiting: a person in the conversation, work that can't start until this finishes. It buys nothing for work nobody is waiting on. A reviewer on a timer that finishes in two minutes instead of four changes nothing about the run it watches, and neither does a faster overnight batch.
+
+A higher thinking level is not a speed setting. It is slower, so when someone is waiting, drop whatever level isn't buying quality before you pay for Fast.
+
+## Whose pick wins
+
+A model or level the user names for a run wins. A pin in a skill, grid, script or brief stands when its reason is written beside it and the reason still holds: "Astra xhigh, because this review is for what Claude can't see." A setting with no reason beside it is a copy of what someone once used, so choose afresh. A pin to an old version of a family means that family: use the newest.
+
+When you write something that starts helpers, it inherits this job: point it at this skill, or give the setting with its reason. A bare model name in a launch line becomes everyone's default within weeks.
+
+## What you hand off
+
+Whether to delegate belongs to `agent-delegate`, but your choice of setting starts there. You run at the level someone set for your whole job, and every step you take yourself pays that rate. Long mechanical stretches (hundreds of shell commands, log reading, retries) are the costly part: one long-running session spent nearly all of its responses on single shell commands. Hand those to a cheap helper. The other edge is a lookup with a known target, which takes less to do than to brief, so do it yourself.
+
+## When one family has no room
+
+Codex and Claude run on separate pools of accounts. When one pool has no room, the other family's model at the matching level takes the work the same day, so nothing stalls waiting for a reset. Astra at xhigh is about Opus at high. Sol at xhigh is about Opus at medium or low; where the job turns on following a long brief, take medium. Terra at xhigh sits lower on coding, about where Sonnet at medium to high or Opus at low would be, but its work still stands in on Opus at medium, because Terra's jobs are builds and checks that hold a brief. The match runs the other way when the Claude accounts are short.
+
+Look again before switching, because accounts come back. Keep the family you would have used while it has room: the match settles which level to ask for, not that the two families think alike. Say which model stood in wherever the work records its models.
 
 ## Setting it
 
-A model or thinking level the user, or the skill you are running, names for a helper wins over this skill.
+Pass both a model and a level, every time. Otherwise use each family's newest version: Claude's `opus` and `sonnet` aliases resolve to it, and Codex's catalog lists it in `~/.codex/models_cache.json`.
 
 - Claude Code's Agent tool: `model: "opus"` and `effort: "medium"`.
-- A one-shot Claude run: `claude -p --model claude-opus-5-5 --effort medium`, or through AI Manager, `aim claude run <account> -- -p --model claude-opus-5-5 --effort medium`.
-- A Codex run: `codex exec -m gpt-6.1-sol -c model_reasoning_effort="high"`.
+- A one-shot Claude run: `claude -p --model opus --effort medium`.
+- A Codex native helper: `spawn_agent` with `model` and `reasoning_effort`.
+- A Codex run: `codex exec -m gpt-6.1-sol -c model_reasoning_effort="high"`. Add `-c service_tier="fast"` for Fast, and only when "When speed is worth paying for" says so.
 - Other hosts, and where a pin stops holding: `../_shared/native-child-capabilities.md`. Check the live tool schema when it and this list disagree.
 
-The numbers behind these examples, how they were measured, and how to measure again when a new model arrives are in [references/evidence.md](references/evidence.md). Read it when you want the evidence for a call.
+A fork takes its parent's model and level and can't be lowered, so forking means paying your own rate for the helper. Fork when it truly needs your whole context, and otherwise start it fresh with the setting you chose.
+
+The measurements behind this skill are in [references/evidence.md](references/evidence.md). When a model arrives or a price moves, `$model-eval` tests it and updates this skill.

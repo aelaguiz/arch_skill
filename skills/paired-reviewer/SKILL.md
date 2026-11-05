@@ -165,11 +165,29 @@ from planning to building. Some the user has asked:
 
 ## Keep it running
 
-After the first review, resume that same reviewer every period, counted from
+After the first review, resume that same reviewer each period, counted from
 when the last check-in started, with the prompt and your current session id.
-The period is the user's number; with none, 30 minutes. Run the check-in in
-the background and keep working; while there is work to do, never sit
-waiting for a review.
+Run the check-in in the background and keep working; while there is work to
+do, never sit waiting for a review.
+
+The period is the user's number when they gave one. Otherwise fit it to how
+fast this work can go wrong, because each check-in is a full read of the
+session, the user's words and the notes, and it repeats for as long as the
+work runs. Building and producing can drift inside an hour, so every half hour
+suits them. Work that moves in steps can't drift between steps, so a loop that
+acts once an hour or once a day is checked once a step, and a training run at
+its checkpoints. With no number and no clear step, 30 minutes.
+
+A check-in with nothing new to read has nothing to say. In one audit about a
+quarter of check-ins came after a session that had done nothing but handle the
+last review, and each one still paid for a full read. So the check-in looks
+before it resumes the reviewer: it notes the time once your turn has settled,
+waits out the period, and resumes only if your transcript has changed since.
+If it hasn't, the command prints that nothing happened and wakes you all the
+same, and that wake is the check. Work waiting means do it now, and
+something running means arm the next check-in. A reviewer once found seven
+hours in which nothing happened, and this keeps that alarm without paying a
+reviewer to ring it. When you are waiting on the user, arm nothing.
 
 - In Claude Code, the check-in is one background shell command that waits
   out the period and then runs the resume; its finishing wakes you. Run it
@@ -177,10 +195,14 @@ waiting for a review.
   wake you, and not through a wrapper script of your own. Do not look in on
   the reviewer while it reads. A pending check-in is also your alarm: never
   end a turn with work still to do unless one is pending, or nothing wakes
-  you until someone else does.
-- In Codex, nothing wakes you when a background command finishes. Start the
-  resume in the background and look at it between your own steps once the
-  period has passed.
+  you until someone else does. Its shape, with your transcript's path as
+  `T` and a marker file beside your notes as `M`:
+  `sleep 60; touch M; sleep <period less a minute>; if [ T -nt M ]; then <resume>; else echo "Nothing happened this period."; fi`,
+  followed by the ending described below.
+- In Codex, nothing wakes you when a background command finishes. Between
+  your own steps, once the period has passed, start the resume in the
+  background if you have done anything since the reviewer last looked, and
+  look at it between later steps.
 
 Have the check-in command end by printing where the review is, where your
 list of taken changes is, and where this file is, with a line saying to
@@ -191,9 +213,9 @@ else reminds you how you agreed to work. Keep that ending when you write the
 next check-in from the last one.
 
 The reviewer belongs to this session, not to a task or milestone in it. Keep
-checking in while anything is still running for the work, including a test,
-a build or a training run you are waiting on: that is when hours go missing.
-Stop only when you are stopped, waiting on the user, or done.
+the check-ins armed while anything is still running for the work, including a
+test, a build or a training run you are waiting on: that is when hours go
+missing. Stop only when you are stopped, waiting on the user, or done.
 
 A resume must come back on the same conversation id, and on the model and
 effort the reviewer started with. `agy` silently starts a new conversation

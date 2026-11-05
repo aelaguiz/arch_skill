@@ -23,7 +23,10 @@ satisfied, the verdict is `fail` with specific reasons. The second and third
 bounded follow-ups in the same consult line resume the exact reviewer by
 default. A fourth turn rotates to a new clean reviewer unless the user asks to
 continue. A new independent gate always starts a new clean reviewer rather
-than resuming convenient history.
+than resuming convenient history. Those follow-ups are for questions about the
+review, not a way to keep reviewing: a `fail` gets one round of fixes, which you
+check yourself, unless the user named a number of rounds (the shared policy's
+"Reviews stop at the rounds asked for").
 
 The parent dispatches native children or external sessions directly. Do not
 add a universal runner, controller, state machine, or harness for this skill.

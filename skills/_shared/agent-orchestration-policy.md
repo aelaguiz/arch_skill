@@ -81,20 +81,19 @@ added later — takes the default below, in every host. A role in the routing ta
 below still gets its routed model. The Codex model preference below is about
 choosing a model for a Codex lane; it does not name a worker for a Codex parent.
 
-When the user names no model and the calling workflow names none, the child is a
-native child of the active host that inherits the parent's model and thinking
-level. Omit both values so the host supplies them. Do not substitute a vendor
-model. If this host cannot start a native child at all, say so, then either do the
-work in the parent or take an external lane on the parent's own model; do not open
-an external lane merely to have a worker when a native child exists.
+When the user names no model and the calling workflow names none, choose the
+child's model and thinking level with the `model-routing` skill and pass both. A
+child left unset takes the parent's, and those were set for the parent's job, so
+leaving them out is a choice nobody made. If this host cannot start a native child
+at all, say so, then either do the work in the parent or take an external lane; do
+not open an external lane merely to have a worker when a native child exists.
 
-Each named value replaces only itself: a named effort runs on the inherited model,
-and an explicit level must be one that model supports. A named model, transport,
-or reviewer needs no justification.
+A named value stands, and `model-routing` fills in the other one. An explicit level
+must be one that model supports. A named model, transport, or reviewer needs no
+justification.
 
-The default covers every role, including review. A review with no model named is a
-native same-model review; ask for a named reviewer when provider diversity is the
-point.
+This covers every role, including review. `model-routing` says which reviews need
+another maker's eye.
 
 ## Role routing: collapse on the same model, hand off on a different one
 
@@ -143,39 +142,35 @@ receipt.
 ## Codex model preference
 
 Applies when a model is being chosen for a child that will run under Codex: an
-external Codex lane from any host, or a native child of a Codex parent that the
-user or workflow is pinning. An unpinned native child of a Codex parent inherits
-under the default above. On any other host, resolve a Codex id against that host's
-live catalog and do not assume it is present.
+external Codex lane from any host, or a native child of a Codex parent. On any other
+host, resolve a Codex id against that host's live catalog and do not assume it is
+present.
 
-Default a Codex model choice to `gpt-6.1-sol` at `xhigh`. Bare `sol` selects
-`gpt-6.1-sol`; `astra` still selects `gpt-6-astra`. Preserve an explicitly named
-model version and reasoning effort, including older Sol versions. Defaults fill
-omitted choices; they do not replace an exact user selection or silently change
-the model of an existing session.
+`model-routing` chooses for helpers. A request that says Codex and nothing more
+means the newest Sol at `xhigh`. Bare `sol` means the newest Sol, and `astra` the
+newest Astra. Preserve a version and reasoning effort the user names for a run, and
+a pin with its reason beside it. None of this silently changes the model of an
+existing session.
 
-## Pin model and thinking level, or inherit knowingly
+## Pin the model and thinking level
 
 Which model and thinking level a helper should run on is the `model-routing`
 skill's question, judged by how soon the parent has an answer it can act on
 rather than by what the child bills. This section is about making that choice
 hold.
 
-A native child normally inherits the parent's model and thinking level. That
+A native child told nothing takes the parent's model and thinking level. That
 inheritance is the whole cost question. An unpinned native child runs the
 parent's model on whatever you gave it, so bulk reading and long implementation
 turns land on the most expensive model in the run. A child pinned to a cheaper
 model bills that model instead. Neither outcome is a property of "native" — it
 is a property of whether the dispatch stated the profile.
 
-The cost question has two directions. When a skill or the user names a worker for
-this parent, state that profile at dispatch or take the external lane. When
-nothing names one, the default above applies and the inherited child is the
-stated profile.
-
 So state the child's model and thinking level at dispatch the same way you state
-its starting context, or state that the child inherits under the default above.
-Treat "cheap worker" as a profile you resolve rather than a transport you pick.
+its starting context. A fork is the exception, because it takes the parent's
+model and level and can't be lowered: choosing a fork is choosing to pay the
+parent's rate. Treat "cheap worker" as a profile you resolve rather than a
+transport you pick.
 Hosts differ in what they will accept: some take both values as spawn arguments,
 some take the model at the call site but the thinking level only in a stored agent
 definition, and some accept only aliases where you expected a full model id.
@@ -368,6 +363,24 @@ External topology stays parent-owned. Ordinary worker and critic prompts should
 say both halves plainly. If peers need to communicate directly rather than
 through the parent, choose a host-native team deliberately and name why that
 topology helps.
+
+## Reviews stop at the rounds asked for
+
+A second opinion runs for the number of rounds the user named; with none named, one.
+Its first pass finds what matters, each pass after that returns a smaller list, and
+a strict reader always finds one more, so "review until it's ready" buys rounds and
+never a verdict. In one audit a single plan took 179 reviews across 22 drafts, and
+each review looked reasonable from inside its own round.
+
+After the round, weigh what it found, fix what holds up, check your fixes yourself,
+and call the work ready or not. A later review earns its place by itself: the work
+changed in a way the first reader never saw, or the user asked. Where a real run can
+settle the question, as a real purchase settles a payment path, run that before you
+pay for another read of the code.
+
+A review of a plan also asks whether each piece should exist and who asked for it,
+because a reader handed a plan polishes the plan. A reviewer starts no reviewer,
+native or external: the parent decides whether more review is worth it.
 
 ## Finish the owned processes
 
