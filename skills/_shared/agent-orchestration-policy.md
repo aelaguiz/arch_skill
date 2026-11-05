@@ -146,11 +146,10 @@ external Codex lane from any host, or a native child of a Codex parent. On any o
 host, resolve a Codex id against that host's live catalog and do not assume it is
 present.
 
-`model-routing` chooses for helpers. A request that says Codex and nothing more
-means the newest Sol at `xhigh`. Bare `sol` means the newest Sol, and `astra` the
-newest Astra. Preserve a version and reasoning effort the user names for a run, and
-a pin with its reason beside it. None of this silently changes the model of an
-existing session.
+`model-routing` chooses for helpers, including one the user asked for by family
+alone. Bare `sol` means the newest Sol, and `astra` the newest Astra. Preserve a
+version and reasoning effort the user names for a run, and a pin with its reason
+beside it. None of this silently changes the model of an existing session.
 
 ## Pin the model and thinking level
 
