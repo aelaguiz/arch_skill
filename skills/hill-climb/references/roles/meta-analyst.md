@@ -28,6 +28,7 @@ The time now is {now}. {other_facts}
   learning now;
 - where the period's hours went: acting on reads, against rewriting the method, correcting rows and planning again; a
   climb busy repairing its own record learns slower than its reads allow;
+- stretches where nothing happened while work was ready: gaps in the ticks, checks and reads longer than the cadence explains, and what sat waiting through them. A paired reviewer skips a look when it has nothing new to read, so a session sitting idle with work ready shows up here or nowhere;
 - whether exploring is getting what it needs: the share of committed spend actually reaching untried options and how it
   has moved, against how much of the map is untried, how fast results drift, and what the charter's `exploring` says
   this climb means to keep reaching for; a share sliding while one option wins big is the usual way a climb gets stuck;
