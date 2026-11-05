@@ -42,9 +42,23 @@ Both judges agree on these, because each compares a model with itself.
 
 Each kind has 4 or 5 tasks, so a row is a direction, not a verdict.
 
-## Why the skill does not move work between Claude and Sol
+## Why the table doesn't rank one family against the other
 
 Each judge scored its own family's answers about 1.5 points higher than the other judge did, though neither knew which model wrote which answer. Sol's judge put Sol at high 0.6 points above the original Opus answers; Opus's judge put it 0.9 below. Averaging the two does not remove that, so the back-test cannot say whether Sol can replace Opus or the reverse. Settling it needs a judge from neither family, or tasks whose answers can be checked.
+
+## What real use showed afterwards
+
+An audit of every Codex and Claude session across five machines, October 29 to November 5, 2026.
+
+- 1,545 of the 1,622 helpers at the two top levels had inherited that level or forked. Nobody had chosen it.
+- Reviewers on a timer at the top Codex model took 59% of that week's Codex allowance. Of 2,113 check-ins, about a quarter came after a session that had done nothing but handle the last review.
+- One plan took 179 reviews across 22 drafts, each reasonable from inside its round.
+- A build check at medium wrote 18k tokens in about 4 minutes, and at max 113k tokens in about 20.
+- No Terra build from a full spec was found that Sol had to redo. 13 of 105 cheap device workers died on a request error, which says nothing about the model's work.
+
+## How firm the table is
+
+Rows on Opus at medium and Sol at high rest on the back-test above. Opus at high was measured on only 15 tasks. Terra and Astra have never been back-tested, so their rows rest on field use and their price rows on Sol's token use. Each kind has 4 or 5 tasks at most, so a row is a direction.
 
 ## Measuring again
 
