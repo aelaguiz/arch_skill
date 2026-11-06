@@ -198,7 +198,7 @@ time and platform request limits that the climb's next tick and every other job 
 spends money. A climb that runs an account out of its limits loses its helpers mid-work and its next ticks; one that
 uses up a platform's request limit stops other climbs' reads. So size each to the decision it serves: research as deep
 as its question needs, reads that say what the call needs, rows that hold what a later reader needs and no more, and
-roles on the model the charter names. That is also what keeps the record short enough to read whole every tick.
+each role on the model and level the charter names for it. That is also what keeps the record short enough to read whole every tick.
 
 **Take now from a live clock.** Use the platform's own time when it reports one, else the machine's, never a time from
 memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it, and cut every
@@ -337,8 +337,8 @@ commands, the current time, the keys its rows will use), and you add any other f
 data that was set aside. Leave out what you hope it finds and your theory of the result. Then apply
 `$prompt-authoring`'s checks to the filled brief: could the role reject your view and still do its job?
 
-Start each role as a clean native child on the model and level `$model-routing` gives it (recorded in the charter's
-`role_model`): in Claude Code, the Agent tool with that model and level; in Codex, `spawn_agent` with
+Start each role as a clean native child on the model and level `$model-routing` gives that role (recorded in the
+charter's `role_models`): in Claude Code, the Agent tool with that model and level; in Codex, `spawn_agent` with
 `fork_turns: "none"`. Roles start clean and cost little next to a test spent on a wrong plan or a method left
 unexamined, so their cost is seldom a reason to put one off; what to keep small is the waiting. Give a role a whole
 round at once (every plan of a round to the plan-checker, every new item to the build-checker and the critic, started
