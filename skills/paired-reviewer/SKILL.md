@@ -37,10 +37,9 @@ changing.
 
 ## Start the reviewer
 
-Use the model or harness the user named. Otherwise pick a different provider
-from yours that is installed on this machine: Antigravity (`agy`, Gemini 4
-Argon) when it is here; otherwise Codex for a Claude session and Claude for a
-Codex session. A different provider is the point: the same model shares your
+Use the model or harness the user named. Otherwise choose its model and level
+with `$model-routing`, from what is installed on this machine. A different
+provider from yours is the point: the same model shares your
 blind spots.
 
 Read `../_shared/agent-orchestration-policy.md`, then start the reviewer as a
