@@ -43,6 +43,6 @@ Agents often write a lesson into the file in the middle of other work, without t
 
 ## Check the file
 
-Give a fresh agent the file and a few situations it never mentions, including one where the obvious move is wrong, and watch what it does. Taking a line out is a guess until an agent shows the case still comes out right.
+Give a fresh agent, on the model and level `$model-routing` gives it, the file and a few situations it never mentions, including one where the obvious move is wrong, and watch what it does. Taking a line out is a guess until an agent shows the case still comes out right.
 
 [references/examples.md](references/examples.md) shows real rule piles next to the intuitions under them, a long paragraph said in a breath, a correction phrased as a rule landing inside the idea it belonged to, and what a revised file looks like. Read it before your first revision of a file.
