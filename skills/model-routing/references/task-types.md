@@ -2,7 +2,7 @@
 
 Read November 5, 2026, from the evidence in [evidence.md](evidence.md). This is a dated reading, and `$model-eval` updates it. The teaching stays in `SKILL.md`, so a new result changes a row here and nothing there.
 
-Each row gives the setting to start on from each family. Without a mark, it's the cheapest setting that held up on that kind of work, and "held" means neither judge saw the score fall by much against the level above it. A * marks a setting that was never run on that kind: a starting guess from field use or the levels around it, tested by nothing yet. Rows rest on 3 to 6 tasks, so each is a direction. Each setting names the version it was measured on. Always run the family's newest version: a newer one starts from its row until it has been measured. A level you or your team has named wins over a row, as "Whose pick wins" says.
+Each row gives the setting to start on from each family. Without a mark, it's the start the evidence supports: usually the cheapest setting that held up on that kind of work, where "held" means neither judge saw the score fall by much against the level above it. Where a row is a judgment call rather than a result, its last column says so. A * marks a setting that was never run on that kind: a starting guess from field use or the levels around it, tested by nothing yet. Rows rest on 3 to 6 tasks, so each is a direction. Each setting names the version it was measured on. Always run the family's newest version: a newer one starts from its row until it has been measured. A level you or your team has named wins over a row, as "Whose pick wins" says.
 
 The rows run from work where the material carries the answer to work where the thinking is the job.
 
