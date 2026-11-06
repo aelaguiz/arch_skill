@@ -1,6 +1,6 @@
 # The evidence behind model-routing
 
-Measured October 27, 2026, on Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 and GPT-6.1 Sol (Codex Fast tier). When these models are replaced, the numbers below are history; the shape (a strong model at a lower level beats a smaller model) is the first guess to test again.
+Measured October 27, 2026, on Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 and GPT-6.1 Sol 6.1 (Codex Fast tier). When these models are replaced, the numbers below are history; the shape (a strong model at a lower level beats a smaller model) is the first guess to test again.
 
 ## What was measured
 
@@ -29,7 +29,7 @@ Both judges agree on these, because each compares a model with itself.
 
 ## Each kind of work, level by level
 
-Each score is the average blind score, 1 to 5, from Sol's judge and then Opus's judge. "First ran on" gives the setting each task started on, because the mix differs by kind: on planning it was two Sonnet 5.5 at max, two Opus and one Sol. So "Score there" is not one model's top level, and a lower setting compares with it fairly only on the tasks that first ran on that same model. `task-types.md` makes that comparison where it matters, and names how many tasks it covers. Otherwise read along a row within one family, for the reason in the next section: each judge favours its own family, but a judge's lean is the same for two levels of one model. The rows run from where levels mattered least to where they mattered most.
+Each score is the average blind score, 1 to 5, from Sol 6.1's judge and then Opus 5.5's judge. "First ran on" gives the setting each task started on, because the mix differs by kind: on planning it was two Sonnet 5.5 at max, two Opus 5.5 and one Sol 6.1. So "Score there" is not one model's top level, and a lower setting compares with it fairly only on the tasks that first ran on that same model. `task-types.md` makes that comparison where it matters, and names how many tasks it covers. Otherwise read along a row within one family, for the reason in the next section: each judge favours its own family, but a judge's lean is the same for two levels of one model. The rows run from where levels mattered least to where they mattered most.
 
 | Kind of work | Tasks | First ran on | Score there | Opus 5.5 medium | Opus 5.5 low | Sonnet 5.5 medium | Sonnet 5.5 low | Haiku 5.5 low | Sol 6.1 high | Sol 6.1 medium | Sol 6.1 low |
 |---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -50,11 +50,11 @@ Each score is the average blind score, 1 to 5, from Sol's judge and then Opus's 
 | Build a content item through its steps | 6 | Opus 5.5 xhigh 3, Opus 5.5 high 1, Sol 6.1 xhigh 1, Opus 5.5 medium 1 | 3.2 / 4.3 | 2.6 / 4.2 | 2.3 / 4.0 | 2.2 / 3.7 | 1.8 / 3.3 | 2.2 / 3.2 | 3.0 / 3.3 | 2.8 / 3.0 | 2.7 / 2.8 |
 | Translate text | 5 | Opus 5.5 max 3, Opus 5.5 xhigh 2 | 4.8 / 5.0 | 4.0 / 4.2 | 3.0 / 3.2 | 3.0 / 3.2 | 2.6 / 2.8 | 2.0 / 2.2 | 4.0 / 3.2 | 4.2 / 3.2 | 3.8 / 3.0 |
 
-Each kind has 3 to 6 tasks, so a row is a direction, not a verdict. Across all kinds, Sol 6.1 at high scored 3.9, medium 3.7 and low 3.5, and misled on 4%, 12% and 10% of tasks. Terra and Astra weren't in this test, and neither were writing code, builds or device work, because the test was stopped before its code-writing tasks ran.
+Each kind has 3 to 6 tasks, so a row is a direction, not a verdict. Across all kinds, Sol 6.1 at high scored 3.9, medium 3.7 and low 3.5, and misled on 4%, 12% and 10% of tasks. Terra 6.1 and Astra 6.0 weren't in this test, and neither were writing code, builds or device work, because the test was stopped before its code-writing tasks ran.
 
 ## Why the scores don't rank one family against the other
 
-Each judge scored its own family's answers about 1.5 points higher than the other judge did, though neither knew which model wrote which answer. Sol's judge put Sol 6.1 at high 0.6 points above the original Opus answers; Opus's judge put it 0.9 below. Averaging the two does not remove that, so the back-test cannot say whether Sol can replace Opus or the reverse. Settling it needs a judge from neither family, or tasks whose answers can be checked.
+Each judge scored its own family's answers about 1.5 points higher than the other judge did, though neither knew which model wrote which answer. Sol 6.1's judge put Sol 6.1 at high 0.6 points above the original Opus 5.5 answers; Opus 5.5's judge put it 0.9 below. Averaging the two does not remove that, so the back-test cannot say whether Sol 6.1 can replace Opus 5.5 or the reverse. Settling it needs a judge from neither family, or tasks whose answers can be checked.
 
 ## What real use showed afterwards
 
@@ -64,7 +64,7 @@ An audit of every Codex and Claude session across five machines, October 29 to N
 - Reviewers on a timer at the top Codex model took 59% of that week's Codex allowance. Of 2,086 check-ins read closely, 576 came after a session that had done nothing but handle the last review.
 - One plan took 179 reviews across 22 drafts, each reasonable from inside its round.
 - A build check at medium wrote 18k tokens in about 4 minutes, and at max 113k tokens in about 20.
-- No Terra 6.1 xhigh build from a full spec was found that Sol had to redo. 13 of 105 cheap device workers died on a request error, which says nothing about the model's work.
+- No Terra 6.1 xhigh build from a full spec was found that Sol 6.1 had to redo. 13 of 105 cheap device workers died on a request error, which says nothing about the model's work.
 
 ## Crossing families and small jobs
 
@@ -87,9 +87,9 @@ That step moved the model and the level together, so the same looks then ran on 
 
 Astra 6.0 at high then ran on all 20 looks. It raised or partly raised 32 of the 52 findings on both readers' marks, against 30 to 33 for Sol 6.1 at high, at $3.33 a look against $0.53. On the 5 looks where Astra 6.0 at xhigh also ran from a frozen copy, Astra 6.0 at high got 10 to 11 of 14 against 10 to 12, in about half the time and for 8% less. Astra 6.0 at high and Sol 6.1 at high missed 14 of the same findings, and the evidence was missing or only partly in the copy for 12 of those.
 
-These figures are a floor on what either would catch live: it had no live records, no earlier thread and shortened tool output. Of the 19 findings both readers said it missed, the evidence was fully in its copy for 4. Astra rerun from the same frozen copies also lost findings, missing 2 to 4 of 14 on five looks where Sol missed 4 to 5, so that gap is too small to divide between the model and the setup.
+These figures are a floor on what either would catch live: it had no live records, no earlier thread and shortened tool output. Of the 19 findings both readers said it missed, the evidence was fully in its copy for 4. Astra 6.0 rerun from the same frozen copies also lost findings, missing 2 to 4 of 14 on five looks where Sol 6.1 missed 4 to 5, so that gap is too small to divide between the model and the setup.
 
-Sol lost most on the job where reviews most often change real work, though that job's reviews also lean most on files a transcript doesn't hold. It lost least on the job whose reviews mostly correct records. Readers counted 24 to 33 further findings from Sol that would change real work, and nobody checked whether those were true. A cold look cost $0.53 on Sol 6.1 at high against $3.75 on Astra 6.0 at xhigh, about a seventh, and Astra's live look cost $7.43. Price per token alone says a fifth, but that ignores what the level does to the tokens.
+Sol 6.1 lost most on the job where reviews most often change real work, though that job's reviews also lean most on files a transcript doesn't hold. It lost least on the job whose reviews mostly correct records. Readers counted 24 to 33 further findings from Sol 6.1 that would change real work, and nobody checked whether those were true. A cold look cost $0.53 on Sol 6.1 at high against $3.75 on Astra 6.0 at xhigh, about a seventh, and Astra 6.0's live look cost $7.43. Price per token alone says a fifth, but that ignores what the level does to the tokens.
 
 ## What each model adds
 
@@ -132,7 +132,7 @@ Since then, two live timers moved to Sol 6.1 at high. Over ten looks on young th
 
 ## How firm the rows are
 
-`task-types.md` says what stands behind each row. Rows with a task count rest on the level-by-level scores above, compared within a family. Rows marked not measured are starting guesses from field use. Opus 5.5 at high was measured on 15 tasks, plus 4 blind-scored on November 5, where it pulled clearly ahead of Opus 5.5 at medium on none. Terra 6.1 at xhigh and Astra 6.0 at xhigh were run on a few real tasks each, November 5: neither pulled clearly ahead of or behind Sol on blind scores, on three tasks a side. The four builds above add a direction for one kind of work, and no more.
+`task-types.md` says what stands behind each row. Rows with a task count rest on the level-by-level scores above, compared within a family. Rows marked not measured are starting guesses from field use. Opus 5.5 at high was measured on 15 tasks, plus 4 blind-scored on November 5, where it pulled clearly ahead of Opus 5.5 at medium on none. Terra 6.1 at xhigh and Astra 6.0 at xhigh were run on a few real tasks each, November 5: neither pulled clearly ahead of or behind Sol 6.1 on blind scores, on three tasks a side. The four builds above add a direction for one kind of work, and no more.
 
 ## Measuring again
 
