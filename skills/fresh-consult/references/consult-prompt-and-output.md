@@ -36,7 +36,9 @@ are still current.
 
 - Starting context: <clean | exact-reviewer history>
 - Continuation: <new-clean | exact-resume | clean-rotation>
-- Native sub-agents: allowed on your own host whenever they help
+- Native sub-agents: allowed on your own host to gather what you need. You
+  start no reviewer, native or external: whether more review is worth it is
+  the parent's call
 - External agents: you may not start any
 
 Keep transport rationale, native mechanism, session handles, chain paths,
@@ -62,9 +64,10 @@ nearby repo, docs, research, tests, command output, or local evidence you judge
 necessary to answer the user's ask. Report what you read and what answer the
 evidence supports.
 
-Use native sub-agents only within the authorized delegation scope and host
-limits. Do not edit or write files, run formatters, coordinate directly with
-sibling consults, start external agents, or start another controller.
+Use native sub-agents only to gather, within the authorized delegation scope
+and host limits. Do not edit or write files, run formatters, coordinate
+directly with sibling consults, start another reviewer, start external agents,
+or start another controller.
 
 # Report Contract
 

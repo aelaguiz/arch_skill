@@ -46,8 +46,8 @@ background lifetime unless the active tool surface confirms it.
 Native children commonly share the parent's workspace. Pair the strongest
 available read-only capability with an explicit no-edit/no-write prompt and a
 parent-owned status or diff check. The parent owns external topology and
-synthesis; child prompts allow the reviewer's own native sub-agents and forbid
-starting external agents.
+synthesis; child prompts allow the reviewer's own native sub-agents for gathering and
+forbid starting another reviewer or any external agent.
 
 ## Choosing The External Lane
 
@@ -431,8 +431,8 @@ consults or gives multiple consult questions and the parent has selected
 external transport for those participants. Parallel consults are still
 ordinary reviewers; the group only gives the parent a place to organize
 chains, prompts, streams, finals, and the combined report. The parent owns the
-external fanout; each reviewer may still use its own native sub-agents and none
-starts another external agent.
+external fanout; each reviewer may still use its own native sub-agents to gather, and none
+starts another reviewer or external agent.
 
 Create one group directory:
 

@@ -118,7 +118,8 @@ add a universal runner, controller, state machine, or harness for this skill.
   even when an older reviewer handle is convenient.
 - The parent owns external topology, the concurrency budget, evidence
   spot-checking, and synthesis. Every reviewer prompt lets the reviewer use its
-  own native sub-agents on its own host and forbids starting external agents.
+  own native sub-agents on its own host to gather, and forbids starting
+  another reviewer or any external agent.
 - For external consults, preserve the existing namespaced chain directories,
   per-turn receipts, event streams, final output, execution metadata, and exact
   session handles described in the invocation reference.
