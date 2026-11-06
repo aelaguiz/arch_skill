@@ -202,8 +202,8 @@ each role on the model and level the charter names for it. That is also what kee
 
 **Take now from a live clock.** Use the platform's own time when it reports one, else the machine's, never a time from
 memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it at the moment
-the row is written, since a time typed ahead of the write is a guess at when the write lands, and cut every data window
-on the platform's reporting day and time zone.
+the row goes in, since a time typed ahead of the write is a guess at when the write lands, and cut every data window on
+the platform's reporting day and time zone.
 
 **No script or rule decides for you.** Read the platform with its own tools, decide yourself what goes in the workbook,
 and work numbers out any way you like, including a quick calculation written on the spot; the row says how you got them.

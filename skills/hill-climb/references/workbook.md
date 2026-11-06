@@ -70,9 +70,9 @@ expensive seat the climb has: on one night about a quarter of what climbs' main 
 times typed by hand had to be corrected twenty times.
 
 So give the climb one closing command, kept with it, as soon as you catch yourself closing a tick the way you closed the
-last. You pass it the rows and the Log's words you have just written. It stamps each time from the clock at the moment it
-writes, appends, reads the rows back, refreshes the Overview, saves the work, and prints one line saying what landed or
-what failed. A time typed ahead of the write is a guess at when the write lands, and that is the time that gets
+last. You pass it the Log's words and any rows still to write; an act's row in the Actions ledger still goes in as the
+act happens. It stamps each time from the live clock at the moment it writes, appends, reads the rows back, refreshes the
+Overview, saves the work, and prints one line saying what landed or what failed. A time typed ahead of the write is a guess at when the write lands, and that is the time that gets
 corrected later. Two climbs on one ad account show the size of it: the one with a command closed an hourly check-in in
 about 12 calls, and the one without took about 26 when the hour had nothing but reading in it.
 

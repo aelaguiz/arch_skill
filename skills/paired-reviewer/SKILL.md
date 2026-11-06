@@ -187,12 +187,12 @@ build polled and found unchanged, or the last review handled and nothing else,
 isn't, so skip it. Skip only because there's nothing to read, never because you
 feel sure of the work: your sureness is what the reviewer is there to check. A
 skipped period costs no coverage, because the next review reads everything
-since the reviewer last looked. The wake is a check in its own right: work
-waiting means do it now, and something running means start the next wait. If
+since the reviewer last looked. The wake matters on its own: work waiting means
+do it now, and a result still to come means start the next wait. If
 you did real work while the last review ran and are about to wait a long while,
 start the reviewer now instead of a wait. A reviewer once found seven hours in
-which nothing happened, and this keeps that alarm without paying a reviewer to
-ring it. When you are waiting on the user, arm nothing.
+which nothing happened, and the wait keeps that alarm without paying a reviewer
+to ring it. When you are waiting on the user, arm nothing.
 
 - In Claude Code, the wait is one background shell command, and its finishing
   wakes you:
@@ -322,13 +322,13 @@ the user asked for, the user's words decide.
 Then go on with the work. A handled review is not a stopping point, and
 neither is a wait you have started: the wait only sets when the next look
 comes, and the work has no reason to keep to it. Before you end a turn, ask
-what you would do now if no timer existed. If the goal has a next step that
-needs no person and no coming result, such as the next idea on the list, the
-research it waits on or a fix a review named, start it now and let the wait
-end whenever it ends. One session finished a piece and ended turn after turn
+what you would do now if no timer existed. If what the user asked for still has
+a next step that needs no person and no coming result, such as the next item on
+its list, the research it waits on or a fix a review named, start it now and
+let the wait end whenever it ends. One session finished a piece and ended turn after turn
 on its wait, with its own list of ideas open and its reviewer saying so each
 time, and lost more than three hours of twelve in the run-up to its busiest
-season. Stop when what is left truly waits, on the user or on a result
+season. End the turn when what is left truly waits, on the user or on a result
 that could change what you would do next, and say in a line what it waits on.
 Work a coming result could change is not a next step yet, and neither is work
 invented to stay busy: the reviewer will ask whether anyone would pay for it.
