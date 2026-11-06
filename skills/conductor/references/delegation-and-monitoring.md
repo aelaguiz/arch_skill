@@ -84,8 +84,9 @@ small chat-only dependency, and `"all"` only when the whole conversation is
 load-bearing. Omitting it is not the same as `"none"` — the current default is
 full inheritance, which is the wrong context and the wrong bill for a phase
 worker. In Claude, a clean named subagent is distinct from an explicit full
-conversation fork, and that fork also forces the parent's model, so it is never
-the way to pin a different worker profile; a skill declared with `context: fork` is an
+conversation fork. A fork on either host takes the parent's model and thinking
+level and can't be lowered, so it is chosen knowing it runs at that setting and
+is never the way to pin a different worker profile; a skill declared with `context: fork` is an
 isolated clean subagent context, not full inheritance. In Prime Agent every
 child is clean and no fork exists, so a load-bearing recent decision must be
 written into the brief.

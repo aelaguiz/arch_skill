@@ -171,14 +171,16 @@ log beside the plan is its durable memory.
   independent review gate start as new clean children on the selected worker
   profile, never on an unpinned native child, because review reading is the
   largest block of bulk tokens in the run.
-- Native model, thinking level, and starting context are all stated at
-  dispatch, with the resolved values recorded in the log. Codex states `fork_turns` — `"none"` for a clean phase worker or
-  critic, a positive count for deliberately bounded chat context, `"all"` only
-  when the whole conversation is genuinely required — because omitting it
-  currently inherits everything. Claude uses a clean named subagent by default;
-  an explicit conversation fork means full inherited conversation and also
-  forces the parent's model, while a skill with `context: fork` is an isolated
-  clean subagent context. Prime Agent children are always clean, so a
+- A fresh native child states its model, thinking level, and starting context
+  at dispatch, with the resolved values recorded in the log. A fork takes the
+  parent's model and thinking level and can't be lowered, so it is chosen
+  knowing it runs at that setting, which the log records too. Codex states
+  `fork_turns` — `"none"` for a clean phase worker or critic, a positive count
+  for deliberately bounded chat context, `"all"` only when the whole
+  conversation is genuinely required — because omitting it currently inherits
+  everything. Claude uses a clean named subagent by default; an explicit
+  conversation fork means full inherited conversation, while a skill with
+  `context: fork` is an isolated clean subagent context. Prime Agent children are always clean, so a
   load-bearing recent decision goes in the brief. Context choice never implies
   permissions, capabilities, or worktree isolation.
 - The parent owns decomposition, external fanout, and integration. Confirm

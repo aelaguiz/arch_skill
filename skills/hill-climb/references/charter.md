@@ -83,7 +83,7 @@ and says why when it departs from them.
 | `speed` | how this climb means to go as fast as it can learn, what usually limits that on this platform, what decides how far ahead of its reads it makes items here (how much the coming reads could change them, how long making, checking and any owner's yes take), and, where it spends a count such as posts, how it means to try spending more and less and read what each does, and why; how fast it is going now goes in the Log and the Overview (references/money.md) |
 | `cadence` | how often ticks run and watch for faults (often enough that new results are acted on soon after they arrive), step back (meta-analyst), revisit the method (strategist), audit, and replay past calls (the auditor re-scoring calls made since the last replay against what came after, and checking the early read still tracks the goal): often enough to catch a narrowing search before it wastes a week, rarely enough that each method change can be judged before the next |
 | `trigger` | what starts the ticks (below) |
-| `role_models` | each role's own model and level, chosen with `$model-routing` for the kind of work it does: the plan-checker, the critic and the reader do different work, so a setting shared by all of them was chosen for none of them |
+| `role_models` | each role's own model and level, chosen with `$model-routing` for the kind of work it does: the plan-checker, the critic and the reader do different work |
 | `outside_sources` | where research looks, and the tools that reach it: the owner's `research_direction` first |
 | `competitors` | who the competitors are, from research |
 
