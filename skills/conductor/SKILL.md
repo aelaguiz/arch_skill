@@ -36,8 +36,8 @@ log beside the plan is its durable memory.
   native child inherits the parent's model unless the dispatch pins
   its model and thinking level; a pinned child bills its own. Pin the profile
   or take the external lane, and never route bulk work to an unpinned native
-  child. When the fleet profile is the parent's own, the inherited native child
-  already carries it and counts as pinned for every rule in this skill.
+  child, even when the fleet profile matches the parent's own: stating both
+  values is what makes the setting a choice.
 - The parent is the scope judge. Workers are genuinely smart but
   over-scope and over-iterate; the parent trims every proposal to the
   smallest sufficient solution and holds the approved boundary against
@@ -171,10 +171,8 @@ log beside the plan is its durable memory.
   independent review gate start as new clean children on the selected worker
   profile, never on an unpinned native child, because review reading is the
   largest block of bulk tokens in the run.
-- Native model, thinking level, and starting context are all explicit at
-  dispatch — the first two stated, or under the inherited fleet deliberately
-  omitted so the host supplies the parent's own, with the resolved values recorded
-  in the log. Codex states `fork_turns` — `"none"` for a clean phase worker or
+- Native model, thinking level, and starting context are all stated at
+  dispatch, with the resolved values recorded in the log. Codex states `fork_turns` — `"none"` for a clean phase worker or
   critic, a positive count for deliberately bounded chat context, `"all"` only
   when the whole conversation is genuinely required — because omitting it
   currently inherits everything. Claude uses a clean named subagent by default;

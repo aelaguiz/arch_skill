@@ -10,9 +10,9 @@ implementation, proof, and review reading on the selected model and effort.
 The cost rule is about pinning, not about transport. A native child inherits
 the parent's model and thinking level unless the dispatch pins them, so an
 unpinned native worker may not use the selected fleet profile. A pinned one bills its own model. Pin the profile or
-take the external lane; never route bulk work to an unpinned native child. When
-the fleet profile is the parent's own, the inherited native child already carries
-it and counts as pinned for every rule in this skill.
+take the external lane; never route bulk work to an unpinned native child, even
+when the fleet profile matches the parent's own: stating both values is what
+makes the setting a choice.
 
 Take the native lane when all four hold:
 
