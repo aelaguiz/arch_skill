@@ -21,7 +21,7 @@ named at invocation is a deliberate exact choice; a house default such as
 Astra xhigh does not override it. If the effort word is not one the named
 model offers (xhigh for a Claude model, say), use that model's nearest level
 and say so in the receipt; that is reading the name, not substituting. A seat
-the user did not name is GPT-6 Astra Pro, unless the calling skill sets its
+the user did not name is GPT-6 Astra Pro (owner direction, 2026-09-30: a ChatGPT consultation, and Astra Pro stays Astra Pro wherever it is specified), unless the calling skill sets its
 own defaults, as `milestone-to-pr` does. A seat renamed mid-run applies from
 the next consultation; record the change in the worklog and carry it into
 the goal, the unblocker charter, and active briefs. `epic-to-prs` names the

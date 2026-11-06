@@ -17,7 +17,7 @@ collaborator: it writes the plan with the coordinator and takes the early PR
 review rounds. The final is the ultimate check: it reads the written-up plan
 once before anyone builds and reviews the PR once at the end. The user names
 the seats at invocation, for example "primary Sol xhigh, final Pro"; with
-none named, GPT-6 Astra Pro holds both. The coordinator's judgment carries
+none named, GPT-6 Astra Pro holds both (owner direction, 2026-09-30: a ChatGPT consultation, and Astra Pro stays Astra Pro wherever it is specified). The coordinator's judgment carries
 the work between them.
 
 Apply `$delegated-implementation` throughout the work: delegate code,

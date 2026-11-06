@@ -102,11 +102,11 @@ still wins over the table for that run.
 
 | Role | Model and effort | Session boundary |
 |---|---|---|
-| Lesson copy author (Lesson Studio) | A Claude model, level by `$model-routing` | Must be a Claude model |
+| Lesson copy author (Lesson Studio) | A Claude model, level by `$model-routing` | Must be a Claude model (owner direction, 2026-09-14: copy goes to Claude models) |
 | Independent lesson reviewer (Lesson Studio) | `$model-routing` | Always a clean session |
 | Charter-lane lesson author (Lesson Studio) | `$model-routing` | As the lane defines |
 | Puzzle final independent reviewer (Poker Skill) | `$model-routing` | Always a clean session |
-| Website copy verdict: the copy gate's cold read (Poker Skill) | A Claude model, level by `$model-routing` | Always a clean session; must be a Claude model |
+| Website copy verdict: the copy gate's cold read (Poker Skill) | A Claude model, level by `$model-routing` | Always a clean session; must be a Claude model (owner direction, 2026-09-14: copy goes to Claude models) |
 | Website page cold reader (Poker Skill) | `$model-routing` | Always a clean session |
 | Adversarial post-build reviewer | `$model-routing` | Always a clean session |
 | Plan reviewer before dispatch | `$model-routing` | Always a clean session |

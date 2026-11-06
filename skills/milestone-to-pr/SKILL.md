@@ -129,7 +129,7 @@ and what is this wait buying?
 Two seats consult, named by the user at invocation and read exactly as
 named: "primary Opus max, final Pro."
 - **The final** writes the milestone plan and reviews the milestone at its
-  boundary. With none named, it is GPT-6 Astra Pro.
+  boundary. With none named, it is GPT-6 Astra Pro (owner direction, 2026-09-30: a ChatGPT consultation, and Astra Pro stays Astra Pro wherever it is specified).
 - **The primary** reads each issue as it lands. With none named, it is a
   native child in a clean context, on the model and level `$model-routing` gives.
 

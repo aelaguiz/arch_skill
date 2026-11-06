@@ -122,7 +122,7 @@ on whatever it does offer; the entry file's no-send rule applies.
 Other layouts appear, such as
 `Configure...` / `Intelligence` or a separate `Extended` thinking control; use
 whatever is offered to the same end. The default is GPT-6 Astra, `Pro`, and
-`Extended` thinking where separately offered.
+`Extended` thinking where separately offered (owner direction, 2026-09-30: a ChatGPT consultation, and Astra Pro stays Astra Pro wherever it is specified).
 
 Select the model and option, close the picker, and read the pill back from the
 page. Write the read-back text and the time in the task notes before Send.
