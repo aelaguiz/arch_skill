@@ -201,13 +201,15 @@ as its question needs, reads that say what the call needs, rows that hold what a
 each role on the model and level the charter names for it. That is also what keeps the record short enough to read whole every tick.
 
 **Take now from a live clock.** Use the platform's own time when it reports one, else the machine's, never a time from
-memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it, and cut every
-data window on the platform's reporting day and time zone.
+memory or a summary; compare read dates, due dates and review periods with it, stamp every row with it at the moment
+the row is written, since a time typed ahead of the write is a guess at when the write lands, and cut every data window
+on the platform's reporting day and time zone.
 
-**No script or rule decides for you.** Read the platform with its own tools, write the workbook yourself, and work
-numbers out any way you like, including a quick calculation written on the spot; the row says how you got them. Keep
-such working files with the climb, not in a shared temporary folder that other work on the machine also writes to. The
-references teach what the numbers mean and what is at stake. No rule here decides in your place.
+**No script or rule decides for you.** Read the platform with its own tools, decide yourself what goes in the workbook,
+and work numbers out any way you like, including a quick calculation written on the spot; the row says how you got them.
+A command can do the writing (references/workbook.md, Closing a tick); what the rows say stays yours. Keep such working
+files with the climb, not in a shared temporary folder that other work on the machine also writes to. The references
+teach what the numbers mean and what is at stake. No rule here decides in your place.
 
 ## Modes
 
@@ -313,9 +315,10 @@ platform shows you counts as much:
   never a count of items made ahead of the money.
 - When a progress report is due (the newest Reviews row of role `report` against the charter's `reporting`), write it
   (references/reporting.md).
-- Write the Log row, with what was learned this tick and what changed because of it (or that nothing moved, and why),
-  refresh the Overview tab, close anything you started that is still running, since it holds the tick open, and end with
-  one line saying what the tick did.
+- Work out the Log row, with what was learned this tick and what changed because of it (or that nothing moved, and why),
+  write it and refresh the Overview tab, through the climb's closing command once it has one (references/workbook.md),
+  close anything you started that is still running, since it holds the tick open, and end with one line saying what the
+  tick did.
 
 A tick with nothing new to read is not finished once the platform checks out or a money request is out; it is when the
 slower work gets done: the reviews the charter's cadence has brought due, research that has gone stale or ideas that
@@ -367,8 +370,8 @@ in the Log, not a fresh role or a rewrite: every correction spends hours the cli
   seeding.
 - references/charter.md: what each Charter field records, and seeding from earlier work.
 - references/research.md: building and refreshing the Library, and how ideas draw on it.
-- references/workbook.md: the tabs and columns and why each exists; read before writing a kind of row for the first time
-  in a session.
+- references/workbook.md: the tabs and columns and why each exists, and how a tick closes; read before writing a kind of
+  row for the first time in a session.
 - references/evidence.md: every tick with a read, a lesson change or a test to plan.
 - references/money.md: every tick that sets spend, and whenever money is short or the owner has answered.
 - references/map.md: choosing what to explore, and judging whether an idea is new.

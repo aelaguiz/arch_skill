@@ -196,14 +196,16 @@ ring it. When you are waiting on the user, arm nothing.
 
 - In Claude Code, the wait is one background shell command, and its finishing
   wakes you:
-  `sleep <period>; echo "Period over: decide whether to start the review (paired-reviewer, Keep it running)."`
+  `sleep <period>; echo "Period over: start any work that is waiting, and decide whether to start the review (paired-reviewer, Keep it running)."`
   If the answer is yes, start the resume as a second background command, whose
   finishing brings you the review, with the ending described below. Run each
   with the shell tool's background option, not with `&`, which would never wake
   you, and not through a wrapper script of your own. Do not look in on the
-  reviewer while it reads. A pending wait or check-in is also your alarm: never
-  end a turn with work still to do unless one is pending, or nothing wakes you
-  until someone else does.
+  reviewer while it reads. A turn that ends with nothing pending wakes only when
+  someone else wakes it, so keep a wait or check-in pending while the work is
+  going. That is your alarm for a stretch when nothing can move, never a reason
+  to stop while something can: "Read and act on every review" ends on how to
+  tell.
 - In Codex, nothing wakes you when a background command finishes. Between
   your own steps, once the period has passed, start the resume in the
   background if another look could change anything, and look at it between
@@ -316,6 +318,20 @@ argue with it point by point, and do not take its findings to the user as
 questions. Never pass a reviewer's claim to the user as fact, its approval
 included, until you have checked it yourself. When a point would change what
 the user asked for, the user's words decide.
+
+Then go on with the work. A handled review is not a stopping point, and
+neither is a wait you have started: the wait only sets when the next look
+comes, and the work has no reason to keep to it. Before you end a turn, ask
+what you would do now if no timer existed. If the goal has a next step that
+needs no person and no coming result, such as the next idea on the list, the
+research it waits on or a fix a review named, start it now and let the wait
+end whenever it ends. One session finished a piece and ended turn after turn
+on its wait, with its own list of ideas open and its reviewer saying so each
+time, and lost more than three hours of twelve in the run-up to its busiest
+season. Stop when what is left truly waits, on the user or on a result
+that could change what you would do next, and say in a line what it waits on.
+Work a coming result could change is not a next step yet, and neither is work
+invented to stay busy: the reviewer will ask whether anyone would pay for it.
 
 ## Replace it when it stops helping
 

@@ -61,6 +61,28 @@ write that failed quietly leaves every later session working from a wrong record
 - **Roles get their keys from you.** When you dispatch a role, give it the key its row will use, or a block of keys when
   it writes several rows, so roles working at once never collide.
 
+## Closing a tick
+
+Every tick ends the same way: the rows its work produced, the Log row, the Overview, a read-back, and whatever saves work
+in this repository. Two kinds of thing are mixed in there. Deciding what the tick learned, what changed because of it and
+what comes next is the climb's thinking, and it is yours. The rest is the same typing every time, done in the most
+expensive seat the climb has: on one night about a quarter of what climbs' main sessions spent went on records, and
+times typed by hand had to be corrected twenty times.
+
+So give the climb one closing command, kept with it, as soon as you catch yourself closing a tick the way you closed the
+last. You pass it the rows and the Log's words you have just written. It stamps each time from the clock at the moment it
+writes, appends, reads the rows back, refreshes the Overview, saves the work, and prints one line saying what landed or
+what failed. A time typed ahead of the write is a guess at when the write lands, and that is the time that gets
+corrected later. Two climbs on one ad account show the size of it: the one with a command closed an hourly check-in in
+about 12 calls, and the one without took about 26 when the hour had nothing but reading in it.
+
+Keep the command to those mechanics. The tick's words are written fresh each tick and passed in, never held in the
+command or copied from the last tick's, and any figure it fills in is read at that moment: one climb's hourly writer was
+a copy of the last hour's, and set names and sentences rode forward after they stopped being true, until about a sixth
+of its time went on those repairs. A command that starts screening what you wrote has started deciding, and one that
+refuses a finished tick's row because a second read failed holds the record back for nothing, so let it write what the
+tick has and say what it lacks. A climb on a host with no shell keeps closing by hand.
+
 ## The tabs
 
 `type` is a map cell, written as `attr=value` pairs in the Charter's attribute order joined by `|` (for example
