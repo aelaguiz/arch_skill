@@ -1,73 +1,41 @@
 ---
 name: amir-publish
-description: "Publish this skills repo across Amir's machine cluster by committing and pushing the current local work, installing locally, then SSHing to the known hosts, skipping the current machine, pulling the same branch from ~/workspace/<repo-name>, and running the local install. Use when Amir asks to distribute, sync, or publish skill changes to his machines. Not for generic deployments, CI release work, or remote edits outside this repo."
+description: "Publish this skills repo to every machine in Amir's cluster by committing the work on main and pushing it; devcluster then pulls, installs and checks it on every machine within minutes, and `devcluster status --all` confirms it. Use when Amir asks to distribute, sync, or publish skill changes to his machines. Not for generic deployments, CI release work, or remote edits outside this repo."
 metadata:
   short-description: "Publish skill changes across Amir's machines"
 ---
 
 # Amir Publish
 
-Use this skill when Amir wants current skill repo changes distributed across his usual machines.
+Use this skill when Amir wants current skill repo changes on all of his machines.
 
-This is prompt-only shell orchestration. Do not add scripts, harnesses, controller state, or new automation infrastructure.
+Every machine runs devcluster, which keeps this repo's `main` in sync on its own: every two minutes it pulls `main`, merges and pushes commits made on that machine, and runs `make install` and then `make verify_install` whenever the commit changes. A failed install puts the installed skills back as they were. So publishing means getting the work onto `main` on GitHub. Nothing logs in to the other machines.
 
 ## When to use
 
 - Amir asks to publish, sync, distribute, or roll out this skills repo to his machines.
-- The desired workflow is local commit, push, local install, then remote pull and install.
-- The target machines are the fixed cluster listed below.
+- A skill change should reach every machine, and you want to confirm it did.
 
 ## When not to use
 
 - The task is a generic deploy, package release, or CI workflow.
-- The task is only to install the current machine without pushing or syncing remotes.
+- The task is only to install the current machine: run `make install`.
 - The repo is not the skills repo or does not have the expected local install command.
-- The user wants `make remote_install`; this workflow keeps each remote repo on the same branch instead of copying files over SSH.
-
-## Machine List
-
-Publish to these SSH targets, skipping whichever one is the current machine:
-
-- `amirs-m3-max-new`
-- `amir-m3-36gb`
-- `agents@amirs-mac-studio`
-- `amir-m5`
-- `home`
-
-Treat `agents@amirs-mac-studio` as the host `amirs-mac-studio` when deciding whether to skip the current machine.
 
 ## Workflow
 
-1. Resolve the git repo root, current branch, current commit, and repo directory name. The local path may be `/Users/aelaguiz/workspace/<repo-name>`, but remotes must use `~/workspace/<repo-name>` because home directories differ across machines.
-2. Identify the current machine with `hostname -s` or the closest available hostname command.
-3. Inspect `git status --short`. Default to committing the full tracked-file diff across the repo, including tracked changes you do not recognize. Unfamiliar tracked changes are not a blocker by themselves.
-4. Stage tracked modifications and deletions with `git add -u`. Also stage untracked files that are clearly part of the current repo work; ask only for ambiguous untracked files or concrete safety issues such as secrets.
-5. If there are changes to commit, create one concise commit. If there is nothing to commit, say so and continue.
-6. Push the current branch to its upstream. If no upstream exists, push with `git push -u origin <branch>`.
-7. Run the local install command from the repo root:
-
-```bash
-make install
-```
-
-8. For each non-skipped SSH target, run the remote sync from the repo under that host's home-relative workspace. Do not use the local absolute `/Users/aelaguiz/...` path on remotes.
-
-```bash
-cd ~/workspace/<repo-name> &&
-git fetch origin &&
-(git checkout <branch> || git checkout -t origin/<branch>) &&
-git pull --ff-only &&
-make install
-```
-
-9. If one remote fails, continue to the remaining hosts unless the failure means the pushed branch or local install is invalid. Keep the failed host and command visible in the final summary.
+1. Work on `main`. devcluster distributes only `main`; work on another branch reaches the machines once it's merged into `main`.
+2. Inspect `git status --short`. Default to committing the full tracked-file diff across the repo, including tracked changes you do not recognize. Unfamiliar tracked changes are not a blocker by themselves.
+3. Stage tracked modifications and deletions with `git add -u`. Also stage untracked files that are clearly part of the current repo work; ask only for ambiguous untracked files or concrete safety issues such as secrets.
+4. If there are changes to commit, create one concise commit. If there is nothing to commit, say so and continue.
+5. Push `main`. If origin moved first, pull with a merge, never a rebase, and push again.
+6. If this session needs the change right away, run `make install` here. Otherwise devcluster installs it here too within a few minutes.
+7. Confirm it arrived: `devcluster status --all` lists `repo arch_skill` for every machine with its commit. Within about ten minutes each should be at the commit you pushed. A machine under "Needs you" or "Failed" says in its line what stopped it.
 
 ## Output
 
 Keep the final response short:
 
-- local branch and commit pushed
-- local install result
-- each remote host result
-- any skipped host
-- any failed host and the exact next repair step
+- the commit pushed
+- the local install result, if you ran one
+- which machines are at that commit, and the status line of any that aren't
