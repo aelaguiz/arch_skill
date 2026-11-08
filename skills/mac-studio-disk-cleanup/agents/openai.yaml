@@ -1,7 +1,7 @@
 interface:
   display_name: "Mac Studio Disk Cleanup"
-  short_description: "Reclaim disk space on agents@amirs-mac-studio"
-  default_prompt: "Use $mac-studio-disk-cleanup to inspect agents@amirs-mac-studio, remove stale worktrees, verified orphaned checkouts, and authorized disposable clutter, including idle shell blockers. Verify actual disk headroom and save the actions and remaining large owners in its cleanup report."
+  short_description: "Clean the agents Mac Studio and keep it from filling"
+  default_prompt: "Use $mac-studio-disk-cleanup on agents@amirs-mac-studio: size the whole disk once, snapshot what every process uses, say what each big folder is, and clear what finished tasks left behind. Keep running services, CI, Hermes, the Colima VM, credentials and Amir's account folder. Delete the local snapshots the T7 already has and measure free space before and after."
 
 policy:
   allow_implicit_invocation: true

@@ -72,17 +72,12 @@ ChatGPT session, and the vendored thermonuclear rubric remains unchanged.
 
 ## Disk maintenance
 
-Use `$disk-cleanup` for the local developer Mac. Use
-`$mac-studio-disk-cleanup` for `agents@amirs-mac-studio`, including its nightly
-01:15 America/Chicago job. The host-specific skill covers Hermes clutter,
-AIM backups, generated build output and disposable simulator data, with current
-activity checks and measured free-space results. Its latest report is on the
-Mac Studio at `~/.local/state/mac-studio-disk-cleanup/latest/final.md`.
-
-Use `$home-disk-cleanup` on the Linux `home` server for root and mounted data
-drives, including obsolete RustAI training/test output. The two M3 developer
-Macs use `$disk-cleanup`. The Studio uses GPT-6.1 Sol high; the other three jobs use Sol medium;
-see [Nightly disk cleanup](NIGHTLY_DISK_CLEANUP.md) for schedules, saved native
+Use `$disk-cleanup` on Amir's laptop, the M3s and Mini 1, `$mac-studio-disk-cleanup`
+on `agents@amirs-mac-studio`, and `$home-disk-cleanup` on the Linux `home` server.
+All three share one judgment, kept in `disk-cleanup`: find what is alive, name it,
+and clear what is dead, saving unsaved work first. The two host skills add their
+machine's map and nightly report contract. See
+[Nightly disk cleanup](NIGHTLY_DISK_CLEANUP.md) for schedules, saved native
 configuration, report locations and operator commands.
 
 ## Shared conventions

@@ -1,13 +1,14 @@
 # Nightly disk cleanup
 
-Each job runs one AIM-managed Codex session. **Default model: GPT-6.1 Sol.**
-The shared launcher for home and both M3 Macs selects `gpt-6.1-sol` at `medium`.
-The Studio's separately owned launcher selects `gpt-6.1-sol` at `high`.
-This is routine filesystem housekeeping with host-specific instructions. There
-is no child-agent fan-out or automatic switch to Astra. Computer-use is disabled
-for these shell maintenance jobs to prevent an unrelated desktop helper from
-surviving a run. Each run has a 20-minute
-deadline and records the real process exit status plus measured free bytes.
+Each job runs one Codex session. The launchers installed on `home` and both M3
+Macs run DeepSeek flash through the `dsflash` Codex profile with a 40-minute
+deadline. The copy in [scripts/nightly_disk_cleanup.sh](../scripts/nightly_disk_cleanup.sh)
+still selects GPT-6.1 Sol at medium with 20 minutes, so reinstalling the
+launcher from this repo would change the model. The Studio's separately owned
+launcher runs GPT-6.1 Sol at xhigh through AIM with a two-hour backstop. There
+is no child-agent fan-out. Computer-use is disabled for these shell maintenance
+jobs so no desktop helper outlives a run. Each run records the real process exit
+status plus measured free bytes.
 
 | SSH target | Time, America/Chicago | Skill | Volumes and maintenance target |
 | --- | --- | --- | --- |
@@ -15,16 +16,15 @@ deadline and records the real process exit status plus measured free bytes.
 | `home` | 01:45 | `home-disk-cleanup` | Root, 150 GB; each mounted data drive, 10% available |
 | `amirs-m3-max-new` | 02:15 | `disk-cleanup` | Data volume, 150 GB available |
 | `amirs-m3-36gb` | 02:45 | `disk-cleanup` | Data volume, 150 GB available |
+| Amir's M5 (local) | 03:00 | `disk-cleanup` | AIM routine `daily-disk-cleanup`, prompt in `~/.aimgr/routines/prompts/daily-disk-cleanup.md`, Sol at xhigh |
 
-Targets guide cleanup; they do not authorize deleting unique work to force a
-number. Recurring retention runs even above target. Expired AIM snapshots and
-rotated diagnostic logs have seven-day retention; large eligible text logs keep
-a recent tail; completed cleanup reports have fourteen-day retention. Source,
-active builds/training, useful models, current credentials, persistent service
-data and current device work remain protected. The home skill uses policy
-catalogs and run metadata to distinguish throwaway training/test output from
-retained policies, without loading policy payloads. Missing data mounts are
-skipped, so cleanup cannot accidentally operate on the directory underneath.
+Targets are floors, not finish lines: each run names the live work on its
+machine, clears what is dead whatever the free-space number says, and keeps
+what is alive, what serves players, credentials, live databases and Amir's own
+files. Expired AIM snapshots and rotated diagnostic logs have seven-day
+retention; large append-written text logs keep a recent tail; completed cleanup
+reports have fourteen-day retention. Policy decisions use metadata only. Missing
+data mounts are skipped, so cleanup can never operate on the directory underneath.
 
 ## Source and installed files
 

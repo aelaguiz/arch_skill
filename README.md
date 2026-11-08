@@ -61,9 +61,9 @@ Other shipped skills are:
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
-- `disk-cleanup` — deletes old task checkouts and worktrees after pushing their unsaved work to salvage branches, plus reproducible build/cache output, unused task simulators and emulators, and authorized inactive Prime state; refreshes current activity, keeps canonical checkouts and work in live use, and measures actual free space
-- `mac-studio-disk-cleanup` — maintains disk headroom on `agents@amirs-mac-studio`, including Hermes clutter, AIM backups, build output and disposable simulators; the existing host timer runs it nightly at 01:15 Chicago time
-- `home-disk-cleanup` — cleans obsolete RustAI training/test output and developer clutter on the Linux home server, measuring root and each mounted data drive separately
+- `disk-cleanup` — frees disk space by finding what is still alive (one process snapshot matched against every candidate) and clearing the rest: old task checkouts after salvaging their unsaved work, finished experiments' bulk, leftover task output, unused builds, caches, task devices and VMs; keeps what serves players, credentials and Amir's own files, and measures actual free space
+- `mac-studio-disk-cleanup` — the Mac Studio's map and nightly contract on top of `disk-cleanup`'s judgment: what each big folder on `agents@amirs-mac-studio` is, Hermes and AIM retention, simulators and the T7 snapshots; the host timer runs it nightly at 01:15 Chicago time
+- `home-disk-cleanup` — the Linux home server's map and nightly contract on top of `disk-cleanup`'s judgment: old RustAI and PS Mobile checkouts, finished experiments on the `/mnt` data drives, and what serving and live checkouts still need; measures root and each data drive separately
 - `codex-babysit` — optional source-retained skill for watching an already-running Codex goal-mode tmux pane; it is not installed by default
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs and strict `approve | not-approved | inconclusive` verdicts
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
@@ -565,43 +565,43 @@ Use when `~/.codex` is multi-GB, old session JSONL/log/cache files are bloated, 
 
 ### `disk-cleanup`
 
-Use when a developer Mac is running out of disk space or the user wants a
-specific amount free. The prompt-only skill starts with a bundled map of
-Amir's recurring worktree, build, cache, and log locations and any saved local
-cleanup inventory. Canonical checkouts such as `~/workspace/psmobile` and
-`~/workspace/psagentspace` are protected regardless of age or Git status. It
-preserves active and dirty worktrees, retained Git
-branches/commits, and unique ignored files, executes authorized cleanup, and
-measures actual free space afterward. Daily housekeeping refreshes Git registrations,
-removes confirmed unused task simulators and inactive Prime session/recovery state,
-and checks generated build leaves even when a nested repository prevents removing
-the whole worktree. It saves paths and recovery information for the next run.
-Use `codex-cleanup` for work confined to Codex state, and
-`arch-docs` for documentation cleanup.
+Use when a machine is running out of disk space, the user wants a specific
+amount free, or for nightly housekeeping on the M5, the M3s and Mini 1. The
+prompt-only skill starts from what is true of these machines: each has two or
+three live projects, and almost everything else was left by agents whose
+sessions have ended. It finds what is alive with one process snapshot matched
+against every candidate, plus links, services, containers, Git state and PR
+state, names the live work, and clears the rest: dead checkouts first (unsaved
+work pushed to a salvage branch, or to a local salvage repository when there is
+no remote), then finished experiments' bulk, task output, unused builds and
+caches, and stopped task devices and VMs. It keeps what serves players,
+credentials, live databases, Amir's own files and one working copy of each live
+project, and measures actual free space afterward. Use `codex-cleanup` for
+Codex's own state.
 
 Example: `Use $disk-cleanup to get this machine back to 1 TB free.`
 
 ### `mac-studio-disk-cleanup`
 
-Use for `agents@amirs-mac-studio`, including its nightly maintenance. The
-prompt-only skill carries the host storage map, recurring retention, activity
-checks and actual free-space verification. It targets 150 GB free and reports
-remaining pressure below 100 GB. The Mac Studio's existing launchd job runs a
-fresh AIM-managed GPT-6.1 Sol high session at 01:15 America/Chicago; scheduling lives in
+Use for `agents@amirs-mac-studio`, including its nightly maintenance. It applies
+`disk-cleanup`'s judgment with the Studio's map: what each big folder on a Mac
+nobody uses by hand is, Hermes and AIM retention, simulators, the Colima VM and
+the T7 backup's local snapshots. The Mac Studio's launchd job runs at 01:15
+America/Chicago; scheduling lives in
 `~/workspace/agents/deploy/mac/host_runner/nightly_disk_cleanup.sh` on that host.
 Reports live under `~/.local/state/mac-studio-disk-cleanup/latest/` there.
-Use `disk-cleanup` for the local developer Mac.
 
 Example: `Use $mac-studio-disk-cleanup to clear the agents Mac Studio.`
 
 ### `home-disk-cleanup`
 
-Use for the Linux `home` server's root and mounted data drives. The skill
-removes verified disposable RustAI test/training output, inactive build caches,
-expired AIM backups and logs while preserving active jobs and retained policies.
-Policy inspection uses metadata only. The nightly systemd timer runs at 01:45
-America/Chicago on GPT-6.1 Sol medium. The two M3 Macs use `disk-cleanup` at
-02:15 and 02:45. See [fleet operations](docs/NIGHTLY_DISK_CLEANUP.md).
+Use for the Linux `home` server's root and its `/mnt` data drives. It applies
+`disk-cleanup`'s judgment with the server's map: old RustAI and PS Mobile
+checkouts, finished experiments' bulk, the `machines run` mirror, and what the
+serving processes and live checkouts still link to. Policy decisions use
+metadata only. The nightly systemd timer runs at 01:45 America/Chicago; the two
+M3 Macs run `disk-cleanup` at 02:15 and 02:45. See
+[fleet operations](docs/NIGHTLY_DISK_CLEANUP.md).
 
 Example: `Use $home-disk-cleanup to clean root and the mounted training drives.`
 

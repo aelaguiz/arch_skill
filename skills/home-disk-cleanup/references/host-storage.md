@@ -1,95 +1,32 @@
-# Home server storage map
+# Home server map
 
-Host alias `home` resolves to `home.fairy-salmon.ts.net`. The machine is
-`amir-server`, user `aelaguiz` (UID 1000), home `/home/aelaguiz`.
+Host alias `home` resolves to `home.fairy-salmon.ts.net`. The machine is `amir-server`, user `aelaguiz` (UID 1000), home `/home/aelaguiz`. Noninteractive `sudo -n` works. Never type or prompt for a password.
 
-## Mounted volumes
+## Volumes
 
-| Path | Expected filesystem identity | Initial September 22 observation |
-| --- | --- | --- |
-| `/` | Linux root ext4 filesystem | Approximately 288 GiB available |
-| `/mnt/p2` | ext4 UUID `33d0a72f-c3b3-4299-a591-dcac986c9327` | Approximately 1.9 TiB available |
-| `/mnt/p3` | ext4 UUID `41f6ce2d-a3e0-488b-9550-180ba6642bc7` | Approximately 592 GiB available |
+| Mount | Identity | Size | What it holds |
+| --- | --- | --- | --- |
+| `/` | ext4 UUID `12baa62b-8161-44d2-ad3d-66d348fcc49a` (`/dev/nvme1n1p2`) | 982 GB | `~/workspace`, caches, agent homes. |
+| `/mnt/p1` | ext4 on `/dev/nvme0n1p1` | 983 GB | `rebel-turn-port` and `rebel-gap` experiment work, older archives, `caches` (uv, go-build), QA build copies. |
+| `/mnt/p2` | ext4 UUID `33d0a72f-c3b3-4299-a591-dcac986c9327` (`/dev/sdb`) | 4 TB | RustAI stores, experiment rounds, QA stacks, `machines run` mirror. The kernel reports past filesystem errors on this drive, so don't run large rewrites on it. |
+| `/mnt/p3` | UUID `41f6ce2d-a3e0-488b-9550-180ba6642bc7`, label `p3-degraded` | | It is unmounted on purpose (`noauto` in `/etc/fstab`). Its mountpoint is an empty directory on root. Never touch it. |
 
-Use `findmnt --target <path> -n -o TARGET,UUID,FSTYPE` and confirm the returned
-mountpoint is the expected one. If a data drive is absent, skip its directory
-and warn; never clean the root filesystem directory underneath a missing mount.
-The other `/mnt` names included unmounted empty directories. Rediscover newly
-mounted user data drives before including them, using the same ownership
-checks. Never touch EFI, system pseudo-filesystems or unrelated mounted data.
+## Where things are
 
-## Known owners
+- **Primary checkouts.** `~/workspace/rustai` is Amir's: his sessions run in it, and its `policies` and `policies_blueprint` link to `/mnt/p2/policies_hydrated_20260611` and `/mnt/p2/policies_blueprint_0422`. `~/workspace/rustai-agents` is the agents' checkout, linked into `/mnt/p2/rustai-agents`. `psmobile`, `psagentspace`, `agentspace`, `puzzledb` and the other top-level repositories are the working copies of their projects.
+- **Task checkouts.** `~/workspace/rustai-worktrees/*`, top-level `~/workspace/rustai-*` copies, `~/workspace/psmobile-worktrees/*`, `~/workspace/experiments/*`, and `/mnt/p2/product-engineer/wt-*` and similar QA checkouts on the data drive.
+- **Serving.** The Play vs AI server runs from a worktree under `~/workspace/rustai-worktrees`, with its binary built under `/mnt/p2/rustai_local`. The snapshot shows its current folders; don't assume them.
+- **RustAI stores on `/mnt/p2`.** `rustai-agents/` holds the agents' four linked folders plus experiment folders: curriculum runs, Sit & Go census and pruning runs, PR checks. `rustai_local/` holds `artifacts/challenges` (a canonical decision store, a `drafts` store and a `.legacy_*` copy from February), `policies_blueprint`, `policies_archive` and build targets. `policies_blueprint`, `policies_blueprint_0422` and `policies_hydrated_20260611` sit at the top level of `/mnt/p2`. QA layout scripts in `/mnt/p2/product-qa-*` name `rustai_local/artifacts`. Read them before removing anything under it.
+- **Hard links.** Many policy files in `/mnt/p2/rustai-agents` are hard links to the same data as Amir's `/mnt/p2` policy folders. Deleting one copy frees nothing while the other remains.
+- **Experiment rounds.** `/mnt/p2/ms12/<round>`, `/mnt/p2/sng*`, `/mnt/p2/pluribus-*`, `/mnt/p2/coach-backtest*`, `~/workspace/archives`, `~/workspace/m12-*`, `/mnt/p1/rebel-*`. Running round scripts (`step*.sh`) show up in the snapshot.
+- **`/mnt/p2/machines-run-mirror`.** This is where `machines run` copies a Mac's workspace folders so commands can run here. It regenerates on the next `machines run`. A copy with no process using it, and no writes since the run that made it, can go.
+- **Caches.** `~/.cargo`, `~/.gradle`, `~/.cache`, `/mnt/p1/caches`, Docker images and build cache (`docker system df`). Docker volumes and the databases in them stay.
+- **AIM backups.** Direct children of `~/.aimgr` named `secrets.json.bak.<YYYYMMDD-HHMMSSmmm>` or `local-state.json.bak.<...>` that are older than seven days, by both their name and their modification time. Never read their contents.
+- **Logs.** Text logs over 128 MiB that a process appends to can be cut to their last 4 MiB in place, keeping the inode. A writer that doesn't append needs its own rotation.
+- **Trash.** `/mnt/p2/.Trash-1000` is a desktop trash can, and nothing there is in use.
 
-- Root: `~/workspace/rustai`, `rustai2`, their `*-worktrees`/`*_worktrees`
-  collections, `~/workspace/checkpoints`, experiment output roots and normal
-  developer caches. Catalogs live at each relevant checkout's
-  `config/catalog.toml`; also inspect registry/run metadata when applicable.
-- Root build accumulation: inspect `~/workspace/rustai-worktrees/*/target/debug`
-  and `target/release`, standalone issue checkouts such as
-  `~/workspace/rustai-issue-760/target`, and
-  `~/workspace/psmobile-worktrees/*/apps/flutter/build`. These are discovery
-  examples, not a fixed allowlist. Use current Git registrations and shallow
-  workspace metadata to find new owners. Only remove verified generated child
-  directories; worktree names, recent mtimes and unrelated source edits do not
-  establish that build output is needed. Cargo `target/codex_research_configs`
-  can contain tracked source, so a whole-target deletion is unsafe.
-- `/mnt/p2/rustai_local/` contains `target`,
-  `target_relocated_from_root_20260806`, `handbuilder_serving_main_target`,
-  `runs`, `artifacts`, `cardabs`, `policies_blueprint`, and `policies_archive`.
-  Inspect the leaf owner; the parent holds useful data as well as build output.
-  `/mnt/p2/policies_blueprint` and `/mnt/p2/rustai2_artifacts/challenges`
-  are potentially canonical artifacts. Worktree collections also live here.
-- `/mnt/p3` contains many separately owned Cargo targets, temporary test
-  directories, `go-cache`, `go-tmp`, logs, `artifacts`, policy stores and
-  archived runs. Use source/config references and filesystem structure to
-  identify disposable output rather than treating the names as deletion rules.
-- `~/workspace/rustai/policies` resolves into
-  `/mnt/p3/policies_hydrated_20260611`. Other policy owners include
-  `/mnt/p3/policies_blueprint_0422`, `policies_extra_20260917`, and
-  `/mnt/p2/rustai_local/policies_archive`. Resolve catalog entries through
-  these aliases before deciding any child policy is unreferenced.
-- The agents' RustAI checkout `~/workspace/rustai-agents` and its policy store
-  `/mnt/p2/rustai-agents` (`policies/`, `policies_blueprint/`, `runs/policies/`,
-  `artifacts/cardabs/`) make this machine a RustAI policy box for agents (the
-  `machines` skill, since 2026-10-27). That checkout's four links reference every
-  policy in the store and it serves Practice vs AI and Sit & Go, so none of it is
-  unreferenced; only its `target/` is ordinary build output. Many store entries
-  are hard links to the same files as Amir's `/mnt/p2` policy folders, so
-  deleting either copy frees no space while the other remains.
-- `~/workspace/rustai/artifacts/policies`, `rustai2/artifacts/policies`,
-  per-worktree test outputs and recorded short-run directories are useful
-  leads for obsolete throwaway policies. Preserve production/retained-model
-  references wherever the payload physically lives.
+## Scheduler and reports
 
-For AIM backup retention, inspect direct children of `~/.aimgr` matching
-`^(secrets|local-state)\.json\.bak\.(\d{8}-\d{9})$`. Require both a valid
-name timestamp and mtime older than seven days. Preserve current files and
-open snapshots. Precompute path guards once for large candidate sets.
-
-`/run/user/1000` was full because of a 13 GB `dictation_*.wav` recording.
-That recording is user data, not training garbage. Do not erase it as routine
-cleanup. Do not purge runtime sockets or another session's temporary files.
-Docker persistent data and real retained datasets likewise need their own
-owner-aware treatment, not broad pruning.
-
-## Runtime operations
-
-Process inspection may require `sudo -n` even for another process owned by
-`aelaguiz`. Test noninteractive access before treating a permission error as a
-blocker. Inspect root and user processes without printing secret-bearing
-arguments or environment values. Preserve serving executables wherever they
-live, including binaries reached through aliases on `/mnt`.
-
-The user systemd manager has lingering enabled, so the timer can run without
-an interactive SSH login. Inspect with
-`systemctl --user status nightly-disk-cleanup.timer` and
-`systemctl --user list-timers nightly-disk-cleanup.timer`.
-Start one manual verification with `systemctl --user start --no-block
-nightly-disk-cleanup.service`. Native systemd owns overlap prevention and its
-service control group; use `systemctl --user stop nightly-disk-cleanup.service`
-to stop this job. Never kill shared training processes by name.
-
-The installed launcher is `~/.local/bin/nightly-disk-cleanup`; the mission is
-`~/.config/disk-cleanup/mission.md`. Latest results are in
-`~/.local/state/disk-cleanup/latest/`. An absent `exit-code` means the current
-run has not completed. `error.log` and the journal explain failed starts.
+- **Timer.** `systemctl --user list-timers nightly-disk-cleanup.timer` shows it, and `systemctl --user start --no-block nightly-disk-cleanup.service` starts one run by hand. Stop a run with `systemctl --user stop nightly-disk-cleanup.service`, and never kill shared training processes by name.
+- **Runs.** Each run's folder is `~/.local/state/disk-cleanup/runs/<time>`, and `latest` points at the newest. The launcher saves `final.md`, `events.jsonl`, `error.log` and `exit-code`, and checks that `summary.json` has `host`, `status` and `volumes`, with integer byte fields. A missing `exit-code` means the run hasn't finished.
+- **Retention.** Keep completed run folders for 14 days.

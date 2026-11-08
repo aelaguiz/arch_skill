@@ -1,138 +1,45 @@
-# Worktree and measurement mechanics
+# Removing checkouts and measuring the result
 
-Use these command shapes inside a scope selected from live evidence. Quote
-paths and prefer subprocess argument arrays for manifests containing many
-paths. Do not paste secret-bearing process arguments into output.
+Quote every path, and work from a saved list of checkouts rather than a glob.
 
-## Measure once
+## Delete first what has nothing unsaved
 
-`df` or Python's disk-usage API measures the actual volume. For exact byte
-comparisons, use the same path before and after:
+A dead checkout has nothing unsaved when all of these are true:
 
-```python
-from pathlib import Path
-import shutil
+- `git status --porcelain` is empty;
+- `git rev-list --count HEAD --not --remotes` prints `0` after a pruning fetch;
+- it has no nested repository with its own unsaved work.
 
-volume = Path.home() / "workspace"
-usage = shutil.disk_usage(volume)
-print({"total_bytes": usage.total, "free_bytes": usage.free})
-```
+A standalone clone, which is not a linked worktree, also needs no local branch and no stash that the remote lacks. Remove these checkouts right away: they free most of the space and need no backup. Then salvage the others in a batch.
 
-`du -sk <selected-path>` estimates allocated blocks. Save one result per
-non-overlapping path, and reuse it during that run. For many paths, a small
-bounded thread pool can run independent measurements and stream summaries;
-do not run a broad parent scan alongside scans of its descendants.
-
-Use `GB = bytes / 10**9`, `TB = bytes / 10**12`, and `GiB = bytes / 2**30`.
-APFS clones, sparse files, hardlinks, snapshots, and concurrent writers explain
-why path totals differ from actual recovered space. Measure after deletion;
-moving files into Trash or a preservation directory on the same disk frees
-no space by itself.
-
-Clones can make a folder of copies look enormous. On the M3 Max on October 28, 248 leftover copies of Chrome in the
-user's temporary folder (`/private/var/folders/.../X`) read 555 GB in `du` and held about 2 GB: they were one clone
-family. When many copies of the same thing top a size list, check before ranking them: files in one family share a
-clone ID and carry a clone count (`getattrlist` with `ATTR_CMNEXT_CLONEID` and `ATTR_CMNEXT_CLONE_REFCNT`), or delete
-one copy and watch `df`. "Bytes not shared with any other file" is no help on a Mac with Time Machine, because every
-file older than the newest snapshot shares its blocks with that snapshot.
-
-Run the size pass at normal priority. At background priority macOS keeps it on the efficiency cores, and a 2 TB disk
-took over 40 minutes while a backup ran.
-
-## Protected set
-
-Build the protected canonical-root set first (see `SKILL.md`). Before any
-deletion, compare both the lexical path and its resolved path with protected
-roots and their resolved destinations. Reject equal paths and ancestors that
-would contain a protected checkout. A path inside a canonical checkout is
-eligible only when it is itself a registered task worktree, such as an entry
-under `.claude/worktrees/`. This applies to every manifest row and cache
-deletion, not just checkout removal.
-
-To classify a top-level folder under `~/workspace`, compare its
-`git rev-parse --path-format=absolute --git-common-dir` and
-`git remote get-url origin` with the canonical checkouts'. A match with a
-different path is a task copy.
-
-## Decide whether a checkout is old
-
-```sh
-git -C "$wt" rev-parse --path-format=absolute --git-common-dir
-git -C "$wt" rev-parse HEAD
-git -C "$wt" symbolic-ref -q HEAD
-git -C "$wt" log -1 --format='%ct %h %s'
-git -C "$wt" reflog -1 --format='%ct %h %gs'
-GIT_OPTIONAL_LOCKS=0 git -C "$wt" status --porcelain=v1 -z --untracked-files=normal
-```
-
-The newest of the commit time, the reflog time, and the modification times of
-the paths `status` lists is when someone last worked there. Do not use mtimes
-under `.git` or of build output. `git worktree list --porcelain` shows
-`locked <reason>`: a lock that points at a live session or current task counts
-as use; a lock left on a finished task does not.
-
-## Exclude running work
-
-```sh
-lsof -n -P -a -d cwd -F pn
-lsof -n -P -F pcn
-```
-
-Capture and parse these locally. Map working directories and open file paths
-to checkout roots, matching whole path components. Include references from
-processes whose current directory is elsewhere. Do not mark a checkout active
-only because the cleanup's own `du`, `git`, or `lsof` inspection has it open.
-Do not ignore unrelated user processes just because their command names also
-match an inspection tool. Refresh the activity inventory periodically during
-long batches and check each candidate close to deletion. Keep parent-directory
-and nested-worktree relationships in view so one removal cannot take another
-live checkout with it.
-
-Inspect command-line references in memory, returning only matched paths, PIDs,
-and sanitized executable names. Do not print raw `ps` output, including `comm`:
-processes can place credentials in their displayed titles. A failed or partial
-activity query is not evidence of inactivity.
+To tell a linked worktree from a standalone clone, run `git -C "$wt" rev-parse --path-format=absolute --git-common-dir`. A linked worktree reports its primary repository's `.git` and appears in that repository's `git worktree list --porcelain`. Linked worktrees share branches and stashes with their primary repository. A standalone clone keeps its own.
 
 ## Salvage unsaved work
 
-Salvage whatever exists only in this checkout: working-tree changes, and
-commits the remote does not have. Build the commit with plumbing so the task's
-own branch is never moved and no hooks run:
+Build the commit with Git's plumbing, through a copy of the checkout's index, so the task's own branch, its staging area and its hooks are all left alone. If the push fails and the checkout stays, nothing in it has changed:
 
 ```sh
-name="salvage/$(basename "$wt")-$(date +%Y%m%d)"
-git -C "$wt" fetch --quiet origin         # fresh remote refs for the check below
-git -C "$wt" add -A -- . ':(exclude)<nested-repo-path>'   # .gitignore keeps ignored files out
+name="salvage/$(basename "$(dirname "$wt")")-$(basename "$wt")-$(date +%Y%m%d)"
+git -C "$wt" fetch --prune --quiet origin
+idx="$(mktemp -d)/index"
+cp "$(git -C "$wt" rev-parse --path-format=absolute --git-path index)" "$idx" 2>/dev/null || true   # none yet is fine
+export GIT_INDEX_FILE="$idx"                              # every git command below uses the copy
+git -C "$wt" add -A -- . ':(exclude)<nested-repo-path>' || echo "add failed: keep $wt"   # .gitignore keeps ignored files out
+git -C "$wt" diff --cached --stat HEAD 2>/dev/null || git -C "$wt" ls-files | head -100   # look before anything leaves the machine
 tree=$(git -C "$wt" write-tree)
-commit=$(git -C "$wt" commit-tree "$tree" -p HEAD -m "salvage: unsaved work from $wt [skip ci]")
-# no commits yet (HEAD does not resolve): omit -p HEAD to build a root commit
-# clean checkout with unpushed commits: wrap HEAD so the pushed head still says [skip ci]:
-# commit=$(git -C "$wt" commit-tree "$(git -C "$wt" rev-parse 'HEAD^{tree}')" -p HEAD -m "salvage: unpushed commits from $wt [skip ci]")
-# (clean and already on the remote: nothing to push)
-git -C "$wt" rev-list --count "$commit" --not --remotes   # 0 means already on the remote
-git -C "$wt" push --no-verify origin "$commit:refs/heads/$name"
-git -C "$wt" ls-remote origin "refs/heads/$name"          # must print $commit
+commit=$(git -C "$wt" commit-tree "$tree" -p HEAD -m "salvage: unsaved work from $wt [skip ci]") || commit=""
+# no commits yet (HEAD doesn't resolve): leave out -p HEAD to make a root commit
+# clean, with unpushed commits: commit=$(git -C "$wt" commit-tree "$(git -C "$wt" rev-parse 'HEAD^{tree}')" -p HEAD -m "salvage: unpushed commits from $wt [skip ci]")
+[ -n "$commit" ] && git -C "$wt" push --no-verify origin "$commit:refs/heads/$name"      # an empty id would delete the branch instead
+[ -n "$commit" ] && [ "$(git -C "$wt" ls-remote origin "refs/heads/$name" | cut -f1)" = "$commit" ] && echo saved
+unset GIT_INDEX_FILE
 ```
 
-Every salvage push lands a head commit whose message carries `[skip ci]`: a backup branch never needs CI, and on 2026-10-01 one cleanup's pushes started 475 CircleCI jobs across Cratejoy's repos ($48). Cratejoy's CircleCI configs also ignore `salvage/` branches.
+The checkout can go only when the last line prints `saved`. An empty `$commit`, a failed `add`, a rejected push or an `ls-remote` that doesn't match means nothing was saved. Every pushed salvage head carries `[skip ci]` in its message, because a salvage branch never needs CI. One cleanup's pushes without it once started 475 CI jobs.
 
-The checkout's deletion depends on that last line printing `$commit`. An empty
-`$commit`, a count computed from an empty value, a rejected push, or an empty
-`ls-remote` means nothing was saved, and the checkout stays.
+Before pushing, read that file list. Take credentials and large generated files (APKs, videos, archives, model files) out with `git -C "$wt" rm -r --cached --quiet -- <path>` while `GIT_INDEX_FILE` is still set, then build the tree again. Those files go with the checkout. If a push is rejected for a secret or a file's size, unstage the file it names and build the commit again.
 
-Before committing, look at the staged file list for credentials and for large
-generated binaries (APKs, videos, archives, model files). Unstage them with
-`git -C "$wt" rm -r --cached --quiet -- <path>`; they are deleted with the
-checkout. If the push is rejected for a secret or file size, remove the named
-file the same way and rebuild the commit.
-
-A linked worktree shares branches and stashes with its common repository, so
-the commit above covers it. A standalone clone keeps its own: also push every
-local branch that has commits missing from the remote, and each stash entry.
-Wrap each in a `[skip ci]` commit, as above, so the pushed head never starts CI
-(a salvage of 16 task branches would otherwise start 16 CI runs). Use names that
-cannot collide with `$name` (Git cannot hold a branch and a folder of the same
-name):
+For a standalone clone, also push each local branch the remote lacks and each stash, wrapped the same way. Give them names that can't collide with `$name`:
 
 ```sh
 tip=$(git -C "$wt" rev-parse "refs/heads/$branch")   # or "stash@{$n}"
@@ -140,76 +47,86 @@ c=$(git -C "$wt" commit-tree "$(git -C "$wt" rev-parse "$tip^{tree}")" -p "$tip"
 git -C "$wt" push --no-verify origin "$c:refs/heads/$name-$branch"   # or $name-stash-$n
 ```
 
-A linked worktree whose Git link is broken (its `.git` file points at an admin
-folder that no longer exists, so every Git command fails in it) can still be
-saved. If a repository still lists it in `git worktree list`, run
-`git -C <that repository> worktree repair <path>` and salvage it as usual. If
-its repository is gone, commit its files as a fresh root commit against the
-right remote, found from the folder's name, its files or the remotes of its
-neighbours, and push that. When no remote can be identified, it is a checkout
-whose work can't be saved: report it.
-
-For submodules and nested repositories with their own dirty work or unpushed
-commits, run the same salvage inside each one against its own remote. Find them
-by looking for `.git` entries below the top level, not from `status`: a nested
-clone that the parent ignores (a `backend/.native`-style checkout) never appears
-there, and its unpushed work is lost with the parent.
+Nested repositories and submodules with their own unsaved work get the same salvage inside each one, against its own remote. Find them by looking for `.git` below the top level, because a nested clone that the parent ignores never shows up in `status`:
 
 ```sh
-find "$wt" -mindepth 2 -maxdepth 6 -name .git -not -path '*/node_modules/*' -prune -print
+find "$wt" -maxdepth 6 \( -path "$wt/.git" -o -name node_modules -o -name target -o -name .venv \) -prune -o -name .git -print
 ```
 
-Exclude each nested repository from the parent's `git add` with the
-`:(exclude)` pathspec above so the parent does not record an embedded
-repository.
+Don't commit onto, push to or rewrite the task's own branch, which may back an open PR, and don't delete branches.
 
-If the remote is unreachable or has no push access, store the commit in the
-canonical repository instead:
+## Work with no remote
+
+A checkout whose origin is a bundle or a local path, a repository with no origin, and a source folder with no Git at all still have somewhere to go. Store the work in a local repository that holds only source:
 
 ```sh
-git -C "$canonical" fetch "$wt" "$commit:refs/salvage/$(basename "$wt")"
+salvage_repo=~/.local/share/disk-cleanup/salvage.git
+[ -d "$salvage_repo" ] || git init --bare --quiet "$salvage_repo"
+ref="refs/salvage/$(basename "$wt")-$(date +%Y%m%d)"
+# a checkout with Git but no remote: build $commit as above, then
+[ -n "$commit" ] && git -C "$wt" push --quiet --no-verify "$salvage_repo" "$commit:$ref/work" "refs/heads/*:$ref/heads/*"   # the work and its local branches; stashes as above
+[ -n "$commit" ] && [ "$(git --git-dir="$salvage_repo" rev-parse --verify --quiet "$ref/work")" = "$commit" ] && echo saved
 ```
 
-Only when neither works, keep the checkout and report the reason. A standalone
-repository with no remote and no related canonical repository is such a case:
-everything in it exists only on this disk.
+The work goes under `$ref/work` and the branches under `$ref/heads/`, because a ref can't also be a folder of refs.
+
+When the same project has a primary checkout on this machine, pushing to it works too: `git -C "$wt" push --no-verify "$primary" "$commit:refs/salvage/<name>"`.
+
+Commit a folder with no Git at all straight from its files, through a private index, so nothing in the folder changes. The index must be a path that doesn't exist yet, because Git rejects an empty file:
+
+```sh
+idx="$(mktemp -d)/index"
+G() { GIT_INDEX_FILE="$idx" git --git-dir="$salvage_repo" --work-tree="$dir" "$@"; }
+G add -A -- . ':(exclude,glob)**/node_modules/**' ':(exclude,glob)**/target/**' ':(exclude,glob)**/build/**' \
+  ':(exclude,glob)**/.venv/**' ':(exclude)*.zip' ':(exclude)*.apk'
+G ls-files --stage | awk '{print $4}' | head -50                 # look at what went in before committing
+commit=$(G commit-tree "$(G write-tree)" -m "salvage: $dir") || commit=""
+[ -n "$commit" ] && G update-ref "$ref/work" "$commit" "" && [ "$(git --git-dir="$salvage_repo" rev-parse --verify --quiet "$ref/work")" = "$commit" ] && echo saved   # "" refuses to overwrite an existing ref
+```
+
+The folder's own `.gitignore` files are honoured. The salvage repository is for source and notes. If it grows large, something big went in: find it and leave it out. A folder can't be salvaged only when the commit itself fails, and then it stays this run, with the reason.
 
 ## Remove the checkout
 
 ```sh
-git --git-dir="$common_gitdir" worktree remove --force "$wt"
-# stale lock: add a second --force
+git --git-dir="$common_gitdir" worktree remove --force "$wt"     # add a second --force for a stale lock
+git --git-dir="$common_gitdir" worktree prune
 ```
 
-If Git still refuses, find out why before deleting anything. A path that
-`git worktree list` does not show is a standalone clone, not a linked worktree,
-and needs the standalone salvage above first. Once the reason is understood
-and the work is saved, delete the resolved path after the protected-set check,
-then run `git --git-dir="$common_gitdir" worktree prune`. Remove a standalone
-clone by deleting its resolved path after the same check. Do not delete
-branches, reset refs, or rewrite commits.
+If Git refuses, find out why before deleting anything. A path missing from `git worktree list` is a standalone clone, and it needs the standalone salvage first. Remove a standalone clone, or a folder that isn't a Git checkout at all, through a check that refuses the paths that must never be targets. Those are a home folder, a workspace root, a mount, anything outside the places task folders live, and any folder that holds a path you decided to keep (the live work you named, one path per line in `$run/keep.txt`):
 
-After each batch, verify the paths are gone, their registrations are pruned,
-every salvage ref resolves to its recorded commit, and the canonical checkouts
-are intact. Then measure actual free bytes. Record skips and failures as such,
-never as removals.
+```sh
+remove_dir() {
+  p=$(printf '%s' "$1" | sed 's#/*$##')                   # a trailing slash would hide a link
+  [ -n "$p" ] && [ ! -L "$p" ] || { echo "refused, a link or empty: remove a link itself, never what it points at: $1"; return 1; }
+  [ -r "$run/keep.txt" ] || { echo "refused, no keep list at $run/keep.txt"; return 1; }
+  t=$(realpath "$p") || return 1
+  case "$t" in "$HOME"/?*|/mnt/p[12]/?*|/tmp/?*|/private/tmp/?*|/private/var/folders/?*) ;; *) echo "refused, not a task location: $t"; return 1;; esac
+  [ -d "$t" ] && [ "$t" != "$HOME/workspace" ] && [ "$t" != "$HOME/worktrees" ] || { echo "refused: $t"; return 1; }
+  m=$(df -P "$t" | awk 'NR==2 {print $6}'); [ -n "$m" ] && [ "$m" != "$t" ] || { echo "refused, a mount or unknown mount: $t"; return 1; }
+  if grep -qF -- "$t/" "$run/keep.txt" 2>/dev/null || grep -qxF -- "$t" "$run/keep.txt" 2>/dev/null; then echo "refused, kept or holds something kept: $t"; return 1; fi
+  rm -rf -- "$t"
+}
+remove_dir "$wt" && [ ! -e "$wt" ] && echo removed
+```
 
-To recreate a removed checkout:
+A link is refused because resolving it would aim the deletion at what it points to, such as a policy store. If the link itself is what should go, remove it with `rm -- "$link"` (no `-r`, no trailing slash). On Linux, `rm -rf --one-file-system` also keeps the removal from crossing into a drive mounted inside the folder. Add it there; macOS `rm` has no such flag.
+
+A worktree whose `.git` file points at an admin folder that no longer exists breaks every Git command inside it. If its repository still lists it, `git -C <repository> worktree repair "$wt"` fixes it and the usual salvage applies. If the repository is gone, salvage it as a folder with no Git.
+
+After each batch, check four things: the paths are gone, the registrations are pruned, every salvage ref resolves to its recorded commit, and the checkouts you kept are intact. Record each removal with its original path, HEAD, salvage ref and a line about what was discarded. To recreate one:
 
 ```sh
 git --git-dir="$common_gitdir" fetch origin "refs/heads/$name:refs/heads/$name"
 git --git-dir="$common_gitdir" worktree add "$original_path" "$name"
 ```
 
-Dependencies, builds, and ignored files are not restored; rebuild with the
-project's normal setup.
+Dependencies, builds and ignored files don't come back. Rebuild them with the project's normal setup.
 
 ## Build output in checkouts that stay
 
-A checkout that is in use or recent keeps its build output. A checkout kept
-only because its work could not be saved, or because it holds model policies,
-can still lose its inactive build output: Flutter `build/`, `.dart_tool/`, Pods, a
-Python virtual environment with `pyvenv.cfg`, or Cargo output. Confirm the
-exact leaf holds no tracked files (`git ls-files -- <relative-path>`) and that
-no running process uses it; a generated-looking parent may also contain tracked
-configuration or unique research.
+A live checkout keeps the build output it is using. A checkout kept for another reason can lose inactive build output: Flutter `build/`, `.dart_tool/`, Pods, a virtual environment with `pyvenv.cfg`, or Cargo `target/debug` and `target/release`. Before removing a leaf, confirm it holds no tracked files (`git ls-files -- <relative-path>` prints nothing) and that no process uses it. A `target/` folder can hold tracked configuration or research alongside the build, so remove its build leaves, not the whole folder.
+
+## Measuring
+
+`df -k` on the volume is the free space that tools see. Measure before and after with the same command. `du` totals are estimates: APFS clones, hard links, sparse files and snapshots all make them differ from what deleting frees. Moving files to Trash or to another folder on the same disk frees nothing. When a deletion doesn't show as free space, the cause is almost always Time Machine's local snapshots ([time-machine-local-snapshots.md](../../_shared/time-machine-local-snapshots.md)), and occasionally a deleted file a process still holds open, which `lsof +L1` lists.

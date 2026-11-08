@@ -1,163 +1,45 @@
-# Known storage locations
+# Where space usually is on the Macs
 
-Use paths relative to the current user's home. These are discovery leads from
-Amir's developer-machine layout, not blanket deletion targets or promised sizes.
-Confirm the host, filesystem, and existing paths. Other machines in the cluster
-can have different home directories and capacity.
+These are leads for Amir's M5, the two M3s and Mini 1, with paths relative to the home folder. They say where to look, not what to decide. The size pass in [checking-use.md](checking-use.md) shows where the space really is today. When the biggest folders are somewhere not listed here, open them anyway.
 
-## Reuse local discovery
+## Task checkouts
 
-Look for `~/disk-cleanup-*/manifest.json` and neighboring reports or receipts.
-Older one-off inventories may also exist as `/private/tmp/disk-cleanup-*` on
-macOS. List these shallowly; read summary fields first and load detailed rows
-programmatically. A prior manifest can save a full search, but paths may have
-been removed, reused, or made active since it was written.
-
-An old report saying there were no eligible worktrees is not a reusable inventory.
-Refresh Git registrations and current eligibility in the known collections each
-day. Save detailed rows locally and print counts and the largest candidates;
-do not dump hundreds of registrations or thousands of ignored filenames.
-
-## First: task checkouts and worktrees
-
-| Location | What to inspect |
+| Where | What it is |
 | --- | --- |
-| `~/workspace/psmobile-worktrees/` | Many full PS Mobile checkouts; Flutter builds and dependencies can multiply their size. |
-| Top-level `~/workspace/<repo>-<task>` folders such as `psmobile-5966`, `psmobile-l10n-m8`, `psmobile-wt-*`, `puzzledb-l10n-*`, `rustai2` | Task copies of canonical repositories, often 2 to 30 GB each; on Amir-M5 in September 2026 they held about 500 GB. Linked worktrees and standalone clones both occur. |
-| `~/workspace/rustai-worktrees/` | RustAI checkouts, per-worktree Rust targets, client dependencies, and local artifacts. |
-| `~/workspace/puzzledb-worktrees/` | PuzzleDB checkouts, Python environments, generated files, and local datasets. |
-| `~/workspace/lessons_studio-worktrees/`, `lessons-studio-worktrees/`, `psagentspace-worktrees/`, `website-worktrees/`, `prime-agent-worktrees/`, `cjdev-worktrees/` | Other recurring agent checkout collections. |
-| `~/workspace/worktrees/`, `~/workspace/.worktrees/`, `~/worktrees/`, `~/.codex/worktrees/` when present | Additional checkout roots; Git's registrations reveal paths outside these examples. |
+| `~/workspace/*-worktrees/`, `~/workspace/*-wt/` | Collections of task checkouts: PS Mobile (2 to 5 GB each with Flutter builds), PuzzleDB, Lessons Studio, RustAI, website, PS Agent Space. |
+| `~/workspace/<repo>-<task>` | Top-level task copies such as `psmobile-5966`, `puzzledb-wt-t91` or `rustai2`. Some are linked worktrees and some are standalone clones. |
+| `.claude/worktrees/` inside a primary checkout | Agent worktrees nested in a checkout that stays. The worktree can go, and its parent stays. |
+| `~/worktrees/`, `~/.codex/worktrees/`, `/private/tmp` | Other places agents put checkouts. `git worktree list` from each primary repository reveals more. |
 
-Enumerate worktrees once per common Git directory, using canonical repos such
-as `~/workspace/psmobile`, `rustai`, `puzzledb`, `lessons_studio`, `psagentspace`,
-`website`, and `prime-agent`. PS Mobile may use
-`~/workspace/.psmobile-git-root` as its shared Git owner. Use
-`git rev-parse --path-format=absolute --git-common-dir` to resolve the current
-owner rather than assuming every checkout has a `.git` directory.
+The primary checkouts are the working copies of the projects that are live: `~/workspace/psmobile` with its shared Git owner `~/workspace/.psmobile-git-root`, `psagentspace`, `psbrain`, `prime-agent`, `arch_skill`, `rustai`, `puzzledb`, `lessons_studio`, `cjdev`, `website` and `agentspace`. On the M3 Max, most of the roughly 200 top-level folders were last touched in April. They are old copies of projects, plus other people's projects cloned to read. Those are copies like any other: salvage the unsaved bits and they go. Amir's personal folders among them stay, as everywhere.
 
-These canonical repositories are read-only inspection anchors, never removal
-candidates, together with their resolved targets and shared Git owners. The
-other copies of the same repositories are task checkouts under the salvage
-rules in `SKILL.md`, including top-level folders and `.claude/worktrees/`
-entries nested inside a canonical checkout.
+## Build output and caches
 
-A shallow listing of `~/workspace` finds newly added `*-worktrees` collections
-and top-level task copies. Do not limit discovery to a fixed repo list when
-current Git registrations or the user's request point elsewhere.
-
-## Next: reproducible build and dependency storage
-
-| Location | What it usually holds |
+| Where | What it is |
 | --- | --- |
-| Worktree `apps/flutter/build/`, `apps/flutter/.dart_tool/`, `apps/flutter/ios/Pods/`, `apps/flutter/macos/Pods/` | Flutter outputs, analysis/build state, and CocoaPods dependencies. |
-| Disposable worktree `target/`, `codex-rs/target/`, `node_modules/`, `.venv/` | Rust outputs and installed dependencies; inspect custom output settings and symlinks. Canonical checkout contents are excluded. |
-| `~/Library/Developer/Xcode/DerivedData/`, `~/Library/Developer/Xcode/iOS DeviceSupport/` | Xcode outputs and device support files. Check active builds and attached-device use. |
-| `~/Library/Caches/go-build/`, `~/Library/Caches/Homebrew/`, `~/Library/Caches/CocoaPods/`, `~/.gradle/caches/`, `~/.npm/_cacache/` | Download and build caches. Prefer the owning tool's cleanup behavior where appropriate. |
-| `~/.cache/uv/`, `~/Library/Caches/pip/`, `~/Library/Caches/pnpm/`, `~/.pub-cache/` | Language package caches; uv's archive can share hardlinks with environments, while active tools may run directly from cached environments. |
+| A task checkout's `apps/flutter/build/`, `.dart_tool/`, `ios/Pods/`, `target/`, `node_modules/`, `.venv/` | These go with the checkout. In a checkout that stays, see the reference on build output. |
+| `~/Library/Developer/Xcode/DerivedData/` | Xcode build output. Clear it when no Xcode build or device run is using it. |
+| `~/Library/Caches/go-build/`, `~/.gradle/caches/`, `~/.npm/_cacache/`, `~/Library/Caches/Homebrew/`, `~/Library/Caches/CocoaPods/` | Download and build caches. Use the tool's own cleaning (`go clean -cache`, `brew cleanup -s`) when no build is running. CI refills Go and Gradle within the hour, so clearing them on a busy CI machine gains little. |
+| `~/.cache/uv/` | Python environments and wheels, about 150 GB on the M5. The tools Amir's agents run start straight from it all day. `uv cache prune` waits while any uv process is running, and it freed only 100 MB the times it ran, so this isn't the easy win it looks like. |
 
-Measure leaf owners without counting both the worktree and its build folders
-as independent reclaimable space. Deleting an old checkout recovers its source
-copy and outputs together, so start there when collections contain hundreds of
-checkouts.
+## Devices and VMs
 
-## Then: application caches, logs, and virtual disks
+- **iOS simulators.** `xcrun simctl list devices --json` lists them with their state and last boot. A task simulator nobody is using goes with `xcrun simctl delete <udid>`: check that no test runner, `idb` or Flutter session has it open. A booted device with no app or test activity can be shut down and then deleted. Never shut down all devices or kill the simulator services.
+- **Android emulators.** Each lives in `~/.android/avd/<name>.avd`, at 3 to 17 GB, under names like `CLAUDE_<task>_API36`. A running one shows up as a `qemu-system-*` process with its files open. A finished task's emulator goes with `avdmanager delete avd -n <name>`, or by removing the `.avd` folder and its `.ini`. Keep the system images that the remaining emulators use.
+- **Colima VMs.** `colima list` shows each profile and whether it runs, and `~/.colima/_lima/_disks/<profile>` shows each disk's size and last change. A stopped profile named for a finished task (a QA environment, a verification run) is a task copy, and `colima delete --profile <name>` removes it with its disk. The default profile, and any profile a current project runs its databases in, stays. Inside a running VM, prune through Docker (`docker image prune`, `docker builder prune`) and leave volumes alone.
 
-Browser caches often live under `~/Library/Caches/BrowserOS/` and
-`~/Library/Caches/Google/`. Profiles under `~/Library/Application Support/`
-contain user data. Keep active browsers usable and distinguish cache files from
-profiles and credentials.
+## Agent and app state
 
-Agent state lives under `~/.codex/`, `~/.claude/`, `~/.aimgr/`, and `~/.prime/`.
-Inspect sizes of log/cache subdirectories rather than dumping their contents.
-`~/.aimgr` can contain credentials and credential backups. Codex databases,
-WAL files, and session history are not generic temporary files; do not remove
-them while agents are running. A targeted Codex maintenance request belongs
-to `$codex-cleanup`.
+- **Codex and Claude history** (`~/.codex/sessions`, `~/.aimgr/claude-homes/*/.claude/projects`) is the session history that `$agent-history` reads. It grows by several GB a day on the M5. How long to keep it is Amir's decision, and the work belongs to `$codex-cleanup`, not here.
+- **`~/.aimgr`** holds credentials and their backups. Timestamped `secrets.json.bak.*` and `local-state.json.bak.*` files older than a week can go. Never read their contents.
+- **Prime.** Inactive session history, recovery snapshots, logs and stale worker records under `~/.prime/agent/` can go. Keep authentication, configuration, custom skills and extensions, and anything a running Prime process uses.
+- **Browsers.** Caches under `~/Library/Caches/<browser>` can go while that browser isn't running. Profiles under `~/Library/Application Support/` hold logins and stay.
+- **This skill's own records** (`~/disk-cleanup-*`) are notes for the next run. Keep the latest few, and remove older ones along with any files an old run "preserved" in them.
 
-### Inactive Prime state
+## Models and policies
 
-Amir has authorized daily removal of unused Prime session and recovery state.
-Inspect `~/.prime/agent/` for session history, session artifacts, recovery
-snapshots, logs, quarantine, stale worker/lease records, and reproducible runtime
-environments. Check live process paths and open files before each batch. Remove
-confirmed inactive state rather than reporting the same opportunity every day.
-Keep authentication files and their backups, configuration, custom skills and
-extensions, source/patch backups, and any currently used runtime. Inspect other
-Prime subdirectories by their actual contents; their location alone does not
-make unique source files disposable. Record that deleted history and snapshots
-cannot be restored from the cleanup. Do not extend this authorization to Codex,
-Claude, AIMgr, or other application databases.
+RustAI policies live on the policy drives (`/Volumes/rustai-policies` on the Studio, `/mnt/p2` on the home server), and a checkout's `policies`, `policies_blueprint`, `runs/policies` and `artifacts/cardabs` link to them. A policy store on a Mac's internal disk is a copy that belongs on a drive. If nothing links to it and no process reads it, it goes. Two folders with similar names and sizes aren't necessarily duplicates, and a hard link or an APFS clone holds no second copy.
 
-### Virtual machines
+## Everything else
 
-Colima storage can be concentrated in `~/.colima/_lima/`; Docker data may be
-inside a VM disk. Start with `docker system df` and the current Colima/Docker
-configuration. A large sparse disk is not all disposable, and deleting the VM
-image can destroy volumes. Use owner-supported pruning and space reclamation
-after identifying what is unused. Prune unused build cache and images through
-the exact Docker context after checking active builds and container references;
-keep containers, volumes, and VM disks. Guest deletion may not release host
-blocks until trim reaches the data filesystem. For Colima, inspect mounts and
-use `colima --profile <profile> ssh -- sudo fstrim -av` when supported. Trimming
-only `/` can miss the separate data disk. Verify host free bytes afterward;
-trim output is not additional reclaimed host space.
-
-### Unused simulators and runtimes
-
-`~/Library/Developer/CoreSimulator/`, `~/Library/Android/`, and `~/.android/`
-hold simulator/emulator runtimes and device data. Inventory installed devices
-and active processes on daily runs. Use `xcrun simctl list devices --json` to
-record device IDs, names, state, last boot, and reported sizes. Connect named
-devices to current worktree/effort activity, direct UDID references, open device
-files, app/test runners, Flutter sessions, and automation clients such as idb.
-
-Delete confirmed unused task devices through `xcrun simctl delete <udid>` under
-the daily authorization. Recheck identity and activity immediately beforehand.
-Old task-specific devices with no live owner or client are candidates; shutdown
-status or age alone is insufficient. Preserve recent devices associated with
-ongoing work and any deliberately retained test fixture. A booted device that
-has only idle simulator OS services, no app/test activity, and no live owner can
-be shut down with `xcrun simctl shutdown <udid>` and then deleted. Never shut down
-all devices or kill shared simulator services. Save each deleted device's name,
-UDID, runtime/type, and reason; recreation does not recover its prior saved state.
-
-Android task emulators in `~/.android/avd/` (names such as
-`CLAUDE_<task>_API36.avd`, `CODEX_...`, `PRIME_...`) are the same class and
-often larger, 3 to 17 GB each with RAM snapshots. A running emulator shows up
-as a `qemu-system-*` process with the AVD's files open. Delete an old,
-unreferenced task AVD with `avdmanager delete avd -n <name>`, or remove its
-`.avd` directory and matching `.ini` file. Keep the system images under
-`~/Library/Android/sdk/` that retained AVDs use.
-
-After device cleanup, check runtime assignments across all retained device sets
-and active processes. Keep loaded runtimes and runtimes needed by retained devices.
-Only remove an unused runtime when no retained device depends on it, using
-`xcrun simctl runtime delete <runtime-id> --dry-run` followed by the exact
-owner-tool deletion when authorized. Verify retained devices and their booted
-state remain present. Runtime volumes mounted beneath CoreSimulator can inflate
-recursive `du` totals; avoid counting both mounted contents and their images.
-
-For suspected duplicate model or policy stores, resolve symlinks and compare
-file inventories and sizes first. Aliases consume no second payload copy, and
-different checkpoints are not duplicates. Preserve canonical model stores and
-unique training outputs; report potential deduplication for a user decision.
-Honor repository payload-access restrictions. In RustAI, never fetch, expand,
-hash, or load multiplayer policy payloads to investigate metadata or disk use.
-
-## Everything else on the disk
-
-The places above are where space usually is. When they don't explain the usage, size the rest of the home folder
-and the volume's other top-level folders once (`~/Library`, `/private/tmp`, `/private/var`, other users' homes) and
-open the biggest owners. macOS may deny access to protected directories; continue with accessible material owners
-rather than making Full Disk Access a prerequisite. When deletion does not translate into available space, the cause
-is almost always Time Machine's local snapshots
-([time-machine-local-snapshots.md](../../_shared/time-machine-local-snapshots.md)), occasionally a deleted file a
-process still holds open.
-
-What decides a large folder is who made it and whether its use is over, not its size or its name. Amir's own files
-(documents, downloads, recordings, his own projects and research) are his: report them. Datasets, models and policies
-that later work reads are not task output either. A folder an agent made for a task (a QA run, a render, captures,
-scratch, a recovery copy, downloaded builds) is done when its task is, as the shared deletion guide describes. A name
-like `tmp`, `artifacts` or `backup` doesn't make a folder disposable, and a name like `data` doesn't make it
-precious.
+When these places don't explain the disk, the size pass over the rest of the home folder, `/private/tmp`, `/private/var/folders` and `/Library` will. Amir's own folders (Documents, Desktop, Downloads, Pictures, Movies, and his personal projects) are his: count them, and leave them. When deleting doesn't raise free space, Time Machine's local snapshots are almost always the reason ([time-machine-local-snapshots.md](../../_shared/time-machine-local-snapshots.md)).

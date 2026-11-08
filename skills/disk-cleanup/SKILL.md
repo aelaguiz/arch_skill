@@ -1,244 +1,100 @@
 ---
 name: disk-cleanup
-description: "Reclaim disk space on Amir's developer Macs by deleting old task checkouts and worktrees after pushing any unsaved work to a salvage branch, plus reproducible builds and caches, unused task simulators, and authorized inactive Prime state. Use for a full disk, accumulated developer junk, daily housekeeping, or a free-space target. Reuse inventories while refreshing Git registrations and live activity. Protect canonical checkouts, active work, credentials, model policies, and VM volumes; verify actual free space. Use codex-cleanup for work confined to Codex SQLite/session maintenance."
+description: "Free disk space on Amir's machines by finding what is still alive and clearing the rest: old task checkouts and worktrees (unsaved work pushed to a salvage branch first), finished experiments' bulk output, leftover QA runs, captures and renders, reproducible builds and caches, stopped task simulators, emulators and VMs, inactive Prime state, and Time Machine snapshots the backup drive already has. Use for a full disk, a free-space target, developer junk piling up, or nightly housekeeping on the M5, the M3s and Mini 1; the Mac Studio and home server skills build on its judgment. Not for Codex's own databases and session history ($codex-cleanup)."
 metadata:
-  short-description: "Fast developer disk cleanup with work preserved"
+  short-description: "Find what's alive, clear the rest, keep unsaved work"
 ---
 
 # Disk Cleanup
 
-Restore the user's requested disk headroom quickly while keeping their work
-recoverable and their running tools usable. Optimize for substantial reclaimed
-space and a shorter next cleanup. A long inventory or a small cache deletion
-does not finish a request for hundreds of gigabytes.
+A full disk stops every agent, build, CI job and Git operation on the machine, and Amir's machines fill fast. Dozens of agents start checkouts, experiments and QA runs every day, and their sessions end. Your job is to give the disk back while keeping what is still alive and what can't be replaced.
 
-**Keep the work, not the copy.** Most of the disk goes to copies: task
-checkouts, their build output, per-task simulators and emulators. The only thing
-of value in an old copy is work that exists nowhere else, and Git can save that
-in seconds. Save it, then delete the copy. Keeping dead copies because they
-contain submodules, uncommitted edits, or ignored files is not caution. It fills
-the disk, and a full disk stops every agent, build, and Git operation on the
-machine. That is the harm this skill exists to prevent. What stays: canonical
-checkouts, anything in live use, work someone did recently, and data that is
-not a copy of anything (credentials, model policies, VM volumes).
+## Almost everything here is dead
 
-Agents also leave output that is not a copy: QA runs, device captures, renders, tuning runs, recovery copies, scratch.
-It lives as long as its task, and nothing ever comes back for it, so it piles up the same way. The shared deletion
-guide says when a task is over. Amir's own files are different: on his laptop, his documents, downloads and own
-projects are his, and a cleanup reports them rather than judging them.
+A machine has two or three live projects at a time. Almost everything else on its disk is left over from tasks whose agents are gone. The agent that made a folder isn't coming back for it, won't be asked about it, and won't notice it's gone, and nobody else knows the folder exists. A folder you defer "for someone's decision" stays until the next run defers it again, so deferring is deciding to keep it forever.
 
-**Delete only what you know is safe to lose.** Every check before a deletion,
-such as the salvage reaching the remote or nothing using the path, has to come
-back with an answer you have seen for that path. A check that errors, times
-out, prints nothing, or fails inside your own batch script has not answered;
-keep that path, record why, and keep cleaning elsewhere. Before the first
-deletion, read [irreversible-deletion.md](../_shared/irreversible-deletion.md):
-its examples show how a failed check turns into lost work.
+So don't try to prove each folder is dead. You can't, and a cleanup that needs proof keeps everything. Find what's alive, which you can see, and treat the rest as done. On the home server in November, 10 of 223 RustAI checkouts were live. Removing the other 213 took the main disk from 24 GB free to over 300 GB, and all their unsaved work fit in 450 MB.
 
-For routine or unattended runs without a numeric target, remove the obvious
-authorized accumulation and identify the largest remaining opportunities. Reuse recent
-inventories and inspect likely owners; do not repeat an exhaustive whole-disk
-scan or invent a hundreds-of-gigabytes target every night. Finish when the
-clear, authorized candidates are handled. When an action needs approval, leave
-the data intact and report the exact opportunity instead of waiting for input
-or expanding deletion scope to force a larger result.
+## What alive looks like
 
-Amir's daily housekeeping authorization includes old task checkouts and
-worktrees (after salvaging their unsaved work as described below), output
-that agents made for finished tasks (October 28: "the whole point of this
-cleanup skill was to get rid of old stuff in the workspace directory"),
-confirmed unused task simulators and emulators and their saved state,
-inactive Prime session/recovery state, and the Time Machine local snapshots
-the backup drive already has. Perform that cleanup without asking again,
-including the salvage commits and pushes. Preserve active or recently used
-devices associated with ongoing work, credentials, canonical checkouts, model
-policies, and VM volumes. A current request to preserve a storage class
-overrides this daily default. Cache-only cleanup is incomplete while obvious
-authorized worktree, simulator, or Prime-state wins remain unchecked.
+Something alive leaves marks you can check in a few minutes:
 
-## When to use
+- **Something runs from it**: it has the folder open, works in it, or names it in its arguments. That covers a training run, a server, a build, a QA stack, or an agent session working there. Agent sessions are processes too: when none of a session's processes are left, its agent is gone.
+- **Something points at it**: a service definition, a scheduled job, a container's mount, or a link from a live checkout.
+- **Someone is working in it**: commits, edits or new output in the last couple of days, on a task that isn't finished. A merged or closed PR finishes the task now, whatever the clock says.
+- **Someone wrote down that it's needed**: a note with a name and a date that hasn't passed.
 
-- "I'm running out of disk space. Find the caches and old worktrees and clean them up."
-- "Get this coding machine back to 1 TB free."
-- "Clean up the developer junk again without scanning the whole disk."
+[checking-use.md](references/checking-use.md) has the commands. You take one snapshot of every process and match all your candidates against it at once, then check the few other places use hides. Read it before the first deletion. It gets the answers in about a minute instead of one slow probe per folder.
 
-This skill owns local disk housekeeping. It does not delete source functionality,
-retire documentation, perform arbitrary application database maintenance, or
-administer other machines.
-For work confined to Codex's session/log SQLite state, use `$codex-cleanup` and
-its live-process rules. A large `~/.codex` directory does not make stopping all
-agents a prerequisite for cleaning unrelated worktrees.
+Then read what you found. A server answering players, a training run writing checkpoints, a build that started an hour ago: that's use. Some processes are only leftovers of finished work: a `tail -f` on the log of a job that ended, a shell nobody is attached to whose parent is gone, a language server indexing a checkout nobody edits, a tool server that happened to start in that folder. Stopping those exact processes is part of cleaning up after them. One fresh file doesn't make a big folder alive either, so look at what was written. A script that rewrites `.env` in every checkout in the same minute is not work in any of them.
 
-## Start with the known map
+The other way round matters as much:
 
-Read [known-locations.md](references/known-locations.md) first. It gives the
-likely large owners and the saved-inventory locations. Read
-[worktrees-and-measurement.md](references/worktrees-and-measurement.md) before
-removing checkouts or interpreting reclaimed bytes; it has the salvage commands.
+- On the home server, nothing had the `policies_hydrated_20260611` store open, but the live `rustai` checkout's `policies` link pointed into it.
+- A Daily Puzzle backend on the Studio had been quiet for days, and an `OWNER.md` in it reserved it until November 10.
+- A QA folder whose files were a week old was serving that afternoon's release-candidate test from its binaries.
 
-1. Measure capacity and available bytes on the volume containing `~/workspace`. With Time Machine on (the laptop
-   and the M3 Max), deletions show up as free space only once the local snapshots holding them are gone: read
-   [time-machine-local-snapshots.md](../_shared/time-machine-local-snapshots.md) first, and delete the snapshots the
-   backup drive already has as it describes, at the end of the run.
-   Carry forward the user's target and cleanup authorization from the conversation.
-   Distinguish a target for total free space from an amount to reclaim.
-   Establish the protected canonical roots below before selecting any candidates.
-2. Look for a recent local cleanup manifest or report. Reuse its paths, recorded
-   sizes, and recovery information as discovery hints. Refresh current existence,
-   Git state, and process use before acting. Enumerate current worktree registrations
-   once per common Git directory on every run, including routine runs, and find
-   top-level task copies under `~/workspace`. Reuse recorded paths and
-   measurements, never a previous report's conclusion that a checkout must stay.
-   This targeted Git inventory is not a whole-disk scan.
-3. Select enough large candidates to plausibly reach the target, or the clear
-   wins for routine housekeeping without a target. Old task checkouts usually
-   hold the most space; start there. Inspect and measure candidates once. Save
-   bulky results locally and report totals and the largest owners. Do not
-   recursively scan `/`, the home directory, `~/workspace`, and their children
-   concurrently: those scans repeat the same expensive traversal.
-4. Execute the authorized cleanup and measure the result. If an applicable
-   instruction requires confirmation that the conversation has not supplied,
-   prepare the exact paths, salvage plan, and estimated space first, then
-   ask once. A preview-only request remains read-only.
-5. Continue through the next material owner when actual free space is still
-   below target. The known locations are where space usually is, not the edge
-   of the search: when the biggest owners are elsewhere, open them and say what
-   they are. Stop when the target is reached, or identify the concrete remaining
-   data that requires a user decision.
+Each of those was alive, and each was one look away.
 
-## Canonical checkouts are protected
+Before deleting anything, write down the live projects on the machine in a line, for example: "home: Amir's `rustai` checkout, the Play vs AI serving worktree, the `ms12` round-26 runs, the 1500-hand Sit & Go runs". If you can't name them, you haven't looked yet.
 
-A canonical checkout is the primary working copy of a repository:
-`~/workspace/psmobile`, `psagentspace`, `prime-agent`, `arch_skill`, `rustai`,
-`puzzledb`, `cjdev`, `website`, `lessons_studio`, the shared Git owner
-`~/workspace/.psmobile-git-root`, and any other top-level project that is the
-only or primary checkout of its repository. Never remove, rename, replace, or
-empty one. Being old, clean, or registered as a linked worktree does not change
-that.
+## What dead things leave behind
 
-A second copy of one of those repositories is a task checkout, wherever it
-sits: `~/workspace/psmobile-5966`, `psmobile-l10n-m8`, `psmobile-wt-6509-before`,
-`rustai2`, `puzzledb-l10n-m9`, everything under a `*-worktrees` collection, and
-`.claude/worktrees/` entries nested inside a canonical checkout. Tell the two
-apart by repository identity (the same common Git directory or origin remote as
-a canonical checkout), not by location or name. When you cannot tell which of
-two copies is the primary one, keep both and report them.
+**Checkouts** are caches of GitHub. The only thing of value in a dead one is work that exists nowhere else: uncommitted edits, commits not on the remote, stashes. That is small. Delete the dead checkouts with nothing unsaved first, because that takes seconds and frees the most space. Then push the rest to salvage branches and delete each one as its push lands. Submodules, dirty files, ignored files, an open PR, and a name without `-worktrees` are not reasons to keep a dead checkout. [worktrees-and-measurement.md](references/worktrees-and-measurement.md) has the salvage commands, including where work with no remote goes.
 
-Before cleanup, record the protected paths and their resolved destinations.
-Exclude those roots, their own files, and any ancestor whose removal would
-contain them from every deletion list, including old manifests and scripts.
-Resolve aliases and symlinks when checking containment. Canonical build and
-dependency folders stay untouched unless the user asks for that folder's
-cleanup. Deleting a task worktree nested inside a canonical checkout is
-allowed; deleting the canonical checkout's own files is not.
+**Experiments** leave an answer. People come back for what a run found: the readings, the report, the manifest, the few small files that say what happened. They also come back for the winner, if it shipped. The bulk got the run to its answer: checkpoints and policies of finished runs, captures, generated datasets, intermediate rounds, logs. When nothing runs the experiment and nothing has been written for days, keep the small record and remove the bulk. What a run cost (28 billion iterations, a week of compute) says nothing about whether anyone needs it now. The newest candidates of a live project, and the baseline its current work compares against, are part of that live project.
 
-Any reused or newly written cleanup script must enforce this protected set
-before every deletion. A safe preview does not compensate for an executable
-that lacks the same lexical and resolved containment checks.
+**Task output** (QA nights, device captures, renders, downloaded builds, recovery copies, scratch) is done when its task is. Usually one small thing in it is worth keeping, such as a final cut, a report or a configuration file. Keep that and remove the rest.
 
-## Old task checkouts: salvage, then delete
+**What regenerates** (build output, package caches, transfer mirrors) can go when nothing is building from it. Clearing a cache a running job refills within the hour gains nothing, and on a Mac with Time Machine it briefly costs double. A cache nothing uses gains its whole size.
 
-A task checkout lives as long as its task. It is old when nothing is using it
-and nobody has worked in it for two days: no process has it as a working
-directory, has files open in it, or names it on a command line, and its newest
-commit, reflog entry, and edited file are all older than that. Amir set the same
-two-day limit for the Mac Studio's worktrees. Build output, Git maintenance,
-and indexing are not work; Git maintenance can rewrite reflog mtimes in every
-worktree at once, so read commit and reflog times rather than file mtimes under
-`.git`. Salvage makes deletion recoverable, so doubt about a dead-looking
-checkout is settled by salvaging and deleting it, not by keeping it. Keep a
-checkout when something is using it now or someone worked in it recently.
+**Devices, VMs and databases**: a stopped simulator, emulator or Colima VM named for a finished task is a task copy. A database or VM disk belongs to whatever uses it. The live service's database stays even when it is quiet tonight. A finished project's database, its stopped containers' volumes and its old backup dumps go with the project. The machine's main development VM and the databases in it stay.
 
-None of these is a reason to keep an old checkout:
+## What stays
 
-- Uncommitted, staged, or untracked work: commit it to a salvage branch and push it.
-- Commits that are not on the remote, including a detached HEAD: push them to a salvage branch.
-- Submodules or nested repositories: salvage any unpushed work inside them the
-  same way, then remove the parent with force. Git refuses a plain removal
-  when submodules are present; that refusal is not a signal to keep.
-- Ignored files (`.env`, logs, downloads, reports, generated assets,
-  dependencies): they go with the checkout. A `.env` in a task checkout is a
-  copy of configuration kept elsewhere, not one of the machine's credential
-  stores. Never move ignored files to a preservation folder; moving files on
-  the same disk frees nothing.
-- An open PR or a task branch on the remote: the branch lives on the remote,
-  and the checkout is only a copy of it.
-- A top-level location or a name without `-worktrees`.
+The list is short because few things belong on it:
 
-The one ignored class that is not a copy is model policies and training-run
-output (RustAI). If an old checkout holds them, keep that checkout and report
-it.
+- what is alive, as above;
+- credentials, keys and login state;
+- what serves players or production, and the policy stores it reads, including the RustAI policy drives;
+- live databases and the service volumes under them;
+- Amir's own files: documents, photos, downloads, legal and personal projects, and his working copies on his own laptop;
+- one working copy of each live project, and shared Git owners such as `~/workspace/.psmobile-git-root`.
 
-Since October 20, 2026, Amir keeps RustAI's serving policies on external
-policy drives mounted at `/Volumes/rustai-policies`, because on an internal
-disk each cleanup deleted them and the next test downloaded them again. A
-cleanup never touches a policy drive, and a checkout's `policies`,
-`policies_blueprint`, `runs/policies` or `artifacts/cardabs` link into one
-holds no space on this disk, so it is no reason to keep that checkout. A
-policy still on an internal disk is one the convention moves off it: report
-it with its size for Amir's call rather than deleting it.
+Before you add anything to this list, ask who would come back for it and what they would do with it.
 
-The salvage protects only what would otherwise be lost, so it needs no
-ceremony: one commit with hooks skipped and `[skip ci]` in its message, pushed to
-`salvage/<checkout-name>-<YYYYMMDD>` on the repository's own remote. Do not
-commit onto, push to, or rewrite the task's own branch (it may back an open
-PR), and do not delete branches. Keep
-credentials and oversized generated binaries out of the salvage commit; if a
-push is rejected for a secret or file size, drop that file and push again. If
-the remote is unreachable, keep the salvage commit as a ref in the canonical
-repository instead. Keep the checkout only when the work can be saved neither
-way, and report why.
+## Safety lines
 
-Refresh activity close to each deletion and throughout long batches. If a
-candidate became active, skip it and continue. Record the original path,
-common Git directory, HEAD, salvage ref and pushed commit, and a one-line
-summary of what was discarded, so the checkout can be recreated.
+These hold in every case:
 
-Checkouts that stay because they are in use or recent keep their build output
-too; the task may be between steps. A checkout kept only because its work could
-not be saved, or because it holds model policies, can still lose its
-reproducible build output (see the reference).
+- **Delete only what you looked at.** Use its full resolved path. Never aim a deletion at a home folder, a workspace root, a mount, or a parent of something you're keeping. A session that ran `rm -rf` on the Studio's home folder emptied about 72 workspaces and took its logins and CI runners with it.
+- **A backup that didn't land isn't a backup.** Delete a checkout with unsaved work only after you have seen its salvage commit on the remote, or in a local salvage ref. If a push fails, a commit id comes back empty, or a check errors, that checkout stays this run and you say why.
+- **A failed use check has told you nothing.** If the snapshot came back empty, a permission was denied or it timed out, run it again, or leave the paths it covered for this run. A folder you didn't understand is different: that isn't a failed check, it's a reason to look inside.
+- **Leave policy payloads unread.** Never read, hash, expand or fetch RustAI multiplayer policy payloads to decide anything. Their manifests, names, dates and links are enough.
+- **Keep secrets off the page.** Never print command lines, environments or credential files. The use checks report process ids and names only.
+- **Stop only exact leftovers.** Stop a process only when you've identified it as a leftover of finished work, by its pid, and never by name pattern. Other people's running work stays running.
 
-## Caches, simulators, and other storage
+## The run
 
-For caches and build folders, establish what regenerates them and whether a
-running process uses them. Verify that selected build paths contain no tracked
-source before deleting them. Keep credentials, live SQLite/WAL state, browser
-profiles, and VM volumes outside generic cache deletion. Use their owning tool
-when those storage classes become necessary to the task.
+1. Measure free space on each volume with `df -k`. On a Mac with Time Machine, read [time-machine-local-snapshots.md](../_shared/time-machine-local-snapshots.md) first, because deletions don't show as free space until the snapshots holding them go.
+2. Make one size pass that also records each folder's newest file. Save it for the rest of this run and for the next one.
+3. Take one process snapshot and run the other use checks for all the large candidates at once.
+4. Name the live projects, and put the paths you're keeping in the run's `keep.txt`, one per line. The removal command in the worktrees reference refuses those paths and anything that holds them. Everything else that's large is a candidate.
+5. Delete the dead checkouts with nothing unsaved and the dead output. Salvage the rest in a batch, and delete each one as its push lands. Take a fresh snapshot before each batch, not before each path.
+6. Clear experiments' bulk, task output, unused caches, and stopped task devices and VMs.
+7. On a Time Machine Mac, delete the local snapshots the backup drive already has, then measure again.
+8. Write a short private record:
+   - free space before and after;
+   - the live projects you named;
+   - what went and how big;
+   - salvage refs;
+   - for each of the largest things you kept, a reason a person would accept. "A server runs from it" is a reason. "Could not establish disposability" is not.
 
-Protect shared caches while their owning builds or tools are active, even if
-a snapshot shows no open file in that cache. Include process command-line path
-references and parent directories in activity checks without printing secrets.
-If another process recreates a removed path, leave the new contents alone; do
-not retry deletion against ongoing work.
+Earlier reports tell you where things are, not what to decide. Decide each large folder again from what you see now. A free-space target is a floor, not a finish line: keep clearing dead things after you pass it. When something truly is Amir's call (his own files, or something that serves players and looks unused), leave it and say so in one line. Don't build a list of deferrals.
 
-For simulator and emulator devices, Prime state, Docker/Colima storage, or suspected duplicate models,
-read the corresponding guidance in [known-locations.md](references/known-locations.md).
-A task simulator or emulator is a copy like a task checkout: judge it by its
-owner, clients, last use, and live activity. Shutdown alone proves neither that
-it is disposable nor that it must be kept forever. Two policy paths may be
-aliases or different training runs, so keep them outside this cleanup.
+## Other machines and owners
 
-## Leave a faster next run
-
-Keep a small private local report under `~/disk-cleanup-<date>/` or an existing
-cleanup-report directory. Record the host and volume, start/end free bytes,
-examined owners, selected paths and measurements, removals, salvage refs, skips,
-and recovery instructions. Record per-candidate skip reasons so the next run can
-refresh decisions efficiently. Keep secrets out of report contents.
-
-Existing local cleanup scripts are optional implementation artifacts. Read them
-before reuse and check their scope, freshness checks, salvage behavior, and
-failure handling against this skill. The skill must also work on a machine
-where no previous script or manifest exists.
-
-Report actual before/after free space, actual bytes reclaimed, the largest
-removed categories, the salvage branches pushed, what was skipped and why, and
-the local report path. State whether an explicit target was reached; for
-routine runs, state whether any clear wins remain and name approval-dependent
-opportunities with estimates. Label estimates separately; do not add nested
-folder sizes or present `du` totals as measured free space. Take the completion
-measurement after verification. If the disk remains busy, select a cleanup
-batch with a few gigabytes of headroom beyond the requested threshold so
-current writes do not consume the entire margin during checks.
+- The Mac Studio and the home server have their own skills, `$mac-studio-disk-cleanup` and `$home-disk-cleanup`. They carry each machine's map, schedule and report format, and use this judgment.
+- [known-locations.md](references/known-locations.md) lists where space usually sits on the Macs.
+- For a cluster-wide request, `$machines` gives the routes.
+- Codex's own databases and session history belong to `$codex-cleanup`.
