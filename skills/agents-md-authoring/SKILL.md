@@ -1,6 +1,6 @@
 ---
 name: agents-md-authoring
-description: "Write, revise or audit always-on instruction files (AGENTS.md, CLAUDE.md, GEMINI.md, AGENTS.override.md, global instruction files) as a few intuitions about the project rather than a pile of rules: land each new lesson or correction by deepening the intuition it belongs to, collapse rules into the understanding under them, and keep the docs the file points to teaching the same thing. Use when creating one of these files, adding a lesson, correction or rule to one, or when one has grown long, rule-heavy or contradictory. Builds each intuition with $intuition-building. Not for skills ($skill-authoring) or prompts ($prompt-authoring)."
+description: "Write, revise or audit always-on instruction files (AGENTS.md, CLAUDE.md, GEMINI.md, AGENTS.override.md, global instruction files) as a few intuitions about the project rather than a pile of rules: land each new lesson or correction by deepening the intuition it belongs to, collapse rules into the understanding under them, and keep the docs the file points to teaching the same thing. Use when creating one of these files, adding a lesson, correction or rule to one, including one built by Doctrine (it opens with a \"Do not edit\" header, and the lesson lands in its source), or when one has grown long, rule-heavy or contradictory. Builds each intuition with $intuition-building. Not for skills ($skill-authoring) or prompts ($prompt-authoring)."
 ---
 
 # AGENTS.md Authoring
@@ -11,7 +11,7 @@ An always-on file is how a project passes its understanding to every agent that 
 
 Most long files are rules that one intuition would have produced. Five numbered bans on faking a review (gating copy after it shipped, calling a skill "passed" without running it, checking three claims and calling the page checked) are one idea: a check counts only if it happened, and saying it did tells everyone else to stop looking. "Proof attaches to the mechanism, not the clock" covers shrinking a timeout to test it, entering a long journey at the failing step, and, read the other way, waiting out a delay that is itself the thing being tested. When a group of lines keeps circling one concern, say the concern, and the lines it produces can go.
 
-An intuition someone understands fits in a breath. If it takes a paragraph, the incident it came from is still in it: the date, the story, the quote. Those belong in the commit message; the file keeps what the incident taught.
+An intuition someone understands fits in a breath. If it takes a paragraph, the incident it came from is still in it: the date, the story, the quote. Those belong in the commit message, or the cases file a repository keeps beside its instructions; the file keeps what the incident taught.
 
 ## When a lesson arrives
 
@@ -38,6 +38,8 @@ An audit looks for the same things a revision fixes: groups of lines circling on
 ## Where things go
 
 An intuition goes in the narrowest file that covers everywhere it applies. Worked cases, procedures and reference go in a doc the file points to, with when to read it. Leave out what an agent sees by looking: layout, frameworks, what the linter already enforces. A file that tells agents how to start other agents points to `../_shared/agent-orchestration-policy.md` instead of restating it. Codex reads one file per folder from the repo root down, an `AGENTS.override.md` replaces its folder's file, and everything past 32 KiB combined is dropped.
+
+Some repositories build their instruction files from source with Doctrine, and a built file opens with a "Do not edit" comment naming its source. That comment is the only sign in front of you that the file is output: an edit to it is overwritten or refused by the next build, and the sentence you are looking at often reaches many agents' files from one declaration. So the lesson lands in the source, by the same move. `doctrine where "<words>"` finds the declaration a sentence comes from and every file that reads it, and "the narrowest file" becomes the lowest level in source that reaches everyone the lesson is for. A correction given to one member of a team, about something every agent in that role gets wrong, belongs in the role's shared class, not in that member's own text, where the next member would miss it; a correction about one agent's own job stays in its own text. Then `doctrine diff` shows who the change reached and how much it added (too many homes means it landed too high), and the repository's build and check prove it. Such a repository usually keeps its own guide to what its levels are and who may change each, and a pinned way to run Doctrine; use those, and the `doctrine-learn` skill for the language. A file without the header is hand-written and changes in place.
 
 Agents often write a lesson into the file in the middle of other work, without this skill. A line at the top saying how the file is kept, such as "This file is a few intuitions about working here; a new lesson deepens the one it belongs to", lets them do it well.
 
