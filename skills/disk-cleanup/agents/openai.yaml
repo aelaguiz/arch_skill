@@ -1,7 +1,0 @@
-interface:
-  display_name: "Disk Cleanup"
-  short_description: "Find what's alive, clear the rest, keep unsaved work"
-  default_prompt: "Use $disk-cleanup to free disk space on this machine. Take one snapshot of what every process uses, name the live projects, and clear what is dead: old checkouts (unsaved work salvaged first), finished experiments' bulk, leftover task output, unused builds, caches, task devices and VMs. Keep what is alive, credentials, what serves players and Amir's own files. Measure actual free space before and after and record what went."
-
-policy:
-  allow_implicit_invocation: true

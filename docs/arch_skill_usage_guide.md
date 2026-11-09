@@ -72,13 +72,9 @@ ChatGPT session, and the vendored thermonuclear rubric remains unchanged.
 
 ## Disk maintenance
 
-Use `$disk-cleanup` on Amir's laptop, the M3s and Mini 1, `$mac-studio-disk-cleanup`
-on `agents@amirs-mac-studio`, and `$home-disk-cleanup` on the Linux `home` server.
-All three share one judgment, kept in `disk-cleanup`: find what is alive, name it,
-and clear what is dead, saving unsaved work first. The two host skills add their
-machine's map and nightly report contract. See
-[Nightly disk cleanup](NIGHTLY_DISK_CLEANUP.md) for schedules, saved native
-configuration, report locations and operator commands.
+The disk cleanup lives in devcluster now: one skill, `$disk-cleanup`, which devcluster links into
+every machine's skill folders and runs each night with that machine's notes and keep list
+([devcluster#28](https://github.com/aelaguiz/devcluster/issues/28)).
 
 ## Shared conventions
 

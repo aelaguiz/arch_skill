@@ -61,9 +61,7 @@ Other shipped skills are:
 - `commit-history-authoring` — rewrites the current branch's branch-span commit messages from its nearest parent branch into informative history while preserving commit boundaries, patches, trailers, and backup recovery; it never pushes rewritten history
 - `amir-publish` — personal shortcut for publishing this skills repo across Amir's usual machines
 - `codex-cleanup` — dry-run-first local cleanup skill for stale `~/.codex` state that relieves multi-instance SQLite/WAL and log bloat without touching live config or credentials
-- `disk-cleanup` — frees disk space by finding what is still alive (one process snapshot matched against every candidate) and clearing the rest: old task checkouts after salvaging their unsaved work, finished experiments' bulk, leftover task output, unused builds, caches, task devices and VMs; keeps what serves players, credentials and Amir's own files, and measures actual free space
-- `mac-studio-disk-cleanup` — the Mac Studio's map and nightly contract on top of `disk-cleanup`'s judgment: what each big folder on `agents@amirs-mac-studio` is, Hermes and AIM retention, simulators and the T7 snapshots; the host timer runs it nightly at 01:15 Chicago time
-- `home-disk-cleanup` — the Linux home server's map and nightly contract on top of `disk-cleanup`'s judgment: old RustAI and PS Mobile checkouts, finished experiments on the `/mnt` data drives, and what serving and live checkouts still need; measures root and each data drive separately
+- `disk-cleanup` — moved to devcluster, which runs one cleanup on every machine each night ([devcluster#28](https://github.com/aelaguiz/devcluster/issues/28))
 - `codex-babysit` — optional source-retained skill for watching an already-running Codex goal-mode tmux pane; it is not installed by default
 - `codex-review-yolo` — external Codex `-p yolo` reviewer for substantial diffs, plans, docs, and completion checks, with live `--json` stream logs and strict `approve | not-approved | inconclusive` verdicts
 - `fresh-consult` — transport-neutral clean read-only opinions: ordinary same-host reviews use clean native children, while cross-provider or otherwise deliberate external lanes keep exact model/profile resolution, strict verdicts, resumable follow-ups, and receipts
@@ -189,7 +187,7 @@ Install destinations are `~/.agents/skills/` for Codex,
 
 Codex reads the same installed skill surface from `~/.agents/skills/`. `make install` also removes stale pre-skill command surfaces, removed skill packages, older `~/.codex/skills/<skill>` mirrors, and local source/build internals so runtime routing stays unambiguous.
 
-`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, `eli10`, and `goal-loop` are removed from the live installed surface; `codex-babysit`, `eli10`, and `goal-loop` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `pr-review-followthrough` is installed on the agents/Codex and Claude Code surfaces. `agent-history` is installed on every surface, including the Gemini CLI and the Antigravity CLI, so an Antigravity reviewer can read the session it reviews; it covers Codex, Claude Code, Pi, Prime Agent, and Antigravity CLI local history, including Prime child-agent transcripts; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `intent-police`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `model-routing`, `model-eval`, `conductor`, `codex-cleanup`, `disk-cleanup`, `mac-studio-disk-cleanup`, `home-disk-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `paired-reviewer`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
+`arch-loop`, `delay-poll`, `wait`, `code-review`, `codex-babysit`, `eli10`, and `goal-loop` are removed from the live installed surface; `codex-babysit`, `eli10`, and `goal-loop` remain in this repository for manual use, while `make install` and `make remote_install` remove previously installed copies. `plan-conductor` is renamed to `conductor`, and install removes previously installed `plan-conductor` copies. Use native `/goal` for free-form completion, the host's native scheduling/reminder surface for timed waiting or polling, and ordinary host review behavior for generic code review. `pr-review-followthrough` is installed on the agents/Codex and Claude Code surfaces. `agent-history` is installed on every surface, including the Gemini CLI and the Antigravity CLI, so an Antigravity reviewer can read the session it reviews; it covers Codex, Claude Code, Pi, Prime Agent, and Antigravity CLI local history, including Prime child-agent transcripts; `pr-review-followthrough` owns live GitHub PR follow-through with replies and same-branch fixes. `contact-sheet-builder` is installed on all three skill surfaces and requires Python with Pillow at runtime. `fc-branded-pdf` is installed on all three skill surfaces and requires `pandoc` plus Chrome or Chromium at runtime. `cf-share` is installed on all three skill surfaces and requires `curl`, `python3`, and a secret env file at `~/.config/cf-share/env` at runtime. `arch-step-goal-prompt`, `figma-best-practices`, `fal-ai-tools`, `transcribe-audio`, `flutter-reference`, `browseros`, `chatgpt-web`, `fresh-consult`, `intent-police`, `agent-delegate`, `plan-audit`, `plan-implement`, `plan-interview`, `model-consensus`, `model-routing`, `model-eval`, `conductor`, `codex-cleanup`, `cynical-code-review`, `cynical-architecture-review`, `cynical-cruft-removal`, `exhaustive-code-review`, `paired-reviewer`, and `thermo-nuclear-code-quality-review` are installed on all three skill surfaces. `browseros` is the canonical preflight before direct BrowserOS MCP use. `chatgpt-web` applies it for browser mechanics, requires an already logged-in ChatGPT browser session, and does not automate login.
 
 `herdr-helper` is installed on the agents/Codex, Claude Code, and Gemini CLI
 surfaces and requires an installed Herdr CLI at runtime.
@@ -565,45 +563,7 @@ Use when `~/.codex` is multi-GB, old session JSONL/log/cache files are bloated, 
 
 ### `disk-cleanup`
 
-Use when a machine is running out of disk space, the user wants a specific
-amount free, or for nightly housekeeping on the M5, the M3s and Mini 1. The
-prompt-only skill starts from what is true of these machines: each has two or
-three live projects, and almost everything else was left by agents whose
-sessions have ended. It finds what is alive with one process snapshot matched
-against every candidate, plus links, services, containers, Git state and PR
-state, names the live work, and clears the rest: dead checkouts first (unsaved
-work pushed to a salvage branch, or to a local salvage repository when there is
-no remote), then finished experiments' bulk, task output, unused builds and
-caches, and stopped task devices and VMs. It keeps what serves players,
-credentials, live databases, Amir's own files and one working copy of each live
-project, and measures actual free space afterward. Use `codex-cleanup` for
-Codex's own state.
-
-Example: `Use $disk-cleanup to get this machine back to 1 TB free.`
-
-### `mac-studio-disk-cleanup`
-
-Use for `agents@amirs-mac-studio`, including its nightly maintenance. It applies
-`disk-cleanup`'s judgment with the Studio's map: what each big folder on a Mac
-nobody uses by hand is, Hermes and AIM retention, simulators, the Colima VM and
-the T7 backup's local snapshots. The Mac Studio's launchd job runs at 01:15
-America/Chicago; scheduling lives in
-`~/workspace/agents/deploy/mac/host_runner/nightly_disk_cleanup.sh` on that host.
-Reports live under `~/.local/state/mac-studio-disk-cleanup/latest/` there.
-
-Example: `Use $mac-studio-disk-cleanup to clear the agents Mac Studio.`
-
-### `home-disk-cleanup`
-
-Use for the Linux `home` server's root and its `/mnt` data drives. It applies
-`disk-cleanup`'s judgment with the server's map: old RustAI and PS Mobile
-checkouts, finished experiments' bulk, the `machines run` mirror, and what the
-serving processes and live checkouts still link to. Policy decisions use
-metadata only. The nightly systemd timer runs at 01:45 America/Chicago; the two
-M3 Macs run `disk-cleanup` at 02:15 and 02:45. See
-[fleet operations](docs/NIGHTLY_DISK_CLEANUP.md).
-
-Example: `Use $home-disk-cleanup to clean root and the mounted training drives.`
+Moved to devcluster: [skills/disk-cleanup](https://github.com/aelaguiz/devcluster/tree/main/skills/disk-cleanup) is the one cleanup skill for every machine, and devcluster runs it each night with each machine's notes and keep list ([devcluster#28](https://github.com/aelaguiz/devcluster/issues/28)). `mac-studio-disk-cleanup` and `home-disk-cleanup` are gone; their machine maps are notes in the cluster config.
 
 ### `codex-babysit`
 
