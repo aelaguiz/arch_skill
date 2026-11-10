@@ -30,7 +30,7 @@ schema over this file when they disagree.
 
 | Capability | Prime Agent | Codex CLI (multi_agent_v2) | Claude Code | Antigravity CLI (`agy`) |
 |---|---|---|---|---|
-| Pin child **model** | `model="provider/id"` on the spawn call. Exact selector; it must be in the authenticated catalog or the spawn hard-fails | `spawn_agent(model=...)`. The slug must be catalog-tagged for v2; on a typical host that is only the `gpt-5.6-*` family | Three levers, in order: `CLAUDE_CODE_SUBAGENT_MODEL` env, per-call `model`, agent frontmatter `model:`. The per-call form is a closed alias enum, not full IDs | `invoke_subagent` `Model` is a tier, not an id: `inherit` (default), `flash_lite`, `flash`, `pro`. An exact model such as `gemini-4-argon` cannot be named |
+| Pin child **model** | `model="provider/id"` on the spawn call. Exact selector; it must be in the authenticated catalog or the spawn hard-fails | `spawn_agent(model=...)`. The slug must be catalog-tagged for v2; on a typical host that is only the `gpt-5.6-*` family | Three levers, in order: `CLAUDE_CODE_SUBAGENT_MODEL` env, per-call `model`, agent frontmatter `model:`. The per-call form is a closed alias enum, not full IDs | `invoke_subagent` `Model` is a tier, not an id: `inherit` (default), `flash_lite`, `flash`, `pro`. An exact model such as `gemini-4-carbon` or `gemini-4-argon` cannot be named |
 | Pin child **thinking / effort** | `thinking=` with `off, minimal, low, medium, high, xhigh, max` | `reasoning_effort=` with `none, minimal, low, medium, high, xhigh, max, ultra` | The Agent tool's `effort` on each call (`low, medium, high, xhigh, max`, or `lower` or `higher` than the parent; seen on 2.1.312, October 28, 2026), or agent frontmatter `effort:`. No per-subagent extended-thinking toggle | **Not offered.** A child runs its tier's own level |
 | Unsupported level | Hard spawn failure when set explicitly; an inherited level is silently clamped | Rejected with the model's supported list | Frontmatter value applies to that agent definition | Not applicable; there is no effort parameter |
 | **Cross-provider** child | **Yes** — provider is not a constraint in the spawn path. The gate is the authenticated catalog: a host logged in to two providers can spawn a child on either | **No** through `model` — the child's provider is copied from the parent turn. Reachable only through a human-installed role whose config file sets its own provider | **No** — the vendor does not route Claude Code to non-Claude models through any gateway; the base-URL override is process-wide and changes where requests go, not which model answers | **No.** The tiers are Gemini tiers, although the parent's own catalog also lists Claude and GPT-OSS models |
@@ -71,7 +71,7 @@ catalog before deciding; do not assume either answer.
 
 **A tier is not a model pin.** On the Antigravity CLI a native child can be
 moved to a cheaper or stronger Gemini tier, but not to a named model or effort.
-When the work needs exactly Gemini 4 Argon at a stated effort, or any
+When the work needs exactly Gemini 4 Carbon or Argon at a stated effort, or any
 non-Gemini model, that is a concrete benefit of the external `agy` lane or
 another provider's lane. `Workspace: branch` (an isolated copy) or `share`
 (a worktree-like checkout) is real filesystem isolation for editful children;

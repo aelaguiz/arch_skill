@@ -30,7 +30,8 @@ PREFERRED_KIMI_MODEL = "kimi-code/k3"
 KIMI_DEFAULT_EFFORT = "max"
 KIMI_EFFORT_ENV = "KIMI_MODEL_THINKING_EFFORT"
 KIMI_NO_AUTO_UPDATE_ENV = "KIMI_CODE_NO_AUTO_UPDATE"
-PREFERRED_AGY_MODEL = "gemini-4-argon"
+PREFERRED_AGY_MODEL = "gemini-4-carbon"
+AGY_ARGON_MODEL = "gemini-4-argon"
 AGY_FLASH_MODEL = "gemini-3.8-flash"
 PREFERRED_AGY_EFFORT = "high"
 # Every scripted agy launch streams events, waits for the whole turn (older
@@ -108,13 +109,15 @@ _CODEX_ULTRA_MODELS = {
 _CLAUDE_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 _KIMI_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 _AGY_EFFORTS = {"low", "medium", "high"}
-_AGY_KEYWORD_RE = re.compile(r"\b(agy|antigravity|gemini|argon)\b", re.IGNORECASE)
+_AGY_KEYWORD_RE = re.compile(
+    r"\b(agy|antigravity|gemini|carbon|argon)\b", re.IGNORECASE
+)
 _AGY_SLUG_RE = re.compile(r"\bgemini-\d[a-z0-9.]*(?:-[a-z0-9.]+)+\b", re.IGNORECASE)
 _AGY_EFFORT_SUFFIX_RE = re.compile(
     r"-(?:none|minimal|low|medium|high|xhigh|max|ultra)$", re.IGNORECASE
 )
 _AGY_NATURAL_RE = re.compile(
-    r"\b(?:gemini[\s_]*(?P<version>\d+(?:\.\d+)?)?[\s_]*)?(?P<family>argon|flash)\b"
+    r"\b(?:gemini[\s_]*(?P<version>\d+(?:\.\d+)?)?[\s_]*)?(?P<family>carbon|argon|flash)\b"
     r"(?:[\s_-]*v?(?P<post_version>\d+(?:\.\d+)?)\b)?",
     re.IGNORECASE,
 )
@@ -125,7 +128,8 @@ _AGY_OTHER_FAMILY_RE = re.compile(
 _AGY_UNSUPPORTED_EFFORT_RE = re.compile(r"\b(none|minimal|off)\b", re.IGNORECASE)
 _AGY_SIGN_IN_RE = re.compile(r"sign[\s-]*in|log[\s-]*in|authenticat", re.IGNORECASE)
 _AGY_NATURAL_MODELS = {
-    "argon": ("4", PREFERRED_AGY_MODEL),
+    "carbon": ("4", PREFERRED_AGY_MODEL),
+    "argon": ("4", AGY_ARGON_MODEL),
     "flash": ("3.8", AGY_FLASH_MODEL),
 }
 _CLAUDE_FAMILY_RE = re.compile(
@@ -444,6 +448,9 @@ def resolve_execution_phrase(
     - "grok composer 2.5 high" -> grok / grok-composer-2.5-fast / high
     - "kimi k3" -> kimi / kimi-code/k3 / max
     - "kimi-code/k3 xhigh" -> kimi / kimi-code/k3 / xhigh
+    - "carbon" -> agy / gemini-4-carbon / high
+    - "gemini 4 carbon medium" -> agy / gemini-4-carbon / medium
+    - "gemini-4-carbon-low" -> agy / gemini-4-carbon / low
     - "argon" -> agy / gemini-4-argon / high
     - "gemini 4 argon medium" -> agy / gemini-4-argon / medium
     - "gemini-4-argon-low" -> agy / gemini-4-argon / low
@@ -942,8 +949,8 @@ def _resolve_agy_model(
         return candidate, model_source
     gemini_models = ", ".join(m for m in normalized_models if m.startswith("gemini-"))
     hint = (
-        "; Gemini 4 Argon in agy needs a Google AI Ultra sign-in"
-        if candidate == PREFERRED_AGY_MODEL
+        "; Gemini 4 Carbon and Argon in agy need a Google AI Ultra sign-in"
+        if candidate in {PREFERRED_AGY_MODEL, AGY_ARGON_MODEL}
         else ""
     )
     raise ModelResolutionError(
@@ -962,7 +969,8 @@ def _extract_agy_model_candidate(lowered: str) -> tuple[str, str]:
         family = "flash lite" if other.group("flash_lite") else other.group("family")
         raise ModelResolutionError(
             f"{family!r} is not an agy model this resolver routes; name "
-            f"{PREFERRED_AGY_MODEL!r}, {AGY_FLASH_MODEL!r}, or an exact gemini-* id"
+            f"{PREFERRED_AGY_MODEL!r}, {AGY_ARGON_MODEL!r}, {AGY_FLASH_MODEL!r}, "
+            "or an exact gemini-* id"
         )
     natural = _AGY_NATURAL_RE.search(lowered)
     if natural:
@@ -978,8 +986,9 @@ def _extract_agy_model_candidate(lowered: str) -> tuple[str, str]:
         return model, "explicit"
     if re.search(r"\bgemini[\s_-]*\d", lowered):
         raise ModelResolutionError(
-            "Gemini wording names a version without Argon or Flash; name "
-            f"{PREFERRED_AGY_MODEL!r}, {AGY_FLASH_MODEL!r}, or an exact gemini-* id"
+            "Gemini wording names a version without Carbon, Argon, or Flash; name "
+            f"{PREFERRED_AGY_MODEL!r}, {AGY_ARGON_MODEL!r}, {AGY_FLASH_MODEL!r}, "
+            "or an exact gemini-* id"
         )
     return PREFERRED_AGY_MODEL, "default"
 

@@ -78,7 +78,7 @@ adversarial mode, set one role to `adversary`. The adversary is not hostile; it
 is responsible for simpler alternatives, counterarguments, failure modes, and
 resisting bloated compromise.
 
-With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Announce each
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). Announce each
 choice and its provenance. If another load-bearing provider, model/profile,
 or effort choice is missing or ambiguous, ask one consolidated question. Do not
 invent other defaults.

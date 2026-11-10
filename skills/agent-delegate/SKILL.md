@@ -1,6 +1,6 @@
 ---
 name: agent-delegate
-description: "Run editful Claude, Codex, Cursor Agent, Grok, Kimi, or Gemini 4 Argon (Antigravity `agy`) workers as explicit external processes or resumable sessions with exact model/profile resolution and structured receipts. Use when external transport provides a concrete benefit, such as a different provider, a load-bearing exact model/profile, durable exact-session continuation, process isolation, automation, or captured event/final-output artifacts; these are examples, not a closed gate. Route ordinary same-host work directly to the active host's native children when they can satisfy the role. Use exact handles to resume the same external worker. Not for read-only reviews (`fresh-consult`), Codex `-p yolo` reviews, two-model convergence, ordered orchestration, or detached/background delegation."
+description: "Run editful Claude, Codex, Cursor Agent, Grok, Kimi, or Gemini 4 Carbon/Argon (Antigravity `agy`) workers as explicit external processes or resumable sessions with exact model/profile resolution and structured receipts. Use when external transport provides a concrete benefit, such as a different provider, a load-bearing exact model/profile, durable exact-session continuation, process isolation, automation, or captured event/final-output artifacts; these are examples, not a closed gate. Route ordinary same-host work directly to the active host's native children when they can satisfy the role. Use exact handles to resume the same external worker. Not for read-only reviews (`fresh-consult`), Codex `-p yolo` reviews, two-model convergence, ordered orchestration, or detached/background delegation."
 metadata:
   short-description: "External editful worker sessions and receipts"
 ---
@@ -9,7 +9,7 @@ metadata:
 
 Use this skill as the explicit external editful worker/session adapter. It runs
 Claude Fable/Opus, Codex GPT/GBT models or Fugu profiles, Cursor Composer,
-Grok, Kimi K3, or Gemini 4 Argon through the Antigravity CLI (`agy`) as a
+Grok, Kimi K3, or Gemini 4 Carbon/Argon through the Antigravity CLI (`agy`) as a
 separate process, captures a durable receipt, and can resume the exact external
 session. It does not own the caller's decomposition, role
 choice, context choice, review policy, or final integration.
@@ -40,7 +40,7 @@ automation.
 - "Use Cursor Agent Composer to implement this slice and report back."
 - "Use Grok Build to investigate and patch this workflow."
 - "Use Kimi K3 max to implement this slice and keep its exact session handle."
-- "Delegate this to Argon high and keep its exact conversation id."
+- "Delegate this to Carbon high and keep its exact conversation id."
 - "Use the exact Fugu Ultra profile and preserve a resumable receipt."
 - "Have an external Claude session use `$skill-authoring` to patch this skill
   package and preserve its exact handle."
@@ -91,7 +91,7 @@ automation.
   authoritative source actually chose them.
 - Runtime must be known. With no model or level named, choose both with
   `$model-routing`. Kimi and agy lanes keep their harness defaults
-  (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+  (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`).
   Codex runs GPT/GBT/OpenAI model ids and Fugu profiles, Claude Code runs
   supported Claude models, Cursor Agent runs `composer-2.5-fast`, Grok CLI
   naturally resolves to `grok-4.6`, Kimi Code runs `kimi-code/k3`, and agy runs
@@ -192,7 +192,7 @@ automation.
    delegate.
 7. With no model or level named, choose both with `$model-routing`. Kimi and
    agy lanes keep their harness defaults (`kimi-code/k3` at `max`,
-   `gemini-4-argon` at `high`). If another required execution value, write scope, or resume handle
+   `gemini-4-carbon` at `high`). If another required execution value, write scope, or resume handle
    is incomplete, ask one question that names exactly what is missing and what
    it controls.
 8. Confirm the selected CLI exists with `command -v codex`, `command -v

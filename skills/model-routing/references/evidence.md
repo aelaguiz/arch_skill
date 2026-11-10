@@ -137,3 +137,50 @@ Since then, two live timers moved to Sol 6.1 at high. Over ten looks on young th
 ## Measuring again
 
 When a new model or level arrives, `$model-eval` runs the back-test again for it and updates this skill from the result. The first run's method, log, tasks, tooling and scores are in psbrain at `projects/agent-watcher/efficiency-profile/task-routing/`.
+
+## Gemini 4 Carbon across helpers, research, builds, reviews and crossing
+
+Measured November 10, 2026, through Antigravity (`agy`) against stored baselines with zero baseline reruns. Two neutral blind judges from the other two families, Opus 5.5 at medium and Sol 6.1 at high, graded every answer without model names. Standard list prices below are Google's December 1, 2026 rates ($4 input, $0.20 cached input, $20 output, $0 cache write); November introductory rates are half of standard.
+
+### Five multi-file helper tasks
+
+Five stored tasks covering planning, translation under length limits, external copy under policy rules, repository survey and multi-file fact checking:
+
+| Setting | Finished | Minutes, all 5 | Cost, standard (Nov intro) | Sol 6.1 judge | Opus 5.5 judge |
+|---|---:|---:|---:|---:|---:|
+| Gemini 4 Carbon at medium | 5 of 5 | 70.9 | $15.07 ($7.53) | 3.6 | 3.8 |
+| Gemini 4 Carbon at high | 2 of 5 | 98.4 | $21.75 ($10.88) | 1.8 | 1.8 |
+| Opus 5.5 at xhigh (stored) | 5 of 5 | 52.8 | $26.16 | 3.8 | 3.6 |
+| Fable 5.2 at high (stored) | 5 of 5 | 41.7 | $27.79 | 3.2 | 3.8 |
+| Fable 5.2 at xhigh (stored) | 5 of 5 | 69.5 | $41.57 | 3.2 | 4.0 |
+
+Carbon at `high` timed out past 21 minutes of file paging (136 to 201 tool steps) on three of the five tasks. Carbon at `medium` finished all five and matched Opus 5.5 at `xhigh` on combined blind score for 42% less at standard rates, taking 34% longer than Opus 5.5 at `xhigh` and 4.0 times as long as Opus 5.5 at `medium` (17.6 minutes, $9.86 on the same five tasks). On two of those tasks where Gemini 4 Argon at `high` also ran as a control, Argon finished in 15.0 minutes ($3.61 standard, $1.81 intro) and scored 2.5 on both judges against 3.0 and 3.5 for Carbon at `medium`.
+
+### Hard analytical rewinds and open systems questions
+
+Three research questions from a quantitative systems project, each rewound to the exact inputs before the team caught a wrong turn, plus two open memory and scaling questions on the same codebase:
+
+| 3 rewound research questions | Finished | Minutes, all 3 | Cost, standard (Nov intro) | Sol 6.1 judge | Opus 5.5 judge |
+|---|---:|---:|---:|---:|---:|
+| Fable 5.2 at xhigh (stored) | 3 of 3 | ~65 | ~$25 | 3.7 | 4.3 |
+| Opus 5.5 at xhigh (stored) | 3 of 3 | ~45 | ~$12 | 3.7 | 3.7 |
+| Gemini 4 Carbon at medium | 3 of 3 | 64.4 | $9.26 ($4.63) | 2.7 | 3.0 |
+| Gemini 4 Carbon at high | 2 of 3 | 84.4 | $15.66 ($7.83) | 2.0 | 2.7 |
+
+On the first two rewinds, Carbon at both levels reproduced the team's settled arithmetic and traced the underlying code mechanism, losing points for co-headlining an unmeasured carry on the first and attributing an unsplit residual by subtraction on the second; on the third, Carbon at `high` wrote seven analysis scripts and timed out at 29 minutes without delivering its answer. On the two open questions (56.7 minutes in all, $8.63 standard, $4.31 intro), Carbon at `high` finished both and independently found verified code-level levers, an algebraic double-exponentiation bug in an existing projection, and an allocator size-class boundary tax that matched or extended what Opus 5.5 and Fable 5.2 found.
+
+### Four code builds and five reviewer control looks
+
+On the same four stored builds reported in "What each model adds" above, both blind readers scored Gemini 4 Carbon at `high` **1 yes, 1 partly, 2 no** (median 20.0 minutes, $14.12 standard, $7.06 intro): two builds timed out after 20 minutes of reading with zero diff, one timed out after writing 499 code lines and 27 guards (12% and 32% cut by the two readers), and one finished cleanly (22 code lines, 96 test lines, 0 guards).
+
+On the five control looks (14 taken findings) where Astra 6.0 at `xhigh` also ran from frozen copies:
+
+| 5 control looks, 14 findings | Terra 6.1 xhigh | Sol 6.1 high | Opus 5.5 high | Astra 6.0 high | Astra 6.0 xhigh | Carbon 4 high |
+|---|---:|---:|---:|---:|---:|---:|
+| Raised or partly, reader 1 / reader 2 | 10 / 10 | 10 / 9 | 10 / 10 | 11 / 10 | 10 / 12 | 12 / 12 |
+| Missed, of 14 | 4 / 4 | 4 / 5 | 4 / 4 | 3 / 4 | 4 / 2 | 2 / 2 |
+| Further findings a look | 2.8 to 3.2 | 3.0 to 3.2 | 8.2 to 8.6 | 2.8 | 2.4 to 2.8 | 10.2 to 13.8 |
+| Cost a look, standard | $0.15 | $0.53 | $1.12 | $3.33 | $3.75 | $2.77 ($1.38 Nov) |
+| Minutes a look | 2.3 | 6.0 | 3.7 | 4.8 | ~10 | 13.5 |
+
+On four small cross-family jobs (two from a Claude parent, two from a Codex parent calling `agy` with Gemini 4 Carbon at `medium`), all four answers were right, setup and reading stayed small, and `agy` itself took 115 to 226 seconds ($0.31 to $0.56 standard) where Sonnet 5.5, Sol 6.1 and Terra 6.1 took 25 to 56 seconds ($0.03 to $0.10).

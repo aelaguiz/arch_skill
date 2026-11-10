@@ -188,7 +188,7 @@ Must happen every run:
   `epic_planner`, `implementation_worker`, and `critic`; ask once for missing
   load-bearing values. With no model or level named, choose both with
   `$model-routing`. Kimi and agy lanes keep their harness defaults
-  (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). A runtime never
+  (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). A runtime never
   silently defaults.
   Natural Grok wording resolves to `grok-4.6`, while explicitly named legacy
   Grok ids remain exact. Existing external

@@ -83,7 +83,7 @@ For each drafted step, resolve execution in this order:
    doctrine applies. Use external defaults only within a selected external
    lane. In a selected Kimi lane, omitted model/effort means
    `kimi-code/k3`/`max`, and in a selected agy lane it means
-   `gemini-4-argon`/`high`; natural Grok wording means `grok-4.6`. Explicit legacy
+   `gemini-4-carbon`/`high`; natural Grok wording means `grok-4.6`. Explicit legacy
    Grok ids remain exact.
 
 Critic execution resolves independently. The default critic runtime is the

@@ -20,7 +20,7 @@ fully external worker-and-critic policy has six values:
 - `execution_defaults.critic.model` - external critic model or profile
 - `execution_defaults.critic.effort` - external critic reasoning effort
 
-External runtime comes from the user or target doctrine. With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+External runtime comes from the user or target doctrine. With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`).
 When an external Codex lane uses Fugu, its execution block also stores
 `codex_profile` as `fugu` or `fugu-ultra`.
 
@@ -33,7 +33,7 @@ resolved from explicit user preferences or hard target-repo doctrine. See
 Different external work deserves different price points. A lesson-authoring
 run may want strong worker steps and a strong critic. A many-step drill may want
 cheap workers and a stronger critic. The right runtime baseline is a user
-judgment. With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+judgment. With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`).
 
 Ask only after the orchestrator has selected an external lane. Guessing wrong
 is expensive: wrong runtime or model wastes money or quality; wrong effort
@@ -53,7 +53,7 @@ requested capability. Any of these is clear:
 - "Codex high everywhere" (the omitted model comes from `$model-routing`)
 - "Grok Build high for steps and Codex gpt-6.1-sol xhigh for critic"
 - "Kimi K3 high for steps and Kimi max for critic"
-- "Argon high for steps and Codex gpt-6.1-sol xhigh for critic"
+- "Carbon high for steps and Codex gpt-6.1-sol xhigh for critic"
 - "steps on gpt-6.1-sol high, critic on gpt-6.1-sol xhigh"
 - "default to Codex gpt-6.1-sol high, but use Claude Fable 5.1 for copywriting"
 
@@ -101,14 +101,15 @@ This is reasoning, not a lookup table:
   `runtime=kimi`, `model=kimi-code/k3`. Do not auto-resolve older
   Kimi-for-coding/K2.7 aliases. Inspect top-level `.models` keys from
   `kimi provider list --json` when availability matters.
-- For agy, `agy`, `antigravity`, `gemini`, and `argon` resolve to
+- For agy, `agy`, `antigravity`, `gemini`, and `carbon` resolve to
+  `runtime=agy`, `model=gemini-4-carbon`, and `argon` resolves to
   `runtime=agy`, `model=gemini-4-argon`. `gemini flash` resolves to
   `gemini-3.8-flash` only when the user names Flash. A natural version agy
-  does not list, such as "gemini 4.5 argon", fails rather than being
+  does not list, such as "gemini 4.5 carbon" or "gemini 4.5 argon", fails rather than being
   rewritten. Only Gemini models run through agy: `agy models` also lists
   Claude and GPT-OSS models, but those never run through agy, so "agy
   opus" fails as a mixed-provider phrase. Inspect `agy models` when
-  availability matters; Gemini 4 Argon needs a Google AI Ultra sign-in.
+  availability matters; Gemini 4 Carbon and Argon need a Google AI Ultra sign-in.
 - Bare `composer`, `composer 2.5`, or bare `2.5` is ambiguous unless the user
   explicitly names Cursor Agent or Grok in the same execution choice.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
@@ -126,8 +127,8 @@ Always announce the raw-to-resolved mapping before execution, for example:
 effort=high` or `Grok Build high -> runtime=grok, model=grok-4.6,
 effort=high`. `Kimi -> runtime=kimi, model=kimi-code/k3, effort=max,
 effort_source=model_default` records the K3 default explicitly.
-`Argon -> runtime=agy, model=gemini-4-argon, effort=high,
-effort_source=preference_default` records the agy default the same way.
+`Carbon -> runtime=agy, model=gemini-4-carbon, effort=high,
+effort_source=preference_default` records the agy default the same way (`Argon` resolves to `gemini-4-argon`).
 `Codex -> runtime=codex, model=gpt-6.1-sol, effort=xhigh,
 model_source=default, effort_source=preference_default` records the resolver's
 last resort.
@@ -148,7 +149,7 @@ Kimi process also sets `KIMI_CODE_NO_AUTO_UPDATE=1`. Print mode's automatic
 approval is not a full permission, hook, or static-denial bypass. Gemini
 models in agy support only `low`, `medium`, and `high`, passed as `--effort`,
 with omitted effort defaulting to `high`; `xhigh`, `max`, and `ultra` fail
-rather than being remapped. A baked id such as `gemini-4-argon-high` reads as
+rather than being remapped. A baked id such as `gemini-4-carbon-high` reads as
 the model plus its effort.
 
 For deterministic script plumbing that needs these same resolution rules, use
@@ -162,7 +163,7 @@ exact-version preservation and fail-loud behavior.
 Do not ask for runtime/model/effort merely to run a capable same-host native
 child. After an external lane has been selected, choose any model or level
 nobody named with `$model-routing`, keeping Kimi's `kimi-code/k3`/`max`
-defaults and agy's `gemini-4-argon`/`high` defaults; if a load-bearing
+defaults and agy's `gemini-4-carbon`/`high` defaults; if a load-bearing
 external value is still
 unspecified and cannot be inferred unambiguously, ask ONE consolidated
 question listing what is missing and what it controls:
@@ -199,7 +200,7 @@ Infer runtime only when the evidence is unambiguous:
 
 - a target repo says "run with Codex"
 - the user says "Claude Fable 5.1", "Codex gpt-6.1-sol", "Luna", "Terra",
-  "Grok Build", "Kimi", "K3", "Argon", "Gemini", or "agy"
+  "Grok Build", "Kimi", "K3", "Carbon", "Argon", "Gemini", or "agy"
 - the user says "Codex Fugu", "Fugu high", or "Fugu Ultra xhigh"
 - an installed CLI supports only the named model family and the user clearly
   intended that family

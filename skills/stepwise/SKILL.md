@@ -105,7 +105,7 @@ break.
   external lane, base runtime is supplied by the user or target doctrine for
   worker and critic independently. With no model or level named, choose both
   with `$model-routing`. Kimi and agy lanes keep their harness defaults
-  (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Natural Grok
+  (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). Natural Grok
   wording resolves to `grok-4.6`, while explicit legacy Grok ids stay exact.
   Ask once only for missing load-bearing external values.
 - Optional execution preferences are interpreted after the Step Manifest is

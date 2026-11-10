@@ -320,7 +320,7 @@ the next routing decision.
   or contradictory. Never advance to the next sub-plan.
 - If an external critic was selected with no model or level named, choose both
   with `$model-routing`. Kimi and agy lanes keep their harness defaults
-  (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+  (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`).
   If another required external critic value is missing, ask the same
   consolidated policy question used by interactive mode.
   Do not ask for model values for an ordinary capable native critic.
@@ -362,7 +362,7 @@ the next routing decision.
    `epic_planner`, `implementation_worker`, and `critic` role table via
    `../../_shared/model_resolution.py`. With no model or level named, choose both
    with `$model-routing`. Kimi and agy lanes keep their harness defaults
-   (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Ask once for other
+   (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). Ask once for other
    missing values, then initialize the run directory with
    `scripts/run_arch_epic.py auto-init`.
 4. Select the first sub-plan whose Status is not `complete`.

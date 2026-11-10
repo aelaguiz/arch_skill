@@ -291,7 +291,7 @@ out unless the host was deliberately configured otherwise.
 
 In the Antigravity CLI (`agy`), a native child is an `invoke_subagent` launch
 and always starts clean from its type's system prompt and the prompt you write.
-`Model: inherit` is the default dispatch for an Argon parent. The other values
+`Model: inherit` is the default dispatch for a Carbon or Argon parent. The other values
 are Gemini tiers, not model ids, and there is no effort setting, so a pinned
 exact model or effort needs the external lane. Give an editful child
 `Workspace: branch` or `share` when it needs its own checkout. Continue the same

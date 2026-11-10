@@ -269,7 +269,7 @@ Practical rule:
   Same-host planner, implementation-worker, and critic roles prefer clean
   native children; the separate external harness is selected only for a
   deliberate external benefit.
-- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5.1 high` becomes `claude-fable-5-1`; bare `Codex` becomes `gpt-6.1-sol` at `xhigh`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; `Argon` or bare `Gemini` becomes `gemini-4-argon` at `high`; and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-6.1-sol` before launching children.
+- Role choices are resolved with the shared exact-version model resolver. Shorthand such as `fable 5.1 high` becomes `claude-fable-5-1`; bare `Codex` becomes `gpt-6.1-sol` at `xhigh`; `Fugu Ultra xhigh` becomes Codex profile `fugu-ultra`; `Kimi` becomes `kimi-code/k3` at `max`; `Carbon` or bare `Gemini` becomes `gemini-4-carbon` at `high` (explicit `Argon` becomes `gemini-4-argon` at `high`); and natural Grok wording selects `grok-4.6`. There is no silent downgrade, provider switch, or effort substitution. `gpt-5.4` and `gpt-5.5` are blocked execution choices; if the user names either while choosing a model, stop and ask whether they meant `gpt-6.1-sol` before launching children.
 - Role-based automatic mode drives sub-plans depth-first. Planner and
   implementation roles are resumable by exact handle; a new clean critic's
   accepted findings return to the owning role instead of creating a repair
@@ -687,7 +687,7 @@ runtime, model/profile, and effort, or the skill asks once. An omitted Codex
 model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane
 defaults to `xhigh`. Bare Kimi defaults to `kimi-code/k3` at `max`; natural
 Grok wording selects `grok-4.6` and still requires an explicit effort. Bare
-Gemini or Argon defaults to `gemini-4-argon` at `high`. Exact
+Gemini or Carbon defaults to `gemini-4-carbon` at `high` (explicit Argon defaults to `gemini-4-argon` at `high`). Exact
 versions and profiles are preserved without silent downgrade or provider
 switch.
 
@@ -728,7 +728,7 @@ same-host work uses native children directly. The adapter preserves exact model
 resolution, CLI invocation, namespaced receipts, shared-worktree reporting, and
 exact-handle resume.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6.1-sol`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini` or `Argon` for the Antigravity CLI. An omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Argon resolves to `gemini-4-argon` at `high`, the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. Runtime can be inferred only from unambiguous model families such as `gpt-6.1-sol`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini`, `Carbon`, or `Argon` for the Antigravity CLI. An omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Carbon resolves to `gemini-4-carbon` at `high` (explicit Argon resolves to `gemini-4-argon` at `high`), the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`, while explicit `medium` and `xhigh` requests remain forced overrides. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, or separate-worktree fallback. Cursor Agent effort is encoded in the model id.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -799,7 +799,7 @@ before dispatch when done-state or frozen scope is not defensible; the
 readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is Codex
-`gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi, Argon, Grok, Cursor, or
+`gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi, Carbon, Argon, Grok, Cursor, or
 Claude, and it covers every heavy role: implementation, research,
 verification, any requested cynical review, and the cold verifier. That
 profile runs on a native child when the host can reach the model in its child
@@ -858,7 +858,7 @@ The user names the participant identities. Native roles use only model
 capabilities the host can confirm; an unavailable load-bearing identity selects
 the external lane. External shorthand follows the shared exact model resolver:
 bare Codex selects `gpt-6.1-sol` at `xhigh`, bare Kimi selects `kimi-code/k3`
-at `max`, bare Gemini or Argon selects `gemini-4-argon` at `high`, and natural
+at `max`, bare Gemini or Carbon selects `gemini-4-carbon` at `high` (explicit Argon selects `gemini-4-argon` at `high`), and natural
 Grok wording selects `grok-4.6` while retaining Grok's explicit-effort
 requirement.
 

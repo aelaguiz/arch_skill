@@ -198,7 +198,7 @@ native child system instead. External provider routing remains exact: Codex
 runs OpenAI model ids and Fugu profiles, Claude Code runs supported Claude
 models, Cursor Agent runs `composer-2.5-fast`, natural Grok requests use
 `grok-4.6`, Kimi Code uses `kimi-code/k3`, and the Antigravity CLI (`agy`)
-runs Gemini models, `gemini-4-argon` at `high` by default; model ids never cross
+runs Gemini models, `gemini-4-carbon` at `high` by default (`gemini-4-argon` when Argon is named); model ids never cross
 runtimes, so the Claude and GPT-OSS models `agy` also lists are never routed
 through `agy`.
 
@@ -585,8 +585,8 @@ runtime, model/profile, and effort, or the skill asks once. Codex aliases remain
 exact (`astra`, `luna`, `terra`), and an omitted external Codex model defaults to
 `gpt-6.1-sol`; an omitted effort on that Sol lane defaults to `xhigh`. Bare
 Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.6`
-and still require an explicit effort. Bare Gemini or Argon defaults to
-`gemini-4-argon` at `high`. Exact model versions and profiles are
+and still require an explicit effort. Bare Gemini or Carbon defaults to
+`gemini-4-carbon` at `high` (explicit Argon selects `gemini-4-argon` at `high`). Exact model versions and profiles are
 preserved without silent downgrade or provider switch.
 
 The first request in a consult line starts clean and preserves the exact native
@@ -633,7 +633,7 @@ resume.
 
 Fresh-resumable is the default. When the caller explicitly requests parallel workers, `agent-delegate` creates a group directory and launches ordinary fresh-resumable child workers, then inspects repo state before reporting the combined result. Stateless one-shot is available only when explicitly requested and the selected CLI can honor it; Kimi always persists a session, even when its receipt is ignored. Explicit resume uses a same-runtime session id or prior run directory. Claude and Kimi resume use `-r <session_id>` from the original work root; Codex resume uses `codex exec resume <thread_id>` and never `--last`; Cursor Agent and Grok resume use `--resume <session_id>` and never latest-session selection; agy resume uses `--conversation <conversation_id>` and never `--continue`. The skill does not resume "latest" sessions, cross runtimes, or use external continuation controllers as a strategy.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `astra`, `luna`, and `terra` as the exact `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra` choices; an omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini` or `Argon` for the Antigravity CLI. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Argon resolves to `gemini-4-argon` at `high`, the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `astra`, `luna`, and `terra` as the exact `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra` choices; an omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini`, `Carbon`, or `Argon` for the Antigravity CLI. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Carbon resolves to `gemini-4-carbon` at `high` (explicit Argon resolves to `gemini-4-argon` at `high`), the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -684,7 +684,7 @@ readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is
 Codex `gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi (`kimi-code/k3`
-at `max`), Argon (`gemini-4-argon` at `high`), Grok (`grok-4.6`), Cursor (`composer-2.5-fast`), or Claude, and it
+at `max`), Carbon (`gemini-4-carbon` at `high`), Argon (`gemini-4-argon` at `high`), Grok (`grok-4.6`), Cursor (`composer-2.5-fast`), or Claude, and it
 covers every heavy role — implementation, research, verification, any
 requested cynical review, and the cold verifier. That profile runs on a native
 child when the host can reach the model in its child catalog, pin both the
@@ -745,8 +745,8 @@ identity selects the external lane. External shorthand follows the shared
 model resolver, preserves exact versions/profiles, and defaults an omitted
 external Codex model to `gpt-6.1-sol` and its omitted Sol effort to `xhigh`.
 Bare Kimi selects `kimi-code/k3` at `max`; natural Grok wording selects
-`grok-4.6` and keeps the explicit-effort requirement. Bare Gemini or Argon
-selects `gemini-4-argon` at `high`.
+`grok-4.6` and keeps the explicit-effort requirement. Bare Gemini or Carbon
+selects `gemini-4-carbon` at `high` (explicit Argon selects `gemini-4-argon` at `high`).
 
 External participants preserve event/final receipts; native participants
 preserve exact host child handles. Both remain read-only, and the parent checks

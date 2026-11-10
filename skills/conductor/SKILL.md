@@ -119,7 +119,7 @@ log beside the plan is its durable memory.
 - Model and thinking level are first-class worker values on both lanes, drawn
   from one vocabulary, and the user normally supplies them. With no model or
   level named, choose both with `$model-routing`. Kimi and agy lanes keep their
-  harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). Accept
+  harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). Accept
   `sol`, `astra`, `luna`, and `terra` as
   `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`. Ask one consolidated
   question only for load-bearing missing values. Provider routing remains:
@@ -127,7 +127,7 @@ log beside the plan is its durable memory.
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording
   resolves to `grok-4.6`, Kimi runs `kimi-code/k3` with an omitted-level
   default of `max`, and the Antigravity CLI (`agy`) runs Gemini models,
-  `gemini-4-argon` by default, with an omitted-level default of `high`.
+  `gemini-4-carbon` by default, with an omitted-level default of `high`.
   Explicit legacy Grok ids remain exact and discovery-gated.
   Announce the resolved model, thinking level, and lane before the first
   launch, and never change any of the three silently mid-run.
@@ -299,7 +299,7 @@ log beside the plan is its durable memory.
    phase range), the worker profile, per-role lane and starting context, max
    parallelism, wave cap, and cold-verifier toggle. The fleet profile comes
    from `$model-routing`; a user-named provider swaps the whole fleet — Kimi to `kimi-code/k3`
-   at `max`, agy (Gemini) to `gemini-4-argon` at `high`, Grok to `grok-4.6`,
+   at `max`, agy (Gemini) to `gemini-4-carbon` at `high` (or `gemini-4-argon` when Argon is named), Grok to `grok-4.6`,
    Cursor to `composer-2.5-fast`, Claude to a supported Claude model. Then
    pick the lane per
    `references/delegation-and-monitoring.md`: a native child when this host

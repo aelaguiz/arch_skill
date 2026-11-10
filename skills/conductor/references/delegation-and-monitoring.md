@@ -106,7 +106,7 @@ choose — the fleet is defined by that profile, not by the runtime that hosts i
 
 When the user names no provider, choose the fleet profile with `$model-routing`.
 
-With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). For Codex, accept `sol`, `astra`, `luna`, and `terra` as
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). For Codex, accept `sol`, `astra`, `luna`, and `terra` as
 `gpt-6.1-sol`, `gpt-6-astra`,
 `gpt-6-luna`, and `gpt-6.1-terra`. Ask one consolidated question for other
 missing execution values. Do not assume the fleet's model is cheaper than the

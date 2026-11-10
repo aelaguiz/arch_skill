@@ -87,10 +87,11 @@ the same doctrine used by Stepwise and fresh-consult:
 - resolve Kimi/K3 wording to `runtime=kimi`, `model=kimi-code/k3`; default an
   omitted Kimi effort to `max`
 - inspect `kimi provider list --json` when Kimi model availability matters
-- resolve Argon, Gemini, Antigravity, and agy wording to `runtime=agy`,
+- resolve Carbon, Gemini, Antigravity, and agy wording to `runtime=agy`,
+  `model=gemini-4-carbon`, and Argon wording to `runtime=agy`,
   `model=gemini-4-argon`; default an omitted agy effort to `high`
-- inspect `agy models` when agy model availability matters; it lists Argon only
-  for a Google AI Ultra sign-in
+- inspect `agy models` when agy model availability matters; it lists Carbon and
+  Argon only for a Google AI Ultra sign-in
 - prefer `claude-<family>-<version-with-hyphens>` for supported Claude
   family+version
   phrases
@@ -113,7 +114,7 @@ include a role:
 - "implementation worker on Codex Fugu Ultra xhigh"
 - "planner on Grok Build high"
 - "implementation worker on Kimi K3 max"
-- "critic on Gemini 4 Argon high"
+- "critic on Gemini 4 Carbon high"
 - "critics on gpt-6.1-sol xhigh"
 - "codex gpt-6.1-sol high everywhere"
 
@@ -146,10 +147,11 @@ Treat model text as intent, not a loose alias:
 - `kimi`, `kimi code`, `kimi k3`, `k3`, and `moonshot` normalize to
   `runtime=kimi`, `model=kimi-code/k3`. Do not auto-resolve older
   Kimi-for-coding/K2.7 aliases.
-- `argon`, `gemini`, `gemini 4 argon`, `antigravity`, and `agy` normalize to
-  `runtime=agy`, `model=gemini-4-argon`; `gemini flash` becomes
+- `carbon`, `gemini`, `gemini 4 carbon`, `antigravity`, and `agy` normalize to
+  `runtime=agy`, `model=gemini-4-carbon`; `argon` and `gemini 4 argon` become
+  `gemini-4-argon`; `gemini flash` becomes
   `gemini-3.8-flash` only when named. A natural Gemini version that is not in
-  the catalog, such as `gemini 4.5 argon`, fails loud rather than being
+  the catalog, such as `gemini 4.5 carbon` or `gemini 4.5 argon`, fails loud rather than being
   rewritten. agy runs only Gemini models: the Claude and GPT-OSS models it also
   lists never run through it, so `agy opus` names two runtime families.
 - Bare `composer`, `composer 2.5`, or bare `2.5` is ambiguous unless the user
@@ -216,7 +218,8 @@ planner: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effo
 implementation_worker: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
 implementation_worker: "Kimi K3 high" -> runtime=kimi, model=kimi-code/k3, effort=high
 critic: "Kimi" -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
-implementation_worker: "Gemini 4 Argon medium" -> runtime=agy, model=gemini-4-argon, effort=medium
+implementation_worker: "Gemini 4 Carbon medium" -> runtime=agy, model=gemini-4-carbon, effort=medium
+critic: "Carbon" -> runtime=agy, model=gemini-4-carbon, effort=high, effort_source=preference_default
 critic: "Argon" -> runtime=agy, model=gemini-4-argon, effort=high, effort_source=preference_default
 ```
 
@@ -240,7 +243,7 @@ choices control real external processes and model budget.
 Please give runtime for each role, plus any model or effort you want to name,
 or say which roles should be "same as" another role. I will choose any model
 or level you leave out; a Kimi role uses kimi-code/k3 and defaults an omitted
-effort to max; an agy role uses gemini-4-argon and defaults an omitted effort
+effort to max; an agy role uses gemini-4-carbon and defaults an omitted effort
 to high. Ordinary critic
 failures resume the exact relevant planner or implementation worker session;
 there is no separate repair-worker choice in new external-harness policies.

@@ -359,7 +359,7 @@ resumed.
 
 ## agy — step session (resumable)
 
-agy (the Antigravity CLI, which runs Gemini models such as Gemini 4 Argon) has
+agy (the Antigravity CLI, which runs Gemini models such as Gemini 4 Carbon and Argon) has
 no cwd or prompt-file flag. Run it from `<target_repo>` and pass the saved
 prompt text as one attached `--print=` argv value, without a shell. The
 attached form keeps a prompt that starts with `-` from being read as a flag.
@@ -573,7 +573,7 @@ KIMI_CODE_NO_AUTO_UPDATE=1 KIMI_MODEL_THINKING_EFFORT=low \
 # 13 agy step (run all agy commands from the same cwd)
 cd /tmp/smoke
 agy --print='Remember the word MANGO. Reply with exactly: OK' \
-  --model gemini-4-argon --effort low --output-format stream-json \
+  --model gemini-4-carbon --effort low --output-format stream-json \
   --print-timeout 0 --dangerously-skip-permissions \
   | tee /tmp/smoke/agy-step.events.jsonl
 jq -rR 'fromjson? | select(.event=="init") | .conversation_id' \
@@ -582,7 +582,7 @@ jq -rR 'fromjson? | select(.event=="init") | .conversation_id' \
 # 14 agy resume (reuse the exact conversation_id from step 13; the response
 # must be MANGO and the result must name the same conversation)
 agy --print='What word did I ask you to remember? Reply with only that word.' \
-  --model gemini-4-argon --effort low --output-format stream-json \
+  --model gemini-4-carbon --effort low --output-format stream-json \
   --print-timeout 0 --dangerously-skip-permissions \
   --conversation <CONVERSATION_ID> | tee /tmp/smoke/agy-resume.events.jsonl
 jq -cR 'fromjson? | select(.event=="result") | .result | {conversation_id,status,response}' \
@@ -592,7 +592,7 @@ jq -cR 'fromjson? | select(.event=="result") | .result | {conversation_id,status
 printf '%s' '{"type":"object","properties":{"verdict":{"type":"string","enum":["pass","fail"]}},"required":["verdict"]}' \
   > /tmp/smoke/agy-schema.json
 agy --print='Return verdict pass.' \
-  --model gemini-4-argon --effort low --output-format stream-json \
+  --model gemini-4-carbon --effort low --output-format stream-json \
   --print-timeout 0 --dangerously-skip-permissions \
   --json-schema /tmp/smoke/agy-schema.json \
   | tee /tmp/smoke/agy-critic.events.jsonl

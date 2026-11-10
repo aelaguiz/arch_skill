@@ -27,7 +27,7 @@ quality bar to finish faster.
    starting context, any external runtime/model/effort, max parallelism, wave
    cap, and cold-verifier toggle. With no model or level named, choose both with
    `$model-routing`. Kimi and agy lanes keep their harness defaults
-   (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+   (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`).
 2. Plan read and extraction in context; capture the start commit and inherited
    worktree state before writing the conductor log.
 3. Write the log, recording the start commit, then apply and record the

@@ -62,7 +62,7 @@ Each participant needs a requested identity and role:
 - `starting context`: clean for the independent first pass
 - `continuation`: the exact child/session handle after launch
 
-With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`).
 
 If any load-bearing participant choice is still missing or ambiguous after
 that, ask one consolidated question. Explain that
@@ -73,7 +73,7 @@ Before I run model-consensus, I need the two participant choices. Please give
 provider for Model A and Model B, any model or effort you want to name, and
 say whether either should be adversarial. I will choose any model or level you
 leave out, except that Kimi stays at kimi-code/k3 at max and agy at
-gemini-4-argon at high. I will use native children where
+gemini-4-carbon at high. I will use native children where
 the active host can honor the requested capability and external sessions for
 the remaining participants; external sessions spend separate model budget.
 Cursor Agent is Composer-only; natural Grok wording resolves to grok-4.6.
@@ -102,7 +102,7 @@ Follow the shared model-resolution doctrine:
   or `cursor-agent` implies Cursor Agent only for Composer.
   natural `grok`, `grok build`, `grok cli`, `grok-4.6`, or an explicit legacy
   `grok-*` slug implies Grok; `kimi`, `kimi code`, `kimi k3`, `k3`, or
-  `moonshot` implies Kimi; `agy`, `antigravity`, `gemini`, `argon`, or an exact
+  `moonshot` implies Kimi; `agy`, `antigravity`, `gemini`, `carbon`, `argon`, or an exact
   `gemini-*` id implies agy. "Antigravity agent" names agy, not Cursor Agent;
   only the word `cursor` selects Cursor Agent beside an agy word, and that
   phrase then fails as mixed.
@@ -135,12 +135,13 @@ Follow the shared model-resolution doctrine:
   older Kimi-for-coding/K2.7 aliases or cross provider model ids. When
   availability matters, inspect the top-level `.models` keys from
   `kimi provider list --json`.
-- For agy, bare `agy`, `antigravity`, `gemini`, and `argon`, natural
-  `gemini 4 argon`, and the exact id `gemini-4-argon` resolve to
+- For agy, bare `agy`, `antigravity`, `gemini`, and `carbon`, natural
+  `gemini 4 carbon`, and the exact id `gemini-4-carbon` resolve to
+  `gemini-4-carbon`. `argon`, `gemini 4 argon`, and `gemini-4-argon` resolve to
   `gemini-4-argon`. `gemini flash`, `gemini 3.8 flash`, or `gemini-3.8-flash`
   resolves to `gemini-3.8-flash`, and only when Flash is named. A baked effort
-  suffix such as `gemini-4-argon-medium` reads as model plus effort. A natural
-  version the catalog does not have, such as `gemini 4.5 argon`, `argon 4.5`, or `gemini 3 flash`, or a Gemini version with neither Argon nor Flash, such as
+  suffix such as `gemini-4-carbon-medium` reads as model plus effort. A natural
+  version the catalog does not have, such as `gemini 4.5 carbon`, `gemini 4.5 argon`, or `gemini 3 flash`, or a Gemini version with neither Carbon, Argon, nor Flash, such as
   `gemini 2.5 pro`, fails; never rewrite it. Only Gemini models run through
   agy: its catalog also lists Claude Opus 5.5, Claude Sonnet 5.5, and GPT-OSS,
   but Opus stays on Claude Code and this doctrine routes neither Sonnet nor
@@ -148,8 +149,8 @@ Follow the shared model-resolution doctrine:
   report that agy is signed out: a signed-out headless agy run opens the
   Google sign-in page in the user's browser. Each model line is
   `<id-with-effort-suffix>\t<display name>`, and the base id is the id without
-  its `-low`, `-medium`, or `-high` suffix. Argon needs a Google AI Ultra
-  sign-in, so a machine without one will not list it. If the catalog lists
+  its `-low`, `-medium`, or `-high` suffix. Carbon and Argon need a Google AI Ultra
+  sign-in, so a machine without one will not list them. If the catalog lists
   models but not the requested one, fail and name the sign-in as the likely
   cause; never substitute Flash or another provider.
 - Bare `composer`, `composer 2.5`, or bare `2.5` is ambiguous unless the user
@@ -175,9 +176,10 @@ Model G: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fu
 Model H: "Grok Build high" -> runtime=grok, model=grok-4.6, effort=high
 Model I: "Kimi K3 high" -> runtime=kimi, model=kimi-code/k3, effort=high
 Model J: "Kimi" -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
-Model K: "Argon high" -> runtime=agy, model=gemini-4-argon, effort=high
-Model L: "Gemini" -> runtime=agy, model=gemini-4-argon, effort=high, model_source=default, effort_source=preference_default
-Model M: "Gemini Flash medium" -> runtime=agy, model=gemini-3.8-flash, effort=medium
+Model K: "Carbon high" -> runtime=agy, model=gemini-4-carbon, effort=high
+Model L: "Argon high" -> runtime=agy, model=gemini-4-argon, effort=high
+Model M: "Gemini" -> runtime=agy, model=gemini-4-carbon, effort=high, model_source=default, effort_source=preference_default
+Model N: "Gemini Flash medium" -> runtime=agy, model=gemini-3.8-flash, effort=medium
 "agy opus high" -> fail: names Claude and agy; Opus runs through Claude Code
 ```
 
@@ -191,7 +193,7 @@ inference and never remap one effort to another. agy's Gemini models accept
 `low`, `medium`, and `high` via `--effort`, with omitted effort defaulting to
 `high` as a preference default; `xhigh`, `max`, and `ultra` fail before launch.
 Pass the base id with `--model` and the effort with `--effort`, even when the
-user named a baked id such as `gemini-4-argon-high`.
+user named a baked id such as `gemini-4-carbon-high`.
 
 For Fable participant prompts, keep the brief direct: state the goal,
 constraints, evidence obligations, and done-ness clearly. Do not ask the child
@@ -586,7 +588,7 @@ the requested id, latest-session selection such as Kimi or agy `-c`, or a
 participant refusing the prompt contract. If native capability is unavailable,
 select the external lane deliberately rather than pretending the native child
 honors it. Do not silently switch among Claude, Codex, Cursor Agent, Grok,
-Kimi, and agy, downgrade models (Argon to Flash included), reduce effort,
+Kimi, and agy, downgrade models (Carbon or Argon to Flash included), reduce effort,
 or replace a long-running participant with the parent agent's own answer.
 
 Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: `$model-routing` chooses for a Codex lane, and bare `sol` means the newest Sol. Preserve explicit model versions and effort choices; do not redirect Sol requests to Astra.

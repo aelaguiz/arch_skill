@@ -9,7 +9,7 @@ isolation, automation, or receipt benefit justifies the added process.
 For the external lane, use this reference to resolve what the user meant by
 "Claude", "Codex", "Cursor Agent", "Grok", "Kimi", "fable 5.1 high", "opus high",
 "gpt-6.1-sol xhigh", "luna xhigh", "terra high", "GPT6SOLXI", "fugu high",
-"fugu-ultra xhigh", "composer-2.5-fast", "grok-4.6", "kimi k3", "argon high",
+"fugu-ultra xhigh", "composer-2.5-fast", "grok-4.6", "kimi k3", "carbon high", "argon high",
 "gemini flash", or similar phrasing, and to run the selected read-only consult
 subprocess.
 
@@ -70,7 +70,7 @@ Every external consult child needs three execution values:
   Fugu.
 - `effort` - the reasoning effort level, or `encoded-in-model` for Cursor Agent
 
-With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`).
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`).
 
 If external transport has been selected and a required value is still missing
 or ambiguous after that, ask one consolidated question before invoking. Do not ask for CLI values for an
@@ -103,8 +103,8 @@ Infer runtime only when the user's wording makes it unambiguous:
   legacy `grok-*` slug implies `runtime=grok`.
 - `kimi`, `kimi code`, `kimi k3`, `k3`, or `moonshot` implies `runtime=kimi`.
   Kimi defaults to `kimi-code/k3` at `max` when model or effort is omitted.
-- `agy`, `antigravity`, `gemini`, `argon`, or an exact `gemini-*` id implies
-  `runtime=agy`. agy defaults to `gemini-4-argon` when the model is omitted and
+- `agy`, `antigravity`, `gemini`, `carbon`, `argon`, or an exact `gemini-*` id implies
+  `runtime=agy`. agy defaults to `gemini-4-carbon` when the model is omitted and
   to `high`, reported as a preference default, when the effort is omitted.
   "Antigravity agent" names agy, not Cursor Agent; only the word `cursor`
   selects Cursor Agent beside an agy word, and that phrase then fails as mixed.
@@ -123,7 +123,7 @@ Infer runtime only when the user's wording makes it unambiguous:
   clean native child of the active host when it can satisfy the role. Ask for
   runtime only after an external lane is selected and it is load-bearing.
 
-With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-argon` at `high`). When a caller passes neither on a Codex lane, the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`. Do not default the runtime itself.
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). When a caller passes neither on a Codex lane, the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`. Do not default the runtime itself.
 
 ## Model Phrase Resolution
 
@@ -166,12 +166,13 @@ Treat model text as intent, not a loose alias:
   Kimi-for-coding/K2.7 aliases and do not cross provider model ids. When
   availability matters, inspect the top-level `.models` keys from
   `kimi provider list --json`.
-- For agy, bare `agy`, `antigravity`, `gemini`, and `argon`, natural
-  `gemini 4 argon`, and the exact id `gemini-4-argon` resolve to
+- For agy, bare `agy`, `antigravity`, `gemini`, and `carbon`, natural
+  `gemini 4 carbon`, and the exact id `gemini-4-carbon` resolve to
+  `gemini-4-carbon`. `argon`, `gemini 4 argon`, and `gemini-4-argon` resolve to
   `gemini-4-argon`. `gemini flash`, `gemini 3.8 flash`, or `gemini-3.8-flash`
   resolves to `gemini-3.8-flash`, and only when Flash is named. A baked effort
-  suffix such as `gemini-4-argon-medium` reads as model plus effort. A natural
-  version the catalog does not have, such as `gemini 4.5 argon`, `argon 4.5`, or `gemini 3 flash`, or a Gemini version with neither Argon nor Flash, such as
+  suffix such as `gemini-4-carbon-medium` reads as model plus effort. A natural
+  version the catalog does not have, such as `gemini 4.5 carbon`, `gemini 4.5 argon`, or `gemini 3 flash`, or a Gemini version with neither Carbon, Argon, nor Flash, such as
   `gemini 2.5 pro`, fails; never rewrite it. Only Gemini models run through
   agy: its catalog also lists Claude Opus 5.5, Claude Sonnet 5.5, and GPT-OSS,
   but Opus stays on Claude Code and this doctrine routes neither Sonnet nor
@@ -179,8 +180,8 @@ Treat model text as intent, not a loose alias:
   report that agy is signed out: a signed-out headless agy run opens the
   Google sign-in page in the user's browser. Each model line is
   `<id-with-effort-suffix>\t<display name>`, and the base id is the id without
-  its `-low`, `-medium`, or `-high` suffix. Argon needs a Google AI Ultra
-  sign-in, so a machine without one will not list it. If the catalog lists
+  its `-low`, `-medium`, or `-high` suffix. Carbon and Argon need a Google AI Ultra
+  sign-in, so a machine without one will not list them. If the catalog lists
   models but not the requested one, fail and name the sign-in as the likely
   cause; never substitute Flash or another provider.
 - Do not run paid trial prompts to discover whether a Claude model exists. Use
@@ -200,8 +201,9 @@ Cursor Agent composer 2.5 -> runtime=agent, model=composer-2.5-fast, effort=enco
 Grok Build high -> runtime=grok, model=grok-4.6, effort=high
 Kimi K3 high -> runtime=kimi, model=kimi-code/k3, effort=high
 Kimi -> runtime=kimi, model=kimi-code/k3, effort=max, effort_source=model_default
+Carbon high -> runtime=agy, model=gemini-4-carbon, effort=high
 Argon high -> runtime=agy, model=gemini-4-argon, effort=high
-Gemini -> runtime=agy, model=gemini-4-argon, effort=high, model_source=default, effort_source=preference_default
+Gemini -> runtime=agy, model=gemini-4-carbon, effort=high, model_source=default, effort_source=preference_default
 Gemini Flash medium -> runtime=agy, model=gemini-3.8-flash, effort=medium
 agy opus high -> fail: names Claude and agy; Opus runs through Claude Code
 ```
@@ -239,7 +241,7 @@ visible output contract to verdict, evidence, session metadata, and directories.
   launch; agy's generic help lists more effort words, but its catalog offers
   only those three per Gemini model. Pass the base id with `--model` and the
   effort with `--effort`, even when the user named a baked id such as
-  `gemini-4-argon-high`.
+  `gemini-4-carbon-high`.
 - Cursor Agent does not expose a separate `--effort` flag in the local CLI.
   Store effort as `encoded-in-model` and pass only
   `--model "composer-2.5-fast"`.

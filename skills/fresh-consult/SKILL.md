@@ -44,7 +44,7 @@ add a universal runner, controller, state machine, or harness for this skill.
 - "Use Cursor Agent Composer 2.5 Fast for a cold read of this artifact."
 - "Use Grok Build for an external fresh consult on this implementation claim."
 - "Use Kimi K3 for a cold read and keep the exact review session receipt."
-- "Fresh consult with Gemini 4 Argon on whether this migration plan is
+- "Fresh consult with Gemini 4 Carbon on whether this migration plan is
   complete."
 - Another skill needs an independent read before deciding whether to proceed.
 
@@ -103,7 +103,7 @@ add a universal runner, controller, state machine, or harness for this skill.
   and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
   runs `kimi-code/k3` and defaults an omitted effort to `max`; the Antigravity
-  CLI (`agy`) runs only Gemini models, defaults to `gemini-4-argon` at `high`,
+  CLI (`agy`) runs only Gemini models, defaults to `gemini-4-carbon` at `high`,
   and runs `gemini-3.8-flash` only when Flash is named. With no model or
   level named, choose both with `$model-routing`; Kimi and agy lanes keep the
   harness defaults above. Preserve explicitly named legacy Grok ids exactly. Never

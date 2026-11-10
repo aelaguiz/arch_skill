@@ -467,6 +467,9 @@ class ArchEpicAutoModeTests(unittest.TestCase):
 
     AGY_MODELS_OUTPUT = (
         "Fetching available models...\n"
+        "gemini-4-carbon-medium\tGemini 4 Carbon (Medium)\n"
+        "gemini-4-carbon-high\tGemini 4 Carbon (High)\n"
+        "gemini-4-carbon-low\tGemini 4 Carbon (Low)\n"
         "gemini-4-argon-medium\tGemini 4 Argon (Medium)\n"
         "gemini-4-argon-high\tGemini 4 Argon (High)\n"
         "gemini-4-argon-low\tGemini 4 Argon (Low)\n"
@@ -476,22 +479,35 @@ class ArchEpicAutoModeTests(unittest.TestCase):
         "claude-opus-5-5-high\tClaude Opus 5.5 (High)\n"
         "gpt-oss-120b-medium\tGPT-OSS 120B (Medium)\n"
     )
-    AGY_CATALOG = ["gemini-3.8-flash", "gemini-4-argon"]
+    AGY_CATALOG = ["gemini-3.8-flash", "gemini-4-argon", "gemini-4-carbon"]
 
-    def test_agy_argon_defaults_to_high_with_preference_provenance(self):
-        for phrase in ("argon", "Gemini 4 Argon", "gemini", "agy", "Antigravity"):
+    def test_agy_carbon_and_argon_default_to_high_with_preference_provenance(self):
+        for phrase, expected_model in (
+            ("carbon", "gemini-4-carbon"),
+            ("Gemini 4 Carbon", "gemini-4-carbon"),
+            ("gemini", "gemini-4-carbon"),
+            ("agy", "gemini-4-carbon"),
+            ("Antigravity", "gemini-4-carbon"),
+            ("argon", "gemini-4-argon"),
+            ("Gemini 4 Argon", "gemini-4-argon"),
+        ):
             with self.subTest(phrase=phrase):
                 resolved = self.model_resolution.resolve_execution_phrase(
                     phrase,
                     agy_models=self.AGY_CATALOG,
                 )
                 self.assertEqual(resolved.runtime, "agy")
-                self.assertEqual(resolved.model, "gemini-4-argon")
+                self.assertEqual(resolved.model, expected_model)
                 self.assertEqual(resolved.effort, "high")
                 self.assertEqual(resolved.effort_source, "preference_default")
 
     def test_agy_preserves_explicit_model_and_effort(self):
         cases = [
+            ("carbon low", "gemini-4-carbon", "low"),
+            ("Gemini 4 Carbon medium", "gemini-4-carbon", "medium"),
+            ("gemini-4-carbon-low", "gemini-4-carbon", "low"),
+            ("gemini-4-carbon high", "gemini-4-carbon", "high"),
+            ("antigravity agent carbon high", "gemini-4-carbon", "high"),
             ("argon low", "gemini-4-argon", "low"),
             ("Gemini 4 Argon medium", "gemini-4-argon", "medium"),
             ("gemini-4-argon-low", "gemini-4-argon", "low"),
@@ -513,7 +529,15 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 self.assertEqual(resolved.effort_source, "explicit")
 
     def test_agy_rejects_efforts_argon_does_not_offer(self):
-        for phrase in ("argon xhigh", "argon max", "gemini ultra", "gemini-4-argon-xhigh"):
+        for phrase in (
+            "carbon xhigh",
+            "carbon max",
+            "gemini-4-carbon-xhigh",
+            "argon xhigh",
+            "argon max",
+            "gemini ultra",
+            "gemini-4-argon-xhigh",
+        ):
             with self.subTest(phrase=phrase):
                 with self.assertRaisesRegex(
                     self.model_resolution.ModelResolutionError,
@@ -526,13 +550,14 @@ class ArchEpicAutoModeTests(unittest.TestCase):
 
     def test_agy_refuses_unlisted_or_rewritten_gemini_identity(self):
         for phrase, message in (
+            ("gemini 4.5 carbon high", "unsupported version '4.5'"),
             ("gemini 4.5 argon high", "unsupported version '4.5'"),
             ("gemini 3 flash high", "unsupported version '3'"),
             ("gemini 3 pro high", "is not an agy model"),
             ("gemini pro high", "is not an agy model"),
             ("gemini flash lite low", "is not an agy model"),
             ("gemini nano", "is not an agy model"),
-            ("gemini 3 high", "without Argon or Flash"),
+            ("gemini 3 high", "without Carbon, Argon, or Flash"),
             ("gemini-9-nope high", "did not match an available agy model id"),
         ):
             with self.subTest(phrase=phrase):
@@ -545,15 +570,17 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                         agy_models=self.AGY_CATALOG,
                     )
 
-    def test_agy_catalog_without_argon_names_the_ultra_requirement(self):
-        with self.assertRaisesRegex(
-            self.model_resolution.ModelResolutionError,
-            "Google AI Ultra",
-        ):
-            self.model_resolution.resolve_execution_phrase(
-                "argon high",
-                agy_models=["gemini-3.8-flash"],
-            )
+    def test_agy_catalog_without_carbon_or_argon_names_the_ultra_requirement(self):
+        for phrase in ("carbon high", "argon high"):
+            with self.subTest(phrase=phrase):
+                with self.assertRaisesRegex(
+                    self.model_resolution.ModelResolutionError,
+                    "Google AI Ultra",
+                ):
+                    self.model_resolution.resolve_execution_phrase(
+                        phrase,
+                        agy_models=["gemini-3.8-flash"],
+                    )
 
     def test_agy_mixed_provider_phrases_fail_loud(self):
         for phrase in (
@@ -597,6 +624,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 "claude-opus-5-5",
                 "gemini-3.8-flash",
                 "gemini-4-argon",
+                "gemini-4-carbon",
                 "gpt-oss-120b",
             ],
         )

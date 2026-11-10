@@ -30,7 +30,7 @@ architecture, and avoids kitchen-sink plans.
 - The user wants two Claude, Codex, Cursor Agent, Grok, Kimi, or Gemini (agy)
   participants to iterate on a plan, architecture, design, migration, debugging
   strategy, investigation, or concept, for example "consensus between Sol and
-  Argon".
+  Carbon".
 - The value comes from independent first passes, critique, and convergence
   rather than one reviewer answering once.
 - One participant should challenge assumptions, propose simpler alternatives,
@@ -99,7 +99,7 @@ architecture, and avoids kitchen-sink plans.
   ids and Fugu profiles; Claude Code runs supported Claude models; Cursor Agent
   runs `composer-2.5-fast`; natural Grok wording resolves to `grok-4.6`; Kimi
   runs `kimi-code/k3` and defaults an omitted effort to `max`; the Antigravity
-  CLI (`agy`) runs only Gemini models, defaults to `gemini-4-argon` at `high`,
+  CLI (`agy`) runs only Gemini models, defaults to `gemini-4-carbon` at `high`,
   and runs `gemini-3.8-flash` only when Flash is named. With no model or
   level named, choose both with `$model-routing`; Kimi and agy lanes keep the
   harness defaults above. Preserve explicit legacy Grok ids exactly.
@@ -147,7 +147,7 @@ Then:
 3. Resolve both participant provider/model/profile/effort choices exactly.
    With no model or level named, choose both with `$model-routing`. Kimi and
    agy lanes keep their harness defaults (`kimi-code/k3` at `max`,
-   `gemini-4-argon` at `high`). Then ask one concise question if another load-bearing participant choice
+   `gemini-4-carbon` at `high`). Then ask one concise question if another load-bearing participant choice
    remains ambiguous.
 4. Inspect the active host's native child capabilities and choose transport for
    each participant separately. Record the concrete reason for any external
