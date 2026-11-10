@@ -1,8 +1,9 @@
 # Observe Pro's progress and recover the consultation
 
 Read before monitoring a response or recovering a stalled/incorrect submission.
-Use BrowserOS on the verified profile/window/page. These are observed DOM shapes,
-not permanent selectors; inspect the current structure when they change.
+Use BrowserOS neo in the verified bound profile and page. These are observed
+DOM shapes, not permanent selectors; inspect the current structure when they
+change.
 
 Sections: [find the current response](#find-the-current-response),
 [read activity](#read-the-activity-panel),
@@ -38,7 +39,7 @@ context when needed; do not invent an association from incomplete DOM history.
 ## Read the Activity panel
 
 The inline turn can contain only a `Pro thinking` button while more detailed
-activity is available in its disclosure. Use a fresh BrowserOS snapshot and
+activity is available in its disclosure. Use a fresh neo snapshot and
 open the thinking/activity control **inside the current response turn**.
 Confirm which response you opened; an already-open panel can belong to an
 older answer. Do not click the composer's Stop control or an old answer's
@@ -59,7 +60,7 @@ Observed panel structure:
 This panel can be **outside `main`**. Read its `[slot="content"]` separately
 from the current response turn. A `get_page_content` call scoped only to `main`
 or an interactive-element snapshot can omit the very traces needed to judge
-progress. Use bounded BrowserOS DOM/content reads, not internal application
+progress. Use bounded neo DOM/content reads, not internal application
 state or private network endpoints. If output is saved to a file, read that
 file; missing tool output is not missing model activity.
 
@@ -95,9 +96,9 @@ backend has stopped thinking; prolonged observed inactivity calls for reload.
 
 ## Scoped DOM read example
 
-Adapt this expression to the live BrowserOS evaluate schema. Supply the user
-and outer response IDs recorded during submission verification. First verify
-the conversation identity and open/verify this response's
+Pass this expression to neo's `evaluate_in_page` (or `page.evaluateInPage`
+in `run`). Supply the user and outer response IDs recorded during submission
+verification. First verify the conversation identity and open/verify this response's
 Activity panel through its own disclosure; the panel has no reliable message-ID
 attribute to establish that association by itself. This expression only reads.
 
@@ -162,7 +163,7 @@ deadline; 15+ minutes of observed inactivity permits one same-page reload.
 Never translate this into “allow up to 30 minutes.” Preserve the complete ask,
 attachment paths, required connectors, and pending turn identity before reload.
 
-1. **Reload once and reacquire state.** Reverify profile/window/conversation,
+1. **Reload once and reacquire state.** Reverify profile binding/page/conversation,
    locate the submitted turn, and open its Activity disclosure again if needed.
    Let the page settle and make a scoped reread. A remount or timer reset is
    not resumed work. If substantive traces resume, return to ordinary waiting.
@@ -187,7 +188,7 @@ attachment paths, required connectors, and pending turn identity before reload.
    required inputs, restore missing context, and send the full original ask.
    If branching is unavailable, continue in a fresh chat in the same project
    with that context. Keep one active consultation; retain the original as
-   evidence and identify any task-created destination under BrowserOS.
+   evidence and identify any task-created destination under `$browseros`.
 
 Carry the same expert question through recovery. Do not replace it with “no
 more research,” “answer now,” a smaller checklist, or an older verdict. Routine

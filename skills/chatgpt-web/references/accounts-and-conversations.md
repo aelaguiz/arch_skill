@@ -1,7 +1,7 @@
 # ChatGPT Accounts and Conversations
 
 Read before selecting an account, project, thread, or model, and when switching
-accounts. Apply the BrowserOS profile-targeting reference before browser calls.
+accounts. Apply `$browseros` and its profile reference before browser calls.
 
 ## Contents
 
@@ -14,15 +14,17 @@ accounts. Apply the BrowserOS profile-targeting reference before browser calls.
 ## Choose a working account
 
 The account pool contains only the consultation profiles configured on this
-machine: the BrowserOS profiles labeled, for example, `pro1`, `pro3`, and
-`pro4`. `pro2` is retired: never use it, even when its profile or window is
-still open.
+machine: the BrowserOS neo profiles labeled, for example, `pro1`, `pro3`, and
+`pro4`. `pro2` is retired: never use it, even though its profile still
+exists.
 Names and count vary; these examples are not a fixed inventory or rotation
 order. The label is how you find the profile and which login it holds. It is
 not the model: choosing the profile and choosing the model are two separate
 steps with two separate proofs.
-Discover the existing windows through BrowserOS; never activate a window
-to infer its profile or create windows for this task. The user's `Work` profile
+List them with `browser_profiles` `list` and bind one with `browser_target`
+`set` and its exact name; a tab title or window never tells you the
+profile. A profile that is not loaded or has no window gets one as
+`$browseros` describes. The user's `Work` profile
 is excluded: do not use it for ChatGPT or test its Pro availability. Preserve
 its rate-limit capacity for the user, even if every consultation profile is
 unavailable.
@@ -34,7 +36,7 @@ context from already-available task artifacts into a conversation in a
 consultation profile instead.
 Otherwise prefer a recently observed working account and verify its current
 state. Keep brief availability notes in the
-existing run context: safe profile label, window, whether the picker offered
+existing run context: safe profile label, whether the picker offered
 the `Pro` option, required connector status, observed condition, and check
 time. Record the
 working account as well as failures. Recheck stale observations on resume;
@@ -47,7 +49,7 @@ into a destination conversation rather than assuming that account has the thread
 
 ## Verify login without exposing session data
 
-On the verified `https://chatgpt.com/` page, use BrowserOS page-context JavaScript
+On the verified `https://chatgpt.com/` page, use `evaluate_in_page`
 for the following boolean-only check:
 
 ```javascript
@@ -59,10 +61,10 @@ async () => {
 }
 ```
 
-Use the live `evaluate` schema's accepted function or expression shape. Only
+Pass it as `func` (or `page.evaluateInPage` inside `run`). Only
 return the boolean; never return, print, persist, or inspect the user object,
 account details, token fields, cookies, or raw payload. If the check fails or
-returns false, identify the verified profile/window and ask the user to log in
+returns false, name the bound profile and ask the user to log in
 manually there. Do not automate login or infer it solely from visible controls.
 
 ## Choose the project and conversation
@@ -90,7 +92,7 @@ The composer's `Select chat surface` radio chooses between ChatGPT `Chat` and
 `Work`. Verify `Chat` before opening the model pill and again before sending.
 The page snapshot lists both radios without marking the selected one; read
 each radio's `aria-checked` value from the page.
-The BrowserOS profile named `Work` does not select this surface.
+The BrowserOS neo profile named `Work` does not select this surface.
 
 The model is chosen and proven here, on the page, in every conversation you
 send into. The consultation profile does not choose it: a page in `pro1`
@@ -169,8 +171,8 @@ prove a Pro rate limit.
    recently verified working account; otherwise check the next consultation
    profile not yet examined. Never include `Work` in this search.
    Do not repeatedly retry the capped account.
-2. Under BrowserOS, select or open one eligible page in that account's existing
-   window and prove the profile/window/page. Verify login, then select the
+2. Rebind with `browser_target` `set` to that profile, read it back with
+   `get`, and select or open one page of your own there. Verify login, then select the
    requested literal configuration in that page's picker and read it back; the
    previous account's setting does not carry over, and arriving in another
    profile labeled `Pro` proves nothing about its model. If unavailable,
@@ -180,7 +182,7 @@ prove a Pro rate limit.
    destination thread. Reattach files and required connector mentions, including
    the exact PR URL for a code review. Verify every required connector works.
 4. Continue in that page alone. Clean up task-created pages no longer needed
-   under BrowserOS and record the successful account and destination thread.
+   under `$browseros` and record the successful account and destination thread.
 5. If no consultation profile's account works, report the profiles and observed conditions.
    Keep the required consultation pending, continue independent work, and wait
    for user notice that Pro is available again. Do not select a substitute tier

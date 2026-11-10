@@ -1,8 +1,8 @@
 # ChatGPT Composer, Connectors, and Attachments
 
 Read the relevant section before attaching files or connectors, or when a
-composer interaction fails. BrowserOS owns profile, focus, mutation, and secret
-handling; use its live tool schemas and current page refs.
+composer interaction fails. `$browseros` owns profile, focus, mutation, and
+secret handling; use neo's live tool schemas and current page refs.
 
 Sections: [enter the brief](#enter-the-brief),
 [connectors](#attach-the-actual-connectors),
@@ -24,7 +24,7 @@ blank lines, and bullet lines, and never submits.
 (`data-prompt-literal-paste`), so `@GitHub` or `@BigQuery` in the pasted brief
 stays ordinary text and attaches nothing. The `@` picker also stays shut in a
 background tab: neither `document.execCommand('insertText', false, '@')` nor
-BrowserOS `press_key` opens it or even types into a hidden page. Do not wait on
+a key press opens it or even types into a hidden page. Do not wait on
 the user for this step. **Paste the connector's app token instead**:
 
 ```
@@ -46,7 +46,7 @@ The words `@GitHub` can stay in the brief as prose; the pill is what gives
 Pro the repository.
 
 ```javascript
-// page-context JS (evaluate). TEXT = the full brief as written;
+// page-context JS (evaluate_in_page). TEXT = the full brief as written;
 // TOKEN = the connector token plus a trailing space, e.g.
 // '[$github](app://connector_76869538009648d5b282a4bb21c3d157) '
 // The visible editor: #prompt-textarea on a chat page; on a project page it has
@@ -112,20 +112,21 @@ Preflight absolute paths, existence, and the maximum of 10 attachments. Do not
 omit files to fit that limit.
 
 **Never click ChatGPT's own upload controls.** `Add files and more`, `Add
-photos & files`, and any file input open the operating system's file dialog,
-whether clicked by ref, by coordinates, or from script. No BrowserOS tool can
-see, fill, or close that dialog. It stays open over the user's window, takes
-their focus, and waits for a person to cancel it. BrowserOS `upload` sets
-files on an `input[type=file]` directly and never needs the dialog. If
+photos & files`, and any file input can open the operating system's file
+dialog, whether clicked by ref, by coordinates, or from script. Neo
+intercepts that chooser only on tabs it opened; on any other tab no tool can
+see, fill, or close the dialog, and it sits over the user's window, takes
+their focus, and waits for a person to cancel it. Neo's `upload` sets files
+on an `input[type=file]` directly and never needs the dialog. If
 `upload` answers `Node is not a file input element`, the ref was a button or
 menu item; fix the ref, do not reach for the dialog. If a dialog did open,
-name its profile and window in your next update so the user can cancel it, and
+name its profile and tab in your next update so the user can cancel it, and
 carry on through the route below.
 
 Attach through the temporary-input route:
 
 1. Create a temporary visible file input on the selected page and snapshot it.
-2. Use BrowserOS `upload` with that exact ref and the absolute file paths.
+2. Use neo's `upload` with that exact ref and the absolute file paths.
 3. Transfer the selected `File` objects to ChatGPT's hidden `#upload-files`
    input and dispatch `input` and `change` events on the ChatGPT input.
 4. Verify every filename appears as a ChatGPT attachment chip and processing
@@ -204,7 +205,7 @@ Verify any menu or dialog actually mounted before interacting with it.
 
 Use fresh refs after a rerender and apply the entry file's before/after checks.
 Keep the observations separate: intended input, current draft, submitted user
-turn, and the response following that turn. Read these through BrowserOS in the
+turn, and the response following that turn. Read these through neo in the
 verified page; do not infer one from another.
 
 Submitted text has lived under `[data-message-author-role="user"]`, with

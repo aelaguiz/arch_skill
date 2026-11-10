@@ -1,12 +1,12 @@
-# BrowserOS Lifecycle and Recovery
+# Lifecycle and Recovery in BrowserOS neo
 
-Read the relevant section before resource cleanup, recovery of an unknown
-outcome, or browser work divided among agents.
+Read the relevant section before cleanup, recovery of an unknown outcome, or
+browser work divided among agents.
 
 ## Contents
 
 - Task notes and reconciliation
-- Lifecycle and state-change reconciliation
+- Lifecycle
 - Mutation safety
 - Failure classification and recovery
 - Parallel ownership
@@ -14,192 +14,127 @@ outcome, or browser work divided among agents.
 
 ## Task notes and reconciliation
 
-Use the existing task notes; no new tracking system is needed. Record baseline
-resources, the verified profile/window/page, adopted pages and allowed use,
-created resources and exact local artifact paths, and retained or unknown state.
-When a site action changes the selected tab or opens a window, record only the
-browser state the tools can actually observe.
+Use the task's existing notes; no new tracking system is needed. Record the
+bound profile and directory, your tab group id, pages and windows you
+created (including a created window's starting tab, which reads as `user`),
+pages of others you were asked to work in, exact paths of local artifacts,
+and anything retained or unknown.
 
-At completion reconcile unique resources, not the number of calls:
+At completion reconcile unique resources, not calls:
 
 ```text
 pages created = closed + intentionally retained + unknown/orphan
 windows created = closed + intentionally retained + unknown/orphan
-groups created = removed + intentionally retained + unknown
 artifacts created = removed + intentionally retained + unknown
 ```
 
-Navigate the same task-created page for retries and readback. If replacement is
-necessary, verify one replacement before closing the uniquely identified old
-page. Never close an unresolved mutation merely to reconcile the counts.
+Retry and read back in the same page you created. If you must replace it,
+verify the replacement before closing the old one. Never close a page with
+an unresolved change on it just to make the counts balance.
 
-If an unknown mutation's original page is wedged, use at most one separately
-recorded read-only verifier page in the proved correct profile. Read authoritative
-state before deciding whether the original action can be repeated.
+## Lifecycle
 
-## Lifecycle and state-change reconciliation
+`ownership` in `browser.pages.list()` tells you whose a page is now, but
+your notes tell you what you created: after a reconnect your own pages read
+`other-agent`, and a created window's starting tab reads `user`. Duplicate
+pages can share a URL and title, so match on page ID plus your notes, not
+on title.
 
-Store creation receipt handles and sanitized semantic identity when a page is
-opened. Duplicate pages can share the same URL and title, so semantic matching
-alone may be insufficient for safe closure.
+List pages after any action that can open a tab, a callback, a download
+page, or a window, and once at final cleanup. Do not claim a page just
+because it appeared after you started; a concurrent user or agent may have
+opened it. Report a page you may have caused but cannot attribute as an
+orphan.
 
-Relist after any action that can spawn a popup, callback, preview, download
-page, or window, and once at final cleanup. Match new resources to the action
-receipt and sanitized application evidence. Do not claim an unrelated
-concurrent user or agent page merely because it appeared after the baseline;
-record a possibly task-caused but unattributable resource as unknown/orphan.
+A timed-out open, close, navigation, or window call has an unknown outcome:
+list before opening another page, prove a page is gone before reusing its ID,
+and read the page's current URL before navigating again.
 
-Browser lifecycle calls change shared state. A timeout during `tabs new` or
-`close`, navigation, `windows close`, `set_visibility`, or a tab-group
-change has an unknown outcome:
+Before closing a tab group with `tab_groups` `close`, list it and prove every
+member is yours. Before closing a window you created, prove every page in it
+is yours. Never close a window you did not create. Turn off focus emulation
+on pages you keep.
 
-- after a timed-out open, relist before opening another page;
-- after a timed-out close, prove whether the page disappeared and never reuse
-  a stale page number blindly;
-- after timed-out navigation, inspect current identity before navigating
-  again; and
-- after a timed-out window or group operation, relist its contents and state.
-
-If several task-created pages need a group, group only those pages. Before
-closing a group, relist it and prove every current member is task-created and
-intended to close. Otherwise close pages individually or ungroup retained
-pages.
-
-Before closing a task-created window, prove every current page inside it is
-task-created and intended to close. If the live schema cannot establish page
-membership, close only individually verified task-created pages and retain or
-report the window rather than risking a user or other-agent page.
-
-Track visibility changes and focus emulation you turn on. Restore a
-pre-existing window's visibility when safe unless the user requested the final
-visible state, and turn emulation off on pages you keep. Never close a
-pre-existing window.
-
-Task calls should deliberately create zero hidden surfaces. If a task action
-unexpectedly causes one, attribute it from the action receipt and current
-identity evidence. Expose the containing window with `activate=false` only
-when that window is task-controlled and its current page membership and
-profile context are proved safe to reveal. If only the page is proved or
-window membership is unknown, close only the verified page when safe or retain
-and report it; do not expose the whole window.
-Report window visibility and site-caused changes to the selected tab or window
-separately, each only as the tool evidence shows it. Do not activate anything
-to restore them.
+When the bound profile was loaded only for this task, leave it loaded; other
+agents may be using it.
 
 ## Mutation safety
 
-Treat a timed-out mutation as unknown rather than failed. This applies to
-saves, sends, publishes, schedules, uploads, purchases, deletes, and connector
-actions. A single old-value read can race an operation that is still running.
-Retry only after authoritative readback proves the mutation did not land and
-the application presents a terminal state, or its processing indicator has
-cleared and authoritative state stays stable across a bounded reread. An
-inherently idempotent, duplicate-safe operation is the only exception.
-Otherwise report the mutation as unknown; an arbitrary sleep is not settlement
-proof.
+Treat a timed-out change as unknown, not failed: saves, sends, publishes,
+schedules, uploads, purchases, deletes. A single read of the old value can
+race an operation still running. Retry only after the application shows a
+settled state that proves the change did not land, or the change is safe to
+repeat by nature. Otherwise report it as unknown; a sleep is not proof.
 
-Do not use broad destructive selectors or loops. Validate exact object
-identity and selector cardinality immediately before acting. Authorization for
-named objects does not authorize every matching control in a container.
+Do not use broad destructive selectors or loops. Check the exact object and
+how many elements a selector matches immediately before acting. Permission
+for named objects does not cover every matching control in a container.
 
-Recovery does not authorize changing the user's workflow. Do not cancel a
-schedule, switch accounts, alter a purchase path, revoke a credential, or
-change another user-visible choice merely because it simplifies recovery.
+Recovery does not license changing the user's workflow: do not cancel a
+schedule, switch accounts, change a purchase path, or revoke a credential
+because it makes recovery easier.
 
 ## Failure classification and recovery
 
 | Symptom | Class | First response |
 | --- | --- | --- |
-| Argument validation error | Schema/call error | Read the live schema and correct the call. |
+| Argument validation error | Call error | Read the tool's live schema and correct the call. |
 | Missing or stale ref | Page changed | Snapshot again and retry once with a fresh ref. |
-| Element not visible | UI/viewport state | Scroll, snapshot, and retry once. |
-| Unknown, closed, or wrong page/window | Identity/lifecycle | Relist and revalidate the full identity tuple. |
-| Success acknowledgment without UI change | Site input or wrong target | Reread actual application state. |
-| Empty or sparse snapshot | Extraction/page readiness | Try bounded `grep`, `read`, or small `evaluate`. |
-| Screenshot timeout | Large-response pressure | Use a small semantic probe or a smaller screenshot. |
-| One page hangs after a long evaluation | Execution still running | Stop stacking calls on that target. |
-| HTTP 500/503 or closed channel | Transport/server lifecycle | Wait once, rediscover, and issue one small read-only tab probe. |
-| Login page or account chooser | Wrong window until proved otherwise | Prove the profile; outside `Work`, reopen the site in `Work` (`SKILL.md`, "Logins, SSO, and OAuth"). |
-| CAPTCHA, code prompt, or password | Sign-in gate | Work it yourself (`logins-and-oauth.md`, "Gates: work them yourself"). Only a step that needs the user's body or a secret only they hold goes to the user, after everything else is done. |
+| A handle from an earlier turn fails instantly | Tab gone or no longer yours | Do not retry it; relist `mine` pages or open a fresh one. |
+| `page_out_of_scope` | Popup or a page outside the bound profile | Check the binding; popups are not reachable (`logins-and-oauth.md`). |
+| `profile_gone`, `pinned_window_closed`, `default_profile_unavailable` | Stale binding | `browser_target` `get`, then `set` or `clear` explicitly. |
+| `target_change_in_run` | Rebinding inside `run` | Rebind with `browser_target` between calls. |
+| Run died at about 30 seconds | Wall-clock cap | Split the work into smaller runs; the timeout cannot be raised. |
+| Success reported, page unchanged | Site ignored input or wrong target | Reread the application state. |
+| Sparse snapshot | Page readiness or extraction | Use `read`, `grep`, or a bounded `evaluate_in_page`. |
+| `browser session not connected` | Neo not running or paired | Tell the user to start BrowserOS neo; do not switch browsers. |
+| HTTP 5xx or closed channel | Transport | Reconnect, `browser_target` `get`, then one small read-only listing. |
+| Login page or account chooser | Wrong profile until proved otherwise | `get`; outside `Work`, reopen the site in `Work`. |
+| CAPTCHA, code prompt, or password | Sign-in gate | Work it yourself (`logins-and-oauth.md`). |
 
-Use this recovery order:
+Recovery order:
 
-1. Read the exact error and classify the failed boundary.
+1. Read the exact error; a failed `run` returns it with captured logs.
 2. Do not repeat the same expensive call unchanged.
-3. Reacquire identity or refs when stale.
-4. Use one small read-only inventory probe for transport recovery.
-5. Read back ambiguous state before any retry.
-6. Use a smaller honest proof when the requested proof rail is unhealthy.
-7. Use a repository-authorized deeper MCP or CDP rail only to preserve the
-   existing authenticated session, never to broaden authority.
-8. Restart BrowserOS only at the final rung with user authority and after
-   coordination proves no other active user or agent work and no unresolved in-flight
-   mutation would be interrupted. If that cannot be proved, do not restart.
-9. After restart, rediscover every page, window, context, and ref.
+3. Reacquire the binding, page, or refs when stale.
+4. Read back ambiguous state before any retry.
+5. Use a smaller honest proof when the requested one is not available.
+6. Restart neo only as a last step, with the user's say-so and after
+   making sure no other agent's work or unresolved change is in flight.
+   Afterwards rebind and rediscover every page and ref.
 
-If the same operation fails twice, change diagnostic layer or name the exact
-blocker. An unknown mutation is not a failed attempt and must not be repeated
-to satisfy this threshold. Do not call every schema, site, or page failure
-“BrowserOS instability.”
+If the same operation fails twice, change approach or name the exact
+blocker. An unknown change is not a failed attempt and is never repeated to
+reach that count.
 
 ## Parallel ownership
 
-Assign independent browser tasks, not parent-owned pages. Each agent selects
-or creates its own page, records exact paths for its own local outputs, and
-returns created, closed or removed, retained, and unknown resource counts.
-Never let two agents act or poll the same page concurrently.
+Give each agent its own browser task, not the parent's pages. Each agent
+binds its own profile in its own session, opens its own pages, and returns
+created, closed, retained, and unknown counts. Never let two agents drive or
+poll the same page at once. Neo runs at most a handful of pages per agent
+comfortably; serialize large screenshots and long scripts.
 
-No agent takes foreground focus (`SKILL.md`), so there is no focus phase to
-coordinate. Focus emulation is set per page by the agent that owns that page.
-
-Saved-artifact analysis can be parallel only after authorization and
-sanitization. Serialize large screenshots and long evaluations so agents do
-not overload the shared BrowserOS transport.
-
-If a child leaves a page open, resume that exact child for cleanup. If it
-cannot be resumed, the parent closes the pages that child's receipt records
+If a child leaves a page open, resume that child for cleanup. If it cannot
+be resumed, the parent closes the pages that child's receipt records
 creating, after matching each live page to the receipt. A page no receipt
-explains stays an orphan to report; nobody closes a page on a guess.
+explains stays an orphan to report.
 
 ## Completion receipt
 
-Return the requested result first, then these core receipt fields:
+Return the result first, then:
 
 ```text
-BrowserOS result: <completed outcome or exact blocker>
+Browser result: <outcome or exact blocker>
 Target: <non-sensitive site/workspace/object label>
-Proof: <proof rail and limitation>
-Mutation outcome: <not applicable, verified, or unknown; safe readback evidence>
-```
-
-For page work, add this page-state block:
-
-```text
-Pre-existing pages adopted/reused: <unique count>
-Working profile/window/page: <verified safe profile label and current handles>
+Profile: <bound profile name, read back with browser_target get>
+Proof: <what proves it, and its limits>
+Change outcome: <not applicable, verified, or unknown, with readback>
 Pages: created <n> = closed <n> + retained <n> + unknown/orphan <n>
-Hidden browser surfaces: deliberately created 0; task-caused observed <n>; unknown <n or not inventoried>
 Focus: none taken; site-caused tab or window changes <none, or which>
 ```
 
-Add resource reconciliation for windows, groups, or artifacts only when the
-task touched them. Add browser window/tab state and window visibility when a
-site action changed them, visibility work occurred, or those states were
-inventoried. Add retained-state or unknown/orphan detail only when
-nonempty. Never fabricate a zero for shared state that was not inventoried.
-
-```text
-Windows: created <n> = closed <n> + retained <n> + unknown/orphan <n>
-Groups: created <n> = removed <n> + retained <n> + unknown <n>
-Artifacts: created <n> = removed <n> + retained <n> + unknown <n>
-Browser window/tab state: <unchanged, changed by a site action, intentionally retained, or unknown>
-Window visibility: <unchanged, restored, changed/unrestored, intentionally retained, or unknown>
-Retained or unknown state: <safe identity, reason, and risk>
-```
-
-For connector-only work, omit browser lifecycle fields and add the
-BrowserOS-managed connector/service, exact safe action or query, structured
-outcome, and readback limitation.
-
-Do not put emails, account IDs, signed URLs, raw callback URLs, session data,
-or sensitive artifact links in the receipt.
+Add windows or artifacts only when the task touched them, and retained or
+unknown detail only when there is some. Never invent a zero for state you
+did not look at. Keep emails, account IDs, signed URLs, callback URLs,
+session data, and sensitive file links out of the receipt.

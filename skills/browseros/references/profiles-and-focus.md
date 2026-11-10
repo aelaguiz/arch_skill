@@ -1,200 +1,125 @@
-# BrowserOS Profiles and Focus
+# Profiles and Focus in BrowserOS neo
 
-Read before selecting a profile, creating a page, working a page that
-misbehaves while hidden, changing window visibility, or arranging manual
-browser input.
+Read before binding a profile, creating a window, or working a page that
+misbehaves in the background. `SKILL.md` owns the rules; this file has the
+mechanics. Tool descriptions are the source of truth for exact arguments.
 
 ## Contents
 
-- Target an existing profile window
+- Bind and verify the profile
+- A profile with no window
 - Background work and hidden pages
-- Identity and profile constraints
+- Calls that take focus, and what to use instead
+- Identity beyond the profile
 
-## Target an existing profile window
+## Bind and verify the profile
 
-`SKILL.md` owns the profile check and the rule that pages open only through
-`newPage` with a `windowId`. Read only the safe profile labels and directory
-keys from `profile.info_cache`; do not dump the file or personal account
-fields. Saved profile and window IDs are hints until matched to live evidence.
+```text
+browser_profiles action="list"            -> names, directories, loaded or not
+browser_target   action="set" name="pro3" -> binds this task's session
+browser_target   action="get"             -> binding + live status
+browser_target   action="clear"           -> back to Work (Default)
+```
 
-When a new page is justified, use
-`browser.pages.newPage(url, {background: true, windowId})` targeting the verified
-existing window. Require a normal, non-hidden result under the entry contract;
-verify the returned page's actual window/context, visibility, and active state.
-If the route exposes a hidden flag, set it false. If it cannot establish those
-facts, do not proceed through that page.
+`set` takes the exact, case-sensitive name or a `browserProfileId`. It only
+records intent: it loads nothing and opens nothing. `get` reports the bound
+name and directory, whether the profile is loaded, its normal windows, and
+any error such as `profile_gone` or `pinned_window_closed`. A stale binding
+never falls back to whatever window is focused; it fails until you rebind or
+clear.
 
-Keep the working profile label, window, page, and safe application marker in
-the current task notes. Verify the site's authenticated context independently
-of the browser profile. Do not navigate a preserved page away for diagnostics.
+Inside `run`, `browser.target({action: 'get'})` reads the same status, and
+`page.info()` returns the page's `browserProfileId`, `windowId`, and
+`isActive`. A page whose `browserProfileId` matches the binding's is in that
+profile. `browserProfileId` values last one browser run; the name and
+directory are what go in notes.
+
+Every listing and page call sees only the bound profile's normal windows.
+That is why the binding is the proof: an unbound session that lists a
+ChatGPT tab is looking at `Work`'s ChatGPT, whatever the tab title says.
+
+`browser_target` `set_window` chooses which of the profile's windows new
+pages go to; `strict=true` pins every call to it. Use it when the profile
+has several windows and the user wants your work in one of them.
+
+## A profile with no window
+
+Most profiles are not loaded until someone uses them. When `get` shows no
+windows:
+
+1. `browser_profiles` `action="load"` (no name loads the bound profile).
+2. `windows` `action="create"`: an inactive normal window in that profile.
+3. Find the window's starting tab in `browser.pages.list()` (it reads
+   `ownership: "user"` and `chrome://newtab/`) and put your first page there
+   with `browser.page(id).goto(url)`. Opening a second tab with
+   `browser.open` while the window holds only its starting tab has brought
+   neo to the front of the user's screen; navigating the starting tab has
+   not.
+4. Record the window and that tab as created by this task. Later
+   `browser.open` calls in that window open background tabs normally.
+
+Keep that window for the rest of the task. Close it at the end only when
+every page in it is one you created.
 
 ## Background work and hidden pages
 
-Routine page work runs on an unselected tab. `snapshot`, `diff`, `grep`,
-`read`, `navigate`, `act`, `evaluate`, `screenshot`, `upload`, `download`,
-`pdf`, and `wait` address a page ID and never need the tab selected or its
-window activated. `act` with `kind="focus"` focuses an element inside the page,
-not the window.
+Every page tool and every `run` page method addresses a page ID or handle
+and works on an unselected tab: read, snapshot, grep, act, navigate, wait,
+screenshot, upload, download, pdf. `act` `kind="focus"` focuses an element
+inside the page, not the window.
 
-### When a hidden page misbehaves
-
-An unselected tab reports `document.visibilityState === 'hidden'` and
-`document.hasFocus() === false`, and runs no animation frames. Pages react in
-recognizable ways:
-
-- a menu or popover is marked closed but stays in the DOM, blocking clicks and
-  typing behind it;
-- a dialog or iframe loads but stays empty;
-- a Save/Discard bar never appears after an edit;
-- a button waits for page focus before enabling, as GitHub's OAuth Authorize
-  button does;
-- a picker lists its items, but a coordinate click on an item does nothing.
-
-Turn on focus emulation for that page, confirm it took effect, retry the step,
-and turn it off when the step is done:
+Neo's background tabs normally report `document.visibilityState` as
+`visible` and `document.hasFocus()` as true, so pages render and respond as
+if in front. If a page still shows the hidden-tab symptoms (a menu marked
+closed that stays in the DOM and blocks clicks, a dialog or iframe that
+stays empty, a Save bar that never appears, a button waiting for focus such
+as GitHub's OAuth Authorize), check and repair it in one `run`:
 
 ```js
-const P = PAGE_ID;
-await browser.cdpJsonForPage(P, 'Emulation.setFocusEmulationEnabled', JSON.stringify({enabled: true}));
-const r = await browser.cdpJsonForPage(P, 'Runtime.evaluate', JSON.stringify({
-  expression: 'JSON.stringify({vis: document.visibilityState, focus: document.hasFocus()})', returnByValue: true}));
-return {page: JSON.parse(r.result.value), tabSelected: (await browser.pages.getInfo(P)).isActive};
-// expect {vis: 'visible', focus: true} and tabSelected false; after the step:
-// await browser.cdpJsonForPage(P, 'Emulation.setFocusEmulationEnabled', JSON.stringify({enabled: false}));
+const page = browser.page(PAGE_ID);
+const state = async () => (await page.evaluateInPage(() =>
+  ({vis: document.visibilityState, focus: document.hasFocus()}))).value;
+const before = await state();
+await page.cdp('Emulation.setFocusEmulationEnabled', JSON.stringify({enabled: true}));
+return {before, after: await state(), tabSelected: (await page.info()).isActive};
+// expect after = {vis: 'visible', focus: true} and tabSelected false.
+// When the step is done:
+// await page.cdp('Emulation.setFocusEmulationEnabled', JSON.stringify({enabled: false}));
 ```
 
-Emulation stays on across a reload of that page. Reload after enabling it when
-the page settled its state at load, such as a button that enables only once
-the page has focus. Finishing animations from script
-(`document.getAnimations()` then `finish()`) does not help a hidden page,
-because the animation's end event still waits for a rendered frame.
+Reload after enabling it when the page settled its state at load.
+A failure that persists with the page visible and focused is usually your
+own call: a stale ref, the wrong element (a hidden fallback textarea), a
+menu you left half-open (a reload clears it), or an input method the page
+ignores. Read the live element and fix the call.
 
-A failure that persists with emulation on is usually in your own call. Common
-causes:
-- a selector that does not match;
-- the wrong element, such as a hidden fallback textarea;
-- a stale ref;
-- a menu you opened and left half-closed (a reload clears it);
-- an input method the page ignores.
-
-Read the live element and fix the call.
-
-### Calls that take focus, and what to use instead
+## Calls that take focus, and what to use instead
 
 | Never | Use instead |
 | --- | --- |
-| `newPage` or `tabs new` with `background: false` | `newPage(url, {background: true, windowId})` |
-| `windows activate` or `Browser.activateWindow`, including to target or inspect a window | `windowId` on `newPage`; `Browser.getWindows` and `pages.list` for window and tab state |
-| `Page.bringToFront`, `Target.activateTarget`, `Browser.activateTab` | Focus emulation on that page |
-| `windows create` | An existing window of the right profile; a new window only when the user asks for one |
-| `windows set_visibility` with `activate=true` | `activate=false` |
-| `osascript` or `open -a` activating any app | Nothing; leave desktop focus alone |
+| `Page.bringToFront`, `Target.activateTarget`, `Browser.activateTab` through `page.cdp` or `browser.cdp` | Focus emulation on that page, when it acts hidden |
+| `browser.open` into a window that holds only its starting tab | `goto` on the starting tab |
+| `windows` `create` when the profile already has a window | The existing window; `browser_target` `set_window` to choose among several |
+| `osascript`, `open -a`, or anything that activates an app | Nothing; leave the desktop alone |
+| Handing a URL to the system's default browser (`open <url>`, a CLI's browser launch) | `browser.open` in the right profile |
 
-Close only tabs this task created. They are unselected, so closing them moves
-no selection. A site action can still change the selected tab or open a
-window, for example a popup, a link that opens a tab, or a "branch in new chat"
-control. When that happens, relist, report it, and leave it. Activating
-something to undo it would interrupt the user a second time.
+A site action can still open a tab or a popup. Relist, report it, and leave
+it; activating something to undo it interrupts the user twice.
 
-`background` and `hidden` are different:
+When a step truly needs the user, leave the page as it is, name the profile
+and tab title, and let them switch to it when they are ready. After they say
+it is done, relist and reread the page and binding before acting.
 
-- Open a page with `newPage`, `background: true`, and the target `windowId`;
-  set `hidden` false where the live schema offers it. This creates a regular
-  unselected tab in that window's normal tab strip. The arguments are the
-  request, not proof of the result: verify the page's actual containing
-  window, visibility, and active state. If those facts cannot be established, do not work through
-  the new page; reconcile or report it.
-- A tab or window created with `hidden=true` is a browser surface
-  outside the normal user-visible tab/window surface. Never use it. Hidden
-  surfaces still consume resources, are easy to orphan, delay user inspection
-  or takeover, and can carry an unintended hidden-window profile context.
-- Do not hide a task window as a workaround. If an action unexpectedly creates
-  a hidden task-owned surface, stop working through it and reconcile it under
-  the lifecycle rules.
-- If no visible target window exists, report the missing prerequisite.
-  Do not let a tab call implicitly create one without the user's request.
+## Identity beyond the profile
 
-To expose a uniquely task-owned containing window without focusing it, use
-the live equivalent of:
+The profile says which cookie jar a page uses. It does not say which account
+or workspace the site is signed into, and matching titles or project names
+across profiles prove nothing. Before authenticated work, read a safe
+in-site marker (the workspace or project name) on the page itself, and keep
+it in the notes beside the profile, page ID, and sanitized origin and path.
+Leave query strings, fragments, emails, and tokens out of notes.
 
-```text
-windows action="set_visibility" windowId=<current-window-id> visible=true activate=false
-```
-
-`set_visibility` operates on a window. It does not select an existing
-background tab. Its result may supply a replacement window ID, so track the
-returned ID instead of reusing a stale handle.
-
-For a sign-in gate (password, code prompt, CAPTCHA, consent), first prove the
-page is in `Work`; a gate elsewhere is the wrong window, not a gate. Then work
-it yourself in the background tab as `logins-and-oauth.md` says, with focus
-emulation when the page misbehaves hidden. When a step truly needs the user
-(their phone, a passkey, a secret only they hold), keep the page as a
-background tab, name the profile and tab title, and let them switch to
-BrowserOS when ready. After the user finishes, relist
-and revalidate the page, profile/account, and target before continuing.
-`logins-and-oauth.md` owns the sign-in mechanics.
-
-## Identity and profile constraints
-
-Expect the user's `Work` profile, a variable number of ChatGPT consultation
-profiles labeled `pro1`, `pro2`, and so on, and other profiles the user keeps
-to have windows open at the same time. Inspect their actual mapping and keep the
-working profile/window/page identified in the existing task notes. Recheck the
-target before every interaction and readback, with fresh live membership and
-safe application identity after navigation, switching, recovery, or resuming,
-and before sends, mutations, and cleanup. This attention continues throughout
-the task; a successful startup check is not enough. Matching titles, projects,
-or URLs across profiles do not identify the account, and foreground activation
-does not prove which profile a page belongs to.
-
-For ChatGPT, select only the existing consultation profiles: the ones labeled
-`pro1`, `pro2`, and so on, whichever are configured. The `Work` profile is
-reserved for the user's personal ChatGPT use and rate-limit capacity. Do not
-use it when a consultation profile is limited, lacks a connector, or contains
-no matching conversation.
-
-The Terms table in `SKILL.md` owns what each label and word means. Record the
-label on the profile line of the task notes and nowhere else; the selected
-model is separate in-site state that `$chatgpt-web` reads from the page.
-
-Build page identity from both ephemeral handles and semantic evidence:
-
-```text
-current-agent dispatch control
-+ current-task authorization
-+ creation receipt handles when returned
-+ intended window/profile or browser context
-+ sanitized origin and stable path
-+ application title or shell
-+ safe account/workspace marker
-+ exact object being read or changed
-```
-
-Keep query strings and fragments out of the ledger. Page IDs, window IDs,
-target IDs, context IDs, session IDs, and refs can drift; they address a
-verified identity but never replace it.
-
-The `tabs new` schema has no target-window or profile argument, so it is
-never used to open a page, and `windows create` has no profile selector. Tab inventories may
-be flat and may omit page-to-window mapping. Derive ownership only from the
-task ledger, creation receipts, and fields actually returned. Do not combine
-separate lists and invent an association.
-
-For a selected current-agent-controlled page, a bounded
-`browser.pages.getInfo(pageId)` call through `run` may provide window or
-browser-context evidence when the live schema supports it. Use that only for
-identity, not broad inventory or dispatch bypass. Do not assume a window
-result's `activeTabId` is an MCP page ID: it can be a native tab ID. Correlate
-it only through a supported page-info result that returns both identities.
-A `browserContextId` can support a profile mapping but does not prove which
-account or workspace is authenticated inside the application.
-
-Use the explicit existing-window targeting route above. Do not activate
-a window as a profile fallback or open repeated pages hoping one lands in the
-right profile. If supported targeting cannot establish the intended context,
-report that blocker. A user-opened page remains user-owned under the current
-no-claim schema.
-
-A diagnostic profile-path page is not a profile-acquisition mechanism. Never
-navigate a preserved application page away merely to inspect its profile.
+Page IDs, window IDs, and refs change when tabs close, the browser restarts,
+or the page rerenders. They address something you verified; they are not
+the verification. Never navigate a page you are preserving away just to
+check where it is.

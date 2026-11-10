@@ -1,8 +1,8 @@
 ---
 name: chatgpt-web
-description: "Consult logged-in ChatGPT through BrowserOS after applying $browseros, writing the submission from its consultation templates in the user's voice with sources attached whole. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro selected and read back in the model picker (a browser profile labeled Pro never proves the model), real @BigQuery access for data and @GitHub access for repo work, existing consultation profile windows only, and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
+description: "Consult logged-in ChatGPT in BrowserOS neo after applying $browseros, writing the submission from its consultation templates in the user's voice with sources attached whole. Use for expert interpretation and planning, data questions, pushed PR reviews, attachments, and exact conversation continuation. Preserve Pro's independent judgment and verify the full submitted input before accepting its answer. Requires literal GPT-6 Astra Pro selected and read back in the model picker (a browser profile labeled Pro never proves the model), real @BigQuery access for data and @GitHub access for repo work, the consultation browser profiles only (pro1, pro3, and so on, bound by exact name), and 3–5-minute generation checks. Never use the user's Work profile. Switch temporarily limited accounts without substituting another tier. Not for API work, generic browser automation, automated login, or a consultation the user did not request."
 metadata:
-  short-description: "Query logged-in ChatGPT through BrowserOS"
+  short-description: "Query logged-in ChatGPT in BrowserOS neo"
 ---
 
 # ChatGPT Web
@@ -17,7 +17,7 @@ carry that word on this machine:
 - **Pro, the model:** GPT-6 Astra with the literal `Pro` option selected in
   the ChatGPT composer's model picker. In this skill, "Pro" alone always
   means this, and so does the user's "work with Pro" or "get Pro signoff".
-- **The consultation profiles:** the BrowserOS browser profiles the user keeps
+- **The consultation profiles:** the BrowserOS neo browser profiles the user keeps
   for agent consultations. Their labels are `pro1`, `pro3`, and so on; the
   user says "Pro 1" or "the Pro3 window". `pro2` is retired. A label is a name the user typed,
   the same kind of thing as `Work`. It says which ChatGPT login the page
@@ -26,7 +26,7 @@ carry that word on this machine:
 **"Work" is the user's browser profile or a ChatGPT product. A consultation
 uses neither.**
 
-- **`Work`, the browser profile:** the user's own BrowserOS profile. When the
+- **`Work`, the browser profile:** the user's own BrowserOS neo profile. When the
   user says "work profile", this is what they mean. Never use it for ChatGPT.
   It is reserved for the user's personal use and rate-limit capacity,
   including when every consultation profile is unavailable, and the
@@ -75,11 +75,13 @@ so afterward does not repair it: its answer, its interim notes, and its
 sign-off are not evidence, not an interpretation, and not a review. Only the
 user naming another model for this consultation changes that. Look for Pro in
 another composer instead: an existing Pro thread in the same project, then the
-same project in another consultation profile. Check the BrowserOS profile of
-any tab before you adopt it, under `$browseros`: the same project name and a
-`6 Pro` pill also appear in the `Work` profile and in other profiles. A tab in
-the `Work` profile is never eligible. A tab in any other profile that is not a
-consultation profile is eligible only when the user named that profile for
+same project in another consultation profile. Open that thread in a tab of
+your own. You see only the tabs of the profile your session is bound to, so
+read the binding with `browser_target` `get` before you use one, under
+`$browseros`: the same project name and a `6 Pro` pill also appear in the
+`Work` profile and in other profiles, and an unbound session is in `Work`. A
+tab in the `Work` profile is never eligible. A tab in any other profile that
+is not a consultation profile is eligible only when the user named that profile for
 this consultation. If none reads `6 Pro`, pause this
 consultation, tell the user what each composer read, and continue other work.
 A menu click that did not change the pill selected nothing; the closed pill is
@@ -131,11 +133,13 @@ the consultation autonomously as described below.
 ## Critical operating rules
 
 - **Apply `$browseros` before every browser phase.** Read
-  [the BrowserOS skill](../browseros/SKILL.md) before the first call and obey it
-  throughout. Never take foreground focus, and continually verify the
-  working profile/window/page. Use existing windows and one eligible ChatGPT
-  tab at a time. Never substitute another browser, the API, shell browser
-  scripts, cookie handling, or automated login.
+  [the BrowserOS skill](../browseros/SKILL.md) and the installed
+  `browseros-neo` skill before the first call and obey them throughout.
+  Never take foreground focus. Bind the consultation profile with
+  `browser_target` `set` and its exact name, and read the binding back with
+  `get` before every send and after any resume or reconnect. Use one
+  ChatGPT tab of your own at a time. Never substitute another browser, the
+  API, shell browser scripts, cookie handling, or automated login.
 - **Pro means GPT-6 Astra with the literal `Pro` option.** Use ChatGPT's
   `Chat` surface and `Extended` thinking when separately offered, unless the
   user explicitly requests another configuration. **Extra High, xhigh, Ultra,
@@ -143,9 +147,11 @@ the consultation autonomously as described below.
   setting, or a browser profile labeled `pro` is not Pro.** A Pro request
   uses the `Chat` surface and the picker's `Pro` option in every profile.
 - **Use a consultation profile whose account currently offers Pro.** Discover
-  the already-open consultation profiles, such as `pro1`, `pro3`, `pro4`,
-  or others present; exclude the `Work` profile and the retired `pro2` from
-  the pool, even when a `pro2` window is open.
+  the consultation profiles with `browser_profiles` `list`, such as `pro1`,
+  `pro3`, `pro4`, or others present; a profile that is not loaded or has no
+  window is still in the pool, and `$browseros` says how to load it and
+  open its window. Exclude the `Work` profile and the retired `pro2` from
+  the pool, even when `pro2` exists.
   Pro is missing from a composer only when `Power` cannot reach it: the slider
   ends at `Extra High, 4 of 4` and a disabled `Pro` entry appears under the
   model list. Hover that entry to read why; `Limit reached. Try again after
@@ -162,7 +168,7 @@ the consultation autonomously as described below.
   connector pill in the draft and on the submitted turn, and verify retrieval
   of the required data or code.
   A badge, typed name, or confident assertion is insufficient. Missing or broken
-  access means switch to a suitable consultation profile's window or stop
+  access means switch to a suitable consultation profile or stop
   and tell the user.
   Never accept or act on guesses about sources Pro could not access.
 - **Wait for the requested review.** After submission readback, check generation
@@ -227,7 +233,7 @@ an explicit user choice of exact thread or fresh chat wins. If an exact requeste
 conversation cannot be identified, ask rather than sending into unrelated
 history. Use a root chat only when no existing project fits and report that choice.
 
-Under `$browseros`, choose one authorized page in the selected existing window.
+Under `$browseros`, choose one page of your own in the bound consultation profile.
 Verify login with the safe boolean session check in that reference. Never
 inspect or output account details, tokens, cookies, or raw session data. Login
 and connector authorization repairs are manual.
@@ -255,8 +261,9 @@ the brief names; a one-line composer message pointing at an "ask file" is not
 a brief. Check absolute paths, existence, and the maximum of 10 attachments.
 Never drop requested files silently. Attach only through the temporary-input
 route in the composer reference; never click ChatGPT's `Add files and more` or
-`Add photos & files`, which open an operating-system file dialog that no tool
-can close and the user then has to cancel. Read
+`Add photos & files`: on a tab neo did not open they raise an
+operating-system file dialog that no tool can close and the user has to
+cancel. Read
 [composer-and-attachments.md](references/composer-and-attachments.md) before
 attaching files, invoking connectors, or diagnosing composer interaction.
 
@@ -267,7 +274,8 @@ the branch. Attach the canonical requirements source whole, exported as
 described in the composer reference. Name the relevant repository or data
 scope so retrieval addresses the actual question.
 
-Before sending, verify the intended profile/window/page and conversation,
+Before sending, verify the bound profile (`browser_target` `get`), your
+page, and the conversation,
 `Chat` surface, the picker's selected model, literal `Pro` option, and effort
 as read from this page, every attachment chip, and each
 required connector pill, immediately before the click and on every send path.
@@ -367,7 +375,7 @@ available again rather than polling capped accounts. Never fall back to `Work`.
 
 Return the answer plus a short receipt: the surface, model, option, and
 effort quoted as read from the page before Send and from the response turn,
-on their own line; the verified working profile/window/page and account
+on their own line; the verified bound profile and page and account
 availability observations on a separate line;
 project and conversation link or identity; attachment filenames and the data
 or code actually retrieved through connectors, including the PR URL when used.
@@ -377,7 +385,7 @@ verified and do not call the answer a Pro review.
 Keep three things separate in the receipt: what Pro was shown, what Pro said,
 and the agent's own conclusion. "Pro signed off" alone is not a receipt.
 Mention material prompt shaping and long waits, and report heartbeat cleanup
-accurately. Follow BrowserOS resource cleanup and identify any retained or
+accurately. Follow `$browseros` cleanup and identify any retained or
 unknown state. Keep secrets and sensitive URLs out of receipts.
 
 On failure, name the exact condition and next repair, plus the dependent
@@ -386,5 +394,5 @@ finished generation.
 
 Use this skill for explicit ChatGPT web consultations, data questions, pushed
 PR reviews, attachments, and conversation continuation. Use other guidance for
-OpenAI API work, generic browser tasks, or BrowserOS installation. Do not send
+OpenAI API work, generic browser tasks, or BrowserOS neo installation. Do not send
 a Pro prompt merely to test this skill.

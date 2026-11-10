@@ -1,13 +1,13 @@
 interface:
   display_name: "BrowserOS"
-  short_description: "Safe preflight for direct BrowserOS MCP use"
-  default_prompt: "Use $browseros for this browser task. Never take foreground focus: no tab selection, background:false tab, window activation, bring-to-front, or app activation, including to restore focus. A hidden page that will not render or respond gets focus emulation on that page; if a required step still fails, tell the user the profile, tab title, and step and continue other work. Apply its profile/window/page, ownership, and outcome rules. Read its Terms first: Work and pro1 are browser profile labels, not ChatGPT's Work surface or the Pro model. For ChatGPT, use only the existing consultation profiles (labeled pro1, pro2, and so on); never use the user's Work browser profile, including as a fallback. A profile label names a browser profile and never proves the ChatGPT model; read the selected model from the live page. Logins, SSO, and OAuth pages open in the Work window by your own newPage call; a login wall or account chooser outside Work means the wrong window, not a missing credential, and a command-line login never launches the browser. Work a sign-in gate in Work yourself (saved password, a credential the task provides, an emailed code, the CAPTCHA); only a step that needs the user's body or a secret only they hold goes to the user, once, after everything else is done. Verify field contents and any submission triggered by typing; read the operating references needed for the task."
+  short_description: "House contract for browser work in BrowserOS neo"
+  default_prompt: "Use $browseros for this browser task, with the installed browseros-neo skill for neo's tools. Bind the profile with browser_target (exact name) and read it back with browser_target get before the first action, after any compaction, resume, or reconnect, and before a send, sign-in, or irreversible change; an unbound session runs in Work. Read its Terms: Work and pro1 are browser profile labels, not ChatGPT's Work surface or the Pro model. For ChatGPT use only the consultation profiles (pro1, pro3, and so on), never Work. Every other site, and every login, SSO, or OAuth page, runs in Work; a login wall or account chooser elsewhere means the wrong profile, not a missing credential, and a command-line login never launches a browser. Never take the user's focus: no bring-to-front CDP, no app activation; create a window only when the profile has none and put the first page in its starting tab with goto. Act only on pages marked mine unless the user named the tab. Work sign-in gates yourself; only a step that needs the user's body or a secret only they hold goes to them, once. Verify results, treat timed-out changes as unknown, and close what you opened."
 
 dependencies:
   tools:
     - type: "mcp"
-      value: "browseros"
-      description: "BrowserOS browser automation and connector tools"
+      value: "browseros-neo"
+      description: "BrowserOS neo browser automation tools"
 
 policy:
   allow_implicit_invocation: true
