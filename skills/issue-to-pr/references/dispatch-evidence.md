@@ -12,8 +12,8 @@ Current model and account selection (owner direction, 2026-09-13): GPT-6 Astra
 with the literal `Pro` option and Extended thinking in ChatGPT's `Chat` surface,
 per `$chatgpt-web` with required `$browseros` usage. Pro is not Extra High,
 xhigh, Ultra, Thinking, or the highest available setting. Missing or disabled
-Pro probably means a temporary account rate limit. Use only the already-open
-consultation profiles, the BrowserOS profiles labeled Pro 1 through Pro5 or
+Pro probably means a temporary account rate limit. Use only the
+consultation profiles, the BrowserOS neo profiles labeled Pro 1 through Pro5 or
 whichever exist; that label names a browser profile and never proves the
 model, which is read from the page's model picker before every Send. The
 user's `Work` profile is reserved for their personal use and rate-limit capacity;

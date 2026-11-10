@@ -301,12 +301,12 @@ Rules evaluate in index order; first true wins. Keep ranges bounded.
 Look the way the reader looks: in the browser. Apply the installed
 `$browseros` skill contract, then open one background tab on
 `https://docs.google.com/spreadsheets/d/<id>/edit?gid=<sheetId>#gid=<sheetId>`
-(`tabs` action `new`, `hidden=false`, `background=true`), `wait` for the
+(`browser.open(url)` in `run`, which opens it in the background), wait for the
 title text, `screenshot` the page, save the image, and `close` the tab when
-the round is over. Scroll (`act` or `evaluate`) and screenshot again for
+the round is over. Scroll (`act` or `evaluate_in_page`) and screenshot again for
 tabs taller or wider than a screen. The screenshot `size` option scales
 the image; it does not change the viewport. Measure the viewport with
-`evaluate` (`window.innerWidth`) and state what width the proof
+`evaluate_in_page` (`window.innerWidth`) and state what width the proof
 represents. Typing an address in the name box selects a cell but does not
 scroll frozen panes; a selected cell with a note shows its tooltip over the
 grid, so select a plain cell before capturing. That is the only view that shows

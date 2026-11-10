@@ -58,7 +58,7 @@ How you decide:
    literal `Pro` option, never Extra High, xhigh, Ultra, or Thinking. Missing or
    disabled Pro probably means a temporary account rate limit: use `$chatgpt-web`
    and its required `$browseros` skill to find an available account among the
-   already-open consultation profiles only (the BrowserOS profiles labeled
+   consultation profiles only (the BrowserOS neo profiles labeled
    `Pro 1`, `Pro2`, and so on). That label names a browser profile and never
    proves the model; select `Pro` in the page's model picker and read it back
    before Send. Never use the user's `Work` profile,

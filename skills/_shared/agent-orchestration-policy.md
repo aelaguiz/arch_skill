@@ -395,7 +395,7 @@ agent cancellation; never blanket-kill processes by name.
 
 Before final handoff, the parent verifies this cleanup for every worker and
 reports no unwanted owned jobs, or names each intentional remaining resource,
-owner, stop handle, and end condition. Preserve shared services, BrowserOS,
+owner, stop handle, and end condition. Preserve shared services, BrowserOS neo,
 other agents' devices, worktrees, durable evidence, and build caches. Inspect
 survivors on resume after a crash; do not promise crash-proof cleanup.
 

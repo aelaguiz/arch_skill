@@ -170,7 +170,7 @@ before the first consultation of a run, and again if the user renames a
 seat. It says how to reach each seat: Pro through `$chatgpt-web` with
 `$browseros`, literal `Pro` selected in the model picker of the `Chat`
 surface and read back from the page before every Send, in the consultation
-profiles only (the BrowserOS profiles labeled `Pro 1`, `Pro2`, and so on),
+profiles only (the BrowserOS neo profiles labeled `Pro 1`, `Pro2`, and so on),
 never the `Work` profile, with `$chatgpt-web`'s rate-limit and
 account-switching rules. Those profile labels name browser profiles; being
 in one never makes a review a Pro review. For any other model, that reference's
@@ -191,7 +191,7 @@ entry, not a separate tracking system.
 
 ## Browser pages
 
-Many runs of this skill share one BrowserOS at the same time, so pages a run
+Many runs of this skill share one BrowserOS neo at the same time, so pages a run
 leaves open pile up in the user's browser. Each page a run opens is that
 run's to close. Note each one in the worklog as it opens, the way
 `$browseros` tracks task-created pages.

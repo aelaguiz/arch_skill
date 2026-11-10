@@ -103,10 +103,10 @@ Claude Code, Gemini CLI, and the Antigravity CLI (`agy`).
   it owns native/Prime/external behavior and task-resource cleanup.
 - Use `$skill-authoring` for skill packages, `$agents-md-authoring` for
   AGENTS files, and `$prompt-authoring` for actual model-facing prompts.
-- Use `$browseros` before BrowserOS calls; Codex CLI browser work uses only
-  BrowserOS and existing windows. Never take the user's foreground focus: a
-  hidden page that will not render or respond gets focus emulation, not a tab
-  or window activation. Keep verifying the target profile and window.
+- Use `$browseros` before any browser call; agent browser work uses only
+  BrowserOS neo (the `browseros-neo` MCP server), with the installed
+  `browseros-neo` skill for its tools. Never take the user's foreground
+  focus, and keep verifying the bound profile with `browser_target` `get`.
 - Use `$herdr` for requested live Herdr control and `$herdr-helper` for
   cross-session migration. Use `$agent-history` for past session evidence,
   never as the default for live status or streaming.

@@ -32,7 +32,7 @@ seats once for the epic; child issues inherit them.
 Pro is GPT-6 Astra with the literal `Pro` option, power 5 of 5, and Extended
 thinking where offered, in ChatGPT's `Chat` surface, reached through
 `$chatgpt-web` with `$browseros` applied. Use only the consultation profiles,
-the BrowserOS profiles labeled `Pro 1`, `Pro2`, and so on; never the user's
+the BrowserOS neo profiles labeled `Pro 1`, `Pro2`, and so on; never the user's
 `Work` profile, including as a fallback.
 
 The seat is the model, not the profile. A label such as `Pro 1` is a name the

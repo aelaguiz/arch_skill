@@ -158,7 +158,7 @@ Order of operations that avoids fighting yourself:
    default or one uniform value.
 7. Sheet properties: frozen rows/columns, gridlines, tab colour.
 8. Validation, conditional formats, protection, notes, named ranges.
-9. Open the tab in BrowserOS and look at it; then read back with
+9. Open the tab in BrowserOS neo and look at it; then read back with
    `includeGridData` (with `effectiveValue`) and run the readback list in
    the guide, including every original output against the dump.
 

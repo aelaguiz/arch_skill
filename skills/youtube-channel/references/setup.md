@@ -28,7 +28,7 @@ Then `whoami`. Don't copy the plaintext between machines by any other route.
 
 ## Sign in again
 
-Only when the grant is gone or revoked. The browser that opens the address must be signed in to Google as amir@fun.country (in BrowserOS, the `Work` profile; follow `$browseros` for opening the page in that profile's window without taking focus):
+Only when the grant is gone or revoked. The browser that opens the address must be signed in to Google as amir@fun.country (in BrowserOS neo, the `Work` profile; follow `$browseros` for opening the page in that profile's window without taking focus):
 
 ```bash
 python3 "{baseDir}/scripts/yt.py" login --url-file <private file outside any repo>

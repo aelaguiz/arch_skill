@@ -174,7 +174,7 @@ covered, reason from these (section 0 of the guide expands each one):
 5. **Apply the house style by range** in the order given in
    `references/house-style.md`: baseline, roles, borders, dimensions, sheet
    properties, validation, conditional formats, protection, notes.
-6. **Look, then verify**: open the tab in BrowserOS (`$browseros`),
+6. **Look, then verify**: open the tab in BrowserOS neo (`$browseros`),
    screenshot it, and read it at laptop width for anything cut off,
    spilling, colliding, repeated, loud or cramped; then read the grid back and run the readback checklist
    (fit, alignment, formats, constants, input style, signal budget);
@@ -200,7 +200,7 @@ covered, reason from these (section 0 of the guide expands each one):
 - `references/house-style.md` - the concrete default spec, layout templates,
   brand adaptation (Poker Skill tokens as the worked example), apply order
 - `references/sheets-api-recipes.md` - gws invocation, batchUpdate request
-  shapes for every style element, gotchas, how to look (BrowserOS) and the
+  shapes for every style element, gotchas, how to look (BrowserOS neo) and the
   readback checklist
 - `$browseros` (installed sibling skill) - the browser contract for opening
   the sheet and taking the screenshot you judge by

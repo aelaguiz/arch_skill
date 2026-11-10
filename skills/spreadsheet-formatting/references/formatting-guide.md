@@ -786,16 +786,16 @@ value present in the API is not yet evidence that a reader can find it: a
 column that inherited `hiddenByUser`, a collapsed group or a filter hides a
 perfectly formatted, perfectly preserved field.
 
-**Look at it first.** Open the tab in the browser (BrowserOS: one
+**Look at it first.** Open the tab in the browser (BrowserOS neo: one
 background tab on the sheet URL with its `gid`, then `screenshot`) and read
 it as a stranger at laptop width: is anything cut off, spilling, repeated,
 loud, or cramped? Does the first screen show the title, the inputs and a
 table with a header? Could you say what each column is without the label
 column? A sheet that has not been looked at has not been formatted; the
 API cannot see clipping, collisions between overflowing strings, or a row
-that reads as a paragraph. Know what you captured: BrowserOS's screenshot
+that reads as a paragraph. Know what you captured: BrowserOS neo's screenshot
 size option scales the image, it does not narrow the viewport, so measure
-the real viewport (`evaluate` `window.innerWidth`) and say what width the
+the real viewport (`evaluate_in_page` `window.innerWidth`) and say what width the
 proof represents; typing an address in the name box selects but does not
 scroll frozen panes; a selected cell with a note shows a tooltip over the
 grid. Scroll to representative positions on wide or tall tabs and inspect
@@ -805,7 +805,7 @@ pixels from CSS pixels, and confirm the capture includes the intended
 extent. After a navigation or scroll, judge the identity and content
 visible in the image rather than trusting the range you requested; Sheets
 sometimes re-scrolls to the selection, and a shared browser's zoom can
-change under you. These are tool-agnostic duties; the BrowserOS mechanics
+change under you. These are tool-agnostic duties; the BrowserOS neo mechanics
 live in the recipes.
 
 **Format readback (after every batch of changes)**

@@ -168,8 +168,8 @@ consultation.
 
 If Pro is missing or disabled, treat it as a probable temporary account rate
 limit; an explicit cap triggers the same switch. Follow `$chatgpt-web` and
-`$browseros` to use only the already-open consultation profiles, the
-BrowserOS profiles labeled `Pro 1` through `Pro5` or whichever exist, and
+`$browseros` to use only the consultation profiles, the
+BrowserOS neo profiles labeled `Pro 1` through `Pro5` or whichever exist, and
 select and read back `Pro` again in the new page. Never use the user's `Work` profile, including
 for fallback or an old thread; preserve its rate-limit capacity.
 Note which eligible profile/window works and use it.

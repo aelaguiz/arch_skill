@@ -201,7 +201,7 @@ thread.
 
 ## Browser pages
 
-Many runs share one BrowserOS, so each page this run opens is this run's to
+Many runs share one BrowserOS neo, so each page this run opens is this run's to
 close. Keep a seat's thread page open while the milestone is in flight; when
 moving profiles, verify the new page first, then close this run's pages in
 the old one; when the run ends or is handed off, close every page it created

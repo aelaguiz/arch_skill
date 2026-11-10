@@ -34,7 +34,7 @@ different facts. Do not write to production just to test permission.
 
 When a needed operation is absent, use the documented Sentry API or an available
 authenticated browser under its operating instructions; apply `$browseros`
-before a BrowserOS fallback. Use existing authorized
+before a BrowserOS neo fallback. Use existing authorized
 credentials without exposing them. Release-upload credentials can lack issue
 and project permissions; an `org:ci` token is not sufficient for this workflow.
 If access is missing, complete the independent authorized work and identify the

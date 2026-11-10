@@ -66,9 +66,9 @@ the matching local `claude`, `codex`, `agent`, `grok`, `kimi`, or `agy` CLI. Pro
 model ids remain exact and never cross runtimes. `agent-delegate` owns external
 editful sessions, while `fresh-consult`, `model-consensus`, `conductor`,
 `stepwise`, and `arch-epic` select transport for each role under the shared
-policy. `browseros` is the canonical preflight before direct BrowserOS MCP
-calls. `chatgpt-web` applies it and still requires BrowserOS plus a logged-in
-ChatGPT session, and the vendored thermonuclear rubric remains unchanged.
+policy. `browseros` is the house contract before any BrowserOS neo browser
+call. `chatgpt-web` applies it and still requires BrowserOS neo plus a
+logged-in ChatGPT session, and the vendored thermonuclear rubric remains unchanged.
 
 ## Disk maintenance
 
@@ -426,23 +426,24 @@ Examples:
 
 ### `browseros`
 
-Use before the first direct BrowserOS MCP call. It owns one-page-by-default
-reuse, page provenance and task authorization, target/profile identity,
-observe-act-verify, unknown timeout outcomes, proof selection, connector
-discovery, secrets, parallel ownership, and cleanup reconciliation. Use it
-alongside a narrower BrowserOS-backed skill; that skill owns its site workflow
-while `browseros` owns BrowserOS mechanics. It is not for BrowserOS
+Use before any browser call. Agents do browser work in BrowserOS neo through
+its `browseros-neo` MCP server; neo's own installed `browseros-neo` skill
+documents the tools, and `browseros` owns how to use them here: profile
+binding with `browser_target`, page ownership, observe-act-verify, unknown
+timeout outcomes, proof selection, secrets, parallel ownership, and cleanup.
+Use it alongside a narrower browser-backed skill; that skill owns its site
+workflow while `browseros` owns browser mechanics. It is not for BrowserOS
 installation or vendor development.
 
 The shared machine has a `Work` profile and a variable number of ChatGPT
-consultation profiles, labeled `Pro 1`, `Pro2`, and so on,
-with many windows already open. A profile label names a browser profile and
+consultation profiles, labeled `Pro 1`, `Pro2`, and so on. A profile label names a browser profile and
 never proves the ChatGPT model. For ChatGPT, only consultation profiles are
 eligible; `Work` is reserved for the user and is never a fallback. The skill
-requires continual verification of the working profile/window/page. Agents never
-take the user's foreground focus: all work runs in unselected background tabs,
-and a hidden page that will not render or respond gets Chromium focus emulation
-on that page instead of a tab or window activation. A required step that still
+binds the profile by exact name and reads the binding back before every
+consequential step. Agents never take the user's foreground focus: all work
+runs in background tabs, and a hidden page that will not render or respond
+gets Chromium focus emulation on that page instead of a tab or window
+activation. A required step that still
 cannot be done in the background goes to the user by name while other work
 continues.
 
@@ -452,7 +453,7 @@ Examples:
 
 ### `chatgpt-web`
 
-Use when the user explicitly wants the ChatGPT web provider, BrowserOS-backed
+Use when the user explicitly wants the ChatGPT web provider, BrowserOS neo-backed
 capabilities, or local attachments. It writes each submission from the
 matching family in `references/consultation-templates.md` (PR review, after
 fixes, plan check, planning where Pro writes the plan, on-track check, design
@@ -460,8 +461,8 @@ round, diagnosis, audit, retry, new thread) in the user's voice, with the
 canonical sources attached whole and no verdict token, answer cap, scope
 fence, or commit SHA; `prompt-authoring` discipline holds underneath. The
 agent watches for Pro's answer rather than handing the wait to the user. It
-requires reading and applying the `browseros` skill, verifies that BrowserOS
-is already logged in, and uses one eligible tab without silently inheriting
+requires reading and applying the `browseros` skill, verifies that the bound
+BrowserOS neo profile is already logged in, and uses one eligible tab without silently inheriting
 whatever conversation is open.
 Use the most applicable project. Prefer a matching recent Pro thread for the
 same workstream; assess whether a longer thread needs a fresh conversation with
@@ -474,8 +475,8 @@ Thinking, or the highest remaining setting. Pro is the top `Power` position of
 the `Latest` model (the composer pill then reads `6 Pro`); it is not an entry
 in the model list. If `Power` cannot reach Pro in the `Chat` picker, it
 probably means a temporary account rate limit. The skill
-uses `$browseros` to discover only the already-open consultation profiles,
-the BrowserOS profiles labeled `Pro 1` through `Pro5` or whichever are
+uses `$browseros` to bind only the consultation profiles,
+the BrowserOS neo profiles labeled `Pro 1` through `Pro5` or whichever are
 configured. Those labels are browser profile names, not the model: the agent
 selects `Pro` in the model picker, reads it back from the page before every
 Send, and reports that reading as the model. Never use the user's
