@@ -1,4 +1,4 @@
-.PHONY: install crg-setup install_skill agents_install_skill clean_codex_skill_mirror clean_installed_hooks clean_codex_installed_hooks clean_claude_installed_hooks claude_install_skill gemini_install gemini_install_skill agy_install_skill hermes_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install verify_agy_install verify_hermes_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
+.PHONY: install install_skill agents_install_skill clean_codex_skill_mirror clean_installed_hooks clean_codex_installed_hooks clean_claude_installed_hooks claude_install_skill gemini_install gemini_install_skill agy_install_skill hermes_install_skill verify_install verify_agents_install verify_codex_install verify_claude_install verify_gemini_install verify_agy_install verify_hermes_install remote_install clean_codex_stale_surfaces clean_claude_stale_surfaces clean_gemini_stale_surfaces
 
 # Purge removed packages from installed skill dirs before copying the active set.
 # disk-cleanup moved to devcluster (aelaguiz/devcluster#28), which links its own copy into the
@@ -129,34 +129,6 @@ VERIFY_HERMES := verify_hermes_install
 endif
 
 install: clean_codex_stale_surfaces clean_claude_stale_surfaces clean_installed_hooks install_skill claude_install_skill $(INSTALL_GEMINI) $(INSTALL_AGY) $(INSTALL_HERMES)
-
-# CRG is an optional agent accelerator. Missing tooling is loud but non-fatal.
-crg-setup:
-	@echo "🕸️  Ensuring code-review-graph is installed..."
-	@if command -v code-review-graph >/dev/null 2>&1; then \
-		echo "✅ code-review-graph already installed"; \
-	elif command -v uv >/dev/null 2>&1; then \
-		echo "📦 Installing code-review-graph with uv tool..."; \
-		uv tool install code-review-graph || { \
-			echo "⚠️  WARNING: code-review-graph install failed; setup will continue because CRG is optional."; \
-			exit 0; \
-		}; \
-	elif command -v pipx >/dev/null 2>&1; then \
-		echo "📦 Installing code-review-graph with pipx..."; \
-		pipx install code-review-graph || { \
-			echo "⚠️  WARNING: code-review-graph install failed; setup will continue because CRG is optional."; \
-			exit 0; \
-		}; \
-	else \
-		echo "⚠️  WARNING: code-review-graph was not installed."; \
-		echo "⚠️  Install uv and run: uv tool install code-review-graph"; \
-		echo "⚠️  Or install pipx and run: pipx install code-review-graph"; \
-		exit 0; \
-	fi
-	@if command -v code-review-graph >/dev/null 2>&1; then \
-		bash scripts/code_review_graph.sh ensure || \
-			echo "⚠️  WARNING: code-review-graph graph setup failed; setup will continue because CRG is optional."; \
-	fi
 
 clean_codex_stale_surfaces:
 	@mkdir -p ~/.codex/prompts/_backup

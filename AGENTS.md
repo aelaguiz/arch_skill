@@ -16,19 +16,6 @@ Claude Code, Gemini CLI, and the Antigravity CLI (`agy`).
   commands or paths you added with `rg`. Do not imply that code verification
   ran when it did not.
 
-## Code Review Graph
-
-- `make crg-setup` installs the `code-review-graph` CLI and builds this repo's
-  local structural graph. Normal skill installation does not rebuild it.
-- Use the graph for unfamiliar-area orientation, multi-hop change impact, and
-  duplicate-pattern searches. Use `rg` for one exact identifier.
-- Each Git worktree owns its own graph. Never copy or share
-  `.code-review-graph/` between worktrees.
-- Project hooks start a complete build in the background when a checkout lacks
-  `.code-review-graph/.baseline-v1.complete`. They run incremental updates only
-  after that baseline exists. Run `make crg-setup` for a foreground repair.
-- If CRG is unavailable, say so and continue with normal repository search.
-
 ## Definition Of Done
 
 - The touched surface is internally consistent.

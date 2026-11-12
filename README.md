@@ -124,9 +124,7 @@ so an `agy` installed later already has its skills; machines without
 surface is mirrored into every existing Hermes skill root
 (`~/.hermes/skills/` and each `~/.hermes/profiles/<name>/skills/`) under the
 `arch_skill/` category directory; machines without Hermes are skipped
-automatically. Run `make crg-setup` separately when you want to install
-`code-review-graph` and build this checkout's local structural graph; normal
-skill installation does not rebuild it. Source/build internals
+automatically. Source/build internals
 (`build/`, `prompts/`, `__pycache__/`, `*.pyc`, and hook cleanup helpers) are
 pruned from installed skill packages. The
 `thermo-nuclear-code-quality-review` package is sourced unchanged from the
