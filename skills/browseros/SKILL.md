@@ -122,6 +122,13 @@ mistake, not a missing credential.
   profile.** Do not sign in there, type anything, or ask for credentials.
   Close your page, rebind to `Work`, open the site there, and say so:
   "RudderStack opened in `pro1`; reopened in `Work`."
+- **The one exception is an account profile's own sign-in.** Some machines
+  keep a profile per agent account, named after it, and a sign-in skill
+  (a login keeper's) says to sign that account in there. Then the login
+  wall is the job: sign in by hand with neo's own tools, as a person
+  would, never with a script driving the page over DevTools or a headless
+  browser. Providers' anti-bot checks are built to catch scripts, and a
+  script fails silently where you'd read what the page wants.
 - **Look for the signed-in state first.** A page in `Work` already showing
   the site signed in proves the login, and any page you open in `Work`
   shares it.
