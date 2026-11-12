@@ -1,7 +1,6 @@
 .env
 gemini/
 .arch_skill/arch-epic/
-.code-review-graph/
 .codex/*-state*.json
 .claude/arch_skill/
 __pycache__/
