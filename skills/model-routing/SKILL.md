@@ -1,11 +1,63 @@
 ---
 name: model-routing
-description: "Required whenever you start a helper, from a Claude, Codex or Antigravity parent: a subagent, a `claude -p`, `codex exec` or `agy` run, a worker a skill or script launches, or a reviewer on a timer. Teaches how to choose its model and thinking level, which is part of the job and never left to inheritance: why the helper exists (a cheap, fast answer or another maker's eye), what a setting really costs once level, Fast and repeat runs are counted, which kinds of work each setting does well, which reviews need deep thinking, stepping up after a miss, native against external helpers, and whose pick wins. Use before you set a helper's model or effort, when you write a skill, script, grid or brief that starts helpers, or when asked which model or thinking level fits a kind of work. Not for whether or how to delegate (agent-delegate and the shared orchestration policy), the model of a session someone else started, or which model an application's code should call."
+description: "Required before you start any helper, from a Claude, Codex or Antigravity parent (a subagent, a `claude -p`, `codex exec` or `agy` run, a worker a skill or script launches, a reviewer on a timer), and before you write code or do other work yourself that a brief could carry. Its first screen is the answer: every helper gets a model and a thinking level from the tested table, code that can be specified goes to Codex (Terra 6.1 at xhigh) from any parent, and what Codex builds is read for overbuild and sent back. The rest teaches why: why the helper exists (a cheap, fast answer or another maker's eye), what a setting really costs once level, Fast and repeat runs are counted, which kinds of work each setting does well, which reviews need deep thinking, stepping up after a miss, native against external helpers, and whose pick wins. Use before you set a helper's model or effort, before you start code or other work yourself that a brief could carry (a build from a spec, a rerun, a sweep), when you write a skill, script, grid or brief that starts helpers, or when asked which model or thinking level fits a kind of work. Not for whether or how to delegate (agent-delegate and the shared orchestration policy), the model of a session someone else started, or which model an application's code should call."
 metadata:
   short-description: "Choose every helper's model and thinking level"
 ---
 
 # Model Routing
+
+## Start here
+
+This skill is the instruction the helper tool's model and level fields wait for. Every helper you start gets both. Left blank, it runs at your own setting, the dearest you have.
+
+Your own model and level were chosen for the judgment your role exists for. Spend them there. For anything else you are about to do or hand over, ask one thing: **could you write down what done looks like, and will something check what comes back** (a test, a build, a script, your own read)?
+
+- **Yes, and it is code** (a build from a spec, a well-defined fix, a rerun, a rebase, a sweep): it goes to Codex, Terra 6.1 at xhigh, whichever model you are. On builds it scored level with the dearer settings at about a tenth of what Opus 5.5 at medium costs, and it draws on the Codex accounts, which sit nearly unused while the Claude ones run out. This holds when you were about to write the code yourself: write the brief instead. How to start it is under the table.
+- **Yes, and it is not code** (gather, recount, check against sources, label, research from documents): the row below, at the level it names. Both columns held on these; take the Codex one when the job runs more than a few minutes and nobody is waiting, the Claude one when you want the answer back in this turn.
+- **No.** Its value is what it notices that nobody pointed at, the spec still has open calls, a passing check would not show it is right, or a miss reaches money, players or a number someone acts on. Keep it strong: do it yourself, or the row's Claude setting at high. A second opinion on your own work goes to another maker.
+- **It is smaller than its brief** (a line or two in code you already hold, a lookup with a known target): do it yourself.
+
+**What Codex builds is a proposal, and you read it before it counts.** OpenAI's models guard against every failure they can imagine, and each guard looks responsible alone. So the brief names the plainest version that does the job and says to add nothing past it. When the work comes back, read the whole diff, not the test result, for what the job did not need: a check, retry, fallback, option, flag or abstraction for a case no user here meets. Send it back with that list to take out, before you look at anything else, and again until the diff is the job and nothing more. Passing tests never make it done. That read is yours or a Claude helper's at high, never the family that built it.
+
+| Kind of work | Claude | Codex |
+|---|---|---|
+| Mechanical work: rebase, run the tests and report | Sonnet 5.5 medium | Terra 6.1 xhigh |
+| Fix a well-defined bug: cause known, one or two files | Sonnet 5.5 medium | Terra 6.1 xhigh |
+| Build one piece from a full spec | Opus 5.5 medium | Terra 6.1 xhigh |
+| Build across several parts from a spec | Opus 5.5 medium | Sol 6.1 xhigh |
+| New feature with open design calls or algorithm changes | Opus 5.5 high | Sol 6.1 xhigh |
+| Find a bug's cause | Opus 5.5 medium | Sol 6.1 xhigh |
+| Walk a test plan on a device | Opus 5.5 high | Terra 6.1 xhigh |
+| Bring text in line with the facts: PR text, docs after a change | Opus 5.5 medium | Terra 6.1 xhigh |
+| Gather material for you to work through | Sonnet 5.5 high | Terra 6.1 xhigh |
+| Research a question from documents, email or the web | Opus 5.5 medium | Sol 6.1 low |
+| Analyze a dataset | Opus 5.5 medium | Sol 6.1 medium |
+| Check facts against their sources | Opus 5.5 medium | Sol 6.1 medium |
+| Label items by a codebook | Opus 5.5 medium | Sol 6.1 medium |
+| Judge images or frames against a standard | Opus 5.5 medium | Sol 6.1 low |
+| Work out a problem with one right answer | Opus 5.5 medium | Sol 6.1 low |
+| Read a document cold | Opus 5.5 medium | Terra 6.1 xhigh |
+| Explain how code behaves | Opus 5.5 medium | Sol 6.1 high |
+| Judge writing against a standard | Opus 5.5 medium | Sol 6.1 high |
+| Review code or a plan against its spec | Opus 5.5 high | Sol 6.1 high |
+| Check in on running work | Opus 5.5 medium | Sol 6.1 high |
+| Plan or design | Opus 5.5 high | Sol 6.1 high |
+| Write short copy people read | Opus 5.5 high | Sol 6.1 medium |
+| Build a content item through its steps | Opus 5.5 high | Sol 6.1 xhigh |
+| Translate text users read | Opus 5.5 xhigh | Sol 6.1 xhigh, untested: lower levels misled on 2 of 5 |
+| Second opinion, once, on a plan or PR | Opus 5.5 high | Astra 6.0 xhigh |
+
+What each row was measured on is in [references/task-types.md](references/task-types.md). A model or level your own instructions or the person you work for names wins over a row.
+
+**Starting it.**
+
+- A Claude helper: the Agent tool with `model: "opus"` or `"sonnet"` and `effort: "medium"`, both set.
+- Codex, from any session: write the brief to a file, then run in the background
+  `aim codex run -- exec -m gpt-6.1-terra -c 'model_reasoning_effort="xhigh"' "$(cat brief.md)" < /dev/null > out.log 2>&1`
+  AI Manager picks a Codex account with room. Without `< /dev/null` the run waits forever on input. Where AI Manager is not installed, the same command starts at `codex exec`. The brief says where the work lives, what done looks like, the check to run, the plainest version, and what to do if something is off (stop and say so, or go on and say what it assumed).
+
+The rest of this page is why: what a level buys, what each model is weak at, which reviews need deep thinking, and what to do when a pool has no room.
 
 Every helper you start runs on a model and a thinking level you chose. That choice is part of your job, like choosing what to ask it. There is no default to fall back on. A helper given no level takes yours, which was set for your work and not for its work: in one audit, about 19 in 20 helpers at the two top levels got there by inheriting or forking, and nobody had decided they should.
 
@@ -123,7 +175,7 @@ Whether to delegate belongs to `agent-delegate`, but your choice of setting star
 
 Codex, Claude and Antigravity run on separate pools of accounts. When one pool has no room, another family's model at the matching level takes the work the same day, so nothing stalls waiting for a reset. Astra 6.0 at xhigh is about Opus 5.5 at high. Sol 6.1 at xhigh is about Opus 5.5 at medium or low; where the job turns on following a long brief, take medium. Terra 6.1 at xhigh sits lower on coding, about where Sonnet 5.5 at medium to high or Opus 5.5 at low would be, but its work still stands in on Opus 5.5 at medium, because Terra 6.1's jobs are builds and checks that hold a brief. The match runs the other way when the Claude accounts are short. When Claude or Codex accounts are tight on non-build helper work, Gemini 4 Carbon at medium held level with Opus 5.5 at xhigh on blind scores across five multi-file tasks (about 40% cheaper than Opus 5.5 at xhigh at standard rates and a third slower); keep Carbon at medium whenever it explores a repository, and save Carbon at high for bounded single-packet reviews or open analytical reads. Do not stand Carbon in for code builds while Terra 6.1, Sol 6.1 or Opus 5.5 has room.
 
-Look again before switching, because accounts come back. Keep the family you would have used while it has room: the match settles which level to ask for, not that the two families think alike. Say which model stood in wherever the work records its models.
+Look again before switching, because accounts come back, and go back to the setting the row gives once its pool has room: the match settles which level to ask for, not that the two families think alike. Say which model stood in wherever the work records its models.
 
 ## Setting it
 
