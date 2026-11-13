@@ -55,7 +55,7 @@ What each row was measured on is in [references/task-types.md](references/task-t
 - A Claude helper: the Agent tool with `model: "opus"` or `"sonnet"` and `effort: "medium"`, both set.
 - Codex, from any session: write the brief to a file, then run in the background
   `aim codex run -- exec -m gpt-6.1-terra -c 'model_reasoning_effort="xhigh"' "$(cat brief.md)" < /dev/null > out.log 2>&1`
-  AI Manager picks a Codex account with room. Without `< /dev/null` the run waits forever on input. Where AI Manager is not installed, the same command starts at `codex exec`. The brief says where the work lives, what done looks like, the check to run, the plainest version, and what to do if something is off (stop and say so, or go on and say what it assumed).
+  AI Manager picks a Codex account with room. Without `< /dev/null` the run waits forever on input. Outside a git checkout (a scratch folder), add `--skip-git-repo-check` after `exec`, or it refuses to start. If AI Manager answers `blocked` with `no_alternate_pool_account`, the machine has one Codex account: name the label the refusal gives, `aim codex run <label> -- exec ...`. Say in the brief where Codex works and that it removes what it made there. Where AI Manager is not installed, the same command starts at `codex exec`. The brief says where the work lives, what done looks like, the check to run, the plainest version, and what to do if something is off (stop and say so, or go on and say what it assumed).
 
 The rest of this page is why: what a level buys, what each model is weak at, which reviews need deep thinking, and what to do when a pool has no room.
 
