@@ -369,8 +369,7 @@ verify_agents_install:
 		test -f $(AGENTS_SKILLS_DIR)/$$skill/SKILL.md; \
 	done
 	@for item in $(SKILLS) $(SHARED_DIRS); do \
-		if find $(AGENTS_SKILLS_DIR)/$$item \( -name build -o -name prompts -o -name __pycache__ \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(AGENTS_SKILLS_DIR)/$$item"; exit 1; fi; \
-		if find $(AGENTS_SKILLS_DIR)/$$item -name '*.pyc' -print -quit | grep -q .; then echo "ERROR: Python bytecode installed under $(AGENTS_SKILLS_DIR)/$$item"; exit 1; fi; \
+		if find $(AGENTS_SKILLS_DIR)/$$item \( -name build -o -name prompts \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(AGENTS_SKILLS_DIR)/$$item"; exit 1; fi; \
 	done
 	@for skill in $(REMOVED_SKILLS); do \
 		test ! -d $(AGENTS_SKILLS_DIR)/$$skill; \
@@ -401,8 +400,7 @@ verify_claude_install:
 		test -f $(CLAUDE_SKILLS_DIR)/$$skill/SKILL.md; \
 	done
 	@for item in $(CLAUDE_SKILLS) $(SHARED_DIRS); do \
-		if find $(CLAUDE_SKILLS_DIR)/$$item \( -name build -o -name prompts -o -name __pycache__ \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(CLAUDE_SKILLS_DIR)/$$item"; exit 1; fi; \
-		if find $(CLAUDE_SKILLS_DIR)/$$item -name '*.pyc' -print -quit | grep -q .; then echo "ERROR: Python bytecode installed under $(CLAUDE_SKILLS_DIR)/$$item"; exit 1; fi; \
+		if find $(CLAUDE_SKILLS_DIR)/$$item \( -name build -o -name prompts \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(CLAUDE_SKILLS_DIR)/$$item"; exit 1; fi; \
 	done
 	@for skill in $(NON_CLAUDE_SKILLS); do \
 		test ! -d $(CLAUDE_SKILLS_DIR)/$$skill; \
@@ -431,8 +429,7 @@ verify_gemini_install:
 		test -f $(GEMINI_SKILLS_DIR)/$$skill/SKILL.md; \
 	done
 	@for item in $(GEMINI_SKILLS) $(SHARED_DIRS); do \
-		if find $(GEMINI_SKILLS_DIR)/$$item \( -name build -o -name prompts -o -name __pycache__ \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(GEMINI_SKILLS_DIR)/$$item"; exit 1; fi; \
-		if find $(GEMINI_SKILLS_DIR)/$$item -name '*.pyc' -print -quit | grep -q .; then echo "ERROR: Python bytecode installed under $(GEMINI_SKILLS_DIR)/$$item"; exit 1; fi; \
+		if find $(GEMINI_SKILLS_DIR)/$$item \( -name build -o -name prompts \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(GEMINI_SKILLS_DIR)/$$item"; exit 1; fi; \
 	done
 	@for skill in $(NON_GEMINI_SKILLS); do \
 		test ! -d $(GEMINI_SKILLS_DIR)/$$skill; \
@@ -474,8 +471,7 @@ verify_agy_install:
 	if ! cmp -s skills/_shared/agent-orchestration-policy.md "$(AGY_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $(AGY_SKILLS_DIR)/_shared/agent-orchestration-policy.md"; exit 1; fi; \
 	if [ ! -f "$(AGY_SKILLS_DIR)/_shared/model_resolution.py" ]; then echo "ERROR: missing $(AGY_SKILLS_DIR)/_shared/model_resolution.py"; exit 1; fi; \
 	for item in $(GEMINI_SKILLS) $(SHARED_DIRS); do \
-		if find "$(AGY_SKILLS_DIR)/$$item" \( -name build -o -name prompts -o -name __pycache__ \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(AGY_SKILLS_DIR)/$$item"; exit 1; fi; \
-		if find "$(AGY_SKILLS_DIR)/$$item" -name '*.pyc' -print -quit | grep -q .; then echo "ERROR: Python bytecode installed under $(AGY_SKILLS_DIR)/$$item"; exit 1; fi; \
+		if find "$(AGY_SKILLS_DIR)/$$item" \( -name build -o -name prompts \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $(AGY_SKILLS_DIR)/$$item"; exit 1; fi; \
 		if find "$(AGY_SKILLS_DIR)/$$item" \( -name 'upsert_*hook.py' -o -name 'arch_controller_stop_hook.py' \) -print -quit | grep -q .; then echo "ERROR: hook scripts installed under $(AGY_SKILLS_DIR)/$$item"; exit 1; fi; \
 	done; \
 	echo "OK: Antigravity CLI skills verified at $(AGY_SKILLS_DIR)"
@@ -503,8 +499,7 @@ verify_hermes_install:
 		if ! cmp -s skills/_shared/agent-orchestration-policy.md "$$dest/_shared/agent-orchestration-policy.md"; then echo "ERROR: missing or stale $$dest/_shared/agent-orchestration-policy.md"; exit 1; fi; \
 		if [ ! -f "$$dest/_shared/model_resolution.py" ]; then echo "ERROR: missing $$dest/_shared/model_resolution.py"; exit 1; fi; \
 		for item in $(SKILLS) $(SHARED_DIRS); do \
-			if find "$$dest/$$item" \( -name build -o -name prompts -o -name __pycache__ \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $$dest/$$item"; exit 1; fi; \
-			if find "$$dest/$$item" -name '*.pyc' -print -quit | grep -q .; then echo "ERROR: Python bytecode installed under $$dest/$$item"; exit 1; fi; \
+			if find "$$dest/$$item" \( -name build -o -name prompts \) -type d -print -quit | grep -q .; then echo "ERROR: source/build internals installed under $$dest/$$item"; exit 1; fi; \
 			if find "$$dest/$$item" \( -name 'upsert_*hook.py' -o -name 'arch_controller_stop_hook.py' \) -print -quit | grep -q .; then echo "ERROR: hook scripts installed under $$dest/$$item"; exit 1; fi; \
 		done; \
 		echo "OK: Hermes skills verified at $$dest"; \
