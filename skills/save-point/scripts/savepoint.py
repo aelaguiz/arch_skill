@@ -434,6 +434,11 @@ def scratch_back(p):
     sid = now[0].get('session_id') if now else None
     if not root or not sid:
         return {'left_at': saved}
+    if sid != a.get('session_id'):
+        # AI Manager gives a session a new id when it moves it to another account, and rewrites the old id out of the
+        # conversation so the new account never presents it. A file in scratch can still hold the old id, so scratch
+        # goes back only into the same session; a moved session's stays in the save point.
+        return {'left_at': saved, 'moved': True}
     old = a['stop']['scratch_from']
     new = scratch_of(now[1], now[0]['pid'], sid) or os.path.join(root, *old.split(os.sep)[-3:-1], sid)
     os.makedirs(new, exist_ok=True)
@@ -531,7 +536,9 @@ def resume(args):
                       + (f" (some didn't copy; the save point's copy is kept at {r['scratch']['kept_copy']})" if r['scratch'].get('kept_copy') else ''))
     for r in moved:
         if r['scratch'].get('left_at'):
-            print(f"  {r['pane']}: its scratch is saved at {r['scratch']['left_at']} and was not put back; run resume again once it is up")
+            print(f"  {r['pane']}: its scratch is saved at {r['scratch']['left_at']} and was not put back; "
+                  + ("the session came back under a new id, as it does on another account, and its old files stay out of that account"
+                     if r['scratch'].get('moved') else "run resume again once it is up"))
     if waiting:
         print(f"  not resumed, Herdr session not running (needs `herdr session attach <name>`): {', '.join(waiting)}")
     notes = [p for p in todo if p['agent'].get('live_work') or p['agent'].get('children', {}).get('reviewer_threads')

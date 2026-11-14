@@ -52,5 +52,34 @@ class CarriesScratch(unittest.TestCase):
             self.assertIsNone(sp.scratch_of({30: (1, RUNTIME)}, 30, "abc"))
 
 
+class PutsScratchBack(unittest.TestCase):
+    def run_case(self, resumed_id):
+        with tempfile.TemporaryDirectory() as home:
+            saved = Path(home) / "save/scratch/pods_w1_p1"
+            (saved / "scratchpad/notes").mkdir(parents=True)
+            (saved / "scratchpad/a.txt").write_text("a")
+            (saved / "scratchpad/notes/b.txt").write_text("b")
+            private = Path(home) / ".aimgr/claude-homes/pro7/.claude/.aim-private-runtime-New1"
+            new = private / "claude-501/-w" / resumed_id
+            (new / "scratchpad").mkdir(parents=True)
+            (new / "scratchpad/a.txt").write_text("written since the resume")
+            pane = {"session": "pods", "pane": "w1:p1", "agent": {"session_id": "abc", "stop": {
+                "scratch_saved": str(saved), "scratch_from": f"{home}/.aimgr/claude-homes/pro7/.claude/.aim-private-runtime-Old1/claude-501/-w/abc"}}}
+            ps = {20: (1, f"node /x/aimgr.js v1 protected {private} 3"), 30: (20, RUNTIME)}
+            with patch.object(sp, "pane_claude", return_value=({"pid": 30, "session_id": resumed_id}, ps)):
+                done = sp.scratch_back(pane)
+            return done, saved.exists(), (new / "scratchpad/a.txt").read_text(), (new / "scratchpad/notes/b.txt").exists()
+
+    def test_same_session_gets_its_files_and_keeps_what_it_wrote_since(self):
+        done, copy_left, a, b = self.run_case("abc")
+        self.assertEqual(done["files"], 2)
+        self.assertEqual((copy_left, a, b), (False, "written since the resume", True))
+
+    def test_a_session_moved_to_another_account_gets_none(self):
+        done, copy_left, a, b = self.run_case("other-id")
+        self.assertTrue(done["moved"])
+        self.assertEqual((copy_left, b), (True, False))
+
+
 if __name__ == "__main__":
     unittest.main()
