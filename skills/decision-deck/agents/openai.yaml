@@ -1,0 +1,7 @@
+interface:
+  display_name: "Decision Deck"
+  short_description: "Ask for approvals one decision per slide and act on each click"
+  default_prompt: "Use $decision-deck to put these decisions to the owner as a decision deck: one decision per slide with the exact thing being decided as its evidence and the recommendation first, checked at desktop and phone width and read cold before it is served, sent with the full text asks, then act on each pick and comment as it lands and report back on the slide."
+
+policy:
+  allow_implicit_invocation: true
