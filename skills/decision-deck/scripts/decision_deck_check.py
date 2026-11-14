@@ -22,6 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import decision_deck_check_centre as centre  # noqa: E402
 import decision_deck_check_pngs as pngs  # noqa: E402
 import decision_deck_stamp as stamp  # noqa: E402
 from decision_deck_check_fit import PROBE  # noqa: E402
@@ -120,6 +121,7 @@ def check(spec: dict, out: Path | None = None, sizes: dict | None = None, source
                     page.goto(base + path, wait_until="load")
                     page.evaluate(SETTLE, [i, mode == "phone"])
                     found = page.evaluate(PROBE, [i, mode]) + page.evaluate(READ_PROBE, [i, mode, *LIMITS])
+                    found += page.evaluate(centre.PROBE, [i, mode, centre.OFFCENTRE_TOL])
                     for kind, sel, msg in found:
                         problems.append(f"{kind} {path} {s['width']} {sel}: {msg}")
                     if out:

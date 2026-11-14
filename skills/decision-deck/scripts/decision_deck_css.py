@@ -8,8 +8,8 @@ scrolls inside one bounded box with no fade (on the stage the diff's panel and r
 the page scrolls and the evidence has no inner scroll box). decision_deck_check.py checks a rendered round against it.
 The parts, in the order page_css joins them: TOKENS (colours and the type stack), CSS (the desktop stage, kept in
 decision_deck_css_stage.py and imported here), PHONE_CSS (phones and portrait screens stack the slides unscaled, and the reduced-motion rule), DIALOG_CSS (Zoom and Keys),
-HEADER_CSS (the header's source line and links), STEADY_CSS (nothing moves when an answer lands) and CHART_CSS (the
-grid bar chart and the line chart of decision_deck_chart.py).
+HEADER_CSS (the header's source line and links), STEADY_CSS (nothing moves when an answer lands), CHART_CSS (the
+grid bar chart and the line chart of decision_deck_chart.py) and CENTRE_CSS (a chart beside a taller side panel).
 """
 
 from decision_deck_css_stage import CSS  # the desktop stage; page_css joins it second
@@ -220,7 +220,22 @@ CHART_CSS = r"""
 }
 """
 
+# ------------------------------------------------------------------ a chart beside a taller side panel
+# On the stage the chart's drawing sits in the middle of its column, level with the panel, not at the column's top.
+# The chart becomes a column flexbox centring its drawing (`safe`, so a drawing taller than its box starts at the top
+# and scrolls as before); the SVG bars take their own height, capped at the chart's, so a chart taller than its zone
+# still scales down whole. A chart as tall as the row, a slide with no panel (.cx.one) and a phone draw as before.
+# decision_deck_check_centre.py (OFFCENTRE) checks it.
+
+CENTRE_CSS = r"""
+@media (min-width: 900px) and (orientation: landscape) {
+  .cx:not(.one) > .chart { display: flex; flex-direction: column; justify-content: safe center; }
+  .cx:not(.one) > .chart > * { flex: none; }
+  .cx:not(.one) > .chart:not(.tbl) > svg { height: auto; max-height: 100%; }
+}
+"""
+
 
 def page_css() -> str:
     """The whole <style> body for a deck page."""
-    return "\n".join((TOKENS, CSS, PHONE_CSS, DIALOG_CSS, HEADER_CSS, STEADY_CSS, CHART_CSS))
+    return "\n".join((TOKENS, CSS, PHONE_CSS, DIALOG_CSS, HEADER_CSS, STEADY_CSS, CHART_CSS, CENTRE_CSS))

@@ -12,7 +12,7 @@ ledger is never touched) and opened in headless Chromium through Python Playwrig
 and the summary, at both sizes.
 
 Each layout problem is one line: `<KIND> <route> <width> <selector>: <what, in px>`. Px are CSS px of the slide (the
-desktop stage is 960 x 540, scaled to the window) except OFFCARD, which is in screen px. The fit kinds:
+desktop stage is 960 x 540, scaled to the window) except OFFCARD and OFFCENTRE, which are in screen px. The fit kinds:
   CLIPPED   content hidden by overflow: hidden (or clip), or running past the bottom of the desktop slide; a
             cut is allowed only when the full text is reachable (an ellipsis with a title attribute, or a
             control that opens it, such as Read all)
@@ -38,6 +38,10 @@ The reading kinds, for what a reviewer would otherwise have to catch by eye:
             what the decision turns on
   BROKEN    a command flag ("-g", "--dry-run") split after its hyphen at a line end, or a table heading split
             inside a word
+  OFFCENTRE a chart beside a side panel taller than it whose drawing does not sit in the middle of its column:
+            the drawing's own shapes and text, not its stretched box, more than 4 px off the column's middle
+            while the panel is more than 4 px taller. On a phone the panel sits under the chart, so it is read
+            there only where the two columns stand side by side
 
 Before the render the spec itself is checked; these lines are `<KIND> <decision id>:` (`deck` for the round's own
 text):
