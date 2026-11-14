@@ -15,18 +15,34 @@
 
 SAVE defaults to the newest save point under ~/.agent-save-points. Each command prints a short summary and the
 path of the JSON it wrote; read the JSON for detail."""
-import argparse, concurrent.futures as cf, datetime, json, os, re, subprocess, sys, time
+import argparse, concurrent.futures as cf, datetime, glob, json, os, re, shutil, subprocess, sys, time
 
 ROOT = os.path.expanduser('~/.agent-save-points')
 ANSI = re.compile(r'\x1b\[[0-9;?]*[A-Za-z]')
 UUID = r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 SHELLS = {'zsh', '-zsh', 'bash', '-bash', 'login', 'sh', 'fish'}
+# Claude Code's own binary: its installer's copy, or the program AI Manager starts sessions from,
+# /opt/aimgr-claude-runtime/artifacts/<hash>/claude. That one is matched as the program itself, because AI Manager's
+# launcher beside it carries the same path as an argument and is not an agent.
+CLAUDE_BIN = re.compile(r'/\.local/share/claude/versions/|^\S*/aimgr-claude-runtime/artifacts/[0-9a-f]+/claude( |$)')
+
+
+def is_claude(cmd):
+    return bool(CLAUDE_BIN.search(cmd)) and 'supervisor' not in cmd
+
+
+# AI Manager gives every start of a session a new private folder inside its account folder, named on the launcher's
+# command, and the session's scratchpad lives in it. It deletes the folders of stopped sessions the next time a
+# session starts on an account with nothing else running, so a stop followed by a resume loses the scratch unless
+# it is carried across: stop copies it into the save point and resume puts it into the new folder.
+PRIVATE = re.compile(r'(/[^ ]*?/\.aim-private-runtime-[A-Za-z0-9]+)')
+COPY = ['cp', '-cRp'] if sys.platform == 'darwin' else ['cp', '-a']   # APFS clones on a Mac, as tmp-save makes
 
 
 def run(*a, timeout=30):
     try:
         return subprocess.run(a, capture_output=True, text=True, timeout=timeout).stdout
-    except subprocess.TimeoutExpired:
+    except (subprocess.TimeoutExpired, FileNotFoundError):  # a tool this machine lacks (launchctl on Linux) reads as nothing
         return ''
 
 
@@ -115,16 +131,53 @@ def live_work(text):
     return work
 
 
+def private_folder(ps, pid):
+    hops = 0
+    while pid in ps and hops < 6:
+        m = PRIVATE.search(ps[pid][1])
+        if m:
+            return m.group(1)
+        pid, hops = ps[pid][0], hops + 1
+    return None
+
+
+def scratch_of(ps, pid, session_id):
+    """The session's own folder in its launch's private folder (it holds scratchpad/), or None."""
+    root = private_folder(ps, pid)
+    found = glob.glob(os.path.join(root, 'claude-*', '*', session_id)) if root and session_id else []
+    return found[0] if found else None
+
+
+def pane_claude(session, pane):
+    """The pane's Claude process as (its record, the process table), or None."""
+    ps = ps_table()
+    for q in fg(session, pane):
+        cmd = ps.get(q.get('pid'), (0, ''))[1]
+        if is_claude(cmd):
+            return claude_record(cmd, q['pid']), ps
+    return None
+
+
+def files_in(folder):
+    return sum(len(f) for _, _, f in os.walk(folder))
+
+
 def claude_record(cmd, pid):
+    # The process's record is in the folder its session started with: the one its command names, else whichever
+    # AI Manager account folder holds a record for this pid, else ~/.claude.
     m = re.search(r'(/[^ ]*?/\.claude)/', cmd)
-    home = m.group(1) if m else os.path.expanduser('~/.claude')
-    acct = re.search(r'claude-homes/([^/]+)/', cmd)
-    rec = {'kind': 'claude', 'pid': pid, 'account': acct.group(1) if acct else None}
-    try:
-        s = json.load(open(os.path.join(home, 'sessions', f'{pid}.json')))
-        rec.update(session_id=s.get('sessionId'), name=s.get('name'), session_cwd=s.get('cwd'))
-    except Exception:
-        pass
+    homes = ([m.group(1)] if m else []) + glob.glob(os.path.expanduser('~/.aimgr/claude-homes/*/.claude')) \
+        + [os.path.expanduser('~/.claude')]
+    rec = {'kind': 'claude', 'pid': pid, 'account': None}
+    for home in homes:
+        try:
+            s = json.load(open(os.path.join(home, 'sessions', f'{pid}.json')))
+        except Exception:
+            continue
+        acct = re.search(r'claude-homes/([^/]+)/', home)
+        rec.update(session_id=s.get('sessionId'), name=s.get('name'), session_cwd=s.get('cwd'),
+                   account=acct.group(1) if acct else None)
+        break
     return rec
 
 
@@ -137,7 +190,13 @@ def save(args):
         sessions = json.loads(run('herdr', 'session', 'list', '--json')).get('sessions', [])
     except Exception:
         sessions = []
-    me = (os.environ.get('HERDR_SESSION'), os.environ.get('HERDR_PANE_ID'))
+    # This session is the pane whose agent started this command: Herdr's default session sets no HERDR_SESSION, so
+    # the pane is known by the process, not the name.
+    me = (os.environ.get('HERDR_SESSION') or 'default', os.environ.get('HERDR_PANE_ID'))
+    above, pid = set(), os.getpid()
+    while pid in ps and pid not in above:
+        above.add(pid)
+        pid = ps[pid][0]
     panes, codex_pids = [], {}
     for s in sessions:
         if not s.get('running'):
@@ -154,11 +213,12 @@ def save(args):
                 agent = None
                 for q in procs:
                     cmd = ps.get(q.get('pid'), (0, ''))[1]
-                    if '/.local/share/claude/versions/' in cmd and 'supervisor' not in cmd:
+                    if is_claude(cmd):
                         agent = claude_record(cmd, q['pid'])
+                        agent['scratch'] = scratch_of(ps, q['pid'], agent.get('session_id'))
                         kids = [ps[k][1] for k in descendants(ps, q['pid']) if k in ps]
                         reviewers = sorted({m for c in kids for m in re.findall(r'codex exec resume (' + UUID + ')', c)})
-                        helpers = sum(1 for c in kids if '/.local/share/claude/versions/' in c and 'supervisor' not in c)
+                        helpers = sum(1 for c in kids if is_claude(c))
                         agent['children'] = {'reviewer_threads': reviewers, 'child_agents': helpers}
                         break
                 if not agent:
@@ -180,6 +240,7 @@ def save(args):
                     agent = {'kind': 'other', 'command': '; '.join(ps.get(q.get('pid'), (0, q.get('name', '')))[1][:120]
                                                                    for q in procs if q.get('name', '') not in SHELLS)[:300]}
                 if agent:
+                    rec['self'] = rec['self'] or agent.get('pid') in above
                     agent['aimgr'] = aimgr
                     raw = pane_read(name, pid_, 14, ansi=True)
                     agent['draft'] = input_box(raw) if agent['kind'] in ('claude', 'codex', 'kimi', 'ssh') else ''
@@ -281,7 +342,7 @@ def pick(data, panes_arg, kinds):
     return out
 
 
-def stop_one(p):
+def stop_one(p, save_dir=None):
     s, pane, a = p['session'], p['pane'], p['agent']
     res = {'pane': f'{s}:{pane}', 'kind': a['kind']}
     raw = pane_read(s, pane, 14, ansi=True)
@@ -289,6 +350,11 @@ def stop_one(p):
     if draft:
         res.update(result='skipped: text in the input box, left alone', draft=draft)
         return res
+    scratch = a.get('scratch')
+    if a['kind'] == 'claude':   # read it again now: the session may have been restarted since the save
+        now = pane_claude(s, pane)
+        if now:
+            scratch = scratch_of(now[1], now[0]['pid'], now[0].get('session_id')) or scratch
     if live_work(ANSI.sub('', raw)).get('working'):
         keys(s, pane, 'esc')
         time.sleep(2)
@@ -317,6 +383,13 @@ def stop_one(p):
     if ids:
         res['printed_id'] = ids[-1]
     res['result'] = 'stopped' if (a['kind'] == 'ssh' and ids) or at_shell(s, pane) else 'check the pane'
+    if res['result'] == 'stopped' and save_dir and scratch and os.path.isdir(scratch) and files_in(scratch):
+        dest = os.path.join(save_dir, 'scratch', f'{s}_{pane}'.replace(':', '_'))
+        if not os.path.exists(dest):
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            run(*COPY, scratch, dest, timeout=900)
+        if os.path.isdir(dest):
+            res.update(scratch_from=scratch, scratch_saved=dest)
     return res
 
 
@@ -325,7 +398,7 @@ def stop(args):
     kinds = {'claude', 'codex', 'kimi'} | ({'ssh'} if args.include_ssh else set())
     todo = pick(data, args.panes, kinds)
     with cf.ThreadPoolExecutor(max_workers=12) as ex:
-        results = list(ex.map(stop_one, todo))
+        results = list(ex.map(lambda p: stop_one(p, os.path.dirname(path)), todo))
     by = {r['pane']: r for r in results}
     for p in data['panes']:
         r = by.get(f"{p['session']}:{p['pane']}")
@@ -350,19 +423,52 @@ def stop(args):
             print(f"  {r['pane']}: {r['result']}" + (f" (\"{r.get('draft', '')[:70]}\")" if r.get('draft') else ''))
 
 
+def scratch_back(p):
+    """Put the scratch that stop saved into the resumed session's new folder. Returns what it did, or None."""
+    a = p['agent']
+    saved = a.get('stop', {}).get('scratch_saved')
+    if not saved or not os.path.isdir(saved) or a.get('scratch_back'):
+        return None
+    now = pane_claude(p['session'], p['pane'])
+    root = private_folder(now[1], now[0]['pid']) if now else None
+    sid = now[0].get('session_id') if now else None
+    if not root or not sid:
+        return {'left_at': saved}
+    old = a['stop']['scratch_from']
+    new = scratch_of(now[1], now[0]['pid'], sid) or os.path.join(root, *old.split(os.sep)[-3:-1], sid)
+    os.makedirs(new, exist_ok=True)
+    run(*COPY, '-n', saved + '/.', new + '/', timeout=900)   # -n: never over a file the session has already written
+    done = {'from': old, 'to': new, 'files': files_in(new)}
+    if all(os.path.lexists(os.path.join(new, os.path.relpath(os.path.join(d, f), saved)))
+           for d, _, files in os.walk(saved) for f in files):
+        shutil.rmtree(saved)   # every file is back in place, so the save point's copy has done its job
+    else:
+        done['kept_copy'] = saved
+    return done
+
+
 def resume_one(p):
     s, pane, a = p['session'], p['pane'], p['agent']
     res = {'pane': f'{s}:{pane}'}
     if not at_shell(s, pane):
         res['result'] = 'pane is not at a shell (already running, or a program in the way)'
+        now = pane_claude(s, pane)   # brought up by hand, or after a question was answered: its scratch still goes back
+        if now and now[0].get('session_id') == a.get('session_id'):
+            back = scratch_back(p)
+            if back:
+                res.update(result='already running', scratch=back)
         return res
     run('herdr', '--session', s, 'pane', 'run', pane, f"cd {p.get('cwd') or '~'} && {a['resume']}")
     end, state = time.time() + 180, 'no prompt after 3 minutes'
     while time.time() < end:
         time.sleep(3)
-        tail = '\n'.join([l for l in pane_read(s, pane, 30).splitlines() if l.strip()][-6:])
+        screen = pane_read(s, pane, 30)
+        tail = '\n'.join([l for l in screen.splitlines() if l.strip()][-6:])
         if 'trust this folder' in tail.lower():
             state = 'waiting at the folder-trust prompt'
+            break
+        if 'new MCP servers found' in screen:
+            state = "waiting at Claude Code's question about this project's MCP servers"
             break
         m = re.search(r'is busy|no other unlocked|hit your|limit reached|Not logged in|rror', tail)
         if m:
@@ -375,6 +481,10 @@ def resume_one(p):
             last = [l for l in pane_read(s, pane, 12, src='recent-unwrapped').splitlines() if l.strip()]
             state = 'resume command exited: ' + (last[-2].strip()[:160] if len(last) >= 2 else '?')
             break
+    if state == 'up':
+        back = scratch_back(p)
+        if back:
+            res['scratch'] = back
     if state == 'up' and a.get('draft'):
         run('herdr', '--session', s, 'pane', 'send-text', pane, a['draft'])  # back in the box, never sent
         res['draft_restored'] = True
@@ -398,11 +508,30 @@ def resume(args):
     for i in range(0, len(todo), args.batch):
         with cf.ThreadPoolExecutor(max_workers=args.batch) as ex:
             results += list(ex.map(resume_one, todo[i:i + args.batch]))
-    up = [r for r in results if r['result'] == 'up']
-    print(f"resumed {len(up)} of {len(results)}; memory {mem_free()}% free -> {path}")
+    by = {r['pane']: r for r in results}
+    for p in todo:   # kept in the save, so a second resume knows whose scratch is already back
+        r = by.get(f"{p['session']}:{p['pane']}")
+        if r:
+            p['agent']['resumed'] = r['result']
+            if isinstance(r.get('scratch'), dict) and r['scratch'].get('to'):
+                p['agent']['scratch_back'] = r['scratch']
+    json.dump(data, open(path, 'w'), indent=1)
+    up = [r for r in results if r['result'] in ('up', 'already running')]
+    free = mem_free()
+    print(f"resumed {len(up)} of {len(results)}; memory {f'{free}% free' if free is not None else 'not read'} -> {path}")
     for r in results:
-        if r['result'] != 'up':
+        if r['result'] not in ('up', 'already running'):
             print(f"  {r['pane']}: {r['result']}")
+    moved = [r for r in results if isinstance(r.get('scratch'), dict)]
+    if any(r['scratch'].get('to') for r in moved):
+        print("  scratch files put back, in each session's new scratch folder (tell each its files moved):")
+        for r in moved:
+            if r['scratch'].get('to'):
+                print(f"    {r['pane']}: {r['scratch']['files']} files, {r['scratch']['from']} -> {r['scratch']['to']}"
+                      + (f" (some didn't copy; the save point's copy is kept at {r['scratch']['kept_copy']})" if r['scratch'].get('kept_copy') else ''))
+    for r in moved:
+        if r['scratch'].get('left_at'):
+            print(f"  {r['pane']}: its scratch is saved at {r['scratch']['left_at']} and was not put back; run resume again once it is up")
     if waiting:
         print(f"  not resumed, Herdr session not running (needs `herdr session attach <name>`): {', '.join(waiting)}")
     notes = [p for p in todo if p['agent'].get('live_work') or p['agent'].get('children', {}).get('reviewer_threads')

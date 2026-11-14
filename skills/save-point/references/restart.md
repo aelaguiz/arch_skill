@@ -4,7 +4,7 @@ Read this when the computer itself is restarting or shutting down, not for a pla
 
 ## /tmp is emptied at boot
 
-macOS empties `/private/tmp` when it starts. Agents keep real work there: every Claude Code session's scratchpad lives under `/private/tmp/claude-<uid>/`, and builds keep their scripts and stacks there too. On October 25 that included the lessons build's runners and play stack, 27 GB in `/tmp/lessons_studio`, and the playtest runners. A session resumed after the restart without its scratchpad loses whatever it kept there.
+macOS empties `/private/tmp` when it starts. Agents keep real work there: a Claude Code session started without AI Manager has its scratchpad under `/private/tmp/claude-<uid>/`, and builds keep their scripts and stacks there too. A session started through AI Manager keeps its scratchpad in its account folder instead, and `stop` and `resume` carry that across by themselves. On October 25 that included the lessons build's runners and play stack, 27 GB in `/tmp/lessons_studio`, and the playtest runners. A session resumed after the restart without its scratchpad loses whatever it kept there.
 
 `savepoint.py tmp-save` copies all of /tmp into the save point folder with APFS clones (`cp -cRp`). Clones share disk blocks, so this costs almost no space, but it still walks every file. On October 25, 94 GB took about eight minutes. Start it in the background as soon as a restart is likely, and tell Amir to restart only after it finishes. After the boot, run `tmp-restore` before resuming sessions. Sockets and a few system folders can't be copied, and the log ignores those errors. Once everything is running again, the clone in the save point can be deleted. While it exists, its blocks stay shared rather than freed.
 
