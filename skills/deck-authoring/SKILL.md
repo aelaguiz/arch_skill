@@ -73,7 +73,12 @@ like.
   fucking worse."
 - **Every slide reads cold.** Each thing is named in full on the slide where
   it appears. No issue numbers without their plain name, no row or section
-  numbers, no "the X" that points to another slide, plan, or conversation.
+  numbers, no "the X" that points to another slide, plan, or conversation. A
+  count that stands in for things he must judge or approve ("17 issues",
+  "four approvals") points elsewhere too: name them or show them on the
+  slide, or drop the number, even when the count cites its source ("17
+  release blockers, from the tracker"). A count of a group he only needs the
+  size of, or a measurement, stands.
 - **Show the thing:** the real screen, ad, listing, chart of real data,
   diagram, or a labeled mock. "You should never use words to describe an
   image. You should always put the image." He can't judge a mock until he
@@ -328,7 +333,8 @@ type new to you.
    2. Does the headline say that point, and only that point, as plainly as
       your sentence?
    3. Which words, names, numbers or sentences would the founder of this app
-      not say himself, or could not resolve from this slide alone?
+      not say himself, or could not resolve from this slide alone, including
+      a count of things the slide never names or shows?
    4. What text could go without losing the point, including any line that
       narrates how the deck was made?
 
