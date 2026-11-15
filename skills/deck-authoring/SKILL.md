@@ -350,7 +350,24 @@ type new to you.
    by adding a definition, a count, or a caveat: the slide gets denser, and he
    still stops at the first word he would not say himself. Whether a sentence
    is true about the app is yours to check. Then send; no second cold read
-   before he has seen the deck.
+   before he has seen the deck, except on a sign-off deck.
+
+   A deck he signs as a whole (a plan's sign-off, or one approval whose case
+   runs past one slide) goes to him only after two clean reads, because he
+   decides from it, and a read of each slide alone passes a deck that repeats
+   itself or never shows the product. One is this cold read. The other is a
+   second clean reviewer from another model family (`$model-routing`, a
+   review where the other family is the point), given his ask, the rendered
+   slides, and the deck's text in order: the headlines, the lines under them,
+   and the ask slide. It flags each place the case is made again, each count
+   that stands in for things he must judge without naming them, each slide
+   about something judged by eye with no picture of it, and an ask slide that
+   argues the case instead of listing what a yes starts, with its terms. Fix
+   each finding or reject it with a one-line reason, then read again; the
+   deck is ready when every finding is fixed or rejected and a re-read finds
+   nothing new you accept. One read never stands in for the other. A helper
+   agent that cannot start reviewers hands the deck back unsent and says
+   which read is missing.
 8. **Deliver.** Send the link with one or two sentences: what the deck
    answers, what you need from him, and anything still rough. Keep the
    builder or spec, images, and a feedback log file next to the work.
