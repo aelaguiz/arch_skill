@@ -10,6 +10,7 @@ with it, and blend shapes when a deck serves two jobs.
 - An advisor or investor meeting
 - The team's weekly focus deck
 - A decision or approval deck
+- A sign-off deck
 - A research deck
 - A design or proposal deck
 - A deck that orients Amir on something new
@@ -66,9 +67,28 @@ with it, and blend shapes when a deck serves two jobs.
   bare: the slide shows what you looked at and what it showed, then what you
   propose. A confident line with a light reason under it reads to him as
   "just designing what seems good".
-- **Long is fine** when every slide is one clear decision.
+- **Long is fine** when every slide is one clear decision. A deck he signs as
+  a whole is the exception (next section).
 - **Planning is not deciding.** While he is still shaping a plan, explain it
   and ask for nothing.
+
+## A sign-off deck
+
+A deck he signs as a whole: a plan's sign-off, or one approval whose case runs
+past one slide. He reads it to decide, so every repeat costs him a re-read
+hunting for what changed.
+
+- **Compact.** No dividers, and about eight slides of argument at most after
+  the short version; further support goes to the back.
+- **The case made once.** The short version states each part's conclusion up
+  front, and each slide after it proves one point; that is the case made once.
+  The repeat is arguing the same support twice: a short-version line that
+  carries a slide's evidence, or a later slide that proves again what an
+  earlier one proved. A total that rolls up from the slides is not a repeat.
+- **The ask slide lists what a yes starts.** The last slide lists only what a
+  yes starts or authorizes, each with its terms: what starts, what it costs,
+  from when, until when, even where an earlier slide analyzed them. It never
+  argues the case again; he has just read it.
 
 ## A research deck
 

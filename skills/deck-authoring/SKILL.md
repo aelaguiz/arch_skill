@@ -230,7 +230,9 @@ defining it keeps the word, and he trips on it again.
 - **Group the rest by the question each part answers, and open every part with
   a divider:** its number, its plain name, one sentence on what it answers,
   and its slides with page numbers. Split a long part into subsections with
-  their own dividers. The cover's contents point at the dividers.
+  their own dividers. The cover's contents point at the dividers. A deck he
+  signs as a whole has no dividers and makes its case once: read "A sign-off
+  deck" in [references/deck-shapes.md](references/deck-shapes.md).
 - **Order for the reader, not for the work.** His worry or the answer first,
   a simple picture before the deep dive, a complicated system built up a
   layer per slide ("you need to ease me into the architecture"), cause before
@@ -313,7 +315,9 @@ type new to you.
    block of text under the headline or a number that runs past a short line
    is a paragraph: make it another slide or move it to the notes. Then look
    at the deck as a contact sheet for a wall with no dividers, one layout
-   repeated across unlike ideas, or a missing answer at the front.
+   repeated across unlike ideas, or a missing answer at the front. On a
+   sign-off deck, look instead for a slide that argues again what an earlier
+   one proved.
 7. **Cold read, once.** Read `../_shared/agent-orchestration-policy.md`, then
    start a clean reviewer with none of your context, on the model and level
    `$model-routing` gives a cold read unless he named another, and apply `$prompt-authoring` to its brief. Give it his
