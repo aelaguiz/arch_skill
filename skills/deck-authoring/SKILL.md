@@ -91,7 +91,11 @@ like.
   first, from what it is for; that call is usually yours. Amir, October 23,
   2026, of nine concept mocks drawn as free-standing pictures, which left
   him to decide they belonged on our website: "I don't know if I'm looking
-  at a web page or an app or what the fuck these are."
+  at a web page or an app or what the fuck these are." A plan is no
+  exception: a plan for work on something he judges by eye shows the real
+  screen, tile, or excerpt on each slide about it, even when nothing visible
+  should change, because the picture is how he knows what is being touched.
+  A plan to rework a game's tiles that shows no tile is not ready.
 - **The answer first, then parts opened by section dividers.** The headlines,
   read alone in order, tell the whole story.
 - **Every slide is numbered,** cover and dividers included, so he can say
