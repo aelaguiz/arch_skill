@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400" font-family="Helvetica, Arial, sans-serif">
+  <rect width="640" height="400" fill="#fbf7f1"/>
+  <rect width="640" height="44" fill="#ffffff"/>
+  <text x="24" y="28" font-size="19" font-weight="700" fill="#5a3b22">Brindlewick Bakery</text>
+  <text x="400" y="29" font-size="18" fill="#5a3b22">Menu   Order   Visit</text>
+  <rect x="24" y="68" width="300" height="300" rx="8" fill="#e8c9a0"/>
+  <circle cx="130" cy="190" r="56" fill="#c98b4e"/>
+  <circle cx="220" cy="250" r="44" fill="#b9733a"/>
+  <text x="174" y="352" font-size="18" text-anchor="middle" fill="#5a3b22">Photo: this morning's loaves</text>
+  <text x="352" y="140" font-size="26" font-weight="700" fill="#2d1f14">Baked at dawn,</text>
+  <text x="352" y="172" font-size="26" font-weight="700" fill="#2d1f14">sold by noon.</text>
+  <text x="352" y="210" font-size="17" fill="#5a3b22">Sourdough, rye and pastries</text>
+  <text x="352" y="232" font-size="17" fill="#5a3b22">from our corner oven.</text>
+  <rect x="352" y="258" width="150" height="40" rx="6" fill="#8a4b1f"/>
+  <text x="427" y="283" font-size="17" font-weight="700" text-anchor="middle" fill="#ffffff">Order for pickup</text>
+</svg>

@@ -915,6 +915,33 @@ Practical rule:
 - Use Figma, slide, doc, PDF, or video tools when the requested artifact is not
   a local image contact sheet.
 
+### `decision-deck`
+
+Use when an agent needs a person's approval or choice on something they must
+see to judge (mockups, a wording change, numbers that decide between options),
+or has several decisions waiting at once. The agent writes one spec per round;
+the bundled server shows it as one interactive deck with one decision per
+slide, the exact thing being decided as the evidence, and the options as
+one-click buttons. Each click and comment lands in an append-only ledger, and
+the agent acts on each answer as it lands and reports back onto the slide. The
+chat message carries a plain-text copy of every ask, so an answer there counts
+the same. Each round is checked at desktop and phone width and read cold by a
+fresh reader before it is served.
+
+Examples:
+
+- `Use $decision-deck to ask me which of these two homepage mockups to ship`
+- `Use $decision-deck to get my approval on the new returns policy wording`
+- `Use $decision-deck for the four launch decisions that are waiting on me`
+
+Practical rule:
+
+- Use `decision-deck` when the person's answer is the deliverable and they need
+  to see the thing to give it.
+- Ask in chat when it is one question whose whole ask fits in a few lines.
+- Use `deck-authoring` when the slides present findings rather than ask for
+  decisions.
+
 ### `cynical-code-review`
 
 When explicitly selected, use when the user wants a prompt-only skeptical implementation-integrity code

@@ -1,0 +1,94 @@
+{
+  "title": "Brindlewick Bakery website relaunch: four choices before launch",
+  "decided": [
+    {"title": "Online ordering", "answer": "Pickup orders only at launch; delivery follows once the fee is set"}
+  ],
+  "decisions": [
+    {
+      "id": "D1",
+      "title": "Homepage hero",
+      "question": "Which homepage hero layout should the new site launch with?",
+      "context": "Both mockups use the same photo, headline and Order for pickup button; only the layout differs.",
+      "recommendation": {
+        "option": "split",
+        "why": "The split layout keeps the headline readable on any photo and puts the order button above the fold on a phone."
+      },
+      "evidence": {"kind": "images"},
+      "options": [
+        {"id": "split", "label": "Split: photo left, text right", "images": ["hero-split.svg"],
+         "caption": "Photo and headline side by side"},
+        {"id": "banner", "label": "Full-width photo banner", "images": ["hero-banner.svg"],
+         "caption": "Headline over a full-width photo"}
+      ]
+    },
+    {
+      "id": "D2",
+      "title": "Returns policy",
+      "question": "Should the site's returns policy use the new wording?",
+      "context": "The change allows refunds for a day instead of exchanges only, and names the receipt as the proof.",
+      "recommendation": {
+        "option": "approve",
+        "why": "Customers asked for refunds at the counter most weeks, and a one-day window keeps the cost small."
+      },
+      "evidence": {
+        "kind": "diff",
+        "before": "Baked goods can be exchanged on the day of purchase. We do not offer refunds.",
+        "after": "Baked goods can be exchanged or refunded within one day of purchase. Please bring your receipt.",
+        "rule_now": "Baked goods can be exchanged or refunded within one day of purchase. Please bring your receipt."
+      },
+      "options": [
+        {"id": "approve", "label": "Use the new wording"},
+        {"id": "keep", "label": "Keep exchanges only"},
+        {"id": "change", "label": "Needs change", "ask_note": true}
+      ]
+    },
+    {
+      "id": "D3",
+      "title": "Delivery fee",
+      "question": "Which delivery fee should the site charge?",
+      "context": "Delivery starts four weeks after launch; the fee can be changed later without rebuilding the site.",
+      "recommendation": {
+        "option": "free-over-25",
+        "why": "Free delivery over $25 brings the most orders, and an order of that size covers the courier's cost."
+      },
+      "evidence": {
+        "kind": "chart",
+        "unit": "orders a week",
+        "bars": [
+          {"label": "Free over $25", "value": 310, "emphasis": true},
+          {"label": "$3.50 flat fee", "value": 240},
+          {"label": "Pickup only (today)", "value": 180}
+        ],
+        "source": "Projection from the last twelve weeks of orders and the customer survey"
+      },
+      "options": [
+        {"id": "free-over-25", "label": "Free delivery over $25"},
+        {"id": "flat", "label": "$3.50 on every order"}
+      ]
+    },
+    {
+      "id": "D4",
+      "title": "Opening hours",
+      "question": "Which opening hours should the site and the shop door show?",
+      "context": "The shop door sign and the site footer both show whichever hours are picked.",
+      "recommendation": {
+        "option": "early",
+        "why": "The early option opens when the commuter rush passes the shop and closes once the bread sells out."
+      },
+      "evidence": {
+        "kind": "table",
+        "columns": ["Option", "Weekdays", "Saturday", "Sunday"],
+        "rows": [
+          ["Early", "6:30-14:00", "7:00-14:00", "Closed"],
+          ["Late", "9:00-17:30", "9:00-16:00", "Closed"],
+          ["All week", "7:30-15:00", "8:00-14:00", "8:00-12:00"]
+        ]
+      },
+      "options": [
+        {"id": "early", "label": "Early"},
+        {"id": "late", "label": "Late"},
+        {"id": "all-week", "label": "All week"}
+      ]
+    }
+  ]
+}
