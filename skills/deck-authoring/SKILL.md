@@ -73,7 +73,12 @@ like.
   fucking worse."
 - **Every slide reads cold.** Each thing is named in full on the slide where
   it appears. No issue numbers without their plain name, no row or section
-  numbers, no "the X" that points to another slide, plan, or conversation.
+  numbers, no "the X" that points to another slide, plan, or conversation. A
+  count that stands in for things he must judge or approve ("17 issues",
+  "four approvals") points elsewhere too: name them or show them on the
+  slide, or drop the number, even when the count cites its source ("17
+  release blockers, from the tracker"). A count of a group he only needs the
+  size of, or a measurement, stands.
 - **Show the thing:** the real screen, ad, listing, chart of real data,
   diagram, or a labeled mock. "You should never use words to describe an
   image. You should always put the image." He can't judge a mock until he
@@ -86,7 +91,11 @@ like.
   first, from what it is for; that call is usually yours. Amir, October 23,
   2026, of nine concept mocks drawn as free-standing pictures, which left
   him to decide they belonged on our website: "I don't know if I'm looking
-  at a web page or an app or what the fuck these are."
+  at a web page or an app or what the fuck these are." A plan is no
+  exception: a plan for work on something he judges by eye shows the real
+  screen, tile, or excerpt on each slide about it, even when nothing visible
+  should change, because the picture is how he knows what is being touched.
+  A plan to rework a game's tiles that shows no tile is not ready.
 - **The answer first, then parts opened by section dividers.** The headlines,
   read alone in order, tell the whole story.
 - **Every slide is numbered,** cover and dividers included, so he can say
@@ -230,7 +239,9 @@ defining it keeps the word, and he trips on it again.
 - **Group the rest by the question each part answers, and open every part with
   a divider:** its number, its plain name, one sentence on what it answers,
   and its slides with page numbers. Split a long part into subsections with
-  their own dividers. The cover's contents point at the dividers.
+  their own dividers. The cover's contents point at the dividers. A deck he
+  signs as a whole has no dividers and makes its case once: read "A sign-off
+  deck" in [references/deck-shapes.md](references/deck-shapes.md).
 - **Order for the reader, not for the work.** His worry or the answer first,
   a simple picture before the deep dive, a complicated system built up a
   layer per slide ("you need to ease me into the architecture"), cause before
@@ -313,7 +324,9 @@ type new to you.
    block of text under the headline or a number that runs past a short line
    is a paragraph: make it another slide or move it to the notes. Then look
    at the deck as a contact sheet for a wall with no dividers, one layout
-   repeated across unlike ideas, or a missing answer at the front.
+   repeated across unlike ideas, or a missing answer at the front. On a
+   sign-off deck, look instead for a slide that argues again what an earlier
+   one proved.
 7. **Cold read, once.** Read `../_shared/agent-orchestration-policy.md`, then
    start a clean reviewer with none of your context, on the model and level
    `$model-routing` gives a cold read unless he named another, and apply `$prompt-authoring` to its brief. Give it his
@@ -324,7 +337,8 @@ type new to you.
    2. Does the headline say that point, and only that point, as plainly as
       your sentence?
    3. Which words, names, numbers or sentences would the founder of this app
-      not say himself, or could not resolve from this slide alone?
+      not say himself, or could not resolve from this slide alone, including
+      a count of things the slide never names or shows?
    4. What text could go without losing the point, including any line that
       narrates how the deck was made?
 
