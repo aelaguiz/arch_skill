@@ -24,12 +24,21 @@ Gotchas that cost time:
 - `gws` prints `Using keyring backend: keyring` on the first line; strip it
   before `json.loads`.
 - Work on a copy (`drive files copy`) when the user has not asked for edits
-  to the live file; say which file you touched.
-- `values.update` with `RAW` stores formulas as text; use `USER_ENTERED`.
+  to the live file; say which file you touched. Keep the copy's file id
+  from the `copy` reply and address every later write to it explicitly:
+  across several tool calls it is easy to drift back to the original id.
+- `values.update` with `RAW` stores formulas as text; formulas and anything
+  Sheets should parse need `USER_ENTERED`. `RAW` is right for literals that
+  must stay exact: numeric JSON values, and text that `USER_ENTERED` would
+  parse (`1/2`, `3-4`, codes with leading zeros).
+- In a `values` write, `null` leaves a cell untouched and `""` clears it.
 - Field masks: `fields` lists exactly the properties you send. A bare
   `"fields": "userEnteredFormat"` resets every unlisted format property on
   the range to default; that is useful once when rebuilding a tab and
   destructive otherwise.
+- `spreadsheets.batchUpdate` is atomic: an HTTP 400 means nothing was
+  applied. Check the field mask and the zero-based, end-exclusive indices
+  of the failing request, then resend the whole batch.
 - `padding` requires all four sides in one object.
 - `autoResizeDimensions` sizes to content only (45 px for `12.3%`); use it
   as a measurement step and then set widths by column type.
@@ -42,16 +51,18 @@ Gotchas that cost time:
 
 ```json
 {"spreadsheetId": "ID", "ranges": ["'Tab'!A1:N60"], "includeGridData": true,
- "fields": "namedRanges,sheets(properties,merges,bandedRanges,conditionalFormats,protectedRanges,basicFilter,filterViews,rowGroups,columnGroups,data(rowData(values(userEnteredValue,effectiveValue,formattedValue,effectiveFormat,note,hyperlink)),rowMetadata(pixelSize,hiddenByUser,hiddenByFilter),columnMetadata(pixelSize,hiddenByUser,hiddenByFilter)))"}
+ "fields": "namedRanges,sheets(properties,merges,bandedRanges,conditionalFormats,protectedRanges,basicFilter,filterViews,rowGroups,columnGroups,data(rowData(values(userEnteredValue,effectiveValue,formattedValue,userEnteredFormat,effectiveFormat,dataValidation,note,hyperlink)),rowMetadata(pixelSize,hiddenByUser,hiddenByFilter),columnMetadata(pixelSize,hiddenByUser,hiddenByFilter)))"}
 ```
 Then list: frozen rows/cols, merges, hidden or grouped rows and columns,
 filters, per-cell `formulaValue` (search for digits not in references),
 `formattedValue` length, `effectiveFormat` (alignment, wrap, numberFormat,
-fonts, fills), column `pixelSize`. Hidden dimensions are part of the
-reading surface: a preserved, formatted column the reader cannot see is a
-failed deliverable. Unhide with `updateDimensionProperties`
-`{"hiddenByUser": false}` and `fields: "hiddenByUser"` when the field is
-meant to be read.
+fonts, fills), `dataValidation` rules, column `pixelSize`. `effectiveFormat`
+includes conditional formatting, so it shows what the reader sees but cannot
+restore what was stored; keep `userEnteredFormat` in the saved dump for
+that. Hidden dimensions are part of the reading surface: a preserved,
+formatted column the reader cannot see is a failed deliverable. Unhide with
+`updateDimensionProperties` `{"hiddenByUser": false}` and
+`fields: "hiddenByUser"` when the field is meant to be read.
 
 ## Sheet properties: freeze, gridlines, tab colour (verified)
 
