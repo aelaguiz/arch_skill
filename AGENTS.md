@@ -7,7 +7,9 @@ Claude Code, Gemini CLI, and the Antigravity CLI (`agy`).
 
 ## Build And Verify
 
-- After skill package changes under `skills/`, run `npx skills check`.
+- After skill package changes under `skills/`, run `npx skills add . --list`
+  and confirm each changed skill is listed with its description. (`npx skills
+  check` updates globally installed skills; it does not check this repo.)
 - Use `make verify_install` only when you intentionally changed or want to
   validate the installed skill surface.
 - If you change install behavior, also verify the affected paths and commands
@@ -69,8 +71,8 @@ Claude Code, Gemini CLI, and the Antigravity CLI (`agy`).
   tests that read `skills/<slug>/SKILL.md`, skill reference docs, prompt
   doctrine, or usage docs only to assert phrase or regex presence/absence.
   Test deterministic behavior, schemas, package shape, install inventory,
-  helper scripts, and runtime output instead; use `npx skills check` plus
-  review for doctrine quality.
+  helper scripts, and runtime output instead; use `npx skills add . --list`
+  plus review for doctrine quality.
 - Keep changes in the smallest owning surface: reusable workflow doctrine in
   `skills/`, install behavior and stale-surface cleanup in `Makefile`, and
   deeper reference material in `docs/`.

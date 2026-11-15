@@ -5,10 +5,11 @@ leaking credentials.
 
 ## Package checks
 
-After changing `skills/fal-ai-tools/`, run:
+After changing `skills/fal-ai-tools/`, run this from the repo root and confirm
+`fal-ai-tools` is listed:
 
 ```bash
-npx skills check
+npx skills add . --list
 ```
 
 When install behavior or installed surfaces are intentionally validated, run:

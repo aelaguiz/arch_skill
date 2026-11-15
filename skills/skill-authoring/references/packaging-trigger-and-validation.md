@@ -304,10 +304,12 @@ Do not treat these as one problem. A skill can trigger perfectly and still execu
 ## Practical checks
 
 - Run any local skill validator your environment already provides.
-- Run the repo-level diagnostic when available:
+- List the package's skills from the repo root, which loads each one without
+  installing it; a skill missing from the list has frontmatter that does not
+  load:
 
 ```bash
-npx skills check
+npx skills add . --list
 ```
 
 - Read the package top-to-bottom and ask:
