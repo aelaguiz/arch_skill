@@ -1,4 +1,5 @@
-"""Decision deck routes: the request handler for decision_deck_server.DeckServer (the deck, pictures, the API, events)."""
+"""Decision deck routes: the request handler for decision_deck_server.DeckServer (the deck, pictures, clips, the API,
+events)."""
 from __future__ import annotations
 
 import hashlib
@@ -18,6 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import decision_deck_render as render  # noqa: E402
 from decision_deck_core import BODY_MAX, MIME, safe_file  # noqa: E402
 from decision_deck_ledger import deck_state, read_records  # noqa: E402
+from decision_deck_video_serve import NAME_RE as CLIP_RE, send_clip  # noqa: E402
 
 EVENT_POLL_S = 0.25         # how often an event stream looks for new ledger lines
 KEEPALIVE_S = 15.0          # a comment line on an idle stream, so proxies and the browser keep it open
@@ -132,7 +134,7 @@ class Handler(BaseHTTPRequestHandler):
         srv = self.server
         gen = srv.ledger_gen()
         self._html(200, render.deck_page(srv.spec, read_records(srv.ledger), start=start, image_of=srv.image_of,
-                                         gen=gen, source=srv.source))
+                                         gen=gen, source=srv.source, clips=srv.clip_urls))
 
     def do_HEAD(self):  # noqa: N802
         self.do_GET()
@@ -167,6 +169,9 @@ class Handler(BaseHTTPRequestHandler):
             if target is not None and hashlib.sha256(body).hexdigest()[:16] == m.group(1):
                 return self._send(200, body, MIME[target.suffix.lower()], cache="private, max-age=31536000, immutable",
                                   extra=PICTURE_HEADERS)
+        m = CLIP_RE.fullmatch(path)
+        if m and m.group(1) in srv.clip_by_name:    # a video decision's clip, from the bytes read at start, with ranges
+            return send_clip(self, *srv.clip_by_name[m.group(1)])
         return self._html(404, render.not_found(srv.spec))
 
     def _events(self, since: int, gen) -> None:

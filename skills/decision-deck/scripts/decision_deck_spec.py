@@ -13,8 +13,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from decision_deck_core import ID_RE, MIME, SKIP_ID  # noqa: E402
+from decision_deck_video import check_video, clips_of  # noqa: E402
 
-EVIDENCE_KINDS = ("images", "diff", "chart", "table")
+EVIDENCE_KINDS = ("images", "diff", "chart", "table", "video")
 KEY_RE = re.compile(r"^[a-z]$")
 RESERVED_KEYS = set("jkcvfbzd")         # next/previous, comment, the picture keys and Done
 DEFAULT_REFERENCES_TITLE = "Reference, layout only (not an option)"
@@ -101,8 +102,9 @@ def _table(ev: dict, ew: str, errors: list) -> None:
             errors.append(f"{ew} row {k}: cells must be text or numbers")
 
 
-def _evidence(dec: dict, where: str, root: Path, errors: list) -> None:
-    """Check the optional `evidence` object: one kind per decision, and images only on a picture decision."""
+def _evidence(dec: dict, where: str, root: Path, errors: list, clips: dict) -> None:
+    """Check the optional `evidence` object: one kind per decision, and images only on a picture decision. `clips`
+    counts a video decision's clip bytes across the deck (decision_deck_video.check_video)."""
     pictures = any(isinstance(o, dict) and o.get("images") for o in dec.get("options") or [])
     pictures = pictures or bool(dec.get("shared") or dec.get("references"))
     if "evidence" not in dec:
@@ -129,6 +131,8 @@ def _evidence(dec: dict, where: str, root: Path, errors: list) -> None:
             _text(ev, "rule_now", ew, errors, required=False)
         elif kind == "chart":
             _chart(ev, ew, errors)
+        elif kind == "video":
+            check_video(dec, ev, ew, root, errors, clips)
         else:
             _table(ev, ew, errors)
         return
@@ -185,6 +189,7 @@ def validate_spec(data, root: Path) -> list[str]:
     if not isinstance(decisions, list) or not decisions:
         return errors + ["spec: 'decisions' must be a non-empty list"]
     seen: set[str] = set()
+    clips = {"bytes": 0, "seen": set()}     # a video decision's clips, counted across the deck
     for i, dec in enumerate(decisions, 1):
         where = f"decision {i}"
         if not isinstance(dec, dict):
@@ -218,7 +223,7 @@ def validate_spec(data, root: Path) -> list[str]:
             _figures(dec, key, where, root, errors)
         if "references_title" in dec:
             _text(dec, "references_title", where, errors)
-        _evidence(dec, where, root, errors)
+        _evidence(dec, where, root, errors, clips)
         rec = dec.get("recommendation")
         if not isinstance(rec, dict):
             errors.append(f"{where}: 'recommendation' must be an object with 'option' (an option id or null) "
@@ -282,7 +287,8 @@ def _fig(fig: dict) -> dict:
 
 
 def evidence_of(dec: dict) -> dict:
-    """The decision's evidence, normalized: diff, chart and table as given; pictures as columns; else kind none.
+    """The decision's evidence, normalized: diff, chart and table as given; video as its clips (decision_deck_video);
+    pictures as columns; else kind none.
 
     Picture columns, left to right: "Ours" (the shared images), each option with images of its own (tagged with its
     id, captioned with its caption or label), then the references under their title. View k shows each column's
@@ -291,6 +297,8 @@ def evidence_of(dec: dict) -> dict:
     ev = dec.get("evidence") or {}
     if ev.get("kind") in ("diff", "chart", "table"):
         return dict(ev)
+    if ev.get("kind") == "video":
+        return clips_of(dec, ev)
     shared = ev.get("shared", dec.get("shared")) or []
     refs = ev.get("references", dec.get("references")) or []
     title = ev.get("references_title") or dec.get("references_title") or DEFAULT_REFERENCES_TITLE

@@ -19,6 +19,8 @@ from decision_deck_ledger import deck_state  # noqa: E402
 from decision_deck_script import SCRIPT  # noqa: E402
 from decision_deck_spec import evidence_of, option_keys, takes_note  # noqa: E402
 from decision_deck_css import page_css  # noqa: E402
+from decision_deck_video import has_video  # noqa: E402
+from decision_deck_video_slide import VIDEO_CSS, VIDEO_KEY, clip_urls, with_video  # noqa: E402
 
 TITLE_MAX = 62              # the longest question that fits the slide title on one line at 20 pt
 HOW = ("One decision per slide. Each answer and comment reaches the session as you make it"
@@ -86,7 +88,7 @@ def _choices(dec: dict, item: dict) -> str:
     return "".join(out)
 
 
-def decision_slide(dec: dict, i: int, total: int, item: dict, comment: str) -> str:
+def decision_slide(dec: dict, i: int, total: int, item: dict, comment: str, clips: dict | None = None) -> str:
     title, moved = shown_title(dec)
     rec = dec["recommendation"]
     if rec.get("option"):
@@ -101,7 +103,7 @@ def decision_slide(dec: dict, i: int, total: int, item: dict, comment: str) -> s
             f'aria-keyshortcuts="C" placeholder="Comment (C)">{e(comment)}</textarea></div>' if note else "")
     src = f'<p class="src">Source: {linked(ev["source"])}</p>' if ev.get("source") else ""
     inner = (f'<h2 class="title" tabindex="-1" title="{e(dec["question"])}">{linked(title)}</h2><div class="trule"></div>'
-             f'<p class="rec">{why}</p>{evidence_html(dec["id"], ev)}{ctx_row(dec["id"], context_text(dec, moved))}'
+             f'<p class="rec">{why}</p>{evidence_html(dec["id"], ev, clips)}{ctx_row(dec["id"], context_text(dec, moved))}'
              f'<div class="grow"></div><div class="dock{"" if note else " nonote"}">{cbox}<div class="choices" role="group" '
              f'aria-label="Your answer" data-choices="{e(dec["id"])}">{_choices(dec, item)}</div>'
              f'<p class="status" data-status="{e(dec["id"])}" aria-live="polite"></p></div>{src}')
@@ -151,28 +153,33 @@ def _dots(items: list, start: int) -> str:
 
 
 def deck_page(spec: dict, records: list, start: int = 0, image_of: dict | None = None, gen: int = 0,
-              source: str = "") -> str:
+              source: str = "", clips: dict | None = None) -> str:
     """The whole deck. `source` is the header's second line, where the deck comes from (serve --source); empty
-    shows the title alone."""
+    shows the title alone. `clips` is the serving server's {clip path: /clip/ URL} (decision_deck_video.routes_of);
+    None reads the clips now. Only a deck with a video decision gets the video look, key and script."""
     image_of = image_ids(spec) if image_of is None else image_of
     decisions = spec["decisions"]
     n = len(decisions)
     total = n + 2
     start = max(0, min(int(start), total - 1))
     state = deck_state(spec, records)
+    video = has_video(spec)
+    if clips is None and video:
+        clips = clip_urls(spec)         # a page rendered without a server: the clips' URLs from the disk, once
     items, slides = [], [cover_slide(spec, total)]
     for k, dec in enumerate(decisions, 1):
         items.append(item_data(dec, image_of))
-        slides.append(decision_slide(dec, k, total, items[-1], state["decisions"][dec["id"]]["comment"]))
+        slides.append(decision_slide(dec, k, total, items[-1], state["decisions"][dec["id"]]["comment"], clips))
     slides.append(closing_slide(spec, n + 1, total))
     data = {"title": spec["title"], "items": items, "state": state, "n": state["n"], "gen": gen, "lines": records,
             "start": start}
-    keys = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in KEYS)
+    keys = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in KEYS + ([VIDEO_KEY] if video else []))
+    script, css = (with_video(SCRIPT), page_css() + VIDEO_CSS) if video else (SCRIPT, page_css())
     src = f'<span class="from" title="{e(source)}">{e(source)}</span>' if source else ""
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
-<title>{e(spec['title'])}</title><style>{page_css()}</style></head>
+<title>{e(spec['title'])}</title><style>{css}</style></head>
 <body><header class="bar"><div class="who"><span class="round" title="{e(spec['title'])}">{e(spec['title'])}</span>{src}</div>
 <nav class="dots" id="dots" aria-label="Slides">{_dots(items, start)}</nav>
 <button type="button" class="btn icon help" id="help-btn" aria-label="Keyboard shortcuts" aria-keyshortcuts="?">?</button>
@@ -188,7 +195,7 @@ def deck_page(spec: dict, records: list, start: int = 0, image_of: dict | None =
  data-close="1">Close <kbd>Esc</kbd></button></div><div class="dlg-b"><table class="keys"><tbody>{keys}</tbody></table>
 </div></dialog>
 <script type="application/json" id="data">{_js(data)}</script>
-<script>{SCRIPT}</script></body></html>"""
+<script>{script}</script></body></html>"""
 
 
 def not_found(spec: dict) -> str:

@@ -1,4 +1,10 @@
 """The --help text of decision_deck_check.py: what it renders, every problem kind it reports, the stamp and exit codes."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import decision_deck_check_video as video  # noqa: E402
 
 HELP = """Check a decision deck before showing it: every slide at 1440x900 (desktop) and 390x844 (phone), every link
 in it, and the size of each diff slide. A CLEAN run writes the check stamp that `decision_deck.py serve` looks for.
@@ -42,6 +48,8 @@ The reading kinds, for what a reviewer would otherwise have to catch by eye:
             the drawing's own shapes and text, not its stretched box, more than 4 px off the column's middle
             while the panel is more than 4 px taller. On a phone the panel sits under the chart, so it is read
             there only where the two columns stand side by side
+""" + video.HELP + """A deck with a video decision is rendered in the installed Google Chrome (Playwright channel "chrome", its sound
+muted), since Playwright's own Chromium plays no H.264 or AAC; every other deck in Playwright's Chromium.
 
 Before the render the spec itself is checked; these lines are `<KIND> <decision id>:` (`deck` for the round's own
 text):
@@ -68,7 +76,7 @@ count left byte-identical. It is never a problem. The first run, or a run after 
 (said on stderr), prints no PNGS line.
 
 The stamp: a CLEAN run writes `<spec stem>.checked.json` beside the spec, one SHA-256 over the spec and every picture
-the deck shows, taken when the check loaded them; a change during the check writes no stamp (exit 2). `serve` warns
+and video clip the deck shows (with each clip's own hash, so a changed clip is named), taken when the check loaded them; a change during the check writes no stamp (exit 2). `serve` warns
 about a spec without a matching stamp, or refuses it with --require-checked, so any edit means a new checked run.
 
 Exit 0 clean, 1 when any problem is found, 2 on a usage error, a bad spec, a file error (such as an --out path that

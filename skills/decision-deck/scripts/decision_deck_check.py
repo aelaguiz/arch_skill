@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import decision_deck_check_centre as centre  # noqa: E402
 import decision_deck_check_pngs as pngs  # noqa: E402
+import decision_deck_check_video as video  # noqa: E402
 import decision_deck_stamp as stamp  # noqa: E402
 from decision_deck_check_fit import PROBE  # noqa: E402
 from decision_deck_check_help import HELP  # noqa: E402
@@ -110,7 +111,8 @@ def check(spec: dict, out: Path | None = None, sizes: dict | None = None, source
     if out:
         out.mkdir(parents=True, exist_ok=True)
     with _Served(spec, source) as base, sync_playwright() as p:
-        browser = p.chromium.launch(ignore_default_args=["--hide-scrollbars"])    # draw them, as a reader sees
+        # draw the scrollbars, as a reader sees; a video deck runs in Google Chrome (decision_deck_check_video.py)
+        browser = p.chromium.launch(ignore_default_args=["--hide-scrollbars"], **video.launch_options(spec))
         try:
             for mode, s in sizes.items():
                 ctx = browser.new_context(viewport={"width": s["width"], "height": s["height"]},
@@ -119,6 +121,7 @@ def check(spec: dict, out: Path | None = None, sizes: dict | None = None, source
                 page = ctx.new_page()
                 for name, path, i in routes(spec):
                     page.goto(base + path, wait_until="load")
+                    video.settle(page, spec, i)
                     page.evaluate(SETTLE, [i, mode == "phone"])
                     found = page.evaluate(PROBE, [i, mode]) + page.evaluate(READ_PROBE, [i, mode, *LIMITS])
                     found += page.evaluate(centre.PROBE, [i, mode, centre.OFFCENTRE_TOL])
@@ -131,6 +134,7 @@ def check(spec: dict, out: Path | None = None, sizes: dict | None = None, source
                             page.screenshot(path=str(shot), full_page=True, clip=page.evaluate(SLIDE_BOX, i))
                         else:
                             page.screenshot(path=str(shot))
+                    problems += video.lines(page, spec, i, path, s["width"])     # after the PNG: it plays each clip
                 ctx.close()
         finally:
             browser.close()
@@ -175,7 +179,8 @@ def main(argv=None) -> int:
     except PlaywrightError as exc:      # no Chromium, a launch or page failure: say so, not a traceback
         first = (str(exc).strip().splitlines() or [type(exc).__name__])[0]
         sys.stderr.write(f"decision_deck_check: the headless Chromium run failed: {first}\n"
-                         "  (no browser? python3 -m playwright install chromium)\n")
+                         + (f"  ({video.NO_CHROME})\n" if video.has_video(spec) else
+                            "  (no browser? python3 -m playwright install chromium)\n"))
         return 2
     except OSError as exc:              # an --out path that is a file or unwritable, a socket that will not bind
         sys.stderr.write(f"decision_deck_check: {exc.strerror or exc}: {exc.filename or args.out or ''}\n")

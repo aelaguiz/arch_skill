@@ -3,9 +3,9 @@
 `decision_deck.py text --spec S [--out FILE]` prints it. Every word the round's spec puts on a slide comes out in slide
 order: the cover title; per decision its slide title, the question when it moved under the evidence, the
 recommendation's why, the evidence as text (table rows, the diff paragraph by paragraph, chart bars with their
-values, side panel and source, pictures by column and caption), the context row with each option's caption, pros
-and cons, and the answer buttons with the Recommended mark; then the summary's rows and the earlier rounds' answers.
-Lines in square brackets say where the text sits; they are not on the slide. The deck's own fixed controls (Start,
+values, side panel and source, pictures by column and caption, video clips by tab label and caption), the context
+row with each option's caption, pros and cons, and the answer buttons with the Recommended mark; then the summary's
+rows and the earlier rounds' answers. Lines in square brackets say where the text sits; they are not on the slide. The deck's own fixed controls (Start,
 the keys, Comment, Done) are left out: they are the tool's words, not the round's. The layout check reads boxes, not
 words, so this text is what a fresh reader reads to find slides that do not make sense. Stdlib only, no rendering.
 """
@@ -23,6 +23,7 @@ from decision_deck_inline import number  # noqa: E402
 from decision_deck_marks import plain  # noqa: E402
 from decision_deck_render import shown_title  # noqa: E402
 from decision_deck_spec import evidence_of, option_keys  # noqa: E402
+from decision_deck_video import video_lines  # noqa: E402
 
 NOTE = "Lines in [square brackets] say where the text sits on the slide; they are not on the slide."
 
@@ -64,6 +65,8 @@ def evidence_lines(dec: dict) -> list[str]:
             if new is not None:
                 out.append(f"{'Now' if old is not None else 'Added'}: {_rule(new)}")
         return out
+    if kind == "video":
+        return video_lines(ev, _flat)
     if kind == "images":
         views = f"; tabs: {' / '.join(_flat(v) for v in ev['views'])}" if ev["views"] else ""
         out = [f"[Evidence: pictures in columns{views}]"]

@@ -9,7 +9,8 @@ Subcommands serve, watch, status, act, reply, text and asks; the spec format, th
 routes are in decision_deck_help.py, printed by --help. Modules: decision_deck_spec.py (spec), decision_deck_ledger.py
 (records, watcher), decision_deck_server.py and decision_deck_routes.py (HTTP), decision_deck_render.py and
 decision_deck_deck.py (the page), decision_deck_diff.py, decision_deck_marks.py, decision_deck_inline.py and
-decision_deck_chart.py (evidence), decision_deck_css.py and decision_deck_css_stage.py (the look),
+decision_deck_chart.py (evidence), decision_deck_video.py, decision_deck_video_slide.py and
+decision_deck_video_serve.py (video clips: spec, slide, byte-range route), decision_deck_css.py and decision_deck_css_stage.py (the look),
 decision_deck_script.py and its parts (the page script), decision_deck_core.py (shared guards), decision_deck_stamp.py (the check stamp), decision_deck_text.py (the
 deck's words as plain text, for a fresh reader), decision_deck_act.py (act, for one or several decisions),
 decision_deck_reply.py (the text copy of each ask). decision_deck_check.py renders a round in headless Chromium and
@@ -40,6 +41,7 @@ from decision_deck_ledger import (  # noqa: E402
 from decision_deck_server import make_server, remove_own_state  # noqa: E402
 from decision_deck_spec import SpecError, load_spec  # noqa: E402
 from decision_deck_stamp import serve_gate  # noqa: E402
+from decision_deck_video import snapshot as clip_snapshot  # noqa: E402
 
 
 # ------------------------------------------------------------------ CLI
@@ -75,7 +77,12 @@ def cmd_serve(args) -> int:
     except ValueError as exc:
         sys.stderr.write(f"decision_deck serve: {exc}\n")
         return 2
-    if not serve_gate(spec, args.require_checked):     # a CLEAN check stamp; without one a warning, or a refusal
+    try:
+        clips = clip_snapshot(spec)     # a video decision's clips, read once: the bytes checked and then served
+    except OSError as exc:              # unreadable, reached through a symlink, or over the caps
+        sys.stderr.write(f"decision_deck serve: refused: {exc}\n")
+        return 2
+    if not serve_gate(spec, args.require_checked, clips):     # a CLEAN check stamp; else a warning, or a refusal
         return 2
     ledger = _ledger_for(args)
     signal.signal(signal.SIGTERM, _raise_terminated)   # before the state file exists, so an early TERM cleans up too
@@ -83,7 +90,7 @@ def cmd_serve(args) -> int:
     try:
         source = (args.source or "").strip()
         srv = make_server(spec, ledger, host, args.port, grace_s=args.grace_min * 60, max_s=args.max_hours * 3600,
-                          source=source)
+                          source=source, clips=clips)
         print(f"URL {srv.url}", flush=True)
         print(f"PID {os.getpid()}  ledger {ledger.resolve()}  state {state_path(ledger).resolve()}", flush=True)
         srv.serve_forever(poll_interval=0.25)

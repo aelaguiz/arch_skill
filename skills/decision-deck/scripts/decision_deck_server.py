@@ -1,4 +1,5 @@
-"""Decision deck server: the threaded HTTP server that renders the deck, serves its pictures and records every answer.
+"""Decision deck server: the threaded HTTP server that renders the deck, serves its pictures and clips and records every
+answer.
 
 Routes are listed in decision_deck_help.py; the request handler is in decision_deck_routes.py.
 """
@@ -23,6 +24,7 @@ from decision_deck_core import (  # noqa: E402,F401  (state_path re-exported for
 from decision_deck_ledger import (  # noqa: E402
     current_comment, current_picks, current_skips, deck_state, is_skip, make_comment, make_done, make_record,
     make_reply, make_status, read_records, status_pick)
+from decision_deck_video import routes_of as clip_routes, snapshot as clip_snapshot  # noqa: E402
 
 RID_RE = re.compile(r"^[A-Za-z0-9_-]{8,64}$")     # the page's id for one user action, reused on every retry
 BATCH_JOBS_MAX = 256                              # actions in one POST /api/batch
@@ -70,9 +72,11 @@ class DeckServer(ThreadingHTTPServer):
     allow_reuse_address = True
     request_queue_size = 128    # a deck page asks for every image at once; a backlog of 5 resets some connections
 
-    def __init__(self, spec, ledger, host, port, grace_s, max_s, source=""):
+    def __init__(self, spec, ledger, host, port, grace_s, max_s, source="", clips=None):
         from decision_deck_routes import Handler, allowed_hosts  # the handler imports the page renderer
         host = validate_bind_host(host)             # canonical form: "localhost" binds and is named as 127.0.0.1
+        # a video decision's clips, read once before binding (or by serve, before its stamp check)
+        clip_files = clip_snapshot(spec) if clips is None else clips
         if ":" in host:                 # the socket family must match the address; the base class defaults to IPv4
             self.address_family = socket.AF_INET6
         super().__init__((host, port), Handler)
@@ -89,6 +93,7 @@ class DeckServer(ThreadingHTTPServer):
         self.token = secrets.token_urlsafe(32)
         self.image_of = image_ids(spec)                                      # spec-relative path -> sha16
         self.images = {sha: rel for rel, sha in self.image_of.items()}      # /img/<sha16> -> spec-relative path
+        self.clip_urls, self.clip_by_name = clip_routes(clip_files)        # /clip/<sha16>.<ext> serves them
         name = f"[{host}]" if ":" in host else host
         self.url = f"http://{name}:{self.server_address[1]}/"
         self.allowed_hosts = allowed_hosts(host, self.server_address[1])     # Host and Origin checks (routes)
@@ -309,6 +314,8 @@ def rid_map(records: list) -> dict:
     return {r["rid"]: r for r in records if isinstance(r.get("rid"), str)}
 
 
-def make_server(spec, ledger, host, port, grace_s=DEFAULT_GRACE_MIN * 60, max_s=DEFAULT_MAX_HOURS * 3600, source=""):
-    """The deck server, bound and with its state file written; call serve_forever() to run it."""
-    return DeckServer(spec, ledger, host, port, grace_s, max_s, source)
+def make_server(spec, ledger, host, port, grace_s=DEFAULT_GRACE_MIN * 60, max_s=DEFAULT_MAX_HOURS * 3600, source="",
+                clips=None):
+    """The deck server, bound and with its state file written; call serve_forever() to run it. `clips` is the clips
+    snapshot serve already checked against the stamp (decision_deck_video.snapshot), else taken now."""
+    return DeckServer(spec, ledger, host, port, grace_s, max_s, source, clips)

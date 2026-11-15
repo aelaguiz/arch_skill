@@ -1,6 +1,7 @@
 """Decision deck evidence: the bar chart as inline SVG, the table, the context row, and the evidence zone per kind.
 
-The text diff with its rule panel lives in decision_deck_diff.py; escaping, links and numbers in decision_deck_inline.py.
+The text diff with its rule panel lives in decision_deck_diff.py; video clips in decision_deck_video_slide.py; escaping,
+links and numbers in decision_deck_inline.py.
 Pictures are drawn by the page script (decision_deck_script.py), since their views, Flip and Zoom change on the page.
 Chart rules: one emphasised bar in --data-1, every other bar in --data-muted, each bar labelled directly (its name at
 the left, its value at its end), no axis, no legend. A chart using note, prefix, decimals, series or type, or a label
@@ -17,6 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from decision_deck_diff import SCROLL_HINT, diff_html  # noqa: E402
 from decision_deck_inline import e, linked, number  # noqa: E402
 from decision_deck_chart import chart_html as rich_chart, rich  # noqa: E402
+from decision_deck_video import clipped_options  # noqa: E402
+from decision_deck_video_slide import video_html  # noqa: E402
 
 CHART_W = 560               # SVG user units; the SVG scales to its column
 ROW_H, BAR_H = 34, 20
@@ -137,15 +140,16 @@ def table_html(ev: dict) -> str:
 
 def context_text(dec: dict, question_moved: bool) -> str:
     """The question when it did not fit the title, the decision's context, and per option its caption (when it has
-    no pictures of its own, whose column head shows it instead) and its pros and cons."""
+    no pictures or clip of its own, whose column head or clip shows it instead) and its pros and cons."""
     parts = [dec["question"]] if question_moved else []
+    clipped = clipped_options(dec)
     if dec.get("context"):
         parts.append(dec["context"])
     for opt in dec["options"]:
         said = [f"for: {'; '.join(opt['pros'])}" if opt.get("pros") else "",
                 f"against: {'; '.join(opt['cons'])}" if opt.get("cons") else ""]
         said = ", ".join(s for s in said if s)
-        cap = "" if opt.get("images") else (opt.get("caption") or "").strip()
+        cap = "" if opt.get("images") or opt["id"] in clipped else (opt.get("caption") or "").strip()
         if cap:
             parts.append(f"{opt['label']}: {cap.rstrip('.')}{', ' + said if said else ''}.")
         elif said:
@@ -161,8 +165,9 @@ def ctx_row(did: str, text: str) -> str:
     return f'<div class="ctxrow"><p class="ctx" id="ctx-{e(did)}">{linked(text)}</p>{more}</div>'
 
 
-def evidence_html(did: str, ev: dict) -> str:
-    """The evidence zone for one decision; pictures get an empty zone the page script fills."""
+def evidence_html(did: str, ev: dict, clips: dict | None = None) -> str:
+    """The evidence zone for one decision; pictures get an empty zone the page script fills. `clips` is {clip path:
+    /clip/ URL} for a video decision (decision_deck_video_slide.py)."""
     kind = ev["kind"]
     if kind == "diff":
         return diff_html(ev)
@@ -170,6 +175,8 @@ def evidence_html(did: str, ev: dict) -> str:
         return chart_html(ev)
     if kind == "table":
         return table_html(ev)
+    if kind == "video":
+        return video_html(did, ev, clips or {})
     if kind == "images":
         return f'<div class="ev" data-ev="{e(did)}"></div>'
     return '<div class="ev"></div>'

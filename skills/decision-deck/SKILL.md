@@ -1,6 +1,6 @@
 ---
 name: decision-deck
-description: "Put approvals and choices to a person (the owner) as a decision deck: one interactive HTML presentation per round, one decision per slide, the exact thing being decided on the slide (pictures, a redline of a text change, a chart or a table), the options as one-click buttons, each click and comment recorded at once in an append-only ledger the asking agent watches and acts on, and a plain-text copy of every ask for the chat message. Use when an agent needs someone's yes, no or pick on something they must see to judge (mockups, wording changes, numbers, options side by side), when several decisions are waiting at once, or when the owner will answer from a phone or later. Not for one quick question that fits in a chat message, for presenting findings as slides ($deck-authoring), for written reports, or for card or inbox approval systems, which are a different surface."
+description: "Put approvals and choices to a person (the owner) as a decision deck: one interactive HTML presentation per round, one decision per slide, the exact thing being decided on the slide (pictures, a redline of a text change, a chart, a table or a video clip that plays there), the options as one-click buttons, each click and comment recorded at once in an append-only ledger the asking agent watches and acts on, and a plain-text copy of every ask for the chat message. Use when an agent needs someone's yes, no or pick on something they must see or hear to judge (mockups, wording changes, numbers, animations or recordings, options side by side), when several decisions are waiting at once, or when the owner will answer from a phone or later. Not for one quick question that fits in a chat message, for presenting findings as slides ($deck-authoring), for written reports, or for card or inbox approval systems, which are a different surface."
 metadata:
   short-description: "Ask for approvals one decision per slide and act on each click"
 ---
@@ -15,8 +15,8 @@ of them:
 - **One decision per slide, with the question as the title.** Nothing gets
   approved in a bundle or lost halfway down a long page.
 - **The exact thing being decided is on the slide, at a size the owner can
-  judge**: the picture, the redline of the text change, the chart, the table.
-  A summary never stands in for it.
+  judge**: the picture, the redline of the text change, the chart, the table,
+  the clip. A summary never stands in for it.
 - **The owner answers by clicking where the evidence is.** Each click and
   comment lands at once in an append-only ledger. You act on each answer as it
   lands and write what you did back onto the slide.
@@ -55,7 +55,9 @@ Each slide holds one decision and only the ask:
   With no recommendation, say why not.
 - **One kind of evidence**, chosen by what the decision turns on: `images` for
   a choice by eye, `diff` for a text change, `chart` for numbers being
-  compared, `table` for options that differ on several attributes.
+  compared, `table` for options that differ on several attributes, `video`
+  for anything that moves or makes a sound. Motion, sound or video to approve
+  is shown playable on the slide, never as still frames or a description.
 - **Two to four options**, recommended first, each a label the owner would say
   as an answer, plus the comment box (on by default).
 - **One context line**: what the options share, or what the change does.

@@ -1,4 +1,10 @@
 """The --help text for decision_deck.py: subcommands, the spec format with every key, the ledger records and the routes."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from decision_deck_help_video import VIDEO_HELP  # noqa: E402
 
 HELP = """Decision deck: an agent that needs a person's approvals (the owner's) writes one JSON spec; this serves it as one
 interactive presentation, one decision per slide, with the exact thing being decided shown as evidence and the options
@@ -48,7 +54,8 @@ Subcommands:
           straight to the ledger; the page shows them within 2 s either way while it is served.
   text    `text --spec S [--out FILE]`: every word the spec puts on a slide, as plain text in slide order (the
           cover title; per decision the slide title, the recommendation's why, the evidence as text: table rows,
-          the diff paragraph by paragraph, chart bars and values, pictures by column and caption; the context line
+          the diff paragraph by paragraph, chart bars and values, pictures by column and caption, video clips by
+          tab label and caption, never a file name; the context line
           with each option's caption, pros and cons; the answer buttons with the Recommended mark; the summary
           rows and earlier rounds). Lines in [square brackets] say where the text sits. Hand it to a reader who
           has not seen the work to find slides that do not make sense on their own; nothing is served or rendered.
@@ -114,7 +121,7 @@ Spec (JSON; "?" marks an optional key, every other key is required):
      unless that leaves a column but the last more than a quarter of the table empty and the label-first layout
      leaves less. On a phone a table of up to 4 columns of short cells stays a table, laid out the same way with
      the label column up to half the width; a wider one shows one card per row.
-  Images and the other evidence kinds do not mix: a diff, chart or table decision carries no images.
+""" + VIDEO_HELP + """  Images and the other evidence kinds do not mix: a diff, chart, table or video decision carries no images.
   Links: an http:// or https:// URL in any text the deck shows (question, context, why, option labels, captions,
   pros and cons, table cells, the diff and rule_now, chart source, side items and notes, decided answers, and the
   agent's results and replies) becomes a link that opens in a new tab; no other scheme is ever linked, and
@@ -139,7 +146,8 @@ Ledger records (one JSON line each; `<ledger>` default ledger.jsonl beside the s
   comment it sets the comment (an empty one clears it), and a changed comment drops the reply to the old one.
 Routes: GET / (the deck; /d/<n> opens slide n, /summary the summary; the address follows the slide shown),
   GET /img/<sha16> (pictures by content hash; 404 once the file no longer hashes to that name; sent with a bare
-  CSP sandbox, so an SVG opened on its own runs no script), POST /api/pick, /api/comment, /api/done (each appends
+  CSP sandbox, so an SVG opened on its own runs no script), GET /clip/<sha16>.<ext> (a video decision's clips,
+  with byte ranges: 206 for one range, 416 past the end, 200 whole without one), POST /api/pick, /api/comment, /api/done (each appends
   one line and returns the decision's state and "gen"; optional "rid"), POST /api/batch {"jobs": [{"kind":
   pick|comment|done, "body"}]} (what a page leaves with: all land in order under one lock, each as its own route
   would, a bad one skipped with its error in "results"), POST /api/status (from this machine only, with header
@@ -158,8 +166,9 @@ Layout: every slide keeps its answer row fully visible; evidence that does not f
   no fade on the desktop, and on a phone the page scrolls with no inner scroll box. Text evidence is as tall as it
   needs, the context line sits under it and the answer row stays at the slide's foot; the context line shows one
   whole line (three on a phone) ending on a word, with Read all only when it is cut. Check a round before showing
-  it: `decision_deck_check.py --spec S` (headless Chromium at 1440x900 and 390x844 through Python Playwright; exit
-  1 on any problem; a CLEAN run writes the check stamp). It also fetches every http(s) URL in the spec and refuses
-  a diff slide with no recap, more than 8 changes, or a change another slide shows.
+  it: `decision_deck_check.py --spec S` (headless Chromium at 1440x900 and 390x844 through Python Playwright, and
+  a deck with a video decision in the installed Google Chrome; exit 1 on any problem; a CLEAN run writes the check
+  stamp). It also fetches every http(s) URL in the spec, refuses a diff slide with no recap, more than 8 changes,
+  or a change another slide shows, and plays every video clip.
 Stdlib only.
 """

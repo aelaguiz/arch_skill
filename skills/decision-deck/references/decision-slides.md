@@ -24,6 +24,7 @@ explains how you got there.
 | exact wording | `diff` | the old and new text, and the rule as it will read |
 | a number that differs between options | `chart` | one bar per option, the recommended one emphasised |
 | several attributes per option | `table` | one row per option, one column per attribute |
+| motion or sound | `video` | one clip per option (or one clip to approve), playable on the slide |
 
 If two of these seem needed, there are probably two decisions; give each its
 own slide. A chart or table goes on a decision slide only when it is the thing
@@ -59,6 +60,13 @@ the comparison themselves.
 first; one column per attribute the decision weighs. Keep cells short so the
 table stays a table on a phone.
 
+**Video.** When the owner approves an animation, a screen recording or a
+sound, put the clip itself on the slide: still frames or a description of it
+are not the thing being approved. Tie each clip to its option, or give a lone
+clip its own label, and cut it to the part that changes. Give MP4 with H.264
+and AAC so it plays on a phone too; `--help` has the ffmpeg command and the
+size limits, and the checker plays every clip in Google Chrome (`VIDEO`).
+
 ## Options
 
 Give two to four options, recommended first, each labelled the way the owner
@@ -92,7 +100,8 @@ reader in step 3 of the round reads.
 ## Worked example: the bakery round
 
 `examples/bakery-site/spec.json` asks a bakery owner four things before a
-website relaunch, one per evidence kind.
+website relaunch, one for each still evidence kind (a video decision is in
+`--help`).
 
 - **D1, the homepage hero, is `images`.** The owner judges a layout by eye, so
   each option carries its mockup and the context line says what the two share
