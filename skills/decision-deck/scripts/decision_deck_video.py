@@ -199,6 +199,11 @@ def check_video(dec: dict, ev: dict, ew: str, root: Path, errors: list, deck: di
         if not isinstance(file, str) or not file.strip() or "\x00" in file:
             errors.append(f"{cw}: 'file' must be a non-empty string, the clip's path relative to the spec's folder")
             continue
+        try:
+            file.encode("utf-8")
+        except UnicodeEncodeError:            # a JSON-escaped lone surrogate: no file can have this name
+            errors.append(f"{cw}: 'file' {file!r} is not a valid file name (it holds a character no file name can)")
+            continue
         path, why = clip_path(root, file)
         sizes: dict = {}
         why = why or _clip_problem(root, file, sizes)

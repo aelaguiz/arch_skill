@@ -177,6 +177,19 @@ class CheckTest(ChromeCase):
         self.assertIn('D2 clip 1 "The animation with its tone" (broken.mp4): the browser could not load it', problems[0])
 
 
+class ProbeTest(ChromeCase):
+    def test_a_play_that_never_settles_is_a_video_line_within_the_deadline(self):
+        import decision_deck_check_video as cv
+        browser, srv = self.chrome(), self.start()
+        page = browser.new_page(viewport={"width": 1440, "height": 900})
+        page.add_init_script("HTMLMediaElement.prototype.play = function () { return new Promise(() => {}); };")
+        page.goto(srv.url + "d/2", wait_until="load")
+        page.set_default_timeout(15_000)           # the probe must return inside its own 1 s deadline, not hang
+        (r,) = page.evaluate(cv.PROBE, [2, 1000, cv.ADVANCE_S])
+        self.assertFalse(r["settled"])
+        self.assertEqual(cv.why_not(r), f"play() did not settle within {cv.PLAY_S} s")
+
+
 class WebKitTest(ChromeCase):
     def test_webkit_plays_both_clips_and_gets_its_byte_range_probe_answered(self):
         """Playwright's WebKit stands in for Safari: Safari opens a clip with a `Range: bytes=0-1` probe and plays

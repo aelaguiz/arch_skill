@@ -51,14 +51,16 @@ async ([i, waitMs, advance]) => {
   for (const v of slide.querySelectorAll('video[data-clip-video]')) {
     const spec = v.dataset.clipVideo, tab = slide.querySelector('[data-clip="' + spec + '"]');
     if (tab && tab.getBoundingClientRect().width > 0) tab.click();
-    const t0 = v.currentTime; let refused = null;
-    try { await v.play(); } catch (x) { refused = (x && x.name) || String(x); }
-    const end = Date.now() + waitMs;
-    while (Date.now() < end && !v.error && !(v.readyState >= 3 && v.currentTime > t0 + advance))
+    const t0 = v.currentTime, end = Date.now() + waitMs; let refused = null, settled = false;
+    // the deadline covers play() itself: a clip whose play() never settles must not hold the check
+    const playing = (async () => { try { await v.play(); } catch (x) { refused = (x && x.name) || String(x); }
+                                   settled = true; })();
+    await Promise.race([playing, new Promise((r) => setTimeout(r, waitMs))]);
+    while (Date.now() < end && !v.error && !refused && !(v.readyState >= 3 && v.currentTime > t0 + advance))
       await new Promise((r) => setTimeout(r, 50));
     out.push({ spec: spec, readyState: v.readyState, currentTime: v.currentTime, start: t0, refused: refused,
-               error: v.error ? v.error.code + (v.error.message ? ' ' + v.error.message : '') : null });
-    v.pause();
+               settled: settled, error: v.error ? v.error.code + (v.error.message ? ' ' + v.error.message : '') : null });
+    try { v.pause(); } catch (x) { /* nothing to stop */ }
     try { v.currentTime = t0; } catch (x) { /* a clip that never loaded has no time to set */ }
   }
   if (first) first.click();
@@ -78,6 +80,8 @@ def why_not(r: dict) -> str:
         return f"the browser could not load it (media error {r['error']})"
     if r["refused"]:
         return f"play() was refused ({r['refused']})"
+    if not r.get("settled", True):
+        return f"play() did not settle within {PLAY_S} s"
     if r["readyState"] < 3:
         return f"it never had enough data to play (readyState {r['readyState']} after {PLAY_S} s)"
     if r["currentTime"] <= r["start"] + ADVANCE_S:

@@ -244,6 +244,20 @@ class StampTest(VideoCase):
         self.assertIn("refused", err.getvalue())
         self.assertIn("calm.webm", err.getvalue())
 
+    def test_a_stamp_whose_clips_are_not_a_mapping_is_an_invalid_stamp(self):
+        for spec in (self.load(), ps.load_spec(make_spec_dir(self.tmp / "plain"))):
+            for bad in ([], 3, "x"):
+                with self.subTest(spec=spec["title"], clips=bad):
+                    stamp.write_stamp(spec, stamp.digest(spec))
+                    record = json.loads(stamp.stamp_path(spec).read_text())
+                    stamp.stamp_path(spec).write_text(json.dumps(dict(record, clips=bad, spec_sha256="0")))
+                    self.assertTrue(stamp.stamp_problem(spec).startswith("the check stamp"))
+                    err = io.StringIO()
+                    with contextlib.redirect_stderr(err):
+                        self.assertTrue(stamp.serve_gate(spec, False))     # a warning, and served
+                        self.assertFalse(stamp.serve_gate(spec, True))     # refused with --require-checked
+                    self.assertIn("malformed", err.getvalue())
+
     def test_a_deck_without_clips_stamps_and_hashes_as_before(self):
         spec = ps.load_spec(make_spec_dir(self.tmp / "plain"))
         stamp.write_stamp(spec, stamp.digest(spec))

@@ -66,6 +66,9 @@ def stamp_problem(spec: dict, clips: dict | None = None) -> str:
         stamp = None
     if not isinstance(stamp, dict):
         return f"no check stamp ({stamp_path(spec).name}): decision_deck_check.py has not printed CLEAN for this spec"
+    if not isinstance(stamp.get("clips", {}), dict):
+        return (f"the check stamp ({stamp_path(spec).name}) is malformed (its clips are not a mapping): run "
+                "decision_deck_check.py again")
     try:
         clips = clip_snapshot(spec) if clips is None else clips
         sha = digest(spec, clips)

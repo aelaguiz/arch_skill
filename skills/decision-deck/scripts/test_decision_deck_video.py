@@ -167,6 +167,14 @@ class SpecTest(VideoCase):
                     where = f"decision D{k + 1} evidence" + ("" if field == "clips" else " clip 1")
                     self.assertTrue(errors and all(e.startswith(where) for e in errors), errors)
 
+    def test_a_file_name_no_file_can_have_is_a_spec_error_not_a_crash(self):
+        self.refused(file_is("\ud800.mp4"), "clip 1: 'file' '\\ud800.mp4' is not a valid file name")
+        data = video_spec()
+        file_is("\ud800.mp4")(data)
+        self.spec_path.write_text(json.dumps(data))         # JSON escapes the lone surrogate as \ud800
+        with self.assertRaises(ps.SpecError):
+            self.load()
+
     def test_a_clip_whose_bytes_are_not_its_kind_is_refused(self):
         for name, body, needle in [("empty.mp4", b"", "is empty"),
                                    ("text.mp4", b"<html>not a clip</html>",
