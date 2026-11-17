@@ -51,6 +51,10 @@ CODEX_BARE_MODELS = {
     "luna": "gpt-6-luna",
     "terra": "gpt-6.1-terra",
 }
+# The newest of each family. A Codex whose bundled catalog predates a release, or
+# that cannot refresh its catalog, omits it, so these are a floor for bare family
+# names and resolve even when discovery does not list them.
+CODEX_NEWEST_KNOWN_MODELS = frozenset({PREFERRED_CODEX_MODEL, "gpt-6.2-astra"})
 BLOCKED_CODEX_MODELS = frozenset({"gpt-5.4", "gpt-5.5"})
 
 _CLAUDE_FAMILIES = {"fable", "opus", "sonnet"}
@@ -823,9 +827,10 @@ def _resolve_codex_model(
 
 
 def _newest_codex_model(family: str, fallback: str, models: list[str]) -> str:
-    """A bare family name means its newest runnable version."""
+    """A bare family name means its newest runnable version, never below a newest-known fallback."""
     versions = []
-    for model in models:
+    floor = [fallback] if fallback in CODEX_NEWEST_KNOWN_MODELS else []
+    for model in [*floor, *models]:
         match = re.fullmatch(rf"gpt-(\d+(?:\.\d+)*)-{family}", model.lower())
         if match:
             version = tuple(int(part) for part in match.group(1).split("."))
@@ -847,7 +852,7 @@ def _resolve_codex_candidate(
 
     if not normalized_models:
         return candidate
-    if candidate in normalized_models:
+    if candidate in normalized_models or candidate in CODEX_NEWEST_KNOWN_MODELS:
         return candidate
     compatible = [
         model

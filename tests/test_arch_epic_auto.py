@@ -101,7 +101,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
                 self.assertEqual(resolved.model, "gpt-6-luna")
                 self.assertEqual(resolved.effort, "xhigh")
 
-    def test_codex_defaults_to_sol_61_xhigh_and_accepts_natural_names(self):
+    def test_codex_defaults_to_newest_sol_xhigh_and_accepts_natural_names(self):
         for phrase, source in [("codex", "default"), ("sol", "explicit"),
                                ("gpt 6.1 sol", "explicit"), ("gpt-6.1-sol", "explicit"),
                                ("Sol 6.1", "explicit"), ("Sol6.1", "explicit"),
@@ -110,8 +110,9 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 result = self.model_resolution.resolve_execution_phrase(
                     phrase, codex_models=["gpt-6.1-sol", "gpt-6-astra", "gpt-6-sol"])
+                expected = "gpt-6.2-sol" if phrase in ("codex", "sol") else "gpt-6.1-sol"
                 self.assertEqual((result.runtime, result.model, result.effort),
-                                 ("codex", "gpt-6.1-sol", "xhigh"))
+                                 ("codex", expected, "xhigh"))
                 self.assertEqual(result.model_source, source)
                 expected_effort_source = "explicit" if phrase.endswith("XI") else "preference_default"
                 self.assertEqual(result.effort_source, expected_effort_source)
@@ -138,7 +139,10 @@ class ArchEpicAutoModeTests(unittest.TestCase):
             self.assertEqual(result.effort_source, "explicit")
         result = self.model_resolution.resolve_execution_phrase(
             "codex", codex_models=["gpt-6-sol"])
-        self.assertEqual(result.model, "gpt-6-sol")
+        self.assertEqual(result.model, "gpt-6.2-sol")
+        result = self.model_resolution.resolve_execution_phrase(
+            "gpt-6.2-astra high", codex_models=["gpt-6-astra", "gpt-6.1-sol"])
+        self.assertEqual(result.model, "gpt-6.2-astra")
 
     def test_bare_family_takes_its_newest_runnable_version(self):
         catalog = ["gpt-5.6-terra", "gpt-6.1-terra", "gpt-6.2-terra"]
@@ -155,7 +159,7 @@ class ArchEpicAutoModeTests(unittest.TestCase):
 
     def test_explicit_older_models_are_preserved_without_astra_recommendation(self):
         cases = [("gpt-6-sol", "gpt-6-sol"), ("Sol 6", "gpt-6-sol"),
-                 ("GPT6SOLXI", "gpt-6-sol"), ("astra", "gpt-6-astra"),
+                 ("GPT6SOLXI", "gpt-6-sol"), ("astra", "gpt-6.2-astra"),
                  ("gpt 6 astra", "gpt-6-astra"), ("gpt-6-astra", "gpt-6-astra")]
         for phrase, model in cases:
             with self.subTest(phrase=phrase):
