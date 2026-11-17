@@ -25,30 +25,30 @@ Your own model and level were chosen for the judgment your role exists for. Spen
 | Mechanical work: rebase, run the tests and report | Sonnet 5.5 medium | Terra 6.1 xhigh |
 | Fix a well-defined bug: cause known, one or two files | Sonnet 5.5 medium | Terra 6.1 xhigh |
 | Build one piece from a full spec | Opus 5.5 medium | Terra 6.1 xhigh |
-| Build across several parts from a spec | Opus 5.5 medium | Sol 6.1 xhigh |
-| New feature with open design calls or algorithm changes | Opus 5.5 high | Sol 6.1 xhigh |
-| Find a bug's cause | Opus 5.5 medium | Sol 6.1 xhigh |
+| Build across several parts from a spec | Opus 5.5 medium | Sol 6.2 xhigh |
+| New feature with open design calls or algorithm changes | Opus 5.5 high | Sol 6.2 xhigh |
+| Find a bug's cause | Opus 5.5 medium | Sol 6.2 xhigh |
 | Walk a test plan on a device | Opus 5.5 high | Terra 6.1 xhigh |
 | Bring text in line with the facts: PR text, docs after a change | Opus 5.5 medium | Terra 6.1 xhigh |
 | Gather material for you to work through | Sonnet 5.5 high | Terra 6.1 xhigh |
-| Research a question from documents, email or the web | Opus 5.5 medium | Sol 6.1 low |
-| Analyze a dataset | Opus 5.5 medium | Sol 6.1 medium |
-| Check facts against their sources | Opus 5.5 medium | Sol 6.1 medium |
-| Label items by a codebook | Opus 5.5 medium | Sol 6.1 medium |
-| Judge images or frames against a standard | Opus 5.5 medium | Sol 6.1 low |
-| Work out a problem with one right answer | Opus 5.5 medium | Sol 6.1 low |
+| Research a question from documents, email or the web | Opus 5.5 medium | Sol 6.2 low |
+| Analyze a dataset | Opus 5.5 medium | Sol 6.2 medium |
+| Check facts against their sources | Opus 5.5 medium | Sol 6.2 medium |
+| Label items by a codebook | Opus 5.5 medium | Sol 6.2 medium |
+| Judge images or frames against a standard | Opus 5.5 medium | Sol 6.2 low |
+| Work out a problem with one right answer | Opus 5.5 medium | Sol 6.2 low |
 | Read a document cold | Opus 5.5 medium | Terra 6.1 xhigh |
-| Explain how code behaves | Opus 5.5 medium | Sol 6.1 high |
-| Judge writing against a standard | Opus 5.5 medium | Sol 6.1 high |
-| Review code or a plan against its spec | Opus 5.5 high | Sol 6.1 high |
-| Check in on running work | Opus 5.5 medium | Sol 6.1 high |
-| Plan or design | Opus 5.5 high | Sol 6.1 high |
-| Write short copy people read | Opus 5.5 high | Sol 6.1 medium |
-| Build a content item through its steps | Opus 5.5 high | Sol 6.1 xhigh |
-| Translate text users read | Opus 5.5 xhigh | Sol 6.1 xhigh, untested: lower levels misled on 2 of 5 |
-| Second opinion, once, on a plan or PR | Opus 5.5 high | Astra 6.0 xhigh |
+| Explain how code behaves | Opus 5.5 medium | Sol 6.2 high |
+| Judge writing against a standard | Opus 5.5 medium | Sol 6.2 high |
+| Review code or a plan against its spec | Opus 5.5 high | Sol 6.2 high |
+| Check in on running work | Opus 5.5 medium | Sol 6.2 high |
+| Plan or design | Opus 5.5 high | Sol 6.2 high |
+| Write short copy people read | Opus 5.5 high | Sol 6.2 medium |
+| Build a content item through its steps | Opus 5.5 high | Sol 6.2 xhigh |
+| Translate text users read | Opus 5.5 xhigh | Sol 6.2 xhigh, untested: lower levels misled on 2 of 5 |
+| Second opinion, once, on a plan or PR | Opus 5.5 high | Astra 6.2 xhigh |
 
-What each row was measured on is in [references/task-types.md](references/task-types.md). A model or level your own instructions or the person you work for names wins over a row.
+Sol 6.2 and Astra 6.2 start from what Sol 6.1 and Astra 6.0 measured on each row; what each row was measured on is in [references/task-types.md](references/task-types.md). A model or level your own instructions or the person you work for names wins over a row.
 
 **Starting it.**
 
@@ -163,7 +163,7 @@ A higher thinking level is not a speed setting. It is slower, so when someone is
 
 ## Whose pick wins
 
-A model or level the user names for a run wins. A pin in a skill, grid, script or brief stands when its reason is written beside it and the reason still holds: "Astra 6.0 xhigh, because this review is for what Claude can't see." A setting with no reason beside it is a copy of what someone once used, so choose afresh. A pin to an old version of a family means that family: use the newest.
+A model or level the user names for a run wins. A pin in a skill, grid, script or brief stands when its reason is written beside it and the reason still holds: "Astra 6.2 xhigh, because this review is for what Claude can't see." A setting with no reason beside it is a copy of what someone once used, so choose afresh. A pin to an old version of a family means that family: use the newest.
 
 When you write something that starts helpers, it inherits this job: point it at this skill, or give the setting with its reason. A bare model name in a launch line becomes everyone's default within weeks.
 
@@ -173,7 +173,7 @@ Whether to delegate belongs to `agent-delegate`, but your choice of setting star
 
 ## When one family has no room
 
-Codex, Claude and Antigravity run on separate pools of accounts. When one pool has no room, another family's model at the matching level takes the work the same day, so nothing stalls waiting for a reset. Astra 6.0 at xhigh is about Opus 5.5 at high. Sol 6.1 at xhigh is about Opus 5.5 at medium or low; where the job turns on following a long brief, take medium. Terra 6.1 at xhigh sits lower on coding, about where Sonnet 5.5 at medium to high or Opus 5.5 at low would be, but its work still stands in on Opus 5.5 at medium, because Terra 6.1's jobs are builds and checks that hold a brief. The match runs the other way when the Claude accounts are short. When Claude or Codex accounts are tight on non-build helper work, Gemini 4 Carbon at medium held level with Opus 5.5 at xhigh on blind scores across five multi-file tasks (about 40% cheaper than Opus 5.5 at xhigh at standard rates and a third slower); keep Carbon at medium whenever it explores a repository, and save Carbon at high for bounded single-packet reviews or open analytical reads. Do not stand Carbon in for code builds while Terra 6.1, Sol 6.1 or Opus 5.5 has room.
+Codex, Claude and Antigravity run on separate pools of accounts. When one pool has no room, another family's model at the matching level takes the work the same day, so nothing stalls waiting for a reset. Astra 6.2 at xhigh stands in for Opus 5.5 at high, and Sol 6.2 at xhigh for Opus 5.5 at medium or low (both matches measured on Sol 6.1 and Astra 6.0); where the job turns on following a long brief, take medium. Terra 6.1 at xhigh sits lower on coding, about where Sonnet 5.5 at medium to high or Opus 5.5 at low would be, but its work still stands in on Opus 5.5 at medium, because Terra 6.1's jobs are builds and checks that hold a brief. The match runs the other way when the Claude accounts are short. When Claude or Codex accounts are tight on non-build helper work, Gemini 4 Carbon at medium held level with Opus 5.5 at xhigh on blind scores across five multi-file tasks (about 40% cheaper than Opus 5.5 at xhigh at standard rates and a third slower); keep Carbon at medium whenever it explores a repository, and save Carbon at high for bounded single-packet reviews or open analytical reads. Do not stand Carbon in for code builds while Terra 6.1, Sol 6.2 or Opus 5.5 has room.
 
 Look again before switching, because accounts come back, and go back to the setting the row gives once its pool has room: the match settles which level to ask for, not that the two families think alike. Say which model stood in wherever the work records its models.
 
@@ -184,7 +184,7 @@ Pass both a model and a level, every time. Otherwise use each family's newest ve
 - Claude Code's Agent tool: `model: "opus"` and `effort: "medium"`.
 - A one-shot Claude run: `claude -p --model opus --effort medium`.
 - A Codex native helper: `spawn_agent` with `model` and `reasoning_effort`.
-- A Codex run: `codex exec -m gpt-6.1-sol -c model_reasoning_effort="high"`. Add `-c service_tier="fast"` for Fast, and only when "When speed is worth paying for" says so.
+- A Codex run: `codex exec -m gpt-6.2-sol -c model_reasoning_effort="high"`. Add `-c service_tier="fast"` for Fast, and only when "When speed is worth paying for" says so.
 - An Antigravity (`agy`) run: `agy --print=<prompt> --model gemini-4-carbon --effort medium --output-format stream-json --print-timeout 0 --dangerously-skip-permissions`. Gemini 4 Carbon and Gemini 4 Argon support `low`, `medium` and `high`.
 - Other hosts, and where a pin stops holding: `../_shared/native-child-capabilities.md`. Check the live tool schema when it and this list disagree.
 

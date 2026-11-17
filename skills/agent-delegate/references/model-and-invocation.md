@@ -7,7 +7,7 @@ capture; it does not decide the worker's role, decompose the task, or integrate
 the result.
 
 Use it to resolve what the user meant by "Claude", "Codex",
-"Cursor Agent", "Grok", "Kimi", "fable 5.1 high", "opus high", "gpt-6.1-sol xhigh",
+"Cursor Agent", "Grok", "Kimi", "fable 5.1 high", "opus high", "gpt-6.2-sol xhigh",
 "luna xhigh", "terra high", "fugu high", "fugu-ultra xhigh",
 "composer-2.5-fast", "grok-4.6", "kimi k3", "carbon high", "argon high", "gemini flash", or
 similar phrasing, and to run the
@@ -96,7 +96,7 @@ skill.
 Infer runtime only when the user's wording makes it unambiguous:
 
 - `codex`, `openai`, `gpt`, `gbt`, `astra`, `luna`, `terra`,
-  `gpt-6.1-sol`, `gpt-6-luna`, `gpt-6.1-terra`, `GPT6SOLXI`,
+  `gpt-6.2-sol`, `gpt-6-luna`, `gpt-6.1-terra`, `GPT6SOLXI`,
   `GPT6LUNAXI`, `GPT56TERRAXI`, `gpt-5.3-codex`, `fugu high`, or
   `fugu-ultra xhigh` implies `runtime=codex`.
 - `claude fable`, `fable`, `claude opus`, or `opus` implies
@@ -132,7 +132,7 @@ Infer runtime only when the user's wording makes it unambiguous:
   Kimi effort is the deliberate `max` model default; omitted agy effort is the
   deliberate `high` preference default.
 
-With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). When a caller passes neither on a Codex lane, the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`. Do not default the runtime itself.
+With no model or level named, choose both with `$model-routing`. Kimi and agy lanes keep their harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). When a caller passes neither on a Codex lane, the resolver's last resort on a Codex lane is `gpt-6.2-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`. Do not default the runtime itself.
 
 ## Model Phrase Resolution
 
@@ -141,17 +141,17 @@ Apply the Codex preference in `../../_shared/agent-orchestration-policy.md`: `$m
 Treat model text as intent, not a loose alias:
 
 - Accept `sol`, `astra`, `luna`, and `terra` as Codex choices. They resolve to
-  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`; compact forms such as
+  `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6-luna`, and `gpt-6.1-terra`; compact forms such as
   `GPT6LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
   `xhigh`. With no model or level named, choose both with `$model-routing`;
-  the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
+  the resolver's last resort on a Codex lane is `gpt-6.2-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
 - Preserve model family and numeric version exactly. `gpt-6-luna` may normalize to
-  `gpt-6-luna`; it must not become `gpt-6.1-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
+  `gpt-6-luna`; it must not become `gpt-6.2-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
   `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`, and `opus 5.5` to `claude-opus-5-5`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-6.1-sol`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6.2-sol`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - For ordinary Codex model ids, inspect `codex debug models` when needed and
   choose an available identifier with the same family and exact version. For
@@ -204,8 +204,8 @@ Always announce the raw-to-resolved mapping before execution:
 ```text
 Claude Fable 5.1 high -> runtime=claude, model=claude-fable-5-1, effort=high
 Claude Opus 5.5 high -> runtime=claude, model=claude-opus-5-5, effort=high
-Codex -> runtime=codex, model=gpt-6.1-sol, effort=xhigh, model_source=default, effort_source=preference_default
-Codex high -> runtime=codex, model=gpt-6.1-sol, effort=high, model_source=default
+Codex -> runtime=codex, model=gpt-6.2-sol, effort=xhigh, model_source=default, effort_source=preference_default
+Codex high -> runtime=codex, model=gpt-6.2-sol, effort=high, model_source=default
 Luna xhigh -> runtime=codex, model=gpt-6-luna, effort=xhigh
 Terra high -> runtime=codex, model=gpt-6.1-terra, effort=high
 Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
@@ -461,7 +461,7 @@ Do not pass `-C` / `--cd` on resume.
 
 Pass the same model/profile and effort flags the thread started with. A
 resume does not carry them over: without them, the resumed turn runs on the
-config's default model and effort, so a thread started on GPT-6 Astra or at
+config's default model and effort, so a thread started on GPT-6.2 Astra or at
 low effort silently comes back on the default Sol at its default effort.
 After the run, check the resumed turn's model and effort in the rollout's
 `turn_context` before trusting the result. If the caller explicitly requires

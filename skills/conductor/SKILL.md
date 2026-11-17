@@ -121,7 +121,7 @@ log beside the plan is its durable memory.
   level named, choose both with `$model-routing`. Kimi and agy lanes keep their
   harness defaults (`kimi-code/k3` at `max`, `gemini-4-carbon` at `high`). Accept
   `sol`, `astra`, `luna`, and `terra` as
-  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`. Ask one consolidated
+  `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6-luna`, and `gpt-6.1-terra`. Ask one consolidated
   question only for load-bearing missing values. Provider routing remains:
   Codex runs GPT/GBT/OpenAI ids and Fugu profiles, Claude Code runs supported
   Claude models, Cursor Agent runs `composer-2.5-fast`, natural Grok wording

@@ -99,8 +99,8 @@ auto_execution:
   auto_run_dir: .arch_skill/arch-epic/auto/<epic-slug>/run-<ts>
   source_quotes:
     epic_planner: claude fable 5.1 high
-    implementation_worker: codex gpt-6.1-sol xhigh
-    critic: codex gpt-6.1-sol xhigh
+    implementation_worker: codex gpt-6.2-sol xhigh
+    critic: codex gpt-6.2-sol xhigh
   roles:
     epic_planner:
       runtime: claude
@@ -109,12 +109,12 @@ auto_execution:
       source: user_table
     implementation_worker:
       runtime: codex
-      model: gpt-6.1-sol
+      model: gpt-6.2-sol
       effort: xhigh
       source: user_table
     critic:
       runtime: codex
-      model: gpt-6.1-sol
+      model: gpt-6.2-sol
       effort: xhigh
       source: user_table
   execution_sha256: <hex digest of the normalized policy>

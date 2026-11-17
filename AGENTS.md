@@ -79,7 +79,7 @@ Claude Code, Gemini CLI, and the Antigravity CLI (`agy`).
 
 ## Skill Routing
 
-- Default Codex to `gpt-6.1-sol` at `xhigh`. Bare `sol` selects that model;
+- Default Codex to `gpt-6.2-sol` at `xhigh`. Bare `sol` selects that model;
   preserve explicit model versions and effort choices.
 - Elective lifecycles, persistent loops, and specialist reviews run only when
   explicitly selected or required by binding task instructions. Ordinary bug

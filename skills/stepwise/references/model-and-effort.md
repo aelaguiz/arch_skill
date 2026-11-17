@@ -46,16 +46,16 @@ provider/model choice load-bearing. Honor it natively only when the active host
 exposes and confirms that choice; otherwise the external adapter supplies the
 requested capability. Any of these is clear:
 
-- "use Claude Fable 5.1 high for steps and Codex gpt-6.1-sol xhigh for critic"
+- "use Claude Fable 5.1 high for steps and Codex gpt-6.2-sol xhigh for critic"
 - "use Codex Fugu high for steps and Codex Fugu Ultra xhigh for critic"
-- "Codex gpt-6.1-sol high everywhere" (one value reused for all defaults)
+- "Codex gpt-6.2-sol high everywhere" (one value reused for all defaults)
 - "Codex luna high for steps and terra xhigh for critic"
 - "Codex high everywhere" (the omitted model comes from `$model-routing`)
-- "Grok Build high for steps and Codex gpt-6.1-sol xhigh for critic"
+- "Grok Build high for steps and Codex gpt-6.2-sol xhigh for critic"
 - "Kimi K3 high for steps and Kimi max for critic"
-- "Carbon high for steps and Codex gpt-6.1-sol xhigh for critic"
-- "steps on gpt-6.1-sol high, critic on gpt-6.1-sol xhigh"
-- "default to Codex gpt-6.1-sol high, but use Claude Fable 5.1 for copywriting"
+- "Carbon high for steps and Codex gpt-6.2-sol xhigh for critic"
+- "steps on gpt-6.2-sol high, critic on gpt-6.2-sol xhigh"
+- "default to Codex gpt-6.2-sol high, but use Claude Fable 5.1 for copywriting"
 
 None of these is magic. The intake reads the phrase, maps the baseline into
 execution defaults, records routing preferences separately, and prints back
@@ -81,13 +81,13 @@ This is reasoning, not a lookup table:
   aliases such as `fable` or `opus` are acceptable only when the user did not
   pin a version.
 - For ordinary Codex model ids, accept `sol`, `astra`, `luna`, and `terra` as
-  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`. Compact forms such as
+  `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6-luna`, and `gpt-6.1-terra`. Compact forms such as
   `GPT6LUNAXI` and `GPT56TERRAXI` preserve the variant and imply `xhigh`.
   With no model or level named, choose both with `$model-routing`;
-  the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`. Inspect the installed CLI's model
+  the resolver's last resort on a Codex lane is `gpt-6.2-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`. Inspect the installed CLI's model
   list when needed (`codex debug models`) and choose the available identifier
-  with the same family and exact version. For example, "gpt-6.1-sol" resolves
-  to `gpt-6.1-sol` if that exact model appears, and "gpt 5.3 codex" resolves
+  with the same family and exact version. For example, "gpt-6.2-sol" resolves
+  to `gpt-6.2-sol` if that exact model appears, and "gpt 5.3 codex" resolves
   to `gpt-5.3-codex`. Fugu is different: resolve `fugu` and `fugu-ultra` as
   Codex profiles, preserve those profile names exactly, and launch them with
   `-p`.
@@ -114,7 +114,7 @@ This is reasoning, not a lookup table:
   explicitly names Cursor Agent or Grok in the same execution choice.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-6.1-sol`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6.2-sol`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - If the runtime is unavailable, model discovery is unavailable, the exact
   version is not present, or the phrase could map to multiple runnable
@@ -129,7 +129,7 @@ effort=high`. `Kimi -> runtime=kimi, model=kimi-code/k3, effort=max,
 effort_source=model_default` records the K3 default explicitly.
 `Carbon -> runtime=agy, model=gemini-4-carbon, effort=high,
 effort_source=preference_default` records the agy default the same way (`Argon` resolves to `gemini-4-argon`).
-`Codex -> runtime=codex, model=gpt-6.1-sol, effort=xhigh,
+`Codex -> runtime=codex, model=gpt-6.2-sol, effort=xhigh,
 model_source=default, effort_source=preference_default` records the resolver's
 last resort.
 `Fugu Ultra xhigh -> runtime=codex, model=fugu-ultra,
@@ -183,7 +183,7 @@ Do not ask six separate questions. Do not invent a runtime. Ask and wait. If
 native children can do the job and no external benefit was requested or
 discovered, proceed natively instead of manufacturing this question.
 
-If the user answers with one complete value ("Codex gpt-6.1-sol medium
+If the user answers with one complete value ("Codex gpt-6.2-sol medium
 everywhere"), apply it to both worker and critic defaults and announce that
 before executing. If they answer with a worker-only override ("copywriting on
 Claude Fable 5.1"), resolve only the affected steps externally and leave other
@@ -199,7 +199,7 @@ External runtime is separate from model and effort.
 Infer runtime only when the evidence is unambiguous:
 
 - a target repo says "run with Codex"
-- the user says "Claude Fable 5.1", "Codex gpt-6.1-sol", "Luna", "Terra",
+- the user says "Claude Fable 5.1", "Codex gpt-6.2-sol", "Luna", "Terra",
   "Grok Build", "Kimi", "K3", "Carbon", "Argon", "Gemini", or "agy"
 - the user says "Codex Fugu", "Fugu high", or "Fugu Ultra xhigh"
 - an installed CLI supports only the named model family and the user clearly

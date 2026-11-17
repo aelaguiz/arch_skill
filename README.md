@@ -70,7 +70,7 @@ Other shipped skills are:
 - `intent-police` — long-lived read-only advocate that derives the user's intent from their verbatim words, keeps an on-disk intent ledger, classifies direction changes as micro-adjustment versus fundamental shift, filters other agents' review findings for scope creep, and gives blunt subtraction-only alignment feedback at decisions, post-review, and done-claims
 - `paired-reviewer` — explicit-invocation long-lived reviewer for the session you are in: starts one reviewer on another model as a resumable session as soon as there is work to review, resumes it every period (30 minutes by default) with one prompt in the user's voice; the reviewer doesn't trust the session's judgment, checks its plans, numbers and idea of done against the user's own words from where the work started, and judges the work as if the time and money were its own, and the session acts on what holds up, keeping each change it takes where it rereads it at every check-in; the reviewer keeps its own notes and scratch work and leaves the session's work alone
 - `agent-watcher` — explicitly selected out-of-loop monitor for Amir's live coding-agent sessions: discovers active Codex, Claude Code, and Prime sessions, dispatches one cheap watcher sub-agent per session on a per-watcher rest interval, keeps an intent artifact and provenance ledger per session, and alerts (macOS notification, sound, optional Slack) when work drifts from what Amir asked, when an agent claims authorization he never gave, or when an agent self-blocks on nothing; read-only, never messages the watched sessions
-- `delegated-implementation` — reusable execution contract: Astra delegates code and tests to GPT-6.1 Sol high, Fable to Opus 5; the parent owns requirements, every deliverable's direct review, and all skill authorship
+- `delegated-implementation` — reusable execution contract: Astra delegates code and tests to GPT-6.2 Sol high, Fable to Opus 5; the parent owns requirements, every deliverable's direct review, and all skill authorship
 - `agent-delegate` — explicit external editful worker/session adapter for cross-provider, load-bearing exact model/profile, durable-session, process-isolation, automation, or receipt benefits; ordinary same-host work uses native children directly
 - `model-routing` — chooses the model and thinking level for a helper before it starts: teaches, with examples, which helper work runs as well on the same strong model at a lower thinking level in a fraction of the time, and leaves the rest on the user's choice or the default
 - `model-eval` — evaluates a new model or thinking level for helper work and updates `model-routing`: runs only the new model, in a sandbox, on the last back-test's real helper tasks, has blind judges chosen for the comparison score its answers against each brief beside the stored answers of today's picks, and changes the router where the result holds up
@@ -311,7 +311,7 @@ It keeps the same full-arch artifact shape and the same clean-audit handoff to `
 
 `miniarch-step implement-loop` and `miniarch-step auto-implement` share the same
 implementation-frontier delivery command. They use a new clean native auditor
-for each independent gate when the host supports it. `gpt-6.1-sol` with
+for each independent gate when the host supports it. `gpt-6.2-sol` with
 `xhigh` is a preference only when the native schema can select and confirm it;
 otherwise the audit uses inherited native capability without claiming a model
 it cannot prove. An external exact-model audit remains available when that
@@ -586,7 +586,7 @@ integrates the verdict.
 For an external consult, the user supplies enough information to resolve the
 runtime, model/profile, and effort, or the skill asks once. Codex aliases remain
 exact (`astra`, `luna`, `terra`), and an omitted external Codex model defaults to
-`gpt-6.1-sol`; an omitted effort on that Sol lane defaults to `xhigh`. Bare
+`gpt-6.2-sol`; an omitted effort on that Sol lane defaults to `xhigh`. Bare
 Kimi defaults to `kimi-code/k3` at `max`; natural Grok requests use `grok-4.6`
 and still require an explicit effort. Bare Gemini or Carbon defaults to
 `gemini-4-carbon` at `high` (explicit Argon selects `gemini-4-argon` at `high`). Exact model versions and profiles are
@@ -614,7 +614,7 @@ and `stepwise` or `arch-epic` for ordered role lifecycles.
 
 Use this execution contract when a coordinator runs `issue-to-pr`,
 `epic-to-prs`, or `milestone-to-pr`, or the user asks the parent to keep requirements and review while
-workers implement accepted work. Astra uses GPT-6.1 Sol at high; Fable uses
+workers implement accepted work. Astra uses GPT-6.2 Sol at high; Fable uses
 Opus 5; any other parent uses a native child on its own model. The active
 harness supplies agent mechanics. Workers implement, test, and repair code; the
 parent personally reviews every deliverable and changed code line, including
@@ -636,7 +636,7 @@ resume.
 
 Fresh-resumable is the default. When the caller explicitly requests parallel workers, `agent-delegate` creates a group directory and launches ordinary fresh-resumable child workers, then inspects repo state before reporting the combined result. Stateless one-shot is available only when explicitly requested and the selected CLI can honor it; Kimi always persists a session, even when its receipt is ignored. Explicit resume uses a same-runtime session id or prior run directory. Claude and Kimi resume use `-r <session_id>` from the original work root; Codex resume uses `codex exec resume <thread_id>` and never `--last`; Cursor Agent and Grok resume use `--resume <session_id>` and never latest-session selection; agy resume uses `--conversation <conversation_id>` and never `--continue`. The skill does not resume "latest" sessions, cross runtimes, or use external continuation controllers as a strategy.
 
-The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `astra`, `luna`, and `terra` as the exact `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra` choices; an omitted Codex model defaults to `gpt-6.1-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini`, `Carbon`, or `Argon` for the Antigravity CLI. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Carbon resolves to `gemini-4-carbon` at `high` (explicit Argon resolves to `gemini-4-argon` at `high`), the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
+The user supplies enough information to resolve runtime, model/profile, and effort, or the skill asks once before invoking. A Codex lane accepts `sol`, `astra`, `luna`, and `terra` as the exact `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6-luna`, and `gpt-6.1-terra` choices; an omitted Codex model defaults to `gpt-6.2-sol`, and an omitted effort on that Sol lane defaults to `xhigh`. Runtime can be inferred from unambiguous model families such as `Luna`, `Terra`, `GPT6SOLXI`, `fugu`, or `fugu-ultra` for Codex, `Claude Fable 5.1` for Claude, `Cursor Agent composer 2.5` for Cursor Agent, `Grok Build` for Grok, `Kimi K3` for Kimi Code, or `Gemini`, `Carbon`, or `Argon` for the Antigravity CLI. Cursor Agent Composer resolves to `composer-2.5-fast`; natural Grok requests resolve to `grok-4.6`; bare Kimi resolves to `kimi-code/k3` at `max`; bare Gemini or Carbon resolves to `gemini-4-carbon` at `high` (explicit Argon resolves to `gemini-4-argon` at `high`), the highest of its `low`, `medium`, and `high` levels. K3 advertises `low`, `high`, and `max`; an explicit `medium` or `xhigh` is preserved as a forced override. Exact model versions and profile names are preserved; there is no silent downgrade, provider switch, effort substitution, detached fallback, separate-worktree fallback, or ambiguous resume fallback.
 
 Delegated children commonly take 5+ minutes; broad edits, verification, `xhigh`, `max`, or `ultra` can reasonably take 20-40 minutes. Poll live streams every few minutes, not every few seconds.
 
@@ -686,7 +686,7 @@ artifact has no observable done-state or defensible approved scope; the
 readiness gate is never waived.
 
 Execution resolves a worker profile before a lane. The fleet default is
-Codex `gpt-6.1-sol` at `xhigh`, with one-word swaps to Kimi (`kimi-code/k3`
+Codex `gpt-6.2-sol` at `xhigh`, with one-word swaps to Kimi (`kimi-code/k3`
 at `max`), Carbon (`gemini-4-carbon` at `high`), Argon (`gemini-4-argon` at `high`), Grok (`grok-4.6`), Cursor (`composer-2.5-fast`), or Claude, and it
 covers every heavy role — implementation, research, verification, any
 requested cynical review, and the cold verifier. That profile runs on a native
@@ -746,7 +746,7 @@ The user names the two participant identities. Native roles use only model
 capabilities the active host can confirm; an unavailable load-bearing exact
 identity selects the external lane. External shorthand follows the shared
 model resolver, preserves exact versions/profiles, and defaults an omitted
-external Codex model to `gpt-6.1-sol` and its omitted Sol effort to `xhigh`.
+external Codex model to `gpt-6.2-sol` and its omitted Sol effort to `xhigh`.
 Bare Kimi selects `kimi-code/k3` at `max`; natural Grok wording selects
 `grok-4.6` and keeps the explicit-effort requirement. Bare Gemini or Carbon
 selects `gemini-4-carbon` at `high` (explicit Argon selects `gemini-4-argon` at `high`).
@@ -914,4 +914,4 @@ Examples:
 
 ### Codex model preference
 
-Default Codex to `gpt-6.1-sol` at `xhigh`. Bare `sol` selects GPT-6.1 Sol. Preserve explicit model versions and effort choices, including older Sol versions and Astra. The shared orchestration policy owns this preference; the deterministic resolver fills omitted choices without redirecting explicit selections.
+Default Codex to `gpt-6.2-sol` at `xhigh`. Bare `sol` selects GPT-6.2 Sol. Preserve explicit model versions and effort choices, including older Sol versions and Astra. The shared orchestration policy owns this preference; the deterministic resolver fills omitted choices without redirecting explicit selections.

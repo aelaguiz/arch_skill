@@ -23,7 +23,7 @@ from typing import Any
 
 VALID_RUNTIMES = {"agent", "agy", "claude", "codex", "grok", "kimi"}
 VALID_EFFORTS = {"low", "medium", "high", "xhigh", "max", "ultra"}
-PREFERRED_CODEX_MODEL = "gpt-6.1-sol"
+PREFERRED_CODEX_MODEL = "gpt-6.2-sol"
 PREFERRED_CODEX_EFFORT = "xhigh"
 PREFERRED_GROK_MODEL = "grok-4.6"
 PREFERRED_KIMI_MODEL = "kimi-code/k3"
@@ -100,6 +100,8 @@ _FUGU_PROFILE_DEFAULT_EFFORTS = {
     "fugu-ultra": "xhigh",
 }
 _CODEX_ULTRA_MODELS = {
+    "gpt-6.2-astra",
+    "gpt-6.2-sol",
     "gpt-6-astra",
     "gpt-6-sol",
     "gpt-6.1-sol",
@@ -433,13 +435,13 @@ def resolve_execution_phrase(
     - "GPT6SOLXI" -> codex / gpt-6-sol / xhigh
     - "GPT61SOLXI" -> codex / gpt-6.1-sol / xhigh
     - "Sol 6.1 high" -> codex / gpt-6.1-sol / high
-    - "codex" -> codex / gpt-6.1-sol / xhigh
-    - "sol" -> codex / gpt-6.1-sol / xhigh
-    - "astra" -> codex / gpt-6-astra / xhigh
+    - "codex" -> codex / gpt-6.2-sol / xhigh
+    - "sol" -> codex / gpt-6.2-sol / xhigh
+    - "astra" -> codex / gpt-6.2-astra / xhigh
     - "luna xhigh" -> codex / gpt-6-luna / xhigh
     - "terra xhigh" -> codex / gpt-6.1-terra / xhigh
     - "GPT56TERRAXI" -> codex / gpt-5.6-terra / xhigh
-    - "codex high" -> codex / gpt-6.1-sol / high
+    - "codex high" -> codex / gpt-6.2-sol / high
     - "Fugu high" -> codex / profile fugu / high
     - "Fugu Ultra xhigh" -> codex / profile fugu-ultra / xhigh
     - "cursor agent composer-2.5-fast" -> agent / composer-2.5-fast / encoded-in-model
@@ -502,7 +504,7 @@ def resolve_execution_phrase(
     if (
         effort is None
         and runtime == "codex"
-        and model in {PREFERRED_CODEX_MODEL, "gpt-6-astra", "gpt-6-sol"}
+        and model in {PREFERRED_CODEX_MODEL, "gpt-6.2-astra", "gpt-6.1-sol", "gpt-6-astra", "gpt-6-sol"}
     ):
         effort = PREFERRED_CODEX_EFFORT
         effort_source = "preference_default"
@@ -806,7 +808,7 @@ def _resolve_codex_model(
         if suffix_words:
             candidate += "-" + "-".join(word.lower() for word in suffix_words)
     elif re.search(r"\bastra\b", raw, re.IGNORECASE):
-        candidate = _newest_codex_model("astra", "gpt-6-astra", codex_models)
+        candidate = _newest_codex_model("astra", "gpt-6.2-astra", codex_models)
     elif sol_version:
         candidate = f"gpt-{sol_version.group('version')}-sol"
     elif bare_variant:

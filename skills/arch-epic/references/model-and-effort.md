@@ -42,8 +42,8 @@ Example table:
 
 ```text
 epic_planner: claude fable 5.1 high
-implementation_worker: codex gpt-6.1-sol xhigh
-critic: codex gpt-6.1-sol xhigh
+implementation_worker: codex gpt-6.2-sol xhigh
+critic: codex gpt-6.2-sol xhigh
 poll_seconds: 180
 quiet_floor_seconds: 900
 stuck_floor_seconds: 1800
@@ -108,15 +108,15 @@ that deliberate value selects the external harness. They are valid when they
 include a role:
 
 - "planner on Claude Fable 5.1 high"
-- "implementation worker on Codex gpt-6.1-sol xhigh"
+- "implementation worker on Codex gpt-6.2-sol xhigh"
 - "implementation worker on Luna xhigh"
 - "critic on Terra high"
 - "implementation worker on Codex Fugu Ultra xhigh"
 - "planner on Grok Build high"
 - "implementation worker on Kimi K3 max"
 - "critic on Gemini 4 Carbon high"
-- "critics on gpt-6.1-sol xhigh"
-- "codex gpt-6.1-sol high everywhere"
+- "critics on gpt-6.2-sol xhigh"
+- "codex gpt-6.2-sol high everywhere"
 
 If the user gives one complete "everywhere" value, the orchestrator may fill
 all three required roles with that value, but it must announce the interpretation before
@@ -126,12 +126,12 @@ running.
 
 Treat model text as intent, not a loose alias:
 
-- `sol`, `astra`, `luna`, and `terra` normalize to `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and
+- `sol`, `astra`, `luna`, and `terra` normalize to `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6-luna`, and
   `gpt-6.1-terra`. Compact forms such as `GPT6LUNAXI` and `GPT56TERRAXI`
   preserve the named variant and imply `xhigh`. With no model or level named,
-  choose both with `$model-routing`; the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
+  choose both with `$model-routing`; the resolver's last resort on a Codex lane is `gpt-6.2-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
 - An explicit `gpt-6-luna` may normalize to `gpt-6-luna`; it must not
-  become `gpt-6.1-sol`, `gpt-5.4`, or `gpt-5.5`.
+  become `gpt-6.2-sol`, `gpt-5.4`, or `gpt-5.5`.
 - `gpt 5.3 codex` may normalize to `gpt-5.3-codex`.
 - `fugu` and `fugu-ultra` are Codex profile names; preserve them as `fugu` and
   `fugu-ultra` and launch them with `codex exec -p`.
@@ -158,7 +158,7 @@ Treat model text as intent, not a loose alias:
   explicitly names Cursor Agent or Grok in the same execution choice.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-6.1-sol`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6.2-sol`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - Family-only supported Claude aliases such as `fable` or `opus` are allowed
   only when the user did not pin a version.
@@ -208,9 +208,9 @@ latest-session, model, effort, or provider fallback.
 Always print the raw-to-resolved mapping before execution:
 
 ```text
-planner: "codex" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh, model_source=default, effort_source=preference_default
-critic: "codex gpt-6.1-sol xhigh" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh
-implementation_worker: "codex high" -> runtime=codex, model=gpt-6.1-sol, effort=high, model_source=default
+planner: "codex" -> runtime=codex, model=gpt-6.2-sol, effort=xhigh, model_source=default, effort_source=preference_default
+critic: "codex gpt-6.2-sol xhigh" -> runtime=codex, model=gpt-6.2-sol, effort=xhigh
+implementation_worker: "codex high" -> runtime=codex, model=gpt-6.2-sol, effort=high, model_source=default
 implementation_worker: "luna xhigh" -> runtime=codex, model=gpt-6-luna, effort=xhigh
 critic: "terra high" -> runtime=codex, model=gpt-6.1-terra, effort=high
 critic: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh

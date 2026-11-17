@@ -84,17 +84,17 @@ Cursor Agent is Composer-only; natural Grok wording resolves to grok-4.6.
 Follow the shared model-resolution doctrine:
 
 - Accept `sol`, `astra`, `luna`, and `terra` as Codex choices. They resolve to
-  `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna`, and `gpt-6.1-terra`; compact forms such as
+  `gpt-6.2-sol`, `gpt-6.2-astra`, `gpt-6-luna`, and `gpt-6.1-terra`; compact forms such as
   `GPT6LUNAXI` and `GPT56TERRAXI` preserve the named variant and imply
   `xhigh`. With no model or level named, choose both with `$model-routing`;
-  the resolver's last resort on a Codex lane is `gpt-6.1-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
+  the resolver's last resort on a Codex lane is `gpt-6.2-sol` at `xhigh`, reported with `model_source=default` and `effort_source=preference_default`.
 - Preserve family and numeric version exactly. `gpt-6-luna` may normalize to
-  `gpt-6-luna`; it must not become `gpt-6.1-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
+  `gpt-6-luna`; it must not become `gpt-6.2-sol`, `gpt-5.4`, or `gpt-5.5`. `fable 5.1` may normalize to
   `claude-fable-5-1`, and `opus 4.7` may normalize to `claude-opus-4-7`, and `opus 5.5` to `claude-opus-5-5`;
   neither may become another Claude family or version.
 - If the user says `gpt 5.4`, `gpt 5.5`, or a variant of either while choosing
   a model, do not execute it. Say that the old model is blocked and ask whether
-  they meant `gpt-6.1-sol`. This is an intent check, not an alias rule: do not
+  they meant `gpt-6.2-sol`. This is an intent check, not an alias rule: do not
   rewrite the version yourself.
 - Infer runtime only from unambiguous family evidence: `gpt`/`gbt`/`fugu`/
   `fugu-ultra`/`codex`/`sol`/`luna`/`terra` implies Codex; `claude fable`, `fable`,
@@ -168,8 +168,8 @@ Always announce the mapping before execution:
 ```text
 Model A: "Claude Fable 5.1 high" -> runtime=claude, model=claude-fable-5-1, effort=high
 Model B: "Claude Opus 5.5 xhigh" -> runtime=claude, model=claude-opus-5-5, effort=xhigh
-Model C: "codex" -> runtime=codex, model=gpt-6.1-sol, effort=xhigh, model_source=default, effort_source=preference_default
-Model D: "codex high" -> runtime=codex, model=gpt-6.1-sol, effort=high, model_source=default
+Model C: "codex" -> runtime=codex, model=gpt-6.2-sol, effort=xhigh, model_source=default, effort_source=preference_default
+Model D: "codex high" -> runtime=codex, model=gpt-6.2-sol, effort=high, model_source=default
 Model E: "luna xhigh" -> runtime=codex, model=gpt-6-luna, effort=xhigh
 Model F: "terra high" -> runtime=codex, model=gpt-6.1-terra, effort=high
 Model G: "Fugu Ultra xhigh" -> runtime=codex, model=fugu-ultra, codex_profile=fugu-ultra, effort=xhigh
