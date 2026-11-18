@@ -1,6 +1,6 @@
 # What each setting costs
 
-Read November 10, 2026, from the published price pages of OpenAI (API and Codex), Anthropic and Google. Prices change; `$model-eval` refreshes this file, and nothing in `SKILL.md` depends on an exact figure here.
+Read November 17, 2026, from the published price pages of OpenAI (API and Codex), Anthropic and Google; Sol 6.2 and Astra 6.2 are as reported at their launch that day. Prices change; `$model-eval` refreshes this file, and nothing in `SKILL.md` depends on an exact figure here.
 
 ## Price per million tokens, list
 
@@ -8,9 +8,11 @@ Read November 10, 2026, from the published price pages of OpenAI (API and Codex)
 |---|---:|---:|---:|---|
 | Terra 6.1 | $1 | $0.05 | $5 | |
 | Terra 6.1 on Fast | $2 | $0.10 | $10 | |
-| Sol 6.1 | $2 | $0.10 | $10 | |
+| Sol 6.2 | $2 | $0.10 | $10 | Same as Sol 6.1 |
+| Sol 6.1 | $2 | $0.10 | $10 | Superseded by Sol 6.2 |
 | Sol 6.1 on Fast | $4 | $0.20 | $20 | |
-| Astra 6.0 | $10 | $1 | $50 | |
+| Astra 6.2 | $8 | $0.40 | $40 | |
+| Astra 6.0 | $10 | $1 | $50 | Superseded by Astra 6.2 |
 | Astra 6.0 on Fast | $20 | $2 | $100 | |
 | Luna | $0.10 | $0.01 | $0.50 | Never tested on helper work |
 | Haiku 5.5 | $0.10 | $0.01 | $0.50 | 5 times this above 100k-token prompts |
@@ -25,7 +27,7 @@ Read November 10, 2026, from the published price pages of OpenAI (API and Codex)
 
 Fast costs 2 times standard on purchased credits and 2.5 times on included usage; the rows above show 2 times. Claude cache writes cost 1.25 times input for five minutes and 2 times for an hour. Google charges nothing for cache writes; in `agy --output-format stream-json`, `input_tokens` is uncached input and `output_tokens` already includes `thinking_tokens`. One Codex credit is $0.04.
 
-Codex, Claude and Antigravity draw on separate pools of accounts, so their costs compare only as list prices. What a pool can really give depends on how much of it other agents are using.
+Codex, Claude and Antigravity draw on separate pools of accounts, so their costs compare only as list prices. What a pool can really give depends on how much of it other agents are using. Read off the weekly bars on November 17, 2026, a point of a Codex account's week came to roughly $15 to $30 of list price, and a point of a Claude account's week to roughly $3 to $4.50. So a list dollar of Codex work used a third or less of the account room a list dollar of Claude work did. The bars are whole percents on shared accounts, so this is rough.
 
 ## What a typical helper run costs
 
@@ -35,8 +37,10 @@ A typical run is the median Opus 5.5 medium helper run across 88 real tasks from
 |---|---:|---:|---:|---:|---:|
 | Terra 6.1 | ~$0.18 | ~$0.23 | ~$0.29 | $0.21 | not run |
 | Terra 6.1 on Fast | ~$0.45 | ~$0.58 | ~$0.73 | $0.53 | not run |
+| Sol 6.2 | ~$0.39 | ~$0.50 | ~$0.63 | ~$0.74 | not run |
 | Sol 6.1 | $0.36 | $0.46 | $0.58 | $0.68 | not run |
 | Sol 6.1 on Fast | $0.90 | $1.15 | $1.45 | $1.70 | not run |
+| Astra 6.2 | ~$0.85 | ~$1.08 | ~$1.36 | ~$1.46 | not run |
 | Astra 6.0 | ~$1.80 | ~$2.30 | ~$2.90 | $3.10 | not run |
 | Astra 6.0 on Fast | ~$4.50 | ~$5.75 | ~$7.25 | $7.75 | not run |
 | Opus 5.5 | $0.85 | $1.71 | $2.03 | $3.40 | $5.69 |
@@ -53,11 +57,13 @@ A ~ marks a cell worked out from price, because no run measured it. Those run hi
 
 Terra 6.1 at xhigh and Astra 6.0 at xhigh were measured November 5, 2026, against Opus 5.5 at medium on the same real tasks: Terra 6.1 on 4 tasks, 0.06 to 0.14 times, in about the same time; Astra 6.0 on 3 tasks, 1.61 to 2.17 times, in about 2.5 times as long. So few tasks give a direction, and both came in below the estimate worked from Sol 6.1's tokens, which said 0.20 and 1.99. Five more tasks put Opus 5.5 at high at 1.14. Sol 6.1 at xhigh on Fast comes close to Opus 5.5 at medium. On four stored builds of 2 to 12 minutes, Terra 6.1 at xhigh cost $0.77 in all, Sol 6.1 at xhigh $2.44, Opus 5.5 at medium $8.59, Astra 6.0 at high $9.66, and Gemini 4 Carbon at high $14.12 at standard rates ($7.06 in November, with two builds timing out).
 
+Sol 6.2 and Astra 6.2 were measured November 17, 2026. Their rows above scale the rows of Sol 6.1 and Astra 6.0 by what each cost on the same 20 reviewer looks: Sol 6.2 at high $0.58 a look against $0.53, and Astra 6.2 at high $1.56 against $3.33, about two fifths of that from fewer tokens and three fifths from the lower price. Astra 6.2 at xhigh cost $2.26 a look against $3.75 for Astra 6.0. On the four stored builds Sol 6.2 cost $2.70 at high and $2.88 at xhigh, and Astra 6.2 at high $6.89. On three real engineer briefs, a build and one fix round cost $0.58 to $2.78 on Terra 6.1 at xhigh and $3.94 to $6.36 on Sol 6.2 at xhigh, 3.4 times as much in all. A plan cost about $4 on Astra 6.2 at xhigh, about $6 on Astra 6.2 at max, under $1 on Sol 6.2 at high, and $4.38 and $6.56 on Opus 5.5 at high.
+
 Gemini 4 Carbon was measured November 10, 2026, on five stored multi-file tasks against Opus 5.5 at medium and Opus 5.5 at xhigh. At medium it cost a median 1.64 times Opus 5.5 at medium at standard rates (0.82 times at November introductory rates), and 42% less in total than Opus 5.5 at xhigh ($15.07 standard, $7.53 intro, against $26.16), because `agy` ran 35 to 138 tool steps and sent 275k to 442k uncached input tokens a task. On two of those tasks Gemini 4 Argon at high cost 0.87 to 1.09 times Opus 5.5 at medium at standard rates. On five saved reviewer control looks, a cold look on Gemini 4 Carbon at high averaged $2.77 at standard rates ($1.38 in November).
 
 ## Multiply by runs
 
-A run's price is the smaller half of the sum, and a reviewer that keeps its thread costs more than a fresh run, because each look carries everything before it. A median Astra 6.0 xhigh look on a live timer cost $7.43 against about $3 for a fresh run. Checking in every half hour on a build that lasts a week, that's 336 looks and about $2,500. Sol 6.1 at high on that timer would be about $350 to $500, a seventh of Astra 6.0's cost on a cold look and a fifth by price per token, and skipping the check-ins where nothing changed costs less again. Measured live since, on one timer at list price: Sol 6.1 at high's first six looks averaged $0.40, against $3.85 for the first six on Astra 6.0 at xhigh, and Astra 6.0's reached $9.49 late in its thread. So Sol 6.1's figure may come in lower, but its thread hasn't grown yet. A cold look cost $0.15 on Terra 6.1 at xhigh and $1.12 on Opus 5.5 at high.
+A run's price is the smaller half of the sum, and a reviewer that keeps its thread costs more than a fresh run, because each look carries everything before it. A median Astra 6.0 xhigh look on a live timer cost $7.43 against about $3 for a fresh run. Checking in every half hour on a build that lasts a week, that's 336 looks and about $2,500. Sol 6.1 at high on that timer would be about $350 to $500, a seventh of Astra 6.0's cost on a cold look and a fifth by price per token, and skipping the check-ins where nothing changed costs less again. Measured live since, on one timer at list price: Sol 6.1 at high's first six looks averaged $0.40, against $3.85 for the first six on Astra 6.0 at xhigh, and Astra 6.0's reached $9.49 late in its thread. So Sol 6.1's figure may come in lower, but its thread hasn't grown yet. A cold look cost $0.15 on Terra 6.1 at xhigh, $1.12 on Opus 5.5 at high, $0.58 on Sol 6.2 at high and $1.56 on Astra 6.2 at high.
 
 ## What crossing families adds
 

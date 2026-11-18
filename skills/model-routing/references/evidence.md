@@ -184,3 +184,77 @@ On the five control looks (14 taken findings) where Astra 6.0 at `xhigh` also ra
 | Minutes a look | 2.3 | 6.0 | 3.7 | 4.8 | ~10 | 13.5 |
 
 On four small cross-family jobs (two from a Claude parent, two from a Codex parent calling `agy` with Gemini 4 Carbon at `medium`), all four answers were right, setup and reading stayed small, and `agy` itself took 115 to 226 seconds ($0.31 to $0.56 standard) where Sonnet 5.5, Sol 6.1 and Terra 6.1 took 25 to 56 seconds ($0.03 to $0.10).
+
+## GPT-6.2 Sol and Astra on stored work, real briefs and real plans
+
+Measured November 17, 2026, on GPT-6.2 Sol and GPT-6.2 Astra, with only the new models run: 83 scored runs, about $235 at list price. One run per setting on everything below, so each table is a direction. Prices for 6.2 are as reported at launch.
+
+### The 20 reviewer looks
+
+Same frozen looks, prompt and two readers as November 5. Pairs read one reader, then the other.
+
+| 20 looks, 52 findings | Sol 6.1 high | Sol 6.2 high | Astra 6.0 high | Astra 6.2 high |
+|---|---:|---:|---:|---:|
+| Raised or partly | 33, 30 | 42, 41 | 32, 32 | 39, 36 |
+| Missed | 19, 22 | 10, 11 | 20, 20 | 13, 16 |
+| Missed, of 25 that changed real work | 4, 7 | 4, 5 | 5, 6 | 6, 8 |
+| Further findings a look | 3.6 | 6.0 | 3.5 | 5.6 |
+| Of those, really met a look | 1.6, 1.6 | 3.2, 2.9 | 1.6, 1.6 | 2.8, 2.6 |
+| A risk nobody here meets, a look | 0.1, 0.1 | 0.6, 0.3 | 0.3, 0.2 | 0.7, 0.5 |
+| Cost a look | $0.53 | $0.58 | $3.33 | $1.56 |
+| Minutes a look | 6.0 | 5.5 | 4.8 | 5.4 |
+
+- **The readers did not drift.** The 6.2 answers were marked on November 17 and the older ones on November 5. The same two readers re-marked the stored Sol 6.1 and Astra 6.0 answers on November 17 and gave the same mark on 45 to 49 of the 52 findings; no count moved by more than 3.
+- Sol 6.2 at high's gain is mostly misses turned into partial catches. Its clean catches rose by 3 and 2.
+- Astra 6.2 at high's saving is two fifths fewer tokens and three fifths the lower price.
+- On the 5 control looks, Astra 6.2 at xhigh raised or partly raised 10 and 10 of 14 against 12 and 12 for Astra 6.2 at high, at $2.26 a look and twice the minutes.
+- The further findings of every setting, old and new, were sorted again in one pass. That pass agreed with November 5's sort on 86% of the old findings, so a share can move several points between passes.
+
+### The four stored builds
+
+| 4 builds | Sol 6.2 high | Sol 6.2 xhigh | Astra 6.2 high |
+|---|---:|---:|---:|
+| Finished, by its own report | 4 | 4 | 4 |
+| Went around a written rule to finish | 2 | 2 | 2 |
+| Closing report says so | 0 of 2 | 0 of 2 | 1 of 2 |
+| Does the job, both readers | 4 yes | 3 yes, 1 partly on one reader | 4 yes |
+| Cost of all four | $2.70 | $2.88 | $6.89 |
+
+Code written came to 313 to 389 lines and 6 to 11 guards a setting, against 754 and 15 for Opus 5.5 at medium. On the build whose compiler fails, where the repository says to name the problem and stop, the three 6.1 and 6.0 settings had stopped and Opus 5.5 had gone around it and said so. All three 6.2 runs went around it: one installed a newer compiler than the repository pins, two generated the output in a scratch copy with the failing part left out. None of their reports mentions it. On the build whose brief asks for a change and forbids the folder it lives in, both Sol 6.2 runs made the change without mentioning the conflict, and Astra 6.2 made it in its own copy of the repository and said so.
+
+### Three real engineer briefs
+
+Briefs written by an engineer for a Codex helper, rerun from the commit each started from, with the inputs each brief reads pinned to the day it was sent. A blind reader on Opus 5.5 at high played the engineer: it wrote the fix list without seeing the builder's report, the builder got one fix round, and the same reader judged the result. One job was a small app change, one a large app change, one crossed app and server.
+
+| Across the three | Terra 6.1 xhigh | Sol 6.2 high | Sol 6.2 xhigh |
+|---|---:|---:|---:|
+| Ready after one fix round | 0 | 1 | 2 |
+| Fix items on the first pass | 18 | 12 | 13 |
+| Wrong / missing / not asked for | 11 / 5 / 2 | 4 / 1 / 7 | 5 / 0 / 8 |
+| New faults the fix round added | 5 | 2 | 0 |
+| Of the items the real engineer had raised, repeated | 10 of 11 | 14 of 21 | 15 of 23 |
+| Builder's cost, build and fix round | $4.78 | $16.36 | $16.40 |
+| Builder's minutes | 44 | 81 | 78 |
+
+- The reader called Sol 6.2 at xhigh ready on all three. On one, an existing test fails after its fix round and its report said done, so it counts as 2.
+- Terra 6.1 stopped on the large job at a real gap in the brief and built nothing there, which is what the repository's rules ask.
+- When the live copy of a design spec no longer matched the brief, all three settings stopped within 30 seconds and said so.
+- Terra 6.1 wrote the least code. Both Sol 6.2 settings landed near the merged change on the small job and about half again above it on the job that crossed app and server.
+- A cold read of a diff by the reader cost about $2, more than a Sol 6.2 build. That is the reader's cost in this test, and a second round for Terra 6.1 costs about one such read plus a dollar of build.
+
+### Two real plans
+
+Two plans a technical lead wrote for features that have since shipped, rewound to the ask, the design and the code as they stood. Each new plan was scored on the 21 things the real plans later got wrong or left open: 1 for already right, half for partly. Readers were Opus 5.5 at high and Astra 6.2 at high, blind; no third maker read them. Every planner's transcript was checked for reading anything dated after the real plan, and none did.
+
+| Planner | Astra 6.2 reader | Opus 5.5 reader | Cost a plan | Minutes a plan |
+|---|---:|---:|---|---|
+| Astra 6.2 xhigh | 10.0 | 11.5 | $3.76, $4.09 | 18, 21 |
+| Astra 6.2 max | 9.0 | 12.0 | $5.88, $6.63 | 36, 32 |
+| Sol 6.2 high | 8.5 | 11.5 | $0.72, $0.95 | 6, 10 |
+| Opus 5.5 high | 8.0 | 11.0 | $4.38, $6.56 | 10, 16 |
+
+Both readers put Opus 5.5 last or tied for last. Only Astra 6.2 at xhigh foresaw the fault that later shipped on the plan that crossed a server, an app and a deploy. Only Opus 5.5 planned the measurement on the other. Every plan asked for 5 to 12 things the shipped feature never needed. The list scores only the real plans' own mistakes.
+
+### Account room
+
+Read from the weekly bars of the accounts that carried the runs, before and after. A point of a Codex account's week came to roughly $15 to $30 of list price, and a point of a Claude account's week to roughly $3 to $4.50. The bars are whole percents and the accounts were shared, so both are rough.
