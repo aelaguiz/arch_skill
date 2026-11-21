@@ -130,11 +130,14 @@ slides exist and look right.
 ## Rendering and looking
 
 ```sh
-rm -f render/deck.pdf
-gws drive files export --params '{"fileId":"<id>","mimeType":"application/pdf"}' --output render/deck.pdf
-pdfinfo render/deck.pdf | grep Pages
-pdftoppm -r 110 -png render/deck.pdf render/p
+mkdir -p scratch/render && rm -f scratch/render/deck.pdf
+gws drive files export --params '{"fileId":"<id>","mimeType":"application/pdf"}' --output scratch/render/deck.pdf
+pdfinfo scratch/render/deck.pdf | grep Pages
+pdftoppm -r 110 -png scratch/render/deck.pdf scratch/render/p
 ```
+
+Render inside the job's `scratch/` (or another folder the repository ignores): the deck in Slides is the record, and the
+renders are for looking.
 
 - The PDF shows the deck you built only if its page count equals the slide
   count and the deck's revision ID, read just before and just after the

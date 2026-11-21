@@ -61,7 +61,8 @@ was made from (`made_from`). A later session that never saw this one makes the i
 recipe. Without it, a fresh session rebuilds from the coded values or the copy, and a rebuild changes things nobody
 chose.
 
-Keep every item's files in the climb's own lasting storage, not where the tool left them: a generated take or a download
+Keep every item's files in the climb's own lasting storage (its bucket or asset library, never the repository its notes
+live in), not where the tool left them: a generated take or a download
 link can expire, and generators rarely make the same thing twice, so the original files are what a clean variation is
 cut from. At intake, do the same for every item the climb may vary but did not make, such as the business's current
 best among what the owner let in: gather its files and whatever is known of how it was made, and record them in its

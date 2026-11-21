@@ -23,7 +23,7 @@ difference that cannot touch the measurement, such as punctuation the platform n
 that holds a page's layout single-column and a built page with two columns fails.
 
 Read each item's recipe in its Tests row too, while the files still exist: a session that never saw this build should be
-able to make the item again from it, or cut a variation from it, and its files should be kept somewhere that lasts. When
+able to make the item again from it, or cut a variation from it, and its files should be kept somewhere that lasts (the climb's bucket or asset library, not its repository). When
 the recipe is too thin for that, or the files sit somewhere that can expire, say exactly what is missing so it is fixed
 before launch: it is cheap to fix now, and once the files are gone the next variation would have to be rebuilt from
 scratch. That gap alone does not make the item wrong, so it is no reason to fail it. Check the recipe's tools as well:

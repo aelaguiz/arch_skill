@@ -55,7 +55,7 @@ Sol 6.2 and Astra 6.2 were measured on November 17, 2026, on builds, reviewer ch
 **Starting it.**
 
 - A Claude helper: the Agent tool with `model: "opus"` or `"sonnet"` and `effort: "medium"`, both set.
-- Codex, from any session: write the brief to a file, then run in the background
+- Codex, from any session: write the brief to a file in a folder your repository doesn't track (a job's `scratch/`), then run in the background from there
   `aim codex run -- exec -m gpt-6.2-sol -c 'model_reasoning_effort="xhigh"' "$(cat brief.md)" < /dev/null > out.log 2>&1`
   For mechanical work, `-m gpt-6.1-terra`. AI Manager picks a Codex account with room. Without `< /dev/null` the run waits forever on input. Outside a git checkout (a scratch folder), add `--skip-git-repo-check` after `exec`, or it refuses to start. If AI Manager answers `blocked` with `no_alternate_pool_account`, the machine has one Codex account: name the label the refusal gives, `aim codex run <label> -- exec ...`. Say in the brief where Codex works and that it removes what it made there. Where AI Manager is not installed, the same command starts at `codex exec`. The brief says where the work lives, what done looks like, the check to run, the plainest version, and what to do at an obstacle: stop and say so, or, where you would take a workaround, go on and name the one it took.
 
