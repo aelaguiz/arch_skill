@@ -124,7 +124,7 @@ slides exist and look right.
   characters and palette, so read every mock's on-screen copy at slide size
   before it goes on, and label each mock on the slide.
 - **Marking a real screenshot:** when the product's own rule calls for a mark
-  (for Poker Skill, `$user-journey` says when), draw it as a native shape over
+  (for Poker Skill, psbrain's `pods/procedures.md`, "A fully formed user journey", says when), draw it as a native shape over
   the placed image; never edit its pixels by hand.
 - **Alt text:** `createImage` sets none. Follow each one with an
   `updatePageElementAltText` request on the same object ID whose description

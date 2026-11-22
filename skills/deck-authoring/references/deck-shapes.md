@@ -110,7 +110,7 @@ hunting for what changed.
 - **Four parts, in order:** the goal and what it must account for; the user
   journey; the mocks in journey order; the supporting analysis. Superseded
   drafts go to the back. What makes a journey whole, and how it is drawn, is
-  the product's own rule: for Poker Skill, `$user-journey`.
+  the product's own rule: for Poker Skill, psbrain's `pods/procedures.md`, "A fully formed user journey".
 - **Today, then ours.** Show what exists today (ours or a competitor's, real
   captures), then what replaces it (or a plain "nothing" when it goes),
   each proposal as a mock in our app's own style, as many
