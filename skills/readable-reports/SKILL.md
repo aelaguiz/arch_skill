@@ -58,7 +58,9 @@ tool's vocabulary in working memory. He wants the plain sentence first and
 the exact term second: "what does that mean in plain English" and then "are
 you saying it's a reverse incompatible build?" He will not be told what any
 engineer knows, and he will not be made to look up what only the writer
-knows. He reads to decide.
+knows. He reads to decide. When the reader is Amir, "Writing to Amir" in your
+global instructions is how he reads; this skill is the craft of meeting it in
+a report's words.
 
 Two failures, one cause: the writer chunked the work into private labels
 (the stacked PR chain becomes "root" and "children"; GitHub's merge state
@@ -93,10 +95,12 @@ Always name the thing.
   did or saw: "29 people bought through the store and got Plus; the app
   recorded none of them as a finished purchase." Put the code, number, or
   exact term in parentheses after the plain name when someone will search
-  for it. The reader's own vocabulary is not the failure: he says paygate,
-  offering, checkout conversion, cohort, canonical, attribution, and he is
-  not to be told what they mean. The test is ownership, not frequency: does
-  this word come from the reader's world or from the writer's process?
+  for it. The reader's own vocabulary is not the failure: his field's terms
+  (cohort, canonical, attribution, entitlement) need no explaining, and his
+  names for his product's things come from its word list where it has one
+  (`$word-list` for Poker Skill), never from a sample in this skill. The test
+  is ownership, not frequency: does this word come from the reader's world or
+  from the writer's process?
 - Every PR, issue, commit, document, dashboard, message, or file the text
   mentions is a clickable link labeled with what it is and its number or
   title. Never a bare number the reader has to go find. Never a raw URL as

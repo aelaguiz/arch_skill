@@ -36,10 +36,12 @@ not, keep working on the explanation."
 3. **Under the headline goes the picture, not a paragraph.** At most one short
    line says what the picture counts, for whom, and over which days. A word
    that explains a number sits beside that number, in a few words.
-4. **His words, not yours.** Name everything the way he names it, from PS
-   Brain's word list and glossary or his own messages. When neither has a
-   name, say what the user does. Never coin a label, and never fix one by
-   defining it: "don't invent words use my words not yours".
+4. **His words, not yours.** Name everything the way "Writing to Amir" in
+   your global instructions says he reads names, taking each name from the
+   product's word list (`$word-list` for Poker Skill) or his own messages.
+   When neither has a name, say what the user does. Never coin a label, and
+   never fix one by defining it: "don't invent words use my words not
+   yours".
 5. **A headline that does not fit on one line at the template's 22 points
    (about 65 characters) holds more than one thing.** Cut it to the one
    thing by saying less, never by squeezing more in: a negative, a symbol or
@@ -84,9 +86,9 @@ like.
   image. You should always put the image." He can't judge a mock until he
   knows what it is and where a person meets it: a screen in our app, a page
   on our website, a post or ad on someone else's site, an email. The picture
-  shows that by itself, drawn inside that place's own frame from captures of
-  it (a website page in a browser with the pokerskill.com address bar), and
-  the slide says it in words ("Mock · pokerskill.com · hand page"). A
+  shows that by itself, in that place's own frame (a website page in a
+  browser with the pokerskill.com address bar), and the slide says it in
+  words ("Mock · pokerskill.com · hand page"). A
   concept with no home yet is not ready to mock: decide where it lives
   first, from what it is for; that call is usually yours. Amir, October 23,
   2026, of nine concept mocks drawn as free-standing pictures, which left
@@ -100,13 +102,15 @@ like.
   read alone in order, tell the whole story.
 - **Every slide is numbered,** cover and dividers included, so he can say
   "slide 14".
-- **Compared to what.** Every number carries its unit, period, population, and
-  comparison, in the picture or the line under the headline. Every proposal
-  shows today beside it.
+- **Compared to what.** Every number is whole the way "Numbers" in "Writing
+  to Amir" says, and on a slide its parts sit in the picture or the line
+  under the headline. Every proposal shows today beside it.
 - **Only what he asked for and doesn't already know,** with nothing important
   left out.
 - **Only checked, current facts.** Look things up instead of writing "needs
-  checking". Label every mock, estimate, and hypothetical.
+  checking". Label every mock, estimate, and hypothetical. The cold read in
+  the workflow reads for sense, not arithmetic; the numbers get whatever check
+  your repository gives them before he sees them.
 - **Say what you need from him.** The kicker says what kind of slide it is:
   needs a yes, proposed, shipped, FYI.
 - **A Google Slides deck in the Poker Skill Cobalt template,** editable by
@@ -189,8 +193,9 @@ never let a builder set it smaller.
 
 His eye goes from the headline to the picture, and anything between them
 competes with the headline. So under it goes the picture, with at most one
-short line saying what it counts, for whom, and over which days ("New users
-who first opened Sep 15 to Oct 2"). A word that explains a number sits beside
+short line giving what "Numbers" asks that the picture doesn't show, usually
+what it counts, for whom, and over which days ("New users who first opened
+Sep 15 to Oct 2"). A word that explains a number sits beside
 that number. An explanation that needs a paragraph is either another point,
 so another slide, or method, so speaker notes. To check, cover the headline
 and the picture and read what is left: if he needs it to get the point, it is
@@ -212,14 +217,9 @@ form and these rows yesterday? If not, it holds one thing.
 The names you give things while you work ("free weeks", "next-day return", "a
 level") are yours. He meets them cold, has to translate each one, and the
 next deck invents another. Before you write headlines, list the things the
-deck names and take each name from PS Brain's glossary
-(`/Users/aelaguiz/workspace/psbrain/shared/glossary.md`), his word-list
-rulings (`/Users/aelaguiz/workspace/psbrain/projects/report-language/README.md`,
-until the word list replaces the glossary), or the words in his own messages.
-For example, he says users (players only for people at a poker table), trial,
-paywall, energy gate, iOS for the platform, proposal (never "move"), D0, D1,
-D7, and D30 for days, and % with the counts behind it. The sources are the
-authority; this is only a sample.
+deck names and take each name from the product's word list (`$word-list` for
+Poker Skill, which holds his rulings and the words decks wrote instead) or the
+words in his own messages.
 
 When no source has a name, say what the user does ("users who cancel their
 trial on D0"). A metric always carries its horizon and unit, and keeps the
@@ -263,10 +263,11 @@ defining it keeps the word, and he trips on it again.
   ("Needs your yes", "Proposed", "Concept", "Shipped", "FYI"). Readers skip
   it, so the headline stands without it.
 - **One picture, chosen for what the slide means:** the real screen or a strip
-  of them in journey order; today beside the proposal, made as a GPT Image
-  edit of the real capture and labeled as a mock; a chart of real data with
-  its baseline; one big number when one fact decides the question; a plain
-  native table for exact values; a native diagram for a loop or mechanism; an
+  of them in journey order; today beside the proposal, labeled as a mock; a
+  chart of real data with its baseline; one big number when one fact decides
+  the question; a plain native table for exact values, or for us beside
+  others (a column each, ours first, a row per dimension); a native diagram
+  for a loop or mechanism; an
   illustration for a strategic idea. Vary the form across unlike ideas; a run
   of identical layouts makes his "brain glaze over". When something changes,
   make the change large and colored and dim the rest.
@@ -291,13 +292,14 @@ type new to you.
    deck is for, and the decision or understanding it should produce. Read the
    study's summary first, then the evidence behind your slides and any
    feedback log for this deck. Ask one short question only if the ask is
-   genuinely ambiguous.
+   genuinely ambiguous. His corrections from other days on the same subject
+   bind this deck too: a report card deck once argued from the comparison
+   with chess.com's game review that he had ruled out two weeks earlier.
 2. **Use the evidence that exists:** numbers with their baselines, real
    screens, and mocks from the study and the PRs that built the feature.
-   Check a time-sensitive status claim against the live system. Make a new
-   mock only when a slide needs one, with `$gpt-image` as an edit of a real
-   capture, following
-   `/Users/aelaguiz/workspace/psbrain/knowledge/ai-mock-style-guide.md`.
+   Check a time-sensitive status claim against the live system. A mock a
+   slide needs and nobody has made comes from wherever the product makes its
+   mocks (for Poker Skill, "A fully formed user journey" in psbrain's `pods/procedures.md`).
 3. **Write the headline outline.** If you have not opened the images in
    [references/bad-and-good.md](references/bad-and-good.md) this session, do
    it now. List the things the deck names and settle each name. Then write the
@@ -367,7 +369,10 @@ type new to you.
 - Change what he named, as far as it reaches. A decision he makes changes
   every slide that states it. A slide he could not read usually shows a habit
   of yours (a made-up word, two findings in one headline, a result with no
-  setup): fix it on every slide. A note about taste applies only to its slide.
+  setup): fix it on every slide, and in every sibling deck built the same way,
+  since a cause one deck shows is usually in the others (in one evening's six
+  proposal decks, the same lessons-only count turned up in several). A note
+  about taste applies only to its slide.
 - Read the live deck before every rebuild. Never overwrite or delete his
   edits or slides you didn't make, and keep his order. Rebuild only what
   changed and send it back fast.

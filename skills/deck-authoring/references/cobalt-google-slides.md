@@ -38,7 +38,12 @@ slides exist and look right.
   Inter for body text (about 10 to 14 pt) and the footer (9 pt).
 - **Frame of a content slide:** kicker, headline, a hairline under the
   headline, the content, then a footer with a hairline: "Poker Skill · <deck
-  name>" on the left, the section and page number on the right.
+  name>" on the left, the section and page number on the right. When a pod
+  sends the deck, its name goes in that footer ("Poker Skill · Growth pod ·
+  <deck name>") and on the cover, so he knows whose deck it is before its
+  first claim (Amir, November 12: "so I don't have to guess").
+- **Us beside others:** our column first, marked with a Cobalt blue header
+  and tinted cells.
 - **Charts:** the palette in fixed order starting at `#0D89AB` (then
   `#9A8409`, `#CF4672`, `#1E852C`, `#AF46A3`, `#C05A0C`, `#4562D9`, `#E25C50`).
   One question and one y-axis per chart. Status colors only with a status
@@ -115,12 +120,9 @@ slides exist and look right.
 - **Prepare images first:** resize large captures, flatten transparent PNGs
   onto the page color before converting to JPEG, and open every image at slide
   size to check that it shows what the caption claims.
-- **Mocks:** make them with `$gpt-image` as edits of the newest real capture,
-  changing only the thing proposed. For Poker Skill screens, follow
-  `/Users/aelaguiz/workspace/psbrain/knowledge/ai-mock-style-guide.md`. GPT
-  Image copies text from its reference images and drifts in characters and
-  palette: spell out every heading and label in the brief, read every mock's
-  on-screen copy, and keep rejected drafts. Label each mock on the slide.
+- **Mocks:** GPT Image copies text from its references and drifts in
+  characters and palette, so read every mock's on-screen copy at slide size
+  before it goes on, and label each mock on the slide.
 - **Marking a real screenshot:** draw native outlines and arrows over the
   placed image; never edit its pixels by hand.
 - **Alt text:** `createImage` sets none. Follow each one with an

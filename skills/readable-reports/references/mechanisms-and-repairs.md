@@ -279,7 +279,7 @@ before you give the actual feedback." Instructional support that helps
 novices measurably hurts experts.
 
 Repair rule: never explain the field and never define a word the reader
-uses himself (paygate, offering, cohort, canonical). Name only the writer's
+uses himself (cohort, canonical, attribution). Name only the writer's
 private labels. Keep real component names and real numbers; simplify the
 sentence, not the vocabulary.
 

@@ -55,7 +55,7 @@ The calibration that follows:
 | Never explain or define | Always name |
 |---|---|
 | what a pull request, CI, staging, a cohort, a rate, a flag, or a deploy is | which pull request, what it changes, and its link |
-| the words he uses himself: paygate, offering, checkout conversion, canonical, attribution, entitlement | which two systems disagree, by how much, for which period |
+| his field's terms (canonical, attribution, entitlement) and his names for his product's things, which its word list holds | which two systems disagree, by how much, for which period |
 | how attribution or a funnel works in general | the baseline the number is compared to |
 | the field | the writer's private labels: a minted code, a wave or worker label, a tool's state word, a session-local noun ("root", "children", "the reset"), a coined metaphor |
 

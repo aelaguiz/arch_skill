@@ -45,8 +45,9 @@ with it, and blend shapes when a deck serves two jobs.
   thinking out loud is thinking, not an instruction; he did not name owners
   just because he mentioned names.
 - **His words.** The whys, the outcomes, and the priorities are his lines.
-- **Journeys:** today's journey and the intended one, each first at a glance
-  with no callouts, then in detail. The team should recognize their own app.
+- **Journeys:** today's journey and the intended one, drawn as a design
+  deck's journey is (below), each first at a glance with no callouts, then in
+  detail. The team should recognize their own app.
 - **Ambition:** the goals cover the whole scope he set, not a smaller version.
   No slides spent on work already shipped.
 - **Hygiene:** no candid remarks about teammates; review copies go to Amir
@@ -108,15 +109,14 @@ hunting for what changed.
 
 - **Four parts, in order:** the goal and what it must account for; the user
   journey; the mocks in journey order; the supporting analysis. Superseded
-  drafts go to the back.
+  drafts go to the back. What makes a journey whole, and how it is drawn, is
+  the product's own rule: for Poker Skill, "A fully formed user journey" in psbrain's `pods/procedures.md`.
 - **Today, then ours.** Show what exists today (ours or a competitor's, real
   captures), then each proposal as a mock in our app's own style, as many
   slides per idea as the idea needs. Several mocked takes side by side work
   when he is choosing.
 - **Future-facing.** No built or not-built labels, no readiness slides, no
   prototype bugs.
-- **Mocks start from what is built.** A live capture or the PR's screenshots
-  before any design file; label every concept.
 
 ## A deck that orients Amir on something new
 

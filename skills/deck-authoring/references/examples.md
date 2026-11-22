@@ -96,8 +96,8 @@ the UI."
 **After:** kicker "Priority 3 · Needs your yes · Monetization"; headline "Out of
 energy, the sheet says 'Upgrade to Plus'; we propose 'Try for $0.00'". On the
 left, a real capture from the current app build labeled "Today"; on the right,
-a GPT Image edit of that same capture with only the button changed, labeled
-"Proposed (a mock)".
+the same screen with only the button changed, labeled "Proposed (a
+mock)".
 
 **Why it works:** a proposal about a screen is two pictures. The status lives
 in the kicker.
