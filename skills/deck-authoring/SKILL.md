@@ -269,8 +269,10 @@ defining it keeps the word, and he trips on it again.
   others (a column each, ours first, a row per dimension); a native diagram
   for a loop or mechanism; an
   illustration for a strategic idea. Vary the form across unlike ideas; a run
-  of identical layouts makes his "brain glaze over". When something changes,
-  make the change large and colored and dim the rest.
+  of identical layouts makes his "brain glaze over". When a number or a row
+  changes, make the change large and colored and dim the rest; how a change
+  on a screen is marked is the product's own rule (for Poker Skill,
+  `$user-journey`).
 - **Words:** short lines that each make sense alone, as sentences. Plain is
   not short: a change slide he accepted had one sentence each for today,
   after, why, who, and when, each beside its label.
@@ -299,7 +301,7 @@ type new to you.
    screens, and mocks from the study and the PRs that built the feature.
    Check a time-sensitive status claim against the live system. A mock a
    slide needs and nobody has made comes from wherever the product makes its
-   mocks (for Poker Skill, "A fully formed user journey" in psbrain's `pods/procedures.md`).
+   mocks (for Poker Skill, `$user-journey`).
 3. **Write the headline outline.** If you have not opened the images in
    [references/bad-and-good.md](references/bad-and-good.md) this session, do
    it now. List the things the deck names and settle each name. Then write the
