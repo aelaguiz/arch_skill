@@ -222,5 +222,5 @@ renders are for looking.
   full-size image.
 
 The full runbook, with the evidence behind each trap and many more edge cases,
-is `/Users/aelaguiz/workspace/psbrain/knowledge/cobalt-slides-decks.md`. Read
-the relevant part when a build fails in a way not listed here.
+is [cobalt-builder-traps.md](cobalt-builder-traps.md). Read the relevant part
+when a build fails in a way not listed here.

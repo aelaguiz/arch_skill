@@ -322,7 +322,10 @@ type new to you.
    [references/examples.md](references/examples.md).
 5. **Build it on the Cobalt template.** Read
    [references/cobalt-google-slides.md](references/cobalt-google-slides.md)
-   before the first build and whenever a build fails.
+   before the first build and whenever a build fails. For Poker Skill, real
+   screenshots of other companies' apps, ads or published charts for an
+   evidence slide are gathered as psbrain's `knowledge/published-screenshots.md`
+   says.
 6. **Render and look, once.** Read each slide at full size. A headline that
    wraps, or that a builder set below 22 points, holds two things: cut it. A
    block of text under the headline or a number that runs past a short line
@@ -394,5 +397,7 @@ type new to you.
   order, and verdicts by audience and deck type.
 - [references/cobalt-google-slides.md](references/cobalt-google-slides.md):
   the template, build tools, rendering, and Slides API traps.
+- [references/cobalt-builder-traps.md](references/cobalt-builder-traps.md):
+  the full traps of psbrain's Cobalt builders, with the evidence behind each.
 - `../_shared/agent-orchestration-policy.md`: read before starting the cold
   reader or any helper agent.

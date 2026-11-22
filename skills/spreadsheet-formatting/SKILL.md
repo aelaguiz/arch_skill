@@ -227,3 +227,4 @@ covered, reason from these (section 0 of the guide expands each one):
   readback checklist
 - `$browseros` (installed sibling skill) - the browser contract for opening
   the sheet and taking the screenshot you judge by
+- In psbrain, a sheet built by script: `knowledge/google-sheets-builds.md`
