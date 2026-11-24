@@ -32,7 +32,8 @@ A session already inside tmux needs none of this: closing the ssh only detaches 
 
 1. `tmp-restore`.
 2. Ask Amir to open any Herdr session that `resume` reports isn't running.
-3. `resume`.
-4. Send a note to each session that had live work.
-5. Restart the detached jobs that are yours.
-6. Reattach the ssh panes to their tmux sessions.
+3. `./pod restore <pod>` for each pod saved with `./pod save`.
+4. `resume`.
+5. Send a note to each session that had live work.
+6. Restart the detached jobs that are yours.
+7. Reattach the ssh panes to their tmux sessions.

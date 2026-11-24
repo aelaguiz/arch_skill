@@ -202,6 +202,9 @@ def save(args):
         if not s.get('running'):
             continue
         name = s['name']
+        # Herdr clears an agent's name when its process exits, so the name each pane's agent carries now is kept with
+        # it and given back at resume: a pod member is reached by that name.
+        herdr_names = {x.get('pane_id'): x.get('name') for x in hj(name, 'agent', 'list').get('agents', [])}
         for w in hj(name, 'workspace', 'list').get('workspaces', []):
             wid = w.get('workspace_id')
             for p in hj(name, 'pane', 'list', '--workspace', wid).get('panes', []):
@@ -240,6 +243,7 @@ def save(args):
                     agent = {'kind': 'other', 'command': '; '.join(ps.get(q.get('pid'), (0, q.get('name', '')))[1][:120]
                                                                    for q in procs if q.get('name', '') not in SHELLS)[:300]}
                 if agent:
+                    agent['herdr_name'] = herdr_names.get(pid_)
                     rec['self'] = rec['self'] or agent.get('pid') in above
                     agent['aimgr'] = aimgr
                     raw = pane_read(name, pid_, 14, ansi=True)
@@ -452,6 +456,19 @@ def scratch_back(p):
     return done
 
 
+def give_name(session, pane, name):
+    """Put back the Herdr name the pane's agent carried at the save, unless it already carries one (AI Manager's resume
+    gives a pane's last name back by itself). Returns the name it carries now, or None when Herdr would not take it."""
+    for _ in range(10):
+        now = hj(session, 'agent', 'get', pane).get('agent') or {}
+        if now.get('name'):
+            return now['name']
+        if now.get('agent') and (hj(session, 'agent', 'rename', pane, name).get('agent') or {}).get('name') == name:
+            return name
+        time.sleep(1)
+    return None
+
+
 def resume_one(p):
     s, pane, a = p['session'], p['pane'], p['agent']
     res = {'pane': f'{s}:{pane}'}
@@ -490,6 +507,8 @@ def resume_one(p):
         back = scratch_back(p)
         if back:
             res['scratch'] = back
+    if state == 'up' and a.get('herdr_name'):
+        res['herdr_name'] = give_name(s, pane, a['herdr_name'])
     if state == 'up' and a.get('draft'):
         run('herdr', '--session', s, 'pane', 'send-text', pane, a['draft'])  # back in the box, never sent
         res['draft_restored'] = True
@@ -527,6 +546,11 @@ def resume(args):
     for r in results:
         if r['result'] not in ('up', 'already running'):
             print(f"  {r['pane']}: {r['result']}")
+    for p in todo:
+        r = by.get(f"{p['session']}:{p['pane']}") or {}
+        if r.get('result') == 'up' and p['agent'].get('herdr_name') and not r.get('herdr_name'):
+            print(f"  {r['pane']}: up without its Herdr name {p['agent']['herdr_name']} (Herdr would not take it);"
+                  f" herdr --session {p['session']} agent rename {p['pane']} {p['agent']['herdr_name']}")
     moved = [r for r in results if isinstance(r.get('scratch'), dict)]
     if any(r['scratch'].get('to') for r in moved):
         print("  scratch files put back, in each session's new scratch folder (tell each its files moved):")
