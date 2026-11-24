@@ -77,8 +77,9 @@ Record the facts needed for reconstruction and proof:
 - ordered tab labels and active tab;
 - pane cwd, manual label, split tree, ratios, and zoom state;
 - foreground command and whether replay could cause side effects;
-- detected agent, lifecycle state, terminal title, visible conversation name,
-  provider/model when visible, and durable session ID or path when available.
+- detected agent, its Herdr agent name, lifecycle state, terminal title, visible
+  conversation name, provider/model when visible, and durable session ID or path
+  when available.
 
 Do not treat `idle`, `done`, a matching title, or similar text as sufficient
 continuation proof. A migration of a live agent needs the runtime's exact
@@ -153,7 +154,10 @@ herdr --session <destination-session> pane split <destination-pane-id> \
 
 Use `down` for horizontal splits. Parse each returned pane ID before the next
 split. Preserve semantic layout rather than terminal-cell dimensions; clients
-may have different sizes. Reapply manual pane names after creation. Leave
+may have different sizes. Reapply manual pane names after creation. Give each
+agent its Herdr name back (`herdr agent rename <pane> <name>`) once it is up:
+Herdr clears a name when the agent's process exits, and whatever reaches the
+agent by name can't until it has one. Leave
 ordinary shell panes at their prompts unless the user explicitly wants their
 foreground commands restarted and the side effects are understood.
 
