@@ -11,7 +11,7 @@ An always-on file is how a project passes its understanding to every agent that 
 
 Most long files are rules that one intuition would have produced. Five numbered bans on faking a review (gating copy after it shipped, calling a skill "passed" without running it, checking three claims and calling the page checked) are one idea: a check counts only if it happened, and saying it did tells everyone else to stop looking. "Proof attaches to the mechanism, not the clock" covers shrinking a timeout to test it, entering a long journey at the failing step, and, read the other way, waiting out a delay that is itself the thing being tested. When a group of lines keeps circling one concern, say the concern, and the lines it produces can go.
 
-An intuition someone understands fits in a breath. If it takes a paragraph, the incident it came from is still in it: the date, the story, the quote. Those belong in the commit message, or the cases file a repository keeps beside its instructions; the file keeps what the incident taught.
+An intuition someone understands fits in a breath. If it takes a paragraph, the incident it came from is still in it: the date, the story, the quote. Those belong in the commit message, or the cases file a repository keeps beside its instructions; the file keeps what the incident taught. Where a repository has its own way to store a correction, follow it for where and in what form.
 
 ## When a lesson arrives
 
