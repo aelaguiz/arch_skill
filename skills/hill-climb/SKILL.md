@@ -209,7 +209,7 @@ the platform's reporting day and time zone.
 and work numbers out any way you like, including a quick calculation written on the spot; the row says how you got them.
 A number a person reads as the company's is the exception (Poker Skill: the pod dashboard's record, `pd read N-…`): it is
 defined there once for everyone and its reading says how far its data runs, so read it there and put its id in the row,
-and one the record lacks is put there first (`$canonical-data`).
+and one the record lacks is put there (`$canonical-data`), the row keeping your own figure, named as that, until it reads back.
 A command can do the writing (references/workbook.md, Closing a tick); what the rows say stays yours. Keep such working
 files with the climb in a folder its repository doesn't track (a job's `scratch/` where the repository ignores one),
 not in a shared temporary folder that other work on the machine also writes to; the rows say what they showed. The references
