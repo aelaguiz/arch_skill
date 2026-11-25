@@ -6,7 +6,7 @@ Audience: FC room
 
 ## TL;DR
 
-- 1–3 bullets. If you have a metric, include window + timezone + numerator/denominator + source.
+- 1–3 bullets. If you have a metric, include window + timezone + numerator/denominator + source (its record id where the project keeps one, e.g. Poker Skill's N-…).
 
 ## Question this report should answer
 

@@ -297,7 +297,8 @@ type new to you.
    genuinely ambiguous. His corrections from other days on the same subject
    bind this deck too: a report card deck once argued from the comparison
    with chess.com's game review that he had ruled out two weeks earlier.
-2. **Use the evidence that exists:** numbers with their baselines, real
+2. **Use the evidence that exists:** numbers with their baselines, read from
+   the project's record where it keeps one (Poker Skill: `pd read N-…`), real
    screens, and mocks from the study and the PRs that built the feature.
    Check a time-sensitive status claim against the live system. A mock a
    slide needs and nobody has made comes from wherever the product makes its

@@ -163,7 +163,9 @@ the consultation autonomously as described below.
   instead of substituting a different tier, and select and read back `Pro`
   again there. All should have the same projects;
   verify the destination and carry the needed conversation context and inputs.
-- **Require real source access.** For data, attach `@BigQuery`; for GitHub or
+- **Require real source access.** For data, attach `@BigQuery`, and a number
+  your project keeps on a record as its reading, attached as a file (Poker
+  Skill: `pd read N-… --json`); for GitHub or
   repository work, attach `@GitHub`; attach both when needed. Verify the
   connector pill in the draft and on the submitted turn, and verify retrieval
   of the required data or code.

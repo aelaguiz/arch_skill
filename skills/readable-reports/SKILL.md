@@ -107,8 +107,8 @@ Always name the thing.
   the label. Link to what the reader can open from where he reads: the
   GitHub, Slack, or Google URL first; an absolute local path only when no
   URL exists.
-- A source is the specific thing: the message, the PR, the query result,
-  the row. Link it on the fact it supports, or in a short tail after the
+- A source is the specific thing: the message, the PR, a number's id on the
+  project's record (Poker Skill: its N-…), the row. Link it on the fact it supports, or in a short tail after the
   cell. Never a sentence whose only job is to say a source supports the
   claim, and never a generic pointer repeated on every cell ("Sources:
   Communications evidence · Business metrics"); a collection the reader

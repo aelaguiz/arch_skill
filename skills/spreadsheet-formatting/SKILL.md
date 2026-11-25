@@ -90,7 +90,9 @@ covered, reason from these (section 0 of the guide expands each one):
   nothing.
 - Classify every literal by owner before changing it. Observations (synced
   data, pulled totals, reported rates and their evidence) stay literal and
-  plain, with their source named once; do not relocate them into a fake
+  plain, with their source named once (a number the project keeps on a
+  record: its id and data-through date, as Poker Skill's `pd read N-…` gives
+  them); do not relocate them into a fake
   inputs table or paint them as levers, and do not re-derive a reported
   value from rounded evidence. Assumptions are literals in the input style,
   once each, with unit and validation over the actual choice domain (a

@@ -6,7 +6,7 @@ Three sources, each for a different question:
 - **The Data API's counts** (`yt.py video`, `public-videos`): a video's view, like and comment counts right now, for our videos or anyone's.
 - **The Reporting API** (`yt.py reporting`): daily bulk CSV files, including what the Analytics API won't give a channel, such as thumbnail impressions and their click-through rate (the Analytics API answers "The query is not supported" for them). A new job produces files for the 30 days before it was created and then one per day; files are kept 60 days, so save what you need before then. Google's staff call these files the final numbers and the Analytics API's estimates.
 
-Before a number goes to a person, count it the way the project counts numbers (in PS Brain, `$canonical-data`): say what it counts, over which days and compared with what, and show the US and outside the US apart.
+A number that goes to a person is read from the project's record, and one it lacks is put there first (in PS Brain, `$canonical-data`); say what it counts, over which days and compared with what, and show the US and outside the US apart.
 
 ## Contents
 
